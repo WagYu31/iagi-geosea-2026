@@ -1,0 +1,32 @@
+55th IAGI-GEOSEA 2026 - Seminar Template
+
+===========================================
+ABSTRACT TEMPLATE
+===========================================
+
+Title: [Your Abstract Title Here]
+
+Author(s): [Author Name 1], [Author Name 2], [Author Name 3]
+
+Affiliation(s): [Institution/Organization]
+
+Email: [Contact Email]
+
+Keywords: [keyword1, keyword2, keyword3, keyword4, keyword5]
+
+Abstract:
+[Your abstract text here - maximum 300 words]
+
+-------------------------------------------
+
+Please follow the formatting guidelines:
+- Font: Times New Roman, 12pt
+- Line spacing: 1.5
+- Margins: 2.5cm all sides
+- Maximum pages: 1 page for abstract, 10 pages for full paper
+
+For more information, visit: https://iagi-geosea2026.com
+
+===========================================
+© 2026 IAGI-GEOSEA Conference
+===========================================

@@ -1,0 +1,1225 @@
+import React, { useState, useRef } from 'react';
+import { Head, useForm, router } from '@inertiajs/react';
+import axios from 'axios';
+import SidebarLayout from '@/Layouts/SidebarLayout';
+import DynamicResourceCards from '@/Components/DynamicResourceCards';
+import DynamicTimelineCards from '@/Components/DynamicTimelineCards';
+import {
+    Box,
+    Typography,
+    Paper,
+    TextField,
+    Button,
+    FormControlLabel,
+    Switch,
+    Alert,
+    Card,
+    CardContent,
+    Stack,
+    Tabs,
+    Tab,
+    Grid,
+    IconButton,
+    Divider,
+    MenuItem,
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import DescriptionIcon from '@mui/icons-material/Description';
+
+function TabPanel({ children, value, index }) {
+    return (
+        <div hidden={value !== index}>
+            {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+        </div>
+    );
+}
+
+// Resource Upload Form Component
+function ResourceUploadForm({ onUpload, uploading }) {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = useRef(null);
+
+    const handleFileSelect = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!title || !selectedFile) {
+            alert('Please provide both title and file');
+            return;
+        }
+
+        await onUpload(title, description, selectedFile);
+
+        // Reset form
+        setTitle('');
+        setDescription('');
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    return (
+        <Stack spacing={2}>
+            <TextField
+                label="Resource Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                fullWidth
+                required
+                size="small"
+            />
+            <TextField
+                label="Description (Optional)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+                multiline
+                rows={2}
+                size="small"
+            />
+            <Box>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif"
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
+                    id="resource-file-input"
+                />
+                <label htmlFor="resource-file-input">
+                    <Button variant="outlined" component="span" fullWidth>
+                        {selectedFile ? selectedFile.name : 'Choose File'}
+                    </Button>
+                </label>
+            </Box>
+            <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={uploading || !title || !selectedFile}
+                sx={{
+                    backgroundColor: '#1abc9c',
+                    '&:hover': { backgroundColor: '#16a085' },
+                }}
+            >
+                {uploading ? 'Uploading...' : 'Upload Resource'}
+            </Button>
+        </Stack>
+    );
+}
+
+export default function Settings({ settings, submissionSettings }) {
+    const [tabValue, setTabValue] = useState(0); // Start with Landing Page Settings
+    const [uploading, setUploading] = useState(false);
+
+    // Parse settings from grouped format
+    const getSettingValue = (key, defaultValue = '') => {
+        if (!settings) return defaultValue;
+
+        for (const section in settings) {
+            const setting = settings[section].find(s => s.key === key);
+            if (setting) {
+                if (setting.type === 'json') {
+                    try {
+                        return JSON.parse(setting.value);
+                    } catch (e) {
+                        return defaultValue;
+                    }
+                }
+                return setting.value;
+            }
+        }
+        return defaultValue;
+    };
+
+    // Get setting ID by key
+    const getSettingId = (key) => {
+        if (!settings) return null;
+
+        for (const section in settings) {
+            const setting = settings[section].find(s => s.key === key);
+            if (setting) return setting.id;
+        }
+        return null;
+    };
+
+    // Landing Page Settings State
+    const [countdownDate, setCountdownDate] = useState(getSettingValue('countdown_target_date', ''));
+    const [contactInfo, setContactInfo] = useState(() => {
+        const info = getSettingValue('contact_info', '{}');
+        try {
+            return typeof info === 'string' ? JSON.parse(info) : info;
+        } catch (e) {
+            return { phone: '', email: '', location: '', maps_url: '' };
+        }
+    });
+    const [timeline, setTimeline] = useState(getSettingValue('timeline', []));
+    const speakersFromDB = getSettingValue('keynote_speakers', []);
+    const [speakers, setSpeakers] = useState(
+        speakersFromDB && speakersFromDB.length > 0
+            ? speakersFromDB
+            : [{ name: '', title: '', photo: '', institution: '' }]
+    );
+    const [sponsors, setSponsors] = useState(getSettingValue('sponsors', []));
+    const [resources, setResources] = useState(getSettingValue('resources', []));
+    const [savingCountdown, setSavingCountdown] = useState(false);
+    const [savingContactInfo, setSavingContactInfo] = useState(false);
+    const [savingSpeakers, setSavingSpeakers] = useState(false);
+    const [savingSponsors, setSavingSponsors] = useState(false);
+
+    // Form for submission deadline settings
+    const { data: deadlineData, setData: setDeadlineData, post: postDeadline, processing: processingDeadline, errors: deadlineErrors } = useForm({
+        submission_deadline_start: submissionSettings?.submission_deadline_start || '',
+        submission_deadline_end: submissionSettings?.submission_deadline_end || '',
+        submission_enabled: submissionSettings?.submission_enabled === '1',
+    });
+
+    const handleDeadlineSubmit = (e) => {
+        e.preventDefault();
+        postDeadline(route('admin.submission.settings.update'));
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
+    // Save Countdown Timer
+    const saveCountdown = async () => {
+        const settingId = getSettingId('countdown_target_date');
+        if (!settingId) {
+            alert('Countdown setting not found');
+            return;
+        }
+
+        setSavingCountdown(true);
+        try {
+            await router.patch(route('admin.settings.update', settingId), {
+                value: countdownDate,
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    alert('Countdown timer updated successfully!');
+                },
+                onError: (errors) => {
+                    console.error('Save failed:', errors);
+                    alert('Failed to save countdown timer');
+                },
+            });
+        } finally {
+            setSavingCountdown(false);
+        }
+    };
+
+    // Save Contact Information
+    const saveContactInfo = () => {
+        const settingId = getSettingId('contact_info');
+        console.log('Saving contact info, settingId:', settingId);
+        console.log('Contact info data:', contactInfo);
+
+        if (!settingId) {
+            alert('Contact info setting not found');
+            console.error('Setting ID not found for contact_info');
+            return;
+        }
+
+        setSavingContactInfo(true);
+
+        router.patch(route('admin.settings.update', settingId), {
+            value: JSON.stringify(contactInfo),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log('Contact info saved successfully');
+                alert('Contact information updated successfully!');
+                setSavingContactInfo(false);
+            },
+            onError: (errors) => {
+                console.error('Save failed:', errors);
+                alert('Failed to save contact information. Check console for details.');
+                setSavingContactInfo(false);
+            },
+            onFinish: () => {
+                setSavingContactInfo(false);
+            },
+        });
+    };
+
+    // Save Keynote Speakers
+    const saveSpeakers = async () => {
+        const settingId = getSettingId('keynote_speakers');
+        if (!settingId) {
+            alert('Keynote speakers setting not found');
+            return;
+        }
+
+        setSavingSpeakers(true);
+        try {
+            await router.patch(route('admin.settings.update', settingId), {
+                value: JSON.stringify(speakers),
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    alert('Keynote speakers updated successfully!');
+                },
+                onError: (errors) => {
+                    console.error('Save failed:', errors);
+                    alert('Failed to save keynote speakers');
+                },
+            });
+        } finally {
+            setSavingSpeakers(false);
+        }
+    };
+
+    // Add new speaker
+    const addSpeaker = () => {
+        setSpeakers([...speakers, { name: '', title: '', photo: '', institution: '' }]);
+    };
+
+    // Remove speaker
+    const removeSpeaker = (index) => {
+        if (speakers.length <= 1) {
+            alert('You must have at least one speaker');
+            return;
+        }
+        if (confirm('Are you sure you want to remove this speaker?')) {
+            const updatedSpeakers = speakers.filter((_, i) => i !== index);
+            setSpeakers(updatedSpeakers);
+        }
+    };
+
+    // Save Sponsors
+    const saveSponsors = async () => {
+        const settingId = getSettingId('sponsors');
+        if (!settingId) {
+            alert('Sponsors setting not found');
+            return;
+        }
+
+        setSavingSponsors(true);
+        try {
+            await router.patch(route('admin.settings.update', settingId), {
+                value: JSON.stringify(sponsors),
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    alert('Sponsors saved successfully!');
+                },
+                onError: (errors) => {
+                    console.error('Save failed:', errors);
+                    alert('Failed to save sponsors');
+                },
+                onFinish: () => {
+                    setSavingSponsors(false);
+                },
+            });
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Failed to save sponsors');
+            setSavingSponsors(false);
+        }
+    };
+
+    // Handle speaker photo upload
+    const handleSpeakerPhotoUpload = async (index, file) => {
+        if (!file) return;
+
+        // Check if this is a new speaker (not yet in DB)
+        const speakersInDB = getSettingValue('keynote_speakers', []);
+        if (index >= speakersInDB.length) {
+            alert('Please save the speakers first before uploading photos for new speakers.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('photo', file);
+        formData.append('index', index);
+
+        setUploading(true);
+
+        try {
+            const response = await axios.post(route('admin.settings.uploadSpeakerPhoto'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+
+            if (response.data.success) {
+                alert('Speaker photo uploaded successfully!');
+                const newSpeakers = [...speakers];
+                newSpeakers[index].photo = response.data.photo_url;
+                setSpeakers(newSpeakers);
+            } else {
+                alert('Upload failed: ' + (response.data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Failed to upload photo: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // Handle sponsor logo upload
+    const handleSponsorLogoUpload = async (index, file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('logo', file);
+        formData.append('index', index);
+
+        setUploading(true);
+        try {
+            const response = await fetch(route('admin.settings.uploadSponsorLogo'), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const newSponsors = [...sponsors];
+                newSponsors[index].logo = data.logo_url;
+                setSponsors(newSponsors);
+            }
+        } catch (error) {
+            console.error('Logo upload failed:', error);
+            alert('Failed to upload logo');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // Handle resource file upload
+    const handleResourceFileUpload = async (title, description, file, resourceIndex = null) => {
+        if (!file || !title) {
+            alert('Please provide a title and select a file');
+            return false;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('title', title);
+        formData.append('description', description || '');
+        if (resourceIndex !== null) {
+            formData.append('resource_index', resourceIndex);
+        }
+
+        setUploading(true);
+        try {
+            const response = await axios.post(route('admin.settings.uploadResourceFile'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                // Update resources state
+                let newResources = [...resources];
+                if (resourceIndex !== null) {
+                    // Update specific slot
+                    newResources[resourceIndex] = response.data.resource;
+                } else {
+                    // Append new resource
+                    newResources.push(response.data.resource);
+                }
+                setResources(newResources);
+
+                // Reload page to refresh all Inertia props (including Landing Page)
+                router.reload({ preserveScroll: true });
+
+                alert('Resource uploaded successfully! Landing Page will be updated.');
+                return true;
+            }
+        } catch (error) {
+            console.error('Resource upload error:', error);
+            alert('Failed to upload resource');
+        } finally {
+            setUploading(false);
+        }
+        return false;
+    };
+
+    // Handle resource delete
+    const handleResourceDelete = (index) => {
+        if (confirm('Are you sure you want to delete this resource?')) {
+            const newResources = resources.filter((_, i) => i !== index);
+            setResources(newResources);
+
+            // Save to database
+            const settingId = getSettingId('resources');
+            if (settingId) {
+                router.patch(route('admin.settings.update', settingId), {
+                    value: JSON.stringify(newResources),
+                }, {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        alert('Resource deleted successfully!');
+                    },
+                });
+            }
+        }
+    };
+
+    // Handle save resources (metadata only, no file upload required)
+    const handleSaveResources = async () => {
+        try {
+            const response = await axios.post(route('admin.settings.saveResources'), {
+                resources: resources
+            });
+
+            if (response.data.success) {
+                setResources(response.data.resources);
+                router.reload({ preserveScroll: true });
+                alert('Resources saved successfully!');
+            }
+        } catch (error) {
+            console.error('Save resources error:', error);
+            alert('Failed to save resources');
+        }
+    };
+
+    // Handle timeline delete
+    const handleTimelineDelete = (index) => {
+        if (confirm('Are you sure you want to delete this timeline event?')) {
+            const newTimeline = timeline.filter((_, i) => i !== index);
+            setTimeline(newTimeline);
+        }
+    };
+
+    // Handle save timeline
+    const handleSaveTimeline = async () => {
+        try {
+            const response = await axios.post(route('admin.settings.saveTimeline'), {
+                timeline: timeline
+            });
+
+            if (response.data.success) {
+                setTimeline(response.data.timeline);
+                router.reload({ preserveScroll: true });
+                alert('Timeline saved successfully!');
+            }
+        } catch (error) {
+            console.error('Save timeline error:', error);
+            alert('Failed to save timeline: ' + (error.response?.data?.error || error.message));
+        }
+    };
+
+    // Update speaker
+    const updateSpeaker = (index, field, value) => {
+        const newSpeakers = [...speakers];
+        newSpeakers[index][field] = value;
+        setSpeakers(newSpeakers);
+    };
+
+    // Update sponsor
+    const updateSponsor = (index, field, value) => {
+        const newSponsors = [...sponsors];
+        newSponsors[index][field] = value;
+        setSponsors(newSponsors);
+    };
+
+    // Add sponsor
+    const addSponsor = () => {
+        setSponsors([...sponsors, { name: '', logo: '', tier: 'gold' }]);
+    };
+
+    // Remove sponsor
+    const removeSponsor = (index) => {
+        const newSponsors = sponsors.filter((_, i) => i !== index);
+        setSponsors(newSponsors);
+    };
+
+    // Save Landing Page Settings
+    const saveLandingPageSettings = async () => {
+        // Implementation for saving settings
+        // This would typically make PATCH requests to update each setting
+        alert('Save functionality to be implemented with PATCH requests to update settings');
+    };
+
+    return (
+        <SidebarLayout>
+            <Head title="Settings" />
+
+            <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
+                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1abc9c', mb: 3 }}>
+                    System Settings
+                </Typography>
+
+                <Paper sx={{ borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+                    <Tabs
+                        value={tabValue}
+                        onChange={handleTabChange}
+                        sx={{
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            px: 2,
+                            '& .MuiTab-root': {
+                                textTransform: 'none',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                            },
+                            '& .Mui-selected': {
+                                color: '#1abc9c',
+                            },
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: '#1abc9c',
+                            },
+                        }}
+                    >
+                        <Tab label="Landing Page Settings" />
+                        <Tab label="Submission Deadline" />
+                    </Tabs>
+
+                    {/* Landing Page Settings Tab */}
+                    <TabPanel value={tabValue} index={0}>
+                        <Box sx={{ p: 3 }}>
+                            <Stack spacing={4}>
+                                {/* Countdown Timer Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Countdown Timer
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            type="datetime-local"
+                                            label="Target Date & Time"
+                                            value={countdownDate}
+                                            onChange={(e) => setCountdownDate(e.target.value)}
+                                            InputLabelProps={{ shrink: true }}
+                                            sx={{
+                                                mb: 2,
+                                                '& .MuiOutlinedInput-root': {
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: '#1abc9c',
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={saveCountdown}
+                                                disabled={savingCountdown}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingCountdown ? 'Saving...' : 'Save Countdown'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Contact Information Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Contact Information
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                            Manage contact details displayed on the landing page (Phone, Email, Location with map)
+                                        </Typography>
+
+                                        <Stack spacing={2}>
+                                            <TextField
+                                                fullWidth
+                                                label="Phone Number"
+                                                value={contactInfo.phone || ''}
+                                                onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                                                placeholder="e.g., 0857/1593522"
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                label="Email Address"
+                                                type="email"
+                                                value={contactInfo.email || ''}
+                                                onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                                                placeholder="e.g., wahyuwutomo31@gmail.com"
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                rows={3}
+                                                label="Location Address"
+                                                value={contactInfo.location || ''}
+                                                onChange={(e) => setContactInfo({ ...contactInfo, location: e.target.value })}
+                                                placeholder="e.g., UPN Veteran Yogyakarta, Jl. SWK 104 (Lingkar Utara), Yogyakarta 55283"
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                label="Google Maps Embed URL"
+                                                value={contactInfo.maps_url || ''}
+                                                onChange={(e) => setContactInfo({ ...contactInfo, maps_url: e.target.value })}
+                                                placeholder="Enter Google Maps embed URL or coordinates"
+                                                helperText="Paste the embed URL from Google Maps (Share > Embed a map)"
+                                            />
+
+                                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={saveContactInfo}
+                                                    disabled={savingContactInfo}
+                                                    sx={{
+                                                        backgroundColor: '#1abc9c',
+                                                        '&:hover': { backgroundColor: '#16a085' },
+                                                    }}
+                                                >
+                                                    {savingContactInfo ? 'Saving...' : 'Save Contact Info'}
+                                                </Button>
+                                            </Box>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Conference Timeline Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Conference Timeline
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 2 }}>
+                                            Timeline events (Abstract Submission, Full Paper Submission, etc.)
+                                        </Alert>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Timeline management interface - Coming soon
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Keynote Speakers Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Alert severity="info" sx={{ mb: 2 }}>
+                                            Manage keynote speakers for the conference. Upload photos and add speaker details.
+                                        </Alert>
+
+                                        {/* Add Speaker Button */}
+                                        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Alert severity="warning" sx={{ flex: 1, mr: 2 }}>
+                                                Save speakers first before uploading photos for new speakers!
+                                            </Alert>
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<AddIcon />}
+                                                onClick={addSpeaker}
+                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c', whiteSpace: 'nowrap' }}
+                                            >
+                                                Add Speaker
+                                            </Button>
+                                        </Box>
+
+                                        <Grid container spacing={2}>
+                                            {speakers.map((speaker, index) => (
+                                                <Grid item xs={12} sm={6} md={3} key={index}>
+                                                    <Card sx={{ p: 2, height: '100%', position: 'relative' }}>
+                                                        {/* Remove Button */}
+                                                        {speakers.length > 1 && (
+                                                            <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    color="error"
+                                                                    onClick={() => removeSpeaker(index)}
+                                                                    sx={{ minWidth: 'auto', p: 0.5 }}
+                                                                >
+                                                                    <DeleteIcon fontSize="small" />
+                                                                </Button>
+                                                            </Box>
+                                                        )}
+
+                                                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                                                            Speaker {index + 1}
+                                                        </Typography>
+                                                        {/* Photo Preview */}
+                                                        <Box
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: 200,
+                                                                backgroundColor: '#f5f5f5',
+                                                                borderRadius: 1,
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                overflow: 'hidden',
+                                                                backgroundImage: speaker.photo ? `url(${speaker.photo})` : 'none',
+                                                                backgroundSize: 'cover',
+                                                                backgroundPosition: 'center',
+                                                            }}
+                                                        >
+                                                            {!speaker.photo && (
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    No Photo
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
+
+                                                        {/* Upload Button */}
+                                                        <Button
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            component="label"
+                                                            startIcon={<UploadFileIcon />}
+                                                            disabled={uploading}
+                                                            sx={{ mb: 2 }}
+                                                        >
+                                                            Upload Photo
+                                                            <input
+                                                                type="file"
+                                                                hidden
+                                                                accept="image/*"
+                                                                onChange={(e) => handleSpeakerPhotoUpload(index, e.target.files[0])}
+                                                            />
+                                                        </Button>
+
+                                                        {/* Name */}
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Name"
+                                                            value={speaker.name}
+                                                            onChange={(e) => updateSpeaker(index, 'name', e.target.value)}
+                                                            sx={{ mb: 1 }}
+                                                        />
+
+                                                        {/* Title */}
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Title/Affiliation"
+                                                            value={speaker.title}
+                                                            onChange={(e) => updateSpeaker(index, 'title', e.target.value)}
+                                                            sx={{ mb: 1 }}
+                                                        />
+
+                                                        {/* Institution */}
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Institution (Optional)"
+                                                            value={speaker.institution || ''}
+                                                            onChange={(e) => updateSpeaker(index, 'institution', e.target.value)}
+                                                            placeholder="e.g., Asian Geological Institute"
+                                                        />
+                                                    </Card>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={saveSpeakers}
+                                                disabled={savingSpeakers}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingSpeakers ? 'Saving...' : 'Save Speakers'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Sponsors Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                            <Typography variant="h6" sx={{ color: '#1abc9c' }}>
+                                                Sponsors
+                                            </Typography>
+                                            <Button
+                                                variant="contained"
+                                                startIcon={<AddIcon />}
+                                                onClick={addSponsor}
+                                                sx={{ backgroundColor: '#1abc9c' }}
+                                            >
+                                                Add Sponsor
+                                            </Button>
+                                        </Box>
+
+                                        <Grid container spacing={2}>
+                                            {sponsors.map((sponsor, index) => (
+                                                <Grid item xs={12} sm={6} md={4} key={index}>
+                                                    <Card variant="outlined" sx={{ p: 2, position: 'relative' }}>
+                                                        {/* Delete Button */}
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => removeSponsor(index)}
+                                                            sx={{ position: 'absolute', top: 8, right: 8 }}
+                                                        >
+                                                            <DeleteIcon fontSize="small" />
+                                                        </IconButton>
+
+                                                        {/* Logo Preview */}
+                                                        <Box
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: 150,
+                                                                backgroundColor: '#f5f5f5',
+                                                                borderRadius: 1,
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                overflow: 'hidden',
+                                                                backgroundImage: sponsor.logo ? `url(${sponsor.logo})` : 'none',
+                                                                backgroundSize: 'contain',
+                                                                backgroundPosition: 'center',
+                                                                backgroundRepeat: 'no-repeat',
+                                                            }}
+                                                        >
+                                                            {!sponsor.logo && (
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    No Logo
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
+
+                                                        {/* Upload Button */}
+                                                        <Button
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            component="label"
+                                                            startIcon={<UploadFileIcon />}
+                                                            disabled={uploading}
+                                                            sx={{ mb: 2 }}
+                                                        >
+                                                            Upload Logo
+                                                            <input
+                                                                type="file"
+                                                                hidden
+                                                                accept="image/*"
+                                                                onChange={(e) => handleSponsorLogoUpload(index, e.target.files[0])}
+                                                            />
+                                                        </Button>
+
+                                                        {/* Tier Selection */}
+                                                        <TextField
+                                                            fullWidth
+                                                            select
+                                                            size="small"
+                                                            label="Sponsor Tier"
+                                                            value={sponsor.tier || 'gold'}
+                                                            onChange={(e) => updateSponsor(index, 'tier', e.target.value)}
+                                                            sx={{ mb: 1 }}
+                                                        >
+                                                            <MenuItem value="gold">Gold</MenuItem>
+                                                            <MenuItem value="platinum">Platinum</MenuItem>
+                                                            <MenuItem value="silver">Silver</MenuItem>
+                                                        </TextField>
+
+                                                        {/* Name */}
+                                                        <TextField
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Sponsor Name"
+                                                            value={sponsor.name}
+                                                            onChange={(e) => updateSponsor(index, 'name', e.target.value)}
+                                                        />
+                                                    </Card>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+
+                                        {/* Save Button */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={saveSponsors}
+                                                disabled={savingSponsors}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingSponsors ? 'Saving...' : 'Save Sponsors'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Resources Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Conference Resources
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Upload presentation templates and guidelines for conference submissions
+                                        </Alert>
+
+                                        <DynamicResourceCards
+                                            resources={resources}
+                                            setResources={setResources}
+                                            uploading={uploading}
+                                            handleResourceFileUpload={handleResourceFileUpload}
+                                            handleResourceDelete={handleResourceDelete}
+                                        />
+
+                                        {/* Save All Resources Button */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                size="large"
+                                                onClick={handleSaveResources}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                Save All Resources
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+
+                                {/* Timeline Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Conference Timeline
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Manage important conference dates and milestones
+                                        </Alert>
+
+                                        <DynamicTimelineCards
+                                            timeline={timeline}
+                                            setTimeline={setTimeline}
+                                            handleTimelineDelete={handleTimelineDelete}
+                                        />
+
+                                        {/* Save All Timeline Button */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                size="large"
+                                                onClick={handleSaveTimeline}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                Save All Timeline
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Save Button */}
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                                    <Button
+                                        variant="outlined"
+                                        size="large"
+                                        onClick={() => window.open('/', '_blank')}
+                                        sx={{
+                                            borderColor: '#1abc9c',
+                                            color: '#1abc9c',
+                                            '&:hover': {
+                                                borderColor: '#16a085',
+                                                backgroundColor: 'rgba(26, 188, 156, 0.04)'
+                                            },
+                                            px: 4,
+                                        }}
+                                    >
+                                        Preview Landing Page
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        size="large"
+                                        onClick={saveLandingPageSettings}
+                                        sx={{
+                                            backgroundColor: '#1abc9c',
+                                            '&:hover': { backgroundColor: '#16a085' },
+                                            px: 4,
+                                        }}
+                                    >
+                                        Save All Settings
+                                    </Button>
+                                </Box>
+                            </Stack>
+                        </Box>
+                    </TabPanel>
+
+                    {/* Submission Deadline Tab */}
+                    <TabPanel value={tabValue} index={1}>
+                        <Box sx={{ p: 3 }}>
+                            <Alert severity="success" sx={{ mb: 3 }}>
+                                <Typography variant="body2">
+                                    <strong>Active Settings:</strong> Configure when users can submit their papers for the conference.
+                                </Typography>
+                            </Alert>
+
+                            <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <CardContent sx={{ p: 3 }}>
+                                    <Box component="form" onSubmit={handleDeadlineSubmit}>
+                                        <Stack spacing={3}>
+                                            {/* Enable/Disable Toggle */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                                    Submission Control
+                                                </Typography>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={deadlineData.submission_enabled}
+                                                            onChange={(e) => setDeadlineData('submission_enabled', e.target.checked)}
+                                                            sx={{
+                                                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                                                    color: '#1abc9c',
+                                                                },
+                                                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                                                    backgroundColor: '#1abc9c',
+                                                                },
+                                                            }}
+                                                        />
+                                                    }
+                                                    label={
+                                                        <Box>
+                                                            <Typography sx={{ fontWeight: 600 }}>
+                                                                {deadlineData.submission_enabled ? '✅ Submissions Enabled' : '🚫 Submissions Disabled'}
+                                                            </Typography>
+                                                            <Typography variant="caption" color="text.secondary">
+                                                                {deadlineData.submission_enabled
+                                                                    ? 'Users can submit papers (subject to deadline dates below)'
+                                                                    : 'All submissions are currently blocked'
+                                                                }
+                                                            </Typography>
+                                                        </Box>
+                                                    }
+                                                />
+                                            </Box>
+
+                                            {/* Deadline Dates */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                                    Submission Period
+                                                </Typography>
+
+                                                <Stack spacing={2}>
+                                                    <TextField
+                                                        fullWidth
+                                                        type="datetime-local"
+                                                        label="Start Date & Time"
+                                                        value={deadlineData.submission_deadline_start}
+                                                        onChange={(e) => setDeadlineData('submission_deadline_start', e.target.value)}
+                                                        error={!!deadlineErrors.submission_deadline_start}
+                                                        helperText={deadlineErrors.submission_deadline_start || 'When submissions will open (leave empty for no start restriction)'}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#1abc9c',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: '#1abc9c',
+                                                            },
+                                                        }}
+                                                    />
+
+                                                    <TextField
+                                                        fullWidth
+                                                        type="datetime-local"
+                                                        label="End Date & Time"
+                                                        value={deadlineData.submission_deadline_end}
+                                                        onChange={(e) => setDeadlineData('submission_deadline_end', e.target.value)}
+                                                        error={!!deadlineErrors.submission_deadline_end}
+                                                        helperText={deadlineErrors.submission_deadline_end || 'When submissions will close (leave empty for no end restriction)'}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#1abc9c',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: '#1abc9c',
+                                                            },
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </Box>
+
+                                            {/* Info Alert */}
+                                            <Alert severity="info">
+                                                <Typography variant="body2">
+                                                    <strong>Note:</strong> Users will not be able to submit new papers outside the specified deadline period.
+                                                    The "New Submission" button will be disabled and show a notification about the deadline.
+                                                </Typography>
+                                            </Alert>
+
+                                            {/* Error Display */}
+                                            {deadlineErrors.error && (
+                                                <Alert severity="error">
+                                                    {deadlineErrors.error}
+                                                </Alert>
+                                            )}
+
+                                            {/* Save Button */}
+                                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2, gap: 2 }}>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={() => window.location.reload()}
+                                                    sx={{
+                                                        color: '#666',
+                                                        borderColor: '#ddd',
+                                                        '&:hover': {
+                                                            borderColor: '#999',
+                                                            backgroundColor: '#f5f5f5',
+                                                        },
+                                                    }}
+                                                >
+                                                    Reset
+                                                </Button>
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    disabled={processingDeadline}
+                                                    sx={{
+                                                        backgroundColor: '#1abc9c',
+                                                        '&:hover': {
+                                                            backgroundColor: '#16a085',
+                                                        },
+                                                        px: 4,
+                                                        py: 1.5,
+                                                    }}
+                                                >
+                                                    {processingDeadline ? 'Saving...' : 'Save Settings'}
+                                                </Button>
+                                            </Box>
+                                        </Stack>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Box>
+                    </TabPanel>
+                </Paper>
+            </Box>
+        </SidebarLayout>
+    );
+}

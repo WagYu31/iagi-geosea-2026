@@ -1,0 +1,235 @@
+import React, { useState } from 'react';
+import { Head, useForm, router } from '@inertiajs/react';
+import SidebarLayout from '@/Layouts/SidebarLayout';
+import {
+    Box,
+    Typography,
+    Paper,
+    TextField,
+    Button,
+    FormControlLabel,
+    Switch,
+    Alert,
+    Card,
+    CardContent,
+    Stack,
+    Tabs,
+    Tab,
+    Divider,
+} from '@mui/material';
+
+function TabPanel({ children, value, index }) {
+    return (
+        <div hidden={value !== index}>
+            {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+        </div>
+    );
+}
+
+export default function Settings({ settings, submissionSettings }) {
+    const [tabValue, setTabValue] = useState(0);
+
+    // Form for submission deadline settings
+    const { data: deadlineData, setData: setDeadlineData, post: postDeadline, processing: processingDeadline, errors: deadlineErrors } = useForm({
+        submission_deadline_start: submissionSettings?.submission_deadline_start || '',
+        submission_deadline_end: submissionSettings?.submission_deadline_end || '',
+        submission_enabled: submissionSettings?.submission_enabled === '1',
+    });
+
+    const handleDeadlineSubmit = (e) => {
+        e.preventDefault();
+        postDeadline(route('admin.submission.settings.update'));
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
+    return (
+        <SidebarLayout>
+            <Head title="Settings" />
+
+            <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
+                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#006838', mb: 3 }}>
+                    System Settings
+                </Typography>
+
+                <Paper sx={{ borderRadius: 2 }}>
+                    <Tabs
+                        value={tabValue}
+                        onChange={handleTabChange}
+                        sx={{
+                            borderBottom: 1,
+                            borderColor: 'divider',
+                            px: 2,
+                            '& .MuiTab-root': {
+                                textTransform: 'none',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                            },
+                            '& .Mui-selected': {
+                                color: '#006838',
+                            },
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: '#006838',
+                            },
+                        }}
+                    >
+                        <Tab label="Landing Page Settings" />
+                        <Tab label="Submission Deadline" />
+                    </Tabs>
+
+                    {/* Landing Page Settings Tab */}
+                    <TabPanel value={tabValue} index={0}>
+                        <Box sx={{ p: 3 }}>
+                            <Alert severity="info" sx={{ mb: 3 }}>
+                                Configure the content displayed on the conference landing page including countdown, event info, speakers, and resources.
+                            </Alert>
+
+                            <Typography variant="h6" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                                Landing Page Settings interface will be displayed here.
+                                <br />
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                    (To be implemented with form fields for countdown, speakers, sponsors, resources, etc.)
+                                </Typography>
+                            </Typography>
+                        </Box>
+                    </TabPanel>
+
+                    {/* Submission Deadline Tab */}
+                    <TabPanel value={tabValue} index={1}>
+                        <Box sx={{ p: 3 }}>
+                            <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <CardContent sx={{ p: 3 }}>
+                                    <Box component="form" onSubmit={handleDeadlineSubmit}>
+                                        <Stack spacing={3}>
+                                            {/* Enable/Disable Toggle */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ mb: 2, color: '#006838' }}>
+                                                    Submission Control
+                                                </Typography>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={deadlineData.submission_enabled}
+                                                            onChange={(e) => setDeadlineData('submission_enabled', e.target.checked)}
+                                                            sx={{
+                                                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                                                    color: '#006838',
+                                                                },
+                                                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                                                    backgroundColor: '#006838',
+                                                                },
+                                                            }}
+                                                        />
+                                                    }
+                                                    label={
+                                                        <Typography>
+                                                            {deadlineData.submission_enabled ? 'Submissions Enabled' : 'Submissions Disabled'}
+                                                        </Typography>
+                                                    }
+                                                />
+                                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1, ml: 6 }}>
+                                                    Toggle this to manually enable or disable all submissions
+                                                </Typography>
+                                            </Box>
+
+                                            {/* Deadline Dates */}
+                                            <Box>
+                                                <Typography variant="h6" sx={{ mb: 2, color: '#006838' }}>
+                                                    Submission Period
+                                                </Typography>
+
+                                                <Stack spacing={2}>
+                                                    <TextField
+                                                        fullWidth
+                                                        type="datetime-local"
+                                                        label="Start Date & Time"
+                                                        value={deadlineData.submission_deadline_start}
+                                                        onChange={(e) => setDeadlineData('submission_deadline_start', e.target.value)}
+                                                        error={!!deadlineErrors.submission_deadline_start}
+                                                        helperText={deadlineErrors.submission_deadline_start || 'When submissions will open (leave empty for no start restriction)'}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#006838',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: '#006838',
+                                                            },
+                                                        }}
+                                                    />
+
+                                                    <TextField
+                                                        fullWidth
+                                                        type="datetime-local"
+                                                        label="End Date & Time"
+                                                        value={deadlineData.submission_deadline_end}
+                                                        onChange={(e) => setDeadlineData('submission_deadline_end', e.target.value)}
+                                                        error={!!deadlineErrors.submission_deadline_end}
+                                                        helperText={deadlineErrors.submission_deadline_end || 'When submissions will close (leave empty for no end restriction)'}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#006838',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: '#006838',
+                                                            },
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </Box>
+
+                                            {/* Info Alert */}
+                                            <Alert severity="info">
+                                                <Typography variant="body2">
+                                                    <strong>Note:</strong> Users will not be able to submit new papers outside the specified deadline period.
+                                                    The "New Submission" button will be disabled and show a notification about the deadline.
+                                                </Typography>
+                                            </Alert>
+
+                                            {/* Error Display */}
+                                            {deadlineErrors.error && (
+                                                <Alert severity="error">
+                                                    {deadlineErrors.error}
+                                                </Alert>
+                                            )}
+
+                                            {/* Save Button */}
+                                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2 }}>
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    disabled={processingDeadline}
+                                                    sx={{
+                                                        backgroundColor: '#006838',
+                                                        '&:hover': {
+                                                            backgroundColor: '#004d28',
+                                                        },
+                                                        px: 4,
+                                                        py: 1.5,
+                                                    }}
+                                                >
+                                                    {processingDeadline ? 'Saving...' : 'Save Settings'}
+                                                </Button>
+                                            </Box>
+                                        </Stack>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Box>
+                    </TabPanel>
+                </Paper>
+            </Box>
+        </SidebarLayout>
+    );
+}

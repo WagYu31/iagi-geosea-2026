@@ -1,0 +1,481 @@
+/* Premium Geological Strata Landing Page Styles */
+
+/* Import fonts if not already loaded */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables for Premium Geological Theme */
+:root {
+  --emerald-primary: #064e3b;
+  --emerald-dark: #022c22;
+  --emerald-light: #0f5132;
+  --teal-accent: #10b981;
+  --slate-dark: #0f172a;
+  --gold-accent: #fbbf24;
+  --strata-border: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  --strata-border-alt: 40% 60% 70% 30% / 30% 70% 40% 60%;
+}
+
+/* Global Styles */
+.geological-body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--slate-dark) 100%);
+  color: white;
+  overflow-x: hidden;
+}
+
+/* Topographic Pattern Background */
+.topographic-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(251, 191, 36, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(6, 78, 59, 0.15) 0%, transparent 70%);
+  background-size: 400px 400px, 600px 600px, 800px 800px;
+  background-position: 0 0, 200px 200px, 100px 100px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Hero Section - Immersive Dark Emerald */
+.geological-hero {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--slate-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.geological-hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(45deg,
+    transparent 30%,
+    rgba(16, 185, 129, 0.1) 50%,
+    transparent 70%);
+  clip-path: polygon(0 100%, 100% 100%, 100% 0, 80% 20%, 60% 10%, 40% 30%, 20% 15%, 0 40%);
+}
+
+.geological-hero-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, white 0%, rgba(251, 191, 36, 0.8) 50%, white 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+}
+
+.geological-hero-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--strata-border);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(16, 185, 129, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Strata Borders */
+.strata-border {
+  border-radius: var(--strata-border);
+}
+
+.strata-border-alt {
+  border-radius: var(--strata-border-alt);
+}
+
+/* Section Headers */
+.geological-section-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 4rem);
+  background: linear-gradient(135deg, white 0%, var(--teal-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.geological-section-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+}
+
+/* Speaker Cards */
+.speaker-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--strata-border);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.speaker-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal-accent), var(--gold-accent), var(--teal-accent));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.speaker-card:hover::before {
+  opacity: 1;
+}
+
+.speaker-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  margin: 0 auto 1.5rem;
+  filter: grayscale(100%);
+  transition: all 0.4s ease;
+}
+
+.speaker-card:hover .speaker-avatar {
+  filter: grayscale(0%);
+  border-color: var(--teal-accent);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+}
+
+/* Timeline */
+.timeline-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom,
+    var(--teal-accent),
+    var(--gold-accent),
+    var(--teal-accent));
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 4rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+  margin-left: auto;
+  margin-right: 0;
+  text-align: right;
+}
+
+.timeline-content {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--strata-border);
+  padding: 2rem;
+  max-width: 400px;
+  position: relative;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: var(--teal-accent);
+  border: 4px solid var(--emerald-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Countdown Timer */
+.countdown-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+}
+
+.countdown-item {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--strata-border);
+  padding: 2rem;
+  text-align: center;
+  min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.countdown-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.countdown-number {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  color: var(--gold-accent);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+}
+
+.countdown-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Contact Cards */
+.contact-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--strata-border);
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+.contact-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.contact-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--teal-accent), var(--gold-accent));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Buttons */
+.geological-btn-primary {
+  background: linear-gradient(135deg, var(--teal-accent), var(--gold-accent));
+  border: none;
+  border-radius: var(--strata-border);
+  color: var(--emerald-primary);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.geological-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+}
+
+.geological-btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--strata-border);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.geological-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--teal-accent);
+  transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes strata-morph {
+  0%, 100% { border-radius: var(--strata-border); }
+  50% { border-radius: var(--strata-border-alt); }
+}
+
+/* Scroll Reveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .geological-hero-title {
+    font-size: clamp(2rem, 12vw, 4rem);
+  }
+
+  .timeline-line {
+    left: 30px;
+  }
+
+  .timeline-item:nth-child(even) .timeline-content {
+    margin-left: 60px;
+    margin-right: 0;
+    text-align: left;
+  }
+
+  .timeline-content {
+    max-width: none;
+    margin-left: 60px;
+  }
+
+  .timeline-dot {
+    left: 30px;
+  }
+}
+
+/* Dark Slate Background Sections */
+.geological-section {
+  background: linear-gradient(135deg, var(--slate-dark) 0%, var(--emerald-primary) 100%);
+  position: relative;
+}
+
+.geological-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Footer */
+.geological-footer {
+  background: var(--emerald-primary);
+  border-top: 3px solid var(--teal-accent);
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, white 0%, var(--teal-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glow-effect {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.slow-spin-animation {
+  animation: slow-spin 20s linear infinite;
+}
