@@ -2084,193 +2084,6 @@ export default function LandingPage({ auth }) {
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        {/* Venue Section Header */}
-                        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 5 } }}>
-                            <Typography
-                                variant="overline"
-                                sx={{
-                                    color: '#4dd4ac',
-                                    fontWeight: 600,
-                                    letterSpacing: '0.15em',
-                                    fontSize: '0.75rem',
-                                    display: 'block',
-                                    mb: 1,
-                                }}
-                            >
-                                CONFERENCE VENUE
-                            </Typography>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    fontWeight: 800,
-                                    color: 'white',
-                                    fontSize: { xs: '1.75rem', md: '2rem' },
-                                    letterSpacing: '-0.02em',
-                                }}
-                            >
-                                Where Geoscience Meets
-                            </Typography>
-                        </Box>
-
-                        {/* Venue & Map Row */}
-                        <Grid container spacing={3} sx={{ mb: { xs: 5, md: 6 } }}>
-                            {/* Venue Info Card */}
-                            <Grid size={{ xs: 12, md: 5 }}>
-                                <Box
-                                    sx={{
-                                        p: { xs: 3, md: 4 },
-                                        borderRadius: '20px',
-                                        height: '100%',
-                                        background: 'rgba(255,255,255,0.08)',
-                                        backdropFilter: 'blur(10px)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                    }}
-                                >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                                        <Box
-                                            sx={{
-                                                width: 48,
-                                                height: 48,
-                                                borderRadius: '12px',
-                                                background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '1.3rem',
-                                            }}
-                                        >
-                                            🏛️
-                                        </Box>
-                                        <Box>
-                                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'white', fontSize: '1.1rem' }}>
-                                                {settings.contact_info?.venue_name || 'Conference Venue'}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                                                {settings.contact_info?.venue_subtitle || 'Main Conference Hall'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                                            <LocationIcon sx={{ color: '#4dd4ac', mt: 0.3, fontSize: 20 }} />
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
-                                                {settings.contact_info?.location || settings.contact_address || 'Address not set'}
-                                            </Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <PhoneIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
-                                                {settings.contact_info?.phone || settings.contact_phone}
-                                            </Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <EmailIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
-                                                {settings.contact_info?.email || settings.contact_email}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-
-                                    <Box
-                                        sx={{
-                                            mt: 3,
-                                            p: 2,
-                                            borderRadius: '12px',
-                                            bgcolor: 'rgba(77, 212, 172, 0.15)',
-                                            border: '1px dashed rgba(77, 212, 172, 0.3)',
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ color: '#4dd4ac', fontWeight: 600, mb: 0.5 }}>
-                                            📅 Conference Dates
-                                        </Typography>
-                                        <Typography sx={{ color: 'white', fontWeight: 700 }}>
-                                            {(() => {
-                                                // Try to find conference event from timeline
-                                                const conferenceEvent = settings.timeline?.find(item =>
-                                                    item.title?.toLowerCase().includes('conference') ||
-                                                    item.title?.toLowerCase().includes('konferensi')
-                                                );
-                                                if (conferenceEvent) {
-                                                    // Format date range if available
-                                                    const startDate = conferenceEvent.start_date || conferenceEvent.date;
-                                                    const endDate = conferenceEvent.end_date;
-                                                    if (startDate) {
-                                                        const start = new Date(startDate);
-                                                        const startMonth = start.toLocaleString('en-US', { month: 'long' });
-                                                        const startDay = start.getDate();
-                                                        const startYear = start.getFullYear();
-                                                        if (endDate) {
-                                                            const end = new Date(endDate);
-                                                            const endMonth = end.toLocaleString('en-US', { month: 'long' });
-                                                            const endDay = end.getDate();
-                                                            if (startMonth === endMonth) {
-                                                                return `${startMonth} ${startDay}-${endDay}, ${startYear}`;
-                                                            }
-                                                            return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${startYear}`;
-                                                        }
-                                                        return `${startMonth} ${startDay}, ${startYear}`;
-                                                    }
-                                                }
-                                                // Fallback to contact_info or default
-                                                return settings.contact_info?.conference_dates || 'August 2026';
-                                            })()}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </Grid>
-
-                            {/* Map */}
-                            <Grid size={{ xs: 12, md: 7 }}>
-                                {settings.contact_info?.maps_url && settings.contact_info.maps_url.trim() !== '' ? (
-                                    <Box
-                                        sx={{
-                                            borderRadius: '20px',
-                                            height: { xs: 280, md: '100%' },
-                                            minHeight: 300,
-                                            overflow: 'hidden',
-                                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                                        }}
-                                    >
-                                        <iframe
-                                            src={settings.contact_info.maps_url}
-                                            width="100%"
-                                            height="100%"
-                                            style={{ border: 0, minHeight: 300 }}
-                                            allowFullScreen=""
-                                            loading="lazy"
-                                            referrerPolicy="no-referrer-when-downgrade"
-                                        />
-                                    </Box>
-                                ) : (
-                                    <Box
-                                        sx={{
-                                            borderRadius: '20px',
-                                            height: { xs: 280, md: '100%' },
-                                            minHeight: 300,
-                                            background: 'rgba(255,255,255,0.05)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            border: '1px dashed rgba(255,255,255,0.2)',
-                                        }}
-                                    >
-                                        <Box sx={{ textAlign: 'center', p: 4 }}>
-                                            <Typography sx={{ fontSize: '3rem', mb: 1 }}>🗺️</Typography>
-                                            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600, mb: 0.5 }}>
-                                                Interactive Map
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', maxWidth: 250 }}>
-                                                Set Maps URL in Landing Page Settings
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                )}
-                            </Grid>
-                        </Grid>
-
-                        {/* Divider */}
-                        <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.15)', pt: { xs: 4, md: 5 } }} />
 
                         <Grid container spacing={{ xs: 4, sm: 5, md: 4 }} justifyContent="space-between">
                             {/* Brand & Social Media Column */}
@@ -2336,82 +2149,6 @@ export default function LandingPage({ auth }) {
                                 >
                                     Indonesian Association of Geologists (IAGI) proudly presents the 55th Annual Convention & GEOSEA XIX - Southeast Asia's premier geological conference.
                                 </Typography>
-
-                                {/* Social Media Icons */}
-                                <Typography
-                                    sx={{
-                                        fontSize: '0.75rem',
-                                        fontWeight: 700,
-                                        color: 'rgba(255,255,255,0.5)',
-                                        mb: 2,
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.2em',
-                                        fontFamily: '"Inter", "Segoe UI", sans-serif',
-                                    }}
-                                >
-                                    Follow Us
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 1.5 }}>
-                                    {[
-                                        { icon: 'instagram', url: settings.social_media?.instagram || '#', color: '#E4405F' },
-                                        { icon: 'facebook', url: settings.social_media?.facebook || '#', color: '#1877F2' },
-                                        { icon: 'twitter', url: settings.social_media?.twitter || '#', color: '#1DA1F2' },
-                                        { icon: 'linkedin', url: settings.social_media?.linkedin || '#', color: '#0A66C2' },
-                                        { icon: 'youtube', url: settings.social_media?.youtube || '#', color: '#FF0000' },
-                                    ].map((social, index) => (
-                                        <Box
-                                            key={index}
-                                            component="a"
-                                            href={social.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            sx={{
-                                                width: 44,
-                                                height: 44,
-                                                borderRadius: '12px',
-                                                bgcolor: 'rgba(255,255,255,0.1)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                cursor: 'pointer',
-                                                border: '1px solid rgba(255,255,255,0.1)',
-                                                '&:hover': {
-                                                    bgcolor: social.color,
-                                                    transform: 'translateY(-4px)',
-                                                    boxShadow: `0 8px 25px ${social.color}40`,
-                                                    border: 'none',
-                                                }
-                                            }}
-                                        >
-                                            {social.icon === 'instagram' && (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                                                </svg>
-                                            )}
-                                            {social.icon === 'facebook' && (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                                </svg>
-                                            )}
-                                            {social.icon === 'twitter' && (
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                                </svg>
-                                            )}
-                                            {social.icon === 'linkedin' && (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                                </svg>
-                                            )}
-                                            {social.icon === 'youtube' && (
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                                                </svg>
-                                            )}
-                                        </Box>
-                                    ))}
-                                </Box>
                             </Grid>
 
                             {/* Quick Links Column */}
@@ -2592,6 +2329,243 @@ export default function LandingPage({ auth }) {
                                 </Box>
                             </Grid>
                         </Grid>
+
+                        {/* Divider */}
+                        <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.15)', pt: { xs: 4, md: 5 } }} />
+                        {/* Venue & Map Row */}
+                        <Grid container spacing={3} sx={{ mb: { xs: 5, md: 6 } }}>
+                            {/* Venue Info Card */}
+                            <Grid size={{ xs: 12, md: 5 }}>
+                                <Box
+                                    sx={{
+                                        p: { xs: 3, md: 4 },
+                                        borderRadius: '20px',
+                                        height: '100%',
+                                        background: 'rgba(255,255,255,0.08)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                                        <Box
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                borderRadius: '12px',
+                                                background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '1.3rem',
+                                            }}
+                                        >
+                                            🏛️
+                                        </Box>
+                                        <Box>
+                                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'white', fontSize: '1.1rem' }}>
+                                                {settings.contact_info?.venue_name || 'Conference Venue'}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                                                {settings.contact_info?.venue_subtitle || 'Main Conference Hall'}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                                            <LocationIcon sx={{ color: '#4dd4ac', mt: 0.3, fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                                                {settings.contact_info?.location || settings.contact_address || 'Address not set'}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <PhoneIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+                                                {settings.contact_info?.phone || settings.contact_phone}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <EmailIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+                                                {settings.contact_info?.email || settings.contact_email}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            mt: 3,
+                                            p: 2,
+                                            borderRadius: '12px',
+                                            bgcolor: 'rgba(77, 212, 172, 0.15)',
+                                            border: '1px dashed rgba(77, 212, 172, 0.3)',
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{ color: '#4dd4ac', fontWeight: 600, mb: 0.5 }}>
+                                            📅 Conference Dates
+                                        </Typography>
+                                        <Typography sx={{ color: 'white', fontWeight: 700 }}>
+                                            {(() => {
+                                                // Try to find conference event from timeline
+                                                const conferenceEvent = settings.timeline?.find(item =>
+                                                    item.title?.toLowerCase().includes('conference') ||
+                                                    item.title?.toLowerCase().includes('konferensi')
+                                                );
+                                                if (conferenceEvent) {
+                                                    // Format date range if available
+                                                    const startDate = conferenceEvent.start_date || conferenceEvent.date;
+                                                    const endDate = conferenceEvent.end_date;
+                                                    if (startDate) {
+                                                        const start = new Date(startDate);
+                                                        const startMonth = start.toLocaleString('en-US', { month: 'long' });
+                                                        const startDay = start.getDate();
+                                                        const startYear = start.getFullYear();
+                                                        if (endDate) {
+                                                            const end = new Date(endDate);
+                                                            const endMonth = end.toLocaleString('en-US', { month: 'long' });
+                                                            const endDay = end.getDate();
+                                                            if (startMonth === endMonth) {
+                                                                return `${startMonth} ${startDay}-${endDay}, ${startYear}`;
+                                                            }
+                                                            return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${startYear}`;
+                                                        }
+                                                        return `${startMonth} ${startDay}, ${startYear}`;
+                                                    }
+                                                }
+                                                // Fallback to contact_info or default
+                                                return settings.contact_info?.conference_dates || 'August 2026';
+                                            })()}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
+
+                            {/* Map */}
+                            <Grid size={{ xs: 12, md: 7 }}>
+                                {settings.contact_info?.maps_url && settings.contact_info.maps_url.trim() !== '' ? (
+                                    <Box
+                                        sx={{
+                                            borderRadius: '20px',
+                                            height: { xs: 280, md: '100%' },
+                                            minHeight: 300,
+                                            overflow: 'hidden',
+                                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                                        }}
+                                    >
+                                        <iframe
+                                            src={settings.contact_info.maps_url}
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0, minHeight: 300 }}
+                                            allowFullScreen=""
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                        />
+                                    </Box>
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            borderRadius: '20px',
+                                            height: { xs: 280, md: '100%' },
+                                            minHeight: 300,
+                                            background: 'rgba(255,255,255,0.05)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: '1px dashed rgba(255,255,255,0.2)',
+                                        }}
+                                    >
+                                        <Box sx={{ textAlign: 'center', p: 4 }}>
+                                            <Typography sx={{ fontSize: '3rem', mb: 1 }}>🗺️</Typography>
+                                            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600, mb: 0.5 }}>
+                                                Interactive Map
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', maxWidth: 250 }}>
+                                                Set Maps URL in Landing Page Settings
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        {/* Follow Us Section - Full Width Centered */}
+                        <Box sx={{ textAlign: 'center', mt: { xs: 4, md: 5 } }}>
+                            <Typography
+                                sx={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    color: 'rgba(255,255,255,0.5)',
+                                    mb: 2,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.2em',
+                                    fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                }}
+                            >
+                                Follow Us
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
+                                {[
+                                    { icon: 'instagram', url: settings.social_media?.instagram || '#', color: '#E4405F' },
+                                    { icon: 'facebook', url: settings.social_media?.facebook || '#', color: '#1877F2' },
+                                    { icon: 'twitter', url: settings.social_media?.twitter || '#', color: '#1DA1F2' },
+                                    { icon: 'linkedin', url: settings.social_media?.linkedin || '#', color: '#0A66C2' },
+                                    { icon: 'youtube', url: settings.social_media?.youtube || '#', color: '#FF0000' },
+                                ].map((social, index) => (
+                                    <Box
+                                        key={index}
+                                        component="a"
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        sx={{
+                                            width: 44,
+                                            height: 44,
+                                            borderRadius: '12px',
+                                            bgcolor: 'rgba(255,255,255,0.1)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            cursor: 'pointer',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            '&:hover': {
+                                                bgcolor: social.color,
+                                                transform: 'translateY(-4px)',
+                                                boxShadow: `0 8px 25px ${social.color}40`,
+                                                border: 'none',
+                                            }
+                                        }}
+                                    >
+                                        {social.icon === 'instagram' && (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                            </svg>
+                                        )}
+                                        {social.icon === 'facebook' && (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                            </svg>
+                                        )}
+                                        {social.icon === 'twitter' && (
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                            </svg>
+                                        )}
+                                        {social.icon === 'linkedin' && (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                            </svg>
+                                        )}
+                                        {social.icon === 'youtube' && (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                            </svg>
+                                        )}
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
 
                         {/* Bottom Bar */}
                         <Box
