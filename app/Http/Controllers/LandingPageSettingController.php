@@ -45,6 +45,28 @@ class LandingPageSettingController extends Controller
     }
 
     /**
+     * Store a new setting
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'key' => 'required|string|unique:landing_page_settings,key',
+            'value' => 'required',
+            'group' => 'nullable|string',
+            'type' => 'nullable|string',
+        ]);
+
+        LandingPageSetting::create([
+            'key' => $validated['key'],
+            'value' => $validated['value'],
+            'section' => $validated['group'] ?? 'general',
+            'type' => $validated['type'] ?? 'text',
+        ]);
+
+        return redirect()->back()->with('success', 'Setting created successfully');
+    }
+
+    /**
      * Upload speaker photo
      */
     public function uploadSpeakerPhoto(Request $request)

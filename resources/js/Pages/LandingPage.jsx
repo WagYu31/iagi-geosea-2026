@@ -75,7 +75,14 @@ export default function LandingPage({ auth }) {
         countdown_target_date: '2026-01-18T00:00:00',
         contact_phone: '+62 21 1234 5678',
         contact_email: 'info@iagi-geosea2026.org',
-        contact_address: 'UPN Veteran Yogyakarta\nJl. SWK 104 (Lingkar Utara)\nYogyakarta 55283'
+        contact_address: 'UPN Veteran Yogyakarta\nJl. SWK 104 (Lingkar Utara)\nYogyakarta 55283',
+        social_media: {
+            instagram: 'https://www.instagram.com/iagi_official/',
+            facebook: 'https://www.facebook.com/iagi.official',
+            twitter: 'https://twitter.com/iagi_official',
+            linkedin: 'https://www.linkedin.com/company/iagi-official',
+            youtube: 'https://www.youtube.com/@iagi_official',
+        }
     });
 
     useEffect(() => {
@@ -210,7 +217,7 @@ export default function LandingPage({ auth }) {
                                         transform: scrolled ? 'scale(1)' : 'scale(1)',
                                     }}
                                 >
-                                    PIT IAHI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
+                                    PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -557,7 +564,7 @@ export default function LandingPage({ auth }) {
                                         color: 'white',
                                     }}
                                 >
-                                    55TH IAHI -
+                                    PIT IAGI
                                 </Typography>
 
                                 {/* GEOSEA 2026 */}
@@ -2173,49 +2180,174 @@ export default function LandingPage({ auth }) {
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        <Grid container spacing={{ xs: 4, sm: 4.5, md: 5 }}>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <Typography
-                                    variant="h5"
-                                    gutterBottom
-                                    sx={{
-                                        fontWeight: 800,
-                                        fontSize: { xs: '1.35rem', md: '1.5rem' },
-                                        mb: 2,
-                                        color: '#4dd4ac',
-                                        letterSpacing: '0.02em',
-                                    }}
-                                >
-                                    55TH PIT IAGI-GEOSEA 2026
-                                </Typography>
+                        <Grid container spacing={{ xs: 4, sm: 5, md: 6 }}>
+                            {/* Brand & Social Media Column */}
+                            <Grid size={{ xs: 12, md: 5 }}>
+                                {/* Logo & Title */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mb: 3.5 }}>
+                                    <Avatar
+                                        src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png"
+                                        sx={{
+                                            width: 70,
+                                            height: 70,
+                                            bgcolor: 'white',
+                                            p: 1,
+                                            boxShadow: '0 8px 32px rgba(77, 212, 172, 0.25)',
+                                            border: '2px solid rgba(77, 212, 172, 0.3)',
+                                        }}
+                                    />
+                                    <Box>
+                                        <Typography
+                                            variant="h5"
+                                            sx={{
+                                                fontWeight: 800,
+                                                fontSize: { xs: '1.35rem', md: '1.5rem' },
+                                                background: 'linear-gradient(135deg, #4dd4ac 0%, #6ee7b7 50%, #4dd4ac 100%)',
+                                                backgroundClip: 'text',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                letterSpacing: '0.03em',
+                                                lineHeight: 1.2,
+                                                fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                                textShadow: '0 2px 20px rgba(77, 212, 172, 0.3)',
+                                            }}
+                                        >
+                                            PIT IAGI-GEOSEA XIX
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                fontSize: '0.9rem',
+                                                color: 'rgba(255,255,255,0.75)',
+                                                fontWeight: 600,
+                                                letterSpacing: '0.15em',
+                                                textTransform: 'uppercase',
+                                                fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                                mt: 0.3,
+                                            }}
+                                        >
+                                            55TH 2026 Conference
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
                                 <Typography
                                     variant="body1"
                                     sx={{
-                                        opacity: 0.9,
-                                        mb: 2.5,
-                                        fontSize: { xs: '0.95rem', md: '1rem' },
-                                        lineHeight: 1.7,
-                                        color: 'rgba(255,255,255,0.85)',
+                                        mb: 4,
+                                        fontSize: { xs: '0.92rem', md: '0.98rem' },
+                                        lineHeight: 1.85,
+                                        color: 'rgba(255,255,255,0.8)',
+                                        maxWidth: '420px',
+                                        fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                        fontWeight: 400,
                                     }}
                                 >
-                                    Indonesian Association of Geologists<br />
-                                    Southeast Asia Geological Conference
+                                    Indonesian Association of Geologists (IAGI) proudly presents the 55th Annual Convention & GEOSEA XIX - Southeast Asia's premier geological conference.
                                 </Typography>
+
+                                {/* Social Media Icons */}
+                                <Typography
+                                    sx={{
+                                        fontSize: '0.75rem',
+                                        fontWeight: 700,
+                                        color: 'rgba(255,255,255,0.5)',
+                                        mb: 2,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.2em',
+                                        fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                    }}
+                                >
+                                    Follow Us
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                    {[
+                                        { icon: 'instagram', url: settings.social_media?.instagram || '#', color: '#E4405F' },
+                                        { icon: 'facebook', url: settings.social_media?.facebook || '#', color: '#1877F2' },
+                                        { icon: 'twitter', url: settings.social_media?.twitter || '#', color: '#1DA1F2' },
+                                        { icon: 'linkedin', url: settings.social_media?.linkedin || '#', color: '#0A66C2' },
+                                        { icon: 'youtube', url: settings.social_media?.youtube || '#', color: '#FF0000' },
+                                    ].map((social, index) => (
+                                        <Box
+                                            key={index}
+                                            component="a"
+                                            href={social.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            sx={{
+                                                width: 44,
+                                                height: 44,
+                                                borderRadius: '12px',
+                                                bgcolor: 'rgba(255,255,255,0.1)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                cursor: 'pointer',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                '&:hover': {
+                                                    bgcolor: social.color,
+                                                    transform: 'translateY(-4px)',
+                                                    boxShadow: `0 8px 25px ${social.color}40`,
+                                                    border: 'none',
+                                                }
+                                            }}
+                                        >
+                                            {social.icon === 'instagram' && (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                                </svg>
+                                            )}
+                                            {social.icon === 'facebook' && (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                                </svg>
+                                            )}
+                                            {social.icon === 'twitter' && (
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                                </svg>
+                                            )}
+                                            {social.icon === 'linkedin' && (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                                </svg>
+                                            )}
+                                            {social.icon === 'youtube' && (
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                                </svg>
+                                            )}
+                                        </Box>
+                                    ))}
+                                </Box>
                             </Grid>
-                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+
+                            {/* Quick Links Column */}
+                            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
                                 <Typography
                                     variant="h6"
                                     gutterBottom
                                     sx={{
                                         fontWeight: 700,
-                                        fontSize: { xs: '1.15rem', md: '1.2rem' },
-                                        mb: 2.5,
+                                        fontSize: { xs: '1rem', md: '1.1rem' },
+                                        mb: 3,
                                         color: '#4dd4ac',
+                                        position: 'relative',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: -8,
+                                            left: 0,
+                                            width: 30,
+                                            height: 2,
+                                            bgcolor: '#4dd4ac',
+                                            borderRadius: 1,
+                                        }
                                     }}
                                 >
                                     Quick Links
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
                                     {[
                                         { label: 'About', action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
                                         { label: 'Speakers', action: () => document.getElementById('speakers')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
@@ -2226,13 +2358,26 @@ export default function LandingPage({ auth }) {
                                             key={index}
                                             onClick={item.action}
                                             sx={{
-                                                color: 'rgba(255,255,255,0.85)',
-                                                fontSize: '0.95rem',
-                                                transition: 'all 0.2s ease',
+                                                color: 'rgba(255,255,255,0.75)',
+                                                fontSize: '0.92rem',
+                                                fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                                fontWeight: 400,
+                                                transition: 'all 0.25s ease',
                                                 cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
                                                 '&:hover': {
                                                     color: '#4dd4ac',
-                                                    transform: 'translateX(5px)',
+                                                    pl: 1,
+                                                },
+                                                '&::before': {
+                                                    content: '"→"',
+                                                    opacity: 0,
+                                                    transition: 'all 0.25s ease',
+                                                },
+                                                '&:hover::before': {
+                                                    opacity: 1,
                                                 }
                                             }}
                                         >
@@ -2241,49 +2386,82 @@ export default function LandingPage({ auth }) {
                                     ))}
                                 </Box>
                             </Grid>
-                            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+
+                            {/* Account Column */}
+                            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
                                 <Typography
                                     variant="h6"
                                     gutterBottom
                                     sx={{
                                         fontWeight: 700,
-                                        fontSize: { xs: '1.15rem', md: '1.2rem' },
-                                        mb: 2.5,
+                                        fontSize: { xs: '1rem', md: '1.1rem' },
+                                        mb: 3,
                                         color: '#4dd4ac',
+                                        position: 'relative',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: -8,
+                                            left: 0,
+                                            width: 30,
+                                            height: 2,
+                                            bgcolor: '#4dd4ac',
+                                            borderRadius: 1,
+                                        }
                                     }}
                                 >
-                                    Register
+                                    Account
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
                                     {!auth.user && (
                                         <>
                                             <Link
                                                 href="/register"
                                                 sx={{
-                                                    color: 'rgba(255,255,255,0.85)',
+                                                    color: 'rgba(255,255,255,0.75)',
                                                     textDecoration: 'none',
-                                                    fontSize: '0.95rem',
-                                                    transition: 'all 0.2s ease',
-                                                    display: 'inline-block',
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.25s ease',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1,
                                                     '&:hover': {
                                                         color: '#4dd4ac',
-                                                        transform: 'translateX(5px)',
+                                                        pl: 1,
+                                                    },
+                                                    '&::before': {
+                                                        content: '"→"',
+                                                        opacity: 0,
+                                                        transition: 'all 0.25s ease',
+                                                    },
+                                                    '&:hover::before': {
+                                                        opacity: 1,
                                                     }
                                                 }}
                                             >
-                                                Create Account
+                                                Register
                                             </Link>
                                             <Link
                                                 href="/login"
                                                 sx={{
-                                                    color: 'rgba(255,255,255,0.85)',
+                                                    color: 'rgba(255,255,255,0.75)',
                                                     textDecoration: 'none',
-                                                    fontSize: '0.95rem',
-                                                    transition: 'all 0.2s ease',
-                                                    display: 'inline-block',
+                                                    fontSize: '0.9rem',
+                                                    transition: 'all 0.25s ease',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1,
                                                     '&:hover': {
                                                         color: '#4dd4ac',
-                                                        transform: 'translateX(5px)',
+                                                        pl: 1,
+                                                    },
+                                                    '&::before': {
+                                                        content: '"→"',
+                                                        opacity: 0,
+                                                        transition: 'all 0.25s ease',
+                                                    },
+                                                    '&:hover::before': {
+                                                        opacity: 1,
                                                     }
                                                 }}
                                             >
@@ -2295,14 +2473,24 @@ export default function LandingPage({ auth }) {
                                         <Link
                                             href="/dashboard"
                                             sx={{
-                                                color: 'rgba(255,255,255,0.85)',
+                                                color: 'rgba(255,255,255,0.75)',
                                                 textDecoration: 'none',
-                                                fontSize: '0.95rem',
-                                                transition: 'all 0.2s ease',
-                                                display: 'inline-block',
+                                                fontSize: '0.9rem',
+                                                transition: 'all 0.25s ease',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
                                                 '&:hover': {
                                                     color: '#4dd4ac',
-                                                    transform: 'translateX(5px)',
+                                                    pl: 1,
+                                                },
+                                                '&::before': {
+                                                    content: '"→"',
+                                                    opacity: 0,
+                                                    transition: 'all 0.25s ease',
+                                                },
+                                                '&:hover::before': {
+                                                    opacity: 1,
                                                 }
                                             }}
                                         >
@@ -2311,26 +2499,133 @@ export default function LandingPage({ auth }) {
                                     )}
                                 </Box>
                             </Grid>
+
+                            {/* Contact Info Column */}
+                            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontSize: { xs: '1rem', md: '1.1rem' },
+                                        mb: 3,
+                                        color: '#4dd4ac',
+                                        position: 'relative',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: -8,
+                                            left: 0,
+                                            width: 30,
+                                            height: 2,
+                                            bgcolor: '#4dd4ac',
+                                            borderRadius: 1,
+                                        }
+                                    }}
+                                >
+                                    Contact Us
+                                </Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                                        <Box sx={{ color: '#4dd4ac', mt: 0.3, flexShrink: 0 }}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                            </svg>
+                                        </Box>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.85rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                                            {settings.contact_info?.location || settings.contact_address || 'Address not set'}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Box sx={{ color: '#4dd4ac', flexShrink: 0 }}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                            </svg>
+                                        </Box>
+                                        <Typography
+                                            component="a"
+                                            href={`mailto:${settings.contact_info?.email || settings.contact_email || ''}`}
+                                            sx={{
+                                                color: 'rgba(255,255,255,0.75)',
+                                                fontSize: '0.85rem',
+                                                textDecoration: 'none',
+                                                transition: 'color 0.2s',
+                                                '&:hover': { color: '#4dd4ac' }
+                                            }}
+                                        >
+                                            {settings.contact_info?.email || settings.contact_email || 'Email not set'}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Box sx={{ color: '#4dd4ac', flexShrink: 0 }}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                                            </svg>
+                                        </Box>
+                                        <Typography
+                                            component="a"
+                                            href={`tel:${(settings.contact_info?.phone || settings.contact_phone || '').replace(/\s/g, '')}`}
+                                            sx={{
+                                                color: 'rgba(255,255,255,0.75)',
+                                                fontSize: '0.85rem',
+                                                textDecoration: 'none',
+                                                transition: 'color 0.2s',
+                                                '&:hover': { color: '#4dd4ac' }
+                                            }}
+                                        >
+                                            {settings.contact_info?.phone || settings.contact_phone || 'Phone not set'}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
                         </Grid>
+
+                        {/* Bottom Bar */}
                         <Box
                             sx={{
                                 mt: { xs: 5, md: 6 },
                                 pt: { xs: 3, md: 4 },
                                 borderTop: '1px solid rgba(77, 212, 172, 0.2)',
-                                textAlign: 'center'
+                                display: 'flex',
+                                flexDirection: { xs: 'column', md: 'row' },
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                gap: 2.5,
                             }}
                         >
                             <Typography
                                 variant="body2"
                                 sx={{
-                                    opacity: 0.75,
-                                    fontSize: { xs: '0.8rem', md: '0.875rem' },
-                                    color: 'rgba(255,255,255,0.7)',
-                                    letterSpacing: '0.02em',
+                                    fontSize: { xs: '0.82rem', md: '0.88rem' },
+                                    color: 'rgba(255,255,255,0.55)',
+                                    letterSpacing: '0.03em',
+                                    textAlign: { xs: 'center', md: 'left' },
+                                    fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                    fontWeight: 400,
                                 }}
                             >
-                                © 2026 PIT IAGI-GEOSEA. All rights reserved. | Privacy Policy | Terms & Conditions
+                                © 2026 PIT IAGI-GEOSEA XIX. All rights reserved.
                             </Typography>
+                            <Box sx={{ display: 'flex', gap: { xs: 2, md: 3.5 } }}>
+                                {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item, index) => (
+                                    <Typography
+                                        key={index}
+                                        sx={{
+                                            fontSize: { xs: '0.78rem', md: '0.82rem' },
+                                            color: 'rgba(255,255,255,0.5)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.25s ease',
+                                            fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                            fontWeight: 500,
+                                            '&:hover': {
+                                                color: '#4dd4ac',
+                                            }
+                                        }}
+                                    >
+                                        {item}
+                                    </Typography>
+                                ))}
+                            </Box>
                         </Box>
                     </Container>
                 </Box>

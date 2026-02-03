@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Landing Page Settings
         Route::get('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'index'])->name('settings');
+        Route::post('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'store'])->name('settings.store');
         Route::patch('/settings/{setting}', [App\Http\Controllers\LandingPageSettingController::class, 'update'])->name('settings.update');
         Route::post('/settings/upload-speaker-photo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadSpeakerPhoto'])->name('settings.uploadSpeakerPhoto');
         Route::post('/settings/upload-sponsor-logo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadSponsorLogo'])->name('settings.uploadSponsorLogo');
