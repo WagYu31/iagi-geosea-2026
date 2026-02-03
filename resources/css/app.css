@@ -5,14 +5,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Professional Color System */
+:root {
+    /* Primary Teal Palette - Softer, easier on eyes */
+    --color-primary-50: #f0fdfa;
+    --color-primary-100: #ccfbf1;
+    --color-primary-200: #99f6e4;
+    --color-primary-300: #5eead4;
+    --color-primary-400: #2dd4bf;
+    --color-primary-500: #14b8a6;
+    --color-primary-600: #0d9488;
+    --color-primary-700: #0f766e;
+    --color-primary-800: #115e59;
+    --color-primary-900: #134e4a;
+    
+    /* Accent Emerald */
+    --color-accent-500: #10b981;
+    --color-accent-600: #059669;
+    
+    /* Earth Tone Palette - Geology Theme */
+    --color-amber-50: #fffbeb;
+    --color-amber-100: #fef3c7;
+    --color-amber-400: #fbbf24;
+    --color-amber-500: #f59e0b;
+    --color-amber-600: #d97706;
+    --color-amber-700: #b45309;
+    
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-400: #a8a29e;
+    --color-stone-500: #78716c;
+    --color-stone-600: #57534e;
+    
+    --color-brown-50: #fdf8f6;
+    --color-brown-100: #f2e8e5;
+    --color-brown-600: #7c2d12;
+    --color-brown-700: #78350f;
+    --color-brown-800: #451a03;
+    
+    /* Neutral Gray Palette */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+    
+    /* Text Colors */
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    
+    /* Background */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-subtle: #f5f7fa;
+}
+
 /* Apply professional fonts globally */
 @layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         font-weight: 400;
         letter-spacing: -0.01em;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        line-height: 1.6;
     }
 
     h1,
@@ -24,6 +98,8 @@
         font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         font-weight: 600;
         letter-spacing: -0.02em;
+        color: var(--text-primary);
+        line-height: 1.3;
     }
 
     h1 {
@@ -33,6 +109,11 @@
 
     h2 {
         font-weight: 700;
+    }
+
+    p {
+        color: var(--text-secondary);
+        line-height: 1.7;
     }
 
     button,
@@ -52,10 +133,10 @@
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 8px 32px rgba(0, 104, 56, 0.08);
+        box-shadow: 0 8px 32px rgba(13, 148, 136, 0.08);
     }
 
-    /* Enhanced Shadows */
+    /* Enhanced Shadows - Softer and more elegant */
     .shadow-soft {
         box-shadow:
             0 2px 8px rgba(0, 0, 0, 0.04),
@@ -64,40 +145,105 @@
 
     .shadow-medium {
         box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.06),
-            0 8px 24px rgba(0, 0, 0, 0.04);
+            0 4px 12px rgba(0, 0, 0, 0.05),
+            0 8px 24px rgba(0, 0, 0, 0.03);
     }
 
     .shadow-strong {
         box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.08),
-            0 16px 48px rgba(0, 0, 0, 0.06);
+            0 8px 24px rgba(0, 0, 0, 0.06),
+            0 16px 48px rgba(0, 0, 0, 0.04);
     }
 
-    .shadow-green {
+    .shadow-teal {
         box-shadow:
-            0 4px 16px rgba(0, 104, 56, 0.12),
-            0 8px 32px rgba(0, 104, 56, 0.06);
+            0 4px 16px rgba(13, 148, 136, 0.10),
+            0 8px 32px rgba(13, 148, 136, 0.05);
     }
 
-    .shadow-green-strong {
+    .shadow-teal-strong {
         box-shadow:
-            0 8px 24px rgba(0, 104, 56, 0.16),
-            0 16px 48px rgba(0, 104, 56, 0.08);
+            0 8px 24px rgba(13, 148, 136, 0.15),
+            0 16px 48px rgba(13, 148, 136, 0.08);
     }
 
-    /* Premium Gradients */
-    .gradient-green {
-        background: linear-gradient(135deg, #006838 0%, #00934d 50%, #00b85c 100%);
+    .shadow-amber {
+        box-shadow:
+            0 4px 16px rgba(217, 119, 6, 0.10),
+            0 8px 32px rgba(217, 119, 6, 0.05);
     }
 
-    .gradient-green-subtle {
-        background: linear-gradient(135deg, rgba(0, 104, 56, 0.05) 0%, rgba(0, 147, 77, 0.08) 100%);
+    /* Premium Gradients - Softer Teal */
+    .gradient-teal {
+        background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%);
+    }
+
+    .gradient-teal-subtle {
+        background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, rgba(20, 184, 166, 0.05) 100%);
+    }
+
+    /* Geology Theme Gradients */
+    .gradient-earth {
+        background: linear-gradient(180deg, 
+            #0d7a6a 0%,
+            #115e59 15%,
+            #475569 35%,
+            #78716c 55%,
+            #a8a29e 75%,
+            #d1d5db 100%);
+    }
+
+    .gradient-earth-subtle {
+        background: linear-gradient(180deg,
+            rgba(13, 122, 106, 0.08) 0%,
+            rgba(71, 85, 105, 0.06) 40%,
+            rgba(120, 113, 108, 0.04) 70%,
+            rgba(245, 245, 244, 0.02) 100%);
+    }
+
+    .gradient-amber-accent {
+        background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+    }
+
+    .gradient-slate {
+        background: linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%);
+    }
+
+    /* Topography Pattern - Geology Theme */
+    .topography-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 304 304' width='304' height='304'%3E%3Cpath fill='none' stroke='%230d948815' stroke-width='1' d='M44.1 224a5 5 0 1 1 0 2H0v-2h44.1zm160 48a5 5 0 1 1 0 2H82v-2h122.1zm57.8-46a5 5 0 1 1 0-2H304v2h-42.1zm0 16a5 5 0 1 1 0-2H304v2h-42.1zm6.2-114a5 5 0 1 1 0 2h-86.2a5 5 0 1 1 0-2h86.2zm-256-48a5 5 0 1 1 0 2H0v-2h12.1zm185.8 34a5 5 0 1 1 0-2h86.2a5 5 0 1 1 0 2h-86.2zM258 12.1a5 5 0 1 1-2 0V0h2v12.1zm-64 208a5 5 0 1 1-2 0v-54.2a5 5 0 1 1 2 0v54.2zm48-198.2V80h62v2h-64V21.9a5 5 0 1 1 2 0zm16 16V64h46v2h-48V37.9a5 5 0 1 1 2 0zm-128 96V208h16v12.1a5 5 0 1 1-2 0V210h-16v-76.1a5 5 0 1 1 2 0zm-5.9-21.9a5 5 0 1 1 0 2H114v48H85.9a5 5 0 1 1 0-2H112v-48h12.1zm-6.2 130a5 5 0 1 1 0-2H176v-74.1a5 5 0 1 1 2 0V242h-60.1zm-16-64a5 5 0 1 1 0-2H114v48h10.1a5 5 0 1 1 0 2H112v-48h-10.1zM66 284.1a5 5 0 1 1-2 0V274H50v30h-2v-32h18v12.1zM236.1 176a5 5 0 1 1 0 2H226v94h48v32h-2v-30h-48v-98h12.1zm25.8-30a5 5 0 1 1 0-2H274v44.1a5 5 0 1 1-2 0V146h-10.1zm-64 96a5 5 0 1 1 0-2H208v-80h16v-14h-42.1a5 5 0 1 1 0-2H226v18h-16v80h-12.1zm86.2-210a5 5 0 1 1 0 2H272V0h2v32h10.1zM98 101.9V146H53.9a5 5 0 1 1 0-2H96v-42.1a5 5 0 1 1 2 0zM53.9 34a5 5 0 1 1 0-2H80V0h2v34H53.9zm60.1 3.9V66H82v64H69.9a5 5 0 1 1 0-2H80V64h32V37.9a5 5 0 1 1 2 0zM101.9 82a5 5 0 1 1 0-2H128V37.9a5 5 0 1 1 2 0V82h-28.1zm16-64a5 5 0 1 1 0-2H146v44.1a5 5 0 1 1-2 0V18h-26.1zm102.2 270a5 5 0 1 1 0 2H98v14h-2v-16h124.1zM242 149.9V160h16v34h-16v62h48v48h-2v-46h-48v-66h16v-30h-16v-12.1a5 5 0 1 1 2 0zM53.9 18a5 5 0 1 1 0-2H64V2H48V0h18v18H53.9zm112 32a5 5 0 1 1 0-2H192V0h50v2h-48v48h-28.1zm-48-48a5 5 0 0 1-9.8-2h2.07a3 3 0 1 0 5.66 0H178v34h-18V21.9a5 5 0 1 1 2 0V32h14V0h-28.1z'/%3E%3C/svg%3E");
+    }
+
+    /* Stratigraphy Divider - Geology Theme */
+    .stratigraphy-divider {
+        height: 8px;
+        background: linear-gradient(to bottom,
+            #0d9488 0%, #0d9488 12%,
+            #475569 12%, #475569 25%,
+            #78716c 25%, #78716c 40%,
+            #a8a29e 40%, #a8a29e 55%,
+            #d1d5db 55%, #d1d5db 70%,
+            #f5f5f4 70%, #f5f5f4 100%);
+        width: 100%;
+    }
+
+    .stratigraphy-divider-thin {
+        height: 4px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #0d9488 10%,
+            #475569 30%,
+            #78716c 50%,
+            #a8a29e 70%,
+            #0d9488 90%,
+            transparent 100%);
+        width: 100%;
+        border-radius: 2px;
     }
 
     .gradient-overlay {
         background: linear-gradient(to bottom,
-                rgba(0, 104, 56, 0.02) 0%,
+                rgba(13, 148, 136, 0.015) 0%,
                 rgba(255, 255, 255, 0.98) 20%,
                 rgba(255, 255, 255, 1) 100%);
     }
@@ -118,7 +264,7 @@
 
     .hover-lift:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 104, 56, 0.15);
+        box-shadow: 0 12px 32px rgba(13, 148, 136, 0.12);
     }
 
     .hover-scale {
@@ -129,57 +275,57 @@
         transform: scale(1.02);
     }
 
-    /* Enhanced Buttons */
+    /* Enhanced Buttons - Refined Teal */
     .btn-primary-enhanced {
-        background: linear-gradient(135deg, #006838 0%, #00934d 100%);
-        box-shadow: 0 4px 16px rgba(0, 104, 56, 0.25);
+        background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+        box-shadow: 0 4px 16px rgba(13, 148, 136, 0.25);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-primary-enhanced:hover {
-        background: linear-gradient(135deg, #004d28 0%, #006838 100%);
-        box-shadow: 0 8px 24px rgba(0, 104, 56, 0.35);
+        background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+        box-shadow: 0 8px 24px rgba(13, 148, 136, 0.35);
         transform: translateY(-2px);
     }
 
     .btn-secondary-enhanced {
         background: white;
-        border: 2px solid #006838;
-        color: #006838;
-        box-shadow: 0 2px 8px rgba(0, 104, 56, 0.1);
+        border: 2px solid #0d9488;
+        color: #0d9488;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-secondary-enhanced:hover {
-        background: #006838;
+        background: #0d9488;
         color: white;
-        box-shadow: 0 4px 16px rgba(0, 104, 56, 0.25);
+        box-shadow: 0 4px 16px rgba(13, 148, 136, 0.25);
         transform: translateY(-2px);
     }
 
     /* Card Enhancements */
     .card-modern {
         background: white;
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 2rem;
         box-shadow:
-            0 4px 16px rgba(0, 0, 0, 0.04),
+            0 4px 16px rgba(0, 0, 0, 0.03),
             0 8px 32px rgba(0, 0, 0, 0.02);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(0, 104, 56, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.06);
     }
 
     .card-modern:hover {
         box-shadow:
-            0 8px 24px rgba(0, 104, 56, 0.08),
-            0 16px 48px rgba(0, 104, 56, 0.04);
+            0 8px 24px rgba(13, 148, 136, 0.08),
+            0 16px 48px rgba(13, 148, 136, 0.04);
         transform: translateY(-6px);
-        border-color: rgba(0, 104, 56, 0.16);
+        border-color: rgba(13, 148, 136, 0.12);
     }
 
     /* Text Enhancements */
-    .text-gradient-green {
-        background: linear-gradient(135deg, #006838 0%, #00934d 50%, #00b85c 100%);
+    .text-gradient-teal {
+        background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -245,15 +391,15 @@
     /* Section Backgrounds */
     .section-bg-subtle {
         background: linear-gradient(135deg,
-                rgba(0, 104, 56, 0.02) 0%,
+                rgba(13, 148, 136, 0.015) 0%,
                 rgba(255, 255, 255, 1) 50%,
-                rgba(0, 147, 77, 0.02) 100%);
+                rgba(20, 184, 166, 0.015) 100%);
     }
 
     .section-bg-pattern {
         background-image:
-            radial-gradient(circle at 20% 50%, rgba(0, 104, 56, 0.03) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(0, 147, 77, 0.03) 0%, transparent 50%);
+            radial-gradient(circle at 20% 50%, rgba(13, 148, 136, 0.02) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.02) 0%, transparent 50%);
     }
 
 
@@ -271,8 +417,14 @@
     /* Enhanced Focus States */
     button:focus-visible,
     a:focus-visible {
-        outline: 3px solid rgba(0, 104, 56, 0.4);
+        outline: 3px solid rgba(13, 148, 136, 0.4);
         outline-offset: 3px;
         border-radius: 4px;
+    }
+    
+    /* Selection Color */
+    ::selection {
+        background: rgba(13, 148, 136, 0.15);
+        color: #0f766e;
     }
 }

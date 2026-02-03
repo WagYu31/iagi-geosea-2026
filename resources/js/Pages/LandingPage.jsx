@@ -708,18 +708,30 @@ export default function LandingPage({ auth }) {
                     id="about"
                     ref={aboutRef}
                     sx={{
-                        bgcolor: '#f5f7fa',
+                        background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
                         scrollMarginTop: '80px',
                         position: 'relative',
+                        overflow: 'hidden',
                         '&::before': {
                             content: '""',
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '4px',
-                            background: 'linear-gradient(135deg, #006838 0%, #00934d 50%, #10b981 100%)',
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #0d9488 0%, #059669 25%, #10b981 50%, #34d399 75%, #0d9488 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '20%',
+                            right: '-10%',
+                            width: '40%',
+                            height: '60%',
+                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.05) 0%, transparent 70%)',
+                            borderRadius: '50%',
+                            pointerEvents: 'none',
                         },
                         transform: aboutVisible ? 'translateY(0)' : 'translateY(50px)',
                         opacity: aboutVisible ? 1 : 0,
@@ -799,22 +811,35 @@ export default function LandingPage({ auth }) {
                                     sx={{
                                         p: { xs: 3, sm: 4, md: 5 },
                                         height: '100%',
-                                        bgcolor: 'white',
-                                        borderRadius: '16px',
-                                        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                                        borderRadius: '20px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                                        border: '1px solid rgba(255,255,255,0.8)',
+                                        backdropFilter: 'blur(10px)',
                                         transform: aboutVisible ? 'translateY(0)' : 'translateY(30px)',
                                         opacity: aboutVisible ? 1 : 0,
-                                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                                         transitionDelay: '0.5s',
-                                        '&:hover': {
-                                            transform: aboutVisible ? 'translateY(-8px)' : 'translateY(30px)',
-                                            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: '3px',
+                                            background: 'linear-gradient(90deg, #0d9488, #14b8a6, #2dd4bf)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease',
                                         },
-                                        '&:active': {
-                                            transform: aboutVisible ? 'translateY(-4px) scale(0.98)' : 'translateY(30px)',
-                                            boxShadow: '0 4px 16px rgba(0,0,0,0.16)',
-                                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: aboutVisible ? 'translateY(-10px) scale(1.01)' : 'translateY(30px)',
+                                            boxShadow: '0 20px 40px rgba(13, 148, 136, 0.15)',
+                                            border: '1px solid rgba(13, 148, 136, 0.2)',
+                                        },
+                                        '&:hover::before': {
+                                            opacity: 1,
                                         },
                                     }}
                                 >
@@ -988,9 +1013,21 @@ export default function LandingPage({ auth }) {
                     id="speakers"
                     ref={speakersRef}
                     sx={{
-                        bgcolor: 'white',
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
                         py: { xs: 6, sm: 8, md: 10, lg: 12 },
                         scrollMarginTop: '80px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '-50%',
+                            left: '-20%',
+                            width: '50%',
+                            height: '100%',
+                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.03) 0%, transparent 60%)',
+                            pointerEvents: 'none',
+                        },
                         transform: speakersVisible ? 'translateY(0)' : 'translateY(50px)',
                         opacity: speakersVisible ? 1 : 0,
                         transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -1046,12 +1083,14 @@ export default function LandingPage({ auth }) {
                         <Box
                             sx={{
                                 display: 'flex',
+                                flexWrap: { xs: 'nowrap', lg: 'wrap' },
+                                justifyContent: { lg: 'center' },
                                 gap: { xs: 2, sm: 2.5, md: 3, lg: 3 },
                                 overflowX: { xs: 'auto', lg: 'visible' },
                                 overflowY: 'visible',
                                 scrollSnapType: { xs: 'x mandatory', lg: 'none' },
                                 scrollBehavior: 'smooth',
-                                pb: { xs: 2, md: 0 },
+                                pb: { xs: 2, lg: 3 },
                                 px: { xs: 2, md: 0 },
                                 mx: { xs: -2, md: 0 },
                                 // Custom scrollbar styling
@@ -1109,20 +1148,20 @@ export default function LandingPage({ auth }) {
                                     sx={{
                                         // Responsive card sizing with breakpoints
                                         // xs (0-600px): 1 card visible (85% width)
-                                        // sm (600-900px): 2 cards visible (45% width each)
-                                        // md (900-1200px): 3 cards visible (30% width each)
-                                        // lg (1200px+): 5 cards visible (18% width each)
+                                        // sm (600-900px): 2 cards visible (48% width each)
+                                        // md (900-1200px): 2 cards visible (48% width each)
+                                        // lg (1200px+): 3 cards visible (31% width each)
                                         minWidth: {
                                             xs: '85%',
-                                            sm: '45%',
-                                            md: '30%',
-                                            lg: '18%',
+                                            sm: '48%',
+                                            md: '48%',
+                                            lg: '31%',
                                         },
                                         flex: {
                                             xs: '0 0 85%',
-                                            sm: '0 0 45%',
-                                            md: '0 0 30%',
-                                            lg: '0 0 18%',
+                                            sm: '0 0 48%',
+                                            md: '0 0 48%',
+                                            lg: '0 0 31%',
                                         },
                                         scrollSnapAlign: { xs: 'center', lg: 'none' },
                                         transform: speakersVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
@@ -1139,11 +1178,16 @@ export default function LandingPage({ auth }) {
                                             borderRadius: '20px',
                                             overflow: 'hidden',
                                             cursor: 'pointer',
-                                            transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                             '&:hover': {
-                                                transform: 'translateY(-8px)',
+                                                transform: 'translateY(-12px) scale(1.02)',
+                                                boxShadow: '0 25px 50px rgba(13, 148, 136, 0.25)',
                                                 '& .speaker-overlay': {
-                                                    background: 'linear-gradient(to top, rgba(9, 77, 66, 0.85) 0%, rgba(13, 122, 106, 0.5) 50%, transparent 100%)',
+                                                    background: 'linear-gradient(to top, rgba(9, 77, 66, 0.9) 0%, rgba(13, 122, 106, 0.6) 40%, transparent 100%)',
+                                                },
+                                                '& .speaker-image': {
+                                                    transform: 'scale(1.1)',
                                                 },
                                             },
                                         }}
@@ -1239,9 +1283,30 @@ export default function LandingPage({ auth }) {
                     id="timeline"
                     ref={timelineRef}
                     sx={{
-                        bgcolor: '#f5f7fa',
+                        background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%)',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
                         scrollMarginTop: '80px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #0d9488 0%, #14b8a6 25%, #2dd4bf 50%, #14b8a6 75%, #0d9488 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: '-30%',
+                            right: '-10%',
+                            width: '50%',
+                            height: '80%',
+                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 60%)',
+                            pointerEvents: 'none',
+                        },
                         transform: timelineVisible ? 'translateY(0)' : 'translateY(50px)',
                         opacity: timelineVisible ? 1 : 0,
                         transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -1327,41 +1392,52 @@ export default function LandingPage({ auth }) {
                                         }}
                                     >
                                         <Paper
-                                            elevation={item.status === 'active' ? 8 : 2}
+                                            elevation={0}
                                             sx={{
-                                                p: { xs: 2.5, md: 3 },
+                                                p: { xs: 3, md: 3.5 },
                                                 textAlign: 'center',
                                                 height: '100%',
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 justifyContent: 'center',
+                                                alignItems: 'center',
                                                 border: item.status === 'active'
-                                                    ? '3px solid #006838'
-                                                    : item.status === 'completed'
-                                                        ? '1px solid #4caf50'
-                                                        : '1px solid #e0e0e0',
-                                                borderRadius: 3,
+                                                    ? '2px solid #0d7a6a'
+                                                    : '1px solid rgba(0, 0, 0, 0.06)',
+                                                borderRadius: '24px',
                                                 position: 'relative',
-                                                bgcolor: item.status === 'active' ? '#f0f9f4' : 'white',
+                                                bgcolor: item.status === 'active'
+                                                    ? 'linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%)'
+                                                    : 'rgba(255, 255, 255, 0.9)',
+                                                background: item.status === 'active'
+                                                    ? 'linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%)'
+                                                    : 'rgba(255, 255, 255, 0.95)',
+                                                backdropFilter: 'blur(10px)',
+                                                boxShadow: item.status === 'active'
+                                                    ? '0 8px 32px rgba(13, 122, 106, 0.15), 0 0 0 1px rgba(13, 122, 106, 0.1)'
+                                                    : '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
                                                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                overflow: 'hidden',
+                                                overflow: 'visible',
                                                 '&::before': {
                                                     content: '""',
                                                     position: 'absolute',
                                                     top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    height: '4px',
-                                                    background: item.status === 'active'
-                                                        ? 'linear-gradient(135deg, #006838 0%, #00934d 50%, #10b981 100%)'
-                                                        : item.status === 'completed'
-                                                            ? '#4caf50'
-                                                            : 'transparent',
-                                                    transition: 'all 0.3s ease',
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    width: item.status === 'active' ? '80%' : '0%',
+                                                    height: '3px',
+                                                    borderRadius: '0 0 8px 8px',
+                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 100%)',
+                                                    transition: 'width 0.3s ease',
                                                 },
                                                 '&:hover': {
-                                                    transform: 'translateY(-12px) scale(1.02)',
-                                                    boxShadow: item.status === 'active' ? '0 20px 40px rgba(0,104,56,0.2)' : '0 12px 24px rgba(0,0,0,0.15)',
+                                                    transform: 'translateY(-10px)',
+                                                    boxShadow: item.status === 'active'
+                                                        ? '0 20px 48px rgba(13, 122, 106, 0.25), 0 0 0 1px rgba(13, 122, 106, 0.15)'
+                                                        : '0 16px 40px rgba(0, 0, 0, 0.1)',
+                                                    '&::before': {
+                                                        width: '80%',
+                                                    },
                                                 },
                                             }}
                                         >
@@ -1370,64 +1446,63 @@ export default function LandingPage({ auth }) {
                                                 <Box
                                                     sx={{
                                                         position: 'absolute',
-                                                        top: -12,
+                                                        top: -14,
                                                         left: '50%',
                                                         transform: 'translateX(-50%)',
-                                                        bgcolor: '#006838',
+                                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
                                                         color: 'white',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        borderRadius: '12px',
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: 'bold',
+                                                        px: 2.5,
+                                                        py: 0.75,
+                                                        borderRadius: '20px',
+                                                        fontSize: '0.7rem',
+                                                        fontWeight: 700,
+                                                        letterSpacing: '0.5px',
+                                                        boxShadow: '0 4px 12px rgba(13, 122, 106, 0.3)',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     ACTIVE NOW
                                                 </Box>
                                             )}
 
-                                            {/* Icon */}
+                                            {/* Icon Container */}
                                             <Box
                                                 sx={{
-                                                    width: 56,
-                                                    height: 56,
-                                                    borderRadius: '50%',
-                                                    bgcolor: item.status === 'completed'
-                                                        ? '#4caf50'
+                                                    width: 64,
+                                                    height: 64,
+                                                    borderRadius: '20px',
+                                                    background: item.status === 'completed'
+                                                        ? 'linear-gradient(135deg, #10b981 0%, #0d7a6a 100%)'
                                                         : item.status === 'active'
-                                                            ? '#006838'
-                                                            : '#bdbdbd',
-                                                    color: 'white',
+                                                            ? 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)'
+                                                            : 'linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%)',
+                                                    color: item.status === 'upcoming' ? '#9ca3af' : 'white',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    margin: '0 auto',
-                                                    mb: 2,
-                                                    boxShadow: item.status === 'active' || item.status === 'completed' ? 3 : 1,
-                                                    border: '4px solid',
-                                                    borderColor: item.status === 'completed'
-                                                        ? '#e8f5e9'
-                                                        : item.status === 'active'
-                                                            ? '#f0f9f4'
-                                                            : '#f5f5f5',
+                                                    mb: 2.5,
+                                                    boxShadow: item.status === 'active' || item.status === 'completed'
+                                                        ? '0 8px 24px rgba(13, 122, 106, 0.25)'
+                                                        : '0 4px 12px rgba(0, 0, 0, 0.06)',
+                                                    transition: 'all 0.3s ease',
                                                 }}
                                             >
-                                                <CheckIcon sx={{ fontSize: 28 }} />
+                                                <CheckIcon sx={{ fontSize: 30 }} />
                                             </Box>
 
                                             {/* Title */}
                                             <Typography
                                                 variant="h6"
-                                                gutterBottom
                                                 sx={{
-                                                    fontWeight: 'bold',
-                                                    fontSize: '0.95rem',
-                                                    color: item.status === 'active' ? '#006838' : '#1a3a4a',
+                                                    fontWeight: 700,
+                                                    fontSize: { xs: '0.95rem', md: '1rem' },
+                                                    color: item.status === 'active' ? '#0d7a6a' : '#1f2937',
                                                     mb: 1,
                                                     minHeight: '2.8em',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
+                                                    lineHeight: 1.3,
                                                 }}
                                             >
                                                 {item.title}
@@ -1437,34 +1512,45 @@ export default function LandingPage({ auth }) {
                                             <Typography
                                                 variant="body2"
                                                 sx={{
-                                                    color: 'text.secondary',
+                                                    color: item.status === 'active' ? '#059669' : '#6b7280',
                                                     fontSize: '0.875rem',
+                                                    fontWeight: item.status === 'active' ? 600 : 400,
                                                 }}
                                             >
                                                 {item.date}
                                             </Typography>
 
-                                            {/* Progress Indicator */}
-                                            {item.status === 'completed' && (
+                                            {/* Status Indicator Bar */}
+                                            <Box
+                                                sx={{
+                                                    mt: 2.5,
+                                                    width: '100%',
+                                                    height: 4,
+                                                    bgcolor: item.status === 'completed'
+                                                        ? 'rgba(16, 185, 129, 0.15)'
+                                                        : item.status === 'active'
+                                                            ? 'rgba(13, 122, 106, 0.1)'
+                                                            : 'rgba(0, 0, 0, 0.04)',
+                                                    borderRadius: 2,
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
                                                 <Box
                                                     sx={{
-                                                        mt: 2,
-                                                        width: '100%',
-                                                        height: 4,
-                                                        bgcolor: '#e8f5e9',
+                                                        width: item.status === 'completed'
+                                                            ? '100%'
+                                                            : item.status === 'active'
+                                                                ? '50%'
+                                                                : '0%',
+                                                        height: '100%',
+                                                        background: item.status === 'completed'
+                                                            ? 'linear-gradient(90deg, #10b981 0%, #0d7a6a 100%)'
+                                                            : 'linear-gradient(90deg, #0d7a6a 0%, #10b981 100%)',
                                                         borderRadius: 2,
-                                                        overflow: 'hidden',
+                                                        transition: 'width 0.5s ease',
                                                     }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            bgcolor: '#4caf50',
-                                                        }}
-                                                    />
-                                                </Box>
-                                            )}
+                                                />
+                                            </Box>
                                         </Paper>
                                     </Grid>
                                 ))}
@@ -1478,17 +1564,28 @@ export default function LandingPage({ auth }) {
                     id="resources"
                     ref={resourcesRef}
                     sx={{
-                        bgcolor: 'white',
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
                         position: 'relative',
+                        overflow: 'hidden',
                         '&::before': {
                             content: '""',
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '4px',
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #a855f7 50%, #8b5cf6 75%, #6366f1 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '10%',
+                            left: '-15%',
+                            width: '45%',
+                            height: '70%',
+                            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 60%)',
+                            pointerEvents: 'none',
                         },
                         transform: resourcesVisible ? 'translateY(0)' : 'translateY(50px)',
                         opacity: resourcesVisible ? 1 : 0,
@@ -1560,12 +1657,16 @@ export default function LandingPage({ auth }) {
                                             sx={{
                                                 p: { xs: 3, sm: 3.5, md: 4 },
                                                 textAlign: 'center',
-                                                background: 'linear-gradient(135deg, #d1f2e6 0%, #c1edd9 100%)',
+                                                background: '#ffffff',
                                                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                borderRadius: '24px',
-                                                border: '2px solid rgba(13, 122, 106, 0.1)',
+                                                borderRadius: '20px',
+                                                border: '1px solid rgba(0, 0, 0, 0.06)',
+                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
                                                 position: 'relative',
                                                 overflow: 'hidden',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                height: '100%',
                                                 '&::before': {
                                                     content: '""',
                                                     position: 'absolute',
@@ -1573,26 +1674,74 @@ export default function LandingPage({ auth }) {
                                                     left: 0,
                                                     right: 0,
                                                     height: '4px',
-                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #1abc9c 100%)',
-                                                    opacity: 0,
-                                                    transition: 'opacity 0.3s ease',
+                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 50%, #34d399 100%)',
+                                                    transform: 'scaleX(0)',
+                                                    transformOrigin: 'left',
+                                                    transition: 'transform 0.4s ease',
                                                 },
                                                 '&:hover': {
-                                                    transform: 'translateY(-12px) scale(1.02)',
-                                                    boxShadow: '0 20px 40px rgba(13, 122, 106, 0.15)',
+                                                    transform: 'translateY(-8px)',
+                                                    boxShadow: '0 12px 40px rgba(13, 122, 106, 0.12), 0 20px 48px rgba(0, 0, 0, 0.06)',
+                                                    border: '1px solid rgba(13, 122, 106, 0.15)',
                                                     '&::before': {
-                                                        opacity: 1,
+                                                        transform: 'scaleX(1)',
                                                     },
                                                 },
                                             }}
                                         >
-                                            <DescriptionIcon sx={{ fontSize: 64, color: '#0d7a6a', mb: 2 }} />
-                                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#0d7a6a' }}>
+                                            {/* Icon Container with Gradient Background */}
+                                            <Box
+                                                sx={{
+                                                    width: 72,
+                                                    height: 72,
+                                                    borderRadius: '16px',
+                                                    background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    mx: 'auto',
+                                                    mb: 2.5,
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.12) 0%, rgba(16, 185, 129, 0.18) 100%)',
+                                                        transform: 'scale(1.05)',
+                                                    },
+                                                }}
+                                            >
+                                                <DescriptionIcon sx={{ fontSize: 36, color: '#0d7a6a' }} />
+                                            </Box>
+
+                                            <Typography
+                                                variant="h6"
+                                                gutterBottom
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#1f2937',
+                                                    fontSize: { xs: '1rem', md: '1.1rem' },
+                                                    lineHeight: 1.4,
+                                                    minHeight: { xs: 'auto', md: '2.8em' },
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
                                                 {resource.title}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ mb: 3, color: '#5a6c7d' }}>
+
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    mb: 3,
+                                                    color: '#6b7280',
+                                                    fontSize: '0.875rem',
+                                                    lineHeight: 1.6,
+                                                    flexGrow: 1,
+                                                }}
+                                            >
                                                 {resource.description || 'Downloadable resource'}
                                             </Typography>
+
                                             <Button
                                                 component="a"
                                                 href={resource.file_url}
@@ -1601,17 +1750,19 @@ export default function LandingPage({ auth }) {
                                                 startIcon={<DownloadIcon />}
                                                 fullWidth
                                                 sx={{
-                                                    bgcolor: '#1abc9c',
+                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
                                                     color: 'white',
                                                     fontWeight: 600,
                                                     py: 1.5,
                                                     borderRadius: '12px',
                                                     textTransform: 'none',
-                                                    fontSize: '0.95rem',
+                                                    fontSize: '0.9rem',
+                                                    boxShadow: '0 4px 12px rgba(13, 122, 106, 0.25)',
+                                                    mt: 'auto',
                                                     '&:hover': {
-                                                        bgcolor: '#16a085',
+                                                        background: 'linear-gradient(135deg, #0a6356 0%, #0d9668 100%)',
                                                         transform: 'translateY(-2px)',
-                                                        boxShadow: '0 8px 16px rgba(26, 188, 156, 0.3)',
+                                                        boxShadow: '0 8px 20px rgba(13, 122, 106, 0.35)',
                                                     },
                                                 }}
                                             >
@@ -1642,18 +1793,28 @@ export default function LandingPage({ auth }) {
                 <Box
                     ref={sponsorsRef}
                     sx={{
-                        bgcolor: '#f5f7fa',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%)',
+                        background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
                         position: 'relative',
+                        overflow: 'hidden',
                         '&::before': {
                             content: '""',
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '4px',
-                            background: 'linear-gradient(135deg, #7c4dff 0%, #9d7aff 100%)',
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #8b5cf6 0%, #a855f7 25%, #c084fc 50%, #a855f7 75%, #8b5cf6 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: '-20%',
+                            left: '-10%',
+                            width: '40%',
+                            height: '60%',
+                            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 60%)',
+                            pointerEvents: 'none',
                         },
                         transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)',
                         opacity: sponsorsVisible ? 1 : 0,
@@ -1730,17 +1891,74 @@ export default function LandingPage({ auth }) {
                             const renderSponsorTier = (tierSponsors, tierName, tierColor, tierBg) => {
                                 if (tierSponsors.length === 0) return null;
 
+                                // Duplicate sponsors for seamless infinite scroll
+                                const duplicatedSponsors = [...tierSponsors, ...tierSponsors, ...tierSponsors];
+
                                 return (
-                                    <Box key={tierName} sx={{ mb: 6 }}>
-                                        <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }} justifyContent="center">
-                                            {tierSponsors.map((sponsor, index) => (
-                                                <Grid key={index} size={{ xs: 6, sm: 4, md: tierName === 'Platinum' ? 4 : 3 }}>
+                                    <Box key={tierName} sx={{ mb: 5 }}>
+                                        {/* Tier Label */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                                            <Chip
+                                                label={tierName}
+                                                sx={{
+                                                    bgcolor: tierBg,
+                                                    color: tierColor,
+                                                    fontWeight: 'bold',
+                                                    fontSize: '0.85rem',
+                                                    px: 2,
+                                                    boxShadow: 2,
+                                                }}
+                                            />
+                                        </Box>
+
+                                        {/* Full Width Marquee Container */}
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                width: '100vw',
+                                                marginLeft: 'calc(-50vw + 50%)',
+                                                overflow: 'hidden',
+                                                '&::before, &::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    width: '60px',
+                                                    zIndex: 2,
+                                                    pointerEvents: 'none',
+                                                },
+                                                '&::before': {
+                                                    left: 0,
+                                                    background: 'linear-gradient(to right, #f5f7fa 0%, transparent 100%)',
+                                                },
+                                                '&::after': {
+                                                    right: 0,
+                                                    background: 'linear-gradient(to left, #f5f7fa 0%, transparent 100%)',
+                                                },
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    gap: 4,
+                                                    animation: 'marquee 40s linear infinite',
+                                                    '&:hover': {
+                                                        animationPlayState: 'paused',
+                                                    },
+                                                    '@keyframes marquee': {
+                                                        '0%': { transform: 'translateX(0)' },
+                                                        '100%': { transform: `translateX(-${tierSponsors.length * 312}px)` },
+                                                    },
+                                                }}
+                                            >
+                                                {duplicatedSponsors.map((sponsor, index) => (
                                                     <Paper
-                                                        elevation={tierName === 'Platinum' ? 4 : 2}
+                                                        key={index}
+                                                        elevation={2}
                                                         sx={{
-                                                            p: { xs: 2, md: 3 },
-                                                            height: '100%',
-                                                            minHeight: tierName === 'Platinum' ? 180 : 140,
+                                                            p: 3,
+                                                            minWidth: { xs: 220, sm: 260, md: 280 },
+                                                            height: { xs: 160, sm: 170, md: 180 },
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             alignItems: 'center',
@@ -1748,47 +1966,27 @@ export default function LandingPage({ auth }) {
                                                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             cursor: 'pointer',
                                                             bgcolor: 'white',
-                                                            border: '2px solid',
-                                                            borderColor: tierName === 'Platinum' ? tierColor : 'transparent',
-                                                            position: 'relative',
-                                                            overflow: 'visible',
+                                                            borderRadius: '20px',
+                                                            border: '1px solid rgba(0, 0, 0, 0.06)',
+                                                            flexShrink: 0,
+                                                            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
                                                             '&:hover': {
-                                                                transform: 'translateY(-8px)',
-                                                                boxShadow: 6,
+                                                                transform: 'translateY(-8px) scale(1.03)',
+                                                                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.15)',
                                                                 borderColor: tierColor,
                                                             },
                                                         }}
                                                     >
-                                                        {/* Tier Badge */}
-                                                        <Chip
-                                                            label={tierName}
-                                                            size="small"
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: -12,
-                                                                right: 8,
-                                                                bgcolor: tierBg,
-                                                                color: tierColor,
-                                                                fontWeight: 'bold',
-                                                                fontSize: '0.7rem',
-                                                                boxShadow: 2,
-                                                            }}
-                                                        />
-
                                                         {/* Logo Display */}
                                                         {sponsor.logo ? (
                                                             <Box
                                                                 sx={{
                                                                     width: '100%',
-                                                                    height: tierName === 'Platinum' ? '100px' : '80px',
+                                                                    height: '100px',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     justifyContent: 'center',
-                                                                    bgcolor: '#f9fafb',
-                                                                    borderRadius: 2,
                                                                     mb: 1.5,
-                                                                    border: '2px solid #e5e7eb',
-                                                                    overflow: 'hidden',
                                                                 }}
                                                             >
                                                                 <img
@@ -1798,7 +1996,6 @@ export default function LandingPage({ auth }) {
                                                                         maxWidth: '100%',
                                                                         maxHeight: '100%',
                                                                         objectFit: 'contain',
-                                                                        padding: '8px',
                                                                     }}
                                                                 />
                                                             </Box>
@@ -1806,14 +2003,13 @@ export default function LandingPage({ auth }) {
                                                             <Box
                                                                 sx={{
                                                                     width: '100%',
-                                                                    height: tierName === 'Platinum' ? '100px' : '80px',
+                                                                    height: '100px',
                                                                     display: 'flex',
                                                                     alignItems: 'center',
                                                                     justifyContent: 'center',
                                                                     bgcolor: '#f9fafb',
                                                                     borderRadius: 2,
                                                                     mb: 1.5,
-                                                                    border: '2px dashed #e5e7eb',
                                                                 }}
                                                             >
                                                                 <Typography
@@ -1830,24 +2026,28 @@ export default function LandingPage({ auth }) {
                                                             </Box>
                                                         )}
 
-                                                        {/* Sponsor Name (if logo exists) */}
+                                                        {/* Sponsor Name */}
                                                         {sponsor.logo && (
                                                             <Typography
                                                                 variant="body2"
                                                                 align="center"
                                                                 sx={{
                                                                     fontWeight: 600,
-                                                                    color: 'text.primary',
-                                                                    fontSize: '0.875rem',
+                                                                    color: '#374151',
+                                                                    fontSize: '0.8rem',
+                                                                    whiteSpace: 'nowrap',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    maxWidth: '100%',
                                                                 }}
                                                             >
                                                                 {sponsor.name}
                                                             </Typography>
                                                         )}
                                                     </Paper>
-                                                </Grid>
-                                            ))}
-                                        </Grid>
+                                                ))}
+                                            </Box>
+                                        </Box>
                                     </Box>
                                 );
                             };
@@ -1860,313 +2060,17 @@ export default function LandingPage({ auth }) {
                                 </>
                             );
                         })()}
-
-                        {/* CTA Section */}
-                        <Box
-                            sx={{
-                                mt: { xs: 5, sm: 6, md: 8 },
-                                textAlign: 'center',
-                                p: { xs: 4, sm: 5, md: 6 },
-                                background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
-                                borderRadius: '24px',
-                                boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-                                border: '1px solid rgba(13, 122, 106, 0.1)',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                '&::before': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    height: '4px',
-                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #1abc9c 100%)',
-                                },
-                            }}
-                        >
-                            <Typography
-                                variant="h5"
-                                gutterBottom
-                                sx={{
-                                    fontWeight: 800,
-                                    color: '#111827',
-                                    fontSize: { xs: '1.5rem', md: '1.75rem' },
-                                    mb: 1.5,
-                                }}
-                            >
-                                Interested in Sponsoring?
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    mb: 4,
-                                    color: '#6b7280',
-                                    fontSize: { xs: '0.95rem', md: '1rem' },
-                                    maxWidth: '600px',
-                                    mx: 'auto',
-                                }}
-                            >
-                                Join us in supporting the advancement of geological sciences
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                size="large"
-                                onClick={() => {
-                                    document.getElementById('contact-us')?.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'start'
-                                    });
-                                }}
-                                sx={{
-                                    px: 5,
-                                    py: 1.75,
-                                    bgcolor: '#1abc9c',
-                                    color: 'white',
-                                    borderRadius: '50px',
-                                    textTransform: 'uppercase',
-                                    fontWeight: 700,
-                                    fontSize: '0.95rem',
-                                    letterSpacing: '0.05em',
-                                    boxShadow: '0 4px 16px rgba(26, 188, 156, 0.3)',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '&:hover': {
-                                        bgcolor: '#16a085',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 24px rgba(26, 188, 156, 0.4)',
-                                    },
-                                    '&:active': {
-                                        transform: 'translateY(0)',
-                                    },
-                                }}
-                            >
-                                Become a Sponsor
-                            </Button>
-                        </Box>
                     </Container>
                 </Box>
 
-                {/* Contact Us Section */}
+                {/* Combined Footer with Venue */}
                 <Box
-                    id="contact-us"
-                    ref={contactRef}
-                    sx={{
-                        bgcolor: '#f5f7fa',
-                        py: { xs: 6, sm: 7, md: 8, lg: 10 },
-                        scrollMarginTop: '80px',
-                        position: 'relative',
-                        transform: contactVisible ? 'translateY(0)' : 'translateY(50px)',
-                        opacity: contactVisible ? 1 : 0,
-                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transitionDelay: '0.2s',
-                    }}
-                >
-                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        {/* Overline */}
-                        <Typography
-                            variant="overline"
-                            align="center"
-                            sx={{
-                                color: '#0d7a6a',
-                                fontWeight: 600,
-                                letterSpacing: '0.15em',
-                                fontSize: { xs: '0.85rem', md: '0.92rem' },
-                                display: 'block',
-                                mb: 1.5,
-                            }}
-                        >
-                            GET IN TOUCH
-                        </Typography>
-
-                        {/* Main Title */}
-                        <Typography
-                            variant="h4"
-                            align="center"
-                            gutterBottom
-                            sx={{
-                                fontWeight: 800,
-                                mb: 2,
-                                color: '#111827',
-                                fontSize: { xs: '1.75rem', md: '2.125rem' },
-                            }}
-                        >
-                            Connect with Us
-                        </Typography>
-
-                        {/* Subtitle */}
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            sx={{
-                                mb: { xs: 4, md: 6 },
-                                color: '#6366f1',
-                                maxWidth: '800px',
-                                mx: 'auto',
-                                fontStyle: 'italic',
-                                fontSize: { xs: '0.95rem', md: '1rem' },
-                            }}
-                        >
-                            Our team is here to support your conference experience. Reach out with any inquiries.
-                        </Typography>
-
-                        {/* Contact Cards */}
-                        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={{ mb: { xs: 4, md: 6 } }}>
-                            {/* Phone Card */}
-                            <Grid size={{ xs: 12, md: 4 }}>
-                                <Card
-                                    sx={{
-                                        textAlign: 'center',
-                                        p: { xs: 3, md: 4 },
-                                        height: '100%',
-                                        borderRadius: 4,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                                        border: '1px solid rgba(0,0,0,0.06)',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px)',
-                                            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                                        },
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: '50%',
-                                            bgcolor: 'rgba(0, 104, 56, 0.1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mx: 'auto',
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <PhoneIcon sx={{ fontSize: 40, color: '#006838' }} />
-                                    </Box>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#1a3a4a' }}>
-                                        Phone
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        {settings.contact_info?.phone || '+62 21 1234 5678'}
-                                    </Typography>
-                                </Card>
-                            </Grid>
-
-                            {/* Email Card */}
-                            <Grid size={{ xs: 12, md: 4 }}>
-                                <Card
-                                    sx={{
-                                        textAlign: 'center',
-                                        p: { xs: 3, md: 4 },
-                                        height: '100%',
-                                        borderRadius: 4,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                                        border: '1px solid rgba(0,0,0,0.06)',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px)',
-                                            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                                        },
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: '50%',
-                                            bgcolor: 'rgba(0, 104, 56, 0.1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mx: 'auto',
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <EmailIcon sx={{ fontSize: 40, color: '#006838' }} />
-                                    </Box>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#1a3a4a' }}>
-                                        Email
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', wordBreak: 'break-word' }}>
-                                        {settings.contact_info?.email || 'info@iagi-geosea2026.org'}
-                                    </Typography>
-                                </Card>
-                            </Grid>
-
-                            {/* Location Card */}
-                            <Grid size={{ xs: 12, md: 4 }}>
-                                <Card
-                                    sx={{
-                                        textAlign: 'center',
-                                        p: { xs: 3, md: 4 },
-                                        height: '100%',
-                                        borderRadius: 4,
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                                        border: '1px solid rgba(0,0,0,0.06)',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px)',
-                                            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                                        },
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: '50%',
-                                            bgcolor: 'rgba(0, 104, 56, 0.1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            mx: 'auto',
-                                            mb: 3,
-                                        }}
-                                    >
-                                        <LocationIcon sx={{ fontSize: 40, color: '#006838' }} />
-                                    </Box>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#1a3a4a' }}>
-                                        Location
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', whiteSpace: 'pre-line' }}>
-                                        {settings.contact_info?.location || 'UPN Veteran Yogyakarta\nJl. SWK 104 (Lingkar Utara)\nYogyakarta 55283'}
-                                    </Typography>
-                                </Card>
-                            </Grid>
-                        </Grid>
-
-                        {/* Google Maps Embed */}
-                        {settings.contact_info?.maps_url && settings.contact_info.maps_url.trim() !== '' && (
-                            <Box
-                                sx={{
-                                    borderRadius: 4,
-                                    overflow: 'hidden',
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                                    height: { xs: 300, sm: 400, md: 450 },
-                                }}
-                            >
-                                <iframe
-                                    src={settings.contact_info.maps_url}
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0 }}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                />
-                            </Box>
-                        )}
-                    </Container>
-                </Box>
-
-                {/* Footer */}
-                <Box
+                    id="venue"
                     sx={{
                         background: 'linear-gradient(135deg, #094d42 0%, #0a3d35 100%)',
                         color: 'white',
-                        py: { xs: 6, sm: 7, md: 8 },
+                        pt: { xs: 6, sm: 7, md: 8 },
+                        pb: { xs: 4, sm: 5, md: 6 },
                         position: 'relative',
                         '&::before': {
                             content: '""',
@@ -2174,15 +2078,203 @@ export default function LandingPage({ auth }) {
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '3px',
-                            background: 'linear-gradient(90deg, #0d7a6a 0%, #1abc9c 50%, #0d7a6a 100%)',
+                            height: '4px',
+                            background: 'linear-gradient(90deg, #0d9488 0%, #475569 25%, #78716c 50%, #a8a29e 75%, #0d9488 100%)',
                         },
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        <Grid container spacing={{ xs: 4, sm: 5, md: 6 }}>
-                            {/* Brand & Social Media Column */}
+                        {/* Venue Section Header */}
+                        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 5 } }}>
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#4dd4ac',
+                                    fontWeight: 600,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                    display: 'block',
+                                    mb: 1,
+                                }}
+                            >
+                                CONFERENCE VENUE
+                            </Typography>
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    fontWeight: 800,
+                                    color: 'white',
+                                    fontSize: { xs: '1.75rem', md: '2rem' },
+                                    letterSpacing: '-0.02em',
+                                }}
+                            >
+                                Where Geoscience Meets
+                            </Typography>
+                        </Box>
+
+                        {/* Venue & Map Row */}
+                        <Grid container spacing={3} sx={{ mb: { xs: 5, md: 6 } }}>
+                            {/* Venue Info Card */}
                             <Grid size={{ xs: 12, md: 5 }}>
+                                <Box
+                                    sx={{
+                                        p: { xs: 3, md: 4 },
+                                        borderRadius: '20px',
+                                        height: '100%',
+                                        background: 'rgba(255,255,255,0.08)',
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                                        <Box
+                                            sx={{
+                                                width: 48,
+                                                height: 48,
+                                                borderRadius: '12px',
+                                                background: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '1.3rem',
+                                            }}
+                                        >
+                                            🏛️
+                                        </Box>
+                                        <Box>
+                                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'white', fontSize: '1.1rem' }}>
+                                                {settings.contact_info?.venue_name || 'Conference Venue'}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                                                {settings.contact_info?.venue_subtitle || 'Main Conference Hall'}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                                            <LocationIcon sx={{ color: '#4dd4ac', mt: 0.3, fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                                                {settings.contact_info?.location || settings.contact_address || 'Address not set'}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <PhoneIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+                                                {settings.contact_info?.phone || settings.contact_phone}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            <EmailIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+                                                {settings.contact_info?.email || settings.contact_email}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            mt: 3,
+                                            p: 2,
+                                            borderRadius: '12px',
+                                            bgcolor: 'rgba(77, 212, 172, 0.15)',
+                                            border: '1px dashed rgba(77, 212, 172, 0.3)',
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{ color: '#4dd4ac', fontWeight: 600, mb: 0.5 }}>
+                                            📅 Conference Dates
+                                        </Typography>
+                                        <Typography sx={{ color: 'white', fontWeight: 700 }}>
+                                            {(() => {
+                                                // Try to find conference event from timeline
+                                                const conferenceEvent = settings.timeline?.find(item =>
+                                                    item.title?.toLowerCase().includes('conference') ||
+                                                    item.title?.toLowerCase().includes('konferensi')
+                                                );
+                                                if (conferenceEvent) {
+                                                    // Format date range if available
+                                                    const startDate = conferenceEvent.start_date || conferenceEvent.date;
+                                                    const endDate = conferenceEvent.end_date;
+                                                    if (startDate) {
+                                                        const start = new Date(startDate);
+                                                        const startMonth = start.toLocaleString('en-US', { month: 'long' });
+                                                        const startDay = start.getDate();
+                                                        const startYear = start.getFullYear();
+                                                        if (endDate) {
+                                                            const end = new Date(endDate);
+                                                            const endMonth = end.toLocaleString('en-US', { month: 'long' });
+                                                            const endDay = end.getDate();
+                                                            if (startMonth === endMonth) {
+                                                                return `${startMonth} ${startDay}-${endDay}, ${startYear}`;
+                                                            }
+                                                            return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${startYear}`;
+                                                        }
+                                                        return `${startMonth} ${startDay}, ${startYear}`;
+                                                    }
+                                                }
+                                                // Fallback to contact_info or default
+                                                return settings.contact_info?.conference_dates || 'August 2026';
+                                            })()}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
+
+                            {/* Map */}
+                            <Grid size={{ xs: 12, md: 7 }}>
+                                {settings.contact_info?.maps_url && settings.contact_info.maps_url.trim() !== '' ? (
+                                    <Box
+                                        sx={{
+                                            borderRadius: '20px',
+                                            height: { xs: 280, md: '100%' },
+                                            minHeight: 300,
+                                            overflow: 'hidden',
+                                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                                        }}
+                                    >
+                                        <iframe
+                                            src={settings.contact_info.maps_url}
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0, minHeight: 300 }}
+                                            allowFullScreen=""
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                        />
+                                    </Box>
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            borderRadius: '20px',
+                                            height: { xs: 280, md: '100%' },
+                                            minHeight: 300,
+                                            background: 'rgba(255,255,255,0.05)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            border: '1px dashed rgba(255,255,255,0.2)',
+                                        }}
+                                    >
+                                        <Box sx={{ textAlign: 'center', p: 4 }}>
+                                            <Typography sx={{ fontSize: '3rem', mb: 1 }}>🗺️</Typography>
+                                            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600, mb: 0.5 }}>
+                                                Interactive Map
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', maxWidth: 250 }}>
+                                                Set Maps URL in Landing Page Settings
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        {/* Divider */}
+                        <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.15)', pt: { xs: 4, md: 5 } }} />
+
+                        <Grid container spacing={{ xs: 4, sm: 5, md: 4 }} justifyContent="space-between">
+                            {/* Brand & Social Media Column */}
+                            <Grid size={{ xs: 12, md: 4 }}>
                                 {/* Logo & Title */}
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mb: 3.5 }}>
                                     <Avatar
@@ -2323,7 +2415,7 @@ export default function LandingPage({ auth }) {
                             </Grid>
 
                             {/* Quick Links Column */}
-                            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+                            <Grid size={{ xs: 6, sm: 4, md: 3 }}>
                                 <Typography
                                     variant="h6"
                                     gutterBottom
@@ -2388,7 +2480,7 @@ export default function LandingPage({ auth }) {
                             </Grid>
 
                             {/* Account Column */}
-                            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+                            <Grid size={{ xs: 6, sm: 4, md: 3 }}>
                                 <Typography
                                     variant="h6"
                                     gutterBottom
@@ -2499,85 +2591,6 @@ export default function LandingPage({ auth }) {
                                     )}
                                 </Box>
                             </Grid>
-
-                            {/* Contact Info Column */}
-                            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-                                <Typography
-                                    variant="h6"
-                                    gutterBottom
-                                    sx={{
-                                        fontWeight: 700,
-                                        fontSize: { xs: '1rem', md: '1.1rem' },
-                                        mb: 3,
-                                        color: '#4dd4ac',
-                                        position: 'relative',
-                                        '&::after': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            bottom: -8,
-                                            left: 0,
-                                            width: 30,
-                                            height: 2,
-                                            bgcolor: '#4dd4ac',
-                                            borderRadius: 1,
-                                        }
-                                    }}
-                                >
-                                    Contact Us
-                                </Typography>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                                        <Box sx={{ color: '#4dd4ac', mt: 0.3, flexShrink: 0 }}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                            </svg>
-                                        </Box>
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.85rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
-                                            {settings.contact_info?.location || settings.contact_address || 'Address not set'}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                        <Box sx={{ color: '#4dd4ac', flexShrink: 0 }}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                                            </svg>
-                                        </Box>
-                                        <Typography
-                                            component="a"
-                                            href={`mailto:${settings.contact_info?.email || settings.contact_email || ''}`}
-                                            sx={{
-                                                color: 'rgba(255,255,255,0.75)',
-                                                fontSize: '0.85rem',
-                                                textDecoration: 'none',
-                                                transition: 'color 0.2s',
-                                                '&:hover': { color: '#4dd4ac' }
-                                            }}
-                                        >
-                                            {settings.contact_info?.email || settings.contact_email || 'Email not set'}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                        <Box sx={{ color: '#4dd4ac', flexShrink: 0 }}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                            </svg>
-                                        </Box>
-                                        <Typography
-                                            component="a"
-                                            href={`tel:${(settings.contact_info?.phone || settings.contact_phone || '').replace(/\s/g, '')}`}
-                                            sx={{
-                                                color: 'rgba(255,255,255,0.75)',
-                                                fontSize: '0.85rem',
-                                                textDecoration: 'none',
-                                                transition: 'color 0.2s',
-                                                '&:hover': { color: '#4dd4ac' }
-                                            }}
-                                        >
-                                            {settings.contact_info?.phone || settings.contact_phone || 'Phone not set'}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </Grid>
                         </Grid>
 
                         {/* Bottom Bar */}
@@ -2628,7 +2641,7 @@ export default function LandingPage({ auth }) {
                             </Box>
                         </Box>
                     </Container>
-                </Box>
+                </Box >
             </Box >
         </ThemeProvider >
     );
