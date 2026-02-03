@@ -649,7 +649,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                 Final Average Score
                                             </Typography>
                                             <Typography variant="h3" sx={{ color: '#fff', fontWeight: 700, mb: 0.5 }}>
-                                                {(reviews.reduce((sum, r) => sum + (r.overall_score || 0), 0) / reviews.filter(r => r.overall_score).length).toFixed(1)}
+                                                {(reviews.reduce((sum, r) => sum + parseInt(r.overall_score || 0, 10), 0) / reviews.filter(r => r.overall_score).length).toFixed(1)}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>
                                                 Based on {reviews.filter(r => r.overall_score).length} reviewer{reviews.filter(r => r.overall_score).length !== 1 ? 's' : ''}

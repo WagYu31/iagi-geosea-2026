@@ -33,7 +33,7 @@ export default function AdminScores({ submissions = [] }) {
         if (!reviews || reviews.length === 0) return 'N/A';
         const validReviews = reviews.filter(r => r.overall_score);
         if (validReviews.length === 0) return 'N/A';
-        const avg = validReviews.reduce((sum, r) => sum + r.overall_score, 0) / validReviews.length;
+        const avg = validReviews.reduce((sum, r) => sum + parseInt(r.overall_score, 10), 0) / validReviews.length;
         return avg.toFixed(1);
     };
 

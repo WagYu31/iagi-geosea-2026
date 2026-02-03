@@ -183,15 +183,16 @@ export default function LandingPage({ auth }) {
                 <AppBar
                     position="sticky"
                     sx={{
-                        bgcolor: scrolled ? 'rgba(255, 255, 255, 0.98)' : '#094d42',
-                        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-                        boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.1)',
+                        bgcolor: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(9, 77, 66, 0.75)',
+                        background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(9, 77, 66, 0.75)',
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.15)',
                         transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transform: scrolled ? 'translateY(0)' : 'translateY(0)',
                     }}
                     elevation={0}
+                    color="transparent"
                 >
-                    <Toolbar sx={{ py: { xs: 1, sm: 1.5, md: 1.5 }, px: { xs: 2, sm: 3, md: 4, lg: 5 }, minHeight: { xs: '64px', md: '72px' } }}>
+                    <Toolbar sx={{ py: { xs: 1, sm: 1.5, md: 1.5 }, px: { xs: 2, sm: 3, md: 4, lg: 5 }, minHeight: { xs: '64px', md: '72px' }, bgcolor: 'transparent' }}>
                         {/* Logo */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
                             <Box>
@@ -201,14 +202,15 @@ export default function LandingPage({ auth }) {
                                         fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1rem', lg: '1.1rem' },
                                         fontWeight: 700,
                                         letterSpacing: '0.05em',
-                                        color: scrolled ? '#094d42' : 'white',
+                                        color: scrolled ? '#094d42' : '#ffffff',
+                                        textShadow: scrolled ? 'none' : '0 2px 10px rgba(0,0,0,0.3)',
                                         lineHeight: 1.2,
                                         mb: 0.25,
                                         transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease',
                                         transform: scrolled ? 'scale(1)' : 'scale(1)',
                                     }}
                                 >
-                                    PIT IAGI-GEOSEA <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
+                                    PIT IAHI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -235,16 +237,17 @@ export default function LandingPage({ auth }) {
                                     size="small"
                                     onClick={item.action}
                                     sx={{
-                                        color: scrolled ? '#094d42' : 'white',
+                                        color: scrolled ? '#094d42' : 'rgba(255,255,255,0.95)',
                                         fontWeight: 500,
                                         fontSize: { md: '0.85rem', lg: '0.9rem' },
                                         px: { md: 1.5, lg: 2 },
                                         py: 1,
                                         textTransform: 'none',
+                                        textShadow: scrolled ? 'none' : '0 1px 4px rgba(0,0,0,0.2)',
                                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            bgcolor: scrolled ? 'rgba(13, 122, 106, 0.08)' : 'rgba(77, 212, 172, 0.1)',
-                                            color: scrolled ? '#0d7a6a' : '#4dd4ac',
+                                            bgcolor: scrolled ? 'rgba(13, 122, 106, 0.08)' : 'rgba(255, 255, 255, 0.1)',
+                                            color: scrolled ? '#0d7a6a' : '#ffffff',
                                             transform: 'translateY(-1px)',
                                         }
                                     }}
@@ -260,17 +263,18 @@ export default function LandingPage({ auth }) {
                                     href="/login"
                                     size="small"
                                     sx={{
-                                        color: scrolled ? '#094d42' : 'white',
+                                        color: scrolled ? '#094d42' : 'rgba(255,255,255,0.95)',
                                         fontWeight: 500,
                                         fontSize: { md: '0.85rem', lg: '0.9rem' },
                                         px: { md: 2, lg: 2.5 },
                                         py: 1,
                                         ml: { md: 0.5, lg: 1 },
                                         textTransform: 'none',
+                                        textShadow: scrolled ? 'none' : '0 1px 4px rgba(0,0,0,0.2)',
                                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            bgcolor: scrolled ? 'rgba(13, 122, 106, 0.08)' : 'rgba(77, 212, 172, 0.1)',
-                                            color: scrolled ? '#0d7a6a' : '#4dd4ac',
+                                            bgcolor: scrolled ? 'rgba(13, 122, 106, 0.08)' : 'rgba(255, 255, 255, 0.1)',
+                                            color: scrolled ? '#0d7a6a' : '#ffffff',
                                             transform: 'translateY(-1px)',
                                         }
                                     }}
@@ -374,7 +378,7 @@ export default function LandingPage({ auth }) {
                     <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0,0,0,0.08)', bgcolor: '#f9fafb' }}>
                         <Box>
                             <Typography variant="h6" sx={{ fontWeight: 700, color: '#094d42', fontSize: '1.1rem', letterSpacing: '0.02em' }}>
-                                IAGI-GEOSEA <Box component="span" sx={{ color: '#0d7a6a' }}>2026</Box>
+                                IAHI-GEOSEA XIX <Box component="span" sx={{ color: '#0d7a6a' }}>2026</Box>
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#6b7280', fontSize: '0.7rem', letterSpacing: '0.1em', fontWeight: 600 }}>
                                 55TH EDITION
@@ -481,6 +485,42 @@ export default function LandingPage({ auth }) {
                         transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                 >
+                    {/* Video Background */}
+                    <Box
+                        component="video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            minWidth: '100%',
+                            minHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                        }}
+                    >
+                        <source src="/hero-background.mp4" type="video/mp4" />
+                    </Box>
+
+                    {/* Dark Overlay for text readability */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            bgcolor: 'rgba(9, 77, 66, 0)',
+                            zIndex: 0,
+                        }}
+                    />
+
                     <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
                         <Box sx={{ textAlign: 'center' }}>
                             {/* Logo */}
@@ -504,7 +544,7 @@ export default function LandingPage({ auth }) {
 
                             {/* Title */}
                             <Box sx={{ mb: { xs: 3, sm: 4, md: 5 } }}>
-                                {/* 55TH IAGI- */}
+                                {/* 55TH IAHI - */}
                                 <Typography
                                     variant="h1"
                                     sx={{
@@ -517,7 +557,7 @@ export default function LandingPage({ auth }) {
                                         color: 'white',
                                     }}
                                 >
-                                    55TH IAGI-
+                                    55TH IAHI -
                                 </Typography>
 
                                 {/* GEOSEA 2026 */}
@@ -533,7 +573,7 @@ export default function LandingPage({ auth }) {
                                         mb: { xs: 4, sm: 5, md: 6 },
                                     }}
                                 >
-                                    GEOSEA 2026
+                                    GEOSEA XIX 2026
                                 </Typography>
                             </Box>
 
