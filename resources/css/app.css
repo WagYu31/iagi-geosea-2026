@@ -256,23 +256,6 @@
             radial-gradient(circle at 80% 80%, rgba(0, 147, 77, 0.03) 0%, transparent 50%);
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #006838 0%, #00934d 100%);
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #004d28 0%, #006838 100%);
-    }
 
     /* Refined spacing and rhythm */
     .section-padding {
