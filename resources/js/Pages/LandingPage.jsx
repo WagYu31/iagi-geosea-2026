@@ -505,7 +505,7 @@ export default function LandingPage({ auth }) {
                             zIndex: 0,
                         }}
                     >
-                        <source src="/hero-background.mp4" type="video/mp4" />
+                        <source src="/hero-background1.mp4" type="video/mp4" />
                     </Box>
 
                     {/* Dark Overlay for text readability */}
