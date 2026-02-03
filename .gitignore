@@ -18,7 +18,6 @@ yarn-error.log
 /.vscode
 
 # Build artifacts
-/public/build
 /public/mix-manifest.json
 
 # OS files
