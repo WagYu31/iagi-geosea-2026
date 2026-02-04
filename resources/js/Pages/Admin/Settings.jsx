@@ -181,11 +181,43 @@ export default function Settings({ settings, submissionSettings }) {
             instagram: 'https://www.instagram.com/iagi_official/',
             facebook: 'https://www.facebook.com/iagi.official',
             twitter: 'https://twitter.com/iagi_official',
-            linkedin: 'https://www.linkedin.com/company/iagi-official',
             youtube: 'https://www.youtube.com/@iagi_official',
         };
     });
     const [savingSocialMedia, setSavingSocialMedia] = useState(false);
+    const [heroBackground, setHeroBackground] = useState(() => {
+        const data = getSettingValue('hero_background', null);
+        if (data && typeof data === 'object') return data;
+        return { url: '/hero-background1.mp4', type: 'video', filename: 'hero-background1.mp4' };
+    });
+    const [uploadingHero, setUploadingHero] = useState(false);
+    const heroInputRef = useRef(null);
+    const [heroText, setHeroText] = useState(() => {
+        const data = getSettingValue('hero_text', null);
+        if (data && typeof data === 'object') return data;
+        return {
+            title_line1: 'PIT IAGI',
+            title_line2: 'GEOSEA XIX 2026',
+            theme_label: 'CONFERENCE THEME',
+            theme_text: 'Advancing Geological Sciences for Sustainable Development',
+        };
+    });
+    const [savingHeroText, setSavingHeroText] = useState(false);
+    const [heroLogo, setHeroLogo] = useState(() => {
+        const data = getSettingValue('hero_logo', null);
+        if (data && typeof data === 'object') return data;
+        return { url: '/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png', filename: 'default_logo.png' };
+    });
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const logoInputRef = useRef(null);
+    const [heroLogosSecondary, setHeroLogosSecondary] = useState(() => {
+        const data = getSettingValue('hero_logos_secondary', null);
+        if (data && Array.isArray(data)) return data;
+        return [];
+    });
+    const [uploadingLogoSecondary, setUploadingLogoSecondary] = useState(false);
+    const logoSecondaryInputRef = useRef(null);
+    const [deletingLogoIndex, setDeletingLogoIndex] = useState(null);
 
     // Form for submission deadline settings
     const { data: deadlineData, setData: setDeadlineData, post: postDeadline, processing: processingDeadline, errors: deadlineErrors } = useForm({
@@ -346,10 +378,6 @@ export default function Settings({ settings, submissionSettings }) {
 
     // Remove speaker
     const removeSpeaker = (index) => {
-        if (speakers.length <= 1) {
-            alert('You must have at least one speaker');
-            return;
-        }
         if (confirm('Are you sure you want to remove this speaker?')) {
             const updatedSpeakers = speakers.filter((_, i) => i !== index);
             setSpeakers(updatedSpeakers);
@@ -576,6 +604,128 @@ export default function Settings({ settings, submissionSettings }) {
         }
     };
 
+    // Save hero text settings
+    const saveHeroText = async () => {
+        setSavingHeroText(true);
+        try {
+            await axios.post(route('admin.settings.saveHeroText'), {
+                hero_text: heroText,
+            });
+            router.reload({ preserveScroll: true });
+            alert('Hero text saved successfully!');
+        } catch (error) {
+            console.error('Save hero text error:', error);
+            alert('Failed to save hero text: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setSavingHeroText(false);
+        }
+    };
+
+    // Handle hero logo upload
+    const handleHeroLogoUpload = async (file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('hero_logo', file);
+
+        setUploadingLogo(true);
+        try {
+            const response = await axios.post(route('admin.settings.uploadHeroLogo'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                setHeroLogo(response.data.hero_logo);
+                router.reload({ preserveScroll: true });
+                alert('Hero logo uploaded successfully!');
+            }
+        } catch (error) {
+            console.error('Hero logo upload error:', error);
+            alert('Failed to upload hero logo: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploadingLogo(false);
+        }
+    };
+
+    // Handle secondary hero logo upload (add to array)
+    const handleHeroLogoSecondaryUpload = async (file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('hero_logo_secondary', file);
+
+        setUploadingLogoSecondary(true);
+        try {
+            const response = await axios.post(route('admin.settings.uploadHeroLogoSecondary'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                setHeroLogosSecondary(response.data.hero_logos_secondary);
+                alert('Secondary logo added successfully!');
+            }
+        } catch (error) {
+            console.error('Secondary logo upload error:', error);
+            alert('Failed to upload secondary logo: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploadingLogoSecondary(false);
+        }
+    };
+
+    // Handle delete secondary logo
+    const handleDeleteLogoSecondary = async (index) => {
+        if (!confirm('Are you sure you want to delete this logo?')) return;
+
+        setDeletingLogoIndex(index);
+        try {
+            const response = await axios.post(route('admin.settings.deleteHeroLogoSecondary'), {
+                index: index,
+            });
+
+            if (response.data.success) {
+                setHeroLogosSecondary(response.data.hero_logos_secondary);
+                alert('Secondary logo deleted successfully!');
+            }
+        } catch (error) {
+            console.error('Delete logo error:', error);
+            alert('Failed to delete logo: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setDeletingLogoIndex(null);
+        }
+    };
+
+    // Handle hero background upload
+    const handleHeroBackgroundUpload = async (file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('hero_background', file);
+
+        setUploadingHero(true);
+        try {
+            const response = await axios.post(route('admin.settings.uploadHeroBackground'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                setHeroBackground(response.data.hero_background);
+                router.reload({ preserveScroll: true });
+                alert('Hero background uploaded successfully!');
+            }
+        } catch (error) {
+            console.error('Hero background upload error:', error);
+            alert('Failed to upload hero background: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploadingHero(false);
+        }
+    };
+
     // Update speaker
     const updateSpeaker = (index, field, value) => {
         const newSpeakers = [...speakers];
@@ -684,6 +834,319 @@ export default function Settings({ settings, submissionSettings }) {
                                     </CardContent>
                                 </Card>
 
+                                {/* Hero Background Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Hero Background
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                            Upload a video (.mp4, .webm) or image (.jpg, .png, .gif) for the hero section background. Max size: 50MB.
+                                        </Typography>
+
+                                        {/* Current Background Preview */}
+                                        {heroBackground?.url && (
+                                            <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', maxHeight: 200 }}>
+                                                {heroBackground.type === 'video' ? (
+                                                    <video
+                                                        src={heroBackground.url}
+                                                        autoPlay
+                                                        muted
+                                                        loop
+                                                        playsInline
+                                                        style={{ width: '100%', height: 200, objectFit: 'cover' }}
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={heroBackground.url}
+                                                        alt="Hero Background"
+                                                        style={{ width: '100%', height: 200, objectFit: 'cover' }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        )}
+
+                                        <Stack direction="row" spacing={2} alignItems="center">
+                                            <input
+                                                ref={heroInputRef}
+                                                type="file"
+                                                accept="video/mp4,video/webm,image/jpeg,image/png,image/gif"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        handleHeroBackgroundUpload(e.target.files[0]);
+                                                    }
+                                                }}
+                                                style={{ display: 'none' }}
+                                                id="hero-background-input"
+                                            />
+                                            <label htmlFor="hero-background-input">
+                                                <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    disabled={uploadingHero}
+                                                    startIcon={<UploadFileIcon />}
+                                                    sx={{
+                                                        backgroundColor: '#1abc9c',
+                                                        '&:hover': { backgroundColor: '#16a085' },
+                                                    }}
+                                                >
+                                                    {uploadingHero ? 'Uploading...' : 'Upload New Background'}
+                                                </Button>
+                                            </label>
+                                            {heroBackground?.filename && (
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Current: {heroBackground.filename}
+                                                </Typography>
+                                            )}
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Hero Text Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Hero Text Settings
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                            Customize the main title, subtitle, and conference theme text displayed on the hero section.
+                                        </Typography>
+
+                                        <Stack spacing={2}>
+                                            <TextField
+                                                fullWidth
+                                                label="Title Line 1 (e.g., PIT IAGI)"
+                                                value={heroText.title_line1}
+                                                onChange={(e) => setHeroText({ ...heroText, title_line1: e.target.value })}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#1abc9c',
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Title Line 2 (e.g., GEOSEA XIX 2026)"
+                                                value={heroText.title_line2}
+                                                onChange={(e) => setHeroText({ ...heroText, title_line2: e.target.value })}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#1abc9c',
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Theme Label (e.g., CONFERENCE THEME)"
+                                                value={heroText.theme_label}
+                                                onChange={(e) => setHeroText({ ...heroText, theme_label: e.target.value })}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#1abc9c',
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Conference Theme Text"
+                                                value={heroText.theme_text}
+                                                onChange={(e) => setHeroText({ ...heroText, theme_text: e.target.value })}
+                                                multiline
+                                                rows={2}
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: '#1abc9c',
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                        </Stack>
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={saveHeroText}
+                                                disabled={savingHeroText}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingHeroText ? 'Saving...' : 'Save Hero Text'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Hero Logo Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Hero Logo
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                            Upload the center logo displayed on the hero section. Recommended: transparent PNG or SVG. Max size: 5MB.
+                                        </Typography>
+
+                                        {/* Current Logo Preview */}
+                                        {heroLogo?.url && (
+                                            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
+                                                <Box
+                                                    sx={{
+                                                        width: 120,
+                                                        height: 120,
+                                                        borderRadius: '50%',
+                                                        bgcolor: 'white',
+                                                        p: 2,
+                                                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={heroLogo.url}
+                                                        alt="Hero Logo"
+                                                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        )}
+
+                                        <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+                                            <input
+                                                ref={logoInputRef}
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/gif,image/svg+xml"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        handleHeroLogoUpload(e.target.files[0]);
+                                                    }
+                                                }}
+                                                style={{ display: 'none' }}
+                                                id="hero-logo-input"
+                                            />
+                                            <label htmlFor="hero-logo-input">
+                                                <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    disabled={uploadingLogo}
+                                                    startIcon={<UploadFileIcon />}
+                                                    sx={{
+                                                        backgroundColor: '#1abc9c',
+                                                        '&:hover': { backgroundColor: '#16a085' },
+                                                    }}
+                                                >
+                                                    {uploadingLogo ? 'Uploading...' : 'Upload New Logo'}
+                                                </Button>
+                                            </label>
+                                            {heroLogo?.filename && (
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Current: {heroLogo.filename}
+                                                </Typography>
+                                            )}
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Secondary Hero Logos Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Secondary Hero Logos
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                            Upload smaller secondary logos displayed below the main logo. You can add multiple logos.
+                                        </Typography>
+
+                                        {/* Logos Grid */}
+                                        {heroLogosSecondary.length > 0 && (
+                                            <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
+                                                {heroLogosSecondary.map((logo, index) => (
+                                                    <Box
+                                                        key={index}
+                                                        sx={{
+                                                            position: 'relative',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            alignItems: 'center',
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                width: 80,
+                                                                height: 80,
+                                                                borderRadius: '50%',
+                                                                bgcolor: 'white',
+                                                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                                                                overflow: 'hidden',
+                                                                position: 'relative',
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={logo.url}
+                                                                alt={`Secondary Logo ${index + 1}`}
+                                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                            />
+                                                        </Box>
+                                                        <Button
+                                                            size="small"
+                                                            color="error"
+                                                            onClick={() => handleDeleteLogoSecondary(index)}
+                                                            disabled={deletingLogoIndex === index}
+                                                            sx={{ mt: 1, fontSize: '0.7rem' }}
+                                                        >
+                                                            {deletingLogoIndex === index ? 'Deleting...' : 'Delete'}
+                                                        </Button>
+                                                    </Box>
+                                                ))}
+                                            </Box>
+                                        )}
+
+                                        {heroLogosSecondary.length === 0 && (
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>
+                                                No secondary logos uploaded yet.
+                                            </Typography>
+                                        )}
+
+                                        <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+                                            <input
+                                                ref={logoSecondaryInputRef}
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/gif,image/svg+xml"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        handleHeroLogoSecondaryUpload(e.target.files[0]);
+                                                    }
+                                                }}
+                                                style={{ display: 'none' }}
+                                                id="hero-logo-secondary-input"
+                                            />
+                                            <label htmlFor="hero-logo-secondary-input">
+                                                <Button
+                                                    variant="contained"
+                                                    component="span"
+                                                    disabled={uploadingLogoSecondary}
+                                                    startIcon={<UploadFileIcon />}
+                                                    sx={{
+                                                        backgroundColor: '#1abc9c',
+                                                        '&:hover': { backgroundColor: '#16a085' },
+                                                    }}
+                                                >
+                                                    {uploadingLogoSecondary ? 'Uploading...' : 'Add Secondary Logo'}
+                                                </Button>
+                                            </label>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+
                                 {/* Contact Information Section */}
                                 <Card variant="outlined">
                                     <CardContent>
@@ -710,6 +1173,14 @@ export default function Settings({ settings, submissionSettings }) {
                                                 value={contactInfo.email || ''}
                                                 onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                                                 placeholder="e.g., wahyuwutomo31@gmail.com"
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                label="Telegram Username"
+                                                value={contactInfo.telegram || ''}
+                                                onChange={(e) => setContactInfo({ ...contactInfo, telegram: e.target.value })}
+                                                placeholder="e.g., @iagi_geosea2026"
                                             />
 
                                             <TextField
@@ -810,22 +1281,6 @@ export default function Settings({ settings, submissionSettings }) {
                                                 }}
                                             />
 
-                                            <TextField
-                                                fullWidth
-                                                label="LinkedIn URL"
-                                                value={socialMedia.linkedin || ''}
-                                                onChange={(e) => setSocialMedia({ ...socialMedia, linkedin: e.target.value })}
-                                                placeholder="https://www.linkedin.com/company/your_company"
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <Box sx={{ mr: 1, color: '#0A66C2', display: 'flex' }}>
-                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                                            </svg>
-                                                        </Box>
-                                                    ),
-                                                }}
-                                            />
 
                                             <TextField
                                                 fullWidth
@@ -888,19 +1343,17 @@ export default function Settings({ settings, submissionSettings }) {
                                                 <Grid item xs={12} sm={6} md={3} key={index}>
                                                     <Card sx={{ p: 2, height: '100%', position: 'relative' }}>
                                                         {/* Remove Button */}
-                                                        {speakers.length > 1 && (
-                                                            <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    color="error"
-                                                                    onClick={() => removeSpeaker(index)}
-                                                                    sx={{ minWidth: 'auto', p: 0.5 }}
-                                                                >
-                                                                    <DeleteIcon fontSize="small" />
-                                                                </Button>
-                                                            </Box>
-                                                        )}
+                                                        <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
+                                                            <Button
+                                                                size="small"
+                                                                variant="outlined"
+                                                                color="error"
+                                                                onClick={() => removeSpeaker(index)}
+                                                                sx={{ minWidth: 'auto', p: 0.5 }}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </Button>
+                                                        </Box>
 
                                                         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
                                                             Speaker {index + 1}

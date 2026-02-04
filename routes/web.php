@@ -114,6 +114,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/upload-resource-file', [App\Http\Controllers\LandingPageSettingController::class, 'uploadResourceFile'])->name('settings.uploadResourceFile');
         Route::post('/settings/save-resources', [App\Http\Controllers\LandingPageSettingController::class, 'saveResources'])->name('settings.saveResources');
         Route::post('/settings/save-timeline', [App\Http\Controllers\LandingPageSettingController::class, 'saveTimeline'])->name('settings.saveTimeline');
+        Route::post('/settings/upload-hero-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadHeroBackground'])->name('settings.uploadHeroBackground');
+        Route::post('/settings/save-hero-text', [App\Http\Controllers\LandingPageSettingController::class, 'saveHeroText'])->name('settings.saveHeroText');
+        Route::post('/settings/upload-hero-logo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadHeroLogo'])->name('settings.uploadHeroLogo');
+        Route::post('/settings/upload-hero-logo-secondary', [App\Http\Controllers\LandingPageSettingController::class, 'uploadHeroLogoSecondary'])->name('settings.uploadHeroLogoSecondary');
+        Route::post('/settings/delete-hero-logo-secondary', [App\Http\Controllers\LandingPageSettingController::class, 'deleteHeroLogoSecondary'])->name('settings.deleteHeroLogoSecondary');
 
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs

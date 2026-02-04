@@ -82,7 +82,22 @@ export default function LandingPage({ auth }) {
             twitter: 'https://twitter.com/iagi_official',
             linkedin: 'https://www.linkedin.com/company/iagi-official',
             youtube: 'https://www.youtube.com/@iagi_official',
-        }
+        },
+        hero_background: {
+            url: '/hero-background1.mp4',
+            type: 'video',
+            filename: 'hero-background1.mp4',
+        },
+        hero_text: {
+            title_line1: 'PIT IAGI',
+            title_line2: 'GEOSEA XIX 2026',
+            theme_label: 'CONFERENCE THEME',
+            theme_text: 'Advancing Geological Sciences for Sustainable Development',
+        },
+        hero_logo: {
+            url: '/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png',
+            filename: 'default_logo.png',
+        },
     });
 
     useEffect(() => {
@@ -202,6 +217,17 @@ export default function LandingPage({ auth }) {
                     <Toolbar sx={{ py: { xs: 1, sm: 1.5, md: 1.5 }, px: { xs: 2, sm: 3, md: 4, lg: 5 }, minHeight: { xs: '64px', md: '72px' }, bgcolor: 'transparent' }}>
                         {/* Logo */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
+                            {/* Favicon Logo */}
+                            <Box
+                                component="img"
+                                src="/favicon.ico"
+                                alt="Logo"
+                                sx={{
+                                    width: { xs: 32, sm: 36, md: 40 },
+                                    height: { xs: 32, sm: 36, md: 40 },
+                                    objectFit: 'contain',
+                                }}
+                            />
                             <Box>
                                 <Typography
                                     variant="h6"
@@ -230,7 +256,6 @@ export default function LandingPage({ auth }) {
                                         display: { xs: 'block', sm: 'block' },
                                     }}
                                 >
-                                    55TH EDITION
                                 </Typography>
                             </Box>
                         </Box>
@@ -492,28 +517,67 @@ export default function LandingPage({ auth }) {
                         transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                 >
-                    {/* Video Background */}
-                    <Box
-                        component="video"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            minWidth: '100%',
-                            minHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            objectFit: 'cover',
-                            zIndex: 0,
-                        }}
-                    >
-                        <source src="/hero-background1.mp4" type="video/mp4" />
-                    </Box>
+                    {/* Dynamic Background (Video or Image) */}
+                    {settings.hero_background?.type === 'video' ? (
+                        <Box
+                            component="video"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                minWidth: '100%',
+                                minHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                                objectFit: 'cover',
+                                zIndex: 0,
+                            }}
+                        >
+                            <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
+                        </Box>
+                    ) : settings.hero_background?.type === 'image' ? (
+                        <Box
+                            component="img"
+                            src={settings.hero_background?.url}
+                            alt="Hero Background"
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                zIndex: 0,
+                            }}
+                        />
+                    ) : (
+                        <Box
+                            component="video"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                minWidth: '100%',
+                                minHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                                objectFit: 'cover',
+                                zIndex: 0,
+                            }}
+                        >
+                            <source src="/hero-background1.mp4" type="video/mp4" />
+                        </Box>
+                    )}
 
                     {/* Dark Overlay for text readability */}
                     <Box
@@ -530,24 +594,62 @@ export default function LandingPage({ auth }) {
 
                     <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
                         <Box sx={{ textAlign: 'center' }}>
-                            {/* Logo */}
-                            <Box sx={{ mb: { xs: 3, sm: 4, md: 4 } }}>
-                                <Avatar
-                                    src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png"
+                            {/* Main Logo */}
+                            <Box sx={{ mb: { xs: 2, sm: 2, md: 2 } }}>
+                                <Box
+                                    component="img"
+                                    src={settings.hero_logo?.url || '/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png'}
+                                    alt="Conference Logo"
                                     sx={{
-                                        width: { xs: 80, sm: 100, md: 120, lg: 140 },
-                                        height: { xs: 80, sm: 100, md: 120, lg: 140 },
+                                        width: { xs: 100, sm: 120, md: 150, lg: 180 },
+                                        height: { xs: 100, sm: 120, md: 150, lg: 180 },
+                                        objectFit: 'cover',
                                         margin: '0 auto',
-                                        bgcolor: 'white',
-                                        p: { xs: 1.5, sm: 2 },
+                                        display: 'block',
+                                        borderRadius: '50%',
                                         boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                                        border: { xs: '3px solid rgba(255,255,255,0.2)', md: '4px solid rgba(255,255,255,0.2)' },
                                     }}
                                     onError={(e) => {
                                         e.target.style.display = 'none';
                                     }}
                                 />
                             </Box>
+
+                            {/* Secondary Logos (smaller, multiple) */}
+                            {settings.hero_logos_secondary && settings.hero_logos_secondary.length > 0 && (
+                                <Box sx={{ mb: { xs: 3, sm: 4, md: 4 }, display: 'flex', justifyContent: 'center', gap: { xs: 1, sm: 2 }, flexWrap: 'wrap' }}>
+                                    {settings.hero_logos_secondary.map((logo, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                width: { xs: 50, sm: 60, md: 70, lg: 80 },
+                                                height: { xs: 50, sm: 60, md: 70, lg: 80 },
+                                                borderRadius: '50%',
+                                                bgcolor: 'white',
+                                                boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                p: 0.5,
+                                            }}
+                                        >
+                                            <Box
+                                                component="img"
+                                                src={logo.url}
+                                                alt={`Secondary Logo ${index + 1}`}
+                                                sx={{
+                                                    maxWidth: '85%',
+                                                    maxHeight: '85%',
+                                                    objectFit: 'contain',
+                                                }}
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                            />
+                                        </Box>
+                                    ))}
+                                </Box>
+                            )}
 
                             {/* Title */}
                             <Box sx={{ mb: { xs: 3, sm: 4, md: 5 } }}>
@@ -564,7 +666,7 @@ export default function LandingPage({ auth }) {
                                         color: 'white',
                                     }}
                                 >
-                                    PIT IAGI
+                                    {settings.hero_text?.title_line1 || 'PIT IAGI'}
                                 </Typography>
 
                                 {/* GEOSEA 2026 */}
@@ -580,7 +682,7 @@ export default function LandingPage({ auth }) {
                                         mb: { xs: 4, sm: 5, md: 6 },
                                     }}
                                 >
-                                    GEOSEA XIX 2026
+                                    {settings.hero_text?.title_line2 || 'GEOSEA XIX 2026'}
                                 </Typography>
                             </Box>
 
@@ -598,7 +700,7 @@ export default function LandingPage({ auth }) {
                                         textShadow: '0 2px 10px rgba(77, 212, 172, 0.2)',
                                     }}
                                 >
-                                    CONFERENCE THEME
+                                    {settings.hero_text?.theme_label || 'CONFERENCE THEME'}
                                 </Typography>
                                 <Typography
                                     variant="h5"
@@ -612,7 +714,7 @@ export default function LandingPage({ auth }) {
                                         textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                                     }}
                                 >
-                                    "Advancing Geological Sciences for Sustainable Development"
+                                    "{settings.hero_text?.theme_text || 'Advancing Geological Sciences for Sustainable Development'}"
                                 </Typography>
                             </Box>
 
@@ -708,7 +810,10 @@ export default function LandingPage({ auth }) {
                     id="about"
                     ref={aboutRef}
                     sx={{
-                        background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
+                        backgroundImage: 'linear-gradient(180deg, rgba(248,250,252,0.5) 0%, rgba(241,245,249,0.45) 50%, rgba(226,232,240,0.5) 100%), url("/about-background.jpg")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
                         scrollMarginTop: '80px',
                         position: 'relative',
@@ -805,92 +910,7 @@ export default function LandingPage({ auth }) {
                         </Typography>
 
                         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-                            {/* Left Box - Conference Description */}
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <Paper
-                                    sx={{
-                                        p: { xs: 3, sm: 4, md: 5 },
-                                        height: '100%',
-                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                                        borderRadius: '20px',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                                        border: '1px solid rgba(255,255,255,0.8)',
-                                        backdropFilter: 'blur(10px)',
-                                        transform: aboutVisible ? 'translateY(0)' : 'translateY(30px)',
-                                        opacity: aboutVisible ? 1 : 0,
-                                        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        transitionDelay: '0.5s',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        '&::before': {
-                                            content: '""',
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            height: '3px',
-                                            background: 'linear-gradient(90deg, #0d9488, #14b8a6, #2dd4bf)',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease',
-                                        },
-                                        '&:hover': {
-                                            transform: aboutVisible ? 'translateY(-10px) scale(1.01)' : 'translateY(30px)',
-                                            boxShadow: '0 20px 40px rgba(13, 148, 136, 0.15)',
-                                            border: '1px solid rgba(13, 148, 136, 0.2)',
-                                        },
-                                        '&:hover::before': {
-                                            opacity: 1,
-                                        },
-                                    }}
-                                >
-                                    {/* Title */}
-                                    <Typography
-                                        variant="h5"
-                                        sx={{
-                                            fontWeight: 700,
-                                            mb: 3,
-                                            lineHeight: 1.3,
-                                        }}
-                                    >
-                                        <Box component="span" sx={{ color: '#111827', display: 'block' }}>
-                                            A Premier Regional
-                                        </Box>
-                                        <Box component="span" sx={{ color: '#0d7a6a', display: 'block' }}>
-                                            Geological Gathering
-                                        </Box>
-                                    </Typography>
-
-                                    {/* First Paragraph */}
-                                    <Typography
-                                        variant="body2"
-                                        paragraph
-                                        sx={{
-                                            lineHeight: 1.8,
-                                            color: '#6b7280',
-                                            mb: 2.5,
-                                        }}
-                                    >
-                                        The 55th IAGI-GEOSEA 2026 is organized by the{' '}
-                                        <Box component="span" sx={{ fontWeight: 600, color: '#111827' }}>
-                                            Indonesian Association of Geologists (IAGI)
-                                        </Box>
-                                        . This landmark event facilitates high-level exchange between geologists, industry leaders, and researchers across the globe.
-                                    </Typography>
-
-                                    {/* Second Paragraph */}
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            lineHeight: 1.8,
-                                            color: '#6b7280',
-                                        }}
-                                    >
-                                        We focus on the intersection of resource management, hazard mitigation, and environmental stewardship to build a resilient future for our region.
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-
-                            {/* Right Box - Why Attend */}
+                            {/* Left Box - Why Attend */}
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Paper
                                     sx={{
@@ -904,8 +924,8 @@ export default function LandingPage({ auth }) {
                                         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                                         transform: aboutVisible ? 'translateY(0)' : 'translateY(30px)',
                                         opacity: aboutVisible ? 1 : 0,
-                                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        transitionDelay: '0.7s',
+                                        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transitionDelay: '0.5s',
                                         '&:hover': {
                                             transform: aboutVisible ? 'translateY(-8px)' : 'translateY(30px)',
                                             boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
@@ -1002,6 +1022,91 @@ export default function LandingPage({ auth }) {
                                             </Box>
                                         ))}
                                     </Box>
+                                </Paper>
+                            </Grid>
+
+                            {/* Right Box - Conference Description */}
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Paper
+                                    sx={{
+                                        p: { xs: 3, sm: 4, md: 5 },
+                                        height: '100%',
+                                        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                                        borderRadius: '20px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                                        border: '1px solid rgba(255,255,255,0.8)',
+                                        backdropFilter: 'blur(10px)',
+                                        transform: aboutVisible ? 'translateY(0)' : 'translateY(30px)',
+                                        opacity: aboutVisible ? 1 : 0,
+                                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transitionDelay: '0.7s',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: '3px',
+                                            background: 'linear-gradient(90deg, #0d9488, #14b8a6, #2dd4bf)',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease',
+                                        },
+                                        '&:hover': {
+                                            transform: aboutVisible ? 'translateY(-10px) scale(1.01)' : 'translateY(30px)',
+                                            boxShadow: '0 20px 40px rgba(13, 148, 136, 0.15)',
+                                            border: '1px solid rgba(13, 148, 136, 0.2)',
+                                        },
+                                        '&:hover::before': {
+                                            opacity: 1,
+                                        },
+                                    }}
+                                >
+                                    {/* Title */}
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontWeight: 700,
+                                            mb: 3,
+                                            lineHeight: 1.3,
+                                        }}
+                                    >
+                                        <Box component="span" sx={{ color: '#111827', display: 'block' }}>
+                                            A Premier International
+                                        </Box>
+                                        <Box component="span" sx={{ color: '#0d7a6a', display: 'block' }}>
+                                            Geological Gathering
+                                        </Box>
+                                    </Typography>
+
+                                    {/* First Paragraph */}
+                                    <Typography
+                                        variant="body2"
+                                        paragraph
+                                        sx={{
+                                            lineHeight: 1.8,
+                                            color: '#6b7280',
+                                            mb: 2.5,
+                                        }}
+                                    >
+                                        The 55th IAGI – GEOSEA XIX 2026 is organized by the{' '}
+                                        <Box component="span" sx={{ fontWeight: 600, color: '#111827' }}>
+                                            Indonesian Association of Geologists (IAGI)
+                                        </Box>
+                                        . This landmark event facilitates high-level exchange between geologists, industry leaders, and researchers across the globe.
+                                    </Typography>
+
+                                    {/* Second Paragraph */}
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            lineHeight: 1.8,
+                                            color: '#6b7280',
+                                        }}
+                                    >
+                                        We focus on the intersection of resource management, hazard mitigation, and environmental stewardship to build a resilient future for our region.
+                                    </Typography>
                                 </Paper>
                             </Grid>
                         </Grid>
@@ -1111,38 +1216,10 @@ export default function LandingPage({ auth }) {
                                 },
                             }}
                         >
-                            {(settings.keynote_speakers && settings.keynote_speakers.length > 0 ? settings.keynote_speakers : [
-                                {
-                                    name: 'Dr. Maria',
-                                    title: 'Research Director',
-                                    institution: 'Asian Geological Institute',
-                                    photo: '/api/placeholder/400/500'
-                                },
-                                {
-                                    name: 'Prof. Adip',
-                                    title: 'Professor',
-                                    institution: 'Institute of Technology',
-                                    photo: '/api/placeholder/400/500'
-                                },
-                                {
-                                    name: 'Wahyu Utomo S.kom, M.kom',
-                                    title: 'Lead Researcher',
-                                    institution: 'Geoscience Center',
-                                    photo: '/api/placeholder/400/500'
-                                },
-                                {
-                                    name: 'Dr. Wahyu',
-                                    title: 'Exploration Manager',
-                                    institution: 'Regional Resources',
-                                    photo: '/api/placeholder/400/500'
-                                },
-                                {
-                                    name: 'Adrian Fathurahman',
-                                    title: 'Chief Geologist',
-                                    institution: 'Global Solutions',
-                                    photo: '/api/placeholder/400/500'
-                                },
-                            ]).map((speaker, index) => (
+                            {(settings.keynote_speakers && settings.keynote_speakers.length > 0
+                                ? settings.keynote_speakers.filter(speaker => speaker.name && speaker.name.trim() !== '')
+                                : []
+                            ).map((speaker, index) => (
                                 <Box
                                     key={index}
                                     sx={{
@@ -2378,13 +2455,58 @@ export default function LandingPage({ auth }) {
                                                 {settings.contact_info?.location || settings.contact_address || 'Address not set'}
                                             </Typography>
                                         </Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <PhoneIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
+                                        <Box
+                                            component="a"
+                                            href={`https://wa.me/${(settings.contact_info?.phone || settings.contact_phone || '').replace(/[^0-9]/g, '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                                        >
+                                            <Box sx={{ color: '#4dd4ac', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                                </svg>
+                                            </Box>
                                             <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
                                                 {settings.contact_info?.phone || settings.contact_phone}
                                             </Typography>
                                         </Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Box
+                                            component="a"
+                                            href={(() => {
+                                                const telegram = settings.contact_info?.telegram || '@iagi_geosea2026';
+                                                // If it's a full URL (http/https) or a known shortener, use directly
+                                                if (telegram.startsWith('http://') || telegram.startsWith('https://')) {
+                                                    return telegram;
+                                                }
+                                                // If it looks like a domain (contains . but doesn't start with @), add https://
+                                                if (telegram.includes('.') && !telegram.startsWith('@')) {
+                                                    return `https://${telegram}`;
+                                                }
+                                                // Otherwise treat as username
+                                                const username = telegram.replace('@', '');
+                                                return `https://t.me/${username}`;
+                                            })()}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                                        >
+                                            <Box sx={{ color: '#4dd4ac', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                                                </svg>
+                                            </Box>
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
+                                                {settings.contact_info?.telegram || '@iagi_geosea2026'}
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            component="a"
+                                            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${settings.contact_info?.email || settings.contact_email || ''}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                                        >
                                             <EmailIcon sx={{ color: '#4dd4ac', fontSize: 20 }} />
                                             <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem' }}>
                                                 {settings.contact_info?.email || settings.contact_email}
@@ -2392,51 +2514,6 @@ export default function LandingPage({ auth }) {
                                         </Box>
                                     </Box>
 
-                                    <Box
-                                        sx={{
-                                            mt: 3,
-                                            p: 2,
-                                            borderRadius: '12px',
-                                            bgcolor: 'rgba(77, 212, 172, 0.15)',
-                                            border: '1px dashed rgba(77, 212, 172, 0.3)',
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ color: '#4dd4ac', fontWeight: 600, mb: 0.5 }}>
-                                            📅 Conference Dates
-                                        </Typography>
-                                        <Typography sx={{ color: 'white', fontWeight: 700 }}>
-                                            {(() => {
-                                                // Try to find conference event from timeline
-                                                const conferenceEvent = settings.timeline?.find(item =>
-                                                    item.title?.toLowerCase().includes('conference') ||
-                                                    item.title?.toLowerCase().includes('konferensi')
-                                                );
-                                                if (conferenceEvent) {
-                                                    // Format date range if available
-                                                    const startDate = conferenceEvent.start_date || conferenceEvent.date;
-                                                    const endDate = conferenceEvent.end_date;
-                                                    if (startDate) {
-                                                        const start = new Date(startDate);
-                                                        const startMonth = start.toLocaleString('en-US', { month: 'long' });
-                                                        const startDay = start.getDate();
-                                                        const startYear = start.getFullYear();
-                                                        if (endDate) {
-                                                            const end = new Date(endDate);
-                                                            const endMonth = end.toLocaleString('en-US', { month: 'long' });
-                                                            const endDay = end.getDate();
-                                                            if (startMonth === endMonth) {
-                                                                return `${startMonth} ${startDay}-${endDay}, ${startYear}`;
-                                                            }
-                                                            return `${startMonth} ${startDay} - ${endMonth} ${endDay}, ${startYear}`;
-                                                        }
-                                                        return `${startMonth} ${startDay}, ${startYear}`;
-                                                    }
-                                                }
-                                                // Fallback to contact_info or default
-                                                return settings.contact_info?.conference_dates || 'August 2026';
-                                            })()}
-                                        </Typography>
-                                    </Box>
                                 </Box>
                             </Grid>
 
@@ -2509,7 +2586,6 @@ export default function LandingPage({ auth }) {
                                     { icon: 'instagram', url: settings.social_media?.instagram || '#', color: '#E4405F' },
                                     { icon: 'facebook', url: settings.social_media?.facebook || '#', color: '#1877F2' },
                                     { icon: 'twitter', url: settings.social_media?.twitter || '#', color: '#1DA1F2' },
-                                    { icon: 'linkedin', url: settings.social_media?.linkedin || '#', color: '#0A66C2' },
                                     { icon: 'youtube', url: settings.social_media?.youtube || '#', color: '#FF0000' },
                                 ].map((social, index) => (
                                     <Box
@@ -2550,11 +2626,6 @@ export default function LandingPage({ auth }) {
                                         {social.icon === 'twitter' && (
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                            </svg>
-                                        )}
-                                        {social.icon === 'linkedin' && (
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                             </svg>
                                         )}
                                         {social.icon === 'youtube' && (
