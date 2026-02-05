@@ -649,7 +649,23 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                 Final Average Score
                                             </Typography>
                                             <Typography variant="h3" sx={{ color: '#fff', fontWeight: 700, mb: 0.5 }}>
-                                                {(reviews.reduce((sum, r) => sum + parseInt(r.overall_score || 0, 10), 0) / reviews.filter(r => r.overall_score).length).toFixed(1)}
+                                                {(() => {
+                                                    const validReviews = reviews.filter(r => r.overall_score);
+                                                    if (validReviews.length === 0) return '0.0';
+
+                                                    // Calculate average of all 5 categories per reviewer, then average across reviewers
+                                                    const totalAvg = validReviews.reduce((sum, r) => {
+                                                        const originality = parseInt(r.originality_score || 0, 10);
+                                                        const relevance = parseInt(r.relevance_score || 0, 10);
+                                                        const clarity = parseInt(r.clarity_score || 0, 10);
+                                                        const methodology = parseInt(r.methodology_score || 0, 10);
+                                                        const overall = parseInt(r.overall_score || 0, 10);
+                                                        const reviewerAvg = (originality + relevance + clarity + methodology + overall) / 5;
+                                                        return sum + reviewerAvg;
+                                                    }, 0) / validReviews.length;
+
+                                                    return totalAvg.toFixed(1);
+                                                })()}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>
                                                 Based on {reviews.filter(r => r.overall_score).length} reviewer{reviews.filter(r => r.overall_score).length !== 1 ? 's' : ''}
@@ -768,29 +784,38 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                         </Box>
 
                                                         {/* Score Display - Prominent */}
-                                                        {review.overall_score && (
-                                                            <Box
-                                                                sx={{
-                                                                    mb: 2,
-                                                                    p: 1.5,
-                                                                    backgroundColor: review.overall_score >= 70 ? '#f0fdf4' : '#fef3c7',
-                                                                    borderRadius: 1.5,
-                                                                    border: `1px solid ${review.overall_score >= 70 ? '#86efac' : '#fde047'}`,
-                                                                    textAlign: 'center'
-                                                                }}
-                                                            >
-                                                                <Typography
-                                                                    variant="h5"
+                                                        {review.overall_score && (() => {
+                                                            const avgScore = (
+                                                                (parseInt(review.originality_score || 0, 10) +
+                                                                    parseInt(review.relevance_score || 0, 10) +
+                                                                    parseInt(review.clarity_score || 0, 10) +
+                                                                    parseInt(review.methodology_score || 0, 10) +
+                                                                    parseInt(review.overall_score || 0, 10)) / 5
+                                                            ).toFixed(1);
+                                                            return (
+                                                                <Box
                                                                     sx={{
-                                                                        fontWeight: 800,
-                                                                        color: review.overall_score >= 70 ? '#15803d' : '#ca8a04',
-                                                                        letterSpacing: -0.5
+                                                                        mb: 2,
+                                                                        p: 1.5,
+                                                                        backgroundColor: avgScore >= 4 ? '#f0fdf4' : '#fef3c7',
+                                                                        borderRadius: 1.5,
+                                                                        border: `1px solid ${avgScore >= 4 ? '#86efac' : '#fde047'}`,
+                                                                        textAlign: 'center'
                                                                     }}
                                                                 >
-                                                                    Score: {review.overall_score}
-                                                                </Typography>
-                                                            </Box>
-                                                        )}
+                                                                    <Typography
+                                                                        variant="h5"
+                                                                        sx={{
+                                                                            fontWeight: 800,
+                                                                            color: avgScore >= 4 ? '#15803d' : '#ca8a04',
+                                                                            letterSpacing: -0.5
+                                                                        }}
+                                                                    >
+                                                                        Score: {avgScore}
+                                                                    </Typography>
+                                                                </Box>
+                                                            );
+                                                        })()}
 
                                                         {/* Feedback Text */}
                                                         <Box sx={{ mb: 2, flex: 1 }}>

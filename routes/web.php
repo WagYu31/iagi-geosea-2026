@@ -30,7 +30,23 @@ Route::get('/dashboard', function () {
         ->get()
         ->map(function ($submission) {
             $submission->payment_status = $submission->payment?->verified ? 'paid' : 'unpaid';
-            $submission->score = $submission->reviews->avg('overall_score') ?? null;
+            
+            // Calculate average of all 5 categories per reviewer
+            $validReviews = $submission->reviews->filter(fn($r) => $r->overall_score !== null);
+            if ($validReviews->count() > 0) {
+                $submission->score = $validReviews->avg(function($r) {
+                    return (
+                        ($r->originality_score ?? 0) +
+                        ($r->relevance_score ?? 0) +
+                        ($r->clarity_score ?? 0) +
+                        ($r->methodology_score ?? 0) +
+                        ($r->overall_score ?? 0)
+                    ) / 5;
+                });
+            } else {
+                $submission->score = null;
+            }
+            
             return $submission;
         });
 
@@ -86,6 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/submissions/bulk-update', [App\Http\Controllers\AdminController::class, 'bulkUpdateStatus'])->name('submissions.bulkUpdate');
         Route::post('/submissions/{id}/assign-reviewer', [App\Http\Controllers\AdminController::class, 'assignReviewer'])->name('submissions.assignReviewer');
         Route::delete('/submissions/{submissionId}/reviewer/{reviewerId}', [App\Http\Controllers\AdminController::class, 'removeReviewer'])->name('submissions.removeReviewer');
+        Route::delete('/submissions/{id}', [App\Http\Controllers\AdminController::class, 'deleteSubmission'])->name('submissions.delete');
         Route::get('/submissions/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('submissions.export');
         Route::get('/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('export');
 

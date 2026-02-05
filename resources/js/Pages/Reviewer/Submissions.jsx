@@ -37,6 +37,15 @@ export default function ReviewerSubmissions({ reviews = [] }) {
         overall_score: 0,
     });
     const [comments, setComments] = useState('');
+    const [reviewStatusFilter, setReviewStatusFilter] = useState('all');
+
+    // Filter reviews based on review status
+    const filteredReviews = reviews.filter(review => {
+        if (reviewStatusFilter === 'all') return true;
+        if (reviewStatusFilter === 'completed') return review.originality_score;
+        if (reviewStatusFilter === 'pending') return !review.originality_score;
+        return true;
+    });
 
     const handleOpenReviewDialog = (review) => {
         setReviewDialog({ open: true, review });
@@ -88,6 +97,27 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                     Assigned Submissions
                 </Typography>
 
+                {/* Review Status Filter */}
+                <Paper elevation={0} sx={{ p: 2, mb: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <FormControl size="small" sx={{ minWidth: 200 }}>
+                            <InputLabel>Filter Review Status</InputLabel>
+                            <Select
+                                value={reviewStatusFilter}
+                                label="Filter Review Status"
+                                onChange={(e) => setReviewStatusFilter(e.target.value)}
+                            >
+                                <MenuItem value="all">All ({reviews.length})</MenuItem>
+                                <MenuItem value="pending">Pending ({reviews.filter(r => !r.originality_score).length})</MenuItem>
+                                <MenuItem value="completed">Completed ({reviews.filter(r => r.originality_score).length})</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Typography variant="body2" color="text.secondary">
+                            Showing {filteredReviews.length} of {reviews.length} submissions
+                        </Typography>
+                    </Box>
+                </Paper>
+
                 <TableContainer component={Paper} sx={{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
                     <Table>
                         <TableHead>
@@ -105,16 +135,16 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {reviews.length === 0 ? (
+                            {filteredReviews.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
                                         <Typography color="text.secondary">
-                                            No submissions assigned yet.
+                                            No submissions found.
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                reviews.map((review) => (
+                                filteredReviews.map((review) => (
                                     <TableRow key={review.id} hover>
                                         <TableCell>
                                             <Chip

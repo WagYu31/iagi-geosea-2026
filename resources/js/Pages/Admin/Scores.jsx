@@ -33,8 +33,19 @@ export default function AdminScores({ submissions = [] }) {
         if (!reviews || reviews.length === 0) return 'N/A';
         const validReviews = reviews.filter(r => r.overall_score);
         if (validReviews.length === 0) return 'N/A';
-        const avg = validReviews.reduce((sum, r) => sum + parseInt(r.overall_score, 10), 0) / validReviews.length;
-        return avg.toFixed(1);
+
+        // Calculate average of all 5 categories per reviewer, then average across reviewers
+        const totalAvg = validReviews.reduce((sum, r) => {
+            const originality = parseInt(r.originality_score || 0, 10);
+            const relevance = parseInt(r.relevance_score || 0, 10);
+            const clarity = parseInt(r.clarity_score || 0, 10);
+            const methodology = parseInt(r.methodology_score || 0, 10);
+            const overall = parseInt(r.overall_score || 0, 10);
+            const reviewerAvg = (originality + relevance + clarity + methodology + overall) / 5;
+            return sum + reviewerAvg;
+        }, 0) / validReviews.length;
+
+        return totalAvg.toFixed(1);
     };
 
     const getStatusColor = (status) => {
@@ -216,22 +227,31 @@ export default function AdminScores({ submissions = [] }) {
                                                 <TableCell>
                                                     {validReviews.length > 0 ? (
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                                            {validReviews.map((review, idx) => (
-                                                                <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                    <Typography variant="caption" sx={{ fontWeight: 600, minWidth: 80 }}>
-                                                                        Reviewer {idx + 1}:
-                                                                    </Typography>
-                                                                    <Chip
-                                                                        label={review.overall_score}
-                                                                        size="small"
-                                                                        sx={{
-                                                                            bgcolor: review.overall_score >= 70 ? '#e8f5e9' : review.overall_score >= 50 ? '#fff9c4' : '#ffebee',
-                                                                            color: review.overall_score >= 70 ? '#2e7d32' : review.overall_score >= 50 ? '#f57c00' : '#c62828',
-                                                                            fontWeight: 600,
-                                                                        }}
-                                                                    />
-                                                                </Box>
-                                                            ))}
+                                                            {validReviews.map((review, idx) => {
+                                                                const reviewerAvg = (
+                                                                    (parseInt(review.originality_score || 0, 10) +
+                                                                        parseInt(review.relevance_score || 0, 10) +
+                                                                        parseInt(review.clarity_score || 0, 10) +
+                                                                        parseInt(review.methodology_score || 0, 10) +
+                                                                        parseInt(review.overall_score || 0, 10)) / 5
+                                                                ).toFixed(1);
+                                                                return (
+                                                                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                        <Typography variant="caption" sx={{ fontWeight: 600, minWidth: 80 }}>
+                                                                            Reviewer {idx + 1}:
+                                                                        </Typography>
+                                                                        <Chip
+                                                                            label={reviewerAvg}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                bgcolor: reviewerAvg >= 4 ? '#e8f5e9' : reviewerAvg >= 3 ? '#fff9c4' : '#ffebee',
+                                                                                color: reviewerAvg >= 4 ? '#2e7d32' : reviewerAvg >= 3 ? '#f57c00' : '#c62828',
+                                                                                fontWeight: 600,
+                                                                            }}
+                                                                        />
+                                                                    </Box>
+                                                                );
+                                                            })}
                                                         </Box>
                                                     ) : (
                                                         <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>

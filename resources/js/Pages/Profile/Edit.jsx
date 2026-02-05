@@ -9,7 +9,6 @@ import {
     Grid,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import { usePage } from '@inertiajs/react';
@@ -222,37 +221,6 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 Ensure your account is using a long, random password to stay secure.
                             </Typography>
                             <UpdatePasswordForm />
-                        </Paper>
-                    </Grid>
-
-                    {/* Delete Account */}
-                    <Grid item xs={12}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 4,
-                                border: '2px solid #ffebee',
-                                borderRadius: 2,
-                                bgcolor: '#fff5f5'
-                            }}
-                        >
-                            <Typography
-                                variant="h6"
-                                sx={{
-                                    fontWeight: 600,
-                                    mb: 1,
-                                    color: '#d32f2f',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}
-                            >
-                                ⚠️ Delete Account
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                                Once your account is deleted, all of its resources and data will be permanently deleted.
-                            </Typography>
-                            <DeleteUserForm />
                         </Paper>
                     </Grid>
                 </Grid>

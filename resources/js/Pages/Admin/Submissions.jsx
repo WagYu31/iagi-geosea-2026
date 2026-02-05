@@ -31,22 +31,35 @@ import {
     ListItemSecondaryAction,
     Divider,
     Alert,
+    InputAdornment,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PeopleIcon from '@mui/icons-material/People';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [selected, setSelected] = useState([]);
     const [bulkStatus, setBulkStatus] = useState('');
     const [assignDialog, setAssignDialog] = useState({ open: false, submission: null });
     const [selectedReviewers, setSelectedReviewers] = useState([]);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Filter submissions based on status and search term
+    const filteredSubmissions = submissions.filter(submission => {
+        const matchesStatus = statusFilter === 'all' || submission.status === statusFilter;
+        const matchesSearch = searchTerm === '' ||
+            submission.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            submission.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesStatus && matchesSearch;
+    });
 
     const handleSelectAll = (event) => {
         if (event.target.checked) {
-            setSelected(submissions.map(s => s.id));
+            setSelected(filteredSubmissions.map(s => s.id));
         } else {
             setSelected([]);
         }
@@ -231,6 +244,45 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                     </Button>
                 </Box>
 
+                {/* Search and Filter Bar */}
+                <Paper elevation={0} sx={{ p: 2, mb: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <TextField
+                            placeholder="Search by title or author..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            size="small"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: 'text.secondary' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{ flex: 1, minWidth: 250 }}
+                        />
+                        <FormControl size="small" sx={{ minWidth: 180 }}>
+                            <InputLabel>Filter by Status</InputLabel>
+                            <Select
+                                value={statusFilter}
+                                label="Filter by Status"
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                            >
+                                <MenuItem value="all">All Status ({submissions.length})</MenuItem>
+                                <MenuItem value="pending">Pending ({submissions.filter(s => s.status === 'pending').length})</MenuItem>
+                                <MenuItem value="under_review">Under Review ({submissions.filter(s => s.status === 'under_review').length})</MenuItem>
+                                <MenuItem value="revision_required_phase1">Revision Phase 1 ({submissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
+                                <MenuItem value="revision_required_phase2">Revision Phase 2 ({submissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
+                                <MenuItem value="accepted">Accepted ({submissions.filter(s => s.status === 'accepted').length})</MenuItem>
+                                <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Typography variant="body2" color="text.secondary">
+                            Showing {filteredSubmissions.length} of {submissions.length} submissions
+                        </Typography>
+                    </Box>
+                </Paper>
+
                 {/* Bulk Actions Toolbar */}
                 {selected.length > 0 && (
                     <Paper elevation={0} sx={{ p: 2, mb: 2, border: '1px solid #e0e0e0', borderRadius: 2, backgroundColor: '#f8f9fa' }}>
@@ -276,8 +328,8 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                 <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
                                     <TableCell padding="checkbox">
                                         <Checkbox
-                                            indeterminate={selected.length > 0 && selected.length < submissions.length}
-                                            checked={submissions.length > 0 && selected.length === submissions.length}
+                                            indeterminate={selected.length > 0 && selected.length < filteredSubmissions.length}
+                                            checked={filteredSubmissions.length > 0 && selected.length === filteredSubmissions.length}
                                             onChange={handleSelectAll}
                                         />
                                     </TableCell>
@@ -290,19 +342,20 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Payment</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Reviewers</TableCell>
+                                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {submissions.length === 0 ? (
+                                {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={10} align="center">
+                                        <TableCell colSpan={11} align="center">
                                             <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
                                                 No submissions found
                                             </Typography>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    submissions.map((submission) => {
+                                    filteredSubmissions.map((submission) => {
                                         const isItemSelected = isSelected(submission.id);
                                         const assignedReviewers = submission.reviews || [];
                                         const reviewerCount = assignedReviewers.length;
@@ -434,6 +487,25 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                             Assign
                                                         </Button>
                                                     )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => {
+                                                            if (confirm('Are you sure you want to delete this submission? This action cannot be undone and will delete all related reviews and payments.')) {
+                                                                router.delete(route('admin.submissions.delete', submission.id), {
+                                                                    preserveScroll: true,
+                                                                });
+                                                            }
+                                                        }}
+                                                        sx={{
+                                                            color: '#e53935',
+                                                            '&:hover': { backgroundColor: '#ffebee' }
+                                                        }}
+                                                        title="Delete Submission"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
                                                 </TableCell>
                                             </TableRow>
                                         );

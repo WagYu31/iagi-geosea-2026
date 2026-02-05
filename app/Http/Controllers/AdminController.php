@@ -334,6 +334,27 @@ class AdminController extends Controller
         ]);
     }
 
+    public function deleteSubmission($id)
+    {
+        $submission = Submission::findOrFail($id);
+        
+        // Delete related reviews first
+        Review::where('submission_id', $id)->delete();
+        
+        // Delete related payments
+        Payment::where('submission_id', $id)->delete();
+        
+        // Delete the submission file if exists
+        if ($submission->file_path && Storage::disk('public')->exists($submission->file_path)) {
+            Storage::disk('public')->delete($submission->file_path);
+        }
+        
+        // Delete the submission
+        $submission->delete();
+
+        return back()->with('success', 'Submission deleted successfully!');
+    }
+
     public function payments()
     {
         $payments = Payment::with(['user', 'submission'])
