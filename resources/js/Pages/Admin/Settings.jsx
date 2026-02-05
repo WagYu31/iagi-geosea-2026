@@ -168,7 +168,13 @@ export default function Settings({ settings, submissionSettings }) {
             ? speakersFromDB
             : [{ name: '', title: '', photo: '', institution: '' }]
     );
+    const [speakersDescription, setSpeakersDescription] = useState(
+        getSettingValue('keynote_speakers_description', 'Distinguished experts bridging the gap between geological science and practical sustainability.')
+    );
     const [sponsors, setSponsors] = useState(getSettingValue('sponsors', []));
+    const [sponsorsDescription, setSponsorsDescription] = useState(
+        getSettingValue('sponsors_description', 'Empowering the future of geological science through strategic partnerships.')
+    );
     const [resources, setResources] = useState(getSettingValue('resources', []));
     const [savingCountdown, setSavingCountdown] = useState(false);
     const [savingContactInfo, setSavingContactInfo] = useState(false);
@@ -354,18 +360,35 @@ export default function Settings({ settings, submissionSettings }) {
 
         setSavingSpeakers(true);
         try {
+            // Save speakers
             await router.patch(route('admin.settings.update', settingId), {
                 value: JSON.stringify(speakers),
             }, {
                 preserveScroll: true,
-                onSuccess: () => {
-                    alert('Keynote speakers updated successfully!');
-                },
-                onError: (errors) => {
-                    console.error('Save failed:', errors);
-                    alert('Failed to save keynote speakers');
-                },
             });
+
+            // Save speakers description
+            const descSettingId = getSettingId('keynote_speakers_description');
+            if (descSettingId) {
+                await router.patch(route('admin.settings.update', descSettingId), {
+                    value: speakersDescription,
+                }, {
+                    preserveScroll: true,
+                });
+            } else {
+                // Create new setting if not exists
+                await router.post(route('admin.settings.store'), {
+                    key: 'keynote_speakers_description',
+                    value: speakersDescription,
+                }, {
+                    preserveScroll: true,
+                });
+            }
+
+            alert('Keynote speakers updated successfully!');
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert('Failed to save keynote speakers');
         } finally {
             setSavingSpeakers(false);
         }
@@ -394,24 +417,36 @@ export default function Settings({ settings, submissionSettings }) {
 
         setSavingSponsors(true);
         try {
+            // Save sponsors
             await router.patch(route('admin.settings.update', settingId), {
                 value: JSON.stringify(sponsors),
             }, {
                 preserveScroll: true,
-                onSuccess: () => {
-                    alert('Sponsors saved successfully!');
-                },
-                onError: (errors) => {
-                    console.error('Save failed:', errors);
-                    alert('Failed to save sponsors');
-                },
-                onFinish: () => {
-                    setSavingSponsors(false);
-                },
             });
+
+            // Save sponsors description
+            const descSettingId = getSettingId('sponsors_description');
+            if (descSettingId) {
+                await router.patch(route('admin.settings.update', descSettingId), {
+                    value: sponsorsDescription,
+                }, {
+                    preserveScroll: true,
+                });
+            } else {
+                // Create new setting if not exists
+                await router.post(route('admin.settings.store'), {
+                    key: 'sponsors_description',
+                    value: sponsorsDescription,
+                }, {
+                    preserveScroll: true,
+                });
+            }
+
+            alert('Sponsors saved successfully!');
         } catch (error) {
             console.error('Save error:', error);
             alert('Failed to save sponsors');
+        } finally {
             setSavingSponsors(false);
         }
     };
@@ -1338,6 +1373,19 @@ export default function Settings({ settings, submissionSettings }) {
                                             </Button>
                                         </Box>
 
+                                        {/* Speakers Description */}
+                                        <TextField
+                                            fullWidth
+                                            label="Speakers Section Description"
+                                            value={speakersDescription}
+                                            onChange={(e) => setSpeakersDescription(e.target.value)}
+                                            multiline
+                                            rows={2}
+                                            placeholder="Description text shown below 'Keynote Speakers' heading"
+                                            helperText="This text appears on the landing page under the Keynote Speakers title"
+                                            sx={{ mb: 3 }}
+                                        />
+
                                         <Grid container spacing={2}>
                                             {speakers.map((speaker, index) => (
                                                 <Grid item xs={12} sm={6} md={3} key={index}>
@@ -1466,6 +1514,19 @@ export default function Settings({ settings, submissionSettings }) {
                                                 Add Sponsor
                                             </Button>
                                         </Box>
+
+                                        {/* Sponsors Description */}
+                                        <TextField
+                                            fullWidth
+                                            label="Sponsors Section Description"
+                                            value={sponsorsDescription}
+                                            onChange={(e) => setSponsorsDescription(e.target.value)}
+                                            multiline
+                                            rows={2}
+                                            placeholder="Description text shown below 'Partners & Sponsors' heading"
+                                            helperText="This text appears on the landing page under the Partners & Sponsors title"
+                                            sx={{ mb: 3 }}
+                                        />
 
                                         <Grid container spacing={2}>
                                             {sponsors.map((sponsor, index) => (

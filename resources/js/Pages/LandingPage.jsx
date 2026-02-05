@@ -69,7 +69,9 @@ export default function LandingPage({ auth }) {
 
     const [settings, setSettings] = useState({
         keynote_speakers: [],
+        keynote_speakers_description: 'Distinguished experts bridging the gap between geological science and practical sustainability.',
         sponsors: [],
+        sponsors_description: 'Empowering the future of geological science through strategic partnerships.',
         resources: [],
         timeline: [],
         countdown_target_date: '2026-01-18T00:00:00',
@@ -1113,248 +1115,6 @@ export default function LandingPage({ auth }) {
                     </Container>
                 </Box>
 
-                {/* Keynote Speakers Section */}
-                <Box
-                    id="speakers"
-                    ref={speakersRef}
-                    sx={{
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-                        py: { xs: 6, sm: 8, md: 10, lg: 12 },
-                        scrollMarginTop: '80px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: '-50%',
-                            left: '-20%',
-                            width: '50%',
-                            height: '100%',
-                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.03) 0%, transparent 60%)',
-                            pointerEvents: 'none',
-                        },
-                        transform: speakersVisible ? 'translateY(0)' : 'translateY(50px)',
-                        opacity: speakersVisible ? 1 : 0,
-                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transitionDelay: '0.2s',
-                    }}
-                >
-                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        {/* Section Header */}
-                        <Box sx={{ mb: { xs: 4, md: 6 } }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                <Box>
-                                    <Typography
-                                        variant="overline"
-                                        sx={{
-                                            color: '#0d7a6a',
-                                            fontWeight: 600,
-                                            letterSpacing: '0.15em',
-                                            fontSize: '0.75rem',
-                                            display: 'block',
-                                            mb: 1.5,
-                                        }}
-                                    >
-                                        VISIONARIES
-                                    </Typography>
-                                    <Typography
-                                        variant="h3"
-                                        sx={{
-                                            fontWeight: 800,
-                                            color: '#111827',
-                                            fontSize: { xs: '2rem', md: '2.5rem', lg: '3rem' },
-                                            mb: 2,
-                                            letterSpacing: '-0.02em',
-                                        }}
-                                    >
-                                        Keynote Speakers
-                                    </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            color: '#6b7280',
-                                            maxWidth: '600px',
-                                            lineHeight: 1.7,
-                                            fontSize: { xs: '0.95rem', md: '1rem' },
-                                        }}
-                                    >
-                                        Distinguished experts bridging the gap between geological science and practical sustainability.
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Box>
-
-                        {/* Speaker Cards - Responsive Horizontal Scroll */}
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexWrap: { xs: 'nowrap', lg: 'wrap' },
-                                justifyContent: { lg: 'center' },
-                                gap: { xs: 2, sm: 2.5, md: 3, lg: 3 },
-                                overflowX: { xs: 'auto', lg: 'visible' },
-                                overflowY: 'visible',
-                                scrollSnapType: { xs: 'x mandatory', lg: 'none' },
-                                scrollBehavior: 'smooth',
-                                pb: { xs: 2, lg: 3 },
-                                px: { xs: 2, md: 0 },
-                                mx: { xs: -2, md: 0 },
-                                // Custom scrollbar styling
-                                '&::-webkit-scrollbar': {
-                                    height: '8px',
-                                    display: { xs: 'block', lg: 'none' },
-                                },
-                                '&::-webkit-scrollbar-track': {
-                                    bgcolor: '#e5e7eb',
-                                    borderRadius: '4px',
-                                },
-                                '&::-webkit-scrollbar-thumb': {
-                                    bgcolor: '#0d7a6a',
-                                    borderRadius: '4px',
-                                    '&:hover': {
-                                        bgcolor: '#094d42',
-                                    },
-                                },
-                            }}
-                        >
-                            {(settings.keynote_speakers && settings.keynote_speakers.length > 0
-                                ? settings.keynote_speakers.filter(speaker => speaker.name && speaker.name.trim() !== '')
-                                : []
-                            ).map((speaker, index) => (
-                                <Box
-                                    key={index}
-                                    sx={{
-                                        // Responsive card sizing with breakpoints
-                                        // xs (0-600px): 1 card visible (85% width)
-                                        // sm (600-900px): 2 cards visible (48% width each)
-                                        // md (900-1200px): 2 cards visible (48% width each)
-                                        // lg (1200px+): 3 cards visible (31% width each)
-                                        minWidth: {
-                                            xs: '85%',
-                                            sm: '48%',
-                                            md: '48%',
-                                            lg: '31%',
-                                        },
-                                        flex: {
-                                            xs: '0 0 85%',
-                                            sm: '0 0 48%',
-                                            md: '0 0 48%',
-                                            lg: '0 0 31%',
-                                        },
-                                        scrollSnapAlign: { xs: 'center', lg: 'none' },
-                                        transform: speakersVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
-                                        opacity: speakersVisible ? 1 : 0,
-                                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        transitionDelay: `${0.4 + index * 0.1}s`,
-                                    }}
-                                >
-                                    {/* Speaker Card with Image Background */}
-                                    <Box
-                                        sx={{
-                                            position: 'relative',
-                                            aspectRatio: '3/4',
-                                            borderRadius: '20px',
-                                            overflow: 'hidden',
-                                            cursor: 'pointer',
-                                            boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            '&:hover': {
-                                                transform: 'translateY(-12px) scale(1.02)',
-                                                boxShadow: '0 25px 50px rgba(13, 148, 136, 0.25)',
-                                                '& .speaker-overlay': {
-                                                    background: 'linear-gradient(to top, rgba(9, 77, 66, 0.9) 0%, rgba(13, 122, 106, 0.6) 40%, transparent 100%)',
-                                                },
-                                                '& .speaker-image': {
-                                                    transform: 'scale(1.1)',
-                                                },
-                                            },
-                                        }}
-                                    >
-                                        {/* Background Image */}
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                backgroundImage: speaker.photo ? `url(${speaker.photo})` : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center',
-                                            }}
-                                        />
-
-                                        {/* Gradient Overlay */}
-                                        <Box
-                                            className="speaker-overlay"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                background: 'linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 30%)',
-                                                transition: 'background 0.4s ease',
-                                            }}
-                                        />
-
-                                        {/* Speaker Name on Card */}
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                bottom: 0,
-                                                left: 0,
-                                                right: 0,
-                                                p: 3,
-                                                zIndex: 2,
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    color: 'white',
-                                                    fontWeight: 700,
-                                                    fontSize: { xs: '1.1rem', md: '1.25rem' },
-                                                    lineHeight: 1.3,
-                                                }}
-                                            >
-                                                {speaker.name}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-
-                                    {/* Speaker Info Below Card */}
-                                    <Box sx={{ mt: 2 }}>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: '#0d7a6a',
-                                                fontWeight: 600,
-                                                fontSize: '0.85rem',
-                                                letterSpacing: '0.05em',
-                                                textTransform: 'uppercase',
-                                                mb: 0.5,
-                                            }}
-                                        >
-                                            {speaker.title}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: '#9ca3af',
-                                                fontSize: '0.875rem',
-                                            }}
-                                        >
-                                            {speaker.institution}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            ))}
-                        </Box>
-
-
-                    </Container>
-                </Box>
-
                 {/* Timeline Section */}
                 <Box
                     id="timeline"
@@ -1866,6 +1626,249 @@ export default function LandingPage({ auth }) {
                 </Box>
 
 
+                {/* Keynote Speakers Section */}
+                <Box
+                    id="speakers"
+                    ref={speakersRef}
+                    sx={{
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                        py: { xs: 6, sm: 8, md: 10, lg: 12 },
+                        scrollMarginTop: '80px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '-50%',
+                            left: '-20%',
+                            width: '50%',
+                            height: '100%',
+                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.03) 0%, transparent 60%)',
+                            pointerEvents: 'none',
+                        },
+                        transform: speakersVisible ? 'translateY(0)' : 'translateY(50px)',
+                        opacity: speakersVisible ? 1 : 0,
+                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transitionDelay: '0.2s',
+                    }}
+                >
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                        {/* Section Header */}
+                        <Box sx={{ mb: { xs: 4, md: 6 } }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                <Box>
+                                    <Typography
+                                        variant="overline"
+                                        sx={{
+                                            color: '#0d7a6a',
+                                            fontWeight: 600,
+                                            letterSpacing: '0.15em',
+                                            fontSize: '0.75rem',
+                                            display: 'block',
+                                            mb: 1.5,
+                                        }}
+                                    >
+                                        VISIONARIES
+                                    </Typography>
+                                    <Typography
+                                        variant="h3"
+                                        sx={{
+                                            fontWeight: 800,
+                                            color: '#111827',
+                                            fontSize: { xs: '2rem', md: '2.5rem', lg: '3rem' },
+                                            mb: 2,
+                                            letterSpacing: '-0.02em',
+                                        }}
+                                    >
+                                        Keynote Speakers
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            color: '#6b7280',
+                                            maxWidth: '600px',
+                                            lineHeight: 1.7,
+                                            fontSize: { xs: '0.95rem', md: '1rem' },
+                                        }}
+                                    >
+                                        {settings.keynote_speakers_description}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
+
+                        {/* Speaker Cards - Responsive Horizontal Scroll */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexWrap: { xs: 'nowrap', lg: 'wrap' },
+                                justifyContent: { lg: 'center' },
+                                gap: { xs: 2, sm: 2.5, md: 3, lg: 3 },
+                                overflowX: { xs: 'auto', lg: 'visible' },
+                                overflowY: 'visible',
+                                scrollSnapType: { xs: 'x mandatory', lg: 'none' },
+                                scrollBehavior: 'smooth',
+                                pb: { xs: 2, lg: 3 },
+                                px: { xs: 2, md: 0 },
+                                mx: { xs: -2, md: 0 },
+                                // Custom scrollbar styling
+                                '&::-webkit-scrollbar': {
+                                    height: '8px',
+                                    display: { xs: 'block', lg: 'none' },
+                                },
+                                '&::-webkit-scrollbar-track': {
+                                    bgcolor: '#e5e7eb',
+                                    borderRadius: '4px',
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    bgcolor: '#0d7a6a',
+                                    borderRadius: '4px',
+                                    '&:hover': {
+                                        bgcolor: '#094d42',
+                                    },
+                                },
+                            }}
+                        >
+                            {(settings.keynote_speakers && settings.keynote_speakers.length > 0
+                                ? settings.keynote_speakers.filter(speaker => speaker.name && speaker.name.trim() !== '')
+                                : []
+                            ).map((speaker, index) => (
+                                <Box
+                                    key={index}
+                                    sx={{
+                                        // Responsive card sizing with breakpoints
+                                        // xs (0-600px): 1 card visible (85% width)
+                                        // sm (600-900px): 2 cards visible (48% width each)
+                                        // md (900-1200px): 2 cards visible (48% width each)
+                                        // lg (1200px+): 3 cards visible (31% width each)
+                                        minWidth: {
+                                            xs: '85%',
+                                            sm: '48%',
+                                            md: '48%',
+                                            lg: '31%',
+                                        },
+                                        flex: {
+                                            xs: '0 0 85%',
+                                            sm: '0 0 48%',
+                                            md: '0 0 48%',
+                                            lg: '0 0 31%',
+                                        },
+                                        scrollSnapAlign: { xs: 'center', lg: 'none' },
+                                        transform: speakersVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
+                                        opacity: speakersVisible ? 1 : 0,
+                                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transitionDelay: `${0.4 + index * 0.1}s`,
+                                    }}
+                                >
+                                    {/* Speaker Card with Image Background */}
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            aspectRatio: '3/4',
+                                            borderRadius: '20px',
+                                            overflow: 'hidden',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            '&:hover': {
+                                                transform: 'translateY(-12px) scale(1.02)',
+                                                boxShadow: '0 25px 50px rgba(13, 148, 136, 0.25)',
+                                                '& .speaker-overlay': {
+                                                    background: 'linear-gradient(to top, rgba(9, 77, 66, 0.9) 0%, rgba(13, 122, 106, 0.6) 40%, transparent 100%)',
+                                                },
+                                                '& .speaker-image': {
+                                                    transform: 'scale(1.1)',
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {/* Background Image */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                backgroundImage: speaker.photo ? `url(${speaker.photo})` : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            }}
+                                        />
+
+                                        {/* Gradient Overlay */}
+                                        <Box
+                                            className="speaker-overlay"
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                background: 'linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 30%)',
+                                                transition: 'background 0.4s ease',
+                                            }}
+                                        />
+
+                                        {/* Speaker Name on Card */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                bottom: 0,
+                                                left: 0,
+                                                right: 0,
+                                                p: 3,
+                                                zIndex: 2,
+                                            }}
+                                        >
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    color: 'white',
+                                                    fontWeight: 700,
+                                                    fontSize: { xs: '1.1rem', md: '1.25rem' },
+                                                    lineHeight: 1.3,
+                                                }}
+                                            >
+                                                {speaker.name}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Speaker Info Below Card */}
+                                    <Box sx={{ mt: 2 }}>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                color: '#0d7a6a',
+                                                fontWeight: 600,
+                                                fontSize: '0.85rem',
+                                                letterSpacing: '0.05em',
+                                                textTransform: 'uppercase',
+                                                mb: 0.5,
+                                            }}
+                                        >
+                                            {speaker.title}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                color: '#9ca3af',
+                                                fontSize: '0.875rem',
+                                            }}
+                                        >
+                                            {speaker.institution}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
+
+                    </Container>
+                </Box>
+
+
                 {/* Sponsors Section */}
                 <Box
                     ref={sponsorsRef}
@@ -1950,7 +1953,7 @@ export default function LandingPage({ auth }) {
                                 transitionDelay: '0.4s',
                             }}
                         >
-                            Empowering the future of geological science through strategic partnerships.
+                            {settings.sponsors_description}
                         </Typography>
 
                         {/* Group sponsors by tier */}
