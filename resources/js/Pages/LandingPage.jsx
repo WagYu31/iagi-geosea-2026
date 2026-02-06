@@ -71,7 +71,7 @@ export default function LandingPage({ auth }) {
         keynote_speakers: [],
         keynote_speakers_description: 'Distinguished experts bridging the gap between geological science and practical sustainability.',
         sponsors: [],
-        sponsors_description: 'Empowering the future of geological science through strategic partnerships.',
+        sponsors_description: '',
         resources: [],
         timeline: [],
         countdown_target_date: '2026-01-18T00:00:00',
@@ -245,7 +245,7 @@ export default function LandingPage({ auth }) {
                                         transform: scrolled ? 'scale(1)' : 'scale(1)',
                                     }}
                                 >
-                                    PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
+                                    55th PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -696,7 +696,7 @@ export default function LandingPage({ auth }) {
                                         color: '#4dd4ac',
                                         mb: { xs: 2, sm: 2.5 },
                                         fontWeight: 600,
-                                        fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                                        fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                                         letterSpacing: { xs: '0.15em', sm: '0.2em' },
                                         display: 'block',
                                         textShadow: '0 2px 10px rgba(77, 212, 172, 0.2)',
@@ -711,7 +711,7 @@ export default function LandingPage({ auth }) {
                                         opacity: 0.95,
                                         fontWeight: 400,
                                         lineHeight: { xs: 1.6, md: 1.5 },
-                                        fontSize: { xs: '1rem', sm: '1.15rem', md: '1.35rem', lg: '1.5rem' },
+                                        fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem', lg: '2rem' },
                                         color: 'white',
                                         textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                                     }}
@@ -1631,7 +1631,10 @@ export default function LandingPage({ auth }) {
                     id="speakers"
                     ref={speakersRef}
                     sx={{
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                        backgroundImage: 'url("/keynote-speakers-bg.jpg")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
                         py: { xs: 6, sm: 8, md: 10, lg: 12 },
                         scrollMarginTop: '80px',
                         position: 'relative',
@@ -1639,11 +1642,11 @@ export default function LandingPage({ auth }) {
                         '&::before': {
                             content: '""',
                             position: 'absolute',
-                            top: '-50%',
-                            left: '-20%',
-                            width: '50%',
-                            height: '100%',
-                            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.03) 0%, transparent 60%)',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(248,250,252,0.35) 100%)',
                             pointerEvents: 'none',
                         },
                         transform: speakersVisible ? 'translateY(0)' : 'translateY(50px)',
@@ -1652,49 +1655,49 @@ export default function LandingPage({ auth }) {
                         transitionDelay: '0.2s',
                     }}
                 >
-                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                         {/* Section Header */}
-                        <Box sx={{ mb: { xs: 4, md: 6 } }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                <Box>
-                                    <Typography
-                                        variant="overline"
-                                        sx={{
-                                            color: '#0d7a6a',
-                                            fontWeight: 600,
-                                            letterSpacing: '0.15em',
-                                            fontSize: '0.75rem',
-                                            display: 'block',
-                                            mb: 1.5,
-                                        }}
-                                    >
-                                        VISIONARIES
-                                    </Typography>
-                                    <Typography
-                                        variant="h3"
-                                        sx={{
-                                            fontWeight: 800,
-                                            color: '#111827',
-                                            fontSize: { xs: '2rem', md: '2.5rem', lg: '3rem' },
-                                            mb: 2,
-                                            letterSpacing: '-0.02em',
-                                        }}
-                                    >
-                                        Keynote Speakers
-                                    </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            color: '#6b7280',
-                                            maxWidth: '600px',
-                                            lineHeight: 1.7,
-                                            fontSize: { xs: '0.95rem', md: '1rem' },
-                                        }}
-                                    >
-                                        {settings.keynote_speakers_description}
-                                    </Typography>
-                                </Box>
-                            </Box>
+                        <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#0d7a6a',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    fontSize: { xs: '1.2rem', md: '1.5rem' },
+                                    display: 'block',
+                                    mb: 1.5,
+                                    textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+                                }}
+                            >
+                                VISIONARIES
+                            </Typography>
+                            <Typography
+                                variant="h3"
+                                sx={{
+                                    fontWeight: 800,
+                                    color: '#1e3a5f',
+                                    fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+                                    mb: 2,
+                                    letterSpacing: '-0.02em',
+                                    textShadow: '0 2px 4px rgba(255,255,255,0.8)',
+                                }}
+                            >
+                                Keynote Speakers
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    color: '#374151',
+                                    maxWidth: '600px',
+                                    mx: 'auto',
+                                    lineHeight: 1.7,
+                                    fontSize: { xs: '1.1rem', md: '1.25rem' },
+                                    textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+                                }}
+                            >
+                                {settings.keynote_speakers_description}
+                            </Typography>
                         </Box>
 
                         {/* Speaker Cards - Responsive Horizontal Scroll */}
@@ -1836,25 +1839,27 @@ export default function LandingPage({ auth }) {
                                     </Box>
 
                                     {/* Speaker Info Below Card */}
-                                    <Box sx={{ mt: 2 }}>
+                                    <Box sx={{ mt: 2.5, textAlign: 'center' }}>
                                         <Typography
-                                            variant="body2"
                                             sx={{
-                                                color: '#0d7a6a',
-                                                fontWeight: 600,
-                                                fontSize: '0.85rem',
+                                                color: '#ffffff',
+                                                fontWeight: 700,
+                                                fontSize: '1.1rem',
                                                 letterSpacing: '0.05em',
                                                 textTransform: 'uppercase',
                                                 mb: 0.5,
+                                                textShadow: '0 2px 6px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.5)',
                                             }}
                                         >
                                             {speaker.title}
                                         </Typography>
                                         <Typography
-                                            variant="body2"
                                             sx={{
-                                                color: '#9ca3af',
-                                                fontSize: '0.875rem',
+                                                color: 'rgba(255,255,255,0.9)',
+                                                fontSize: '1rem',
+                                                fontWeight: 500,
+                                                fontStyle: 'italic',
+                                                textShadow: '0 2px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4)',
                                             }}
                                         >
                                             {speaker.institution}
@@ -1865,16 +1870,211 @@ export default function LandingPage({ auth }) {
                         </Box>
 
 
+
                     </Container>
                 </Box>
 
+                {/* Submission Procedure Section */}
+                <Box
+                    sx={{
+                        py: { xs: 6, sm: 7, md: 8, lg: 10 },
+                        background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                        {/* Title */}
+                        <Typography
+                            variant="h4"
+                            align="center"
+                            gutterBottom
+                            sx={{
+                                fontWeight: 800,
+                                mb: 2,
+                                color: '#111827',
+                                fontSize: { xs: '1.75rem', md: '2.5rem' },
+                                letterSpacing: '0.05em',
+                            }}
+                        >
+                            SUBMISSION PROCEDURE
+                        </Typography>
+
+                        <Typography
+                            variant="body1"
+                            align="center"
+                            sx={{
+                                mb: { xs: 4, md: 6 },
+                                color: '#6b7280',
+                                maxWidth: '700px',
+                                mx: 'auto',
+                                fontSize: { xs: '0.95rem', md: '1.1rem' },
+                            }}
+                        >
+                            Follow these simple steps to submit your abstract for the conference
+                        </Typography>
+
+                        {/* White Box Container */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: { xs: 3, sm: 4, md: 5 },
+                                borderRadius: '20px',
+                                bgcolor: 'white',
+                                border: '1px solid rgba(0,0,0,0.08)',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                            }}
+                        >
+                            {/* Two Column Layout - Dynamic Sections */}
+                            <Grid container spacing={6}>
+                                {(() => {
+                                    // Get procedure data with backward compatibility
+                                    const procedureData = settings.submission_procedure;
+                                    let sections = [];
+
+                                    if (Array.isArray(procedureData)) {
+                                        // New array format
+                                        sections = procedureData;
+                                    } else if (procedureData && typeof procedureData === 'object') {
+                                        // Old object format - convert to array
+                                        if (procedureData.pendaftaran) {
+                                            sections.push({ title: 'PENDAFTARAN', items: procedureData.pendaftaran });
+                                        }
+                                        if (procedureData.abstract) {
+                                            sections.push({ title: 'SUBMISSION ABSTRACT', items: procedureData.abstract });
+                                        }
+                                    }
+
+                                    // Fallback to defaults if empty
+                                    if (sections.length === 0) {
+                                        sections = [
+                                            {
+                                                title: 'PENDAFTARAN',
+                                                items: [
+                                                    { text: 'Register on our platform with your email', link: '/register' },
+                                                    { text: 'Complete your profile information', link: '/dashboard' },
+                                                    { text: 'Choose your participation category', link: '/register' },
+                                                    { text: 'Wait for account verification', link: '' },
+                                                ],
+                                            },
+                                            {
+                                                title: 'SUBMISSION ABSTRACT',
+                                                items: [
+                                                    { text: 'Download the abstract template from Resources', link: '#resources' },
+                                                    { text: 'Prepare your abstract following the guidelines', link: '#resources' },
+                                                    { text: 'Upload your abstract through the submission portal', link: '/dashboard' },
+                                                    { text: 'Track your submission status in your dashboard', link: '/dashboard' },
+                                                ],
+                                            },
+                                        ];
+                                    }
+
+                                    return sections.map((section, sectionIndex) => (
+                                        <Grid item xs={12} md={6} key={sectionIndex}>
+                                            <Typography
+                                                variant="h5"
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#111827',
+                                                    mb: 3,
+                                                    fontSize: { xs: '1.5rem', md: '1.75rem' },
+                                                    letterSpacing: '0.02em',
+                                                }}
+                                            >
+                                                {section.title}
+                                            </Typography>
+
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                                                {(section.items || []).map((item, index) => {
+                                                    // Determine if this is an external link (PDF/storage) or internal route
+                                                    const isExternalLink = item.link && (item.link.includes('/storage/') || item.link.startsWith('http'));
+                                                    const LinkComponent = isExternalLink ? 'a' : (item.link ? Link : 'div');
+
+                                                    return (
+                                                        <Box
+                                                            key={index}
+                                                            component={LinkComponent}
+                                                            href={item.link || undefined}
+                                                            target={isExternalLink ? '_blank' : undefined}
+                                                            rel={isExternalLink ? 'noopener noreferrer' : undefined}
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'flex-start',
+                                                                gap: 1.5,
+                                                                textDecoration: 'none',
+                                                                cursor: item.link ? 'pointer' : 'default',
+                                                                p: 1.5,
+                                                                mx: -1.5,
+                                                                borderRadius: '8px',
+                                                                transition: 'all 0.2s ease',
+                                                                '&:hover': item.link ? {
+                                                                    bgcolor: 'rgba(13, 122, 106, 0.08)',
+                                                                    transform: 'translateX(4px)',
+                                                                } : {},
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ color: '#0d7a6a', fontWeight: 600, fontSize: '1.25rem' }}>›</Typography>
+                                                            <Typography
+                                                                sx={{
+                                                                    color: item.link ? '#0d7a6a' : '#374151',
+                                                                    fontSize: { xs: '1rem', md: '1.1rem' },
+                                                                    lineHeight: 1.6,
+                                                                    fontWeight: item.link ? 500 : 400,
+                                                                    '&:hover': item.link ? {
+                                                                        textDecoration: 'underline',
+                                                                    } : {},
+                                                                }}
+                                                            >
+                                                                {item.text}
+                                                            </Typography>
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Box>
+                                        </Grid>
+                                    ));
+                                })()}
+                            </Grid>
+                        </Paper>
+
+                        {/* CTA Button */}
+                        <Box sx={{ textAlign: 'center', mt: 6 }}>
+                            <Button
+                                component={Link}
+                                href="/register"
+                                variant="contained"
+                                size="large"
+                                sx={{
+                                    bgcolor: '#0d7a6a',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    px: 5,
+                                    py: 1.5,
+                                    borderRadius: '12px',
+                                    textTransform: 'none',
+                                    boxShadow: '0 4px 16px rgba(13, 122, 106, 0.3)',
+                                    '&:hover': {
+                                        bgcolor: '#095c50',
+                                        boxShadow: '0 8px 24px rgba(13, 122, 106, 0.4)',
+                                    },
+                                }}
+                            >
+                                Start Your Submission
+                            </Button>
+                        </Box>
+                    </Container>
+                </Box>
 
                 {/* Sponsors Section */}
                 <Box
                     ref={sponsorsRef}
                     sx={{
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
-                        background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)',
+                        backgroundImage: 'url("/WhatsApp Image 2026-02-06 at 09.55.24.jpeg")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
                         position: 'relative',
                         overflow: 'hidden',
                         '&::before': {
@@ -1883,17 +2083,8 @@ export default function LandingPage({ auth }) {
                             top: 0,
                             left: 0,
                             right: 0,
-                            height: '5px',
-                            background: 'linear-gradient(90deg, #8b5cf6 0%, #a855f7 25%, #c084fc 50%, #a855f7 75%, #8b5cf6 100%)',
-                        },
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            bottom: '-20%',
-                            left: '-10%',
-                            width: '40%',
-                            height: '60%',
-                            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 60%)',
+                            bottom: 0,
+                            background: 'linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(248,250,252,0.35) 50%, rgba(226,232,240,0.35) 100%)',
                             pointerEvents: 'none',
                         },
                         transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)',
@@ -1903,22 +2094,6 @@ export default function LandingPage({ auth }) {
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        {/* Overline */}
-                        <Typography
-                            variant="overline"
-                            align="center"
-                            sx={{
-                                color: '#0d7a6a',
-                                fontWeight: 600,
-                                letterSpacing: '0.15em',
-                                fontSize: { xs: '0.85rem', md: '0.92rem' },
-                                display: 'block',
-                                mb: 1.5,
-                            }}
-                        >
-                            COLLABORATION
-                        </Typography>
-
                         {/* Main Title */}
                         <Typography
                             variant="h4"
@@ -1928,216 +2103,152 @@ export default function LandingPage({ auth }) {
                                 fontWeight: 800,
                                 mb: 2,
                                 color: '#111827',
-                                fontSize: { xs: '1.75rem', md: '2.125rem' },
+                                fontSize: { xs: '1.75rem', md: '2.5rem' },
                                 px: { xs: 2, sm: 0 },
+                                letterSpacing: '0.05em',
                             }}
                         >
-                            Partners & Sponsors
+                            SUPPORTED BY :
                         </Typography>
 
-                        {/* Subtitle */}
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            sx={{
-                                mb: { xs: 4, md: 6 },
-                                color: '#3b82f6',
-                                maxWidth: '600px',
-                                mx: 'auto',
-                                px: { xs: 2, sm: 0 },
-                                fontStyle: 'italic',
-                                fontSize: { xs: '0.95rem', md: '1rem' },
-                                transform: sponsorsVisible ? 'translateY(0)' : 'translateY(20px)',
-                                opacity: sponsorsVisible ? 1 : 0,
-                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transitionDelay: '0.4s',
-                            }}
-                        >
-                            {settings.sponsors_description}
-                        </Typography>
+                        {/* Subtitle - only show if description is not empty */}
+                        {settings.sponsors_description && settings.sponsors_description.trim() !== '' && (
+                            <Typography
+                                variant="body1"
+                                align="center"
+                                sx={{
+                                    mb: { xs: 4, md: 6 },
+                                    color: '#3b82f6',
+                                    maxWidth: '600px',
+                                    mx: 'auto',
+                                    px: { xs: 2, sm: 0 },
+                                    fontStyle: 'italic',
+                                    fontSize: { xs: '0.95rem', md: '1rem' },
+                                    transform: sponsorsVisible ? 'translateY(0)' : 'translateY(20px)',
+                                    opacity: sponsorsVisible ? 1 : 0,
+                                    transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    transitionDelay: '0.4s',
+                                }}
+                            >
+                                {settings.sponsors_description}
+                            </Typography>
+                        )}
 
-                        {/* Group sponsors by tier */}
+                        {/* Display all sponsors logos without tiers */}
                         {(() => {
                             const sponsors = settings.sponsors && settings.sponsors.length > 0 ? settings.sponsors : [];
-                            // Add default tier 'gold' for sponsors without tier property (backward compatibility)
-                            const sponsorsWithTier = sponsors.map(s => ({
-                                ...s,
-                                tier: s.tier || 'gold' // default to gold if no tier specified
-                            }));
-                            const platinumSponsors = sponsorsWithTier.filter(s => s.tier === 'platinum');
-                            const goldSponsors = sponsorsWithTier.filter(s => s.tier === 'gold');
-                            const silverSponsors = sponsorsWithTier.filter(s => s.tier === 'silver');
+                            if (sponsors.length === 0) return null;
 
-                            const renderSponsorTier = (tierSponsors, tierName, tierColor, tierBg) => {
-                                if (tierSponsors.length === 0) return null;
+                            // Duplicate sponsors for seamless infinite scroll
+                            const duplicatedSponsors = [...sponsors, ...sponsors, ...sponsors];
 
-                                // Duplicate sponsors for seamless infinite scroll
-                                const duplicatedSponsors = [...tierSponsors, ...tierSponsors, ...tierSponsors];
-
-                                return (
-                                    <Box key={tierName} sx={{ mb: 5 }}>
-                                        {/* Tier Label */}
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                                            <Chip
-                                                label={tierName}
-                                                sx={{
-                                                    bgcolor: tierBg,
-                                                    color: tierColor,
-                                                    fontWeight: 'bold',
-                                                    fontSize: '0.85rem',
-                                                    px: 2,
-                                                    boxShadow: 2,
-                                                }}
-                                            />
-                                        </Box>
-
-                                        {/* Full Width Marquee Container */}
+                            return (
+                                <Box sx={{ mb: 5 }}>
+                                    {/* Full Width Marquee Container */}
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            width: '100vw',
+                                            marginLeft: 'calc(-50vw + 50%)',
+                                            overflow: 'hidden',
+                                            '&::before, &::after': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                top: 0,
+                                                bottom: 0,
+                                                width: '60px',
+                                                zIndex: 2,
+                                                pointerEvents: 'none',
+                                            },
+                                            '&::before': {
+                                                left: 0,
+                                                background: 'linear-gradient(to right, rgba(255,255,255,0.5) 0%, transparent 100%)',
+                                            },
+                                            '&::after': {
+                                                right: 0,
+                                                background: 'linear-gradient(to left, rgba(255,255,255,0.5) 0%, transparent 100%)',
+                                            },
+                                        }}
+                                    >
                                         <Box
                                             sx={{
-                                                position: 'relative',
-                                                width: '100vw',
-                                                marginLeft: 'calc(-50vw + 50%)',
-                                                overflow: 'hidden',
-                                                '&::before, &::after': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    bottom: 0,
-                                                    width: '60px',
-                                                    zIndex: 2,
-                                                    pointerEvents: 'none',
+                                                display: 'flex',
+                                                gap: 4,
+                                                animation: 'marquee 40s linear infinite',
+                                                '&:hover': {
+                                                    animationPlayState: 'paused',
                                                 },
-                                                '&::before': {
-                                                    left: 0,
-                                                    background: 'linear-gradient(to right, #f5f7fa 0%, transparent 100%)',
-                                                },
-                                                '&::after': {
-                                                    right: 0,
-                                                    background: 'linear-gradient(to left, #f5f7fa 0%, transparent 100%)',
+                                                '@keyframes marquee': {
+                                                    '0%': { transform: 'translateX(0)' },
+                                                    '100%': { transform: `translateX(-${sponsors.length * 312}px)` },
                                                 },
                                             }}
                                         >
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    gap: 4,
-                                                    animation: 'marquee 40s linear infinite',
-                                                    '&:hover': {
-                                                        animationPlayState: 'paused',
-                                                    },
-                                                    '@keyframes marquee': {
-                                                        '0%': { transform: 'translateX(0)' },
-                                                        '100%': { transform: `translateX(-${tierSponsors.length * 312}px)` },
-                                                    },
-                                                }}
-                                            >
-                                                {duplicatedSponsors.map((sponsor, index) => (
-                                                    <Paper
-                                                        key={index}
-                                                        elevation={2}
-                                                        sx={{
-                                                            p: 3,
-                                                            minWidth: { xs: 220, sm: 260, md: 280 },
-                                                            height: { xs: 160, sm: 170, md: 180 },
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                            cursor: 'pointer',
-                                                            bgcolor: 'white',
-                                                            borderRadius: '20px',
-                                                            border: '1px solid rgba(0, 0, 0, 0.06)',
-                                                            flexShrink: 0,
-                                                            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-                                                            '&:hover': {
-                                                                transform: 'translateY(-8px) scale(1.03)',
-                                                                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.15)',
-                                                                borderColor: tierColor,
-                                                            },
-                                                        }}
-                                                    >
-                                                        {/* Logo Display */}
-                                                        {sponsor.logo ? (
-                                                            <Box
-                                                                sx={{
-                                                                    width: '100%',
-                                                                    height: '100px',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
-                                                                    mb: 1.5,
-                                                                }}
-                                                            >
-                                                                <img
-                                                                    src={sponsor.logo}
-                                                                    alt={sponsor.name}
-                                                                    style={{
-                                                                        maxWidth: '100%',
-                                                                        maxHeight: '100%',
-                                                                        objectFit: 'contain',
-                                                                    }}
-                                                                />
-                                                            </Box>
-                                                        ) : (
-                                                            <Box
-                                                                sx={{
-                                                                    width: '100%',
-                                                                    height: '100px',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
-                                                                    bgcolor: '#f9fafb',
-                                                                    borderRadius: 2,
-                                                                    mb: 1.5,
-                                                                }}
-                                                            >
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    sx={{
-                                                                        fontWeight: 'bold',
-                                                                        color: '#6b7280',
-                                                                        fontSize: '0.85rem',
-                                                                        textAlign: 'center',
-                                                                    }}
-                                                                >
-                                                                    {sponsor.name}
-                                                                </Typography>
-                                                            </Box>
-                                                        )}
-
-                                                        {/* Sponsor Name */}
-                                                        {sponsor.logo && (
-                                                            <Typography
-                                                                variant="body2"
-                                                                align="center"
-                                                                sx={{
-                                                                    fontWeight: 600,
-                                                                    color: '#374151',
-                                                                    fontSize: '0.8rem',
-                                                                    whiteSpace: 'nowrap',
-                                                                    overflow: 'hidden',
-                                                                    textOverflow: 'ellipsis',
+                                            {duplicatedSponsors.map((sponsor, index) => (
+                                                <Paper
+                                                    key={index}
+                                                    elevation={2}
+                                                    sx={{
+                                                        p: 3,
+                                                        minWidth: { xs: 220, sm: 260, md: 280 },
+                                                        height: { xs: 140, sm: 150, md: 160 },
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        cursor: 'pointer',
+                                                        bgcolor: 'white',
+                                                        borderRadius: '20px',
+                                                        border: '1px solid rgba(0, 0, 0, 0.06)',
+                                                        flexShrink: 0,
+                                                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
+                                                        '&:hover': {
+                                                            transform: 'translateY(-8px) scale(1.03)',
+                                                            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.15)',
+                                                        },
+                                                    }}
+                                                >
+                                                    {/* Logo Display Only */}
+                                                    {sponsor.logo ? (
+                                                        <Box
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={sponsor.logo}
+                                                                alt="Supported by"
+                                                                style={{
                                                                     maxWidth: '100%',
+                                                                    maxHeight: '100%',
+                                                                    objectFit: 'contain',
                                                                 }}
-                                                            >
-                                                                {sponsor.name}
-                                                            </Typography>
-                                                        )}
-                                                    </Paper>
-                                                ))}
-                                            </Box>
+                                                            />
+                                                        </Box>
+                                                    ) : (
+                                                        <Box
+                                                            sx={{
+                                                                width: 80,
+                                                                height: 80,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                bgcolor: '#f9fafb',
+                                                                borderRadius: 2,
+                                                            }}
+                                                        >
+                                                            <SettingsIcon sx={{ fontSize: 40, color: '#9ca3af' }} />
+                                                        </Box>
+                                                    )}
+                                                </Paper>
+                                            ))}
                                         </Box>
                                     </Box>
-                                );
-                            };
-
-                            return (
-                                <>
-                                    {renderSponsorTier(platinumSponsors, 'Platinum', '#475569', '#e2e8f0')}
-                                    {renderSponsorTier(goldSponsors, 'Gold', '#92400e', '#fef3c7')}
-                                    {renderSponsorTier(silverSponsors, 'Silver', '#3730a3', '#e0e7ff')}
-                                </>
+                                </Box>
                             );
                         })()}
                     </Container>

@@ -36,8 +36,11 @@ class LandingPageSettingController extends Controller
     public function update(Request $request, $setting)
     {
         $validated = $request->validate([
-            'value' => 'required',
+            'value' => 'nullable',
         ]);
+        
+        // Handle empty value - save as empty string
+        $validated['value'] = $validated['value'] ?? '';
 
         // Find by key or id
         $settingModel = LandingPageSetting::where('key', $setting)->first();
@@ -71,14 +74,17 @@ class LandingPageSettingController extends Controller
     {
         $validated = $request->validate([
             'key' => 'required|string|unique:landing_page_settings,key',
-            'value' => 'required',
+            'value' => 'nullable',
             'group' => 'nullable|string',
             'type' => 'nullable|string',
         ]);
+        
+        // Handle empty value
+        $value = $validated['value'] ?? '';
 
         LandingPageSetting::create([
             'key' => $validated['key'],
-            'value' => $validated['value'],
+            'value' => $value,
             'section' => $validated['group'] ?? 'general',
             'type' => $validated['type'] ?? 'text',
         ]);

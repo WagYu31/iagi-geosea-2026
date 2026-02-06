@@ -225,6 +225,47 @@ export default function Settings({ settings, submissionSettings }) {
     const logoSecondaryInputRef = useRef(null);
     const [deletingLogoIndex, setDeletingLogoIndex] = useState(null);
 
+    // Submission Procedure State - Array of sections with title and items
+    const [submissionProcedure, setSubmissionProcedure] = useState(() => {
+        const data = getSettingValue('submission_procedure', null);
+        // Support both old format (object with pendaftaran/abstract) and new format (array of sections)
+        if (data && Array.isArray(data)) return data;
+        if (data && typeof data === 'object' && data.pendaftaran) {
+            // Convert old format to new format
+            return [
+                {
+                    title: 'PENDAFTARAN',
+                    items: data.pendaftaran || [],
+                },
+                {
+                    title: 'SUBMISSION ABSTRACT',
+                    items: data.abstract || [],
+                },
+            ];
+        }
+        return [
+            {
+                title: 'PENDAFTARAN',
+                items: [
+                    { text: 'Register on our platform with your email', link: '/register' },
+                    { text: 'Complete your profile information', link: '/dashboard' },
+                    { text: 'Choose your participation category', link: '/register' },
+                    { text: 'Wait for account verification', link: '' },
+                ],
+            },
+            {
+                title: 'SUBMISSION ABSTRACT',
+                items: [
+                    { text: 'Download the abstract template from Resources', link: '#resources' },
+                    { text: 'Prepare your abstract following the guidelines', link: '#resources' },
+                    { text: 'Upload your abstract through the submission portal', link: '/dashboard' },
+                    { text: 'Track your submission status in your dashboard', link: '/dashboard' },
+                ],
+            },
+        ];
+    });
+    const [savingSubmissionProcedure, setSavingSubmissionProcedure] = useState(false);
+
     // Form for submission deadline settings
     const { data: deadlineData, setData: setDeadlineData, post: postDeadline, processing: processingDeadline, errors: deadlineErrors } = useForm({
         submission_deadline_start: submissionSettings?.submission_deadline_start || '',
@@ -784,6 +825,107 @@ export default function Settings({ settings, submissionSettings }) {
     const removeSponsor = (index) => {
         const newSponsors = sponsors.filter((_, i) => i !== index);
         setSponsors(newSponsors);
+    };
+
+    // Update submission procedure item (now uses section index)
+    const updateSubmissionProcedure = (sectionIndex, itemIndex, field, value) => {
+        const newProcedure = [...submissionProcedure];
+        newProcedure[sectionIndex].items[itemIndex][field] = value;
+        setSubmissionProcedure(newProcedure);
+    };
+
+    // Update section title
+    const updateSectionTitle = (sectionIndex, title) => {
+        const newProcedure = [...submissionProcedure];
+        newProcedure[sectionIndex].title = title;
+        setSubmissionProcedure(newProcedure);
+    };
+
+    // Add submission procedure item to section
+    const addSubmissionProcedureItem = (sectionIndex) => {
+        const newProcedure = [...submissionProcedure];
+        newProcedure[sectionIndex].items = [...newProcedure[sectionIndex].items, { text: '', link: '', filename: '' }];
+        setSubmissionProcedure(newProcedure);
+    };
+
+    // Remove submission procedure item from section
+    const removeSubmissionProcedureItem = (sectionIndex, itemIndex) => {
+        const newProcedure = [...submissionProcedure];
+        newProcedure[sectionIndex].items = newProcedure[sectionIndex].items.filter((_, i) => i !== itemIndex);
+        setSubmissionProcedure(newProcedure);
+    };
+
+    // Add new section
+    const addSubmissionProcedureSection = () => {
+        setSubmissionProcedure([
+            ...submissionProcedure,
+            {
+                title: 'NEW SECTION',
+                items: [{ text: '', link: '', filename: '' }],
+            },
+        ]);
+    };
+
+    // Remove section
+    const removeSubmissionProcedureSection = (sectionIndex) => {
+        if (submissionProcedure.length <= 1) return;
+        setSubmissionProcedure(submissionProcedure.filter((_, i) => i !== sectionIndex));
+    };
+
+    // Save submission procedure settings
+    const saveSubmissionProcedure = () => {
+        setSavingSubmissionProcedure(true);
+        router.patch(route('admin.settings.update', 'submission_procedure'), {
+            value: JSON.stringify(submissionProcedure),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setSavingSubmissionProcedure(false);
+                alert('Submission procedure settings saved successfully!');
+            },
+            onError: (errors) => {
+                setSavingSubmissionProcedure(false);
+                console.error('Save errors:', errors);
+                alert('Failed to save submission procedure settings');
+            },
+            onFinish: () => {
+                setSavingSubmissionProcedure(false);
+            }
+        });
+    };
+
+    // Handle PDF upload for submission procedure
+    const [uploadingProcedurePdf, setUploadingProcedurePdf] = useState(null);
+    const handleSubmissionProcedurePdfUpload = async (sectionIndex, itemIndex, file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('title', submissionProcedure[sectionIndex].items[itemIndex].text || `procedure_${sectionIndex}_${itemIndex}`);
+        formData.append('description', `${submissionProcedure[sectionIndex].title} Step ${itemIndex + 1}`);
+
+        setUploadingProcedurePdf(`${sectionIndex}_${itemIndex}`);
+        try {
+            const response = await axios.post(route('admin.settings.uploadResourceFile'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                // Update the link with the uploaded file URL
+                const newProcedure = [...submissionProcedure];
+                newProcedure[sectionIndex].items[itemIndex].link = response.data.resource.file_url;
+                newProcedure[sectionIndex].items[itemIndex].filename = response.data.resource.title + '.' + response.data.resource.file_type;
+                setSubmissionProcedure(newProcedure);
+                alert('PDF uploaded successfully! Click Save to persist changes.');
+            }
+        } catch (error) {
+            console.error('PDF upload error:', error);
+            alert('Failed to upload PDF: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploadingProcedurePdf(null);
+        }
     };
 
     // Save Landing Page Settings
@@ -1503,7 +1645,7 @@ export default function Settings({ settings, submissionSettings }) {
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                             <Typography variant="h6" sx={{ color: '#1abc9c' }}>
-                                                Sponsors
+                                                SUPPORTED
                                             </Typography>
                                             <Button
                                                 variant="contained"
@@ -1511,20 +1653,20 @@ export default function Settings({ settings, submissionSettings }) {
                                                 onClick={addSponsor}
                                                 sx={{ backgroundColor: '#1abc9c' }}
                                             >
-                                                Add Sponsor
+                                                Add Supported
                                             </Button>
                                         </Box>
 
                                         {/* Sponsors Description */}
                                         <TextField
                                             fullWidth
-                                            label="Sponsors Section Description"
+                                            label="Supported Section Description"
                                             value={sponsorsDescription}
                                             onChange={(e) => setSponsorsDescription(e.target.value)}
                                             multiline
                                             rows={2}
                                             placeholder="Description text shown below 'Partners & Sponsors' heading"
-                                            helperText="This text appears on the landing page under the Partners & Sponsors title"
+                                            helperText="This text appears on the landing page under the SUPPORTED BY : title"
                                             sx={{ mb: 3 }}
                                         />
 
@@ -1584,29 +1726,7 @@ export default function Settings({ settings, submissionSettings }) {
                                                             />
                                                         </Button>
 
-                                                        {/* Tier Selection */}
-                                                        <TextField
-                                                            fullWidth
-                                                            select
-                                                            size="small"
-                                                            label="Sponsor Tier"
-                                                            value={sponsor.tier || 'gold'}
-                                                            onChange={(e) => updateSponsor(index, 'tier', e.target.value)}
-                                                            sx={{ mb: 1 }}
-                                                        >
-                                                            <MenuItem value="gold">Gold</MenuItem>
-                                                            <MenuItem value="platinum">Platinum</MenuItem>
-                                                            <MenuItem value="silver">Silver</MenuItem>
-                                                        </TextField>
 
-                                                        {/* Name */}
-                                                        <TextField
-                                                            fullWidth
-                                                            size="small"
-                                                            label="Sponsor Name"
-                                                            value={sponsor.name}
-                                                            onChange={(e) => updateSponsor(index, 'name', e.target.value)}
-                                                        />
                                                     </Card>
                                                 </Grid>
                                             ))}
@@ -1659,6 +1779,154 @@ export default function Settings({ settings, submissionSettings }) {
                                                 }}
                                             >
                                                 Save All Resources
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Submission Procedure Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Submission Procedure
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Manage the submission procedure steps shown on the landing page. You can add new sections and steps.
+                                        </Alert>
+
+                                        {/* Dynamic Sections */}
+                                        {submissionProcedure.map((section, sectionIndex) => (
+                                            <Box key={sectionIndex} sx={{ mb: 4, p: 2, bgcolor: '#f9fafb', borderRadius: 2, border: '1px solid #e5e7eb' }}>
+                                                {/* Section Header */}
+                                                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+                                                    <TextField
+                                                        value={section.title}
+                                                        onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)}
+                                                        size="small"
+                                                        sx={{
+                                                            flex: 1,
+                                                            '& .MuiOutlinedInput-root': {
+                                                                fontWeight: 600,
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: '#1abc9c',
+                                                                },
+                                                            },
+                                                        }}
+                                                        placeholder="Section Title"
+                                                    />
+                                                    <IconButton
+                                                        onClick={() => removeSubmissionProcedureSection(sectionIndex)}
+                                                        color="error"
+                                                        disabled={submissionProcedure.length <= 1}
+                                                        title="Remove Section"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Box>
+
+                                                {/* Section Items */}
+                                                <Stack spacing={2}>
+                                                    {section.items.map((item, itemIndex) => (
+                                                        <Box key={itemIndex} sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                                                            <TextField
+                                                                fullWidth
+                                                                label={`Step ${itemIndex + 1} Text`}
+                                                                value={item.text}
+                                                                onChange={(e) => updateSubmissionProcedure(sectionIndex, itemIndex, 'text', e.target.value)}
+                                                                size="small"
+                                                                sx={{
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        '&.Mui-focused fieldset': {
+                                                                            borderColor: '#1abc9c',
+                                                                        },
+                                                                    },
+                                                                }}
+                                                            />
+                                                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', minWidth: 220 }}>
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    component="label"
+                                                                    size="small"
+                                                                    startIcon={<UploadFileIcon />}
+                                                                    disabled={uploadingProcedurePdf === `${sectionIndex}_${itemIndex}`}
+                                                                    sx={{
+                                                                        borderColor: item.link ? '#1abc9c' : '#ccc',
+                                                                        color: item.link ? '#1abc9c' : '#666',
+                                                                        minWidth: 120,
+                                                                        '&:hover': { borderColor: '#16a085' },
+                                                                    }}
+                                                                >
+                                                                    {uploadingProcedurePdf === `${sectionIndex}_${itemIndex}` ? 'Uploading...' : (item.filename || 'Upload PDF')}
+                                                                    <input
+                                                                        type="file"
+                                                                        hidden
+                                                                        accept=".pdf"
+                                                                        onChange={(e) => handleSubmissionProcedurePdfUpload(sectionIndex, itemIndex, e.target.files[0])}
+                                                                    />
+                                                                </Button>
+                                                                {item.link && (
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={() => window.open(item.link, '_blank')}
+                                                                        sx={{ color: '#1abc9c' }}
+                                                                        title="View PDF"
+                                                                    >
+                                                                        <DescriptionIcon fontSize="small" />
+                                                                    </IconButton>
+                                                                )}
+                                                            </Box>
+                                                            <IconButton
+                                                                onClick={() => removeSubmissionProcedureItem(sectionIndex, itemIndex)}
+                                                                color="error"
+                                                                disabled={section.items.length <= 1}
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Box>
+                                                    ))}
+                                                    <Button
+                                                        startIcon={<AddIcon />}
+                                                        variant="outlined"
+                                                        onClick={() => addSubmissionProcedureItem(sectionIndex)}
+                                                        sx={{
+                                                            alignSelf: 'flex-start',
+                                                            borderColor: '#1abc9c',
+                                                            color: '#1abc9c',
+                                                            '&:hover': { borderColor: '#16a085', backgroundColor: 'rgba(26, 188, 156, 0.04)' }
+                                                        }}
+                                                    >
+                                                        Add Step
+                                                    </Button>
+                                                </Stack>
+                                            </Box>
+                                        ))}
+
+                                        {/* Add Section Button */}
+                                        <Button
+                                            startIcon={<AddIcon />}
+                                            variant="contained"
+                                            onClick={addSubmissionProcedureSection}
+                                            sx={{
+                                                mb: 3,
+                                                backgroundColor: '#0d7a6a',
+                                                '&:hover': { backgroundColor: '#095c50' }
+                                            }}
+                                        >
+                                            Add New Section
+                                        </Button>
+
+                                        {/* Save Button */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={saveSubmissionProcedure}
+                                                disabled={savingSubmissionProcedure}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingSubmissionProcedure ? 'Saving...' : 'Save Submission Procedure'}
                                             </Button>
                                         </Box>
                                     </CardContent>
