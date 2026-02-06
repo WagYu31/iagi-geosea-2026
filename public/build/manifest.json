@@ -18,8 +18,8 @@
       "_components-kagBm8H-.js"
     ]
   },
-  "_pages-admin-BbqnSU4a.js": {
-    "file": "assets/pages-admin-BbqnSU4a.js",
+  "_pages-admin-hT1w5kjS.js": {
+    "file": "assets/pages-admin-hT1w5kjS.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -178,7 +178,7 @@
     ]
   },
   "resources/js/Pages/LandingPage.jsx": {
-    "file": "assets/LandingPage-Cw4DkYcn.js",
+    "file": "assets/LandingPage-Qsoll9Nk.js",
     "name": "LandingPage",
     "src": "resources/js/Pages/LandingPage.jsx",
     "isDynamicEntry": true,
@@ -238,7 +238,7 @@
     ]
   },
   "resources/js/Pages/Reviewer/Submissions.jsx": {
-    "file": "assets/Submissions-BnIp5Khb.js",
+    "file": "assets/Submissions-BMde2TqG.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Reviewer/Submissions.jsx",
     "isDynamicEntry": true,
@@ -309,7 +309,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Wqi-24OX.js",
+    "file": "assets/app-DX1eR8Q5.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -319,12 +319,12 @@
       "_vendor-react-zq6P3Ky3.js"
     ],
     "dynamicImports": [
-      "_pages-admin-BbqnSU4a.js",
+      "_pages-admin-hT1w5kjS.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-BbqnSU4a.js",
+      "_pages-admin-hT1w5kjS.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-BbqnSU4a.js",
+      "_pages-admin-hT1w5kjS.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-dUJpoZtk.js",
       "_pages-auth-dUJpoZtk.js",

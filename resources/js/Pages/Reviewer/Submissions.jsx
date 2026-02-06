@@ -234,7 +234,7 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                                         '&:hover': { backgroundColor: '#16a085' },
                                                     }}
                                                 >
-                                                    {review.originality_score ? 'Edit Review' : 'Submit Review'}
+                                                    {review.originality_score ? 'Scoring Review' : 'Submit Review'}
                                                 </Button>
                                             </Stack>
                                         </TableCell>

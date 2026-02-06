@@ -314,7 +314,7 @@ export default function LandingPage({ auth }) {
                                         }
                                     }}
                                 >
-                                    Login
+                                    LOGIN
                                 </Button>
                             )}
 

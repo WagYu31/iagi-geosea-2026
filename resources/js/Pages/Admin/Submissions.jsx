@@ -46,15 +46,17 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [assignDialog, setAssignDialog] = useState({ open: false, submission: null });
     const [selectedReviewers, setSelectedReviewers] = useState([]);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [presentationFilter, setPresentationFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter submissions based on status and search term
+    // Filter submissions based on status, presentation type and search term
     const filteredSubmissions = submissions.filter(submission => {
         const matchesStatus = statusFilter === 'all' || submission.status === statusFilter;
+        const matchesPresentation = presentationFilter === 'all' || submission.presentation_preference === presentationFilter;
         const matchesSearch = searchTerm === '' ||
             submission.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             submission.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesSearch;
+        return matchesStatus && matchesPresentation && matchesSearch;
     });
 
     const handleSelectAll = (event) => {
@@ -277,6 +279,18 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                 <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
                             </Select>
                         </FormControl>
+                        <FormControl size="small" sx={{ minWidth: 180 }}>
+                            <InputLabel>Presentation Type</InputLabel>
+                            <Select
+                                value={presentationFilter}
+                                label="Presentation Type"
+                                onChange={(e) => setPresentationFilter(e.target.value)}
+                            >
+                                <MenuItem value="all">All Types ({submissions.length})</MenuItem>
+                                <MenuItem value="Oral Presentation">Oral Presentation ({submissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
+                                <MenuItem value="Poster Presentation">Poster Presentation ({submissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
+                            </Select>
+                        </FormControl>
                         <Typography variant="body2" color="text.secondary">
                             Showing {filteredSubmissions.length} of {submissions.length} submissions
                         </Typography>
@@ -335,9 +349,12 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Title</TableCell>
+                                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Author</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
+                                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Topic</TableCell>
+                                    <TableCell sx={{ fontWeight: 600 }}>Presentation Type</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Submitted</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                                     <TableCell sx={{ fontWeight: 600 }}>Payment</TableCell>
@@ -348,7 +365,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             <TableBody>
                                 {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={11} align="center">
+                                        <TableCell colSpan={14} align="center">
                                             <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
                                                 No submissions found
                                             </Typography>
@@ -370,6 +387,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                 </TableCell>
                                                 <TableCell>{submission.id}</TableCell>
                                                 <TableCell>{submission.title || 'N/A'}</TableCell>
+                                                <TableCell>{submission.author_full_name || 'N/A'}</TableCell>
                                                 <TableCell>{submission.user?.name || 'N/A'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -391,7 +409,16 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                         )}
                                                     </Box>
                                                 </TableCell>
+                                                <TableCell>{submission.user?.email || 'N/A'}</TableCell>
                                                 <TableCell>{submission.paper_sub_theme || submission.topic || 'N/A'}</TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={submission.presentation_preference || 'N/A'}
+                                                        size="small"
+                                                        color={submission.presentation_preference === 'Oral Presentation' ? 'primary' : submission.presentation_preference === 'Poster Presentation' ? 'secondary' : 'default'}
+                                                        variant="outlined"
+                                                    />
+                                                </TableCell>
                                                 <TableCell>
                                                     {new Date(submission.created_at).toLocaleDateString('en-GB', {
                                                         day: '2-digit',
