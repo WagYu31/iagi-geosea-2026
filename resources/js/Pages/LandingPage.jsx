@@ -33,6 +33,7 @@ import {
     Description as DescriptionIcon,
     Menu as MenuIcon,
     Close as CloseIcon,
+    Settings as SettingsIcon,
 } from '@mui/icons-material';
 import theme from '../theme';
 
