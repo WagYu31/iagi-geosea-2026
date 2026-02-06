@@ -966,6 +966,18 @@ class LandingPageSettingController extends Controller
     public function uploadFaqBackground(Request $request)
     {
         try {
+            // Debug logging for upload diagnostics
+            Log::info('FAQ background upload attempt', [
+                'has_file' => $request->hasFile('background'),
+                'file_valid' => $request->hasFile('background') ? $request->file('background')->isValid() : false,
+                'file_error' => $request->hasFile('background') ? $request->file('background')->getError() : 'no file',
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size'),
+                'content_length' => $request->header('Content-Length'),
+                'all_files' => array_keys($_FILES),
+                'files_error' => isset($_FILES['background']) ? $_FILES['background']['error'] : 'not set',
+            ]);
+
             $request->validate([
                 'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
             ]);
