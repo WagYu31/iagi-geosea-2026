@@ -251,89 +251,120 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                 <DialogTitle>Submit Review</DialogTitle>
                 <DialogContent>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
+                        {/* Originality Score */}
                         <FormControl fullWidth>
                             <InputLabel>Originality Score *</InputLabel>
                             <Select
                                 value={scores.originality_score}
                                 onChange={(e) => setScores({ ...scores, originality_score: e.target.value })}
                                 label="Originality Score *"
+                                MenuProps={{ PaperProps: { sx: { maxWidth: 600 } } }}
                             >
                                 <MenuItem value=""><em>Select score</em></MenuItem>
-                                <MenuItem value={1}>1 - Poor</MenuItem>
-                                <MenuItem value={2}>2 - Fair</MenuItem>
-                                <MenuItem value={3}>3 - Good</MenuItem>
-                                <MenuItem value={4}>4 - Very Good</MenuItem>
-                                <MenuItem value={5}>5 - Excellent</MenuItem>
+                                <MenuItem value={1} sx={{ whiteSpace: 'normal' }}>1 - Poor: Lacks originality. Merely repeats known concepts or previous work without any new contribution.</MenuItem>
+                                <MenuItem value={2} sx={{ whiteSpace: 'normal' }}>2 - Fair: Minimal originality. Offers only slight variations on existing knowledge or approaches.</MenuItem>
+                                <MenuItem value={3} sx={{ whiteSpace: 'normal' }}>3 - Good: Presents some new insights or perspectives, but the core contribution is incremental.</MenuItem>
+                                <MenuItem value={4} sx={{ whiteSpace: 'normal' }}>4 - Very Good: Demonstrates significant originality. Offers fresh insights, novel methods, or meaningful new findings.</MenuItem>
+                                <MenuItem value={5} sx={{ whiteSpace: 'normal' }}>5 - Excellent: Highly innovative and original. Represents a substantial or breakthrough contribution to the field.</MenuItem>
                             </Select>
+                            <Typography variant="caption" sx={{ mt: 0.5, ml: 1.5, color: 'text.secondary' }}>
+                                Evaluates the novelty of the research question, approach, or findings. Does the submission add new knowledge to the field?
+                            </Typography>
                         </FormControl>
+
+                        {/* Relevance Score */}
                         <FormControl fullWidth>
                             <InputLabel>Relevance Score *</InputLabel>
                             <Select
                                 value={scores.relevance_score}
                                 onChange={(e) => setScores({ ...scores, relevance_score: e.target.value })}
                                 label="Relevance Score *"
+                                MenuProps={{ PaperProps: { sx: { maxWidth: 600 } } }}
                             >
                                 <MenuItem value=""><em>Select score</em></MenuItem>
-                                <MenuItem value={1}>1 - Poor</MenuItem>
-                                <MenuItem value={2}>2 - Fair</MenuItem>
-                                <MenuItem value={3}>3 - Good</MenuItem>
-                                <MenuItem value={4}>4 - Very Good</MenuItem>
-                                <MenuItem value={5}>5 - Excellent</MenuItem>
+                                <MenuItem value={1} sx={{ whiteSpace: 'normal' }}>1 - Poor: Not relevant to the conference themes.</MenuItem>
+                                <MenuItem value={2} sx={{ whiteSpace: 'normal' }}>2 - Fair: Marginal relevance. Only tangentially related to the themes, or the focus is too broad/narrow.</MenuItem>
+                                <MenuItem value={3} sx={{ whiteSpace: 'normal' }}>3 - Good: Relevant to the themes, but the connection could be stronger or more focused.</MenuItem>
+                                <MenuItem value={4} sx={{ whiteSpace: 'normal' }}>4 - Very Good: Highly relevant. Addresses the core aspects of the chosen sub-theme effectively.</MenuItem>
+                                <MenuItem value={5} sx={{ whiteSpace: 'normal' }}>5 - Excellent: Perfectly aligned. The topic is timely and critically important to the conference themes.</MenuItem>
                             </Select>
+                            <Typography variant="caption" sx={{ mt: 0.5, ml: 1.5, color: 'text.secondary' }}>
+                                Evaluates how well the submission aligns with the conference theme and the specific sub-theme selected.
+                            </Typography>
                         </FormControl>
+
+                        {/* Clarity Score */}
                         <FormControl fullWidth>
                             <InputLabel>Clarity Score *</InputLabel>
                             <Select
                                 value={scores.clarity_score}
                                 onChange={(e) => setScores({ ...scores, clarity_score: e.target.value })}
                                 label="Clarity Score *"
+                                MenuProps={{ PaperProps: { sx: { maxWidth: 600 } } }}
                             >
                                 <MenuItem value=""><em>Select score</em></MenuItem>
-                                <MenuItem value={1}>1 - Poor</MenuItem>
-                                <MenuItem value={2}>2 - Fair</MenuItem>
-                                <MenuItem value={3}>3 - Good</MenuItem>
-                                <MenuItem value={4}>4 - Very Good</MenuItem>
-                                <MenuItem value={5}>5 - Excellent</MenuItem>
+                                <MenuItem value={1} sx={{ whiteSpace: 'normal' }}>1 - Poor: Very difficult to understand. Poorly organized with significant grammatical or structural errors.</MenuItem>
+                                <MenuItem value={2} sx={{ whiteSpace: 'normal' }}>2 - Fair: Understandable but difficult to follow. Suffers from lack of focus, poor flow, or frequent language errors.</MenuItem>
+                                <MenuItem value={3} sx={{ whiteSpace: 'normal' }}>3 - Good: Generally clear and organized. The message is conveyed, though there may be minor ambiguities or rough transitions.</MenuItem>
+                                <MenuItem value={4} sx={{ whiteSpace: 'normal' }}>4 - Very Good: Well-written and clearly structured. Arguments are presented logically and are easy to follow.</MenuItem>
+                                <MenuItem value={5} sx={{ whiteSpace: 'normal' }}>5 - Excellent: Exceptionally clear, concise, and well-polished. The presentation enhances the content significantly.</MenuItem>
                             </Select>
+                            <Typography variant="caption" sx={{ mt: 0.5, ml: 1.5, color: 'text.secondary' }}>
+                                Evaluates the quality of writing, organization, and presentation. Is the submission easy to understand?
+                            </Typography>
                         </FormControl>
+
+                        {/* Methodology Score */}
                         <FormControl fullWidth>
                             <InputLabel>Methodology Score *</InputLabel>
                             <Select
                                 value={scores.methodology_score}
                                 onChange={(e) => setScores({ ...scores, methodology_score: e.target.value })}
                                 label="Methodology Score *"
+                                MenuProps={{ PaperProps: { sx: { maxWidth: 600 } } }}
                             >
                                 <MenuItem value=""><em>Select score</em></MenuItem>
-                                <MenuItem value={1}>1 - Poor</MenuItem>
-                                <MenuItem value={2}>2 - Fair</MenuItem>
-                                <MenuItem value={3}>3 - Good</MenuItem>
-                                <MenuItem value={4}>4 - Very Good</MenuItem>
-                                <MenuItem value={5}>5 - Excellent</MenuItem>
+                                <MenuItem value={1} sx={{ whiteSpace: 'normal' }}>1 - Poor: Flawed methodology. The approach is unsuitable, leading to unreliable results.</MenuItem>
+                                <MenuItem value={2} sx={{ whiteSpace: 'normal' }}>2 - Fair: Questionable methodology. Significant limitations or weaknesses in the design that affect the validity of findings.</MenuItem>
+                                <MenuItem value={3} sx={{ whiteSpace: 'normal' }}>3 - Good: Sound methodology. Standard approaches are used appropriately, though there may be room for improvement.</MenuItem>
+                                <MenuItem value={4} sx={{ whiteSpace: 'normal' }}>4 - Very Good: Strong and rigorous methodology. The design is well-suited to answer the research questions effectively.</MenuItem>
+                                <MenuItem value={5} sx={{ whiteSpace: 'normal' }}>5 - Excellent: Flawless or innovative methodology. The research design is executed perfectly and may set a high standard.</MenuItem>
                             </Select>
+                            <Typography variant="caption" sx={{ mt: 0.5, ml: 1.5, color: 'text.secondary' }}>
+                                Evaluates the scientific rigor, appropriateness, and validity of the methods used to conduct the research.
+                            </Typography>
                         </FormControl>
+
+                        {/* Overall Score */}
                         <FormControl fullWidth>
                             <InputLabel>Overall Score *</InputLabel>
                             <Select
                                 value={scores.overall_score}
                                 onChange={(e) => setScores({ ...scores, overall_score: e.target.value })}
                                 label="Overall Score *"
+                                MenuProps={{ PaperProps: { sx: { maxWidth: 600 } } }}
                             >
                                 <MenuItem value=""><em>Select score</em></MenuItem>
-                                <MenuItem value={1}>1 - Poor</MenuItem>
-                                <MenuItem value={2}>2 - Fair</MenuItem>
-                                <MenuItem value={3}>3 - Good</MenuItem>
-                                <MenuItem value={4}>4 - Very Good</MenuItem>
-                                <MenuItem value={5}>5 - Excellent</MenuItem>
+                                <MenuItem value={1} sx={{ whiteSpace: 'normal' }}>1 - Poor (Reject): The submission falls significantly below conference standards.</MenuItem>
+                                <MenuItem value={2} sx={{ whiteSpace: 'normal' }}>2 - Fair (Major Revisions): Weak submission. Requires major revisions; acceptance is doubtful without substantial improvements.</MenuItem>
+                                <MenuItem value={3} sx={{ whiteSpace: 'normal' }}>3 - Good (Acceptable): Meets the basic standards but would benefit from revisions before final acceptance.</MenuItem>
+                                <MenuItem value={4} sx={{ whiteSpace: 'normal' }}>4 - Very Good (Recommended): Strong submission. A valuable contribution that is highly recommended for acceptance.</MenuItem>
+                                <MenuItem value={5} sx={{ whiteSpace: 'normal' }}>5 - Excellent (Priority): Outstanding submission. A top-tier contribution that should be prioritized for acceptance and presentation.</MenuItem>
                             </Select>
+                            <Typography variant="caption" sx={{ mt: 0.5, ml: 1.5, color: 'text.secondary' }}>
+                                A holistic assessment of the submission's quality and suitability for acceptance into the conference.
+                            </Typography>
                         </FormControl>
+
                         <TextField
-                            label="Comments"
+                            label="Comments *"
                             multiline
                             rows={4}
                             fullWidth
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
                             required
+                            helperText="Provide detailed feedback including strengths, weaknesses, and suggestions for improvement."
                         />
                     </Box>
                 </DialogContent>

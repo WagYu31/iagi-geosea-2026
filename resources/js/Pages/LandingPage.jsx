@@ -187,7 +187,9 @@ export default function LandingPage({ auth }) {
         { label: 'SPEAKERS', action: () => document.getElementById('speakers')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
         { label: 'TIMELINE', action: () => document.getElementById('timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
         { label: 'RESOURCES', action: () => document.getElementById('resources')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
-        { label: 'CONTACT', action: () => document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
+        { label: 'FAQ', action: () => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
+        { label: 'CONTACT', action: () => document.getElementById('venue')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
+        { label: 'AFGEO', action: () => document.getElementById('afgeo')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
     ];
 
     const handleMenuClick = (action) => {
@@ -246,7 +248,7 @@ export default function LandingPage({ auth }) {
                                         transform: scrolled ? 'scale(1)' : 'scale(1)',
                                     }}
                                 >
-                                    55th PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
+                                    ⁵⁵ᵀᴴ PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -807,6 +809,296 @@ export default function LandingPage({ auth }) {
                         </Box>
                     </Container>
                 </Box>
+
+
+                {/* AFGEO Member Section */}
+                <Box
+                    id="afgeo"
+                    sx={{
+                        py: { xs: 5, sm: 6, md: 7 },
+                        backgroundImage: settings.afgeo_text?.background
+                            ? `linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(248,250,252,0.35) 100%), url("${settings.afgeo_text.background}")`
+                            : 'linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(248,250,252,0.35) 100%), url("/Gemini_Generated_Image_ckbitcckbitcckbi.jpeg")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
+                        position: 'relative',
+                    }}
+                >
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                        {/* Section Header */}
+                        <Typography
+                            variant="overline"
+                            align="center"
+                            display="block"
+                            sx={{
+                                color: '#0d9488',
+                                fontWeight: 700,
+                                letterSpacing: '0.15em',
+                                mb: 1.5,
+                                fontSize: { xs: '0.7rem', md: '0.8rem' },
+                            }}
+                        >
+                            {settings.afgeo_text?.section_label || 'OUR NETWORK'}
+                        </Typography>
+                        <Typography
+                            variant="h4"
+                            align="center"
+                            sx={{
+                                fontWeight: 800,
+                                mb: 2,
+                                color: '#111827',
+                                fontSize: { xs: '1.75rem', md: '2.25rem' },
+                            }}
+                        >
+                            {settings.afgeo_text?.title || 'AFGEO Member'}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            align="center"
+                            sx={{
+                                mb: { xs: 4, md: 5 },
+                                color: '#6b7280',
+                                maxWidth: '700px',
+                                mx: 'auto',
+                                fontSize: { xs: '0.95rem', md: '1.05rem' },
+                            }}
+                        >
+                            {settings.afgeo_text?.subtitle || 'Association of Federation of Geoscientists of East and Southeast Asia'}
+                        </Typography>
+
+                        {/* Member Logos Grid */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: { xs: 3, md: 4 },
+                                maxWidth: '1000px',
+                                mx: 'auto',
+                            }}
+                        >
+                            {(settings.afgeo_members || [
+                                { name: 'IAGI', country: 'Indonesia' },
+                                { name: 'GSM', country: 'Malaysia' },
+                                { name: 'GST', country: 'Thailand' },
+                                { name: 'GSP', country: 'Philippines' },
+                                { name: 'GSV', country: 'Vietnam' },
+                                { name: 'GSJ', country: 'Japan' },
+                                { name: 'GSK', country: 'Korea' },
+                                { name: 'GSC', country: 'China' },
+                            ]).map((member, index) => (
+                                <Paper
+                                    key={index}
+                                    elevation={0}
+                                    sx={{
+                                        p: { xs: 2.5, md: 3 },
+                                        minWidth: { xs: 120, md: 140 },
+                                        textAlign: 'center',
+                                        borderRadius: 3,
+                                        border: '1px solid #e5e7eb',
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: '0 8px 30px rgba(13, 148, 136, 0.15)',
+                                            borderColor: '#0d9488',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 60,
+                                            height: 60,
+                                            borderRadius: '50%',
+                                            bgcolor: '#f0fdfa',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mx: 'auto',
+                                            mb: 1.5,
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {member.logo ? (
+                                            <Box
+                                                component="img"
+                                                src={member.logo}
+                                                alt={member.name}
+                                                sx={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        ) : (
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#0d9488',
+                                                    fontSize: '1.1rem',
+                                                }}
+                                            >
+                                                {member.name}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: '#6b7280',
+                                            fontSize: '0.85rem',
+                                        }}
+                                    >
+                                        {member.country}
+                                    </Typography>
+                                </Paper>
+                            ))}
+                        </Box>
+                    </Container>
+                </Box>
+
+                {/* Custom Sections - Dynamic sections from admin */}
+                {(settings.custom_sections || []).map((section, sectionIndex) => (
+                    <Box
+                        key={sectionIndex}
+                        sx={{
+                            py: { xs: 5, sm: 6, md: 7 },
+                            backgroundImage: section.background
+                                ? `linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(248,250,252,0.35) 100%), url("${section.background}")`
+                                : sectionIndex % 2 === 0
+                                    ? 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)'
+                                    : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                            backgroundSize: section.background ? 'cover' : 'auto',
+                            backgroundPosition: section.background ? 'center' : 'auto',
+                            backgroundAttachment: section.background ? 'fixed' : 'scroll',
+                            position: 'relative',
+                        }}
+                    >
+                        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                            {/* Section Header */}
+                            <Typography
+                                variant="overline"
+                                align="center"
+                                display="block"
+                                sx={{
+                                    color: '#0d9488',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    mb: 1.5,
+                                    fontSize: { xs: '0.7rem', md: '0.8rem' },
+                                }}
+                            >
+                                {section.section_label || 'SECTION'}
+                            </Typography>
+                            <Typography
+                                variant="h4"
+                                align="center"
+                                sx={{
+                                    fontWeight: 800,
+                                    mb: 2,
+                                    color: '#111827',
+                                    fontSize: { xs: '1.75rem', md: '2.25rem' },
+                                }}
+                            >
+                                {section.title || 'Section Title'}
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                align="center"
+                                sx={{
+                                    mb: { xs: 4, md: 5 },
+                                    color: '#6b7280',
+                                    maxWidth: '700px',
+                                    mx: 'auto',
+                                    fontSize: { xs: '0.95rem', md: '1.05rem' },
+                                }}
+                            >
+                                {section.subtitle || ''}
+                            </Typography>
+
+                            {/* Items Grid */}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: { xs: 3, md: 4 },
+                                    maxWidth: '1000px',
+                                    mx: 'auto',
+                                }}
+                            >
+                                {(section.members || []).map((member, index) => (
+                                    <Paper
+                                        key={index}
+                                        elevation={0}
+                                        sx={{
+                                            p: { xs: 2.5, md: 3 },
+                                            minWidth: { xs: 120, md: 140 },
+                                            textAlign: 'center',
+                                            borderRadius: 3,
+                                            border: '1px solid #e5e7eb',
+                                            transition: 'all 0.3s ease',
+                                            '&:hover': {
+                                                transform: 'translateY(-4px)',
+                                                boxShadow: '0 8px 30px rgba(13, 148, 136, 0.15)',
+                                                borderColor: '#0d9488',
+                                            },
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: 60,
+                                                height: 60,
+                                                borderRadius: '50%',
+                                                bgcolor: '#f0fdfa',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                mx: 'auto',
+                                                mb: 1.5,
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            {member.logo ? (
+                                                <Box
+                                                    component="img"
+                                                    src={member.logo}
+                                                    alt={member.name}
+                                                    sx={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                    }}
+                                                />
+                                            ) : (
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 700,
+                                                        color: '#0d9488',
+                                                        fontSize: '1.1rem',
+                                                    }}
+                                                >
+                                                    {member.name?.substring(0, 3) || ''}
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                color: '#6b7280',
+                                                fontSize: '0.85rem',
+                                            }}
+                                        >
+                                            {member.country || member.name}
+                                        </Typography>
+                                    </Paper>
+                                ))}
+                            </Box>
+                        </Container>
+                    </Box>
+                ))}
 
                 {/* About the Conference Section */}
                 <Box
@@ -1397,232 +1689,179 @@ export default function LandingPage({ auth }) {
                     </Container>
                 </Box>
 
-                {/* Seminar Resources Section */}
+                {/* Submission Procedure Section */}
                 <Box
-                    id="resources"
-                    ref={resourcesRef}
+                    id="faq"
                     sx={{
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
+                        background: settings.faq_background?.url
+                            ? 'none'
+                            : 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+                        backgroundImage: settings.faq_background?.url
+                            ? `linear-gradient(rgba(248, 250, 252, 0.65), rgba(226, 232, 240, 0.65)), url(${settings.faq_background?.url})`
+                            : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: { xs: 'scroll', md: 'fixed' },
                         position: 'relative',
                         overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: '5px',
-                            background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #a855f7 50%, #8b5cf6 75%, #6366f1 100%)',
-                        },
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            top: '10%',
-                            left: '-15%',
-                            width: '45%',
-                            height: '70%',
-                            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 60%)',
-                            pointerEvents: 'none',
-                        },
-                        transform: resourcesVisible ? 'translateY(0)' : 'translateY(50px)',
-                        opacity: resourcesVisible ? 1 : 0,
-                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transitionDelay: '0.2s',
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        <Typography
-                            variant="overline"
-                            align="center"
-                            sx={{
-                                color: '#0d7a6a',
-                                fontWeight: 600,
-                                letterSpacing: '0.15em',
-                                fontSize: { xs: '0.85rem', md: '0.92rem' },
-                                display: 'block',
-                                mb: 1.5,
-                            }}
-                        >
-                            DOWNLOADS
-                        </Typography>
+                        {/* Title */}
                         <Typography
                             variant="h4"
                             align="center"
                             gutterBottom
                             sx={{
-                                fontWeight: 'bold',
+                                fontWeight: 800,
                                 mb: 2,
                                 color: '#111827',
-                                fontSize: { xs: '1.75rem', md: '2.125rem' },
-                                px: { xs: 2, sm: 0 },
+                                fontSize: { xs: '1.75rem', md: '2.5rem' },
+                                letterSpacing: '0.05em',
                             }}
                         >
-                            Seminar Resources
+                            {settings.faq_text?.title || 'FREQUENTLY ASKED QUESTION'}
                         </Typography>
+
                         <Typography
                             variant="body1"
                             align="center"
                             sx={{
                                 mb: { xs: 4, md: 6 },
                                 color: '#6b7280',
-                                px: { xs: 2, sm: 0 },
-                                maxWidth: '600px',
+                                maxWidth: '700px',
                                 mx: 'auto',
-                                transform: resourcesVisible ? 'translateY(0)' : 'translateY(20px)',
-                                opacity: resourcesVisible ? 1 : 0,
-                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transitionDelay: '0.4s',
+                                fontSize: { xs: '0.95rem', md: '1.1rem' },
                             }}
                         >
-                            Everything you need to prepare a professional presentation for the IAGI-GEOSEA 2026 conference.
+                            {settings.faq_text?.subtitle || 'Follow these simple steps to submit your abstract for the conference'}
                         </Typography>
 
-                        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
-                            {settings.resources && settings.resources.length > 0 ? (
-                                settings.resources.map((resource, index) => (
-                                    <Grid
-                                        key={index}
-                                        size={{ xs: 12, sm: 6, md: 4 }}
-                                        sx={{
-                                            transform: resourcesVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
-                                            opacity: resourcesVisible ? 1 : 0,
-                                            transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            transitionDelay: `${0.6 + index * 0.1}s`,
-                                        }}
-                                    >
-                                        <Paper
-                                            sx={{
-                                                p: { xs: 3, sm: 3.5, md: 4 },
-                                                textAlign: 'center',
-                                                background: '#ffffff',
-                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                borderRadius: '20px',
-                                                border: '1px solid rgba(0, 0, 0, 0.06)',
-                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
-                                                position: 'relative',
-                                                overflow: 'hidden',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                height: '100%',
-                                                '&::before': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    height: '4px',
-                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 50%, #34d399 100%)',
-                                                    transform: 'scaleX(0)',
-                                                    transformOrigin: 'left',
-                                                    transition: 'transform 0.4s ease',
-                                                },
-                                                '&:hover': {
-                                                    transform: 'translateY(-8px)',
-                                                    boxShadow: '0 12px 40px rgba(13, 122, 106, 0.12), 0 20px 48px rgba(0, 0, 0, 0.06)',
-                                                    border: '1px solid rgba(13, 122, 106, 0.15)',
-                                                    '&::before': {
-                                                        transform: 'scaleX(1)',
-                                                    },
-                                                },
-                                            }}
-                                        >
-                                            {/* Icon Container with Gradient Background */}
-                                            <Box
-                                                sx={{
-                                                    width: 72,
-                                                    height: 72,
-                                                    borderRadius: '16px',
-                                                    background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    mx: 'auto',
-                                                    mb: 2.5,
-                                                    transition: 'all 0.3s ease',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.12) 0%, rgba(16, 185, 129, 0.18) 100%)',
-                                                        transform: 'scale(1.05)',
-                                                    },
-                                                }}
-                                            >
-                                                <DescriptionIcon sx={{ fontSize: 36, color: '#0d7a6a' }} />
-                                            </Box>
+                        {/* Glassmorphism Box Container */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: { xs: 3, sm: 4, md: 5 },
+                                borderRadius: '20px',
+                                bgcolor: 'rgba(255, 255, 255, 0.25)',
+                                backdropFilter: 'blur(12px)',
+                                WebkitBackdropFilter: 'blur(12px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                            }}
+                        >
+                            {/* Two Column Layout - Dynamic Sections */}
+                            <Grid container spacing={6}>
+                                {(() => {
+                                    // Get procedure data with backward compatibility
+                                    const procedureData = settings.submission_procedure;
+                                    let sections = [];
 
+                                    if (Array.isArray(procedureData)) {
+                                        // New array format
+                                        sections = procedureData;
+                                    } else if (procedureData && typeof procedureData === 'object') {
+                                        // Old object format - convert to array
+                                        if (procedureData.pendaftaran) {
+                                            sections.push({ title: 'PENDAFTARAN', items: procedureData.pendaftaran });
+                                        }
+                                        if (procedureData.abstract) {
+                                            sections.push({ title: 'SUBMISSION ABSTRACT', items: procedureData.abstract });
+                                        }
+                                    }
+
+                                    // Fallback to defaults if empty
+                                    if (sections.length === 0) {
+                                        sections = [
+                                            {
+                                                title: 'PENDAFTARAN',
+                                                items: [
+                                                    { text: 'Register on our platform with your email', link: '/register' },
+                                                    { text: 'Complete your profile information', link: '/dashboard' },
+                                                    { text: 'Choose your participation category', link: '/register' },
+                                                    { text: 'Wait for account verification', link: '' },
+                                                ],
+                                            },
+                                            {
+                                                title: 'SUBMISSION ABSTRACT',
+                                                items: [
+                                                    { text: 'Download the abstract template from Resources', link: '#resources' },
+                                                    { text: 'Prepare your abstract following the guidelines', link: '#resources' },
+                                                    { text: 'Upload your abstract through the submission portal', link: '/dashboard' },
+                                                    { text: 'Track your submission status in your dashboard', link: '/dashboard' },
+                                                ],
+                                            },
+                                        ];
+                                    }
+
+                                    return sections.map((section, sectionIndex) => (
+                                        <Grid item xs={12} md={6} key={sectionIndex}>
                                             <Typography
-                                                variant="h6"
-                                                gutterBottom
+                                                variant="h5"
                                                 sx={{
                                                     fontWeight: 700,
-                                                    color: '#1f2937',
-                                                    fontSize: { xs: '1rem', md: '1.1rem' },
-                                                    lineHeight: 1.4,
-                                                    minHeight: { xs: 'auto', md: '2.8em' },
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                }}
-                                            >
-                                                {resource.title}
-                                            </Typography>
-
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
+                                                    color: '#111827',
                                                     mb: 3,
-                                                    color: '#6b7280',
-                                                    fontSize: '0.875rem',
-                                                    lineHeight: 1.6,
-                                                    flexGrow: 1,
+                                                    fontSize: { xs: '1.75rem', md: '2rem' },
+                                                    letterSpacing: '0.02em',
                                                 }}
                                             >
-                                                {resource.description || 'Downloadable resource'}
+                                                {section.title}
                                             </Typography>
 
-                                            <Button
-                                                component="a"
-                                                href={resource.file_url}
-                                                download
-                                                variant="contained"
-                                                startIcon={<DownloadIcon />}
-                                                fullWidth
-                                                sx={{
-                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
-                                                    color: 'white',
-                                                    fontWeight: 600,
-                                                    py: 1.5,
-                                                    borderRadius: '12px',
-                                                    textTransform: 'none',
-                                                    fontSize: '0.9rem',
-                                                    boxShadow: '0 4px 12px rgba(13, 122, 106, 0.25)',
-                                                    mt: 'auto',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(135deg, #0a6356 0%, #0d9668 100%)',
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 8px 20px rgba(13, 122, 106, 0.35)',
-                                                    },
-                                                }}
-                                            >
-                                                Download {
-                                                    resource.file_type === 'pdf' ? 'PDF' :
-                                                        ['ppt', 'pptx'].includes(resource.file_type) ? 'PowerPoint' :
-                                                            ['doc', 'docx'].includes(resource.file_type) ? 'Word Document' :
-                                                                resource.file_type === 'txt' ? 'Text File' :
-                                                                    'File'
-                                                }
-                                            </Button>
-                                        </Paper>
-                                    </Grid>
-                                ))
-                            ) : (
-                                <Grid size={12}>
-                                    <Typography variant="body1" align="center" color="text.secondary" sx={{ py: 4 }}>
-                                        No resources available yet. Please check back later.
-                                    </Typography>
-                                </Grid>
-                            )}
-                        </Grid>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                                                {(section.items || []).map((item, index) => {
+                                                    // Determine if this is an external link (PDF/storage) or internal route
+                                                    const isExternalLink = item.link && (item.link.includes('/storage/') || item.link.startsWith('http'));
+                                                    const LinkComponent = isExternalLink ? 'a' : (item.link ? Link : 'div');
+
+                                                    return (
+                                                        <Box
+                                                            key={index}
+                                                            component={LinkComponent}
+                                                            href={item.link || undefined}
+                                                            target={isExternalLink ? '_blank' : undefined}
+                                                            rel={isExternalLink ? 'noopener noreferrer' : undefined}
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'flex-start',
+                                                                gap: 1.5,
+                                                                textDecoration: 'none',
+                                                                cursor: item.link ? 'pointer' : 'default',
+                                                                p: 1.5,
+                                                                mx: -1.5,
+                                                                borderRadius: '8px',
+                                                                transition: 'all 0.2s ease',
+                                                                '&:hover': item.link ? {
+                                                                    bgcolor: 'rgba(13, 122, 106, 0.08)',
+                                                                    transform: 'translateX(4px)',
+                                                                } : {},
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ color: '#0d7a6a', fontWeight: 600, fontSize: '1.5rem' }}>›</Typography>
+                                                            <Typography
+                                                                sx={{
+                                                                    color: item.link ? '#0d7a6a' : '#374151',
+                                                                    fontSize: { xs: '1.15rem', md: '1.3rem' },
+                                                                    lineHeight: 1.6,
+                                                                    fontWeight: item.link ? 500 : 400,
+                                                                    '&:hover': item.link ? {
+                                                                        textDecoration: 'underline',
+                                                                    } : {},
+                                                                }}
+                                                            >
+                                                                {item.text}
+                                                            </Typography>
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Box>
+                                        </Grid>
+                                    ));
+                                })()}
+                            </Grid>
+                        </Paper>
                     </Container>
                 </Box>
 
@@ -1875,195 +2114,232 @@ export default function LandingPage({ auth }) {
                     </Container>
                 </Box>
 
-                {/* Submission Procedure Section */}
+                {/* Seminar Resources Section */}
                 <Box
+                    id="resources"
+                    ref={resourcesRef}
                     sx={{
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
                         py: { xs: 6, sm: 7, md: 8, lg: 10 },
-                        background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
                         position: 'relative',
                         overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #a855f7 50%, #8b5cf6 75%, #6366f1 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '10%',
+                            left: '-15%',
+                            width: '45%',
+                            height: '70%',
+                            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 60%)',
+                            pointerEvents: 'none',
+                        },
+                        transform: resourcesVisible ? 'translateY(0)' : 'translateY(50px)',
+                        opacity: resourcesVisible ? 1 : 0,
+                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transitionDelay: '0.2s',
                     }}
                 >
                     <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        {/* Title */}
+                        <Typography
+                            variant="overline"
+                            align="center"
+                            sx={{
+                                color: '#0d7a6a',
+                                fontWeight: 600,
+                                letterSpacing: '0.15em',
+                                fontSize: { xs: '0.85rem', md: '0.92rem' },
+                                display: 'block',
+                                mb: 1.5,
+                            }}
+                        >
+                            {settings.resources_text?.section_label || 'DOWNLOADS'}
+                        </Typography>
                         <Typography
                             variant="h4"
                             align="center"
                             gutterBottom
                             sx={{
-                                fontWeight: 800,
+                                fontWeight: 'bold',
                                 mb: 2,
                                 color: '#111827',
-                                fontSize: { xs: '1.75rem', md: '2.5rem' },
-                                letterSpacing: '0.05em',
+                                fontSize: { xs: '1.75rem', md: '2.125rem' },
+                                px: { xs: 2, sm: 0 },
                             }}
                         >
-                            SUBMISSION PROCEDURE
+                            {settings.resources_text?.title || 'Seminar Resources'}
                         </Typography>
-
                         <Typography
                             variant="body1"
                             align="center"
                             sx={{
                                 mb: { xs: 4, md: 6 },
                                 color: '#6b7280',
-                                maxWidth: '700px',
+                                px: { xs: 2, sm: 0 },
+                                maxWidth: '600px',
                                 mx: 'auto',
-                                fontSize: { xs: '0.95rem', md: '1.1rem' },
+                                transform: resourcesVisible ? 'translateY(0)' : 'translateY(20px)',
+                                opacity: resourcesVisible ? 1 : 0,
+                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transitionDelay: '0.4s',
                             }}
                         >
-                            Follow these simple steps to submit your abstract for the conference
+                            {settings.resources_text?.subtitle || 'Everything you need to prepare a professional presentation for the IAGI-GEOSEA 2026 conference.'}
                         </Typography>
 
-                        {/* White Box Container */}
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: { xs: 3, sm: 4, md: 5 },
-                                borderRadius: '20px',
-                                bgcolor: 'white',
-                                border: '1px solid rgba(0,0,0,0.08)',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-                            }}
-                        >
-                            {/* Two Column Layout - Dynamic Sections */}
-                            <Grid container spacing={6}>
-                                {(() => {
-                                    // Get procedure data with backward compatibility
-                                    const procedureData = settings.submission_procedure;
-                                    let sections = [];
-
-                                    if (Array.isArray(procedureData)) {
-                                        // New array format
-                                        sections = procedureData;
-                                    } else if (procedureData && typeof procedureData === 'object') {
-                                        // Old object format - convert to array
-                                        if (procedureData.pendaftaran) {
-                                            sections.push({ title: 'PENDAFTARAN', items: procedureData.pendaftaran });
-                                        }
-                                        if (procedureData.abstract) {
-                                            sections.push({ title: 'SUBMISSION ABSTRACT', items: procedureData.abstract });
-                                        }
-                                    }
-
-                                    // Fallback to defaults if empty
-                                    if (sections.length === 0) {
-                                        sections = [
-                                            {
-                                                title: 'PENDAFTARAN',
-                                                items: [
-                                                    { text: 'Register on our platform with your email', link: '/register' },
-                                                    { text: 'Complete your profile information', link: '/dashboard' },
-                                                    { text: 'Choose your participation category', link: '/register' },
-                                                    { text: 'Wait for account verification', link: '' },
-                                                ],
-                                            },
-                                            {
-                                                title: 'SUBMISSION ABSTRACT',
-                                                items: [
-                                                    { text: 'Download the abstract template from Resources', link: '#resources' },
-                                                    { text: 'Prepare your abstract following the guidelines', link: '#resources' },
-                                                    { text: 'Upload your abstract through the submission portal', link: '/dashboard' },
-                                                    { text: 'Track your submission status in your dashboard', link: '/dashboard' },
-                                                ],
-                                            },
-                                        ];
-                                    }
-
-                                    return sections.map((section, sectionIndex) => (
-                                        <Grid item xs={12} md={6} key={sectionIndex}>
-                                            <Typography
-                                                variant="h5"
+                        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
+                            {settings.resources && settings.resources.length > 0 ? (
+                                settings.resources.map((resource, index) => (
+                                    <Grid
+                                        key={index}
+                                        size={{ xs: 12, sm: 6, md: 4 }}
+                                        sx={{
+                                            transform: resourcesVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
+                                            opacity: resourcesVisible ? 1 : 0,
+                                            transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            transitionDelay: `${0.6 + index * 0.1}s`,
+                                        }}
+                                    >
+                                        <Paper
+                                            sx={{
+                                                p: { xs: 3, sm: 3.5, md: 4 },
+                                                textAlign: 'center',
+                                                background: '#ffffff',
+                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                borderRadius: '20px',
+                                                border: '1px solid rgba(0, 0, 0, 0.06)',
+                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
+                                                position: 'relative',
+                                                overflow: 'hidden',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                height: '100%',
+                                                '&::before': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    height: '4px',
+                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 50%, #34d399 100%)',
+                                                    transform: 'scaleX(0)',
+                                                    transformOrigin: 'left',
+                                                    transition: 'transform 0.4s ease',
+                                                },
+                                                '&:hover': {
+                                                    transform: 'translateY(-8px)',
+                                                    boxShadow: '0 12px 40px rgba(13, 122, 106, 0.12), 0 20px 48px rgba(0, 0, 0, 0.06)',
+                                                    border: '1px solid rgba(13, 122, 106, 0.15)',
+                                                    '&::before': {
+                                                        transform: 'scaleX(1)',
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            {/* Icon Container with Gradient Background */}
+                                            <Box
                                                 sx={{
-                                                    fontWeight: 700,
-                                                    color: '#111827',
-                                                    mb: 3,
-                                                    fontSize: { xs: '1.5rem', md: '1.75rem' },
-                                                    letterSpacing: '0.02em',
+                                                    width: 72,
+                                                    height: 72,
+                                                    borderRadius: '16px',
+                                                    background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    mx: 'auto',
+                                                    mb: 2.5,
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.12) 0%, rgba(16, 185, 129, 0.18) 100%)',
+                                                        transform: 'scale(1.05)',
+                                                    },
                                                 }}
                                             >
-                                                {section.title}
+                                                <DescriptionIcon sx={{ fontSize: 36, color: '#0d7a6a' }} />
+                                            </Box>
+
+                                            <Typography
+                                                variant="h6"
+                                                gutterBottom
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#1f2937',
+                                                    fontSize: { xs: '1rem', md: '1.1rem' },
+                                                    lineHeight: 1.4,
+                                                    minHeight: { xs: 'auto', md: '2.8em' },
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                {resource.title}
                                             </Typography>
 
-                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                                                {(section.items || []).map((item, index) => {
-                                                    // Determine if this is an external link (PDF/storage) or internal route
-                                                    const isExternalLink = item.link && (item.link.includes('/storage/') || item.link.startsWith('http'));
-                                                    const LinkComponent = isExternalLink ? 'a' : (item.link ? Link : 'div');
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    mb: 3,
+                                                    color: '#6b7280',
+                                                    fontSize: '0.875rem',
+                                                    lineHeight: 1.6,
+                                                    flexGrow: 1,
+                                                }}
+                                            >
+                                                {resource.description || 'Downloadable resource'}
+                                            </Typography>
 
-                                                    return (
-                                                        <Box
-                                                            key={index}
-                                                            component={LinkComponent}
-                                                            href={item.link || undefined}
-                                                            target={isExternalLink ? '_blank' : undefined}
-                                                            rel={isExternalLink ? 'noopener noreferrer' : undefined}
-                                                            sx={{
-                                                                display: 'flex',
-                                                                alignItems: 'flex-start',
-                                                                gap: 1.5,
-                                                                textDecoration: 'none',
-                                                                cursor: item.link ? 'pointer' : 'default',
-                                                                p: 1.5,
-                                                                mx: -1.5,
-                                                                borderRadius: '8px',
-                                                                transition: 'all 0.2s ease',
-                                                                '&:hover': item.link ? {
-                                                                    bgcolor: 'rgba(13, 122, 106, 0.08)',
-                                                                    transform: 'translateX(4px)',
-                                                                } : {},
-                                                            }}
-                                                        >
-                                                            <Typography sx={{ color: '#0d7a6a', fontWeight: 600, fontSize: '1.25rem' }}>›</Typography>
-                                                            <Typography
-                                                                sx={{
-                                                                    color: item.link ? '#0d7a6a' : '#374151',
-                                                                    fontSize: { xs: '1rem', md: '1.1rem' },
-                                                                    lineHeight: 1.6,
-                                                                    fontWeight: item.link ? 500 : 400,
-                                                                    '&:hover': item.link ? {
-                                                                        textDecoration: 'underline',
-                                                                    } : {},
-                                                                }}
-                                                            >
-                                                                {item.text}
-                                                            </Typography>
-                                                        </Box>
-                                                    );
-                                                })}
-                                            </Box>
-                                        </Grid>
-                                    ));
-                                })()}
-                            </Grid>
-                        </Paper>
-
-                        {/* CTA Button */}
-                        <Box sx={{ textAlign: 'center', mt: 6 }}>
-                            <Button
-                                component={Link}
-                                href="/register"
-                                variant="contained"
-                                size="large"
-                                sx={{
-                                    bgcolor: '#0d7a6a',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    fontSize: '1rem',
-                                    px: 5,
-                                    py: 1.5,
-                                    borderRadius: '12px',
-                                    textTransform: 'none',
-                                    boxShadow: '0 4px 16px rgba(13, 122, 106, 0.3)',
-                                    '&:hover': {
-                                        bgcolor: '#095c50',
-                                        boxShadow: '0 8px 24px rgba(13, 122, 106, 0.4)',
-                                    },
-                                }}
-                            >
-                                Start Your Submission
-                            </Button>
-                        </Box>
+                                            <Button
+                                                component="a"
+                                                href={resource.file_url}
+                                                download
+                                                variant="contained"
+                                                startIcon={<DownloadIcon />}
+                                                fullWidth
+                                                sx={{
+                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
+                                                    color: 'white',
+                                                    fontWeight: 600,
+                                                    py: 1.5,
+                                                    borderRadius: '12px',
+                                                    textTransform: 'none',
+                                                    fontSize: '0.9rem',
+                                                    boxShadow: '0 4px 12px rgba(13, 122, 106, 0.25)',
+                                                    mt: 'auto',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, #0a6356 0%, #0d9668 100%)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 8px 20px rgba(13, 122, 106, 0.35)',
+                                                    },
+                                                }}
+                                            >
+                                                Download {
+                                                    resource.file_type === 'pdf' ? 'PDF' :
+                                                        ['ppt', 'pptx'].includes(resource.file_type) ? 'PowerPoint' :
+                                                            ['doc', 'docx'].includes(resource.file_type) ? 'Word Document' :
+                                                                resource.file_type === 'txt' ? 'Text File' :
+                                                                    'File'
+                                                }
+                                            </Button>
+                                        </Paper>
+                                    </Grid>
+                                ))
+                            ) : (
+                                <Grid size={12}>
+                                    <Typography variant="body1" align="center" color="text.secondary" sx={{ py: 4 }}>
+                                        No resources available yet. Please check back later.
+                                    </Typography>
+                                </Grid>
+                            )}
+                        </Grid>
                     </Container>
                 </Box>
 

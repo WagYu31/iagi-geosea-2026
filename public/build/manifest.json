@@ -133,7 +133,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-DNxbLQIP.js",
+    "file": "assets/Settings-kZcLBKIq.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -178,7 +178,7 @@
     ]
   },
   "resources/js/Pages/LandingPage.jsx": {
-    "file": "assets/LandingPage-Qsoll9Nk.js",
+    "file": "assets/LandingPage-DTsQiV6P.js",
     "name": "LandingPage",
     "src": "resources/js/Pages/LandingPage.jsx",
     "isDynamicEntry": true,
@@ -238,7 +238,7 @@
     ]
   },
   "resources/js/Pages/Reviewer/Submissions.jsx": {
-    "file": "assets/Submissions-BMde2TqG.js",
+    "file": "assets/Submissions-Dw84iG7q.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Reviewer/Submissions.jsx",
     "isDynamicEntry": true,
@@ -309,7 +309,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DX1eR8Q5.js",
+    "file": "assets/app-CkzkfGBH.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

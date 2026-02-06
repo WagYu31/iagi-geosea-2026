@@ -136,6 +136,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/upload-hero-logo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadHeroLogo'])->name('settings.uploadHeroLogo');
         Route::post('/settings/upload-hero-logo-secondary', [App\Http\Controllers\LandingPageSettingController::class, 'uploadHeroLogoSecondary'])->name('settings.uploadHeroLogoSecondary');
         Route::post('/settings/delete-hero-logo-secondary', [App\Http\Controllers\LandingPageSettingController::class, 'deleteHeroLogoSecondary'])->name('settings.deleteHeroLogoSecondary');
+        Route::post('/settings/afgeo-member-logo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadAfgeoMemberLogo'])->name('settings.uploadAfgeoMemberLogo');
+        Route::post('/settings/custom-section-logo', [App\Http\Controllers\LandingPageSettingController::class, 'uploadCustomSectionLogo'])->name('settings.uploadCustomSectionLogo');
+        Route::post('/settings/custom-section-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadCustomSectionBackground'])->name('settings.uploadCustomSectionBackground');
+        Route::post('/settings/afgeo-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadAfgeoBackground'])->name('settings.uploadAfgeoBackground');
+        Route::post('/settings/faq-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadFaqBackground'])->name('settings.uploadFaqBackground');
 
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs

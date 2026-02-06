@@ -176,10 +176,58 @@ export default function Settings({ settings, submissionSettings }) {
         getSettingValue('sponsors_description', 'Empowering the future of geological science through strategic partnerships.')
     );
     const [resources, setResources] = useState(getSettingValue('resources', []));
+    // Conference Resources Text Settings
+    const [resourcesText, setResourcesText] = useState(() => {
+        const data = getSettingValue('resources_text', null);
+        if (data && typeof data === 'object') return data;
+        return {
+            section_label: 'DOWNLOADS',
+            title: 'Seminar Resources',
+            subtitle: 'Everything you need to prepare a professional presentation for the IAGI-GEOSEA 2026 conference.',
+        };
+    });
+    const [savingResourcesText, setSavingResourcesText] = useState(false);
     const [savingCountdown, setSavingCountdown] = useState(false);
     const [savingContactInfo, setSavingContactInfo] = useState(false);
     const [savingSpeakers, setSavingSpeakers] = useState(false);
     const [savingSponsors, setSavingSponsors] = useState(false);
+
+    // AFGEO Members State
+    const [afgeoMembers, setAfgeoMembers] = useState(() => {
+        const data = getSettingValue('afgeo_members', null);
+        if (data && Array.isArray(data)) return data;
+        return [
+            { name: 'IAGI', country: 'Indonesia', logo: '' },
+            { name: 'GSM', country: 'Malaysia', logo: '' },
+            { name: 'GST', country: 'Thailand', logo: '' },
+            { name: 'GSP', country: 'Philippines', logo: '' },
+            { name: 'GSV', country: 'Vietnam', logo: '' },
+            { name: 'GSJ', country: 'Japan', logo: '' },
+            { name: 'GSK', country: 'Korea', logo: '' },
+            { name: 'GSC', country: 'China', logo: '' },
+        ];
+    });
+    const [savingAfgeoMembers, setSavingAfgeoMembers] = useState(false);
+
+    // AFGEO Text Settings State
+    const [afgeoText, setAfgeoText] = useState(() => {
+        const data = getSettingValue('afgeo_text', null);
+        if (data && typeof data === 'object') return data;
+        return {
+            section_label: 'OUR NETWORK',
+            title: 'AFGEO Member',
+            subtitle: 'Association of Federation of Geoscientists of East and Southeast Asia',
+        };
+    });
+    const [savingAfgeoText, setSavingAfgeoText] = useState(false);
+
+    // Custom Sections State (dynamic sections like AFGEO)
+    const [customSections, setCustomSections] = useState(() => {
+        const data = getSettingValue('custom_sections', null);
+        if (data && Array.isArray(data)) return data;
+        return [];
+    });
+    const [savingCustomSections, setSavingCustomSections] = useState(false);
     const [socialMedia, setSocialMedia] = useState(() => {
         const data = getSettingValue('social_media', null);
         if (data && typeof data === 'object') return data;
@@ -265,6 +313,23 @@ export default function Settings({ settings, submissionSettings }) {
         ];
     });
     const [savingSubmissionProcedure, setSavingSubmissionProcedure] = useState(false);
+    // FAQ/Submission Procedure Background
+    const [faqBackground, setFaqBackground] = useState(() => {
+        const data = getSettingValue('faq_background', null);
+        if (data && typeof data === 'object') return data;
+        return { url: '', filename: '' };
+    });
+    const [uploadingFaqBackground, setUploadingFaqBackground] = useState(false);
+    // FAQ Text Settings State
+    const [faqText, setFaqText] = useState(() => {
+        const data = getSettingValue('faq_text', null);
+        if (data && typeof data === 'object') return data;
+        return {
+            title: 'FREQUENTLY ASKED QUESTION',
+            subtitle: 'Follow these simple steps to submit your abstract for the conference',
+        };
+    });
+    const [savingFaqText, setSavingFaqText] = useState(false);
 
     // Form for submission deadline settings
     const { data: deadlineData, setData: setDeadlineData, post: postDeadline, processing: processingDeadline, errors: deadlineErrors } = useForm({
@@ -492,6 +557,72 @@ export default function Settings({ settings, submissionSettings }) {
         }
     };
 
+    // Save AFGEO Members
+    const saveAfgeoMembers = async () => {
+        setSavingAfgeoMembers(true);
+        try {
+            const settingId = getSettingId('afgeo_members');
+            if (settingId) {
+                await router.patch(route('admin.settings.update', settingId), {
+                    value: JSON.stringify(afgeoMembers),
+                }, {
+                    preserveScroll: true,
+                });
+            } else {
+                await router.post(route('admin.settings.store'), {
+                    key: 'afgeo_members',
+                    value: JSON.stringify(afgeoMembers),
+                    type: 'json',
+                }, {
+                    preserveScroll: true,
+                });
+            }
+            alert('AFGEO Members saved successfully!');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Failed to save AFGEO Members');
+        } finally {
+            setSavingAfgeoMembers(false);
+        }
+    };
+
+    // Add new AFGEO member
+    const addAfgeoMember = () => {
+        setAfgeoMembers([...afgeoMembers, { name: '', country: '', logo: '' }]);
+    };
+
+    // Remove AFGEO member
+    const removeAfgeoMember = (index) => {
+        if (confirm('Are you sure you want to remove this member?')) {
+            const updated = afgeoMembers.filter((_, i) => i !== index);
+            setAfgeoMembers(updated);
+        }
+    };
+
+    // Handle AFGEO member logo upload
+    const handleAfgeoMemberLogoUpload = async (index, file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('logo', file);
+        formData.append('index', index);
+
+        try {
+            const response = await axios.post('/admin/settings/afgeo-member-logo', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            if (response.data.success) {
+                const updated = [...afgeoMembers];
+                updated[index].logo = response.data.logo_url;
+                setAfgeoMembers(updated);
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Failed to upload logo');
+        }
+    };
+
     // Handle speaker photo upload
     const handleSpeakerPhotoUpload = async (index, file) => {
         if (!file) return;
@@ -651,6 +782,64 @@ export default function Settings({ settings, submissionSettings }) {
         } catch (error) {
             console.error('Save resources error:', error);
             alert('Failed to save resources');
+        }
+    };
+
+    // Save Resources Text Settings
+    const saveResourcesText = async () => {
+        setSavingResourcesText(true);
+        try {
+            const settingId = getSettingId('resources_text');
+            if (settingId) {
+                await router.patch(route('admin.settings.update', settingId), {
+                    value: JSON.stringify(resourcesText),
+                }, {
+                    preserveScroll: true,
+                });
+            } else {
+                await router.post(route('admin.settings.store'), {
+                    key: 'resources_text',
+                    value: JSON.stringify(resourcesText),
+                    type: 'json',
+                }, {
+                    preserveScroll: true,
+                });
+            }
+            alert('Resources text settings saved successfully!');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Failed to save resources text settings');
+        } finally {
+            setSavingResourcesText(false);
+        }
+    };
+
+    // Save FAQ Text Settings
+    const saveFaqText = async () => {
+        setSavingFaqText(true);
+        try {
+            const settingId = getSettingId('faq_text');
+            if (settingId) {
+                await router.patch(route('admin.settings.update', settingId), {
+                    value: JSON.stringify(faqText),
+                }, {
+                    preserveScroll: true,
+                });
+            } else {
+                await router.post(route('admin.settings.store'), {
+                    key: 'faq_text',
+                    value: JSON.stringify(faqText),
+                    type: 'json',
+                }, {
+                    preserveScroll: true,
+                });
+            }
+            alert('FAQ text settings saved successfully!');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Failed to save FAQ text settings');
+        } finally {
+            setSavingFaqText(false);
         }
     };
 
@@ -925,6 +1114,57 @@ export default function Settings({ settings, submissionSettings }) {
             alert('Failed to upload PDF: ' + (error.response?.data?.error || error.message));
         } finally {
             setUploadingProcedurePdf(null);
+        }
+    };
+
+    // Handle FAQ background upload
+    const handleFaqBackgroundUpload = async (file) => {
+        if (!file) return;
+
+        setUploadingFaqBackground(true);
+        const formData = new FormData();
+        formData.append('background', file);
+
+        try {
+            const response = await axios.post('/admin/settings/faq-background', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.data.success) {
+                setFaqBackground({
+                    url: response.data.background_url,
+                    filename: file.name,
+                });
+                alert('FAQ background uploaded successfully!');
+            }
+        } catch (error) {
+            console.error('FAQ background upload error:', error);
+            alert('Failed to upload background: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setUploadingFaqBackground(false);
+        }
+    };
+
+    // Remove FAQ background
+    const removeFaqBackground = async () => {
+        if (confirm('Are you sure you want to remove the FAQ background?')) {
+            try {
+                const settingId = getSettingId('faq_background');
+                if (settingId) {
+                    await router.patch(route('admin.settings.update', settingId), {
+                        value: JSON.stringify({ url: '', filename: '' }),
+                    }, {
+                        preserveScroll: true,
+                    });
+                }
+                setFaqBackground({ url: '', filename: '' });
+                alert('FAQ background removed successfully!');
+            } catch (error) {
+                console.error('Remove FAQ background error:', error);
+                alert('Failed to remove background');
+            }
         }
     };
 
@@ -1759,6 +1999,56 @@ export default function Settings({ settings, submissionSettings }) {
                                             Upload presentation templates and guidelines for conference submissions
                                         </Alert>
 
+                                        {/* Section Header Text Settings */}
+                                        <Typography variant="subtitle2" sx={{ mb: 2, color: '#6b7280', fontWeight: 600 }}>
+                                            Section Header Text
+                                        </Typography>
+                                        <Grid container spacing={2} sx={{ mb: 3 }}>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Section Label"
+                                                    value={resourcesText.section_label}
+                                                    onChange={(e) => setResourcesText({ ...resourcesText, section_label: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="e.g. DOWNLOADS"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Title"
+                                                    value={resourcesText.title}
+                                                    onChange={(e) => setResourcesText({ ...resourcesText, title: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="e.g. Seminar Resources"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Subtitle"
+                                                    value={resourcesText.subtitle}
+                                                    onChange={(e) => setResourcesText({ ...resourcesText, subtitle: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="Full description"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={saveResourcesText}
+                                                disabled={savingResourcesText}
+                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c' }}
+                                            >
+                                                {savingResourcesText ? 'Saving...' : 'Save Section Text'}
+                                            </Button>
+                                        </Box>
+
+                                        <Divider sx={{ my: 2 }} />
+
                                         <DynamicResourceCards
                                             resources={resources}
                                             setResources={setResources}
@@ -1784,6 +2074,559 @@ export default function Settings({ settings, submissionSettings }) {
                                     </CardContent>
                                 </Card>
 
+                                {/* AFGEO Members Section */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            AFGEO Members
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Manage AFGEO (Association of Federation of Geoscientists of East and Southeast Asia) member organizations
+                                        </Alert>
+
+                                        {/* Section Text Settings */}
+                                        <Typography variant="subtitle2" sx={{ mb: 2, color: '#6b7280', fontWeight: 600 }}>
+                                            Section Header Text
+                                        </Typography>
+                                        <Grid container spacing={2} sx={{ mb: 3 }}>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Section Label"
+                                                    value={afgeoText.section_label}
+                                                    onChange={(e) => setAfgeoText({ ...afgeoText, section_label: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="e.g. OUR NETWORK"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Title"
+                                                    value={afgeoText.title}
+                                                    onChange={(e) => setAfgeoText({ ...afgeoText, title: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="e.g. AFGEO Member"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={4}>
+                                                <TextField
+                                                    label="Subtitle"
+                                                    value={afgeoText.subtitle}
+                                                    onChange={(e) => setAfgeoText({ ...afgeoText, subtitle: e.target.value })}
+                                                    fullWidth
+                                                    size="small"
+                                                    helperText="Full description"
+                                                />
+                                            </Grid>
+                                        </Grid>
+
+                                        {/* AFGEO Background Image Upload */}
+                                        <Box sx={{ mt: 2, p: 2, bgcolor: '#f9fafb', borderRadius: 1, border: '1px dashed #e5e7eb' }}>
+                                            <Typography variant="subtitle2" sx={{ mb: 1, color: '#6b7280', fontSize: '0.8rem' }}>
+                                                Section Background Image
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                {afgeoText.background && (
+                                                    <Box
+                                                        component="img"
+                                                        src={afgeoText.background}
+                                                        sx={{ width: 100, height: 60, objectFit: 'cover', borderRadius: 1, border: '1px solid #e5e7eb' }}
+                                                    />
+                                                )}
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    component="label"
+                                                    startIcon={<UploadFileIcon />}
+                                                >
+                                                    {afgeoText.background ? 'Change Background' : 'Upload Background'}
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        accept="image/*"
+                                                        onChange={async (e) => {
+                                                            const file = e.target.files[0];
+                                                            if (!file) return;
+                                                            try {
+                                                                const formData = new FormData();
+                                                                formData.append('background', file);
+                                                                const response = await axios.post('/admin/settings/afgeo-background', formData, {
+                                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                                });
+                                                                if (response.data.background_url) {
+                                                                    setAfgeoText({ ...afgeoText, background: response.data.background_url });
+                                                                }
+                                                            } catch (error) {
+                                                                console.error('Background upload error:', error);
+                                                                alert('Failed to upload background');
+                                                            }
+                                                        }}
+                                                    />
+                                                </Button>
+                                                {afgeoText.background && (
+                                                    <Button
+                                                        variant="text"
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={() => setAfgeoText({ ...afgeoText, background: '' })}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                        </Box>
+
+                                        <Divider sx={{ my: 2 }} />
+
+                                        <Typography variant="subtitle2" sx={{ mb: 2, color: '#6b7280', fontWeight: 600 }}>
+                                            Member Organizations
+                                        </Typography>
+
+                                        <Grid container spacing={2}>
+                                            {afgeoMembers.map((member, index) => (
+                                                <Grid item xs={12} sm={6} md={4} key={index}>
+                                                    <Paper sx={{ p: 2, border: '1px solid #e5e7eb' }}>
+                                                        <Stack spacing={2}>
+                                                            <TextField
+                                                                label="Organization Name"
+                                                                value={member.name}
+                                                                onChange={(e) => {
+                                                                    const updated = [...afgeoMembers];
+                                                                    updated[index].name = e.target.value;
+                                                                    setAfgeoMembers(updated);
+                                                                }}
+                                                                fullWidth
+                                                                size="small"
+                                                            />
+                                                            <TextField
+                                                                label="Country"
+                                                                value={member.country}
+                                                                onChange={(e) => {
+                                                                    const updated = [...afgeoMembers];
+                                                                    updated[index].country = e.target.value;
+                                                                    setAfgeoMembers(updated);
+                                                                }}
+                                                                fullWidth
+                                                                size="small"
+                                                            />
+
+                                                            {/* Logo Upload */}
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                {member.logo && (
+                                                                    <Box
+                                                                        component="img"
+                                                                        src={member.logo}
+                                                                        sx={{ width: 50, height: 50, objectFit: 'contain', borderRadius: 1, border: '1px solid #e5e7eb' }}
+                                                                    />
+                                                                )}
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    component="label"
+                                                                    startIcon={<UploadFileIcon />}
+                                                                >
+                                                                    Logo
+                                                                    <input
+                                                                        type="file"
+                                                                        hidden
+                                                                        accept="image/*"
+                                                                        onChange={(e) => handleAfgeoMemberLogoUpload(index, e.target.files[0])}
+                                                                    />
+                                                                </Button>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    color="error"
+                                                                    onClick={() => removeAfgeoMember(index)}
+                                                                >
+                                                                    <DeleteIcon />
+                                                                </IconButton>
+                                                            </Box>
+                                                        </Stack>
+                                                    </Paper>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<AddIcon />}
+                                                onClick={addAfgeoMember}
+                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c' }}
+                                            >
+                                                Add Member
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                onClick={async () => {
+                                                    setSavingAfgeoMembers(true);
+                                                    try {
+                                                        // Save members
+                                                        const membersSettingId = getSettingId('afgeo_members');
+                                                        if (membersSettingId) {
+                                                            await router.patch(route('admin.settings.update', membersSettingId), {
+                                                                value: JSON.stringify(afgeoMembers),
+                                                            }, { preserveScroll: true });
+                                                        } else {
+                                                            await router.post(route('admin.settings.store'), {
+                                                                key: 'afgeo_members',
+                                                                value: JSON.stringify(afgeoMembers),
+                                                                type: 'json',
+                                                            }, { preserveScroll: true });
+                                                        }
+
+                                                        // Save text settings
+                                                        const textSettingId = getSettingId('afgeo_text');
+                                                        if (textSettingId) {
+                                                            await router.patch(route('admin.settings.update', textSettingId), {
+                                                                value: JSON.stringify(afgeoText),
+                                                            }, { preserveScroll: true });
+                                                        } else {
+                                                            await router.post(route('admin.settings.store'), {
+                                                                key: 'afgeo_text',
+                                                                value: JSON.stringify(afgeoText),
+                                                                type: 'json',
+                                                            }, { preserveScroll: true });
+                                                        }
+
+                                                        alert('AFGEO Settings saved successfully!');
+                                                    } catch (error) {
+                                                        console.error('Save error:', error);
+                                                        alert('Failed to save AFGEO Settings');
+                                                    } finally {
+                                                        setSavingAfgeoMembers(false);
+                                                    }
+                                                }}
+                                                disabled={savingAfgeoMembers}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingAfgeoMembers ? 'Saving...' : 'Save AFGEO Settings'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Custom Sections - Dynamic Landing Page Sections */}
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                            Custom Sections
+                                        </Typography>
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Create additional sections on the landing page (similar to AFGEO Member section)
+                                        </Alert>
+
+                                        {customSections.length === 0 ? (
+                                            <Box sx={{ textAlign: 'center', py: 4, bgcolor: '#f9fafb', borderRadius: 2 }}>
+                                                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                                                    No custom sections yet. Click "Add New Section" to create one.
+                                                </Typography>
+                                            </Box>
+                                        ) : (
+                                            <Stack spacing={3}>
+                                                {customSections.map((section, sectionIndex) => (
+                                                    <Paper key={sectionIndex} sx={{ p: 3, border: '1px solid #e5e7eb' }}>
+                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#374151' }}>
+                                                                Section #{sectionIndex + 1}
+                                                            </Typography>
+                                                            <IconButton
+                                                                size="small"
+                                                                color="error"
+                                                                onClick={() => {
+                                                                    if (confirm('Delete this section?')) {
+                                                                        setCustomSections(customSections.filter((_, i) => i !== sectionIndex));
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Box>
+
+                                                        {/* Section Header Settings */}
+                                                        <Grid container spacing={2} sx={{ mb: 2 }}>
+                                                            <Grid item xs={12} sm={4}>
+                                                                <TextField
+                                                                    label="Section Label"
+                                                                    value={section.section_label || ''}
+                                                                    onChange={(e) => {
+                                                                        const updated = [...customSections];
+                                                                        updated[sectionIndex].section_label = e.target.value;
+                                                                        setCustomSections(updated);
+                                                                    }}
+                                                                    fullWidth
+                                                                    size="small"
+                                                                    placeholder="e.g. OUR PARTNERS"
+                                                                />
+                                                            </Grid>
+                                                            <Grid item xs={12} sm={4}>
+                                                                <TextField
+                                                                    label="Title"
+                                                                    value={section.title || ''}
+                                                                    onChange={(e) => {
+                                                                        const updated = [...customSections];
+                                                                        updated[sectionIndex].title = e.target.value;
+                                                                        setCustomSections(updated);
+                                                                    }}
+                                                                    fullWidth
+                                                                    size="small"
+                                                                    placeholder="e.g. Our Partners"
+                                                                />
+                                                            </Grid>
+                                                            <Grid item xs={12} sm={4}>
+                                                                <TextField
+                                                                    label="Subtitle"
+                                                                    value={section.subtitle || ''}
+                                                                    onChange={(e) => {
+                                                                        const updated = [...customSections];
+                                                                        updated[sectionIndex].subtitle = e.target.value;
+                                                                        setCustomSections(updated);
+                                                                    }}
+                                                                    fullWidth
+                                                                    size="small"
+                                                                    placeholder="Description"
+                                                                />
+                                                            </Grid>
+                                                        </Grid>
+
+                                                        {/* Background Image Upload */}
+                                                        <Box sx={{ mt: 2, p: 2, bgcolor: '#f9fafb', borderRadius: 1, border: '1px dashed #e5e7eb' }}>
+                                                            <Typography variant="subtitle2" sx={{ mb: 1, color: '#6b7280', fontSize: '0.8rem' }}>
+                                                                Section Background Image
+                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                                {section.background && (
+                                                                    <Box
+                                                                        component="img"
+                                                                        src={section.background}
+                                                                        sx={{ width: 100, height: 60, objectFit: 'cover', borderRadius: 1, border: '1px solid #e5e7eb' }}
+                                                                    />
+                                                                )}
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    component="label"
+                                                                    startIcon={<UploadFileIcon />}
+                                                                >
+                                                                    {section.background ? 'Change Background' : 'Upload Background'}
+                                                                    <input
+                                                                        type="file"
+                                                                        hidden
+                                                                        accept="image/*"
+                                                                        onChange={async (e) => {
+                                                                            const file = e.target.files[0];
+                                                                            if (!file) return;
+                                                                            try {
+                                                                                const formData = new FormData();
+                                                                                formData.append('background', file);
+                                                                                formData.append('section_index', sectionIndex);
+                                                                                const response = await axios.post('/admin/settings/custom-section-background', formData, {
+                                                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                                                });
+                                                                                if (response.data.background_url) {
+                                                                                    const updated = [...customSections];
+                                                                                    updated[sectionIndex].background = response.data.background_url;
+                                                                                    setCustomSections(updated);
+                                                                                }
+                                                                            } catch (error) {
+                                                                                console.error('Background upload error:', error);
+                                                                                alert('Failed to upload background');
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </Button>
+                                                                {section.background && (
+                                                                    <Button
+                                                                        variant="text"
+                                                                        size="small"
+                                                                        color="error"
+                                                                        onClick={() => {
+                                                                            const updated = [...customSections];
+                                                                            updated[sectionIndex].background = '';
+                                                                            setCustomSections(updated);
+                                                                        }}
+                                                                    >
+                                                                        Remove
+                                                                    </Button>
+                                                                )}
+                                                            </Box>
+                                                        </Box>
+
+                                                        <Divider sx={{ my: 2 }} />
+
+                                                        {/* Section Members/Items */}
+                                                        <Typography variant="subtitle2" sx={{ mb: 2, color: '#6b7280' }}>
+                                                            Items
+                                                        </Typography>
+                                                        <Grid container spacing={2}>
+                                                            {(section.members || []).map((member, memberIndex) => (
+                                                                <Grid item xs={12} sm={6} md={4} key={memberIndex}>
+                                                                    <Paper sx={{ p: 2, border: '1px solid #e5e7eb' }}>
+                                                                        <Stack spacing={1}>
+                                                                            <TextField
+                                                                                label="Name"
+                                                                                value={member.name || ''}
+                                                                                onChange={(e) => {
+                                                                                    const updated = [...customSections];
+                                                                                    updated[sectionIndex].members[memberIndex].name = e.target.value;
+                                                                                    setCustomSections(updated);
+                                                                                }}
+                                                                                fullWidth
+                                                                                size="small"
+                                                                            />
+                                                                            <TextField
+                                                                                label="Description"
+                                                                                value={member.country || ''}
+                                                                                onChange={(e) => {
+                                                                                    const updated = [...customSections];
+                                                                                    updated[sectionIndex].members[memberIndex].country = e.target.value;
+                                                                                    setCustomSections(updated);
+                                                                                }}
+                                                                                fullWidth
+                                                                                size="small"
+                                                                            />
+                                                                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                                                                                {member.logo && (
+                                                                                    <Box
+                                                                                        component="img"
+                                                                                        src={member.logo}
+                                                                                        sx={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 1, border: '1px solid #e5e7eb' }}
+                                                                                    />
+                                                                                )}
+                                                                                <Button
+                                                                                    variant="outlined"
+                                                                                    size="small"
+                                                                                    component="label"
+                                                                                    startIcon={<UploadFileIcon />}
+                                                                                    sx={{ fontSize: '0.7rem' }}
+                                                                                >
+                                                                                    Logo
+                                                                                    <input
+                                                                                        type="file"
+                                                                                        hidden
+                                                                                        accept="image/*"
+                                                                                        onChange={async (e) => {
+                                                                                            const file = e.target.files[0];
+                                                                                            if (!file) return;
+                                                                                            try {
+                                                                                                const formData = new FormData();
+                                                                                                formData.append('logo', file);
+                                                                                                formData.append('section_index', sectionIndex);
+                                                                                                formData.append('member_index', memberIndex);
+                                                                                                const response = await axios.post('/admin/settings/custom-section-logo', formData, {
+                                                                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                                                                });
+                                                                                                if (response.data.logo_url) {
+                                                                                                    const updated = [...customSections];
+                                                                                                    updated[sectionIndex].members[memberIndex].logo = response.data.logo_url;
+                                                                                                    setCustomSections(updated);
+                                                                                                }
+                                                                                            } catch (error) {
+                                                                                                console.error('Logo upload error:', error);
+                                                                                                alert('Failed to upload logo');
+                                                                                            }
+                                                                                        }}
+                                                                                    />
+                                                                                </Button>
+                                                                                <IconButton
+                                                                                    size="small"
+                                                                                    color="error"
+                                                                                    onClick={() => {
+                                                                                        const updated = [...customSections];
+                                                                                        updated[sectionIndex].members = updated[sectionIndex].members.filter((_, i) => i !== memberIndex);
+                                                                                        setCustomSections(updated);
+                                                                                    }}
+                                                                                >
+                                                                                    <DeleteIcon fontSize="small" />
+                                                                                </IconButton>
+                                                                            </Box>
+                                                                        </Stack>
+                                                                    </Paper>
+                                                                </Grid>
+                                                            ))}
+                                                        </Grid>
+
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            startIcon={<AddIcon />}
+                                                            onClick={() => {
+                                                                const updated = [...customSections];
+                                                                if (!updated[sectionIndex].members) {
+                                                                    updated[sectionIndex].members = [];
+                                                                }
+                                                                updated[sectionIndex].members.push({ name: '', country: '', logo: '' });
+                                                                setCustomSections(updated);
+                                                            }}
+                                                            sx={{ mt: 2, borderColor: '#1abc9c', color: '#1abc9c' }}
+                                                        >
+                                                            Add Item
+                                                        </Button>
+                                                    </Paper>
+                                                ))}
+                                            </Stack>
+                                        )}
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<AddIcon />}
+                                                onClick={() => {
+                                                    setCustomSections([
+                                                        ...customSections,
+                                                        {
+                                                            section_label: 'NEW SECTION',
+                                                            title: 'Section Title',
+                                                            subtitle: 'Section description',
+                                                            members: [],
+                                                        },
+                                                    ]);
+                                                }}
+                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c' }}
+                                            >
+                                                Add New Section
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                onClick={async () => {
+                                                    setSavingCustomSections(true);
+                                                    try {
+                                                        const settingId = getSettingId('custom_sections');
+                                                        if (settingId) {
+                                                            await router.patch(route('admin.settings.update', settingId), {
+                                                                value: JSON.stringify(customSections),
+                                                            }, { preserveScroll: true });
+                                                        } else {
+                                                            await router.post(route('admin.settings.store'), {
+                                                                key: 'custom_sections',
+                                                                value: JSON.stringify(customSections),
+                                                                type: 'json',
+                                                            }, { preserveScroll: true });
+                                                        }
+                                                        alert('Custom Sections saved successfully!');
+                                                    } catch (error) {
+                                                        console.error('Save error:', error);
+                                                        alert('Failed to save Custom Sections');
+                                                    } finally {
+                                                        setSavingCustomSections(false);
+                                                    }
+                                                }}
+                                                disabled={savingCustomSections}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingCustomSections ? 'Saving...' : 'Save Custom Sections'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
                                 {/* Submission Procedure Section */}
                                 <Card variant="outlined">
                                     <CardContent>
@@ -1793,6 +2636,88 @@ export default function Settings({ settings, submissionSettings }) {
                                         <Alert severity="info" sx={{ mb: 3 }}>
                                             Manage the submission procedure steps shown on the landing page. You can add new sections and steps.
                                         </Alert>
+
+                                        {/* FAQ Text Settings */}
+                                        <Box sx={{ mb: 3, p: 2, bgcolor: '#f9fafb', borderRadius: 1, border: '1px dashed #e5e7eb' }}>
+                                            <Typography variant="subtitle2" sx={{ mb: 2, color: '#6b7280', fontWeight: 600, fontSize: '0.85rem' }}>
+                                                Section Text Settings
+                                            </Typography>
+                                            <Stack spacing={2}>
+                                                <TextField
+                                                    label="Section Title"
+                                                    fullWidth
+                                                    size="small"
+                                                    value={faqText.title}
+                                                    onChange={(e) => setFaqText({ ...faqText, title: e.target.value })}
+                                                    placeholder="e.g. FREQUENTLY ASKED QUESTION"
+                                                />
+                                                <TextField
+                                                    label="Section Subtitle"
+                                                    fullWidth
+                                                    size="small"
+                                                    value={faqText.subtitle}
+                                                    onChange={(e) => setFaqText({ ...faqText, subtitle: e.target.value })}
+                                                    placeholder="e.g. Follow these simple steps to submit your abstract..."
+                                                />
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    onClick={saveFaqText}
+                                                    disabled={savingFaqText}
+                                                    sx={{ alignSelf: 'flex-start', backgroundColor: '#1abc9c', '&:hover': { backgroundColor: '#16a085' } }}
+                                                >
+                                                    {savingFaqText ? 'Saving...' : 'Save Text Settings'}
+                                                </Button>
+                                            </Stack>
+                                        </Box>
+
+                                        {/* Section Background Image Upload */}
+                                        <Box sx={{ mb: 3, p: 2, bgcolor: '#f9fafb', borderRadius: 1, border: '1px dashed #e5e7eb' }}>
+                                            <Typography variant="subtitle2" sx={{ mb: 1, color: '#6b7280', fontWeight: 600, fontSize: '0.85rem' }}>
+                                                Section Background Image
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                                {faqBackground.url && (
+                                                    <Box
+                                                        component="img"
+                                                        src={faqBackground.url}
+                                                        sx={{ width: 120, height: 70, objectFit: 'cover', borderRadius: 1, border: '1px solid #e5e7eb' }}
+                                                    />
+                                                )}
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    component="label"
+                                                    startIcon={<UploadFileIcon />}
+                                                    disabled={uploadingFaqBackground}
+                                                    sx={{ borderColor: '#1abc9c', color: '#1abc9c' }}
+                                                >
+                                                    {uploadingFaqBackground ? 'Uploading...' : (faqBackground.url ? 'Change Background' : 'Upload Background')}
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        accept="image/*"
+                                                        onChange={(e) => handleFaqBackgroundUpload(e.target.files[0])}
+                                                    />
+                                                </Button>
+                                                {faqBackground.url && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        color="error"
+                                                        startIcon={<DeleteIcon />}
+                                                        onClick={removeFaqBackground}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                            {faqBackground.filename && (
+                                                <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#9ca3af' }}>
+                                                    Current: {faqBackground.filename}
+                                                </Typography>
+                                            )}
+                                        </Box>
 
                                         {/* Dynamic Sections */}
                                         {submissionProcedure.map((section, sectionIndex) => (

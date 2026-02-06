@@ -807,6 +807,409 @@ class LandingPageSettingController extends Controller
     }
 
 
+    /**
+     * Upload AFGEO member logo
+     */
+    public function uploadAfgeoMemberLogo(Request $request)
+    {
+        try {
+            $request->validate([
+                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'index' => 'required|integer'
+            ]);
+
+            $setting = LandingPageSetting::where('key', 'afgeo_members')->first();
+
+            // Initialize members array if not exists
+            $members = $setting ? json_decode($setting->value, true) : [];
+            if (!is_array($members)) {
+                $members = [];
+            }
+
+            $index = $request->index;
+
+            // Ensure array has enough slots
+            while (count($members) <= $index) {
+                $members[] = ['name' => '', 'country' => '', 'logo' => ''];
+            }
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/afgeo');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Delete old logo if exists
+            if (isset($members[$index]['logo']) && $members[$index]['logo']) {
+                $oldLogoPath = public_path($members[$index]['logo']);
+                if (file_exists($oldLogoPath)) {
+                    unlink($oldLogoPath);
+                    Log::info('Deleted old AFGEO logo: ' . $oldLogoPath);
+                }
+            }
+
+            // Upload new logo
+            $file = $request->file('logo');
+            $filename = 'afgeo_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('AFGEO logo uploaded: ' . $filename);
+
+            // Update member logo path
+            $members[$index]['logo'] = '/storage/afgeo/' . $filename;
+
+            // Save to database
+            if ($setting) {
+                $setting->update(['value' => json_encode($members)]);
+            } else {
+                LandingPageSetting::create([
+                    'key' => 'afgeo_members',
+                    'value' => json_encode($members),
+                    'section' => 'landing_page',
+                    'type' => 'json',
+                ]);
+            }
+
+            Log::info('AFGEO members updated with new logo path');
+
+            return response()->json([
+                'success' => true,
+                'logo_url' => $members[$index]['logo'],
+                'message' => 'Logo uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('AFGEO logo upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    /**
+     * Upload AFGEO Section background
+     */
+    public function uploadAfgeoBackground(Request $request)
+    {
+        try {
+            $request->validate([
+                'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
+            ]);
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/afgeo');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Get existing setting to check for old background
+            $setting = LandingPageSetting::where('key', 'afgeo_text')->first();
+            $afgeoText = $setting ? json_decode($setting->value, true) : [];
+            
+            // Delete old background if exists
+            $oldBackground = $afgeoText['background'] ?? null;
+            if ($oldBackground) {
+                $oldPath = public_path($oldBackground);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                    Log::info('Deleted old AFGEO background: ' . $oldPath);
+                }
+            }
+
+            // Upload new background
+            $file = $request->file('background');
+            $filename = 'afgeo_bg_' . time() . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('AFGEO background uploaded: ' . $filename);
+
+            $backgroundUrl = '/storage/afgeo/' . $filename;
+
+            // Update afgeo_text setting with new background
+            $afgeoText['background'] = $backgroundUrl;
+            
+            if ($setting) {
+                $setting->update(['value' => json_encode($afgeoText)]);
+            } else {
+                LandingPageSetting::create([
+                    'key' => 'afgeo_text',
+                    'value' => json_encode($afgeoText),
+                    'section' => 'landing_page',
+                    'type' => 'json',
+                ]);
+            }
+
+            Log::info('AFGEO settings updated with new background');
+
+            return response()->json([
+                'success' => true,
+                'background_url' => $backgroundUrl,
+                'message' => 'Background uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('AFGEO background upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Upload FAQ Section background
+     */
+    public function uploadFaqBackground(Request $request)
+    {
+        try {
+            $request->validate([
+                'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
+            ]);
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/faq');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Get existing setting to check for old background
+            $setting = LandingPageSetting::where('key', 'faq_background')->first();
+            $faqBackground = $setting ? json_decode($setting->value, true) : [];
+            
+            // Delete old background if exists
+            $oldBackground = $faqBackground['url'] ?? null;
+            if ($oldBackground) {
+                $oldPath = public_path($oldBackground);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                    Log::info('Deleted old FAQ background: ' . $oldPath);
+                }
+            }
+
+            // Upload new background
+            $file = $request->file('background');
+            $filename = 'faq_bg_' . time() . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('FAQ background uploaded: ' . $filename);
+
+            $backgroundUrl = '/storage/faq/' . $filename;
+
+            // Update faq_background setting
+            $faqBackground = [
+                'url' => $backgroundUrl,
+                'filename' => $file->getClientOriginalName(),
+            ];
+            
+            if ($setting) {
+                $setting->update(['value' => json_encode($faqBackground)]);
+            } else {
+                LandingPageSetting::create([
+                    'key' => 'faq_background',
+                    'value' => json_encode($faqBackground),
+                    'section' => 'landing_page',
+                    'type' => 'json',
+                ]);
+            }
+
+            Log::info('FAQ background settings saved');
+
+            return response()->json([
+                'success' => true,
+                'background_url' => $backgroundUrl,
+                'message' => 'Background uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('FAQ background upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Upload Custom Section logo
+     */
+    public function uploadCustomSectionLogo(Request $request)
+    {
+        try {
+            $request->validate([
+                'logo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'section_index' => 'required|integer',
+                'member_index' => 'required|integer'
+            ]);
+
+            $setting = LandingPageSetting::where('key', 'custom_sections')->first();
+
+            // Initialize sections array if not exists
+            $sections = $setting ? json_decode($setting->value, true) : [];
+            if (!is_array($sections)) {
+                $sections = [];
+            }
+
+            $sectionIndex = $request->section_index;
+            $memberIndex = $request->member_index;
+
+            // Ensure section exists
+            if (!isset($sections[$sectionIndex])) {
+                return response()->json(['error' => 'Section not found'], 404);
+            }
+
+            // Ensure members array exists
+            if (!isset($sections[$sectionIndex]['members'])) {
+                $sections[$sectionIndex]['members'] = [];
+            }
+
+            // Ensure member exists
+            if (!isset($sections[$sectionIndex]['members'][$memberIndex])) {
+                return response()->json(['error' => 'Member not found'], 404);
+            }
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/custom-sections');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Delete old logo if exists
+            $oldLogo = $sections[$sectionIndex]['members'][$memberIndex]['logo'] ?? null;
+            if ($oldLogo) {
+                $oldLogoPath = public_path($oldLogo);
+                if (file_exists($oldLogoPath)) {
+                    unlink($oldLogoPath);
+                    Log::info('Deleted old custom section logo: ' . $oldLogoPath);
+                }
+            }
+
+            // Upload new logo
+            $file = $request->file('logo');
+            $filename = 'custom_' . time() . '_' . $sectionIndex . '_' . $memberIndex . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('Custom section logo uploaded: ' . $filename);
+
+            // Update member logo path
+            $sections[$sectionIndex]['members'][$memberIndex]['logo'] = '/storage/custom-sections/' . $filename;
+
+            // Save to database
+            if ($setting) {
+                $setting->update(['value' => json_encode($sections)]);
+            } else {
+                LandingPageSetting::create([
+                    'key' => 'custom_sections',
+                    'value' => json_encode($sections),
+                    'section' => 'landing_page',
+                    'type' => 'json',
+                ]);
+            }
+
+            Log::info('Custom sections updated with new logo path');
+
+            return response()->json([
+                'success' => true,
+                'logo_url' => $sections[$sectionIndex]['members'][$memberIndex]['logo'],
+                'message' => 'Logo uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Custom section logo upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Upload Custom Section background
+     */
+    public function uploadCustomSectionBackground(Request $request)
+    {
+        try {
+            $request->validate([
+                'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                'section_index' => 'required|integer'
+            ]);
+
+            $setting = LandingPageSetting::where('key', 'custom_sections')->first();
+
+            // Initialize sections array if not exists
+            $sections = $setting ? json_decode($setting->value, true) : [];
+            if (!is_array($sections)) {
+                $sections = [];
+            }
+
+            $sectionIndex = $request->section_index;
+
+            // Ensure section exists
+            if (!isset($sections[$sectionIndex])) {
+                return response()->json(['error' => 'Section not found'], 404);
+            }
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/custom-sections/backgrounds');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Delete old background if exists
+            $oldBackground = $sections[$sectionIndex]['background'] ?? null;
+            if ($oldBackground) {
+                $oldPath = public_path($oldBackground);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                    Log::info('Deleted old section background: ' . $oldPath);
+                }
+            }
+
+            // Upload new background
+            $file = $request->file('background');
+            $filename = 'bg_section_' . time() . '_' . $sectionIndex . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('Section background uploaded: ' . $filename);
+
+            // Update section background path
+            $sections[$sectionIndex]['background'] = '/storage/custom-sections/backgrounds/' . $filename;
+
+            // Save to database
+            if ($setting) {
+                $setting->update(['value' => json_encode($sections)]);
+            } else {
+                LandingPageSetting::create([
+                    'key' => 'custom_sections',
+                    'value' => json_encode($sections),
+                    'section' => 'landing_page',
+                    'type' => 'json',
+                ]);
+            }
+
+            Log::info('Custom section updated with new background');
+
+            return response()->json([
+                'success' => true,
+                'background_url' => $sections[$sectionIndex]['background'],
+                'message' => 'Background uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Section background upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
     /**
      * Helper function to format file size
