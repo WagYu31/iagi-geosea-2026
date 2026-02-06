@@ -1117,15 +1117,64 @@ export default function Settings({ settings, submissionSettings }) {
         }
     };
 
+    // Compress image client-side before upload (stays under PHP 2MB limit)
+    const compressImage = (file, maxWidth = 1920, quality = 0.7) => {
+        return new Promise((resolve) => {
+            // If file is already small enough, skip compression
+            if (file.size <= 1.8 * 1024 * 1024) {
+                resolve(file);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let { width, height } = img;
+
+                    // Scale down if larger than maxWidth
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            console.log(`Compressed: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
+                            resolve(compressedFile);
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
     // Handle FAQ background upload
     const handleFaqBackgroundUpload = async (file) => {
         if (!file) return;
 
         setUploadingFaqBackground(true);
-        const formData = new FormData();
-        formData.append('background', file);
-
         try {
+            // Compress image before upload
+            const compressedFile = await compressImage(file);
+
+            const formData = new FormData();
+            formData.append('background', compressedFile);
+
             const response = await axios.post('/admin/settings/faq-background', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
