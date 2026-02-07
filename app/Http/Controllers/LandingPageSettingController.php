@@ -312,6 +312,35 @@ class LandingPageSettingController extends Controller
     public function uploadResourceFile(Request $request)
     {
         try {
+            // Check for PHP upload errors (file too large for php.ini limits)
+            if (isset($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+                $phpError = $_FILES['file']['error'];
+                $errorMessages = [
+                    UPLOAD_ERR_INI_SIZE => 'File terlalu besar (melebihi batas server ' . ini_get('upload_max_filesize') . '). Silakan upload file yang lebih kecil.',
+                    UPLOAD_ERR_FORM_SIZE => 'File terlalu besar untuk form upload.',
+                    UPLOAD_ERR_PARTIAL => 'File hanya terupload sebagian. Silakan coba lagi.',
+                    UPLOAD_ERR_NO_FILE => 'Tidak ada file yang dipilih.',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Folder temporary server tidak ditemukan.',
+                    UPLOAD_ERR_CANT_WRITE => 'Gagal menulis file ke server.',
+                    UPLOAD_ERR_EXTENSION => 'Upload dihentikan oleh extension server.',
+                ];
+                $msg = $errorMessages[$phpError] ?? 'Upload error (code: ' . $phpError . ')';
+                \Log::error('Resource upload PHP error', ['error_code' => $phpError, 'message' => $msg, 'upload_max_filesize' => ini_get('upload_max_filesize')]);
+                return response()->json(['error' => $msg], 422);
+            }
+
+            // Check if file was not received at all (PHP silently dropped it)
+            if (!$request->hasFile('file')) {
+                \Log::error('Resource upload: no file received', [
+                    'content_length' => $request->header('Content-Length'),
+                    'upload_max_filesize' => ini_get('upload_max_filesize'),
+                    'post_max_size' => ini_get('post_max_size'),
+                ]);
+                return response()->json([
+                    'error' => 'File tidak diterima oleh server. Kemungkinan file terlalu besar (batas: ' . ini_get('upload_max_filesize') . '). Coba file yang lebih kecil.'
+                ], 422);
+            }
+
             $request->validate([
                 'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,txt,jpg,jpeg,png,gif|max:10240', // 10MB max
                 'title' => 'required|string|max:255',
