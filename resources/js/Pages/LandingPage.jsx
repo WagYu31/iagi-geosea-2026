@@ -248,7 +248,7 @@ export default function LandingPage({ auth }) {
                                         transform: scrolled ? 'scale(1)' : 'scale(1)',
                                     }}
                                 >
-                                    ⁵⁵ᵀᴴ PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
+                                    55ᵀᴴ PIT IAGI-GEOSEA XIX <Box component="span" sx={{ color: scrolled ? '#0d7a6a' : '#4dd4ac', transition: 'color 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}>2026</Box>
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -1689,6 +1689,235 @@ export default function LandingPage({ auth }) {
                     </Container>
                 </Box>
 
+                {/* Seminar Resources Section */}
+                <Box
+                    id="resources"
+                    ref={resourcesRef}
+                    sx={{
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
+                        py: { xs: 6, sm: 7, md: 8, lg: 10 },
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '5px',
+                            background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #a855f7 50%, #8b5cf6 75%, #6366f1 100%)',
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '10%',
+                            left: '-15%',
+                            width: '45%',
+                            height: '70%',
+                            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 60%)',
+                            pointerEvents: 'none',
+                        },
+                        transform: resourcesVisible ? 'translateY(0)' : 'translateY(50px)',
+                        opacity: resourcesVisible ? 1 : 0,
+                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transitionDelay: '0.2s',
+                    }}
+                >
+                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                        <Typography
+                            variant="overline"
+                            align="center"
+                            sx={{
+                                color: '#0d7a6a',
+                                fontWeight: 600,
+                                letterSpacing: '0.15em',
+                                fontSize: { xs: '0.85rem', md: '0.92rem' },
+                                display: 'block',
+                                mb: 1.5,
+                            }}
+                        >
+                            {settings.resources_text?.section_label || 'DOWNLOADS'}
+                        </Typography>
+                        <Typography
+                            variant="h4"
+                            align="center"
+                            gutterBottom
+                            sx={{
+                                fontWeight: 'bold',
+                                mb: 2,
+                                color: '#111827',
+                                fontSize: { xs: '1.75rem', md: '2.125rem' },
+                                px: { xs: 2, sm: 0 },
+                            }}
+                        >
+                            {settings.resources_text?.title || 'Seminar Resources'}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            align="center"
+                            sx={{
+                                mb: { xs: 4, md: 6 },
+                                color: '#6b7280',
+                                px: { xs: 2, sm: 0 },
+                                maxWidth: '600px',
+                                mx: 'auto',
+                                transform: resourcesVisible ? 'translateY(0)' : 'translateY(20px)',
+                                opacity: resourcesVisible ? 1 : 0,
+                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transitionDelay: '0.4s',
+                            }}
+                        >
+                            {settings.resources_text?.subtitle || 'Everything you need to prepare a professional presentation for the IAGI-GEOSEA 2026 conference.'}
+                        </Typography>
+
+                        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
+                            {settings.resources && settings.resources.length > 0 ? (
+                                settings.resources.map((resource, index) => (
+                                    <Grid
+                                        key={index}
+                                        size={{ xs: 12, sm: 6, md: 4 }}
+                                        sx={{
+                                            transform: resourcesVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
+                                            opacity: resourcesVisible ? 1 : 0,
+                                            transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            transitionDelay: `${0.6 + index * 0.1}s`,
+                                        }}
+                                    >
+                                        <Paper
+                                            sx={{
+                                                p: { xs: 3, sm: 3.5, md: 4 },
+                                                textAlign: 'center',
+                                                background: '#ffffff',
+                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                borderRadius: '20px',
+                                                border: '1px solid rgba(0, 0, 0, 0.06)',
+                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
+                                                position: 'relative',
+                                                overflow: 'hidden',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                height: '100%',
+                                                '&::before': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    height: '4px',
+                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 50%, #34d399 100%)',
+                                                    transform: 'scaleX(0)',
+                                                    transformOrigin: 'left',
+                                                    transition: 'transform 0.4s ease',
+                                                },
+                                                '&:hover': {
+                                                    transform: 'translateY(-8px)',
+                                                    boxShadow: '0 12px 40px rgba(13, 122, 106, 0.12), 0 20px 48px rgba(0, 0, 0, 0.06)',
+                                                    border: '1px solid rgba(13, 122, 106, 0.15)',
+                                                    '&::before': {
+                                                        transform: 'scaleX(1)',
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            {/* Icon Container with Gradient Background */}
+                                            <Box
+                                                sx={{
+                                                    width: 72,
+                                                    height: 72,
+                                                    borderRadius: '16px',
+                                                    background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    mx: 'auto',
+                                                    mb: 2.5,
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.12) 0%, rgba(16, 185, 129, 0.18) 100%)',
+                                                        transform: 'scale(1.05)',
+                                                    },
+                                                }}
+                                            >
+                                                <DescriptionIcon sx={{ fontSize: 36, color: '#0d7a6a' }} />
+                                            </Box>
+
+                                            <Typography
+                                                variant="h6"
+                                                gutterBottom
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#1f2937',
+                                                    fontSize: { xs: '1rem', md: '1.1rem' },
+                                                    lineHeight: 1.4,
+                                                    minHeight: { xs: 'auto', md: '2.8em' },
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                {resource.title}
+                                            </Typography>
+
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    mb: 3,
+                                                    color: '#6b7280',
+                                                    fontSize: '0.875rem',
+                                                    lineHeight: 1.6,
+                                                    flexGrow: 1,
+                                                }}
+                                            >
+                                                {resource.description || 'Downloadable resource'}
+                                            </Typography>
+
+                                            <Button
+                                                component="a"
+                                                href={resource.file_url}
+                                                download
+                                                variant="contained"
+                                                startIcon={<DownloadIcon />}
+                                                fullWidth
+                                                sx={{
+                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
+                                                    color: 'white',
+                                                    fontWeight: 600,
+                                                    py: 1.5,
+                                                    borderRadius: '12px',
+                                                    textTransform: 'none',
+                                                    fontSize: '0.9rem',
+                                                    boxShadow: '0 4px 12px rgba(13, 122, 106, 0.25)',
+                                                    mt: 'auto',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, #0a6356 0%, #0d9668 100%)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 8px 20px rgba(13, 122, 106, 0.35)',
+                                                    },
+                                                }}
+                                            >
+                                                Download {
+                                                    resource.file_type === 'pdf' ? 'PDF' :
+                                                        ['ppt', 'pptx'].includes(resource.file_type) ? 'PowerPoint' :
+                                                            ['doc', 'docx'].includes(resource.file_type) ? 'Word Document' :
+                                                                resource.file_type === 'txt' ? 'Text File' :
+                                                                    'File'
+                                                }
+                                            </Button>
+                                        </Paper>
+                                    </Grid>
+                                ))
+                            ) : (
+                                <Grid size={12}>
+                                    <Typography variant="body1" align="center" color="text.secondary" sx={{ py: 4 }}>
+                                        No resources available yet. Please check back later.
+                                    </Typography>
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Container>
+                </Box>
+
                 {/* Submission Procedure Section */}
                 <Box
                     id="faq"
@@ -2114,234 +2343,6 @@ export default function LandingPage({ auth }) {
                     </Container>
                 </Box>
 
-                {/* Seminar Resources Section */}
-                <Box
-                    id="resources"
-                    ref={resourcesRef}
-                    sx={{
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%)',
-                        py: { xs: 6, sm: 7, md: 8, lg: 10 },
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: '5px',
-                            background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #a855f7 50%, #8b5cf6 75%, #6366f1 100%)',
-                        },
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            top: '10%',
-                            left: '-15%',
-                            width: '45%',
-                            height: '70%',
-                            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 60%)',
-                            pointerEvents: 'none',
-                        },
-                        transform: resourcesVisible ? 'translateY(0)' : 'translateY(50px)',
-                        opacity: resourcesVisible ? 1 : 0,
-                        transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transitionDelay: '0.2s',
-                    }}
-                >
-                    <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                        <Typography
-                            variant="overline"
-                            align="center"
-                            sx={{
-                                color: '#0d7a6a',
-                                fontWeight: 600,
-                                letterSpacing: '0.15em',
-                                fontSize: { xs: '0.85rem', md: '0.92rem' },
-                                display: 'block',
-                                mb: 1.5,
-                            }}
-                        >
-                            {settings.resources_text?.section_label || 'DOWNLOADS'}
-                        </Typography>
-                        <Typography
-                            variant="h4"
-                            align="center"
-                            gutterBottom
-                            sx={{
-                                fontWeight: 'bold',
-                                mb: 2,
-                                color: '#111827',
-                                fontSize: { xs: '1.75rem', md: '2.125rem' },
-                                px: { xs: 2, sm: 0 },
-                            }}
-                        >
-                            {settings.resources_text?.title || 'Seminar Resources'}
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            sx={{
-                                mb: { xs: 4, md: 6 },
-                                color: '#6b7280',
-                                px: { xs: 2, sm: 0 },
-                                maxWidth: '600px',
-                                mx: 'auto',
-                                transform: resourcesVisible ? 'translateY(0)' : 'translateY(20px)',
-                                opacity: resourcesVisible ? 1 : 0,
-                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                transitionDelay: '0.4s',
-                            }}
-                        >
-                            {settings.resources_text?.subtitle || 'Everything you need to prepare a professional presentation for the IAGI-GEOSEA 2026 conference.'}
-                        </Typography>
-
-                        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
-                            {settings.resources && settings.resources.length > 0 ? (
-                                settings.resources.map((resource, index) => (
-                                    <Grid
-                                        key={index}
-                                        size={{ xs: 12, sm: 6, md: 4 }}
-                                        sx={{
-                                            transform: resourcesVisible ? 'translateY(0)' : `translateY(${30 + index * 10}px)`,
-                                            opacity: resourcesVisible ? 1 : 0,
-                                            transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            transitionDelay: `${0.6 + index * 0.1}s`,
-                                        }}
-                                    >
-                                        <Paper
-                                            sx={{
-                                                p: { xs: 3, sm: 3.5, md: 4 },
-                                                textAlign: 'center',
-                                                background: '#ffffff',
-                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                borderRadius: '20px',
-                                                border: '1px solid rgba(0, 0, 0, 0.06)',
-                                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.02)',
-                                                position: 'relative',
-                                                overflow: 'hidden',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                height: '100%',
-                                                '&::before': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    height: '4px',
-                                                    background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 50%, #34d399 100%)',
-                                                    transform: 'scaleX(0)',
-                                                    transformOrigin: 'left',
-                                                    transition: 'transform 0.4s ease',
-                                                },
-                                                '&:hover': {
-                                                    transform: 'translateY(-8px)',
-                                                    boxShadow: '0 12px 40px rgba(13, 122, 106, 0.12), 0 20px 48px rgba(0, 0, 0, 0.06)',
-                                                    border: '1px solid rgba(13, 122, 106, 0.15)',
-                                                    '&::before': {
-                                                        transform: 'scaleX(1)',
-                                                    },
-                                                },
-                                            }}
-                                        >
-                                            {/* Icon Container with Gradient Background */}
-                                            <Box
-                                                sx={{
-                                                    width: 72,
-                                                    height: 72,
-                                                    borderRadius: '16px',
-                                                    background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    mx: 'auto',
-                                                    mb: 2.5,
-                                                    transition: 'all 0.3s ease',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(135deg, rgba(13, 122, 106, 0.12) 0%, rgba(16, 185, 129, 0.18) 100%)',
-                                                        transform: 'scale(1.05)',
-                                                    },
-                                                }}
-                                            >
-                                                <DescriptionIcon sx={{ fontSize: 36, color: '#0d7a6a' }} />
-                                            </Box>
-
-                                            <Typography
-                                                variant="h6"
-                                                gutterBottom
-                                                sx={{
-                                                    fontWeight: 700,
-                                                    color: '#1f2937',
-                                                    fontSize: { xs: '1rem', md: '1.1rem' },
-                                                    lineHeight: 1.4,
-                                                    minHeight: { xs: 'auto', md: '2.8em' },
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                }}
-                                            >
-                                                {resource.title}
-                                            </Typography>
-
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    mb: 3,
-                                                    color: '#6b7280',
-                                                    fontSize: '0.875rem',
-                                                    lineHeight: 1.6,
-                                                    flexGrow: 1,
-                                                }}
-                                            >
-                                                {resource.description || 'Downloadable resource'}
-                                            </Typography>
-
-                                            <Button
-                                                component="a"
-                                                href={resource.file_url}
-                                                download
-                                                variant="contained"
-                                                startIcon={<DownloadIcon />}
-                                                fullWidth
-                                                sx={{
-                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
-                                                    color: 'white',
-                                                    fontWeight: 600,
-                                                    py: 1.5,
-                                                    borderRadius: '12px',
-                                                    textTransform: 'none',
-                                                    fontSize: '0.9rem',
-                                                    boxShadow: '0 4px 12px rgba(13, 122, 106, 0.25)',
-                                                    mt: 'auto',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(135deg, #0a6356 0%, #0d9668 100%)',
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 8px 20px rgba(13, 122, 106, 0.35)',
-                                                    },
-                                                }}
-                                            >
-                                                Download {
-                                                    resource.file_type === 'pdf' ? 'PDF' :
-                                                        ['ppt', 'pptx'].includes(resource.file_type) ? 'PowerPoint' :
-                                                            ['doc', 'docx'].includes(resource.file_type) ? 'Word Document' :
-                                                                resource.file_type === 'txt' ? 'Text File' :
-                                                                    'File'
-                                                }
-                                            </Button>
-                                        </Paper>
-                                    </Grid>
-                                ))
-                            ) : (
-                                <Grid size={12}>
-                                    <Typography variant="body1" align="center" color="text.secondary" sx={{ py: 4 }}>
-                                        No resources available yet. Please check back later.
-                                    </Typography>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </Container>
-                </Box>
 
                 {/* Sponsors Section */}
                 <Box

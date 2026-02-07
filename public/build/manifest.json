@@ -133,7 +133,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-kZcLBKIq.js",
+    "file": "assets/Settings-C7w0qMhg.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -178,7 +178,7 @@
     ]
   },
   "resources/js/Pages/LandingPage.jsx": {
-    "file": "assets/LandingPage-DTsQiV6P.js",
+    "file": "assets/LandingPage-C0iXAePi.js",
     "name": "LandingPage",
     "src": "resources/js/Pages/LandingPage.jsx",
     "isDynamicEntry": true,
@@ -309,7 +309,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-CkzkfGBH.js",
+    "file": "assets/app-DetxfdKK.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
