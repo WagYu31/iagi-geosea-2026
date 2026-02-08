@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
@@ -109,6 +109,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const [showForm, setShowForm] = useState(false);
     const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
     const [wordCount, setWordCount] = useState(0);
+    const formRef = useRef(null);
     const MAX_WORDS = 400;
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -162,6 +163,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
             setShowDeadlineDialog(true);
         } else {
             setShowForm(true);
+            setTimeout(() => {
+                formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
     };
 
@@ -397,7 +401,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                         submission_status: submission.status,
                                                                     });
                                                                     setShowForm(true);
-                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                    setTimeout(() => {
+                                                                        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                                    }, 100);
                                                                 }}
                                                                 sx={{
                                                                     background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
@@ -527,7 +533,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 submission_status: submission.status,
                                                             });
                                                             setShowForm(true);
-                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                            setTimeout(() => {
+                                                                formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                            }, 100);
                                                         }}
                                                         sx={{
                                                             background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
@@ -556,7 +564,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
                 {/* Submit New Paper Form - MOBILE FIRST RESPONSIVE */}
                 {showForm && (
-                    <Paper elevation={0} sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
+                    <Paper ref={formRef} elevation={0} sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
                         <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5, fontSize: { xs: '1.25rem', md: '1.5rem' }, letterSpacing: '-0.02em' }}>
                             Submit New Paper
                         </Typography>

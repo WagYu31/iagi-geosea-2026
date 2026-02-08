@@ -217,27 +217,45 @@ export default function Index({ payments = [], submissions = [] }) {
                     {payments.length === 0 ? (
                         <Box sx={{
                             textAlign: 'center',
-                            py: { xs: 4, md: 6 },
+                            py: { xs: 5, md: 8 },
                             px: 2,
                         }}>
+                            {/* NO PAYMENT Icon */}
                             <Box sx={{
-                                width: 56,
-                                height: 56,
-                                borderRadius: '14px',
-                                bgcolor: '#f3f4f6',
+                                width: 80,
+                                height: 80,
+                                borderRadius: '50%',
+                                bgcolor: isDark ? 'rgba(239, 68, 68, 0.08)' : '#fef2f2',
+                                border: `2px dashed ${isDark ? 'rgba(239, 68, 68, 0.25)' : '#fecaca'}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 margin: '0 auto',
-                                mb: 2,
+                                mb: 3,
+                                position: 'relative',
                             }}>
-                                <ReceiptLongIcon sx={{ color: '#9ca3af', fontSize: '1.5rem' }} />
+                                <ReceiptLongIcon sx={{ color: isDark ? '#f87171' : '#ef4444', fontSize: '2rem' }} />
+                                {/* Strikethrough line */}
+                                <Box sx={{
+                                    position: 'absolute',
+                                    width: '60%',
+                                    height: '3px',
+                                    bgcolor: isDark ? '#f87171' : '#ef4444',
+                                    borderRadius: '2px',
+                                    transform: 'rotate(-45deg)',
+                                }} />
                             </Box>
-                            <Typography sx={{ fontWeight: 600, color: '#374151', fontSize: '0.95rem', mb: 0.5 }}>
-                                No payment records yet
+                            <Typography sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '1.1rem', mb: 1 }}>
+                                No Payment Required Yet
                             </Typography>
-                            <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>
-                                Upload your payment proof after your submission is accepted
+                            <Typography sx={{
+                                color: c.textMuted,
+                                fontSize: '0.85rem',
+                                maxWidth: 480,
+                                mx: 'auto',
+                                lineHeight: 1.7,
+                            }}>
+                                Payment will be required once the abstract has been confirmed as accepted and the participant is declared to have advanced to the next stage.
                             </Typography>
                         </Box>
                     ) : (

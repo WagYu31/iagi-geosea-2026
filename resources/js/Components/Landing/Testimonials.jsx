@@ -8,6 +8,9 @@ export default function Testimonials({ settings }) {
         ? settings.keynote_speakers.filter(s => s.name && s.name.trim() !== '')
         : []);
 
+    // Hide entire section if no speakers configured
+    // if (speakers.length === 0) return null;
+
     return (
         <Box
             id="speakers"
@@ -57,52 +60,7 @@ export default function Testimonials({ settings }) {
                     </Typography>
                 </Box>
 
-                {speakers.length === 0 ? (
-                    /* Coming Soon Placeholder */
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                            py: { xs: 4, md: 6 },
-                            px: 3,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: 80,
-                                height: 80,
-                                borderRadius: '50%',
-                                bgcolor: 'rgba(13, 148, 136, 0.1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                mx: 'auto',
-                                mb: 3,
-                            }}
-                        >
-                            <Typography sx={{ fontSize: '2rem' }}>🎤</Typography>
-                        </Box>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontWeight: 700,
-                                color: '#0d9488',
-                                mb: 1,
-                            }}
-                        >
-                            Coming Soon
-                        </Typography>
-                        <Typography
-                            sx={{
-                                color: 'text.secondary',
-                                fontSize: '0.95rem',
-                                maxWidth: '400px',
-                                mx: 'auto',
-                            }}
-                        >
-                            Our distinguished keynote speakers will be announced shortly. Stay tuned!
-                        </Typography>
-                    </Box>
-                ) : (
+                {speakers.length === 0 ? null : (
                     /* Speaker Cards — horizontal scroll on mobile, wrap on desktop */
                     <Box
                         sx={{

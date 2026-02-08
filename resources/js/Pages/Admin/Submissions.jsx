@@ -4,7 +4,8 @@ import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box,
     Typography,
-    Paper,
+    Card,
+    CardContent,
     Table,
     TableBody,
     TableCell,
@@ -16,7 +17,6 @@ import {
     Select,
     MenuItem,
     Checkbox,
-    Toolbar,
     IconButton,
     Dialog,
     DialogTitle,
@@ -29,9 +29,12 @@ import {
     ListItem,
     ListItemText,
     ListItemSecondaryAction,
-    Divider,
     Alert,
     InputAdornment,
+    Avatar,
+    Tooltip,
+    Stack,
+    useTheme,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -39,8 +42,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PeopleIcon from '@mui/icons-material/People';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SearchIcon from '@mui/icons-material/Search';
+import ArticleIcon from '@mui/icons-material/Article';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
+    const theme = useTheme();
+    const c = theme.palette.custom;
+    const isDark = theme.palette.mode === 'dark';
+
     const [selected, setSelected] = useState([]);
     const [bulkStatus, setBulkStatus] = useState('');
     const [assignDialog, setAssignDialog] = useState({ open: false, submission: null });
@@ -49,7 +60,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [presentationFilter, setPresentationFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter submissions based on status, presentation type and search term
+    // Filter submissions
     const filteredSubmissions = submissions.filter(submission => {
         const matchesStatus = statusFilter === 'all' || submission.status === statusFilter;
         const matchesPresentation = presentationFilter === 'all' || submission.presentation_preference === presentationFilter;
@@ -70,7 +81,6 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const handleSelectOne = (id) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected = [];
-
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
@@ -83,16 +93,13 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
 
     const handleStatusChange = (submissionId, newStatus) => {
         router.patch(route('admin.submissions.updateStatus', submissionId), {
             status: newStatus,
-        }, {
-            preserveScroll: true,
-        });
+        }, { preserveScroll: true });
     };
 
     const handleBulkUpdate = () => {
@@ -102,10 +109,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                 status: bulkStatus,
             }, {
                 preserveScroll: true,
-                onSuccess: () => {
-                    setSelected([]);
-                    setBulkStatus('');
-                },
+                onSuccess: () => { setSelected([]); setBulkStatus(''); },
             });
         }
     };
@@ -154,35 +158,22 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
         window.location.href = route('admin.submissions.export');
     };
 
-    const getStatusColor = (status) => {
-        const colors = {
-            'pending': 'default',
-            'under_review': 'info',
-            'revision_required_phase1': 'warning',
-            'revision_required_phase2': 'warning',
-            'accepted': 'success',
-            'rejected': 'error',
+    const getStatusChip = (status) => {
+        const map = {
+            'pending': { bg: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7', color: '#d97706', label: 'Pending' },
+            'under_review': { bg: isDark ? 'rgba(59, 130, 246, 0.15)' : '#dbeafe', color: '#2563eb', label: 'In Review' },
+            'revision_required_phase1': { bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', color: '#ea580c', label: 'Revision P1' },
+            'revision_required_phase2': { bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', color: '#ea580c', label: 'Revision P2' },
+            'accepted': { bg: isDark ? 'rgba(22, 163, 74, 0.15)' : '#dcfce7', color: '#16a34a', label: 'Accepted' },
+            'rejected': { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2', color: '#dc2626', label: 'Rejected' },
         };
-        return colors[status] || 'default';
-    };
-
-    const getStatusLabel = (status) => {
-        const labels = {
-            'pending': 'Pending',
-            'under_review': 'Under Review',
-            'revision_required_phase1': 'Revision Phase 1',
-            'revision_required_phase2': 'Revision Phase 2',
-            'accepted': 'Accepted',
-            'rejected': 'Rejected',
-        };
-        return labels[status] || status;
+        return map[status] || { bg: isDark ? 'rgba(107, 114, 128, 0.15)' : '#f3f4f6', color: '#6b7280', label: status };
     };
 
     const isSelected = (id) => selected.indexOf(id) !== -1;
 
     const getAvailableReviewers = () => {
         if (!assignDialog.submission) return reviewers;
-
         const assignedIds = (assignDialog.submission.reviews || []).map(r => r.reviewer_id);
         return reviewers.filter(r => !assignedIds.includes(r.id) && !selectedReviewers.includes(r.id));
     };
@@ -196,9 +187,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
             'accepted': "🎉 *Selamat!* 🎉\n\nSubmission Anda telah *DITERIMA* (Accepted).\n\nTerima kasih atas kontribusi Anda dalam konferensi ini.",
             'rejected': "Status submission Anda telah diubah menjadi *Rejected*.\n\nMohon maaf submission Anda tidak dapat diterima kali ini. Terima kasih atas partisipasi Anda.",
         };
-
         const statusText = statusMessages[submission.status] || "Status submission Anda telah diperbarui.";
-
         let message = "*IAGI-GEOSEA 2026 - Notification*\n\n";
         message += `Halo *${submission.user?.name}*,\n\n`;
         message += `Submission ID: *${submission.id}*\n`;
@@ -207,7 +196,6 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
         message += "Silakan login ke dashboard Anda untuk informasi lebih lanjut.\n\n";
         message += "Terima kasih,\n";
         message += "Tim IAGI-GEOSEA 2026";
-
         return message;
     };
 
@@ -216,159 +204,273 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
             alert('User tidak memiliki nomor WhatsApp!');
             return;
         }
-
         const message = generateWhatsAppMessage(submission);
         const phoneNumber = submission.user.whatsapp.replace(/^0/, '62').replace(/\D/g, '');
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
         window.open(whatsappUrl, '_blank');
+    };
+
+    // Common cell styling
+    const cellSx = {
+        borderBottom: `1px solid ${c.cardBorder}`,
+        py: 1.5,
+        fontSize: '0.825rem',
+        color: c.textPrimary,
+    };
+    const headCellSx = {
+        ...cellSx,
+        fontWeight: 700,
+        fontSize: '0.75rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        color: c.textMuted,
+        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
     };
 
     return (
         <SidebarLayout>
             <Head title="Manage Submissions" />
 
-            <Box sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1abc9c' }}>
-                        Manage Submissions
-                    </Typography>
+            <Box sx={{ p: { xs: 2, sm: 3, md: 3.5 }, minHeight: '100vh', bgcolor: c.surfaceBg }}>
+                {/* Header */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    mb: 3,
+                    gap: 2,
+                }}>
+                    <Box>
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                fontWeight: 800,
+                                color: c.textPrimary,
+                                fontSize: { xs: '1.5rem', sm: '1.85rem' },
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            Manage Submissions 📄
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5, fontSize: '0.85rem' }}>
+                            {submissions.length} total submissions
+                        </Typography>
+                    </Box>
                     <Button
                         variant="contained"
                         startIcon={<DownloadIcon />}
                         onClick={handleExport}
                         sx={{
-                            backgroundColor: '#1abc9c',
-                            '&:hover': { backgroundColor: '#16a085' },
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                            px: 3,
+                            py: 1.2,
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '0.875rem',
+                            boxShadow: '0 4px 14px rgba(26, 188, 156, 0.35)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
+                                boxShadow: '0 6px 20px rgba(26, 188, 156, 0.45)',
+                                transform: 'translateY(-1px)',
+                            },
+                            transition: 'all 0.25s ease',
                         }}
                     >
-                        Export to CSV
+                        Export CSV
                     </Button>
                 </Box>
 
-                {/* Search and Filter Bar */}
-                <Paper elevation={0} sx={{ p: 2, mb: 2, border: '1px solid #e0e0e0', borderRadius: 2 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <TextField
-                            placeholder="Search by title or author..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            size="small"
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: 'text.secondary' }} />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            sx={{ flex: 1, minWidth: 250 }}
-                        />
-                        <FormControl size="small" sx={{ minWidth: 180 }}>
-                            <InputLabel>Filter by Status</InputLabel>
-                            <Select
-                                value={statusFilter}
-                                label="Filter by Status"
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                            >
-                                <MenuItem value="all">All Status ({submissions.length})</MenuItem>
-                                <MenuItem value="pending">Pending ({submissions.filter(s => s.status === 'pending').length})</MenuItem>
-                                <MenuItem value="under_review">Under Review ({submissions.filter(s => s.status === 'under_review').length})</MenuItem>
-                                <MenuItem value="revision_required_phase1">Revision Phase 1 ({submissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
-                                <MenuItem value="revision_required_phase2">Revision Phase 2 ({submissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
-                                <MenuItem value="accepted">Accepted ({submissions.filter(s => s.status === 'accepted').length})</MenuItem>
-                                <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl size="small" sx={{ minWidth: 180 }}>
-                            <InputLabel>Presentation Type</InputLabel>
-                            <Select
-                                value={presentationFilter}
-                                label="Presentation Type"
-                                onChange={(e) => setPresentationFilter(e.target.value)}
-                            >
-                                <MenuItem value="all">All Types ({submissions.length})</MenuItem>
-                                <MenuItem value="Oral Presentation">Oral Presentation ({submissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
-                                <MenuItem value="Poster Presentation">Poster Presentation ({submissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Typography variant="body2" color="text.secondary">
-                            Showing {filteredSubmissions.length} of {submissions.length} submissions
-                        </Typography>
-                    </Box>
-                </Paper>
-
-                {/* Bulk Actions Toolbar */}
-                {selected.length > 0 && (
-                    <Paper elevation={0} sx={{ p: 2, mb: 2, border: '1px solid #e0e0e0', borderRadius: 2, backgroundColor: '#f8f9fa' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                {selected.length} selected
-                            </Typography>
-                            <FormControl size="small" sx={{ minWidth: 200 }}>
-                                <InputLabel>Bulk Update Status</InputLabel>
+                {/* Search & Filter Bar */}
+                <Card elevation={0} sx={{
+                    borderRadius: '14px',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: c.cardBg,
+                    mb: 2.5,
+                }}>
+                    <CardContent sx={{ p: { xs: 2, sm: 2.5 }, '&:last-child': { pb: { xs: 2, sm: 2.5 } } }}>
+                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+                            <TextField
+                                placeholder="Search by title or author..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                size="small"
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: c.textMuted, fontSize: 20 }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    flex: 1,
+                                    minWidth: 220,
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                        '&:hover fieldset': { borderColor: '#1abc9c' },
+                                        '&.Mui-focused fieldset': { borderColor: '#1abc9c' },
+                                    },
+                                    '& input': { color: c.textPrimary, fontSize: '0.85rem' },
+                                }}
+                            />
+                            <FormControl size="small" sx={{ minWidth: 160 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Status</InputLabel>
                                 <Select
-                                    value={bulkStatus}
-                                    onChange={(e) => setBulkStatus(e.target.value)}
-                                    label="Bulk Update Status"
+                                    value={statusFilter}
+                                    label="Status"
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        fontSize: '0.85rem',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                    }}
                                 >
-                                    <MenuItem value="pending">Pending</MenuItem>
-                                    <MenuItem value="under_review">Under Review</MenuItem>
-                                    <MenuItem value="revision_required_phase1">Revision Phase 1</MenuItem>
-                                    <MenuItem value="revision_required_phase2">Revision Phase 2</MenuItem>
-                                    <MenuItem value="accepted">Accepted</MenuItem>
-                                    <MenuItem value="rejected">Rejected</MenuItem>
+                                    <MenuItem value="all">All ({submissions.length})</MenuItem>
+                                    <MenuItem value="pending">Pending ({submissions.filter(s => s.status === 'pending').length})</MenuItem>
+                                    <MenuItem value="under_review">In Review ({submissions.filter(s => s.status === 'under_review').length})</MenuItem>
+                                    <MenuItem value="revision_required_phase1">Revision P1 ({submissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
+                                    <MenuItem value="revision_required_phase2">Revision P2 ({submissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
+                                    <MenuItem value="accepted">Accepted ({submissions.filter(s => s.status === 'accepted').length})</MenuItem>
+                                    <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
                                 </Select>
                             </FormControl>
-                            <Button
-                                variant="contained"
-                                onClick={handleBulkUpdate}
-                                disabled={!bulkStatus}
+                            <FormControl size="small" sx={{ minWidth: 160 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Type</InputLabel>
+                                <Select
+                                    value={presentationFilter}
+                                    label="Type"
+                                    onChange={(e) => setPresentationFilter(e.target.value)}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        fontSize: '0.85rem',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                    }}
+                                >
+                                    <MenuItem value="all">All ({submissions.length})</MenuItem>
+                                    <MenuItem value="Oral Presentation">Oral ({submissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
+                                    <MenuItem value="Poster Presentation">Poster ({submissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <Chip
+                                label={`${filteredSubmissions.length} of ${submissions.length}`}
+                                size="small"
                                 sx={{
-                                    backgroundColor: '#1abc9c',
-                                    '&:hover': { backgroundColor: '#16a085' },
+                                    bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                    color: '#1abc9c',
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '8px',
                                 }}
-                            >
-                                Update {selected.length} Submissions
-                            </Button>
+                            />
                         </Box>
-                    </Paper>
+                    </CardContent>
+                </Card>
+
+                {/* Bulk Actions */}
+                {selected.length > 0 && (
+                    <Card elevation={0} sx={{
+                        borderRadius: '14px',
+                        border: `2px solid ${isDark ? 'rgba(26, 188, 156, 0.3)' : '#a7f3d0'}`,
+                        bgcolor: isDark ? 'rgba(26, 188, 156, 0.06)' : '#ecfdf5',
+                        mb: 2.5,
+                    }}>
+                        <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                <Chip
+                                    label={`${selected.length} selected`}
+                                    sx={{
+                                        bgcolor: '#1abc9c',
+                                        color: 'white',
+                                        fontWeight: 700,
+                                        fontSize: '0.8rem',
+                                    }}
+                                />
+                                <FormControl size="small" sx={{ minWidth: 180 }}>
+                                    <InputLabel sx={{ fontSize: '0.85rem' }}>Bulk Update</InputLabel>
+                                    <Select
+                                        value={bulkStatus}
+                                        onChange={(e) => setBulkStatus(e.target.value)}
+                                        label="Bulk Update"
+                                        sx={{ borderRadius: '10px', fontSize: '0.85rem' }}
+                                    >
+                                        <MenuItem value="pending">Pending</MenuItem>
+                                        <MenuItem value="under_review">Under Review</MenuItem>
+                                        <MenuItem value="revision_required_phase1">Revision Phase 1</MenuItem>
+                                        <MenuItem value="revision_required_phase2">Revision Phase 2</MenuItem>
+                                        <MenuItem value="accepted">Accepted</MenuItem>
+                                        <MenuItem value="rejected">Rejected</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleBulkUpdate}
+                                    disabled={!bulkStatus}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: '#1abc9c',
+                                        '&:hover': { bgcolor: '#16a085' },
+                                        borderRadius: '10px',
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        px: 2.5,
+                                    }}
+                                >
+                                    Apply
+                                </Button>
+                            </Box>
+                        </CardContent>
+                    </Card>
                 )}
 
                 {/* Submissions Table */}
-                <Paper elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: 2 }}>
-                    <TableContainer>
-                        <Table>
+                <Card elevation={0} sx={{
+                    borderRadius: '16px',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: c.cardBg,
+                    overflow: 'hidden',
+                }}>
+                    <TableContainer sx={{ maxHeight: '75vh' }}>
+                        <Table stickyHeader size="small">
                             <TableHead>
-                                <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
-                                    <TableCell padding="checkbox">
+                                <TableRow>
+                                    <TableCell padding="checkbox" sx={headCellSx}>
                                         <Checkbox
                                             indeterminate={selected.length > 0 && selected.length < filteredSubmissions.length}
                                             checked={filteredSubmissions.length > 0 && selected.length === filteredSubmissions.length}
                                             onChange={handleSelectAll}
+                                            sx={{ '&.Mui-checked': { color: '#1abc9c' }, '&.MuiCheckbox-indeterminate': { color: '#1abc9c' } }}
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>ID</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Title</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Author</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Topic</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Presentation Type</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Submitted</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Payment</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Reviewers</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                                    <TableCell sx={headCellSx}>ID</TableCell>
+                                    <TableCell sx={headCellSx}>Title</TableCell>
+                                    <TableCell sx={headCellSx}>Name</TableCell>
+                                    <TableCell sx={headCellSx}>Author</TableCell>
+                                    <TableCell sx={headCellSx}>Phone</TableCell>
+                                    <TableCell sx={headCellSx}>Email</TableCell>
+                                    <TableCell sx={headCellSx}>Topic</TableCell>
+                                    <TableCell sx={headCellSx}>Type</TableCell>
+                                    <TableCell sx={headCellSx}>Submitted</TableCell>
+                                    <TableCell sx={headCellSx}>Status</TableCell>
+                                    <TableCell sx={headCellSx}>Payment</TableCell>
+                                    <TableCell sx={headCellSx}>Reviewers</TableCell>
+                                    <TableCell sx={headCellSx}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={14} align="center">
-                                            <Typography variant="body2" color="text.secondary" sx={{ py: 3 }}>
-                                                No submissions found
-                                            </Typography>
+                                        <TableCell colSpan={14} align="center" sx={cellSx}>
+                                            <Box sx={{ py: 5 }}>
+                                                <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} />
+                                                <Typography variant="body2" sx={{ color: c.textMuted }}>
+                                                    No submissions found
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -376,89 +478,187 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         const isItemSelected = isSelected(submission.id);
                                         const assignedReviewers = submission.reviews || [];
                                         const reviewerCount = assignedReviewers.length;
+                                        const status = getStatusChip(submission.status);
 
                                         return (
-                                            <TableRow key={submission.id} hover selected={isItemSelected}>
-                                                <TableCell padding="checkbox">
+                                            <TableRow
+                                                key={submission.id}
+                                                hover
+                                                selected={isItemSelected}
+                                                sx={{
+                                                    '&:hover': {
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        bgcolor: isDark ? 'rgba(26, 188, 156, 0.06)' : '#ecfdf5',
+                                                        '&:hover': {
+                                                            bgcolor: isDark ? 'rgba(26, 188, 156, 0.1)' : '#d1fae5',
+                                                        },
+                                                    },
+                                                }}
+                                            >
+                                                <TableCell padding="checkbox" sx={cellSx}>
                                                     <Checkbox
                                                         checked={isItemSelected}
                                                         onChange={() => handleSelectOne(submission.id)}
+                                                        sx={{ '&.Mui-checked': { color: '#1abc9c' } }}
                                                     />
                                                 </TableCell>
-                                                <TableCell>{submission.id}</TableCell>
-                                                <TableCell>{submission.title || 'N/A'}</TableCell>
-                                                <TableCell>{submission.author_full_name || 'N/A'}</TableCell>
-                                                <TableCell>{submission.user?.name || 'N/A'}</TableCell>
-                                                <TableCell>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <Typography variant="body2">
+                                                <TableCell sx={{ ...cellSx, fontWeight: 600, color: c.textMuted, fontSize: '0.8rem' }}>
+                                                    #{submission.id}
+                                                </TableCell>
+                                                <TableCell sx={{ ...cellSx, fontWeight: 600, maxWidth: 200 }}>
+                                                    <Typography variant="body2" sx={{
+                                                        fontWeight: 600,
+                                                        color: c.textPrimary,
+                                                        fontSize: '0.825rem',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        maxWidth: 200,
+                                                    }}>
+                                                        {submission.title || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={cellSx}>
+                                                    <Typography variant="body2" sx={{ fontSize: '0.825rem', color: c.textPrimary }}>
+                                                        {submission.author_full_name || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={cellSx}>
+                                                    <Typography variant="body2" sx={{ fontSize: '0.825rem', color: c.textPrimary }}>
+                                                        {submission.user?.name || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={cellSx}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                        <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>
                                                             {submission.user?.whatsapp || 'N/A'}
                                                         </Typography>
                                                         {submission.user?.whatsapp && (
-                                                            <IconButton
-                                                                size="small"
-                                                                onClick={() => handleSendWhatsApp(submission)}
-                                                                sx={{
-                                                                    color: '#25D366',
-                                                                    '&:hover': { backgroundColor: '#25D36620' }
-                                                                }}
-                                                                title="Kirim Notifikasi via WhatsApp"
-                                                            >
-                                                                <WhatsAppIcon sx={{ fontSize: 20 }} />
-                                                            </IconButton>
+                                                            <Tooltip title="Send WhatsApp Notification">
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => handleSendWhatsApp(submission)}
+                                                                    sx={{
+                                                                        color: '#25D366',
+                                                                        p: 0.5,
+                                                                        '&:hover': { bgcolor: 'rgba(37, 211, 102, 0.1)' }
+                                                                    }}
+                                                                >
+                                                                    <WhatsAppIcon sx={{ fontSize: 18 }} />
+                                                                </IconButton>
+                                                            </Tooltip>
                                                         )}
                                                     </Box>
                                                 </TableCell>
-                                                <TableCell>{submission.user?.email || 'N/A'}</TableCell>
-                                                <TableCell>{submission.paper_sub_theme || submission.topic || 'N/A'}</TableCell>
-                                                <TableCell>
+                                                <TableCell sx={cellSx}>
+                                                    <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>
+                                                        {submission.user?.email || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={{ ...cellSx, maxWidth: 150 }}>
+                                                    <Typography variant="body2" sx={{
+                                                        fontSize: '0.8rem',
+                                                        color: c.textPrimary,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                    }}>
+                                                        {submission.paper_sub_theme || submission.topic || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={cellSx}>
                                                     <Chip
-                                                        label={submission.presentation_preference || 'N/A'}
+                                                        label={submission.presentation_preference === 'Oral Presentation' ? 'Oral' : submission.presentation_preference === 'Poster Presentation' ? 'Poster' : 'N/A'}
                                                         size="small"
-                                                        color={submission.presentation_preference === 'Oral Presentation' ? 'primary' : submission.presentation_preference === 'Poster Presentation' ? 'secondary' : 'default'}
-                                                        variant="outlined"
+                                                        sx={{
+                                                            bgcolor: submission.presentation_preference === 'Oral Presentation'
+                                                                ? (isDark ? 'rgba(37, 99, 235, 0.15)' : '#dbeafe')
+                                                                : submission.presentation_preference === 'Poster Presentation'
+                                                                    ? (isDark ? 'rgba(147, 51, 234, 0.15)' : '#f3e8ff')
+                                                                    : (isDark ? 'rgba(107, 114, 128, 0.15)' : '#f3f4f6'),
+                                                            color: submission.presentation_preference === 'Oral Presentation'
+                                                                ? '#2563eb'
+                                                                : submission.presentation_preference === 'Poster Presentation'
+                                                                    ? '#9333ea'
+                                                                    : '#6b7280',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.7rem',
+                                                            borderRadius: '6px',
+                                                            height: 24,
+                                                        }}
                                                     />
                                                 </TableCell>
-                                                <TableCell>
-                                                    {new Date(submission.created_at).toLocaleDateString('en-GB', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: false,
-                                                        timeZone: 'Asia/Jakarta'
-                                                    }).replace(',', '')}
+                                                <TableCell sx={cellSx}>
+                                                    <Typography variant="body2" sx={{ fontSize: '0.75rem', color: c.textMuted }}>
+                                                        {new Date(submission.created_at).toLocaleDateString('en-GB', {
+                                                            day: '2-digit', month: '2-digit', year: 'numeric',
+                                                            hour: '2-digit', minute: '2-digit', hour12: false,
+                                                            timeZone: 'Asia/Jakarta'
+                                                        }).replace(',', '')}
+                                                    </Typography>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={cellSx}>
                                                     <Select
                                                         value={submission.status || 'pending'}
                                                         onChange={(e) => handleStatusChange(submission.id, e.target.value)}
                                                         size="small"
-                                                        sx={{ minWidth: 150 }}
+                                                        sx={{
+                                                            minWidth: 130,
+                                                            borderRadius: '8px',
+                                                            fontSize: '0.8rem',
+                                                            fontWeight: 600,
+                                                            bgcolor: status.bg,
+                                                            color: status.color,
+                                                            '& .MuiSelect-select': { py: 0.75 },
+                                                            '& fieldset': { borderColor: 'transparent' },
+                                                            '&:hover fieldset': { borderColor: status.color },
+                                                        }}
                                                     >
-                                                        <MenuItem value="pending">Pending</MenuItem>
-                                                        <MenuItem value="under_review">Under Review</MenuItem>
-                                                        <MenuItem value="revision_required_phase1">Revision Phase 1</MenuItem>
-                                                        <MenuItem value="revision_required_phase2">Revision Phase 2</MenuItem>
-                                                        <MenuItem value="accepted">Accepted</MenuItem>
-                                                        <MenuItem value="rejected">Rejected</MenuItem>
+                                                        <MenuItem value="pending" sx={{ fontSize: '0.85rem' }}>Pending</MenuItem>
+                                                        <MenuItem value="under_review" sx={{ fontSize: '0.85rem' }}>Under Review</MenuItem>
+                                                        <MenuItem value="revision_required_phase1" sx={{ fontSize: '0.85rem' }}>Revision P1</MenuItem>
+                                                        <MenuItem value="revision_required_phase2" sx={{ fontSize: '0.85rem' }}>Revision P2</MenuItem>
+                                                        <MenuItem value="accepted" sx={{ fontSize: '0.85rem' }}>Accepted</MenuItem>
+                                                        <MenuItem value="rejected" sx={{ fontSize: '0.85rem' }}>Rejected</MenuItem>
                                                     </Select>
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={cellSx}>
                                                     <Chip
                                                         label={submission.payment?.verified ? 'Paid' : 'Unpaid'}
-                                                        color={submission.payment?.verified ? 'success' : 'default'}
                                                         size="small"
+                                                        sx={{
+                                                            bgcolor: submission.payment?.verified
+                                                                ? (isDark ? 'rgba(22, 163, 74, 0.15)' : '#dcfce7')
+                                                                : (isDark ? 'rgba(107, 114, 128, 0.15)' : '#f3f4f6'),
+                                                            color: submission.payment?.verified ? '#16a34a' : '#6b7280',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.7rem',
+                                                            borderRadius: '6px',
+                                                            height: 24,
+                                                        }}
                                                     />
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={cellSx}>
                                                     {reviewerCount > 0 ? (
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                                            <Typography variant="caption" sx={{ fontWeight: 600, color: '#1abc9c' }}>
-                                                                <PeopleIcon sx={{ fontSize: 14, verticalAlign: 'middle', mr: 0.5 }} />
-                                                                Reviewers: {reviewerCount}/5
-                                                            </Typography>
+                                                            <Chip
+                                                                icon={<PeopleIcon sx={{ fontSize: 14 }} />}
+                                                                label={`${reviewerCount}/5`}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                                                    color: '#1abc9c',
+                                                                    fontWeight: 700,
+                                                                    fontSize: '0.7rem',
+                                                                    borderRadius: '6px',
+                                                                    height: 24,
+                                                                    '& .MuiChip-icon': { color: '#1abc9c' },
+                                                                }}
+                                                            />
                                                             {assignedReviewers.map((review) => (
                                                                 <Box
                                                                     key={review.id}
@@ -466,73 +666,92 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         gap: 0.5,
-                                                                        backgroundColor: '#f5f5f5',
-                                                                        padding: '4px 8px',
-                                                                        borderRadius: 1,
+                                                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                                                        px: 1,
+                                                                        py: 0.25,
+                                                                        borderRadius: '6px',
                                                                     }}
                                                                 >
-                                                                    <Typography variant="caption" sx={{ flex: 1, fontSize: '0.75rem' }}>
+                                                                    <Typography variant="caption" sx={{
+                                                                        flex: 1,
+                                                                        fontSize: '0.7rem',
+                                                                        color: c.textPrimary,
+                                                                        overflow: 'hidden',
+                                                                        textOverflow: 'ellipsis',
+                                                                        whiteSpace: 'nowrap',
+                                                                    }}>
                                                                         {review.reviewer?.name || 'Unknown'}
                                                                     </Typography>
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleRemoveReviewer(submission.id, review.reviewer_id)}
-                                                                        sx={{
-                                                                            padding: '2px',
-                                                                            '&:hover': { color: 'error.main' }
-                                                                        }}
+                                                                        sx={{ p: '2px', '&:hover': { color: '#dc2626' } }}
                                                                     >
-                                                                        <DeleteIcon sx={{ fontSize: 14 }} />
+                                                                        <DeleteIcon sx={{ fontSize: 12 }} />
                                                                     </IconButton>
                                                                 </Box>
                                                             ))}
                                                             {reviewerCount < 5 && (
                                                                 <Button
                                                                     size="small"
-                                                                    variant="outlined"
-                                                                    startIcon={<PersonAddIcon />}
+                                                                    startIcon={<PersonAddIcon sx={{ fontSize: 14 }} />}
                                                                     onClick={() => handleAssignReviewer(submission)}
                                                                     sx={{
                                                                         color: '#1abc9c',
-                                                                        borderColor: '#1abc9c',
-                                                                        fontSize: '0.7rem',
-                                                                        mt: 0.5
+                                                                        fontSize: '0.65rem',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 600,
+                                                                        px: 1,
+                                                                        py: 0.25,
+                                                                        minWidth: 0,
+                                                                        borderRadius: '6px',
+                                                                        '&:hover': { bgcolor: isDark ? 'rgba(26, 188, 156, 0.1)' : '#ecfdf5' },
                                                                     }}
                                                                 >
-                                                                    Add More
+                                                                    Add
                                                                 </Button>
                                                             )}
                                                         </Box>
                                                     ) : (
                                                         <Button
                                                             size="small"
-                                                            variant="outlined"
-                                                            startIcon={<PersonAddIcon />}
+                                                            startIcon={<PersonAddIcon sx={{ fontSize: 16 }} />}
                                                             onClick={() => handleAssignReviewer(submission)}
-                                                            sx={{ color: '#1abc9c', borderColor: '#1abc9c' }}
+                                                            sx={{
+                                                                color: '#1abc9c',
+                                                                fontSize: '0.75rem',
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                borderRadius: '8px',
+                                                                px: 1.5,
+                                                                '&:hover': { bgcolor: isDark ? 'rgba(26, 188, 156, 0.1)' : '#ecfdf5' },
+                                                            }}
                                                         >
                                                             Assign
                                                         </Button>
                                                     )}
                                                 </TableCell>
-                                                <TableCell>
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={() => {
-                                                            if (confirm('Are you sure you want to delete this submission? This action cannot be undone and will delete all related reviews and payments.')) {
-                                                                router.delete(route('admin.submissions.delete', submission.id), {
-                                                                    preserveScroll: true,
-                                                                });
-                                                            }
-                                                        }}
-                                                        sx={{
-                                                            color: '#e53935',
-                                                            '&:hover': { backgroundColor: '#ffebee' }
-                                                        }}
-                                                        title="Delete Submission"
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
+                                                <TableCell sx={cellSx}>
+                                                    <Tooltip title="Delete submission">
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => {
+                                                                if (confirm('Are you sure you want to delete this submission? This action cannot be undone and will delete all related reviews and payments.')) {
+                                                                    router.delete(route('admin.submissions.delete', submission.id), {
+                                                                        preserveScroll: true,
+                                                                    });
+                                                                }
+                                                            }}
+                                                            sx={{
+                                                                color: isDark ? '#f87171' : '#ef4444',
+                                                                '&:hover': {
+                                                                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fee2e2',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <DeleteIcon sx={{ fontSize: 20 }} />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </TableCell>
                                             </TableRow>
                                         );
@@ -541,89 +760,151 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </Paper>
+                </Card>
             </Box>
 
-            {/* Assign Multiple Reviewers Dialog */}
+            {/* Assign Reviewers Dialog */}
             <Dialog
                 open={assignDialog.open}
                 onClose={() => setAssignDialog({ open: false, submission: null })}
                 maxWidth="sm"
                 fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '16px',
+                        bgcolor: c.cardBg,
+                        border: `1px solid ${c.cardBorder}`,
+                    }
+                }}
             >
-                <DialogTitle>
-                    Assign Reviewers
-                    {assignDialog.submission && (
-                        <Typography variant="caption" display="block" color="text.secondary">
-                            Current: {assignDialog.submission.reviews?.length || 0}/5 |
-                            Adding: {selectedReviewers.length} |
-                            Total: {(assignDialog.submission.reviews?.length || 0) + selectedReviewers.length}/5
-                        </Typography>
-                    )}
+                <DialogTitle sx={{
+                    pb: 1,
+                    fontWeight: 700,
+                    color: c.textPrimary,
+                    borderBottom: `1px solid ${c.cardBorder}`,
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar
+                            variant="rounded"
+                            sx={{
+                                bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                width: 40,
+                                height: 40,
+                                borderRadius: '10px',
+                            }}
+                        >
+                            <PersonAddIcon sx={{ color: '#1abc9c', fontSize: 22 }} />
+                        </Avatar>
+                        <Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
+                                Assign Reviewers
+                            </Typography>
+                            {assignDialog.submission && (
+                                <Typography variant="caption" sx={{ color: c.textMuted }}>
+                                    {assignDialog.submission.reviews?.length || 0}/5 assigned • Adding {selectedReviewers.length}
+                                </Typography>
+                            )}
+                        </Box>
+                    </Box>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ pt: 2.5 }}>
                     {assignDialog.submission && (
                         <>
-                            <Box sx={{ mb: 3, mt: 1 }}>
-                                <Typography variant="body2" color="text.secondary">
-                                    Submission:
+                            <Box sx={{
+                                mb: 2.5,
+                                mt: 1,
+                                p: 2,
+                                bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                borderRadius: '10px',
+                                border: `1px solid ${c.cardBorder}`,
+                            }}>
+                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    Submission
                                 </Typography>
-                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, mt: 0.5 }}>
                                     {assignDialog.submission.title}
                                 </Typography>
                             </Box>
 
-                            {/* Currently Assigned Reviewers */}
+                            {/* Currently Assigned */}
                             {assignDialog.submission.reviews && assignDialog.submission.reviews.length > 0 && (
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                                        Currently Assigned:
+                                <Box sx={{ mb: 2.5 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
+                                        Currently Assigned
                                     </Typography>
-                                    <List dense>
+                                    <Stack spacing={0.75}>
                                         {assignDialog.submission.reviews.map((review) => (
-                                            <ListItem key={review.id} sx={{ bgcolor: '#f5f5f5', mb: 0.5, borderRadius: 1 }}>
-                                                <ListItemText
-                                                    primary={review.reviewer?.name || 'Unknown'}
-                                                    secondary={review.reviewer?.email}
-                                                />
-                                            </ListItem>
+                                            <Box key={review.id} sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1.5,
+                                                p: 1.5,
+                                                bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb',
+                                                borderRadius: '10px',
+                                                border: `1px solid ${c.cardBorder}`,
+                                            }}>
+                                                <Avatar sx={{ width: 32, height: 32, bgcolor: '#1abc9c', fontSize: '0.8rem', fontWeight: 700 }}>
+                                                    {(review.reviewer?.name || 'U').charAt(0)}
+                                                </Avatar>
+                                                <Box sx={{ flex: 1 }}>
+                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                        {review.reviewer?.name || 'Unknown'}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                                        {review.reviewer?.email}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
                                         ))}
-                                    </List>
+                                    </Stack>
                                 </Box>
                             )}
 
-                            {/* Reviewers to Add */}
+                            {/* Selected to Add */}
                             {selectedReviewers.length > 0 && (
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1abc9c' }}>
-                                        Selected to Add:
+                                <Box sx={{ mb: 2.5 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#1abc9c', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
+                                        Selected to Add
                                     </Typography>
-                                    <List dense>
+                                    <Stack spacing={0.75}>
                                         {selectedReviewers.map((id) => {
                                             const reviewer = reviewers.find(r => r.id === id);
                                             return (
-                                                <ListItem key={id} sx={{ bgcolor: '#e8f5e9', mb: 0.5, borderRadius: 1 }}>
-                                                    <ListItemText
-                                                        primary={reviewer?.name || 'Unknown'}
-                                                        secondary={reviewer?.email}
-                                                    />
-                                                    <ListItemSecondaryAction>
-                                                        <IconButton
-                                                            edge="end"
-                                                            size="small"
-                                                            onClick={() => handleRemoveSelectedReviewer(id)}
-                                                        >
-                                                            <DeleteIcon fontSize="small" />
-                                                        </IconButton>
-                                                    </ListItemSecondaryAction>
-                                                </ListItem>
+                                                <Box key={id} sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1.5,
+                                                    p: 1.5,
+                                                    bgcolor: isDark ? 'rgba(26, 188, 156, 0.08)' : '#ecfdf5',
+                                                    borderRadius: '10px',
+                                                    border: `1px solid ${isDark ? 'rgba(26, 188, 156, 0.2)' : '#a7f3d0'}`,
+                                                }}>
+                                                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#16a34a', fontSize: '0.8rem', fontWeight: 700 }}>
+                                                        {(reviewer?.name || 'U').charAt(0)}
+                                                    </Avatar>
+                                                    <Box sx={{ flex: 1 }}>
+                                                        <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                            {reviewer?.name || 'Unknown'}
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                                            {reviewer?.email}
+                                                        </Typography>
+                                                    </Box>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleRemoveSelectedReviewer(id)}
+                                                        sx={{ '&:hover': { color: '#dc2626' } }}
+                                                    >
+                                                        <DeleteIcon sx={{ fontSize: 18 }} />
+                                                    </IconButton>
+                                                </Box>
                                             );
                                         })}
-                                    </List>
+                                    </Stack>
                                 </Box>
                             )}
 
-                            {/* Available Reviewers to Select */}
+                            {/* Reviewer Select */}
                             {(assignDialog.submission.reviews?.length || 0) + selectedReviewers.length < 5 ? (
                                 <FormControl fullWidth>
                                     <InputLabel>Select Reviewer to Add</InputLabel>
@@ -631,6 +912,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         value=""
                                         onChange={(e) => handleAddReviewer(e.target.value)}
                                         label="Select Reviewer to Add"
+                                        sx={{ borderRadius: '10px' }}
                                     >
                                         {getAvailableReviewers().length === 0 ? (
                                             <MenuItem disabled>No more reviewers available</MenuItem>
@@ -644,18 +926,26 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     </Select>
                                 </FormControl>
                             ) : (
-                                <Alert severity="info">
+                                <Alert severity="info" sx={{ borderRadius: '10px' }}>
                                     Maximum of 5 reviewers reached
                                 </Alert>
                             )}
                         </>
                     )}
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => {
-                        setAssignDialog({ open: false, submission: null });
-                        setSelectedReviewers([]);
-                    }}>
+                <DialogActions sx={{ p: 2.5, pt: 1.5, borderTop: `1px solid ${c.cardBorder}` }}>
+                    <Button
+                        onClick={() => {
+                            setAssignDialog({ open: false, submission: null });
+                            setSelectedReviewers([]);
+                        }}
+                        sx={{
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            color: c.textMuted,
+                        }}
+                    >
                         Cancel
                     </Button>
                     <Button
@@ -663,11 +953,17 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                         variant="contained"
                         disabled={selectedReviewers.length === 0}
                         sx={{
-                            backgroundColor: '#1abc9c',
-                            '&:hover': { backgroundColor: '#16a085' },
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
+                            },
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            px: 3,
                         }}
                     >
-                        Assign {selectedReviewers.length} Reviewer(s)
+                        Assign {selectedReviewers.length} Reviewer{selectedReviewers.length !== 1 ? 's' : ''}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -22,7 +22,10 @@ import {
     IconButton,
     Divider,
     MenuItem,
+    Avatar,
+    useTheme,
 } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -117,8 +120,17 @@ function ResourceUploadForm({ onUpload, uploading }) {
 }
 
 export default function Settings({ settings, submissionSettings }) {
+    const theme = useTheme();
+    const c = theme.palette.custom;
+    const isDark = theme.palette.mode === 'dark';
     const [tabValue, setTabValue] = useState(0); // Start with Landing Page Settings
     const [uploading, setUploading] = useState(false);
+
+    // Shared premium styles
+    const inputSx = { '& .MuiOutlinedInput-root': { borderRadius: '10px', '& fieldset': { borderColor: c.cardBorder }, '&:hover fieldset': { borderColor: '#1abc9c' }, '&.Mui-focused fieldset': { borderColor: '#1abc9c' } }, '& .MuiInputLabel-root.Mui-focused': { color: '#1abc9c' }, '& input, & textarea': { color: c.textPrimary }, '& .MuiFormHelperText-root': { color: c.textMuted } };
+    const tealBtnSx = { background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)', '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' }, borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 3, boxShadow: '0 4px 14px rgba(26,188,156,0.35)' };
+    const sectionCardSx = { borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, overflow: 'hidden' };
+    const sectionTitleSx = { fontWeight: 700, fontSize: '1rem', color: '#1abc9c', mb: 2 };
 
     // Parse settings from grouped format
     const getSettingValue = (key, defaultValue = '') => {
@@ -1242,29 +1254,38 @@ export default function Settings({ settings, submissionSettings }) {
         <SidebarLayout>
             <Head title="Settings" />
 
-            <Box sx={{ p: 3, maxWidth: '1200px', margin: '0 auto' }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1abc9c', mb: 3 }}>
-                    System Settings
-                </Typography>
+            <Box sx={{ p: { xs: 2, sm: 3, md: 3.5 }, maxWidth: '1200px', margin: '0 auto', minHeight: '100vh', bgcolor: c.surfaceBg }}>
+                {/* Header */}
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
+                        System Settings ⚙️
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>Configure your landing page and submission settings</Typography>
+                </Box>
 
-                <Paper sx={{ borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+                <Card elevation={0} sx={{ borderRadius: '16px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, overflow: 'hidden' }}>
                     <Tabs
                         value={tabValue}
                         onChange={handleTabChange}
                         sx={{
-                            borderBottom: 1,
-                            borderColor: 'divider',
+                            borderBottom: `1px solid ${c.cardBorder}`,
                             px: 2,
+                            bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb',
                             '& .MuiTab-root': {
                                 textTransform: 'none',
-                                fontSize: '1rem',
+                                fontSize: '0.9rem',
                                 fontWeight: 600,
+                                color: c.textMuted,
+                                borderRadius: '8px 8px 0 0',
+                                py: 1.5,
                             },
                             '& .Mui-selected': {
                                 color: '#1abc9c',
                             },
                             '& .MuiTabs-indicator': {
                                 backgroundColor: '#1abc9c',
+                                height: 3,
+                                borderRadius: '3px 3px 0 0',
                             },
                         }}
                     >
@@ -1277,10 +1298,10 @@ export default function Settings({ settings, submissionSettings }) {
                         <Box sx={{ p: 3 }}>
                             <Stack spacing={4}>
                                 {/* Countdown Timer Section */}
-                                <Card variant="outlined">
-                                    <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
-                                            Countdown Timer
+                                <Card elevation={0} sx={sectionCardSx}>
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
+                                            ⏱️ Countdown Timer
                                         </Typography>
                                         <TextField
                                             fullWidth
@@ -1289,25 +1310,10 @@ export default function Settings({ settings, submissionSettings }) {
                                             value={countdownDate}
                                             onChange={(e) => setCountdownDate(e.target.value)}
                                             InputLabelProps={{ shrink: true }}
-                                            sx={{
-                                                mb: 2,
-                                                '& .MuiOutlinedInput-root': {
-                                                    '&.Mui-focused fieldset': {
-                                                        borderColor: '#1abc9c',
-                                                    },
-                                                },
-                                            }}
+                                            sx={{ mb: 2, ...inputSx }}
                                         />
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                            <Button
-                                                variant="contained"
-                                                onClick={saveCountdown}
-                                                disabled={savingCountdown}
-                                                sx={{
-                                                    backgroundColor: '#1abc9c',
-                                                    '&:hover': { backgroundColor: '#16a085' },
-                                                }}
-                                            >
+                                            <Button variant="contained" onClick={saveCountdown} disabled={savingCountdown} sx={tealBtnSx}>
                                                 {savingCountdown ? 'Saving...' : 'Save Countdown'}
                                             </Button>
                                         </Box>
@@ -1315,9 +1321,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Hero Background Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Hero Background
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1383,9 +1389,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Hero Text Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Hero Text Settings
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1466,9 +1472,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Hero Logo Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Hero Logo
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1537,9 +1543,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Secondary Hero Logos Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Secondary Hero Logos
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1628,9 +1634,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Contact Information Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Contact Information
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -1700,9 +1706,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Follow Us - Social Media Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Follow Us
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -1797,7 +1803,7 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Keynote Speakers Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
                                         <Alert severity="info" sx={{ mb: 2 }}>
                                             Manage keynote speakers for the conference. Upload photos and add speaker details.
@@ -1944,7 +1950,7 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Sponsors Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                             <Typography variant="h6" sx={{ color: '#1abc9c' }}>
@@ -2053,9 +2059,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Resources Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Conference Resources
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -2138,9 +2144,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* AFGEO Members Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             AFGEO Members
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -2374,9 +2380,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Custom Sections - Dynamic Landing Page Sections */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Custom Sections
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -2691,9 +2697,9 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Card>
 
                                 {/* Submission Procedure Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Submission Procedure
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -2922,9 +2928,9 @@ export default function Settings({ settings, submissionSettings }) {
 
 
                                 {/* Timeline Section */}
-                                <Card variant="outlined">
+                                <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                        <Typography variant="h6" sx={sectionTitleSx}>
                                             Conference Timeline
                                         </Typography>
                                         <Alert severity="info" sx={{ mb: 3 }}>
@@ -2998,13 +3004,13 @@ export default function Settings({ settings, submissionSettings }) {
                                 </Typography>
                             </Alert>
 
-                            <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                            <Card elevation={0} sx={sectionCardSx}>
                                 <CardContent sx={{ p: 3 }}>
                                     <Box component="form" onSubmit={handleDeadlineSubmit}>
                                         <Stack spacing={3}>
                                             {/* Enable/Disable Toggle */}
                                             <Box>
-                                                <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                                <Typography variant="h6" sx={sectionTitleSx}>
                                                     Submission Control
                                                 </Typography>
                                                 <FormControlLabel
@@ -3040,7 +3046,7 @@ export default function Settings({ settings, submissionSettings }) {
 
                                             {/* Deadline Dates */}
                                             <Box>
-                                                <Typography variant="h6" sx={{ mb: 2, color: '#1abc9c' }}>
+                                                <Typography variant="h6" sx={sectionTitleSx}>
                                                     Submission Period
                                                 </Typography>
 
@@ -3053,19 +3059,8 @@ export default function Settings({ settings, submissionSettings }) {
                                                         onChange={(e) => setDeadlineData('submission_deadline_start', e.target.value)}
                                                         error={!!deadlineErrors.submission_deadline_start}
                                                         helperText={deadlineErrors.submission_deadline_start || 'When submissions will open (leave empty for no start restriction)'}
-                                                        InputLabelProps={{
-                                                            shrink: true,
-                                                        }}
-                                                        sx={{
-                                                            '& .MuiOutlinedInput-root': {
-                                                                '&.Mui-focused fieldset': {
-                                                                    borderColor: '#1abc9c',
-                                                                },
-                                                            },
-                                                            '& .MuiInputLabel-root.Mui-focused': {
-                                                                color: '#1abc9c',
-                                                            },
-                                                        }}
+                                                        InputLabelProps={{ shrink: true }}
+                                                        sx={inputSx}
                                                     />
 
                                                     <TextField
@@ -3076,19 +3071,8 @@ export default function Settings({ settings, submissionSettings }) {
                                                         onChange={(e) => setDeadlineData('submission_deadline_end', e.target.value)}
                                                         error={!!deadlineErrors.submission_deadline_end}
                                                         helperText={deadlineErrors.submission_deadline_end || 'When submissions will close (leave empty for no end restriction)'}
-                                                        InputLabelProps={{
-                                                            shrink: true,
-                                                        }}
-                                                        sx={{
-                                                            '& .MuiOutlinedInput-root': {
-                                                                '&.Mui-focused fieldset': {
-                                                                    borderColor: '#1abc9c',
-                                                                },
-                                                            },
-                                                            '& .MuiInputLabel-root.Mui-focused': {
-                                                                color: '#1abc9c',
-                                                            },
-                                                        }}
+                                                        InputLabelProps={{ shrink: true }}
+                                                        sx={inputSx}
                                                     />
                                                 </Stack>
                                             </Box>
@@ -3114,11 +3098,14 @@ export default function Settings({ settings, submissionSettings }) {
                                                     variant="outlined"
                                                     onClick={() => window.location.reload()}
                                                     sx={{
-                                                        color: '#666',
-                                                        borderColor: '#ddd',
+                                                        color: c.textMuted,
+                                                        borderColor: c.cardBorder,
+                                                        borderRadius: '10px',
+                                                        textTransform: 'none',
+                                                        fontWeight: 600,
                                                         '&:hover': {
-                                                            borderColor: '#999',
-                                                            backgroundColor: '#f5f5f5',
+                                                            borderColor: '#1abc9c',
+                                                            backgroundColor: isDark ? 'rgba(26,188,156,0.06)' : '#f9fafb',
                                                         },
                                                     }}
                                                 >
@@ -3128,14 +3115,7 @@ export default function Settings({ settings, submissionSettings }) {
                                                     type="submit"
                                                     variant="contained"
                                                     disabled={processingDeadline}
-                                                    sx={{
-                                                        backgroundColor: '#1abc9c',
-                                                        '&:hover': {
-                                                            backgroundColor: '#16a085',
-                                                        },
-                                                        px: 4,
-                                                        py: 1.5,
-                                                    }}
+                                                    sx={tealBtnSx}
                                                 >
                                                     {processingDeadline ? 'Saving...' : 'Save Settings'}
                                                 </Button>
@@ -3146,7 +3126,7 @@ export default function Settings({ settings, submissionSettings }) {
                             </Card>
                         </Box>
                     </TabPanel>
-                </Paper>
+                </Card>
             </Box>
         </SidebarLayout>
     );
