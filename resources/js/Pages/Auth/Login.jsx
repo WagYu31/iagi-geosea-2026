@@ -1,11 +1,24 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Alert from '@mui/material/Alert';
+import Divider from '@mui/material/Divider';
+import CircularProgress from '@mui/material/CircularProgress';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import { alpha } from '@mui/material/styles';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -18,243 +31,294 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('login'), {
             onFinish: () => reset('password'),
         });
     };
 
+    const teal = '#0d9488';
+    const tealDark = '#0d7a6a';
+    const tealLight = '#1abc9c';
+
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Sign In" />
 
-            {/* Page Title - Responsive */}
-            <div className="mb-4 sm:mb-6 md:mb-8 text-center">
-                <h2
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ color: '#111827' }}
+            {/* Header */}
+            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+                <Box
+                    sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        background: `linear-gradient(135deg, ${alpha(teal, 0.1)}, ${alpha(tealLight, 0.15)})`,
+                        mb: 2,
+                    }}
+                >
+                    <LoginIcon sx={{ fontSize: 28, color: teal }} />
+                </Box>
+                <Typography
+                    variant="h5"
+                    sx={{
+                        fontWeight: 800,
+                        color: '#111827',
+                        fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                        mb: 0.5,
+                    }}
                 >
                     Welcome Back
-                </h2>
-                <p
-                    className="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base"
-                    style={{ color: '#6b7280' }}
+                </Typography>
+                <Typography
+                    sx={{
+                        color: '#6b7280',
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                    }}
                 >
                     Sign in to access your account
-                </p>
-            </div>
+                </Typography>
+            </Box>
 
-            {/* Status Message - Responsive */}
+            {/* Status Message */}
             {status && (
-                <div
-                    className="mb-3 sm:mb-4 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium"
-                    style={{
-                        backgroundColor: 'rgba(26, 188, 156, 0.1)',
-                        color: '#0d7a6a',
-                        border: '1px solid rgba(26, 188, 156, 0.3)',
+                <Alert
+                    severity="success"
+                    sx={{
+                        mb: 3,
+                        borderRadius: '12px',
+                        bgcolor: alpha(teal, 0.08),
+                        color: tealDark,
+                        '& .MuiAlert-icon': { color: teal },
+                        border: `1px solid ${alpha(teal, 0.2)}`,
                     }}
                 >
                     {status}
-                </div>
+                </Alert>
             )}
 
             <form onSubmit={submit}>
-                {/* Email Field - Responsive */}
-                <div>
-                    <InputLabel
-                        htmlFor="email"
-                        value="Email Address"
-                        className="text-xs sm:text-sm"
-                        style={{
-                            color: '#374151',
-                            fontWeight: '600',
-                        }}
+                {/* Email Field */}
+                <TextField
+                    id="email"
+                    label="Email Address"
+                    type="email"
+                    fullWidth
+                    value={data.email}
+                    onChange={(e) => setData('email', e.target.value)}
+                    error={!!errors.email}
+                    helperText={errors.email}
+                    autoComplete="username"
+                    autoFocus
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <EmailOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                    sx={{
+                        mb: 2.5,
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: teal,
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: teal,
+                                borderWidth: '2px',
+                            },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                            color: tealDark,
+                        },
+                    }}
+                />
+
+                {/* Password Field */}
+                <TextField
+                    id="password"
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    fullWidth
+                    value={data.password}
+                    onChange={(e) => setData('password', e.target.value)}
+                    error={!!errors.password}
+                    helperText={errors.password}
+                    autoComplete="current-password"
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <LockOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                        size="small"
+                                        sx={{
+                                            color: '#9ca3af',
+                                            '&:hover': { color: tealDark },
+                                        }}
+                                    >
+                                        {showPassword ? (
+                                            <VisibilityOffIcon sx={{ fontSize: 20 }} />
+                                        ) : (
+                                            <VisibilityIcon sx={{ fontSize: 20 }} />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                    sx={{
+                        mb: 1.5,
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '12px',
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: teal,
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: teal,
+                                borderWidth: '2px',
+                            },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                            color: tealDark,
+                        },
+                    }}
+                />
+
+                {/* Remember Me & Forgot Password */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: { xs: 'flex-start', sm: 'center' },
+                        justifyContent: 'space-between',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: { xs: 1, sm: 0 },
+                        mb: 3,
+                    }}
+                >
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={data.remember}
+                                onChange={(e) => setData('remember', e.target.checked)}
+                                sx={{
+                                    color: '#d1d5db',
+                                    '&.Mui-checked': { color: teal },
+                                    padding: '4px 8px',
+                                }}
+                                size="small"
+                            />
+                        }
+                        label={
+                            <Typography sx={{ fontSize: '0.85rem', color: '#6b7280' }}>
+                                Remember me
+                            </Typography>
+                        }
                     />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 sm:mt-2 block w-full text-sm sm:text-base"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                        style={{
-                            borderRadius: '10px',
-                            borderColor: errors.email ? '#ef4444' : '#d1d5db',
-                            paddingTop: '0.625rem',
-                            paddingBottom: '0.625rem',
-                        }}
-                    />
-
-                    <InputError message={errors.email} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                </div>
-
-                {/* Password Field - Responsive */}
-                <div className="mt-3 sm:mt-4 md:mt-5">
-                    <InputLabel
-                        htmlFor="password"
-                        value="Password"
-                        className="text-xs sm:text-sm"
-                        style={{
-                            color: '#374151',
-                            fontWeight: '600',
-                        }}
-                    />
-
-                    <div className="relative">
-                        <TextInput
-                            id="password"
-                            type={showPassword ? 'text' : 'password'}
-                            name="password"
-                            value={data.password}
-                            className="mt-1 sm:mt-2 block w-full pr-10 sm:pr-12 text-sm sm:text-base"
-                            autoComplete="current-password"
-                            onChange={(e) => setData('password', e.target.value)}
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.password ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                            }}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 focus:outline-none transition-colors duration-200"
-                            style={{
-                                color: '#9ca3af',
-                                marginTop: '0.125rem',
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#0d7a6a'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
-                        >
-                            {showPassword ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                                </svg>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            )}
-                        </button>
-                    </div>
-
-                    <InputError message={errors.password} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                </div>
-
-                {/* Remember Me & Forgot Password - Responsive Stack on Mobile */}
-                <div className="mt-3 sm:mt-4 md:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                            className="w-4 h-4 sm:w-auto sm:h-auto"
-                        />
-                        <span
-                            className="ms-2 text-xs sm:text-sm"
-                            style={{ color: '#6b7280' }}
-                        >
-                            Remember me
-                        </span>
-                    </label>
 
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-xs sm:text-sm font-medium transition-colors duration-200"
-                            style={{ color: '#0d7a6a' }}
-                            onMouseEnter={(e) => e.target.style.color = '#1abc9c'}
-                            onMouseLeave={(e) => e.target.style.color = '#0d7a6a'}
+                            style={{
+                                color: tealDark,
+                                fontSize: '0.85rem',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                            }}
                         >
                             Forgot password?
                         </Link>
                     )}
-                </div>
+                </Box>
 
-                {/* Login Button - Responsive */}
-                <button
+                {/* Sign In Button */}
+                <Button
                     type="submit"
+                    fullWidth
+                    variant="contained"
                     disabled={processing}
-                    className="mt-4 sm:mt-5 md:mt-6 w-full font-bold text-white transition-all duration-300 text-xs sm:text-sm md:text-base"
-                    style={{
-                        backgroundColor: processing ? '#9ca3af' : '#1abc9c',
-                        padding: '0.75rem 1.5rem',
+                    startIcon={
+                        processing ? (
+                            <CircularProgress size={18} sx={{ color: 'white' }} />
+                        ) : (
+                            <LoginIcon />
+                        )
+                    }
+                    sx={{
+                        py: 1.5,
                         borderRadius: '50px',
-                        letterSpacing: '0.05em',
                         textTransform: 'uppercase',
-                        boxShadow: '0 4px 16px rgba(26, 188, 156, 0.3)',
-                        cursor: processing ? 'not-allowed' : 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                        if (!processing) {
-                            e.target.style.backgroundColor = '#16a085';
-                            e.target.style.transform = 'translateY(-2px)';
-                            e.target.style.boxShadow = '0 8px 24px rgba(26, 188, 156, 0.4)';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (!processing) {
-                            e.target.style.backgroundColor = '#1abc9c';
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = '0 4px 16px rgba(26, 188, 156, 0.3)';
-                        }
+                        fontWeight: 700,
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        letterSpacing: '0.08em',
+                        bgcolor: tealLight,
+                        boxShadow: `0 6px 24px ${alpha(tealLight, 0.4)}`,
+                        '&:hover': {
+                            bgcolor: tealDark,
+                            boxShadow: `0 8px 32px ${alpha(tealDark, 0.5)}`,
+                            transform: 'translateY(-2px)',
+                        },
+                        '&:active': {
+                            transform: 'translateY(0)',
+                        },
+                        transition: 'all 0.3s ease',
+                        '&.Mui-disabled': {
+                            bgcolor: '#d1d5db',
+                            color: 'white',
+                        },
                     }}
                 >
                     {processing ? 'Signing in...' : 'Sign In'}
-                </button>
+                </Button>
 
-                {/* Register Link - Responsive */}
-                <div className="mt-4 sm:mt-5 md:mt-6 text-center">
-                    <span className="text-xs sm:text-sm" style={{ color: '#6b7280' }}>
-                        Don't have an account?{' '}
-                    </span>
-                    <Link
-                        href={route('register')}
-                        className="font-semibold transition-colors duration-200 text-xs sm:text-sm"
-                        style={{
-                            color: '#0d7a6a',
+                {/* Divider */}
+                <Divider sx={{ my: 3 }}>
+                    <Typography
+                        sx={{
+                            color: '#9ca3af',
+                            fontSize: '0.75rem',
+                            px: 2,
+                            fontWeight: 500,
                         }}
-                        onMouseEnter={(e) => e.target.style.color = '#1abc9c'}
-                        onMouseLeave={(e) => e.target.style.color = '#0d7a6a'}
                     >
-                        Create an account
-                    </Link>
-                </div>
-            </form>
+                        OR
+                    </Typography>
+                </Divider>
 
-            {/* Responsive Media Query Styles */}
-            <style>{`
-                /* Mobile First - Default Styles Above */
-                
-                /* Small devices (landscape phones, 640px and up) */
-                @media (min-width: 640px) {
-                    .login-button {
-                        padding: 0.875rem 1.5rem;
-                    }
-                }
-                
-                /* Medium devices (tablets, 768px and up) */
-                @media (min-width: 768px) {
-                    .login-button {
-                        padding: 1rem 2rem;
-                    }
-                }
-                
-                /* Large devices (desktops, 1024px and up) */
-                @media (min-width: 1024px) {
-                    .login-input {
-                        padding-top: 0.75rem;
-                        padding-bottom: 0.75rem;
-                    }
-                }
-            `}</style>
+                {/* Register Link */}
+                <Button
+                    component={Link}
+                    href={route('register')}
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<PersonAddOutlinedIcon />}
+                    sx={{
+                        py: 1.3,
+                        borderRadius: '50px',
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        color: tealDark,
+                        borderColor: alpha(teal, 0.3),
+                        '&:hover': {
+                            borderColor: teal,
+                            bgcolor: alpha(teal, 0.05),
+                        },
+                    }}
+                >
+                    Create an account
+                </Button>
+            </form>
         </GuestLayout>
     );
 }

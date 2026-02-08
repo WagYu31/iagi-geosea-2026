@@ -1,111 +1,201 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
+import { alpha } from '@mui/material/styles';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Button from '@mui/material/Button';
 
 export default function GuestLayout({ children }) {
     return (
-        <div
-            className="flex min-h-screen flex-col items-center justify-center px-3 py-8 sm:px-6 sm:py-12 lg:px-8"
-            style={{
-                background: 'linear-gradient(135deg, #094d42 0%, #0a3d35 50%, #083a31 100%)',
+        <Box
+            sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
                 position: 'relative',
+                overflow: 'hidden',
+                background: 'linear-gradient(135deg, #094d42 0%, #0a3d35 40%, #062e28 100%)',
+                px: { xs: 2, sm: 3 },
+                py: { xs: 4, sm: 6 },
             }}
         >
-            {/* Decorative Background Elements */}
-            <div
-                style={{
+            {/* Animated Background Pattern */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    opacity: 0.06,
+                    backgroundImage: `radial-gradient(circle at 20% 50%, #1abc9c 1px, transparent 1px),
+                                      radial-gradient(circle at 80% 20%, #1abc9c 1px, transparent 1px),
+                                      radial-gradient(circle at 40% 80%, #1abc9c 1px, transparent 1px)`,
+                    backgroundSize: '100px 100px, 150px 150px, 120px 120px',
+                    animation: 'float 20s ease-in-out infinite',
+                    '@keyframes float': {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                }}
+            />
+
+            {/* Top Accent Bar */}
+            <Box
+                sx={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     right: 0,
                     height: '4px',
-                    background: 'linear-gradient(90deg, #0d7a6a 0%, #1abc9c 50%, #0d7a6a 100%)',
+                    background: 'linear-gradient(90deg, #0d7a6a, #1abc9c, #4dd4ac, #1abc9c, #0d7a6a)',
                 }}
             />
 
-            {/* Logo/Branding */}
-            <div className="mb-6 sm:mb-8 md:mb-10 text-center">
-                <Link href="/" className="inline-block">
-                    {/* Logo - Responsive Sizes */}
-                    <ApplicationLogo
-                        className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mb-3 sm:mb-4 mx-auto transition-transform duration-300 hover:scale-110"
-                        style={{ fill: '#4dd4ac' }}
-                    />
-
-                    {/* Title - Responsive Text Sizes */}
-                    <h1
-                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 transition-colors duration-300 hover:opacity-90"
-                        style={{
-                            color: '#4dd4ac',
-                            letterSpacing: '0.02em',
-                        }}
-                    >
-                        55ᵀᴴ PIT IAGI-GEOSEA <span style={{ color: '#1abc9c' }}>XIX 2026</span>
-                    </h1>
-
-                    {/* Subtitle - Responsive Text Sizes */}
-                    <p
-                        className="text-xs sm:text-sm md:text-base font-semibold"
-                        style={{
-                            color: 'rgba(255,255,255,0.7)',
-                            letterSpacing: '0.1em',
-                        }}
-                    >
-                        Annual Convention
-                    </p>
-                </Link>
-            </div>
-
-            {/* Login Card - Responsive Width & Padding */}
-            <div
-                className="w-full overflow-hidden shadow-2xl sm:max-w-md md:max-w-lg lg:max-w-xl"
-                style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    padding: '1.5rem',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            {/* Decorative Glow */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '-30%',
+                    right: '-20%',
+                    width: '500px',
+                    height: '500px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(26, 188, 156, 0.12) 0%, transparent 70%)',
+                    filter: 'blur(60px)',
                 }}
-            >
-                <style>{`
-                    @media (min-width: 640px) {
-                        .login-card {
-                            border-radius: 20px;
-                            padding: 2rem;
-                        }
-                    }
-                    @media (min-width: 768px) {
-                        .login-card {
-                            border-radius: 24px;
-                            padding: 2.5rem;
-                        }
-                    }
-                    @media (min-width: 1024px) {
-                        .login-card {
-                            padding: 3rem;
-                        }
-                    }
-                `}</style>
-                <div className="login-card">
-                    {children}
-                </div>
-            </div>
+            />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '-20%',
+                    left: '-15%',
+                    width: '400px',
+                    height: '400px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(13, 122, 106, 0.15) 0%, transparent 70%)',
+                    filter: 'blur(50px)',
+                }}
+            />
 
-            {/* Footer Link - Responsive Text */}
-            <div className="mt-4 sm:mt-6 md:mt-8 text-center">
-                <Link
-                    href="/"
-                    className="text-xs sm:text-sm md:text-base font-medium transition-all duration-200 inline-flex items-center gap-2 hover:gap-3"
-                    style={{
-                        color: 'rgba(255,255,255,0.7)',
+            <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
+                {/* Logo & Branding */}
+                <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+                    <Link href="/" style={{ textDecoration: 'none' }}>
+                        <Box
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: { xs: 72, sm: 88, md: 100 },
+                                height: { xs: 72, sm: 88, md: 100 },
+                                borderRadius: '50%',
+                                bgcolor: 'white',
+                                mb: 2.5,
+                                overflow: 'hidden',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.05)',
+                                },
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src="/favicon.ico"
+                                alt="Logo"
+                                sx={{
+                                    width: '75%',
+                                    height: '75%',
+                                    objectFit: 'contain',
+                                }}
+                            />
+                        </Box>
+
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                fontWeight: 800,
+                                color: '#4dd4ac',
+                                fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.2rem' },
+                                letterSpacing: '0.02em',
+                                mb: 0.5,
+                                textShadow: '0 2px 12px rgba(77, 212, 172, 0.3)',
+                            }}
+                        >
+                            55ᵀᴴ PIT IAGI-GEOSEA{' '}
+                            <Box component="span" sx={{ color: '#1abc9c' }}>
+                                XIX 2026
+                            </Box>
+                        </Typography>
+
+                        <Typography
+                            sx={{
+                                color: alpha('#ffffff', 0.6),
+                                fontWeight: 600,
+                                letterSpacing: '0.15em',
+                                fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                                textTransform: 'uppercase',
+                            }}
+                        >
+                            Annual Convention
+                        </Typography>
+                    </Link>
+                </Box>
+
+                {/* Main Card */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        borderRadius: { xs: '20px', sm: '24px' },
+                        p: { xs: 3, sm: 4, md: 5 },
+                        bgcolor: 'white',
+                        boxShadow: '0 24px 80px rgba(0,0,0,0.25)',
+                        border: `1px solid ${alpha('#ffffff', 0.1)}`,
+                        position: 'relative',
+                        overflow: 'hidden',
                     }}
-                    onMouseEnter={(e) => e.target.style.color = '#4dd4ac'}
-                    onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}
                 >
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Back to Home
-                </Link>
-            </div>
-        </div>
+                    {/* Card top accent */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '3px',
+                            background: 'linear-gradient(90deg, #0d9488, #1abc9c, #4dd4ac)',
+                        }}
+                    />
+                    {children}
+                </Paper>
+
+                {/* Back to Home */}
+                <Box sx={{ textAlign: 'center', mt: { xs: 3, sm: 4 } }}>
+                    <Button
+                        component={Link}
+                        href="/"
+                        startIcon={<ArrowBackIcon />}
+                        sx={{
+                            color: alpha('#ffffff', 0.65),
+                            fontWeight: 600,
+                            fontSize: '0.85rem',
+                            textTransform: 'none',
+                            letterSpacing: '0.02em',
+                            '&:hover': {
+                                color: '#4dd4ac',
+                                bgcolor: 'transparent',
+                            },
+                        }}
+                    >
+                        Back to Home
+                    </Button>
+                </Box>
+            </Container>
+        </Box>
     );
 }

@@ -1,10 +1,27 @@
 import { useState } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Alert from '@mui/material/Alert';
+import Divider from '@mui/material/Divider';
+import CircularProgress from '@mui/material/CircularProgress';
+import MenuItem from '@mui/material/MenuItem';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import { alpha } from '@mui/material/styles';
 
 export default function Register() {
     const { flash } = usePage().props;
@@ -29,350 +46,392 @@ export default function Register() {
         });
     };
 
+    const teal = '#0d9488';
+    const tealDark = '#0d7a6a';
+    const tealLight = '#1abc9c';
+
+    const textFieldSx = {
+        mb: 2,
+        '& .MuiOutlinedInput-root': {
+            borderRadius: '12px',
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: teal,
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: teal,
+                borderWidth: '2px',
+            },
+        },
+        '& .MuiInputLabel-root.Mui-focused': {
+            color: tealDark,
+        },
+    };
+
     return (
         <GuestLayout>
             <Head title="Register" />
 
-            {/* Page Title - Responsive */}
-            <div className="mb-4 sm:mb-6 md:mb-8 text-center">
-                <h2
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ color: '#111827' }}
+            {/* Header */}
+            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+                <Box
+                    sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        background: `linear-gradient(135deg, ${alpha(teal, 0.1)}, ${alpha(tealLight, 0.15)})`,
+                        mb: 2,
+                    }}
+                >
+                    <PersonAddOutlinedIcon sx={{ fontSize: 28, color: teal }} />
+                </Box>
+                <Typography
+                    variant="h5"
+                    sx={{
+                        fontWeight: 800,
+                        color: '#111827',
+                        fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                        mb: 0.5,
+                    }}
                 >
                     Create Account
-                </h2>
-                <p
-                    className="mt-1 sm:mt-2 text-xs sm:text-sm md:text-base"
-                    style={{ color: '#6b7280' }}
+                </Typography>
+                <Typography
+                    sx={{
+                        color: '#6b7280',
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                    }}
                 >
-                    Register for IAGI-GEOSEA 2026
-                </p>
-            </div>
+                    Register for 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
+                </Typography>
+            </Box>
 
             {/* Success Message */}
             {flash?.success && (
-                <div
-                    className="mb-3 sm:mb-4 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium"
-                    style={{
-                        backgroundColor: 'rgba(26, 188, 156, 0.1)',
-                        color: '#0d7a6a',
-                        border: '1px solid rgba(26, 188, 156, 0.3)',
+                <Alert
+                    severity="success"
+                    sx={{
+                        mb: 3,
+                        borderRadius: '12px',
+                        bgcolor: alpha(teal, 0.08),
+                        color: tealDark,
+                        '& .MuiAlert-icon': { color: teal },
+                        border: `1px solid ${alpha(teal, 0.2)}`,
                     }}
                 >
                     {flash.success}
-                </div>
+                </Alert>
             )}
 
             <form onSubmit={submit}>
-                {/* Account Data Section */}
-                <div className="mb-4 sm:mb-5">
-                    <h3
-                        className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4"
-                        style={{
-                            color: '#0d7a6a',
-                            borderBottom: '2px solid rgba(26, 188, 156, 0.2)',
-                            paddingBottom: '0.5rem',
+                {/* Account Information Section */}
+                <Box sx={{ mb: 1 }}>
+                    <Typography
+                        sx={{
+                            fontWeight: 700,
+                            color: tealDark,
+                            fontSize: { xs: '0.9rem', sm: '1rem' },
+                            mb: 2,
+                            pb: 1,
+                            borderBottom: `2px solid ${alpha(tealLight, 0.2)}`,
                         }}
                     >
                         Account Information
-                    </h3>
+                    </Typography>
 
                     {/* Email */}
-                    <div className="mb-3 sm:mb-4">
-                        <InputLabel
-                            htmlFor="email"
-                            value="Email (Username)"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <TextInput
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
-                            className="mt-1 sm:mt-2 block w-full text-sm sm:text-base"
-                            autoComplete="username"
-                            isFocused={true}
-                            onChange={(e) => setData('email', e.target.value)}
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.email ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                            }}
-                            required
-                        />
-                        <InputError message={errors.email} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
+                    <TextField
+                        id="email"
+                        label="Email (Username)"
+                        type="email"
+                        fullWidth
+                        value={data.email}
+                        onChange={(e) => setData('email', e.target.value)}
+                        error={!!errors.email}
+                        helperText={errors.email}
+                        autoComplete="username"
+                        autoFocus
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
 
                     {/* Password */}
-                    <div className="mb-3 sm:mb-4">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <div className="relative">
-                            <TextInput
-                                id="password"
-                                type={showPassword ? 'text' : 'password'}
-                                name="password"
-                                value={data.password}
-                                className="mt-1 sm:mt-2 block w-full pr-10 sm:pr-12 text-sm sm:text-base"
-                                autoComplete="new-password"
-                                onChange={(e) => setData('password', e.target.value)}
-                                style={{
-                                    borderRadius: '10px',
-                                    borderColor: errors.password ? '#ef4444' : '#d1d5db',
-                                    paddingTop: '0.625rem',
-                                    paddingBottom: '0.625rem',
-                                }}
-                                required
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 focus:outline-none transition-colors duration-200"
-                                style={{ color: '#9ca3af', marginTop: '0.125rem' }}
-                                onMouseEnter={(e) => e.currentTarget.style.color = '#0d7a6a'}
-                                onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
-                            >
-                                {showPassword ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                                    </svg>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                )}
-                            </button>
-                        </div>
-                        <InputError message={errors.password} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
+                    <TextField
+                        id="password"
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        fullWidth
+                        value={data.password}
+                        onChange={(e) => setData('password', e.target.value)}
+                        error={!!errors.password}
+                        helperText={errors.password}
+                        autoComplete="new-password"
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                            size="small"
+                                            sx={{ color: '#9ca3af', '&:hover': { color: tealDark } }}
+                                        >
+                                            {showPassword ? <VisibilityOffIcon sx={{ fontSize: 20 }} /> : <VisibilityIcon sx={{ fontSize: 20 }} />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
 
                     {/* Confirm Password */}
-                    <div>
-                        <InputLabel
-                            htmlFor="password_confirmation"
-                            value="Confirm Password"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <div className="relative">
-                            <TextInput
-                                id="password_confirmation"
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                name="password_confirmation"
-                                value={data.password_confirmation}
-                                className="mt-1 sm:mt-2 block w-full pr-10 sm:pr-12 text-sm sm:text-base"
-                                autoComplete="new-password"
-                                onChange={(e) => setData('password_confirmation', e.target.value)}
-                                style={{
-                                    borderRadius: '10px',
-                                    borderColor: errors.password_confirmation ? '#ef4444' : '#d1d5db',
-                                    paddingTop: '0.625rem',
-                                    paddingBottom: '0.625rem',
-                                }}
-                                required
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 focus:outline-none transition-colors duration-200"
-                                style={{ color: '#9ca3af', marginTop: '0.125rem' }}
-                                onMouseEnter={(e) => e.currentTarget.style.color = '#0d7a6a'}
-                                onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
-                            >
-                                {showConfirmPassword ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                                    </svg>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                )}
-                            </button>
-                        </div>
-                        <InputError message={errors.password_confirmation} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
-                </div>
+                    <TextField
+                        id="password_confirmation"
+                        label="Confirm Password"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        fullWidth
+                        value={data.password_confirmation}
+                        onChange={(e) => setData('password_confirmation', e.target.value)}
+                        error={!!errors.password_confirmation}
+                        helperText={errors.password_confirmation}
+                        autoComplete="new-password"
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            edge="end"
+                                            size="small"
+                                            sx={{ color: '#9ca3af', '&:hover': { color: tealDark } }}
+                                        >
+                                            {showConfirmPassword ? <VisibilityOffIcon sx={{ fontSize: 20 }} /> : <VisibilityIcon sx={{ fontSize: 20 }} />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
+                </Box>
 
-                {/* Profile Data Section */}
-                <div className="mb-4 sm:mb-5">
-                    <h3
-                        className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4"
-                        style={{
-                            color: '#0d7a6a',
-                            borderBottom: '2px solid rgba(26, 188, 156, 0.2)',
-                            paddingBottom: '0.5rem',
+                {/* Profile Information Section */}
+                <Box sx={{ mb: 1 }}>
+                    <Typography
+                        sx={{
+                            fontWeight: 700,
+                            color: tealDark,
+                            fontSize: { xs: '0.9rem', sm: '1rem' },
+                            mb: 2,
+                            pb: 1,
+                            borderBottom: `2px solid ${alpha(tealLight, 0.2)}`,
                         }}
                     >
                         Profile Information
-                    </h3>
+                    </Typography>
 
                     {/* Full Name */}
-                    <div className="mb-3 sm:mb-4">
-                        <InputLabel
-                            htmlFor="full_name"
-                            value="Full Name (with title if any)"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <TextInput
-                            id="full_name"
-                            type="text"
-                            name="full_name"
-                            value={data.full_name}
-                            className="mt-1 sm:mt-2 block w-full text-sm sm:text-base"
-                            onChange={(e) => setData('full_name', e.target.value)}
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.full_name ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                            }}
-                            required
-                        />
-                        <InputError message={errors.full_name} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
+                    <TextField
+                        id="full_name"
+                        label="Full Name (with title if any)"
+                        type="text"
+                        fullWidth
+                        value={data.full_name}
+                        onChange={(e) => setData('full_name', e.target.value)}
+                        error={!!errors.full_name}
+                        helperText={errors.full_name}
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonOutlineIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
 
                     {/* Affiliation */}
-                    <div className="mb-3 sm:mb-4">
-                        <InputLabel
-                            htmlFor="affiliation"
-                            value="Affiliation/Institution"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <TextInput
-                            id="affiliation"
-                            type="text"
-                            name="affiliation"
-                            value={data.affiliation}
-                            className="mt-1 sm:mt-2 block w-full text-sm sm:text-base"
-                            onChange={(e) => setData('affiliation', e.target.value)}
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.affiliation ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                            }}
-                            required
-                        />
-                        <InputError message={errors.affiliation} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
+                    <TextField
+                        id="affiliation"
+                        label="Affiliation/Institution"
+                        type="text"
+                        fullWidth
+                        value={data.affiliation}
+                        onChange={(e) => setData('affiliation', e.target.value)}
+                        error={!!errors.affiliation}
+                        helperText={errors.affiliation}
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <BusinessOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
 
                     {/* WhatsApp */}
-                    <div className="mb-3 sm:mb-4">
-                        <InputLabel
-                            htmlFor="whatsapp"
-                            value="WhatsApp/Phone Number"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <TextInput
-                            id="whatsapp"
-                            type="text"
-                            name="whatsapp"
-                            value={data.whatsapp}
-                            className="mt-1 sm:mt-2 block w-full text-sm sm:text-base"
-                            onChange={(e) => setData('whatsapp', e.target.value)}
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.whatsapp ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                            }}
-                            required
-                        />
-                        <InputError message={errors.whatsapp} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
+                    <TextField
+                        id="whatsapp"
+                        label="WhatsApp/Phone Number"
+                        type="text"
+                        fullWidth
+                        value={data.whatsapp}
+                        onChange={(e) => setData('whatsapp', e.target.value)}
+                        error={!!errors.whatsapp}
+                        helperText={errors.whatsapp}
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <WhatsAppIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    />
 
                     {/* Category */}
-                    <div>
-                        <InputLabel
-                            htmlFor="category"
-                            value="Participant Category"
-                            className="text-xs sm:text-sm"
-                            style={{ color: '#374151', fontWeight: '600' }}
-                        />
-                        <select
-                            id="category"
-                            name="category"
-                            value={data.category}
-                            onChange={(e) => setData('category', e.target.value)}
-                            className="mt-1 sm:mt-2 block w-full text-sm sm:text-base border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm"
-                            style={{
-                                borderRadius: '10px',
-                                borderColor: errors.category ? '#ef4444' : '#d1d5db',
-                                paddingTop: '0.625rem',
-                                paddingBottom: '0.625rem',
-                                paddingLeft: '0.75rem',
-                                paddingRight: '0.75rem',
-                            }}
-                            required
-                        >
-                            <option value="">Select a category</option>
-                            <option value="Student">Student</option>
-                            <option value="Professional">Professional</option>
-                            <option value="International Delegate">International Delegate</option>
-                        </select>
-                        <InputError message={errors.category} className="mt-1 sm:mt-2 text-xs sm:text-sm" />
-                    </div>
-                </div>
+                    <TextField
+                        id="category"
+                        label="Participant Category"
+                        select
+                        fullWidth
+                        value={data.category}
+                        onChange={(e) => setData('category', e.target.value)}
+                        error={!!errors.category}
+                        helperText={errors.category}
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <CategoryOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                        sx={textFieldSx}
+                    >
+                        <MenuItem value="">
+                            <em>Select a category</em>
+                        </MenuItem>
+                        <MenuItem value="Student">Student</MenuItem>
+                        <MenuItem value="Professional">Professional</MenuItem>
+                        <MenuItem value="International Delegate">International Delegate</MenuItem>
+                    </TextField>
+                </Box>
 
                 {/* Register Button */}
-                <button
+                <Button
                     type="submit"
+                    fullWidth
+                    variant="contained"
                     disabled={processing}
-                    className="mt-4 sm:mt-5 md:mt-6 w-full font-bold text-white transition-all duration-300 text-xs sm:text-sm md:text-base"
-                    style={{
-                        backgroundColor: processing ? '#9ca3af' : '#1abc9c',
-                        padding: '0.75rem 1.5rem',
+                    startIcon={
+                        processing ? (
+                            <CircularProgress size={18} sx={{ color: 'white' }} />
+                        ) : (
+                            <PersonAddOutlinedIcon />
+                        )
+                    }
+                    sx={{
+                        py: 1.5,
+                        mt: 1,
                         borderRadius: '50px',
-                        letterSpacing: '0.05em',
                         textTransform: 'uppercase',
-                        boxShadow: '0 4px 16px rgba(26, 188, 156, 0.3)',
-                        cursor: processing ? 'not-allowed' : 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                        if (!processing) {
-                            e.target.style.backgroundColor = '#16a085';
-                            e.target.style.transform = 'translateY(-2px)';
-                            e.target.style.boxShadow = '0 8px 24px rgba(26, 188, 156, 0.4)';
-                        }
-                    }}
-                    onMouseLeave={(e) => {
-                        if (!processing) {
-                            e.target.style.backgroundColor = '#1abc9c';
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = '0 4px 16px rgba(26, 188, 156, 0.3)';
-                        }
+                        fontWeight: 700,
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        letterSpacing: '0.08em',
+                        bgcolor: tealLight,
+                        boxShadow: `0 6px 24px ${alpha(tealLight, 0.4)}`,
+                        '&:hover': {
+                            bgcolor: tealDark,
+                            boxShadow: `0 8px 32px ${alpha(tealDark, 0.5)}`,
+                            transform: 'translateY(-2px)',
+                        },
+                        '&:active': {
+                            transform: 'translateY(0)',
+                        },
+                        transition: 'all 0.3s ease',
+                        '&.Mui-disabled': {
+                            bgcolor: '#d1d5db',
+                            color: 'white',
+                        },
                     }}
                 >
                     {processing ? 'Creating Account...' : 'Create Account'}
-                </button>
+                </Button>
+
+                {/* Divider */}
+                <Divider sx={{ my: 3 }}>
+                    <Typography
+                        sx={{
+                            color: '#9ca3af',
+                            fontSize: '0.75rem',
+                            px: 2,
+                            fontWeight: 500,
+                        }}
+                    >
+                        OR
+                    </Typography>
+                </Divider>
 
                 {/* Login Link */}
-                <div className="mt-4 sm:mt-5 md:mt-6 text-center">
-                    <span className="text-xs sm:text-sm" style={{ color: '#6b7280' }}>
-                        Already have an account?{' '}
-                    </span>
-                    <Link
-                        href={route('login')}
-                        className="font-semibold transition-colors duration-200 text-xs sm:text-sm"
-                        style={{ color: '#0d7a6a' }}
-                        onMouseEnter={(e) => e.target.style.color = '#1abc9c'}
-                        onMouseLeave={(e) => e.target.style.color = '#0d7a6a'}
-                    >
-                        Sign in here
-                    </Link>
-                </div>
+                <Button
+                    component={Link}
+                    href={route('login')}
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<LoginIcon />}
+                    sx={{
+                        py: 1.3,
+                        borderRadius: '50px',
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        color: tealDark,
+                        borderColor: alpha(teal, 0.3),
+                        '&:hover': {
+                            borderColor: teal,
+                            bgcolor: alpha(teal, 0.05),
+                        },
+                    }}
+                >
+                    Already have an account? Sign in
+                </Button>
             </form>
         </GuestLayout>
     );
