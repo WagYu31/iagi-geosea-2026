@@ -39,7 +39,7 @@ export default function GuestLayout({ children }) {
                             letterSpacing: '0.02em',
                         }}
                     >
-                        PIT IAGI-GEOSEA <span style={{ color: '#1abc9c' }}>2026</span>
+                        55ᵀᴴ PIT IAGI-GEOSEA <span style={{ color: '#1abc9c' }}>XIX 2026</span>
                     </h1>
 
                     {/* Subtitle - Responsive Text Sizes */}
@@ -50,7 +50,7 @@ export default function GuestLayout({ children }) {
                             letterSpacing: '0.1em',
                         }}
                     >
-                        55TH EDITION
+                        Annual Convention
                     </p>
                 </Link>
             </div>
