@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class SubmissionController extends Controller
@@ -140,7 +141,7 @@ class SubmissionController extends Controller
             'participant_category' => 'required|in:student,professional,international',
         ]);
 
-        // Generate submission code
+        // Generate submission code with database lock to prevent race conditions
         $participantCode = match($request->participant_category) {
             'student' => 'S',
             'professional' => 'P',
@@ -150,21 +151,7 @@ class SubmissionController extends Controller
         $presentationCode = str_starts_with($request->category_submission, 'Oral') ? 'O' : 'P';
         $prefix = $participantCode . $presentationCode . 'IG';
 
-        // Get next number for this prefix
-        $lastSubmission = Submission::where('submission_code', 'LIKE', $prefix . '-%')
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($lastSubmission && $lastSubmission->submission_code) {
-            $lastNumber = (int) substr($lastSubmission->submission_code, -3);
-            $nextNumber = $lastNumber + 1;
-        } else {
-            $nextNumber = 1;
-        }
-
-        $submissionCode = $prefix . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-
-        // Store files
+        // Store files before transaction (no need to lock for this)
         $layoutingPath = null;
         $editorFeedbackPath = null;
         $fullPaperPath = null;
@@ -181,41 +168,58 @@ class SubmissionController extends Controller
             $fullPaperPath = $request->file('full_paper_file')->store('submissions/papers', 'public');
         }
 
-        $submission = Submission::create([
-            'user_id' => Auth::id(),
-            'author_full_name' => $request->author_full_name,
-            'co_author_1' => $request->co_author_1,
-            'co_author_1_institute' => $request->co_author_1_institute,
-            'co_author_2' => $request->co_author_2,
-            'co_author_2_institute' => $request->co_author_2_institute,
-            'co_author_3' => $request->co_author_3,
-            'co_author_3_institute' => $request->co_author_3_institute,
-            'co_author_4' => $request->co_author_4,
-            'co_author_4_institute' => $request->co_author_4_institute,
-            'co_author_5' => $request->co_author_5,
-            'co_author_5_institute' => $request->co_author_5_institute,
-            'mobile_number' => $request->mobile_number,
-            'corresponding_author_email' => $request->corresponding_author_email,
-            'paper_sub_theme' => $request->paper_sub_theme,
-            'paper_theme' => $request->paper_theme,
-            'category_submission' => $request->category_submission,
-            'title' => $request->title,
-            'abstract' => $request->abstract,
-            'keywords' => $request->keywords,
-            'layouting_file' => $layoutingPath,
-            'editor_feedback_file' => $editorFeedbackPath,
-            'full_paper_file' => $fullPaperPath,
-            'institute_organization' => $request->institute_organization,
-            'consent_agreed' => $request->consent_agreed,
-            'status' => 'pending',
-            // Default values for backward compatibility
-            'topic' => $request->paper_sub_theme,
-            'affiliation' => $request->institute_organization,
-            'whatsapp_number' => $request->mobile_number,
-            'presentation_preference' => $request->category_submission ?? 'Oral Presentation',
-            'participant_category' => $request->participant_category,
-            'submission_code' => $submissionCode,
-        ]);
+        // Use database transaction with lock to prevent duplicate submission codes
+        $submission = DB::transaction(function () use ($request, $prefix, $layoutingPath, $editorFeedbackPath, $fullPaperPath) {
+            // Lock the rows with this prefix to prevent concurrent reads
+            $lastSubmission = Submission::where('submission_code', 'LIKE', $prefix . '-%')
+                ->lockForUpdate()
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($lastSubmission && $lastSubmission->submission_code) {
+                $lastNumber = (int) substr($lastSubmission->submission_code, -3);
+                $nextNumber = $lastNumber + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $submissionCode = $prefix . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+            return Submission::create([
+                'user_id' => Auth::id(),
+                'author_full_name' => $request->author_full_name,
+                'co_author_1' => $request->co_author_1,
+                'co_author_1_institute' => $request->co_author_1_institute,
+                'co_author_2' => $request->co_author_2,
+                'co_author_2_institute' => $request->co_author_2_institute,
+                'co_author_3' => $request->co_author_3,
+                'co_author_3_institute' => $request->co_author_3_institute,
+                'co_author_4' => $request->co_author_4,
+                'co_author_4_institute' => $request->co_author_4_institute,
+                'co_author_5' => $request->co_author_5,
+                'co_author_5_institute' => $request->co_author_5_institute,
+                'mobile_number' => $request->mobile_number,
+                'corresponding_author_email' => $request->corresponding_author_email,
+                'paper_sub_theme' => $request->paper_sub_theme,
+                'paper_theme' => $request->paper_theme,
+                'category_submission' => $request->category_submission,
+                'title' => $request->title,
+                'abstract' => $request->abstract,
+                'keywords' => $request->keywords,
+                'layouting_file' => $layoutingPath,
+                'editor_feedback_file' => $editorFeedbackPath,
+                'full_paper_file' => $fullPaperPath,
+                'institute_organization' => $request->institute_organization,
+                'consent_agreed' => $request->consent_agreed,
+                'status' => 'pending',
+                'topic' => $request->paper_sub_theme,
+                'affiliation' => $request->institute_organization,
+                'whatsapp_number' => $request->mobile_number,
+                'presentation_preference' => $request->category_submission ?? 'Oral Presentation',
+                'participant_category' => $request->participant_category,
+                'submission_code' => $submissionCode,
+            ]);
+        });
 
         // Send confirmation email to author (queued for async processing)
         try {

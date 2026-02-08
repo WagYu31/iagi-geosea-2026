@@ -26,6 +26,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    useTheme,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -102,6 +103,9 @@ const themeSubThemes = {
 };
 
 export default function Submissions({ submissions = [], submissionStatus = { open: true, message: '' } }) {
+    const theme = useTheme();
+    const c = theme.palette.custom;
+    const isDark = theme.palette.mode === 'dark';
     const [showForm, setShowForm] = useState(false);
     const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
     const [wordCount, setWordCount] = useState(0);
@@ -181,6 +185,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
             <Head title="Submissions" />
 
             <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
+                {/* Page Header */}
                 <Box sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
@@ -189,23 +194,39 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                     mb: 3,
                     gap: 2
                 }}>
-                    <Typography variant="h4" sx={{
-                        fontWeight: 'bold',
-                        color: '#1abc9c',
-                        fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
-                    }}>
-                        My Submissions
-                    </Typography>
+                    <Box>
+                        <Typography sx={{
+                            fontWeight: 800,
+                            color: c.textPrimary,
+                            fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
+                            letterSpacing: '-0.02em',
+                            lineHeight: 1.2,
+                        }}>
+                            My Submissions
+                        </Typography>
+                        <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mt: 0.5 }}>
+                            Manage and track your paper submissions
+                        </Typography>
+                    </Box>
                     <Button
                         variant="contained"
                         onClick={handleNewSubmissionClick}
                         sx={{
-                            backgroundColor: '#1abc9c',
-                            '&:hover': { backgroundColor: '#16a085' },
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                            boxShadow: '0 4px 14px rgba(13, 122, 106, 0.3)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #0a6b5c 0%, #16a085 100%)',
+                                boxShadow: '0 6px 20px rgba(13, 122, 106, 0.4)',
+                            },
                             textTransform: 'none',
                             px: 3,
+                            py: 1.2,
+                            borderRadius: '12px',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
                             minHeight: '44px',
-                            width: { xs: '100%', sm: 'auto' }
+                            width: { xs: '100%', sm: 'auto' },
+                            transition: 'all 0.2s ease',
                         }}
                     >
                         + New Submission
@@ -213,8 +234,14 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                 </Box>
 
                 {/* Submissions Table */}
-                <Paper elevation={0} sx={{ p: { xs: 2, md: 3 }, mb: 3, border: '1px solid #e0e0e0', borderRadius: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                <Paper elevation={0} sx={{
+                    p: { xs: 2, md: 3 },
+                    mb: 3,
+                    border: `1px solid ${c.cardBorder}`,
+                    borderRadius: '16px',
+                    bgcolor: c.cardBg,
+                }}>
+                    <Typography sx={{ fontWeight: 700, mb: 2, fontSize: '1rem', color: c.textPrimary }}>
                         Submission List
                     </Typography>
                     {submissions.length === 0 ? (
@@ -228,29 +255,36 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
-                                            <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
-                                                <TableCell sx={{ fontWeight: 600 }}>Submission Code</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Title</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Sub Theme</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Participant Category</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Presentation Type</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Submitted At</TableCell>
-                                                <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                                            <TableRow sx={{ backgroundColor: c.headerBg }}>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Code</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Title</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Sub Theme</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Category</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Presentation</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Status</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Submitted</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {submissions.map((submission) => (
-                                                <TableRow key={submission.id} hover>
+                                                <TableRow key={submission.id} sx={{
+                                                    transition: 'background-color 0.15s ease',
+                                                    '&:hover': { bgcolor: '#f9fafb' },
+                                                    '& td': { borderBottom: '1px solid #f3f4f6', py: 1.8, fontSize: '0.85rem', color: '#374151' },
+                                                }}>
                                                     <TableCell>
                                                         <Chip
                                                             label={submission.submission_code || 'N/A'}
                                                             size="small"
                                                             sx={{
                                                                 fontFamily: 'monospace',
-                                                                fontWeight: 600,
-                                                                backgroundColor: '#e8f5e9',
-                                                                color: '#2e7d32',
+                                                                fontWeight: 700,
+                                                                fontSize: '0.7rem',
+                                                                bgcolor: '#ecfdf5',
+                                                                color: '#059669',
+                                                                border: '1px solid #d1fae5',
+                                                                borderRadius: '8px',
                                                             }}
                                                         />
                                                     </TableCell>
@@ -279,52 +313,76 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 label={submission.category_submission}
                                                                 size="small"
                                                                 sx={{
-                                                                    backgroundColor: submission.category_submission === 'Oral Presentation' ? '#e3f2fd' : '#f3e5f5',
-                                                                    color: submission.category_submission === 'Oral Presentation' ? '#1976d2' : '#9c27b0',
-                                                                    fontWeight: 500,
+                                                                    bgcolor: submission.category_submission === 'Oral Presentation' ? '#eff6ff' : '#fdf4ff',
+                                                                    color: submission.category_submission === 'Oral Presentation' ? '#2563eb' : '#9333ea',
+                                                                    border: submission.category_submission === 'Oral Presentation' ? '1px solid #dbeafe' : '1px solid #f3e8ff',
+                                                                    fontWeight: 600,
+                                                                    fontSize: '0.7rem',
+                                                                    borderRadius: '8px',
                                                                 }}
                                                             />
                                                         ) : (
-                                                            <Typography variant="body2" color="text.secondary">-</Typography>
+                                                            <Typography variant="body2" sx={{ color: '#d1d5db' }}>—</Typography>
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Chip
-                                                            label={submission.status}
-                                                            color={
-                                                                submission.status === 'accepted' ? 'success' :
-                                                                    submission.status === 'rejected' ? 'error' :
-                                                                        submission.status === 'under_review' ? 'info' :
-                                                                            submission.status === 'revision_required_phase1' ? 'warning' :
-                                                                                submission.status === 'revision_required_phase2' ? 'warning' :
-                                                                                    submission.status === 'revision' ? 'warning' : 'default'
-                                                            }
+                                                            label={submission.status?.replace(/_/g, ' ')}
                                                             size="small"
+                                                            sx={{
+                                                                fontWeight: 700,
+                                                                fontSize: '0.65rem',
+                                                                textTransform: 'capitalize',
+                                                                borderRadius: '8px',
+                                                                ...(submission.status === 'accepted' && {
+                                                                    bgcolor: '#ecfdf5', color: '#059669', border: '1px solid #d1fae5',
+                                                                }),
+                                                                ...(submission.status === 'rejected' && {
+                                                                    bgcolor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
+                                                                }),
+                                                                ...(submission.status === 'under_review' && {
+                                                                    bgcolor: '#eff6ff', color: '#2563eb', border: '1px solid #dbeafe',
+                                                                }),
+                                                                ...((submission.status === 'revision_required_phase1' || submission.status === 'revision_required_phase2' || submission.status === 'revision') && {
+                                                                    bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a',
+                                                                }),
+                                                                ...(submission.status === 'pending' && {
+                                                                    bgcolor: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb',
+                                                                }),
+                                                            }}
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        {new Date(submission.created_at).toLocaleDateString('en-GB', {
-                                                            day: '2-digit',
-                                                            month: '2-digit',
-                                                            year: 'numeric',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                            hour12: false,
-                                                            timeZone: 'Asia/Jakarta'
-                                                        }).replace(',', '')}
+                                                        <Typography sx={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                                                            {new Date(submission.created_at).toLocaleDateString('en-GB', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                hour12: false,
+                                                                timeZone: 'Asia/Jakarta'
+                                                            }).replace(',', '')}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Box sx={{ display: 'flex', gap: 1 }}>
+                                                        <Box sx={{ display: 'flex', gap: 0.8 }}>
                                                             <Button
                                                                 variant="outlined"
                                                                 size="small"
                                                                 onClick={() => router.visit(route('submissions.show', submission.id))}
                                                                 sx={{
-                                                                    color: '#1abc9c',
-                                                                    borderColor: '#1abc9c',
+                                                                    color: '#0d7a6a',
+                                                                    borderColor: '#d1fae5',
+                                                                    bgcolor: '#f0fdf4',
+                                                                    borderRadius: '8px',
+                                                                    textTransform: 'none',
+                                                                    fontWeight: 600,
+                                                                    fontSize: '0.75rem',
+                                                                    px: 1.5,
                                                                     '&:hover': {
-                                                                        borderColor: '#16a085',
-                                                                        backgroundColor: 'rgba(26, 188, 156, 0.04)',
+                                                                        borderColor: '#0d7a6a',
+                                                                        bgcolor: '#ecfdf5',
                                                                     },
                                                                 }}
                                                             >
@@ -342,9 +400,15 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                                 }}
                                                                 sx={{
-                                                                    backgroundColor: '#1abc9c',
+                                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                                    boxShadow: 'none',
+                                                                    borderRadius: '8px',
+                                                                    textTransform: 'none',
+                                                                    fontWeight: 600,
+                                                                    fontSize: '0.75rem',
+                                                                    px: 1.5,
                                                                     '&:hover': {
-                                                                        backgroundColor: '#16a085',
+                                                                        boxShadow: '0 2px 8px rgba(13, 122, 106, 0.3)',
                                                                     },
                                                                 }}
                                                             >
@@ -367,48 +431,67 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                             key={submission.id}
                                             variant="outlined"
                                             sx={{
-                                                borderRadius: 2,
-                                                border: '1px solid #e0e0e0',
-                                                transition: 'all 0.3s ease',
+                                                borderRadius: '14px',
+                                                border: '1px solid #f0f0f0',
+                                                transition: 'all 0.2s ease',
                                                 '&:hover': {
-                                                    boxShadow: '0 4px 12px rgba(26, 188, 156, 0.15)',
-                                                    borderColor: '#1abc9c',
+                                                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
+                                                    borderColor: '#e5e7eb',
                                                 }
                                             }}
                                         >
-                                            <CardContent sx={{ p: 2 }}>
-                                                {/* Submission Code */}
-                                                <Chip
-                                                    label={submission.submission_code || 'N/A'}
-                                                    size="small"
-                                                    sx={{
-                                                        fontFamily: 'monospace',
-                                                        fontWeight: 600,
-                                                        backgroundColor: '#e8f5e9',
-                                                        color: '#2e7d32',
-                                                        mb: 1.5
-                                                    }}
-                                                />
+                                            <CardContent sx={{ p: 2.5 }}>
+                                                {/* Header Row: Code + Status */}
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                                    <Chip
+                                                        label={submission.submission_code || 'N/A'}
+                                                        size="small"
+                                                        sx={{
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: 700,
+                                                            fontSize: '0.7rem',
+                                                            bgcolor: '#ecfdf5',
+                                                            color: '#059669',
+                                                            border: '1px solid #d1fae5',
+                                                            borderRadius: '8px',
+                                                        }}
+                                                    />
+                                                    <Chip
+                                                        label={submission.status?.replace(/_/g, ' ')}
+                                                        size="small"
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                            fontSize: '0.65rem',
+                                                            textTransform: 'capitalize',
+                                                            borderRadius: '8px',
+                                                            ...(submission.status === 'accepted' && {
+                                                                bgcolor: '#ecfdf5', color: '#059669', border: '1px solid #d1fae5',
+                                                            }),
+                                                            ...(submission.status === 'rejected' && {
+                                                                bgcolor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
+                                                            }),
+                                                            ...(submission.status === 'under_review' && {
+                                                                bgcolor: '#eff6ff', color: '#2563eb', border: '1px solid #dbeafe',
+                                                            }),
+                                                            ...((submission.status === 'revision_required_phase1' || submission.status === 'revision_required_phase2' || submission.status === 'revision') && {
+                                                                bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a',
+                                                            }),
+                                                            ...(submission.status === 'pending' && {
+                                                                bgcolor: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb',
+                                                            }),
+                                                        }}
+                                                    />
+                                                </Box>
 
                                                 {/* Title */}
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, fontSize: '0.95rem' }}>
+                                                <Typography sx={{ fontWeight: 700, mb: 0.5, fontSize: '0.9rem', color: '#111827', lineHeight: 1.4 }}>
                                                     {submission.title}
                                                 </Typography>
 
-                                                {/* Status */}
-                                                <Chip
-                                                    label={submission.status}
-                                                    color={
-                                                        submission.status === 'accepted' ? 'success' :
-                                                            submission.status === 'rejected' ? 'error' :
-                                                                submission.status === 'under_review' ? 'info' :
-                                                                    submission.status === 'revision_required_phase1' ? 'warning' :
-                                                                        submission.status === 'revision_required_phase2' ? 'warning' :
-                                                                            submission.status === 'revision' ? 'warning' : 'default'
-                                                    }
-                                                    size="small"
-                                                    sx={{ mb: 2 }}
-                                                />
+                                                {/* Sub Theme */}
+                                                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', mb: 2 }}>
+                                                    {submission.paper_sub_theme || submission.topic || '—'}
+                                                </Typography>
 
                                                 {/* Action Buttons */}
                                                 <Stack direction="row" spacing={1}>
@@ -418,11 +501,17 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         fullWidth
                                                         onClick={() => router.visit(route('submissions.show', submission.id))}
                                                         sx={{
-                                                            color: '#1abc9c',
-                                                            borderColor: '#1abc9c',
+                                                            color: '#0d7a6a',
+                                                            borderColor: '#d1fae5',
+                                                            bgcolor: '#f0fdf4',
+                                                            borderRadius: '10px',
+                                                            textTransform: 'none',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.8rem',
+                                                            py: 1,
                                                             '&:hover': {
-                                                                borderColor: '#16a085',
-                                                                backgroundColor: 'rgba(26, 188, 156, 0.04)',
+                                                                borderColor: '#0d7a6a',
+                                                                bgcolor: '#ecfdf5',
                                                             },
                                                         }}
                                                     >
@@ -441,9 +530,15 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                                         }}
                                                         sx={{
-                                                            backgroundColor: '#1abc9c',
+                                                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                            boxShadow: 'none',
+                                                            borderRadius: '10px',
+                                                            textTransform: 'none',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.8rem',
+                                                            py: 1,
                                                             '&:hover': {
-                                                                backgroundColor: '#16a085',
+                                                                boxShadow: '0 2px 8px rgba(13, 122, 106, 0.3)',
                                                             },
                                                         }}
                                                     >
@@ -461,11 +556,11 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
                 {/* Submit New Paper Form - MOBILE FIRST RESPONSIVE */}
                 {showForm && (
-                    <Paper elevation={0} sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #e0e0e0', borderRadius: 2 }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: '#1abc9c', mb: 1, fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
+                    <Paper elevation={0} sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
+                        <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5, fontSize: { xs: '1.25rem', md: '1.5rem' }, letterSpacing: '-0.02em' }}>
                             Submit New Paper
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: { xs: 3, md: 4 }, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+                        <Typography sx={{ mb: { xs: 3, md: 4 }, fontSize: { xs: '0.85rem', md: '0.9rem' }, color: '#9ca3af' }}>
                             Please fill in all required fields marked with an asterisk (*)
                         </Typography>
 
@@ -473,9 +568,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                             <Stack spacing={{ xs: 3, md: 4 }}>
 
                                 {/* SECTION 1: Author Information */}
-                                <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <Card variant="outlined" sx={{ borderRadius: '14px', border: '1px solid #f0f0f0' }}>
                                     <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 2, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#0d7a6a', mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                                             Author Information
                                         </Typography>
 
@@ -563,9 +658,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 </Card>
 
                                 {/* SECTION 2: Co-Authors */}
-                                <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <Card variant="outlined" sx={{ borderRadius: '14px', border: '1px solid #f0f0f0' }}>
                                     <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#0d7a6a', mb: 1, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                                             Co-Authors (Optional)
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontSize: { xs: '0.875rem', md: '1rem' } }}>
@@ -792,9 +887,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 </Card>
 
                                 {/* SECTION 3: Paper Details */}
-                                <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <Card variant="outlined" sx={{ borderRadius: '14px', border: '1px solid #f0f0f0' }}>
                                     <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 2, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#0d7a6a', mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                                             Paper Details
                                         </Typography>
 

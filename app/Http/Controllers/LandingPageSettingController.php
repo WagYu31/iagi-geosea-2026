@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class LandingPageSettingController extends Controller
@@ -63,6 +64,9 @@ class LandingPageSettingController extends Controller
             $settingModel->update($validated);
             Log::info('Updated setting: ' . $setting);
         }
+
+        // Clear landing page cache so changes appear immediately
+        Cache::forget('landing-page-settings');
 
         return redirect()->back()->with('success', 'Setting updated successfully');
     }
@@ -216,6 +220,9 @@ class LandingPageSettingController extends Controller
             // Save to database
             $setting->update(['value' => json_encode($sponsors)]);
             Log::info('Database updated with new logo path');
+
+            // Clear landing page cache
+            Cache::forget('landing-page-settings');
 
             return response()->json([
                 'success' => true,

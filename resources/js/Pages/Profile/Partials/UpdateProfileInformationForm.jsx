@@ -107,7 +107,7 @@ export default function UpdateProfileInformation({
 
                     <select
                         id="category"
-                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        className="mt-1 block w-full border-gray-300 focus:border-[#0d7a6a] focus:ring-[#0d7a6a] rounded-xl shadow-sm"
                         value={data.category}
                         onChange={(e) => setData('category', e.target.value)}
                     >

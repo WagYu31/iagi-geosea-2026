@@ -4,8 +4,24 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
+use Illuminate\Support\Facades\Cache;
+use App\Models\LandingPageSetting;
+
 Route::get('/', function () {
-    return Inertia::render('LandingPage');
+    $settings = Cache::remember('landing-page-settings', 300, function () {
+        $allSettings = LandingPageSetting::all();
+        $formatted = [];
+        foreach ($allSettings as $setting) {
+            if ($setting->type === 'json') {
+                $formatted[$setting->key] = json_decode($setting->value, true);
+            } else {
+                $formatted[$setting->key] = $setting->value;
+            }
+        }
+        return $formatted;
+    });
+
+    return Inertia::render('LandingPage', ['serverSettings' => $settings]);
 })->name('landing');
 
 // Public API for landing page settings (must be outside auth middleware)

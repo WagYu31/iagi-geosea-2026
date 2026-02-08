@@ -514,7 +514,7 @@ export default function Settings({ settings, submissionSettings }) {
     };
 
     // Save Sponsors
-    const saveSponsors = async () => {
+    const saveSponsors = () => {
         const settingId = getSettingId('sponsors');
         if (!settingId) {
             alert('Sponsors setting not found');
@@ -522,39 +522,53 @@ export default function Settings({ settings, submissionSettings }) {
         }
 
         setSavingSponsors(true);
-        try {
-            // Save sponsors
-            await router.patch(route('admin.settings.update', settingId), {
-                value: JSON.stringify(sponsors),
-            }, {
-                preserveScroll: true,
-            });
 
-            // Save sponsors description
-            const descSettingId = getSettingId('sponsors_description');
-            if (descSettingId) {
-                await router.patch(route('admin.settings.update', descSettingId), {
-                    value: sponsorsDescription,
-                }, {
-                    preserveScroll: true,
-                });
-            } else {
-                // Create new setting if not exists
-                await router.post(route('admin.settings.store'), {
-                    key: 'sponsors_description',
-                    value: sponsorsDescription,
-                }, {
-                    preserveScroll: true,
-                });
-            }
-
-            alert('Sponsors saved successfully!');
-        } catch (error) {
-            console.error('Save error:', error);
-            alert('Failed to save sponsors');
-        } finally {
-            setSavingSponsors(false);
-        }
+        // Save sponsors using Inertia router with hardcoded URL
+        router.patch(`/admin/settings/${settingId}`, {
+            value: JSON.stringify(sponsors),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                // After sponsors saved, save description
+                const descSettingId = getSettingId('sponsors_description');
+                if (descSettingId) {
+                    router.patch(`/admin/settings/${descSettingId}`, {
+                        value: sponsorsDescription,
+                    }, {
+                        preserveScroll: true,
+                        onSuccess: () => {
+                            setSavingSponsors(false);
+                            alert('Sponsors saved successfully!');
+                        },
+                        onError: (errors) => {
+                            setSavingSponsors(false);
+                            console.error('Description save error:', errors);
+                            alert('Sponsors saved, but description failed.');
+                        },
+                    });
+                } else {
+                    router.post('/admin/settings', {
+                        key: 'sponsors_description',
+                        value: sponsorsDescription,
+                    }, {
+                        preserveScroll: true,
+                        onSuccess: () => {
+                            setSavingSponsors(false);
+                            alert('Sponsors saved successfully!');
+                        },
+                        onError: () => {
+                            setSavingSponsors(false);
+                            alert('Sponsors saved, but description failed.');
+                        },
+                    });
+                }
+            },
+            onError: (errors) => {
+                setSavingSponsors(false);
+                console.error('Sponsors save error:', errors);
+                alert('Failed to save sponsors.');
+            },
+        });
     };
 
     // Save AFGEO Members
