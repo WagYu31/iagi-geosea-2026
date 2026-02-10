@@ -431,6 +431,38 @@ class AdminController extends Controller
         return back()->with('success', 'Password updated successfully');
     }
 
+    public function updateProfile(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'whatsapp' => 'nullable|string|max:20',
+            'affiliation' => 'nullable|string|max:255',
+            'category' => 'nullable|string|in:Student,Professional,International Delegate',
+            'password' => 'nullable|string|min:8',
+        ];
+
+        $request->validate($rules);
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'whatsapp' => $request->whatsapp,
+            'affiliation' => $request->affiliation,
+            'category' => $request->category,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return back()->with('success', 'Profile updated successfully');
+    }
+
     public function scores()
     {
         $submissions = Submission::with(['user', 'reviews.reviewer'])
@@ -449,6 +481,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:Author,Admin,Reviewer',
+            'affiliation' => $request->role === 'Reviewer' ? 'required|string|max:255' : 'nullable|string|max:255',
         ]);
 
         $user = User::create([
@@ -456,6 +489,7 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'affiliation' => $request->affiliation,
             'email_verified_at' => now(), // Auto-verify admin-created users
         ]);
 
@@ -473,6 +507,16 @@ class AdminController extends Controller
         }
 
         $user->save();
+
+        // Send email notification when account is verified
+        if ($request->verify) {
+            try {
+                Mail::to($user->email)->queue(new \App\Mail\AccountVerified($user));
+            } catch (\Exception $e) {
+                // Log error but don't fail the verification
+                \Log::warning('Failed to send verification email to ' . $user->email . ': ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', 'User verification status updated successfully');
     }

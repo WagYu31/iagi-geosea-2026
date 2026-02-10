@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
+            'flash' => [
+                'error' => fn () => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+            ],
         ];
     }
 }

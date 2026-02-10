@@ -25,7 +25,11 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
-            'affiliation' => ['nullable', 'string', 'max:255'],
+            'affiliation' => [
+                $this->user()->role === 'Reviewer' ? 'required' : 'nullable',
+                'string',
+                'max:255',
+            ],
             'whatsapp' => ['nullable', 'string', 'max:20'],
             'category' => ['nullable', 'string', 'in:Student,Professional,International Delegate'],
         ];

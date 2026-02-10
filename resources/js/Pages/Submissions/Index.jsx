@@ -27,7 +27,11 @@ import {
     DialogContent,
     DialogActions,
     useTheme,
+    Select,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -111,6 +115,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const [wordCount, setWordCount] = useState(0);
     const formRef = useRef(null);
     const MAX_WORDS = 400;
+    const [statusFilter, setStatusFilter] = useState('all');
 
     const { data, setData, post, processing, errors, reset } = useForm({
         author_full_name: '',
@@ -245,9 +250,43 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                     borderRadius: '16px',
                     bgcolor: c.cardBg,
                 }}>
-                    <Typography sx={{ fontWeight: 700, mb: 2, fontSize: '1rem', color: c.textPrimary }}>
-                        Submission List
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
+                            Submission List
+                        </Typography>
+                        <FormControl size="small" sx={{ minWidth: 180 }}>
+                            <Select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                displayEmpty
+                                startAdornment={<FilterListIcon sx={{ mr: 0.5, fontSize: '1rem', color: '#9ca3af' }} />}
+                                sx={{
+                                    borderRadius: '10px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f9fafb',
+                                    '& .MuiSelect-select': { py: 0.8 },
+                                }}
+                            >
+                                <MenuItem value="all" sx={{ fontSize: '0.8rem' }}>All Status</MenuItem>
+                                <MenuItem value="pending" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Pending" size="small" sx={{ bgcolor: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Pending
+                                </MenuItem>
+                                <MenuItem value="under_review" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Under Review" size="small" sx={{ bgcolor: '#eff6ff', color: '#2563eb', border: '1px solid #dbeafe', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Under Review
+                                </MenuItem>
+                                <MenuItem value="accepted" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Accepted" size="small" sx={{ bgcolor: '#ecfdf5', color: '#059669', border: '1px solid #d1fae5', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Accepted
+                                </MenuItem>
+                                <MenuItem value="revision" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Revision" size="small" sx={{ bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Revision Required
+                                </MenuItem>
+                                <MenuItem value="rejected" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Rejected" size="small" sx={{ bgcolor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Rejected
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                     {submissions.length === 0 ? (
                         <Alert severity="info" sx={{ mt: 2 }}>
                             You haven't submitted any papers yet. Click "New Submission" to get started.
@@ -271,7 +310,11 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {submissions.map((submission) => (
+                                            {submissions.filter(s => {
+                                                if (statusFilter === 'all') return true;
+                                                if (statusFilter === 'revision') return s.status?.includes('revision');
+                                                return s.status === statusFilter;
+                                            }).map((submission) => (
                                                 <TableRow key={submission.id} sx={{
                                                     transition: 'background-color 0.15s ease',
                                                     '&:hover': { bgcolor: '#f9fafb' },

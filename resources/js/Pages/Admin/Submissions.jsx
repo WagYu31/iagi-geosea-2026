@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Head, router } from '@inertiajs/react';
+import Draggable from 'react-draggable';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box,
@@ -34,6 +35,8 @@ import {
     Avatar,
     Tooltip,
     Stack,
+    Paper,
+    Popover,
     useTheme,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -47,6 +50,64 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DescriptionIcon from '@mui/icons-material/Description';
 
+const themeSubThemes = {
+    'Fundamental & Digital Geoscience': [
+        'Geodynamics, Seismology, Petrology and Volcanology',
+        'Sedimentology and Paleontology',
+        'Pore Pressure and Geomechanics',
+        'Remote Sensing',
+        'Technology and Application of Big Data, Machine Learning and Artificial Intelligence in Geoscience',
+        'Others'
+    ],
+    'Advanced Mining & Mineral Technology': [
+        'Economic Minerals and Coal Exploration',
+        'Economic Minerals and Coal Resources Conservation',
+        'Economic Minerals Processing and Refining',
+        'Mine Geology, Grade Control and Reconciliation',
+        'Mine Geotechnical and Hydrogeology',
+        'Geometallurgy',
+        'Gemology',
+        'Others'
+    ],
+    'Petroleum Geoscience, Engineering and Management': [
+        'Petroleum Geoscience',
+        'Petroleum Engineering and Production Technology',
+        'Enhanced Oil/Gas Recovery',
+        'Reservoir and Production Management',
+        'Others'
+    ],
+    'Engineering Geology, Environment and Geohazard': [
+        'Engineering Geology for Infrastructure Development',
+        'Monitoring and Instrumentation in Geotechnical Projects',
+        'Environmental Geology and Land Use Planning',
+        'Geohazards and It\'s Risk Assessment, Mitigation and Prevention',
+        'Others'
+    ],
+    'Energy Transition & Sustainable Future': [
+        'Unconventional and Renewable Energy',
+        'Geothermal',
+        'CCS/CCUS',
+        'Natural Hydrogen',
+        'Others'
+    ],
+    'Governance, Culture and Social Impact': [
+        'Energy and Economic Mineral Policies',
+        'CSR and Social Impact',
+        'Health, Safety and Environment (HSE)',
+        'Geotourism and Geoheritage',
+        'Geomithology',
+        'Others'
+    ]
+};
+
+const getThemeFromSubTheme = (subTheme) => {
+    if (!subTheme) return 'N/A';
+    for (const [theme, subs] of Object.entries(themeSubThemes)) {
+        if (subs.includes(subTheme) || theme === subTheme) return theme;
+    }
+    return subTheme;
+};
+
 export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const theme = useTheme();
     const c = theme.palette.custom;
@@ -59,6 +120,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [statusFilter, setStatusFilter] = useState('all');
     const [presentationFilter, setPresentationFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [coAuthorPopover, setCoAuthorPopover] = useState(null);
 
     // Filter submissions
     const filteredSubmissions = submissions.filter(submission => {
@@ -450,9 +512,11 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     <TableCell sx={headCellSx}>Title</TableCell>
                                     <TableCell sx={headCellSx}>Name</TableCell>
                                     <TableCell sx={headCellSx}>Author</TableCell>
+                                    <TableCell sx={headCellSx}>Co-Authors</TableCell>
                                     <TableCell sx={headCellSx}>Phone</TableCell>
                                     <TableCell sx={headCellSx}>Email</TableCell>
-                                    <TableCell sx={headCellSx}>Topic</TableCell>
+                                    <TableCell sx={headCellSx}>Paper Theme</TableCell>
+                                    <TableCell sx={headCellSx}>Paper Sub Theme</TableCell>
                                     <TableCell sx={headCellSx}>Type</TableCell>
                                     <TableCell sx={headCellSx}>Submitted</TableCell>
                                     <TableCell sx={headCellSx}>Status</TableCell>
@@ -464,7 +528,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             <TableBody>
                                 {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={14} align="center" sx={cellSx}>
+                                        <TableCell colSpan={15} align="center" sx={cellSx}>
                                             <Box sx={{ py: 5 }}>
                                                 <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} />
                                                 <Typography variant="body2" sx={{ color: c.textMuted }}>
@@ -531,6 +595,51 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
+                                                    {(() => {
+                                                        const coAuthors = [];
+                                                        for (let i = 1; i <= 5; i++) {
+                                                            const name = submission[`co_author_${i}`];
+                                                            const institute = submission[`co_author_${i}_institute`];
+                                                            if (name && name.trim()) {
+                                                                coAuthors.push({ name, institute: institute || '-' });
+                                                            }
+                                                        }
+                                                        if (coAuthors.length === 0) {
+                                                            return (
+                                                                <Typography variant="body2" sx={{ fontSize: '0.75rem', color: c.textMuted, fontStyle: 'italic' }}>
+                                                                    —
+                                                                </Typography>
+                                                            );
+                                                        }
+                                                        return (
+                                                            <Chip
+                                                                id={`co-authors-${submission.id}`}
+                                                                icon={<PeopleIcon sx={{ fontSize: 13 }} />}
+                                                                label={`${coAuthors.length}`}
+                                                                size="small"
+                                                                onClick={(e) => {
+                                                                    const chipId = `co-authors-${submission.id}`;
+                                                                    if (coAuthorPopover?.id === chipId) {
+                                                                        setCoAuthorPopover(null);
+                                                                    } else {
+                                                                        setCoAuthorPopover({ id: chipId, anchorEl: e.currentTarget, coAuthors });
+                                                                    }
+                                                                }}
+                                                                sx={{
+                                                                    bgcolor: isDark ? 'rgba(59, 130, 246, 0.12)' : '#dbeafe',
+                                                                    color: '#3b82f6',
+                                                                    fontWeight: 700,
+                                                                    fontSize: '0.7rem',
+                                                                    borderRadius: '6px',
+                                                                    height: 24,
+                                                                    cursor: 'pointer',
+                                                                    '& .MuiChip-icon': { color: '#3b82f6' },
+                                                                }}
+                                                            />
+                                                        );
+                                                    })()}
+                                                </TableCell>
+                                                <TableCell sx={cellSx}>
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                                         <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>
                                                             {submission.user?.whatsapp || 'N/A'}
@@ -555,6 +664,20 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                 <TableCell sx={cellSx}>
                                                     <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>
                                                         {submission.user?.email || 'N/A'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell sx={{ ...cellSx, maxWidth: 130 }}>
+                                                    <Typography variant="body2" sx={{
+                                                        fontSize: '0.75rem',
+                                                        color: '#1abc9c',
+                                                        fontWeight: 600,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                    }}>
+                                                        {getThemeFromSubTheme(submission.paper_sub_theme || submission.topic)}
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell sx={{ ...cellSx, maxWidth: 150 }}>
@@ -769,20 +892,36 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                 onClose={() => setAssignDialog({ open: false, submission: null })}
                 maxWidth="sm"
                 fullWidth
+                PaperComponent={(props) => (
+                    <Draggable handle="#assign-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+                        <Paper {...props} />
+                    </Draggable>
+                )}
                 PaperProps={{
                     sx: {
-                        borderRadius: '16px',
+                        borderRadius: { xs: 0, sm: '16px' },
                         bgcolor: c.cardBg,
-                        border: `1px solid ${c.cardBorder}`,
+                        border: { xs: 'none', sm: `1px solid ${c.cardBorder}` },
+                        m: { xs: 0, sm: 3 },
+                        maxHeight: { xs: '100vh', sm: '85vh' },
+                        height: { xs: '100vh', sm: 'auto' },
+                        width: { xs: '100vw', sm: undefined },
                     }
                 }}
             >
-                <DialogTitle sx={{
-                    pb: 1,
-                    fontWeight: 700,
-                    color: c.textPrimary,
-                    borderBottom: `1px solid ${c.cardBorder}`,
-                }}>
+                <DialogTitle
+                    id="assign-dialog-title"
+                    sx={{
+                        pb: 1,
+                        fontWeight: 700,
+                        color: c.textPrimary,
+                        borderBottom: `1px solid ${c.cardBorder}`,
+                        position: 'sticky',
+                        top: 0,
+                        bgcolor: c.cardBg,
+                        zIndex: 1,
+                        cursor: 'move',
+                    }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Avatar
                             variant="rounded"
@@ -807,7 +946,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                         </Box>
                     </Box>
                 </DialogTitle>
-                <DialogContent sx={{ pt: 2.5 }}>
+                <DialogContent sx={{ pt: 2.5, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     {assignDialog.submission && (
                         <>
                             <Box sx={{
@@ -853,6 +992,11 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                     <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
                                                         {review.reviewer?.email}
                                                     </Typography>
+                                                    {review.reviewer?.affiliation && (
+                                                        <Typography variant="caption" sx={{ color: '#1abc9c', fontSize: '0.7rem', display: 'block' }}>
+                                                            {review.reviewer.affiliation}
+                                                        </Typography>
+                                                    )}
                                                 </Box>
                                             </Box>
                                         ))}
@@ -889,6 +1033,11 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                         <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
                                                             {reviewer?.email}
                                                         </Typography>
+                                                        {reviewer?.affiliation && (
+                                                            <Typography variant="caption" sx={{ color: '#1abc9c', fontSize: '0.7rem', display: 'block' }}>
+                                                                {reviewer.affiliation}
+                                                            </Typography>
+                                                        )}
                                                     </Box>
                                                     <IconButton
                                                         size="small"
@@ -918,8 +1067,15 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                             <MenuItem disabled>No more reviewers available</MenuItem>
                                         ) : (
                                             getAvailableReviewers().map((reviewer) => (
-                                                <MenuItem key={reviewer.id} value={reviewer.id}>
-                                                    {reviewer.name} ({reviewer.email})
+                                                <MenuItem key={reviewer.id} value={reviewer.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', py: 1 }}>
+                                                    <Typography sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
+                                                        {reviewer.name} ({reviewer.email})
+                                                    </Typography>
+                                                    {reviewer.affiliation && (
+                                                        <Typography sx={{ fontSize: '0.75rem', color: '#1abc9c', mt: 0.25 }}>
+                                                            {reviewer.affiliation}
+                                                        </Typography>
+                                                    )}
                                                 </MenuItem>
                                             ))
                                         )}
@@ -967,6 +1123,51 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Co-Authors Popover */}
+            <Popover
+                open={Boolean(coAuthorPopover)}
+                anchorEl={coAuthorPopover?.anchorEl}
+                onClose={() => { }}
+                disableAutoFocus
+                disableEnforceFocus
+                disableRestoreFocus
+                style={{ pointerEvents: 'none' }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                PaperProps={{
+                    style: { pointerEvents: 'auto' },
+                    sx: {
+                        bgcolor: '#1e293b',
+                        borderRadius: '10px',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                        p: 2,
+                        minWidth: 220,
+                        maxWidth: 350,
+                    }
+                }}
+            >
+                {coAuthorPopover?.coAuthors && (
+                    <Box>
+                        <Typography sx={{ fontWeight: 700, fontSize: '0.75rem', mb: 1, color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Co-Authors ({coAuthorPopover.coAuthors.length})
+                        </Typography>
+                        <Stack spacing={1}>
+                            {coAuthorPopover.coAuthors.map((ca, idx) => (
+                                <Box key={idx}>
+                                    <Typography sx={{ fontWeight: 600, fontSize: '0.8rem', color: '#fff' }}>
+                                        {idx + 1}. {ca.name}
+                                    </Typography>
+                                    <Typography sx={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.65)', pl: 1.5 }}>
+                                        {ca.institute}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Stack>
+                    </Box>
+                )}
+            </Popover>
+
         </SidebarLayout>
     );
 }

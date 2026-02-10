@@ -29,6 +29,7 @@
         "@mui/material": "^7.3.6",
         "@mui/x-charts": "^8.23.0",
         "@mui/x-data-grid": "^8.23.0",
-        "react-countdown": "^2.3.6"
+        "react-countdown": "^2.3.6",
+        "react-draggable": "^4.5.0"
     }
 }

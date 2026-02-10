@@ -23,10 +23,11 @@ export default function AdminUsers({ users = [] }) {
     const isDark = theme.palette.mode === 'dark';
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('all');
     const [deleteDialog, setDeleteDialog] = useState({ open: false, user: null });
     const [roleDialog, setRoleDialog] = useState({ open: false, user: null, newRole: null });
-    const [passwordDialog, setPasswordDialog] = useState({ open: false, user: null, password: '', confirmPassword: '', error: '' });
-    const [createDialog, setCreateDialog] = useState({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '', showPassword: false, showConfirmPassword: false });
+    const [editDialog, setEditDialog] = useState({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' });
+    const [createDialog, setCreateDialog] = useState({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '', showPassword: false, showConfirmPassword: false });
     const [loading, setLoading] = useState(null);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -55,28 +56,30 @@ export default function AdminUsers({ users = [] }) {
     const handleDeleteConfirm = () => {
         if (deleteDialog.user) { router.delete(route('admin.users.delete', deleteDialog.user.id), { preserveScroll: true, onSuccess: () => setDeleteDialog({ open: false, user: null }) }); }
     };
-    const handleEditPasswordClick = (user) => setPasswordDialog({ open: true, user, password: '', confirmPassword: '', error: '' });
-    const handlePasswordUpdate = () => {
-        const { user, password, confirmPassword } = passwordDialog;
-        if (!password || password.length < 8) { setPasswordDialog({ ...passwordDialog, error: 'Password must be at least 8 characters' }); return; }
-        if (password !== confirmPassword) { setPasswordDialog({ ...passwordDialog, error: 'Passwords do not match' }); return; }
+    const handleEditClick = (user) => setEditDialog({ open: true, user, name: user.name || '', email: user.email || '', whatsapp: user.whatsapp || '', affiliation: user.affiliation || '', category: user.category || '', password: '', confirmPassword: '', error: '' });
+    const handleProfileUpdate = () => {
+        const { user, name, email, whatsapp, affiliation, category, password, confirmPassword } = editDialog;
+        if (!name || !email) { setEditDialog({ ...editDialog, error: 'Name and email are required' }); return; }
+        if (password && password.length < 8) { setEditDialog({ ...editDialog, error: 'Password must be at least 8 characters' }); return; }
+        if (password && password !== confirmPassword) { setEditDialog({ ...editDialog, error: 'Passwords do not match' }); return; }
         setLoading(user.id);
-        router.patch(route('admin.users.updatePassword', user.id), { password }, {
+        router.patch(route('admin.users.updateProfile', user.id), { name, email, whatsapp: whatsapp || null, affiliation: affiliation || null, category: category || null, password: password || null }, {
             preserveScroll: true,
-            onSuccess: () => { setLoading(null); setPasswordDialog({ open: false, user: null, password: '', confirmPassword: '', error: '' }); setSnackbar({ open: true, message: `Updated password for ${user.name}`, severity: 'success' }); },
-            onError: (errors) => { setLoading(null); setPasswordDialog({ ...passwordDialog, error: errors.password || 'Failed to update password.' }); }
+            onSuccess: () => { setLoading(null); setEditDialog({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' }); setSnackbar({ open: true, message: `Updated profile for ${name}`, severity: 'success' }); },
+            onError: (errors) => { setLoading(null); setEditDialog({ ...editDialog, error: errors.email || errors.name || errors.password || 'Failed to update profile.' }); }
         });
     };
     const handleCreateUser = () => {
-        const { name, email, password, confirmPassword, role } = createDialog;
+        const { name, email, password, confirmPassword, role, affiliation } = createDialog;
         if (!name || !email || !password || !confirmPassword || !role) { setCreateDialog({ ...createDialog, error: 'All fields are required' }); return; }
+        if (role === 'Reviewer' && !affiliation?.trim()) { setCreateDialog({ ...createDialog, error: 'Affiliation/Institution is required for Reviewer accounts' }); return; }
         if (password.length < 8) { setCreateDialog({ ...createDialog, error: 'Password must be at least 8 characters' }); return; }
         if (password !== confirmPassword) { setCreateDialog({ ...createDialog, error: 'Passwords do not match' }); return; }
         setLoading('creating');
-        router.post(route('admin.users.create'), { name, email, password, role }, {
+        router.post(route('admin.users.create'), { name, email, password, role, affiliation }, {
             preserveScroll: true,
-            onSuccess: () => { setLoading(null); setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '' }); setSnackbar({ open: true, message: `Created user ${name}`, severity: 'success' }); },
-            onError: (errors) => { setLoading(null); setCreateDialog({ ...createDialog, error: errors.email || errors.password || 'Failed to create user.' }); }
+            onSuccess: () => { setLoading(null); setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '' }); setSnackbar({ open: true, message: `Created user ${name}`, severity: 'success' }); },
+            onError: (errors) => { setLoading(null); setCreateDialog({ ...createDialog, error: errors.email || errors.affiliation || errors.password || 'Failed to create user.' }); }
         });
     };
     const handleToggleVerification = (user) => {
@@ -89,7 +92,11 @@ export default function AdminUsers({ users = [] }) {
         });
     };
 
-    const filteredUsers = users.filter(u => u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredUsers = users.filter(u => {
+        const matchesSearch = searchTerm === '' || u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = roleFilter === 'all' || (u.role || 'Author') === roleFilter;
+        return matchesSearch && matchesRole;
+    });
 
     const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.5, fontSize: '0.825rem', color: c.textPrimary };
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
@@ -127,10 +134,33 @@ export default function AdminUsers({ users = [] }) {
                 {/* Search */}
                 <Card elevation={0} sx={{ borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, mb: 2.5 }}>
                     <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                        <TextField fullWidth placeholder="Search by name or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} size="small"
-                            InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: c.textMuted, fontSize: 20 }} /></InputAdornment> }}
-                            sx={{ ...inputSx, '& .MuiOutlinedInput-root': { ...inputSx['& .MuiOutlinedInput-root'], bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' }, '& input': { color: c.textPrimary, fontSize: '0.85rem' } }}
-                        />
+                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+                            <TextField flex={1} placeholder="Search by name or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} size="small"
+                                InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: c.textMuted, fontSize: 20 }} /></InputAdornment> }}
+                                sx={{ flex: 1, minWidth: 200, ...inputSx, '& .MuiOutlinedInput-root': { ...inputSx['& .MuiOutlinedInput-root'], bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' }, '& input': { color: c.textPrimary, fontSize: '0.85rem' } }}
+                            />
+                            <FormControl size="small" sx={{ minWidth: 150 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Role</InputLabel>
+                                <Select
+                                    value={roleFilter}
+                                    label="Role"
+                                    onChange={(e) => setRoleFilter(e.target.value)}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        fontSize: '0.85rem',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                        '&:hover fieldset': { borderColor: '#1abc9c' },
+                                        '&.Mui-focused fieldset': { borderColor: '#1abc9c' },
+                                    }}
+                                >
+                                    <MenuItem value="all">All ({users.length})</MenuItem>
+                                    <MenuItem value="Author">Author ({users.filter(u => (u.role || 'Author') === 'Author').length})</MenuItem>
+                                    <MenuItem value="Reviewer">Reviewer ({users.filter(u => u.role === 'Reviewer').length})</MenuItem>
+                                    <MenuItem value="Admin">Admin ({users.filter(u => u.role === 'Admin').length})</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </CardContent>
                 </Card>
 
@@ -186,8 +216,8 @@ export default function AdminUsers({ users = [] }) {
                                             </TableCell>
                                             <TableCell sx={cellSx}>
                                                 <Box sx={{ display: 'flex', gap: 0.5 }}>
-                                                    <Tooltip title="Edit Password">
-                                                        <IconButton size="small" onClick={() => handleEditPasswordClick(user)} sx={{ color: '#1abc9c', '&:hover': { bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5' } }}>
+                                                    <Tooltip title="Edit Profile">
+                                                        <IconButton size="small" onClick={() => handleEditClick(user)} sx={{ color: '#1abc9c', '&:hover': { bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5' } }}>
                                                             <EditIcon sx={{ fontSize: 18 }} />
                                                         </IconButton>
                                                     </Tooltip>
@@ -238,27 +268,43 @@ export default function AdminUsers({ users = [] }) {
                 </DialogActions>
             </Dialog>
 
-            {/* Password Dialog */}
-            <Dialog open={passwordDialog.open} onClose={() => setPasswordDialog({ open: false, user: null, password: '', confirmPassword: '', error: '' })} maxWidth="sm" fullWidth PaperProps={dialogPaper}>
+            {/* Edit Profile Dialog */}
+            <Dialog open={editDialog.open} onClose={() => setEditDialog({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' })} maxWidth="sm" fullWidth PaperProps={dialogPaper}>
                 <DialogTitle sx={{ fontWeight: 700, color: c.textPrimary, borderBottom: `1px solid ${c.cardBorder}`, pb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 40, height: 40, borderRadius: '10px' }}>
                             <EditIcon sx={{ color: '#1abc9c', fontSize: 22 }} />
                         </Avatar>
                         <Box>
-                            <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>Edit Password</Typography>
-                            <Typography variant="caption" sx={{ color: c.textMuted }}>{passwordDialog.user?.name}</Typography>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>Edit Profile</Typography>
+                            <Typography variant="caption" sx={{ color: c.textMuted }}>{editDialog.user?.email}</Typography>
                         </Box>
                     </Box>
                 </DialogTitle>
                 <DialogContent sx={{ pt: 2.5 }}>
-                    {passwordDialog.error && <Alert severity="error" sx={{ borderRadius: '10px', mb: 2, mt: 1 }}>{passwordDialog.error}</Alert>}
-                    <TextField fullWidth label="New Password" type="password" value={passwordDialog.password} onChange={(e) => setPasswordDialog({ ...passwordDialog, password: e.target.value, error: '' })} sx={{ mb: 2, mt: 1, ...inputSx }} helperText="Minimum 8 characters" />
-                    <TextField fullWidth label="Confirm Password" type="password" value={passwordDialog.confirmPassword} onChange={(e) => setPasswordDialog({ ...passwordDialog, confirmPassword: e.target.value, error: '' })} sx={inputSx} />
+                    {editDialog.error && <Alert severity="error" sx={{ borderRadius: '10px', mb: 2, mt: 1 }}>{editDialog.error}</Alert>}
+                    <TextField fullWidth label="Full Name" value={editDialog.name} onChange={(e) => setEditDialog({ ...editDialog, name: e.target.value, error: '' })} sx={{ mb: 2, mt: 1, ...inputSx }} required />
+                    <TextField fullWidth label="Email" type="email" value={editDialog.email} onChange={(e) => setEditDialog({ ...editDialog, email: e.target.value, error: '' })} sx={{ mb: 2, ...inputSx }} required />
+                    <TextField fullWidth label="WhatsApp" value={editDialog.whatsapp} onChange={(e) => setEditDialog({ ...editDialog, whatsapp: e.target.value })} sx={{ mb: 2, ...inputSx }} placeholder="e.g. 08123456789" />
+                    <TextField fullWidth label="Affiliation/Institution" value={editDialog.affiliation} onChange={(e) => setEditDialog({ ...editDialog, affiliation: e.target.value })} sx={{ mb: 2, ...inputSx }} />
+                    <FormControl fullWidth sx={{ mb: 2, ...inputSx }}>
+                        <InputLabel>Category</InputLabel>
+                        <Select value={editDialog.category} label="Category" onChange={(e) => setEditDialog({ ...editDialog, category: e.target.value })} sx={{ borderRadius: '10px' }}>
+                            <MenuItem value=""><em>None</em></MenuItem>
+                            <MenuItem value="Student">Student</MenuItem>
+                            <MenuItem value="Professional">Professional</MenuItem>
+                            <MenuItem value="International Delegate">International Delegate</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Box sx={{ borderTop: `1px solid ${c.cardBorder}`, pt: 2, mt: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: c.textMuted, mb: 1.5, fontSize: '0.8rem' }}>Change Password (optional)</Typography>
+                        <TextField fullWidth label="New Password" type="password" value={editDialog.password} onChange={(e) => setEditDialog({ ...editDialog, password: e.target.value, error: '' })} sx={{ mb: 2, ...inputSx }} helperText="Leave blank to keep current password. Min 8 characters." />
+                        <TextField fullWidth label="Confirm Password" type="password" value={editDialog.confirmPassword} onChange={(e) => setEditDialog({ ...editDialog, confirmPassword: e.target.value, error: '' })} sx={inputSx} />
+                    </Box>
                 </DialogContent>
                 <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}` }}>
-                    <Button onClick={() => setPasswordDialog({ open: false, user: null, password: '', confirmPassword: '', error: '' })} disabled={loading === passwordDialog.user?.id} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
-                    <Button onClick={handlePasswordUpdate} variant="contained" disabled={loading === passwordDialog.user?.id} sx={tealBtn}>{loading === passwordDialog.user?.id ? 'Updating...' : 'Update'}</Button>
+                    <Button onClick={() => setEditDialog({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' })} disabled={loading === editDialog.user?.id} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
+                    <Button onClick={handleProfileUpdate} variant="contained" disabled={loading === editDialog.user?.id} sx={tealBtn}>{loading === editDialog.user?.id ? 'Saving...' : 'Save Changes'}</Button>
                 </DialogActions>
             </Dialog>
 
@@ -288,9 +334,12 @@ export default function AdminUsers({ users = [] }) {
                             <MenuItem value="Admin">Admin</MenuItem>
                         </Select>
                     </FormControl>
+                    {createDialog.role === 'Reviewer' && (
+                        <TextField fullWidth label="Affiliation/Institution" value={createDialog.affiliation} onChange={(e) => setCreateDialog({ ...createDialog, affiliation: e.target.value, error: '' })} sx={{ mt: 2, ...inputSx }} required helperText="Required for Reviewer accounts" />
+                    )}
                 </DialogContent>
                 <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}` }}>
-                    <Button onClick={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '' })} disabled={loading === 'creating'} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
+                    <Button onClick={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '' })} disabled={loading === 'creating'} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
                     <Button onClick={handleCreateUser} variant="contained" disabled={loading === 'creating'} sx={tealBtn}>{loading === 'creating' ? 'Creating...' : 'Create User'}</Button>
                 </DialogActions>
             </Dialog>

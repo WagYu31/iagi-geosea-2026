@@ -73,7 +73,7 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="affiliation" value="Affiliation/Institution" />
+                    <InputLabel htmlFor="affiliation" value={`Affiliation/Institution${user.role === 'Reviewer' ? ' *' : ''}`} />
 
                     <TextInput
                         id="affiliation"
@@ -81,8 +81,12 @@ export default function UpdateProfileInformation({
                         value={data.affiliation}
                         onChange={(e) => setData('affiliation', e.target.value)}
                         autoComplete="organization"
+                        required={user.role === 'Reviewer'}
                     />
 
+                    {user.role === 'Reviewer' && (
+                        <p className="mt-1 text-xs text-gray-500">Required for Reviewer accounts</p>
+                    )}
                     <InputError className="mt-2" message={errors.affiliation} />
                 </div>
 

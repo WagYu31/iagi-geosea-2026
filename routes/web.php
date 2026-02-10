@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/users', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
         Route::patch('/users/{id}/role', [App\Http\Controllers\AdminController::class, 'updateUserRole'])->name('users.updateRole');
         Route::patch('/users/{id}/password', [App\Http\Controllers\AdminController::class, 'updatePassword'])->name('users.updatePassword');
+        Route::patch('/users/{id}/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('users.updateProfile');
         Route::patch('/users/{id}/toggle-verification', [App\Http\Controllers\AdminController::class, 'toggleVerification'])->name('users.toggleVerification');
         Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
 

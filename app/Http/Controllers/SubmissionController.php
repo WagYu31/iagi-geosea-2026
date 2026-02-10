@@ -17,7 +17,27 @@ class SubmissionController extends Controller
 {
     public function index()
     {
-        $submissions = Auth::user()->submissions()->with('reviews.reviewer')->get();
+        $user = Auth::user();
+
+        // Block unverified Authors from accessing My Submissions
+        if ((!$user->role || $user->role === 'Author') && !$user->email_verified_at) {
+            return redirect()->route('dashboard')->with('error', 'Your account has not been verified yet. Please wait for admin verification before accessing submissions.');
+        }
+
+        $submissions = $user->submissions()->with('reviews.reviewer')->get();
+
+        // Backfill participant_category from user's category for older submissions
+        $categoryMap = [
+            'Student' => 'student',
+            'Professional' => 'professional',
+            'International Delegate' => 'international',
+        ];
+        foreach ($submissions as $submission) {
+            if (!$submission->participant_category && $user->category) {
+                $submission->participant_category = $categoryMap[$user->category] ?? null;
+            }
+        }
+
         $submissionStatus = Setting::getSubmissionStatus();
 
         return Inertia::render('Submissions/Index', [

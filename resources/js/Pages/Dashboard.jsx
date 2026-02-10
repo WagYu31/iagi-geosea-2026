@@ -1,5 +1,5 @@
-import React from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box,
@@ -17,6 +17,8 @@ import {
     Stack,
     alpha,
     useTheme,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -37,6 +39,15 @@ export default function Dashboard({ submissions = [], user }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
+    const { flash } = usePage().props;
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
+
+    useEffect(() => {
+        if (flash?.error) {
+            setSnackbar({ open: true, message: flash.error, severity: 'error' });
+        }
+    }, [flash?.error]);
+
     const totalSubmissions = submissions.length;
     const paidSubmissions = submissions.filter(s => s.payment_status === 'paid').length;
     const pendingSubmissions = submissions.filter(s => s.status === 'pending').length;
@@ -693,6 +704,10 @@ export default function Dashboard({ submissions = [], user }) {
                     </Card>
                 )}
             </Box>
+
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }}>{snackbar.message}</Alert>
+            </Snackbar>
         </SidebarLayout>
     );
 }
