@@ -12,6 +12,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 export default function AdminScores({ submissions = [] }) {
     const theme = useTheme();
@@ -72,6 +73,48 @@ export default function AdminScores({ submissions = [] }) {
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
     const inputSx = { '& .MuiOutlinedInput-root': { borderRadius: '10px', '& fieldset': { borderColor: c.cardBorder }, '&:hover fieldset': { borderColor: '#1abc9c' }, '&.Mui-focused fieldset': { borderColor: '#1abc9c' } } };
 
+    const exportToExcel = () => {
+        const maxReviewers = Math.max(...filteredSubmissions.map(s => s.reviews?.filter(r => r.overall_score)?.length || 0), 1);
+        const headers = ['#', 'Submission Code', 'Title', 'Author', 'Email', 'Status', 'Assigned', 'Completed', 'Avg Score'];
+        for (let i = 1; i <= maxReviewers; i++) {
+            headers.push(`Reviewer ${i} Name`, `Reviewer ${i} Score`);
+        }
+
+        const rows = filteredSubmissions.map(sub => {
+            const avg = calculateAverageScore(sub.reviews);
+            const valid = sub.reviews?.filter(r => r.overall_score) || [];
+            const row = [
+                sub.id,
+                sub.submission_code || '',
+                `"${(sub.title || '').replace(/"/g, '""')}"`,
+                `"${(sub.user?.name || 'Unknown').replace(/"/g, '""')}"`,
+                sub.user?.email || '',
+                sub.status || '',
+                sub.reviews?.length || 0,
+                valid.length,
+                avg,
+            ];
+            for (let i = 0; i < maxReviewers; i++) {
+                if (valid[i]) {
+                    const rAvg = ((parseInt(valid[i].originality_score || 0) + parseInt(valid[i].relevance_score || 0) + parseInt(valid[i].clarity_score || 0) + parseInt(valid[i].methodology_score || 0) + parseInt(valid[i].overall_score || 0)) / 5).toFixed(1);
+                    row.push(`"${(valid[i].reviewer?.name || 'Reviewer ' + (i + 1)).replace(/"/g, '""')}"`, rAvg);
+                } else {
+                    row.push('', '');
+                }
+            }
+            return row.join(',');
+        });
+
+        const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `scores_rankings_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const stats = [
         { label: 'Total Submissions', value: submissions.length, icon: <AssignmentIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
         { label: 'With Scores', value: withScores, icon: <CheckCircleIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
@@ -88,6 +131,24 @@ export default function AdminScores({ submissions = [] }) {
                         Scores & Rankings 📊
                     </Typography>
                     <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{submissions.length} submissions tracked</Typography>
+                    <Button
+                        variant="contained"
+                        startIcon={<FileDownloadIcon />}
+                        onClick={exportToExcel}
+                        sx={{
+                            mt: 1.5,
+                            bgcolor: '#1abc9c',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '0.8rem',
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            px: 2.5,
+                            '&:hover': { bgcolor: '#16a085' },
+                        }}
+                    >
+                        Export Excel
+                    </Button>
                 </Box>
 
                 {/* Stats */}
