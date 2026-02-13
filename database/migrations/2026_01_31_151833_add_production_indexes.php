@@ -12,19 +12,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add indexes to submissions table for faster queries (safe check)
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_submissions_user_id ON submissions(user_id)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_submissions_created_at ON submissions(created_at)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_submissions_code ON submissions(submission_code)');
+        // Add indexes safely - skip if already exists
+        $indexes = [
+            'CREATE INDEX idx_submissions_user_id ON submissions(user_id)',
+            'CREATE INDEX idx_submissions_status ON submissions(status)',
+            'CREATE INDEX idx_submissions_created_at ON submissions(created_at)',
+            'CREATE INDEX idx_submissions_code ON submissions(submission_code)',
+            'CREATE INDEX idx_users_email ON users(email)',
+            'CREATE INDEX idx_users_role ON users(role)',
+            'CREATE INDEX idx_payments_submission ON payments(submission_id)',
+            'CREATE INDEX idx_payments_status ON payments(status)',
+        ];
 
-        // Add indexes to users table
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)');
-
-        // Add indexes to payments table  
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_payments_submission ON payments(submission_id)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status)');
+        foreach ($indexes as $sql) {
+            try {
+                DB::statement($sql);
+            } catch (\Exception $e) {
+                // Index already exists, skip
+            }
+        }
     }
 
     /**

@@ -22,7 +22,7 @@ Route::get('/', function () {
     });
 
     return Inertia::render('LandingPage', ['serverSettings' => $settings]);
-})->name('landing');
+})->middleware(\App\Http\Middleware\TrackPageVisit::class)->name('landing');
 
 // Public API for landing page settings (must be outside auth middleware)
 Route::get('/api/landing-settings', [App\Http\Controllers\LandingPageSettingController::class, 'getPublicSettings']);
@@ -88,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/submissions/{id}', [App\Http\Controllers\SubmissionController::class, 'show'])->name('submissions.show');
     Route::post('/submissions', [App\Http\Controllers\SubmissionController::class, 'store'])->name('submissions.store');
     Route::post('/submissions/{id}', [App\Http\Controllers\SubmissionController::class, 'update'])->name('submissions.update');
+    Route::post('/submissions/{id}/request-deletion', [App\Http\Controllers\SubmissionController::class, 'requestDeletion'])->name('submissions.requestDeletion');
 
     // Payments routes
     Route::get('/payments', function () {
@@ -111,6 +112,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         // Dashboard
         Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/visitor-analytics', [App\Http\Controllers\AdminController::class, 'visitorAnalytics'])->name('visitor-analytics');
+        Route::get('/submission-analytics', [App\Http\Controllers\AdminController::class, 'submissionAnalytics'])->name('submission-analytics');
 
         // Submissions Management
         Route::get('/submissions', [App\Http\Controllers\AdminController::class, 'submissions'])->name('submissions');
@@ -119,6 +122,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/submissions/{id}/assign-reviewer', [App\Http\Controllers\AdminController::class, 'assignReviewer'])->name('submissions.assignReviewer');
         Route::delete('/submissions/{submissionId}/reviewer/{reviewerId}', [App\Http\Controllers\AdminController::class, 'removeReviewer'])->name('submissions.removeReviewer');
         Route::delete('/submissions/{id}', [App\Http\Controllers\AdminController::class, 'deleteSubmission'])->name('submissions.delete');
+        Route::post('/submissions/{id}/approve-deletion', [App\Http\Controllers\AdminController::class, 'approveDeletion'])->name('submissions.approveDeletion');
+        Route::post('/submissions/{id}/reject-deletion', [App\Http\Controllers\AdminController::class, 'rejectDeletion'])->name('submissions.rejectDeletion');
         Route::get('/submissions/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('submissions.export');
         Route::get('/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('export');
 

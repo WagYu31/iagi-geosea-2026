@@ -12,7 +12,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 export default function Features({ settings }) {
     const stats = [
-        { number: '500+', label: 'Expected Participants', icon: <GroupsIcon /> },
+        { number: '200+', label: 'Expected Participants', icon: <GroupsIcon /> },
         { number: '50+', label: 'Expert Speakers', icon: <RecordVoiceOverIcon /> },
         { number: '3', label: 'Days of Sessions', icon: <CalendarMonthIcon /> },
         { number: '8+', label: 'Countries', icon: <PublicIcon /> },

@@ -60,11 +60,7 @@ class SubmissionController extends Controller
     {
         $submission = Auth::user()->submissions()->findOrFail($id);
 
-        // Check if user is allowed to edit (only for revision required statuses)
-        $allowedStatuses = ['revision_required_phase1', 'revision_required_phase2', 'pending'];
-        if (!in_array($submission->status, $allowedStatuses)) {
-            return back()->withErrors(['error' => 'You cannot edit this submission at its current status.']);
-        }
+        // Allow editing for all statuses
 
         $validated = $request->validate([
             'author_full_name' => 'required|string|max:255',
@@ -91,6 +87,8 @@ class SubmissionController extends Controller
             'full_paper_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'layouting_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'editor_feedback_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'publication_option' => 'required|in:no,yes',
+            'preferred_publication' => 'required_if:publication_option,yes|nullable|in:scopus_proceedings,iagi_journal',
         ]);
 
         // Handle file uploads
@@ -123,7 +121,7 @@ class SubmissionController extends Controller
 
         $submission->update($validated);
 
-        return redirect()->route('submissions.show', $id)->with('success', 'Submission updated successfully!');
+        return redirect()->route('submissions.index')->with('success', 'Submission updated successfully!');
     }
 
     public function store(Request $request)
@@ -159,6 +157,8 @@ class SubmissionController extends Controller
             'institute_organization' => 'required|string|max:255',
             'consent_agreed' => 'required|accepted',
             'participant_category' => 'required|in:student,professional,international',
+            'publication_option' => 'required|in:no,yes',
+            'preferred_publication' => 'required_if:publication_option,yes|nullable|in:scopus_proceedings,iagi_journal',
         ]);
 
         // Generate submission code with database lock to prevent race conditions
@@ -238,6 +238,8 @@ class SubmissionController extends Controller
                 'presentation_preference' => $request->category_submission ?? 'Oral Presentation',
                 'participant_category' => $request->participant_category,
                 'submission_code' => $submissionCode,
+                'publication_option' => $request->publication_option,
+                'preferred_publication' => $request->preferred_publication,
             ]);
         });
 
@@ -306,5 +308,27 @@ class SubmissionController extends Controller
         ]);
 
         return back()->with('success', 'Revision submitted successfully!');
+    }
+
+    public function requestDeletion(Request $request, $id)
+    {
+        $request->validate([
+            'deletion_reason' => 'required|string|max:500',
+        ]);
+
+        $submission = Auth::user()->submissions()->findOrFail($id);
+
+        // Don't allow re-requesting if already requested
+        if ($submission->status === 'deletion_requested') {
+            return back()->withErrors(['error' => 'Deletion request already submitted for this submission.']);
+        }
+
+        $submission->update([
+            'status' => 'deletion_requested',
+            'deletion_reason' => $request->deletion_reason,
+            'deletion_requested_at' => now(),
+        ]);
+
+        return back()->with('success', 'Deletion request submitted. Waiting for admin approval.');
     }
 }

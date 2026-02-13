@@ -33,6 +33,8 @@ export default function FAQ({ settings }) {
     return (
         <Box
             id="faq"
+            role="region"
+            aria-label="Submission Procedure"
             sx={{
                 py: { xs: 8, sm: 12 },
                 position: 'relative',

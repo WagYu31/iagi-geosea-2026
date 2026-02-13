@@ -46,6 +46,10 @@ class Submission extends Model
         'category',
         'participant_category',
         'submission_code',
+        'publication_option',
+        'preferred_publication',
+        'deletion_requested_at',
+        'deletion_reason',
     ];
 
     public function user()

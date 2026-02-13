@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
@@ -38,15 +38,85 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { BarChart } from '@mui/x-charts/BarChart';
+import { LineChart } from '@mui/x-charts/LineChart';
 
-export default function AdminDashboard({ analytics, recentSubmissions = [], pendingPayments = 0, submissionsPerTopic = [], participantStats = {}, submissionsPerTopicByParticipant = [] }) {
+export default function AdminDashboard({ analytics, recentSubmissions = [], pendingPayments = 0, submissionsPerTopic = [], participantStats = {}, submissionsPerTopicByParticipant = [], visitorAnalytics = {}, dailyVisitors = [] }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
 
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [participantFilter, setParticipantFilter] = useState('all');
+
+    // Visitor analytics state with auto-refresh
+    const [visitorPeriod, setVisitorPeriod] = useState('30d');
+    const [liveStats, setLiveStats] = useState(visitorAnalytics);
+    const [liveChartData, setLiveChartData] = useState([]);
+    const [lastUpdated, setLastUpdated] = useState(new Date());
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const refreshTimerRef = useRef(null);
+
+    const fetchVisitorData = useCallback((period) => {
+        setIsRefreshing(true);
+        fetch(`/admin/visitor-analytics?period=${period}`, {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        })
+            .then(res => res.json())
+            .then(data => {
+                setLiveStats(data.stats);
+                setLiveChartData(data.chartData || []);
+                setLastUpdated(new Date());
+                setIsRefreshing(false);
+            })
+            .catch(() => setIsRefreshing(false));
+    }, []);
+
+    useEffect(() => {
+        fetchVisitorData(visitorPeriod);
+        refreshTimerRef.current = setInterval(() => fetchVisitorData(visitorPeriod), 10000);
+        return () => clearInterval(refreshTimerRef.current);
+    }, [visitorPeriod, fetchVisitorData]);
+
+    const handlePeriodChange = (period) => {
+        setVisitorPeriod(period);
+    };
+
+    // Submission analytics state with auto-refresh
+    const [subPeriod, setSubPeriod] = useState('30d');
+    const [subStats, setSubStats] = useState({ today: 0, last7days: 0, last30days: 0, total: analytics?.totalSubmissions || 0 });
+    const [subChartData, setSubChartData] = useState([]);
+    const [subLastUpdated, setSubLastUpdated] = useState(new Date());
+    const [isSubRefreshing, setIsSubRefreshing] = useState(false);
+    const subRefreshTimerRef = useRef(null);
+
+    const fetchSubData = useCallback((period) => {
+        setIsSubRefreshing(true);
+        fetch(`/admin/submission-analytics?period=${period}`, {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        })
+            .then(res => res.json())
+            .then(data => {
+                setSubStats(data.stats);
+                setSubChartData(data.chartData || []);
+                setSubLastUpdated(new Date());
+                setIsSubRefreshing(false);
+            })
+            .catch(() => setIsSubRefreshing(false));
+    }, []);
+
+    useEffect(() => {
+        fetchSubData(subPeriod);
+        subRefreshTimerRef.current = setInterval(() => fetchSubData(subPeriod), 15000);
+        return () => clearInterval(subRefreshTimerRef.current);
+    }, [subPeriod, fetchSubData]);
+
+    const handleSubPeriodChange = (period) => {
+        setSubPeriod(period);
+    };
 
     const totalSubmissions = analytics?.totalSubmissions || 0;
     const pendingReviews = analytics?.pendingReviews || 0;
@@ -90,12 +160,12 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
             trend: 'Verified',
         },
         {
-            title: 'Total Users',
+            title: 'Total Authors',
             value: totalUsers,
             icon: <PeopleIcon />,
             color: '#9333ea',
             bgColor: isDark ? 'rgba(147, 51, 234, 0.12)' : '#faf5ff',
-            trend: 'Users',
+            trend: 'Authors',
         },
     ];
 
@@ -364,6 +434,520 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
                         </Grid>
                     ))}
                 </Grid>
+
+                {/* Visitor Analytics — Google Analytics Style */}
+                <Card
+                    elevation={0}
+                    sx={{
+                        borderRadius: '12px',
+                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#dadce0'}`,
+                        bgcolor: c.cardBg,
+                        mb: 3.5,
+                        overflow: 'hidden',
+                    }}
+                >
+                    {/* GA Header */}
+                    <Box sx={{
+                        px: { xs: 2, sm: 3 },
+                        pt: { xs: 2, sm: 2.5 },
+                        pb: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1,
+                    }}>
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
+                                <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: c.textPrimary }}>
+                                    Website Visitors
+                                </Typography>
+                                <Box sx={{
+                                    display: 'flex', alignItems: 'center', gap: 0.5,
+                                    px: 1, py: 0.25,
+                                    bgcolor: isDark ? 'rgba(34,197,94,0.15)' : '#f0fdf4',
+                                    borderRadius: '4px',
+                                    border: `1px solid ${isDark ? 'rgba(34,197,94,0.3)' : '#bbf7d0'}`,
+                                }}>
+                                    <Box sx={{
+                                        width: 6, height: 6, borderRadius: '50%',
+                                        bgcolor: '#22c55e',
+                                        animation: 'gaPulse 2s ease-in-out infinite',
+                                        '@keyframes gaPulse': {
+                                            '0%, 100%': { opacity: 1 },
+                                            '50%': { opacity: 0.4 },
+                                        },
+                                    }} />
+                                    <Typography sx={{ fontSize: '0.65rem', fontWeight: 600, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                        Live
+                                    </Typography>
+                                </Box>
+                                {isRefreshing && (
+                                    <Box sx={{
+                                        width: 14, height: 14, borderRadius: '50%',
+                                        border: '2px solid #1a73e8',
+                                        borderTopColor: 'transparent',
+                                        animation: 'gaSpin 0.8s linear infinite',
+                                        '@keyframes gaSpin': { to: { transform: 'rotate(360deg)' } },
+                                    }} />
+                                )}
+                            </Box>
+                            <Typography sx={{ fontSize: '0.72rem', color: c.textMuted }}>
+                                Landing page traffic · Updated {lastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            </Typography>
+                        </Box>
+                        {/* Period pills */}
+                        <Box sx={{
+                            display: 'flex',
+                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#dadce0'}`,
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                        }}>
+                            {[
+                                { key: 'today', label: 'Today' },
+                                { key: '7d', label: '7 days' },
+                                { key: '30d', label: '30 days' },
+                            ].map((tab, i) => (
+                                <Button
+                                    key={tab.key}
+                                    size="small"
+                                    onClick={() => handlePeriodChange(tab.key)}
+                                    sx={{
+                                        px: { xs: 1.5, sm: 2 }, py: 0.5,
+                                        fontSize: '0.72rem',
+                                        fontWeight: 600,
+                                        textTransform: 'none',
+                                        minWidth: 'auto',
+                                        borderRadius: 0,
+                                        borderRight: i < 2 ? `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#dadce0'}` : 'none',
+                                        ...(visitorPeriod === tab.key ? {
+                                            bgcolor: isDark ? 'rgba(66,133,244,0.15)' : '#e8f0fe',
+                                            color: '#1a73e8',
+                                        } : {
+                                            color: c.textMuted,
+                                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8f9fa' },
+                                        }),
+                                    }}
+                                >
+                                    {tab.label}
+                                </Button>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    {/* GA Metric Cards Row */}
+                    <Box sx={{
+                        display: 'flex',
+                        px: { xs: 1, sm: 3 },
+                        pt: 2.5,
+                        pb: 0,
+                        gap: 0,
+                        overflowX: 'auto',
+                    }}>
+                        {[
+                            { key: 'today', label: 'Today', value: liveStats.today || 0, color: '#1a73e8' },
+                            { key: '7d', label: 'Last 7 days', value: liveStats.last7days || 0, color: '#e8710a' },
+                            { key: '30d', label: 'Last 30 days', value: liveStats.last30days || 0, color: '#1e8e3e' },
+                            { key: 'all', label: 'All time', value: liveStats.total || 0, color: '#9334e6' },
+                        ].map((metric) => (
+                            <Box
+                                key={metric.key}
+                                onClick={() => metric.key !== 'all' && handlePeriodChange(metric.key)}
+                                sx={{
+                                    flex: 1,
+                                    minWidth: 110,
+                                    px: 2,
+                                    py: 1.5,
+                                    cursor: metric.key !== 'all' ? 'pointer' : 'default',
+                                    borderBottom: `3px solid ${visitorPeriod === metric.key ? metric.color : 'transparent'
+                                        }`,
+                                    transition: 'all 0.15s ease',
+                                    '&:hover': metric.key !== 'all' ? {
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa',
+                                    } : {},
+                                }}
+                            >
+                                <Typography sx={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 500,
+                                    color: visitorPeriod === metric.key ? metric.color : c.textMuted,
+                                    mb: 0.5,
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    {metric.label}
+                                </Typography>
+                                <Typography sx={{
+                                    fontSize: '1.75rem',
+                                    fontWeight: 700,
+                                    color: visitorPeriod === metric.key ? metric.color : c.textPrimary,
+                                    lineHeight: 1,
+                                    letterSpacing: '-0.02em',
+                                }}>
+                                    {metric.value.toLocaleString()}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+
+                    {/* Divider */}
+                    <Box sx={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f3f4f6'}`, mx: { xs: 1, sm: 3 } }} />
+
+                    {/* GA Chart Area */}
+                    <Box sx={{
+                        width: '100%',
+                        height: { xs: 260, sm: 340 },
+                        px: { xs: 0.5, sm: 1 },
+                        pt: 1,
+                        pb: 1,
+                    }}>
+                        {liveChartData.length > 0 ? (
+                            <LineChart
+                                xAxis={[{
+                                    data: liveChartData.map((d, i) => i),
+                                    scaleType: 'point',
+                                    valueFormatter: (idx) => liveChartData[idx]?.label || '',
+                                    tickLabelStyle: {
+                                        fontSize: 10,
+                                        fontWeight: 500,
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                    },
+                                }]}
+                                yAxis={[{
+                                    tickMinStep: 1,
+                                    tickLabelStyle: {
+                                        fontSize: 10,
+                                        fontWeight: 500,
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                    },
+                                }]}
+                                series={[{
+                                    data: liveChartData.map(d => d.count),
+                                    color: visitorPeriod === '7d' ? '#e8710a' : visitorPeriod === 'today' ? '#1a73e8' : '#1e8e3e',
+                                    area: true,
+                                    curve: 'catmullRom',
+                                    showMark: liveChartData.length <= 15,
+                                    valueFormatter: (value) => `${value} visitor${value !== 1 ? 's' : ''}`,
+                                }]}
+                                grid={{ horizontal: true }}
+                                margin={{ top: 20, bottom: 35, left: 45, right: 20 }}
+                                slotProps={{
+                                    legend: { hidden: true },
+                                }}
+                                sx={{
+                                    '& .MuiChartsAxis-tickLabel': {
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                        fontWeight: 500,
+                                    },
+                                    '& .MuiChartsAxis-line': {
+                                        stroke: isDark ? 'rgba(255,255,255,0.06)' : '#f3f4f6',
+                                        strokeWidth: 1,
+                                    },
+                                    '& .MuiChartsAxis-tick': { stroke: 'transparent' },
+                                    '& .MuiChartsGrid-line': {
+                                        stroke: isDark ? 'rgba(255,255,255,0.04)' : '#f3f4f6',
+                                        strokeWidth: 1,
+                                    },
+                                    '& .MuiAreaElement-root': {
+                                        fill: visitorPeriod === '7d'
+                                            ? 'url(#gaGradientOrange)'
+                                            : visitorPeriod === 'today'
+                                                ? 'url(#gaGradientBlue)'
+                                                : 'url(#gaGradientGreen)',
+                                        opacity: 1,
+                                    },
+                                    '& .MuiLineElement-root': {
+                                        strokeWidth: 2.5,
+                                    },
+                                    '& .MuiMarkElement-root': {
+                                        strokeWidth: 2,
+                                        r: 3.5,
+                                        fill: isDark ? '#1e1e1e' : '#fff',
+                                    },
+                                }}
+                            >
+                                <defs>
+                                    <linearGradient id="gaGradientBlue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#1a73e8" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#1a73e8" stopOpacity={0.01} />
+                                    </linearGradient>
+                                    <linearGradient id="gaGradientOrange" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#e8710a" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#e8710a" stopOpacity={0.01} />
+                                    </linearGradient>
+                                    <linearGradient id="gaGradientGreen" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#1e8e3e" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#1e8e3e" stopOpacity={0.01} />
+                                    </linearGradient>
+                                </defs>
+                            </LineChart>
+                        ) : (
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 1.5 }}>
+                                <BarChartIcon sx={{ fontSize: 48, color: c.textMuted, opacity: 0.3 }} />
+                                <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', fontWeight: 500 }}>
+                                    No data available for this period
+                                </Typography>
+                                <Typography sx={{ color: c.textMuted, fontSize: '0.72rem', opacity: 0.7 }}>
+                                    Visitor data will appear here as traffic comes in
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
+
+                </Card>
+
+                {/* Submission Analytics — Google Analytics Style */}
+                <Card
+                    elevation={0}
+                    sx={{
+                        borderRadius: '12px',
+                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#dadce0'}`,
+                        bgcolor: c.cardBg,
+                        mb: 3.5,
+                        overflow: 'hidden',
+                    }}
+                >
+                    {/* Header */}
+                    <Box sx={{
+                        px: { xs: 2, sm: 3 },
+                        pt: { xs: 2, sm: 2.5 },
+                        pb: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1,
+                    }}>
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
+                                <Typography sx={{ fontWeight: 600, fontSize: '1rem', color: c.textPrimary }}>
+                                    Paper Submissions
+                                </Typography>
+                                <Box sx={{
+                                    display: 'flex', alignItems: 'center', gap: 0.5,
+                                    px: 1, py: 0.25,
+                                    bgcolor: isDark ? 'rgba(14,165,233,0.15)' : '#f0f9ff',
+                                    borderRadius: '4px',
+                                    border: `1px solid ${isDark ? 'rgba(14,165,233,0.3)' : '#bae6fd'}`,
+                                }}>
+                                    <Box sx={{
+                                        width: 6, height: 6, borderRadius: '50%',
+                                        bgcolor: '#0ea5e9',
+                                        animation: 'gaPulse 2s ease-in-out infinite',
+                                    }} />
+                                    <Typography sx={{ fontSize: '0.65rem', fontWeight: 600, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                        Live
+                                    </Typography>
+                                </Box>
+                                {isSubRefreshing && (
+                                    <Box sx={{
+                                        width: 14, height: 14, borderRadius: '50%',
+                                        border: '2px solid #0ea5e9',
+                                        borderTopColor: 'transparent',
+                                        animation: 'gaSpin 0.8s linear infinite',
+                                    }} />
+                                )}
+                            </Box>
+                            <Typography sx={{ fontSize: '0.72rem', color: c.textMuted }}>
+                                Submission activity · Updated {subLastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            </Typography>
+                        </Box>
+                        {/* Period pills */}
+                        <Box sx={{
+                            display: 'flex',
+                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#dadce0'}`,
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                        }}>
+                            {[
+                                { key: 'today', label: 'Today' },
+                                { key: '7d', label: '7 days' },
+                                { key: '30d', label: '30 days' },
+                            ].map((tab, i) => (
+                                <Button
+                                    key={tab.key}
+                                    size="small"
+                                    onClick={() => handleSubPeriodChange(tab.key)}
+                                    sx={{
+                                        px: { xs: 1.5, sm: 2 }, py: 0.5,
+                                        fontSize: '0.72rem',
+                                        fontWeight: 600,
+                                        textTransform: 'none',
+                                        minWidth: 'auto',
+                                        borderRadius: 0,
+                                        borderRight: i < 2 ? `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#dadce0'}` : 'none',
+                                        ...(subPeriod === tab.key ? {
+                                            bgcolor: isDark ? 'rgba(14,165,233,0.15)' : '#e0f2fe',
+                                            color: '#0284c7',
+                                        } : {
+                                            color: c.textMuted,
+                                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8f9fa' },
+                                        }),
+                                    }}
+                                >
+                                    {tab.label}
+                                </Button>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    {/* Metric Cards Row */}
+                    <Box sx={{
+                        display: 'flex',
+                        px: { xs: 1, sm: 3 },
+                        pt: 2.5,
+                        pb: 0,
+                        gap: 0,
+                        overflowX: 'auto',
+                    }}>
+                        {[
+                            { key: 'today', label: 'Today', value: subStats.today || 0, color: '#0284c7' },
+                            { key: '7d', label: 'Last 7 days', value: subStats.last7days || 0, color: '#d97706' },
+                            { key: '30d', label: 'Last 30 days', value: subStats.last30days || 0, color: '#059669' },
+                            { key: 'all', label: 'Total', value: subStats.total || 0, color: '#dc2626' },
+                        ].map((metric) => (
+                            <Box
+                                key={metric.key}
+                                onClick={() => metric.key !== 'all' && handleSubPeriodChange(metric.key)}
+                                sx={{
+                                    flex: 1,
+                                    minWidth: 110,
+                                    px: 2,
+                                    py: 1.5,
+                                    cursor: metric.key !== 'all' ? 'pointer' : 'default',
+                                    borderBottom: `3px solid ${subPeriod === metric.key ? metric.color : 'transparent'
+                                        }`,
+                                    transition: 'all 0.15s ease',
+                                    '&:hover': metric.key !== 'all' ? {
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa',
+                                    } : {},
+                                }}
+                            >
+                                <Typography sx={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 500,
+                                    color: subPeriod === metric.key ? metric.color : c.textMuted,
+                                    mb: 0.5,
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    {metric.label}
+                                </Typography>
+                                <Typography sx={{
+                                    fontSize: '1.75rem',
+                                    fontWeight: 700,
+                                    color: subPeriod === metric.key ? metric.color : c.textPrimary,
+                                    lineHeight: 1,
+                                    letterSpacing: '-0.02em',
+                                }}>
+                                    {metric.value.toLocaleString()}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+
+                    {/* Divider */}
+                    <Box sx={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f3f4f6'}`, mx: { xs: 1, sm: 3 } }} />
+
+                    {/* Chart Area */}
+                    <Box sx={{
+                        width: '100%',
+                        height: { xs: 260, sm: 340 },
+                        px: { xs: 0.5, sm: 1 },
+                        pt: 1,
+                        pb: 1,
+                    }}>
+                        {subChartData.length > 0 ? (
+                            <LineChart
+                                xAxis={[{
+                                    data: subChartData.map((d, i) => i),
+                                    scaleType: 'point',
+                                    valueFormatter: (idx) => subChartData[idx]?.label || '',
+                                    tickLabelStyle: {
+                                        fontSize: 10,
+                                        fontWeight: 500,
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                    },
+                                }]}
+                                yAxis={[{
+                                    tickMinStep: 1,
+                                    tickLabelStyle: {
+                                        fontSize: 10,
+                                        fontWeight: 500,
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                    },
+                                }]}
+                                series={[{
+                                    data: subChartData.map(d => d.count),
+                                    color: subPeriod === '7d' ? '#d97706' : subPeriod === 'today' ? '#0284c7' : '#059669',
+                                    area: true,
+                                    curve: 'catmullRom',
+                                    showMark: subChartData.length <= 15,
+                                    valueFormatter: (value) => `${value} submission${value !== 1 ? 's' : ''}`,
+                                }]}
+                                grid={{ horizontal: true }}
+                                margin={{ top: 20, bottom: 35, left: 45, right: 20 }}
+                                slotProps={{
+                                    legend: { hidden: true },
+                                }}
+                                sx={{
+                                    '& .MuiChartsAxis-tickLabel': {
+                                        fill: isDark ? '#9ca3af' : '#80868b',
+                                        fontWeight: 500,
+                                    },
+                                    '& .MuiChartsAxis-line': {
+                                        stroke: isDark ? 'rgba(255,255,255,0.06)' : '#f3f4f6',
+                                        strokeWidth: 1,
+                                    },
+                                    '& .MuiChartsAxis-tick': { stroke: 'transparent' },
+                                    '& .MuiChartsGrid-line': {
+                                        stroke: isDark ? 'rgba(255,255,255,0.04)' : '#f3f4f6',
+                                        strokeWidth: 1,
+                                    },
+                                    '& .MuiAreaElement-root': {
+                                        fill: subPeriod === '7d'
+                                            ? 'url(#subGradientAmber)'
+                                            : subPeriod === 'today'
+                                                ? 'url(#subGradientTeal)'
+                                                : 'url(#subGradientEmerald)',
+                                        opacity: 1,
+                                    },
+                                    '& .MuiLineElement-root': {
+                                        strokeWidth: 2.5,
+                                    },
+                                    '& .MuiMarkElement-root': {
+                                        strokeWidth: 2,
+                                        r: 3.5,
+                                        fill: isDark ? '#1e1e1e' : '#fff',
+                                    },
+                                }}
+                            >
+                                <defs>
+                                    <linearGradient id="subGradientTeal" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#0284c7" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#0284c7" stopOpacity={0.01} />
+                                    </linearGradient>
+                                    <linearGradient id="subGradientAmber" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#d97706" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#d97706" stopOpacity={0.01} />
+                                    </linearGradient>
+                                    <linearGradient id="subGradientEmerald" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#059669" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#059669" stopOpacity={0.01} />
+                                    </linearGradient>
+                                </defs>
+                            </LineChart>
+                        ) : (
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 1.5 }}>
+                                <DescriptionIcon sx={{ fontSize: 48, color: c.textMuted, opacity: 0.3 }} />
+                                <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', fontWeight: 500 }}>
+                                    No submission data for this period
+                                </Typography>
+                                <Typography sx={{ color: c.textMuted, fontSize: '0.72rem', opacity: 0.7 }}>
+                                    Submission data will appear here as papers are submitted
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
+                </Card>
 
                 {/* Pending Payments Alert */}
                 {pendingPayments > 0 && (
@@ -849,6 +1433,6 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
                     </Grid>
                 </Grid>
             </Box>
-        </SidebarLayout>
+        </SidebarLayout >
     );
 }

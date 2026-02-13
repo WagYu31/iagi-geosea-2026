@@ -106,6 +106,8 @@ export default function Testimonials({ settings }) {
                                     }}
                                 >
                                     <Box
+                                        role="img"
+                                        aria-label={`Photo of ${speaker.name}`}
                                         sx={{
                                             position: 'absolute',
                                             inset: 0,

@@ -62,7 +62,7 @@ function SidebarLayout({ children }) {
     { text: 'Manage Submissions', icon: <ArticleIcon />, href: route('admin.submissions'), color: '#2563eb' },
     { text: 'Manage Payments', icon: <PaymentIcon />, href: route('admin.payments'), color: '#ea580c' },
     { text: 'Manage Users', icon: <PeopleIcon />, href: route('admin.users'), color: '#9333ea' },
-    { text: 'Daftar Nilai', icon: <GradeIcon />, href: route('admin.scores'), color: '#ca8a04' },
+    { text: 'Scores', icon: <GradeIcon />, href: route('admin.scores'), color: '#ca8a04' },
     { text: 'Settings', icon: <SettingsIcon />, href: route('admin.settings'), color: '#0891b2' },
     { text: 'Email Settings', icon: <EmailIcon />, href: route('admin.email.settings.page'), color: '#db2777' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },

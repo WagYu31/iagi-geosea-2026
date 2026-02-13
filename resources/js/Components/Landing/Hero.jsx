@@ -148,6 +148,7 @@ export default function Hero({ settings, auth }) {
                             component="img"
                             src={settings.hero_logo.url}
                             alt="Conference Logo"
+                            loading="eager"
                             sx={{
                                 width: '110%',
                                 height: '110%',

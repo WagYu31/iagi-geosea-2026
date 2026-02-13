@@ -30,8 +30,12 @@ import {
     Select,
     FormControl,
     InputLabel,
+    Radio,
+    RadioGroup,
+    FormLabel,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -116,6 +120,29 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const formRef = useRef(null);
     const MAX_WORDS = 400;
     const [statusFilter, setStatusFilter] = useState('all');
+    const [editingSubmissionId, setEditingSubmissionId] = useState(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deletingSubmissionId, setDeletingSubmissionId] = useState(null);
+    const [deletionReason, setDeletionReason] = useState('');
+    const [deletionProcessing, setDeletionProcessing] = useState(false);
+
+    const handleRequestDeletion = () => {
+        if (!deletingSubmissionId || !deletionReason.trim()) return;
+        setDeletionProcessing(true);
+        router.post(route('submissions.requestDeletion', deletingSubmissionId), {
+            deletion_reason: deletionReason,
+        }, {
+            onSuccess: () => {
+                setDeleteDialogOpen(false);
+                setDeletingSubmissionId(null);
+                setDeletionReason('');
+                setDeletionProcessing(false);
+            },
+            onError: () => {
+                setDeletionProcessing(false);
+            },
+        });
+    };
 
     const { data, setData, post, processing, errors, reset } = useForm({
         author_full_name: '',
@@ -144,6 +171,8 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         institute_organization: '',
         submission_status: '', // Track submission status to control File Uploads visibility
         consent_agreed: false,
+        publication_option: '',
+        preferred_publication: '',
     });
 
     const handleAbstractChange = (e) => {
@@ -158,15 +187,19 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     };
 
     const handleThemeChange = (e) => {
-        setData('paper_theme', e.target.value);
-        // Clear sub-theme when theme changes
-        setData('paper_sub_theme', '');
+        setData({
+            ...data,
+            paper_theme: e.target.value,
+            paper_sub_theme: '', // Clear sub-theme when theme changes
+        });
     };
 
     const handleNewSubmissionClick = () => {
         if (!submissionStatus.open) {
             setShowDeadlineDialog(true);
         } else {
+            setEditingSubmissionId(null);
+            reset();
             setShowForm(true);
             setTimeout(() => {
                 formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -179,14 +212,28 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('submissions.store'), {
-            forceFormData: true,
-            onSuccess: () => {
-                reset();
-                setShowForm(false);
-                setWordCount(0);
-            },
-        });
+        if (editingSubmissionId) {
+            // Update existing submission
+            post(route('submissions.update', editingSubmissionId), {
+                forceFormData: true,
+                onSuccess: () => {
+                    reset();
+                    setShowForm(false);
+                    setWordCount(0);
+                    setEditingSubmissionId(null);
+                },
+            });
+        } else {
+            // Create new submission
+            post(route('submissions.store'), {
+                forceFormData: true,
+                onSuccess: () => {
+                    reset();
+                    setShowForm(false);
+                    setWordCount(0);
+                },
+            });
+        }
     };
 
     return (
@@ -283,6 +330,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 </MenuItem>
                                 <MenuItem value="rejected" sx={{ fontSize: '0.8rem' }}>
                                     <Chip label="Rejected" size="small" sx={{ bgcolor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Rejected
+                                </MenuItem>
+                                <MenuItem value="deletion_requested" sx={{ fontSize: '0.8rem' }}>
+                                    <Chip label="Delete Req." size="small" sx={{ bgcolor: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa', fontWeight: 600, fontSize: '0.65rem', mr: 1 }} /> Deletion Requested
                                 </MenuItem>
                             </Select>
                         </FormControl>
@@ -396,6 +446,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 ...(submission.status === 'pending' && {
                                                                     bgcolor: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb',
                                                                 }),
+                                                                ...(submission.status === 'deletion_requested' && {
+                                                                    bgcolor: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa',
+                                                                }),
                                                             }}
                                                         />
                                                     </TableCell>
@@ -439,9 +492,36 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 variant="contained"
                                                                 size="small"
                                                                 onClick={() => {
+                                                                    setEditingSubmissionId(submission.id);
                                                                     setData({
-                                                                        ...submission,
-                                                                        submission_status: submission.status,
+                                                                        author_full_name: submission.author_full_name || '',
+                                                                        co_author_1: submission.co_author_1 || '',
+                                                                        co_author_1_institute: submission.co_author_1_institute || '',
+                                                                        co_author_2: submission.co_author_2 || '',
+                                                                        co_author_2_institute: submission.co_author_2_institute || '',
+                                                                        co_author_3: submission.co_author_3 || '',
+                                                                        co_author_3_institute: submission.co_author_3_institute || '',
+                                                                        co_author_4: submission.co_author_4 || '',
+                                                                        co_author_4_institute: submission.co_author_4_institute || '',
+                                                                        co_author_5: submission.co_author_5 || '',
+                                                                        co_author_5_institute: submission.co_author_5_institute || '',
+                                                                        mobile_number: submission.mobile_number || '',
+                                                                        corresponding_author_email: submission.corresponding_author_email || '',
+                                                                        paper_theme: submission.paper_theme || '',
+                                                                        paper_sub_theme: submission.paper_sub_theme || '',
+                                                                        category_submission: submission.category_submission || '',
+                                                                        participant_category: submission.participant_category || '',
+                                                                        title: submission.title || '',
+                                                                        abstract: submission.abstract || '',
+                                                                        keywords: submission.keywords || '',
+                                                                        layouting_file: null,
+                                                                        editor_feedback_file: null,
+                                                                        full_paper_file: null,
+                                                                        institute_organization: submission.institute_organization || '',
+                                                                        submission_status: submission.status || '',
+                                                                        consent_agreed: submission.consent_agreed || false,
+                                                                        publication_option: submission.publication_option || '',
+                                                                        preferred_publication: submission.preferred_publication || '',
                                                                     });
                                                                     setShowForm(true);
                                                                     setTimeout(() => {
@@ -463,6 +543,31 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             >
                                                                 Edit
                                                             </Button>
+                                                            {submission.status !== 'deletion_requested' && (
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        setDeletingSubmissionId(submission.id);
+                                                                        setDeleteDialogOpen(true);
+                                                                    }}
+                                                                    sx={{
+                                                                        color: '#dc2626',
+                                                                        borderColor: '#fca5a5',
+                                                                        borderRadius: '8px',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.75rem',
+                                                                        px: 1.5,
+                                                                        '&:hover': {
+                                                                            borderColor: '#dc2626',
+                                                                            bgcolor: '#fef2f2',
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    Delete
+                                                                </Button>
+                                                            )}
                                                         </Box>
                                                     </TableCell>
                                                 </TableRow>
@@ -571,9 +676,36 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         size="small"
                                                         fullWidth
                                                         onClick={() => {
+                                                            setEditingSubmissionId(submission.id);
                                                             setData({
-                                                                ...submission,
-                                                                submission_status: submission.status,
+                                                                author_full_name: submission.author_full_name || '',
+                                                                co_author_1: submission.co_author_1 || '',
+                                                                co_author_1_institute: submission.co_author_1_institute || '',
+                                                                co_author_2: submission.co_author_2 || '',
+                                                                co_author_2_institute: submission.co_author_2_institute || '',
+                                                                co_author_3: submission.co_author_3 || '',
+                                                                co_author_3_institute: submission.co_author_3_institute || '',
+                                                                co_author_4: submission.co_author_4 || '',
+                                                                co_author_4_institute: submission.co_author_4_institute || '',
+                                                                co_author_5: submission.co_author_5 || '',
+                                                                co_author_5_institute: submission.co_author_5_institute || '',
+                                                                mobile_number: submission.mobile_number || '',
+                                                                corresponding_author_email: submission.corresponding_author_email || '',
+                                                                paper_theme: submission.paper_theme || '',
+                                                                paper_sub_theme: submission.paper_sub_theme || '',
+                                                                category_submission: submission.category_submission || '',
+                                                                participant_category: submission.participant_category || '',
+                                                                title: submission.title || '',
+                                                                abstract: submission.abstract || '',
+                                                                keywords: submission.keywords || '',
+                                                                layouting_file: null,
+                                                                editor_feedback_file: null,
+                                                                full_paper_file: null,
+                                                                institute_organization: submission.institute_organization || '',
+                                                                submission_status: submission.status || '',
+                                                                consent_agreed: submission.consent_agreed || false,
+                                                                publication_option: submission.publication_option || '',
+                                                                preferred_publication: submission.preferred_publication || '',
                                                             });
                                                             setShowForm(true);
                                                             setTimeout(() => {
@@ -595,6 +727,32 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                     >
                                                         Edit
                                                     </Button>
+                                                    {submission.status !== 'deletion_requested' && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            fullWidth
+                                                            onClick={() => {
+                                                                setDeletingSubmissionId(submission.id);
+                                                                setDeleteDialogOpen(true);
+                                                            }}
+                                                            sx={{
+                                                                color: '#dc2626',
+                                                                borderColor: '#fca5a5',
+                                                                borderRadius: '10px',
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.8rem',
+                                                                py: 1,
+                                                                '&:hover': {
+                                                                    borderColor: '#dc2626',
+                                                                    bgcolor: '#fef2f2',
+                                                                },
+                                                            }}
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    )}
                                                 </Stack>
                                             </CardContent>
                                         </Card>
@@ -1472,6 +1630,109 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                     </CardContent>
                                 </Card>
 
+                                {/* SECTION: Publication Preference */}
+                                <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                                            Publication Preference
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.875rem', md: '1rem' } }}>
+                                            Would you like to publish your paper in a Scopus-indexed proceedings or journal?
+                                        </Typography>
+
+                                        <FormControl component="fieldset" error={!!errors.publication_option}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={data.publication_option === 'no'}
+                                                            onChange={() => {
+                                                                setData({
+                                                                    ...data,
+                                                                    publication_option: 'no',
+                                                                    preferred_publication: '',
+                                                                });
+                                                            }}
+                                                            sx={{ '&.Mui-checked': { color: '#1abc9c' } }}
+                                                        />
+                                                    }
+                                                    label={
+                                                        <Typography sx={{ fontSize: { xs: '0.875rem', md: '0.95rem' } }}>
+                                                            No – The paper will be published only in the 55th PIT IAGI Proceedings.
+                                                        </Typography>
+                                                    }
+                                                />
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={data.publication_option === 'yes'}
+                                                            onChange={() => {
+                                                                setData({
+                                                                    ...data,
+                                                                    publication_option: 'yes',
+                                                                    preferred_publication: '',
+                                                                });
+                                                            }}
+                                                            sx={{ '&.Mui-checked': { color: '#1abc9c' } }}
+                                                        />
+                                                    }
+                                                    label={
+                                                        <Typography sx={{ fontSize: { xs: '0.875rem', md: '0.95rem' } }}>
+                                                            Yes – Please indicate your preferred publication option:
+                                                        </Typography>
+                                                    }
+                                                />
+                                            </Box>
+                                            {errors.publication_option && (
+                                                <Typography variant="caption" color="error" sx={{ ml: 2 }}>{errors.publication_option}</Typography>
+                                            )}
+                                        </FormControl>
+
+                                        {/* Sub-options when Yes is selected */}
+                                        {data.publication_option === 'yes' && (
+                                            <Box sx={{ ml: 4, mt: 1, pl: 2, borderLeft: '3px solid #1abc9c', borderRadius: '2px' }}>
+                                                <FormControl component="fieldset" error={!!errors.preferred_publication}>
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox
+                                                                    size="small"
+                                                                    checked={data.preferred_publication === 'scopus_proceedings'}
+                                                                    onChange={() => setData('preferred_publication', 'scopus_proceedings')}
+                                                                    sx={{ '&.Mui-checked': { color: '#1abc9c' } }}
+                                                                />
+                                                            }
+                                                            label={
+                                                                <Typography sx={{ fontSize: { xs: '0.85rem', md: '0.9rem' } }}>
+                                                                    1. Scopus-indexed Proceedings
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox
+                                                                    size="small"
+                                                                    checked={data.preferred_publication === 'iagi_journal'}
+                                                                    onChange={() => setData('preferred_publication', 'iagi_journal')}
+                                                                    sx={{ '&.Mui-checked': { color: '#1abc9c' } }}
+                                                                />
+                                                            }
+                                                            label={
+                                                                <Typography sx={{ fontSize: { xs: '0.85rem', md: '0.9rem' } }}>
+                                                                    2. IAGI Journal
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                    </Box>
+                                                    {errors.preferred_publication && (
+                                                        <Typography variant="caption" color="error" sx={{ ml: 2 }}>{errors.preferred_publication}</Typography>
+                                                    )}
+                                                </FormControl>
+                                            </Box>
+                                        )}
+                                    </CardContent>
+                                </Card>
+
 
                                 {/* SECTION 4: File Uploads - Only visible when status is 'accepted' */}
                                 {data.submission_status === 'accepted' && (
@@ -1745,6 +2006,99 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         }}
                     >
                         Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => {
+                    setDeleteDialogOpen(false);
+                    setDeletingSubmissionId(null);
+                    setDeletionReason('');
+                }}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                    }
+                }}
+            >
+                <DialogTitle sx={{
+                    background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                    color: 'white',
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                }}>
+                    ⚠️ Request Submission Deletion
+                </DialogTitle>
+                <DialogContent sx={{ pt: 3, pb: 1 }}>
+                    <Typography variant="body1" sx={{ mb: 2, mt: 1, color: '#374151' }}>
+                        Are you sure you want to request deletion of this submission? An admin will review your request before the submission is permanently deleted.
+                    </Typography>
+                    <TextField
+                        label="Reason for deletion *"
+                        multiline
+                        rows={3}
+                        fullWidth
+                        value={deletionReason}
+                        onChange={(e) => setDeletionReason(e.target.value)}
+                        placeholder="Please explain why you want to delete this submission..."
+                        inputProps={{ maxLength: 500 }}
+                        helperText={`${deletionReason.length}/500 characters`}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '12px',
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#dc2626',
+                                },
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#dc2626',
+                            },
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+                    <Button
+                        onClick={() => {
+                            setDeleteDialogOpen(false);
+                            setDeletingSubmissionId(null);
+                            setDeletionReason('');
+                        }}
+                        sx={{
+                            color: '#6b7280',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            borderRadius: '10px',
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleRequestDeletion}
+                        disabled={!deletionReason.trim() || deletionProcessing}
+                        sx={{
+                            background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                            color: 'white',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            borderRadius: '10px',
+                            px: 3,
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)',
+                            },
+                            '&:disabled': {
+                                background: '#e5e7eb',
+                                color: '#9ca3af',
+                            },
+                        }}
+                    >
+                        {deletionProcessing ? 'Submitting...' : 'Request Deletion'}
                     </Button>
                 </DialogActions>
             </Dialog>

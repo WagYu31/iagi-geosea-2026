@@ -57,7 +57,10 @@ export default function LandingPage({ auth, serverSettings }) {
     return (
         <ThemeProvider theme={landingTheme}>
             <CssBaseline enableColorScheme />
-            <Head title="55TH IAGI - GEOSEA XIX 2026" />
+            <Head title="55TH PIT IAGI - GEOSEA XIX 2026 | International Geological Conference">
+                <meta name="description" content="Join the 55th Annual Convention of the Indonesian Association of Geologists (IAGI) and GEOSEA XIX 2026 — Southeast Asia's premier geological conference. Register now for keynote sessions, workshops, and networking opportunities." />
+                <meta name="robots" content="index, follow" />
+            </Head>
 
             <AppAppBar auth={auth} />
 

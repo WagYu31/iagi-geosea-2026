@@ -203,7 +203,7 @@ export default function AppAppBar({ auth }) {
                                     <Typography sx={{ fontWeight: 700, color: '#094d42', fontSize: '1rem' }}>
                                         IAGI-GEOSEA XIX 2026
                                     </Typography>
-                                    <IconButton onClick={() => setOpen(false)}>
+                                    <IconButton aria-label="Close menu" onClick={() => setOpen(false)}>
                                         <CloseRoundedIcon />
                                     </IconButton>
                                 </Box>

@@ -228,6 +228,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
             'revision_required_phase2': { bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', color: '#ea580c', label: 'Revision P2' },
             'accepted': { bg: isDark ? 'rgba(22, 163, 74, 0.15)' : '#dcfce7', color: '#16a34a', label: 'Accepted' },
             'rejected': { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2', color: '#dc2626', label: 'Rejected' },
+            'deletion_requested': { bg: isDark ? 'rgba(249, 115, 22, 0.15)' : '#fff7ed', color: '#ea580c', label: 'Delete Req.' },
         };
         return map[status] || { bg: isDark ? 'rgba(107, 114, 128, 0.15)' : '#f3f4f6', color: '#6b7280', label: status };
     };
@@ -398,6 +399,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     <MenuItem value="revision_required_phase2">Revision P2 ({submissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
                                     <MenuItem value="accepted">Accepted ({submissions.filter(s => s.status === 'accepted').length})</MenuItem>
                                     <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
+                                    <MenuItem value="deletion_requested">Delete Requested ({submissions.filter(s => s.status === 'deletion_requested').length})</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl size="small" sx={{ minWidth: 160 }}>
@@ -855,26 +857,85 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
-                                                    <Tooltip title="Delete submission">
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => {
-                                                                if (confirm('Are you sure you want to delete this submission? This action cannot be undone and will delete all related reviews and payments.')) {
-                                                                    router.delete(route('admin.submissions.delete', submission.id), {
-                                                                        preserveScroll: true,
-                                                                    });
-                                                                }
-                                                            }}
-                                                            sx={{
-                                                                color: isDark ? '#f87171' : '#ef4444',
-                                                                '&:hover': {
-                                                                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fee2e2',
-                                                                },
-                                                            }}
-                                                        >
-                                                            <DeleteIcon sx={{ fontSize: 20 }} />
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                                                        {submission.status === 'deletion_requested' ? (
+                                                            <>
+                                                                <Tooltip title={`Reason: ${submission.deletion_reason || 'No reason provided'}`}>
+                                                                    <Button
+                                                                        size="small"
+                                                                        variant="contained"
+                                                                        onClick={() => {
+                                                                            if (confirm(`Approve deletion of "${submission.title}"?\n\nReason: ${submission.deletion_reason || 'No reason provided'}\n\nThis will permanently delete the submission and all related data.`)) {
+                                                                                router.post(route('admin.submissions.approveDeletion', submission.id), {}, {
+                                                                                    preserveScroll: true,
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        sx={{
+                                                                            bgcolor: '#16a34a',
+                                                                            color: 'white',
+                                                                            fontSize: '0.65rem',
+                                                                            textTransform: 'none',
+                                                                            fontWeight: 600,
+                                                                            borderRadius: '6px',
+                                                                            px: 1,
+                                                                            py: 0.3,
+                                                                            minWidth: 0,
+                                                                            '&:hover': { bgcolor: '#15803d' },
+                                                                        }}
+                                                                    >
+                                                                        ✓ Approve
+                                                                    </Button>
+                                                                </Tooltip>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    onClick={() => {
+                                                                        if (confirm('Reject this deletion request? The submission status will be reset to Pending.')) {
+                                                                            router.post(route('admin.submissions.rejectDeletion', submission.id), {}, {
+                                                                                preserveScroll: true,
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                    sx={{
+                                                                        color: '#dc2626',
+                                                                        borderColor: '#fca5a5',
+                                                                        fontSize: '0.65rem',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 600,
+                                                                        borderRadius: '6px',
+                                                                        px: 1,
+                                                                        py: 0.3,
+                                                                        minWidth: 0,
+                                                                        '&:hover': { borderColor: '#dc2626', bgcolor: '#fef2f2' },
+                                                                    }}
+                                                                >
+                                                                    ✗ Reject
+                                                                </Button>
+                                                            </>
+                                                        ) : (
+                                                            <Tooltip title="Delete submission">
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        if (confirm('Are you sure you want to delete this submission? This action cannot be undone and will delete all related reviews and payments.')) {
+                                                                            router.delete(route('admin.submissions.delete', submission.id), {
+                                                                                preserveScroll: true,
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                    sx={{
+                                                                        color: isDark ? '#f87171' : '#ef4444',
+                                                                        '&:hover': {
+                                                                            bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fee2e2',
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    <DeleteIcon sx={{ fontSize: 20 }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+                                                    </Box>
                                                 </TableCell>
                                             </TableRow>
                                         );

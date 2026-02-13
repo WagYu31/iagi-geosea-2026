@@ -24,9 +24,13 @@ return new class extends Migration
                 ->update(['submission_code' => 'LEGACY-' . str_pad($row->id, 5, '0', STR_PAD_LEFT)]);
         }
 
-        Schema::table('submissions', function (Blueprint $table) {
-            $table->unique('submission_code');
-        });
+        try {
+            Schema::table('submissions', function (Blueprint $table) {
+                $table->unique('submission_code');
+            });
+        } catch (\Exception $e) {
+            // Unique constraint already exists, skip
+        }
     }
 
     /**

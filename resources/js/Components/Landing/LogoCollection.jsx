@@ -79,6 +79,7 @@ export default function LogoCollection({ settings }) {
                     </Box>
 
                     <Typography
+                        component="h2"
                         variant="h3"
                         sx={{
                             fontWeight: 800,

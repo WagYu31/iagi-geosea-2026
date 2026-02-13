@@ -6,6 +6,7 @@ use App\Models\Submission;
 use App\Models\Payment;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\PageVisit;
 use App\Models\EmailSetting;
 use App\Mail\SubmissionStatusChanged;
 use App\Services\WhatsAppNotificationService;
@@ -28,7 +29,7 @@ class AdminController extends Controller
             'verifiedPayments' => Payment::where('verified', true)->count(),
             'acceptedSubmissions' => Submission::where('status', 'accepted')->count(),
             'rejectedSubmissions' => Submission::where('status', 'rejected')->count(),
-            'totalUsers' => User::where('role', 'user')->count(),
+            'totalUsers' => User::where('role', 'Author')->count(),
         ];
 
         // Recent submissions
@@ -100,6 +101,26 @@ class AdminController extends Controller
                 ];
             });
 
+        // Visitor analytics
+        $visitorAnalytics = [
+            'today' => PageVisit::where('page', '/')->whereDate('visited_at', today())->count(),
+            'last7days' => PageVisit::where('page', '/')->where('visited_at', '>=', now()->subDays(7))->count(),
+            'last30days' => PageVisit::where('page', '/')->where('visited_at', '>=', now()->subDays(30))->count(),
+            'total' => PageVisit::where('page', '/')->count(),
+        ];
+
+        // Daily visitor trend (last 30 days)
+        $dailyVisitors = PageVisit::where('page', '/')
+            ->where('visited_at', '>=', now()->subDays(30))
+            ->selectRaw('DATE(visited_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(fn($item) => [
+                'date' => $item->date,
+                'count' => (int) $item->count,
+            ]);
+
         return Inertia::render('Admin/Dashboard', [
             'analytics' => $analytics,
             'recentSubmissions' => $recentSubmissions,
@@ -107,6 +128,112 @@ class AdminController extends Controller
             'submissionsPerTopic' => $submissionsPerTopic,
             'participantStats' => $participantStats,
             'submissionsPerTopicByParticipant' => $submissionsPerTopicByParticipant,
+            'visitorAnalytics' => $visitorAnalytics,
+            'dailyVisitors' => $dailyVisitors,
+        ]);
+    }
+
+    public function visitorAnalytics(Request $request)
+    {
+        $period = $request->get('period', '30d');
+
+        $stats = [
+            'today' => PageVisit::where('page', '/')->whereDate('visited_at', today())->count(),
+            'last7days' => PageVisit::where('page', '/')->where('visited_at', '>=', now()->subDays(7))->count(),
+            'last30days' => PageVisit::where('page', '/')->where('visited_at', '>=', now()->subDays(30))->count(),
+            'total' => PageVisit::where('page', '/')->count(),
+        ];
+
+        if ($period === 'today') {
+            // Hourly breakdown for today
+            $chartData = PageVisit::where('page', '/')
+                ->whereDate('visited_at', today())
+                ->selectRaw('HOUR(visited_at) as hour, COUNT(*) as count')
+                ->groupBy('hour')
+                ->orderBy('hour')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => str_pad($item->hour, 2, '0', STR_PAD_LEFT) . ':00',
+                    'count' => (int) $item->count,
+                ]);
+        } elseif ($period === '7d') {
+            $chartData = PageVisit::where('page', '/')
+                ->where('visited_at', '>=', now()->subDays(7))
+                ->selectRaw('DATE(visited_at) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
+                    'count' => (int) $item->count,
+                ]);
+        } else {
+            $chartData = PageVisit::where('page', '/')
+                ->where('visited_at', '>=', now()->subDays(30))
+                ->selectRaw('DATE(visited_at) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
+                    'count' => (int) $item->count,
+                ]);
+        }
+
+        return response()->json([
+            'stats' => $stats,
+            'chartData' => $chartData,
+            'period' => $period,
+        ]);
+    }
+
+    public function submissionAnalytics(Request $request)
+    {
+        $period = $request->get('period', '30d');
+
+        $stats = [
+            'today' => Submission::whereDate('created_at', today())->count(),
+            'last7days' => Submission::where('created_at', '>=', now()->subDays(7))->count(),
+            'last30days' => Submission::where('created_at', '>=', now()->subDays(30))->count(),
+            'total' => Submission::count(),
+        ];
+
+        if ($period === 'today') {
+            $chartData = Submission::whereDate('created_at', today())
+                ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
+                ->groupBy('hour')
+                ->orderBy('hour')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => str_pad($item->hour, 2, '0', STR_PAD_LEFT) . ':00',
+                    'count' => (int) $item->count,
+                ]);
+        } elseif ($period === '7d') {
+            $chartData = Submission::where('created_at', '>=', now()->subDays(7))
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
+                    'count' => (int) $item->count,
+                ]);
+        } else {
+            $chartData = Submission::where('created_at', '>=', now()->subDays(30))
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->map(fn($item) => [
+                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
+                    'count' => (int) $item->count,
+                ]);
+        }
+
+        return response()->json([
+            'stats' => $stats,
+            'chartData' => $chartData,
+            'period' => $period,
         ]);
     }
 
@@ -353,6 +480,49 @@ class AdminController extends Controller
         $submission->delete();
 
         return back()->with('success', 'Submission deleted successfully!');
+    }
+
+    public function approveDeletion($id)
+    {
+        $submission = Submission::findOrFail($id);
+
+        if ($submission->status !== 'deletion_requested') {
+            return back()->withErrors(['error' => 'This submission has not requested deletion.']);
+        }
+
+        // Delete related reviews
+        Review::where('submission_id', $id)->delete();
+
+        // Delete related payments
+        Payment::where('submission_id', $id)->delete();
+
+        // Delete submission files
+        foreach (['file_path', 'full_paper_file', 'layouting_file', 'editor_feedback_file'] as $fileField) {
+            if ($submission->$fileField && Storage::disk('public')->exists($submission->$fileField)) {
+                Storage::disk('public')->delete($submission->$fileField);
+            }
+        }
+
+        $submission->delete();
+
+        return back()->with('success', 'Deletion request approved. Submission has been permanently deleted.');
+    }
+
+    public function rejectDeletion($id)
+    {
+        $submission = Submission::findOrFail($id);
+
+        if ($submission->status !== 'deletion_requested') {
+            return back()->withErrors(['error' => 'This submission has not requested deletion.']);
+        }
+
+        $submission->update([
+            'status' => 'pending',
+            'deletion_reason' => null,
+            'deletion_requested_at' => null,
+        ]);
+
+        return back()->with('success', 'Deletion request rejected. Submission status reset to pending.');
     }
 
     public function payments()
