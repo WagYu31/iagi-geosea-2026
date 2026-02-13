@@ -64,10 +64,13 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('API error');
+                return res.json();
+            })
             .then(data => {
-                setLiveStats(data.stats);
-                setLiveChartData(data.chartData || []);
+                if (data?.stats) setLiveStats(data.stats);
+                setLiveChartData(data?.chartData || []);
                 setLastUpdated(new Date());
                 setIsRefreshing(false);
             })
@@ -98,10 +101,13 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('API error');
+                return res.json();
+            })
             .then(data => {
-                setSubStats(data.stats);
-                setSubChartData(data.chartData || []);
+                if (data?.stats) setSubStats(data.stats);
+                setSubChartData(data?.chartData || []);
                 setSubLastUpdated(new Date());
                 setIsSubRefreshing(false);
             })

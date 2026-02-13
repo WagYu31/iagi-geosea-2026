@@ -17,8 +17,8 @@
       "_vendor-mui-icons-Dh1wiQLE.js"
     ]
   },
-  "_pages-admin-nD12kcTJ.js": {
-    "file": "assets/pages-admin-nD12kcTJ.js",
+  "_pages-admin-BRm429nc.js": {
+    "file": "assets/pages-admin-BRm429nc.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -287,7 +287,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Cvx5bmpk.js",
+    "file": "assets/app-usz2hRyK.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -299,12 +299,12 @@
       "_vendor-mui-icons-Dh1wiQLE.js"
     ],
     "dynamicImports": [
-      "_pages-admin-nD12kcTJ.js",
+      "_pages-admin-BRm429nc.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-nD12kcTJ.js",
+      "_pages-admin-BRm429nc.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-nD12kcTJ.js",
+      "_pages-admin-BRm429nc.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-CD9CtvWE.js",
       "_pages-auth-CD9CtvWE.js",
