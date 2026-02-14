@@ -353,10 +353,10 @@ export default function Footer({ settings, auth }) {
                                             lineHeight: 1.2,
                                         }}
                                     >
-                                        PIT IAGI-GEOSEA XIX
+                                        55ᵀᴴ IAGI Annual Scientific Meeting 2026
                                     </Typography>
                                     <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                                        55TH 2026 Conference
+                                        GEOSEA XIX Convention & Exhibition
                                     </Typography>
                                 </Box>
                             </Box>
