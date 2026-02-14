@@ -205,7 +205,7 @@ export default function Hero({ settings, auth }) {
                         variant="overline"
                         sx={{
                             display: 'block',
-                            fontSize: '0.85rem',
+                            fontSize: '1.1rem',
                             fontWeight: 700,
                             letterSpacing: '0.2em',
                             color: 'rgba(255,255,255,0.9)',
