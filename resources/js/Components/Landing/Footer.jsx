@@ -168,6 +168,88 @@ export default function Footer({ settings, auth }) {
                 </Box>
             )}
 
+            {/* Partners Section */}
+            <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(180deg, #f0fdf9 0%, #ecfdf5 50%, #e8f5f0 100%)' }}>
+                <Container maxWidth="lg">
+                    <Typography
+                        variant="overline"
+                        sx={{
+                            color: '#0d7a6a',
+                            fontWeight: 700,
+                            letterSpacing: '0.15em',
+                            fontSize: '0.75rem',
+                            display: 'block',
+                            textAlign: 'center',
+                            mb: 1,
+                        }}
+                    >
+                        OUR PARTNERS
+                    </Typography>
+                    <Typography
+                        variant="h5"
+                        align="center"
+                        sx={{
+                            fontWeight: 800,
+                            mb: { xs: 3, md: 5 },
+                            color: 'text.primary',
+                            fontSize: { xs: '1.5rem', md: '2rem' },
+                            letterSpacing: '0.02em',
+                        }}
+                    >
+                        Event Partners
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 4 }}>
+                        {/* Geo Energy Run Poster */}
+                        <Box
+                            component="a"
+                            href="https://geoenergy.run"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                display: 'block',
+                                maxWidth: 400,
+                                width: '100%',
+                                borderRadius: '20px',
+                                overflow: 'hidden',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                border: '3px solid transparent',
+                                '&:hover': {
+                                    transform: 'translateY(-8px) scale(1.02)',
+                                    boxShadow: '0 20px 60px rgba(13, 122, 106, 0.25)',
+                                    borderColor: '#0d7a6a',
+                                },
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src="/images/partners/geo-energy-run.jpg"
+                                alt="Geo Energy Run - IAGI"
+                                sx={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    display: 'block',
+                                }}
+                            />
+                        </Box>
+                    </Box>
+
+                    <Typography
+                        variant="body2"
+                        align="center"
+                        sx={{
+                            mt: 3,
+                            color: 'text.secondary',
+                            fontSize: '0.85rem',
+                            fontStyle: 'italic',
+                        }}
+                    >
+                        Click the poster to visit our partner's website
+                    </Typography>
+                </Container>
+            </Box>
+
             {/* Footer with Venue */}
             <Box
                 id="venue"

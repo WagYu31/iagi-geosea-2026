@@ -170,7 +170,7 @@
     ]
   },
   "resources/js/Pages/LandingPage.jsx": {
-    "file": "assets/LandingPage-DKzXB1Qh.js",
+    "file": "assets/LandingPage-C6F_Ge6-.js",
     "name": "LandingPage",
     "src": "resources/js/Pages/LandingPage.jsx",
     "isDynamicEntry": true,
@@ -287,7 +287,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-D43tp1gZ.js",
+    "file": "assets/app-alPEuSxs.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -327,7 +327,7 @@
       "resources/js/Pages/Welcome.jsx"
     ],
     "css": [
-      "assets/app-DCxS4RY3.css"
+      "assets/app-Db4i9yd7.css"
     ]
   }
 }
