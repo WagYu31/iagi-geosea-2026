@@ -686,6 +686,12 @@ class AdminController extends Controller
                 // Log error but don't fail the verification
                 \Log::warning('Failed to send verification email to ' . $user->email . ': ' . $e->getMessage());
             }
+        } else {
+            try {
+                Mail::to($user->email)->queue(new \App\Mail\AccountUnverified($user));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to send unverification email to ' . $user->email . ': ' . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'User verification status updated successfully');
