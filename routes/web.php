@@ -163,6 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/custom-section-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadCustomSectionBackground'])->name('settings.uploadCustomSectionBackground');
         Route::post('/settings/afgeo-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadAfgeoBackground'])->name('settings.uploadAfgeoBackground');
         Route::post('/settings/faq-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadFaqBackground'])->name('settings.uploadFaqBackground');
+        Route::post('/settings/upload-partner-poster', [App\Http\Controllers\LandingPageSettingController::class, 'uploadPartnerPoster'])->name('settings.uploadPartnerPoster');
 
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs

@@ -187,6 +187,8 @@ export default function Settings({ settings, submissionSettings }) {
     const [sponsorsDescription, setSponsorsDescription] = useState(
         getSettingValue('sponsors_description', 'Empowering the future of geological science through strategic partnerships.')
     );
+    const [partners, setPartners] = useState(getSettingValue('partners', []));
+    const [savingPartners, setSavingPartners] = useState(false);
     const [resources, setResources] = useState(getSettingValue('resources', []));
     // Conference Resources Text Settings
     const [resourcesText, setResourcesText] = useState(() => {
@@ -1040,6 +1042,98 @@ export default function Settings({ settings, submissionSettings }) {
     const removeSponsor = (index) => {
         const newSponsors = sponsors.filter((_, i) => i !== index);
         setSponsors(newSponsors);
+    };
+
+    // ── Partners CRUD ──
+    const addPartner = () => {
+        setPartners([...partners, { name: '', poster: '', url: '' }]);
+    };
+
+    const removePartner = (index) => {
+        const updated = partners.filter((_, i) => i !== index);
+        setPartners(updated);
+    };
+
+    const updatePartner = (index, field, value) => {
+        const updated = [...partners];
+        updated[index][field] = value;
+        setPartners(updated);
+    };
+
+    const handlePartnerPosterUpload = async (index, file) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('poster', file);
+        formData.append('index', index);
+
+        setUploading(true);
+        try {
+            const response = await fetch(route('admin.settings.uploadPartnerPoster'), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const updated = [...partners];
+                updated[index].poster = data.poster_url;
+                setPartners(updated);
+            }
+        } catch (error) {
+            console.error('Partner poster upload failed:', error);
+            alert('Failed to upload poster');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const savePartners = () => {
+        const settingId = getSettingId('partners');
+
+        setSavingPartners(true);
+
+        if (!settingId) {
+            // Create new setting
+            router.post(route('admin.settings.store'), {
+                key: 'partners',
+                value: JSON.stringify(partners),
+                group: 'landing_page',
+                type: 'json',
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setSavingPartners(false);
+                    alert('Partners saved successfully!');
+                    router.reload({ preserveScroll: true });
+                },
+                onError: (errors) => {
+                    setSavingPartners(false);
+                    console.error('Partners save error:', errors);
+                    alert('Failed to save partners.');
+                },
+            });
+            return;
+        }
+
+        router.patch(`/admin/settings/${settingId}`, {
+            value: JSON.stringify(partners),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setSavingPartners(false);
+                alert('Partners saved successfully!');
+            },
+            onError: (errors) => {
+                setSavingPartners(false);
+                console.error('Partners save error:', errors);
+                alert('Failed to save partners.');
+            },
+        });
     };
 
     // Update submission procedure item (now uses section index)
@@ -2053,6 +2147,124 @@ export default function Settings({ settings, submissionSettings }) {
                                                 }}
                                             >
                                                 {savingSponsors ? 'Saving...' : 'Save Sponsors'}
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Event Partners Section */}
+                                <Card elevation={0} sx={sectionCardSx}>
+                                    <CardContent>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                            <Typography variant="h6" sx={{ color: '#1abc9c' }}>
+                                                Event Partners
+                                            </Typography>
+                                            <Button
+                                                variant="contained"
+                                                startIcon={<AddIcon />}
+                                                onClick={addPartner}
+                                                sx={{ backgroundColor: '#1abc9c' }}
+                                            >
+                                                Add Partner
+                                            </Button>
+                                        </Box>
+
+                                        <Alert severity="info" sx={{ mb: 3 }}>
+                                            Upload partner posters with name and link URL. These will appear on the landing page as clickable poster cards.
+                                        </Alert>
+
+                                        <Grid container spacing={2}>
+                                            {partners.map((partner, index) => (
+                                                <Grid item xs={12} sm={6} md={4} key={index}>
+                                                    <Card variant="outlined" sx={{ p: 2, position: 'relative' }}>
+                                                        {/* Delete Button */}
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => removePartner(index)}
+                                                            sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}
+                                                        >
+                                                            <DeleteIcon fontSize="small" />
+                                                        </IconButton>
+
+                                                        {/* Poster Preview */}
+                                                        <Box
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: 200,
+                                                                backgroundColor: '#f5f5f5',
+                                                                borderRadius: 1,
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                overflow: 'hidden',
+                                                                backgroundImage: partner.poster ? `url(${partner.poster})` : 'none',
+                                                                backgroundSize: 'contain',
+                                                                backgroundPosition: 'center',
+                                                                backgroundRepeat: 'no-repeat',
+                                                            }}
+                                                        >
+                                                            {!partner.poster && (
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    No Poster
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
+
+                                                        {/* Upload Button */}
+                                                        <Button
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            component="label"
+                                                            startIcon={<UploadFileIcon />}
+                                                            disabled={uploading}
+                                                            sx={{ mb: 2 }}
+                                                        >
+                                                            Upload Poster
+                                                            <input
+                                                                type="file"
+                                                                hidden
+                                                                accept="image/*"
+                                                                onChange={(e) => handlePartnerPosterUpload(index, e.target.files[0])}
+                                                            />
+                                                        </Button>
+
+                                                        {/* Name Field */}
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Partner Name"
+                                                            value={partner.name || ''}
+                                                            onChange={(e) => updatePartner(index, 'name', e.target.value)}
+                                                            sx={{ mb: 2 }}
+                                                            size="small"
+                                                        />
+
+                                                        {/* URL Field */}
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Website URL"
+                                                            value={partner.url || ''}
+                                                            onChange={(e) => updatePartner(index, 'url', e.target.value)}
+                                                            placeholder="https://example.com"
+                                                            size="small"
+                                                        />
+                                                    </Card>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+
+                                        {/* Save Button */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={savePartners}
+                                                disabled={savingPartners}
+                                                sx={{
+                                                    backgroundColor: '#1abc9c',
+                                                    '&:hover': { backgroundColor: '#16a085' },
+                                                }}
+                                            >
+                                                {savingPartners ? 'Saving...' : 'Save Partners'}
                                             </Button>
                                         </Box>
                                     </CardContent>

@@ -240,6 +240,79 @@ class LandingPageSettingController extends Controller
     }
 
     /**
+     * Upload partner poster
+     */
+    public function uploadPartnerPoster(Request $request)
+    {
+        try {
+            $request->validate([
+                'poster' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+                'index' => 'required|integer'
+            ]);
+
+            $setting = LandingPageSetting::where('key', 'partners')->first();
+
+            if (!$setting) {
+                Log::error('Partners setting not found');
+                return response()->json(['error' => 'Setting not found'], 404);
+            }
+
+            $partners = json_decode($setting->value, true);
+            $index = $request->index;
+
+            if (!isset($partners[$index])) {
+                Log::error('Partner not found at index: ' . $index);
+                return response()->json(['error' => 'Partner not found at index ' . $index], 404);
+            }
+
+            // Ensure directory exists
+            $uploadPath = public_path('storage/partners');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Delete old poster if exists
+            if (isset($partners[$index]['poster']) && $partners[$index]['poster']) {
+                $oldPosterPath = public_path($partners[$index]['poster']);
+                if (file_exists($oldPosterPath)) {
+                    unlink($oldPosterPath);
+                    Log::info('Deleted old partner poster: ' . $oldPosterPath);
+                }
+            }
+
+            // Upload new poster
+            $file = $request->file('poster');
+            $filename = 'partner_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+
+            $file->move($uploadPath, $filename);
+            Log::info('Partner poster uploaded: ' . $filename);
+
+            // Update partner poster path
+            $partners[$index]['poster'] = '/storage/partners/' . $filename;
+
+            // Save to database
+            $setting->update(['value' => json_encode($partners)]);
+            Log::info('Database updated with new partner poster path');
+
+            // Clear landing page cache
+            Cache::forget('landing-page-settings');
+
+            return response()->json([
+                'success' => true,
+                'poster_url' => $partners[$index]['poster'],
+                'message' => 'Partner poster uploaded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Partner poster upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Download resource file
      */
     public function downloadResource($index)

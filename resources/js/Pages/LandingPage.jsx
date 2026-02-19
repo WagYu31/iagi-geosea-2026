@@ -13,6 +13,7 @@ import Pricing from '../Components/Landing/Pricing';
 import Testimonials from '../Components/Landing/Testimonials';
 import FAQ from '../Components/Landing/FAQ';
 import Footer from '../Components/Landing/Footer';
+import ScrollReveal from '../Components/Landing/ScrollReveal';
 
 // Force light-mode theme for the landing page
 const landingTheme = createTheme({
@@ -66,14 +67,36 @@ export default function LandingPage({ auth, serverSettings }) {
 
             <Box sx={{ bgcolor: 'background.default' }}>
                 <Hero settings={settings} auth={auth} />
-                <LogoCollection settings={settings} />
-                <Features settings={settings} />
-                <Highlights settings={settings} />
-                <Pricing settings={settings} />
-                <Testimonials settings={settings} />
-                <FAQ settings={settings} />
-                <Footer settings={settings} auth={auth} />
+
+                <ScrollReveal variant="fadeUp" duration={900}>
+                    <LogoCollection settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
+                    <Features settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900}>
+                    <Highlights settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
+                    <Pricing settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900}>
+                    <Testimonials settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
+                    <FAQ settings={settings} />
+                </ScrollReveal>
+
+                <ScrollReveal variant="fadeUp" duration={900}>
+                    <Footer settings={settings} auth={auth} />
+                </ScrollReveal>
             </Box>
         </ThemeProvider>
     );
 }
+

@@ -9,6 +9,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ScrollReveal from './ScrollReveal';
 
 export default function FAQ({ settings }) {
     const [expanded, setExpanded] = React.useState(false);
@@ -106,128 +107,130 @@ export default function FAQ({ settings }) {
                 <Box sx={{ width: '100%' }}>
                     {procedureSections.length > 0 ? (
                         procedureSections.map((section, sectionIndex) => (
-                            <Accordion
-                                key={sectionIndex}
-                                expanded={expanded === `panel${sectionIndex}`}
-                                onChange={handleChange(`panel${sectionIndex}`)}
-                                disableGutters
-                                elevation={0}
-                                sx={{
-                                    borderRadius: '12px !important',
-                                    border: '1px solid',
-                                    borderColor: expanded === `panel${sectionIndex}` ? '#0d9488' : 'divider',
-                                    mb: 1.5,
-                                    bgcolor: expanded === `panel${sectionIndex}` ? alpha('#0d9488', 0.04) : 'background.paper',
-                                    transition: 'all 0.3s ease',
-                                    '&:before': { display: 'none' },
-                                    '&:hover': {
-                                        borderColor: '#0d9488',
-                                    },
-                                }}
-                            >
-                                <AccordionSummary
-                                    expandIcon={
-                                        <ExpandMoreIcon
-                                            sx={{
-                                                color: expanded === `panel${sectionIndex}` ? '#0d9488' : 'text.secondary',
-                                                transition: 'color 0.2s',
-                                            }}
-                                        />
-                                    }
+                            <ScrollReveal key={sectionIndex} variant="fadeUp" delay={sectionIndex * 120} duration={700}>
+                                <Accordion
+                                    key={sectionIndex}
+                                    expanded={expanded === `panel${sectionIndex}`}
+                                    onChange={handleChange(`panel${sectionIndex}`)}
+                                    disableGutters
+                                    elevation={0}
                                     sx={{
-                                        minHeight: 56,
-                                        '& .MuiAccordionSummary-content': { my: 1.5 },
+                                        borderRadius: '12px !important',
+                                        border: '1px solid',
+                                        borderColor: expanded === `panel${sectionIndex}` ? '#0d9488' : 'divider',
+                                        mb: 1.5,
+                                        bgcolor: expanded === `panel${sectionIndex}` ? alpha('#0d9488', 0.04) : 'background.paper',
+                                        transition: 'all 0.3s ease',
+                                        '&:before': { display: 'none' },
+                                        '&:hover': {
+                                            borderColor: '#0d9488',
+                                        },
                                     }}
                                 >
-                                    <Typography
-                                        component="span"
-                                        variant="subtitle1"
+                                    <AccordionSummary
+                                        expandIcon={
+                                            <ExpandMoreIcon
+                                                sx={{
+                                                    color: expanded === `panel${sectionIndex}` ? '#0d9488' : 'text.secondary',
+                                                    transition: 'color 0.2s',
+                                                }}
+                                            />
+                                        }
                                         sx={{
-                                            fontWeight: expanded === `panel${sectionIndex}` ? 700 : 600,
-                                            color: expanded === `panel${sectionIndex}` ? '#094d42' : 'text.primary',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em',
+                                            minHeight: 56,
+                                            '& .MuiAccordionSummary-content': { my: 1.5 },
                                         }}
                                     >
-                                        {section.title}
-                                    </Typography>
-                                </AccordionSummary>
-                                <AccordionDetails sx={{ pt: 0, pb: 2.5, px: 3 }}>
-                                    {section.items && section.items.map((step, stepIndex) => (
-                                        <Box
-                                            key={stepIndex}
-                                            component={step.link ? 'a' : 'div'}
-                                            href={step.link || undefined}
-                                            target={step.link ? '_blank' : undefined}
-                                            rel={step.link ? 'noopener noreferrer' : undefined}
-                                            download={step.link ? true : undefined}
+                                        <Typography
+                                            component="span"
+                                            variant="subtitle1"
                                             sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 2,
-                                                mb: stepIndex < section.items.length - 1 ? 1.5 : 0,
-                                                py: 1.5,
-                                                px: 2,
-                                                borderRadius: '10px',
-                                                textDecoration: 'none',
-                                                color: 'inherit',
-                                                cursor: step.link ? 'pointer' : 'default',
-                                                transition: 'all 0.2s ease',
-                                                ...(step.link && {
-                                                    '&:hover': {
-                                                        bgcolor: alpha('#0d9488', 0.08),
-                                                        transform: 'translateX(4px)',
-                                                    },
-                                                }),
+                                                fontWeight: expanded === `panel${sectionIndex}` ? 700 : 600,
+                                                color: expanded === `panel${sectionIndex}` ? '#094d42' : 'text.primary',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em',
                                             }}
                                         >
-                                            {/* Step number */}
+                                            {section.title}
+                                        </Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails sx={{ pt: 0, pb: 2.5, px: 3 }}>
+                                        {section.items && section.items.map((step, stepIndex) => (
                                             <Box
+                                                key={stepIndex}
+                                                component={step.link ? 'a' : 'div'}
+                                                href={step.link || undefined}
+                                                target={step.link ? '_blank' : undefined}
+                                                rel={step.link ? 'noopener noreferrer' : undefined}
+                                                download={step.link ? true : undefined}
                                                 sx={{
-                                                    minWidth: 32,
-                                                    height: 32,
-                                                    borderRadius: '50%',
-                                                    bgcolor: '#0d9488',
-                                                    color: 'white',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontWeight: 700,
-                                                    fontSize: '0.85rem',
-                                                    flexShrink: 0,
+                                                    gap: 2,
+                                                    mb: stepIndex < section.items.length - 1 ? 1.5 : 0,
+                                                    py: 1.5,
+                                                    px: 2,
+                                                    borderRadius: '10px',
+                                                    textDecoration: 'none',
+                                                    color: 'inherit',
+                                                    cursor: step.link ? 'pointer' : 'default',
+                                                    transition: 'all 0.2s ease',
+                                                    ...(step.link && {
+                                                        '&:hover': {
+                                                            bgcolor: alpha('#0d9488', 0.08),
+                                                            transform: 'translateX(4px)',
+                                                        },
+                                                    }),
                                                 }}
                                             >
-                                                {stepIndex + 1}
-                                            </Box>
-                                            {/* Step text */}
-                                            <Box sx={{ flex: 1 }}>
-                                                <Typography
-                                                    variant="body2"
+                                                {/* Step number */}
+                                                <Box
                                                     sx={{
-                                                        color: 'text.primary',
-                                                        fontWeight: 500,
-                                                        lineHeight: 1.6,
+                                                        minWidth: 32,
+                                                        height: 32,
+                                                        borderRadius: '50%',
+                                                        bgcolor: '#0d9488',
+                                                        color: 'white',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.85rem',
+                                                        flexShrink: 0,
                                                     }}
                                                 >
-                                                    {step.text}
-                                                </Typography>
-                                                {step.filename && (
+                                                    {stepIndex + 1}
+                                                </Box>
+                                                {/* Step text */}
+                                                <Box sx={{ flex: 1 }}>
                                                     <Typography
-                                                        variant="caption"
-                                                        sx={{ color: '#0d9488', fontWeight: 600 }}
+                                                        variant="body2"
+                                                        sx={{
+                                                            color: 'text.primary',
+                                                            fontWeight: 500,
+                                                            lineHeight: 1.6,
+                                                        }}
                                                     >
-                                                        📎 {step.filename}
+                                                        {step.text}
                                                     </Typography>
+                                                    {step.filename && (
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{ color: '#0d9488', fontWeight: 600 }}
+                                                        >
+                                                            📎 {step.filename}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                                {/* Download icon */}
+                                                {step.link && (
+                                                    <DescriptionIcon sx={{ color: '#0d9488', fontSize: 20, flexShrink: 0 }} />
                                                 )}
                                             </Box>
-                                            {/* Download icon */}
-                                            {step.link && (
-                                                <DescriptionIcon sx={{ color: '#0d9488', fontSize: 20, flexShrink: 0 }} />
-                                            )}
-                                        </Box>
-                                    ))}
-                                </AccordionDetails>
-                            </Accordion>
+                                        ))}
+                                    </AccordionDetails>
+                                </Accordion>
+                            </ScrollReveal>
                         ))
                     ) : (
                         /* Fallback if no procedure data */

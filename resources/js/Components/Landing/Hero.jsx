@@ -1,11 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
-import { alpha } from '@mui/material/styles';
+import { alpha, keyframes } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+// Keyframe animations
+const fadeInUp = keyframes`
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+`;
+
+const fadeIn = keyframes`
+    from { opacity: 0; }
+    to   { opacity: 1; }
+`;
+
+const float1 = keyframes`
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25%      { transform: translate(30px, -40px) rotate(45deg); }
+    50%      { transform: translate(-20px, -80px) rotate(90deg); }
+    75%      { transform: translate(40px, -30px) rotate(135deg); }
+`;
+
+const float2 = keyframes`
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33%      { transform: translate(-50px, -30px) rotate(-60deg); }
+    66%      { transform: translate(30px, -60px) rotate(60deg); }
+`;
+
+const float3 = keyframes`
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(20px, -50px) scale(1.2); }
+`;
+
+const gradientShift = keyframes`
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+`;
+
+const pulseGlow = keyframes`
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 0.6; }
+`;
+
+// Floating particle component
+function FloatingParticle({ size, top, left, delay, duration, variant = 1 }) {
+    const animations = [float1, float2, float3];
+    const anim = animations[(variant - 1) % 3];
+
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                top,
+                left,
+                width: size,
+                height: size,
+                borderRadius: variant === 3 ? '4px' : '50%',
+                background: variant === 1
+                    ? 'radial-gradient(circle, rgba(77, 212, 172, 0.4), transparent)'
+                    : variant === 2
+                        ? 'radial-gradient(circle, rgba(13, 148, 136, 0.3), transparent)'
+                        : 'linear-gradient(135deg, rgba(77, 212, 172, 0.25), rgba(13, 148, 136, 0.15))',
+                animation: `${anim} ${duration}s ease-in-out ${delay}s infinite`,
+                pointerEvents: 'none',
+                zIndex: 1,
+                transform: variant === 3 ? 'rotate(45deg)' : undefined,
+            }}
+        />
+    );
+}
 
 export default function Hero({ settings, auth }) {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -28,6 +96,10 @@ export default function Hero({ settings, auth }) {
     }, [settings.countdown_target_date]);
 
     const heroText = settings.hero_text || {};
+
+    // Split title into words for staggered animation
+    const titleLine1 = heroText.title_line1 || 'PIT IAGI';
+    const titleLine2 = heroText.title_line2 || 'GEOSEA XIX 2026';
 
     return (
         <Box
@@ -104,7 +176,7 @@ export default function Hero({ settings, auth }) {
                 </Box>
             )}
 
-            {/* Overlay */}
+            {/* Animated Gradient Overlay */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -117,6 +189,33 @@ export default function Hero({ settings, auth }) {
                 }}
             />
 
+            {/* Subtle animated glow orb */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '20%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '600px',
+                    height: '400px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(ellipse, rgba(13, 148, 136, 0.15) 0%, transparent 70%)',
+                    animation: `${pulseGlow} 4s ease-in-out infinite`,
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                }}
+            />
+
+            {/* Floating Particles */}
+            <FloatingParticle size={12} top="15%" left="10%" delay={0} duration={18} variant={1} />
+            <FloatingParticle size={8} top="25%" left="85%" delay={2} duration={22} variant={2} />
+            <FloatingParticle size={16} top="60%" left="5%" delay={1} duration={20} variant={3} />
+            <FloatingParticle size={10} top="70%" left="90%" delay={3} duration={16} variant={1} />
+            <FloatingParticle size={6} top="40%" left="20%" delay={4} duration={24} variant={2} />
+            <FloatingParticle size={14} top="50%" left="75%" delay={0.5} duration={19} variant={3} />
+            <FloatingParticle size={8} top="80%" left="40%" delay={2.5} duration={21} variant={1} />
+            <FloatingParticle size={10} top="10%" left="60%" delay={1.5} duration={17} variant={2} />
+
             <Container
                 sx={{
                     display: 'flex',
@@ -128,7 +227,7 @@ export default function Hero({ settings, auth }) {
                     zIndex: 2,
                 }}
             >
-                {/* Logo */}
+                {/* Logo — fade in */}
                 {settings.hero_logo?.url && (
                     <Box
                         sx={{
@@ -142,6 +241,7 @@ export default function Hero({ settings, auth }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            animation: `${fadeIn} 1s ease-out 0.2s both`,
                         }}
                     >
                         <Box
@@ -158,7 +258,7 @@ export default function Hero({ settings, auth }) {
                     </Box>
                 )}
 
-                {/* Title */}
+                {/* Title — word-by-word staggered reveal */}
                 <Typography
                     variant="h1"
                     sx={{
@@ -173,23 +273,41 @@ export default function Hero({ settings, auth }) {
                         textShadow: '0 4px 20px rgba(0,0,0,0.3)',
                     }}
                 >
-                    <Box component="span" sx={{ lineHeight: 1.1 }}>
-                        {heroText.title_line1 || 'PIT IAGI'}
+                    <Box component="span" sx={{ lineHeight: 1.1, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em' }}>
+                        {titleLine1.split(' ').map((word, i) => (
+                            <Box
+                                key={i}
+                                component="span"
+                                sx={{
+                                    display: 'inline-block',
+                                    animation: `${fadeInUp} 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.12}s both`,
+                                }}
+                            >
+                                {word}
+                            </Box>
+                        ))}
                     </Box>
-                    <Typography
-                        component="span"
-                        sx={{
-                            fontSize: 'clamp(1.8rem, 5vw, 3.2rem)',
-                            fontWeight: 700,
-                            color: '#4dd4ac',
-                            textShadow: '0 2px 12px rgba(77, 212, 172, 0.4)',
-                        }}
-                    >
-                        {heroText.title_line2 || 'GEOSEA XIX 2026'}
-                    </Typography>
+                    <Box component="span" sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em' }}>
+                        {titleLine2.split(' ').map((word, i) => (
+                            <Box
+                                key={i}
+                                component="span"
+                                sx={{
+                                    display: 'inline-block',
+                                    fontSize: 'clamp(1.8rem, 5vw, 3.2rem)',
+                                    fontWeight: 700,
+                                    color: '#4dd4ac',
+                                    textShadow: '0 2px 12px rgba(77, 212, 172, 0.4)',
+                                    animation: `${fadeInUp} 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.6 + i * 0.12}s both`,
+                                }}
+                            >
+                                {word}
+                            </Box>
+                        ))}
+                    </Box>
                 </Typography>
 
-                {/* Theme */}
+                {/* Theme — fade in */}
                 <Box
                     sx={{
                         mt: 3,
@@ -199,6 +317,7 @@ export default function Hero({ settings, auth }) {
                         bgcolor: alpha('#ffffff', 0.15),
                         backdropFilter: 'blur(16px)',
                         border: '1px solid rgba(255,255,255,0.2)',
+                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1s both`,
                     }}
                 >
                     <Typography
@@ -228,11 +347,14 @@ export default function Hero({ settings, auth }) {
                     </Typography>
                 </Box>
 
-                {/* CTA Buttons */}
+                {/* CTA Buttons — fade in */}
                 <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
-                    sx={{ mt: 4 }}
+                    sx={{
+                        mt: 4,
+                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both`,
+                    }}
                 >
                     {auth?.user ? (
                         <Button
@@ -313,7 +435,7 @@ export default function Hero({ settings, auth }) {
                     )}
                 </Stack>
 
-                {/* Secondary Hero Logos */}
+                {/* Secondary Hero Logos — fade in */}
                 {settings.hero_logos_secondary && settings.hero_logos_secondary.length > 0 && (
                     <Box
                         sx={{
@@ -329,6 +451,7 @@ export default function Hero({ settings, auth }) {
                             bgcolor: alpha('#ffffff', 0.1),
                             backdropFilter: 'blur(12px)',
                             border: '1px solid rgba(255,255,255,0.15)',
+                            animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both`,
                         }}
                     >
                         {settings.hero_logos_secondary.map((logo, index) => (
@@ -366,12 +489,13 @@ export default function Hero({ settings, auth }) {
                     </Box>
                 )}
 
-                {/* Countdown */}
+                {/* Countdown — fade in */}
                 <Box
                     sx={{
                         display: 'flex',
                         gap: { xs: 2, sm: 3 },
                         mt: 5,
+                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.6s both`,
                     }}
                 >
                     {[

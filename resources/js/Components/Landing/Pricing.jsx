@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import DownloadIcon from '@mui/icons-material/Download';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ScrollReveal from './ScrollReveal';
 
 export default function Pricing({ settings }) {
     const resources = settings.resources && settings.resources.length > 0
@@ -58,75 +59,77 @@ export default function Pricing({ settings }) {
                 <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: '1000px' }}>
                     {resources.map((resource, index) => (
                         <Grid size={{ xs: 12, sm: resources.length === 1 ? 12 : 6, md: resources.length === 1 ? 8 : resources.length === 2 ? 6 : 4 }} key={index}>
-                            <Paper
-                                elevation={0}
-                                variant="outlined"
-                                sx={{
-                                    p: 3,
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    borderRadius: '16px',
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        transform: 'translateY(-4px)',
-                                        boxShadow: '0 12px 32px rgba(13, 148, 136, 0.12)',
-                                        borderColor: '#0d9488',
-                                    },
-                                }}
-                            >
-                                {/* Icon */}
-                                <Box
-                                    sx={{
-                                        width: 52,
-                                        height: 52,
-                                        borderRadius: '14px',
-                                        background: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        mb: 2,
-                                    }}
-                                >
-                                    <DescriptionIcon sx={{ color: '#0d7a6a', fontSize: 26 }} />
-                                </Box>
-
-                                {/* Title */}
-                                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
-                                    {resource.title}
-                                </Typography>
-
-                                {/* Description */}
-                                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2, flexGrow: 1, lineHeight: 1.6 }}>
-                                    {resource.description || 'Click below to download this resource.'}
-                                </Typography>
-
-                                {/* Download Button */}
-                                <Button
-                                    component="a"
-                                    href={resource.file_url || resource.url || '#'}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    download
+                            <ScrollReveal variant="fadeUp" delay={index * 150} duration={700}>
+                                <Paper
+                                    elevation={0}
                                     variant="outlined"
-                                    size="small"
-                                    startIcon={<DownloadIcon />}
                                     sx={{
-                                        borderColor: '#0d9488',
-                                        color: '#0d7a6a',
-                                        fontWeight: 600,
-                                        textTransform: 'none',
-                                        borderRadius: '10px',
+                                        p: 3,
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        borderRadius: '16px',
+                                        transition: 'all 0.3s ease',
                                         '&:hover': {
-                                            bgcolor: '#0d9488',
-                                            color: 'white',
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: '0 12px 32px rgba(13, 148, 136, 0.12)',
                                             borderColor: '#0d9488',
                                         },
                                     }}
                                 >
-                                    Download
-                                </Button>
-                            </Paper>
+                                    {/* Icon */}
+                                    <Box
+                                        sx={{
+                                            width: 52,
+                                            height: 52,
+                                            borderRadius: '14px',
+                                            background: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            mb: 2,
+                                        }}
+                                    >
+                                        <DescriptionIcon sx={{ color: '#0d7a6a', fontSize: 26 }} />
+                                    </Box>
+
+                                    {/* Title */}
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
+                                        {resource.title}
+                                    </Typography>
+
+                                    {/* Description */}
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2, flexGrow: 1, lineHeight: 1.6 }}>
+                                        {resource.description || 'Click below to download this resource.'}
+                                    </Typography>
+
+                                    {/* Download Button */}
+                                    <Button
+                                        component="a"
+                                        href={resource.file_url || resource.url || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        download
+                                        variant="outlined"
+                                        size="small"
+                                        startIcon={<DownloadIcon />}
+                                        sx={{
+                                            borderColor: '#0d9488',
+                                            color: '#0d7a6a',
+                                            fontWeight: 600,
+                                            textTransform: 'none',
+                                            borderRadius: '10px',
+                                            '&:hover': {
+                                                bgcolor: '#0d9488',
+                                                color: 'white',
+                                                borderColor: '#0d9488',
+                                            },
+                                        }}
+                                    >
+                                        Download
+                                    </Button>
+                                </Paper>
+                            </ScrollReveal>
                         </Grid>
                     ))}
                 </Grid>

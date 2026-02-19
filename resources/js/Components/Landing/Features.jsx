@@ -1,5 +1,5 @@
 import React from 'react';
-import { alpha } from '@mui/material/styles';
+import { alpha, keyframes } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -9,13 +9,89 @@ import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PublicIcon from '@mui/icons-material/Public';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import ScrollReveal from './ScrollReveal';
+import useCountUp from './useCountUp';
+
+// Subtle gradient background shift
+const gradientShift = keyframes`
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+`;
+
+function CountUpStat({ end, suffix, label, icon, index }) {
+    const { ref, display } = useCountUp(end, 2000, suffix);
+
+    return (
+        <ScrollReveal key={index} variant="fadeUp" delay={index * 120} duration={700}>
+            <Box
+                ref={ref}
+                sx={{
+                    textAlign: 'center',
+                    p: { xs: 2, md: 2.5 },
+                    borderRadius: '16px',
+                    bgcolor: '#ffffff',
+                    border: '1px solid',
+                    borderColor: alpha('#0d9488', 0.12),
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: '-100%',
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(90deg, transparent, rgba(13, 148, 136, 0.08), transparent)',
+                        transition: 'left 0.6s ease',
+                    },
+                    '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: `0 12px 32px ${alpha('#0d9488', 0.18)}`,
+                        borderColor: '#0d9488',
+                        '&::before': {
+                            left: '100%',
+                        },
+                    },
+                }}
+            >
+                <Box sx={{ color: '#0d9488', mb: 0.5, '& svg': { fontSize: 28 } }}>
+                    {icon}
+                </Box>
+                <Typography
+                    sx={{
+                        fontWeight: 800,
+                        color: '#094d42',
+                        fontSize: { xs: '1.5rem', md: '1.75rem' },
+                        lineHeight: 1.2,
+                    }}
+                >
+                    {display}
+                </Typography>
+                <Typography
+                    variant="caption"
+                    sx={{
+                        color: '#6b7280',
+                        fontWeight: 600,
+                        fontSize: '0.75rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                    }}
+                >
+                    {label}
+                </Typography>
+            </Box>
+        </ScrollReveal>
+    );
+}
 
 export default function Features({ settings }) {
     const stats = [
-        { number: '2000+', label: 'Expected Participants', icon: <GroupsIcon /> },
-        { number: '50+', label: 'Expert Speakers', icon: <RecordVoiceOverIcon /> },
-        { number: '3', label: 'Days of Sessions', icon: <CalendarMonthIcon /> },
-        { number: '8+', label: 'Countries', icon: <PublicIcon /> },
+        { end: 2000, suffix: '+', label: 'Expected Participants', icon: <GroupsIcon /> },
+        { end: 50, suffix: '+', label: 'Expert Speakers', icon: <RecordVoiceOverIcon /> },
+        { end: 3, suffix: '', label: 'Days of Sessions', icon: <CalendarMonthIcon /> },
+        { end: 8, suffix: '+', label: 'Countries', icon: <PublicIcon /> },
     ];
 
     const whyAttend = [
@@ -27,7 +103,12 @@ export default function Features({ settings }) {
     ];
 
     return (
-        <Box id="about" sx={{ py: { xs: 8, sm: 12 }, background: 'linear-gradient(180deg, #e6f7f4 0%, #f0fdfa 30%, #ffffff 100%)' }}>
+        <Box id="about" sx={{
+            py: { xs: 8, sm: 12 },
+            background: 'linear-gradient(135deg, #e6f7f4 0%, #f0fdfa 25%, #ffffff 50%, #e6f7f4 75%, #f0fdfa 100%)',
+            backgroundSize: '400% 400%',
+            animation: `${gradientShift} 12s ease infinite`,
+        }}>
             <Container maxWidth="lg">
                 {/* Top Section: Title + Stats Row */}
                 <Box
@@ -113,49 +194,14 @@ export default function Features({ settings }) {
                         }}
                     >
                         {stats.map((stat, index) => (
-                            <Box
+                            <CountUpStat
                                 key={index}
-                                sx={{
-                                    textAlign: 'center',
-                                    p: { xs: 2, md: 2.5 },
-                                    borderRadius: '16px',
-                                    bgcolor: '#ffffff',
-                                    border: '1px solid',
-                                    borderColor: alpha('#0d9488', 0.12),
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        transform: 'translateY(-4px)',
-                                        boxShadow: `0 12px 24px ${alpha('#0d9488', 0.12)}`,
-                                        borderColor: '#0d9488',
-                                    },
-                                }}
-                            >
-                                <Box sx={{ color: '#0d9488', mb: 0.5, '& svg': { fontSize: 28 } }}>
-                                    {stat.icon}
-                                </Box>
-                                <Typography
-                                    sx={{
-                                        fontWeight: 800,
-                                        color: '#094d42',
-                                        fontSize: { xs: '1.5rem', md: '1.75rem' },
-                                        lineHeight: 1.2,
-                                    }}
-                                >
-                                    {stat.number}
-                                </Typography>
-                                <Typography
-                                    variant="caption"
-                                    sx={{
-                                        color: '#6b7280',
-                                        fontWeight: 600,
-                                        fontSize: '0.75rem',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em',
-                                    }}
-                                >
-                                    {stat.label}
-                                </Typography>
-                            </Box>
+                                index={index}
+                                end={stat.end}
+                                suffix={stat.suffix}
+                                label={stat.label}
+                                icon={stat.icon}
+                            />
                         ))}
                     </Box>
                 </Box>
@@ -244,45 +290,46 @@ export default function Features({ settings }) {
                         }}
                     >
                         {whyAttend.map((item, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: 1.5,
-                                    p: 2.5,
-                                    borderRadius: '14px',
-                                    bgcolor: alpha('#ffffff', 0.08),
-                                    backdropFilter: 'blur(8px)',
-                                    border: `1px solid ${alpha('#ffffff', 0.12)}`,
-                                    transition: 'all 0.3s ease',
-                                    '&:hover': {
-                                        bgcolor: alpha('#ffffff', 0.14),
-                                        borderColor: alpha('#ffffff', 0.25),
-                                        transform: 'translateY(-2px)',
-                                    },
-                                }}
-                            >
-                                <CheckCircleIcon
+                            <ScrollReveal key={index} variant="fadeUp" delay={index * 100} duration={600}>
+                                <Box
                                     sx={{
-                                        color: '#4dd4ac',
-                                        fontSize: 22,
-                                        mt: 0.2,
-                                        flexShrink: 0,
-                                    }}
-                                />
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: alpha('#ffffff', 0.92),
-                                        lineHeight: 1.6,
-                                        fontSize: '0.9rem',
-                                        fontWeight: 500,
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: 1.5,
+                                        p: 2.5,
+                                        borderRadius: '14px',
+                                        bgcolor: alpha('#ffffff', 0.08),
+                                        backdropFilter: 'blur(8px)',
+                                        border: `1px solid ${alpha('#ffffff', 0.12)}`,
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': {
+                                            bgcolor: alpha('#ffffff', 0.14),
+                                            borderColor: alpha('#ffffff', 0.25),
+                                            transform: 'translateY(-2px)',
+                                        },
                                     }}
                                 >
-                                    {item}
-                                </Typography>
-                            </Box>
+                                    <CheckCircleIcon
+                                        sx={{
+                                            color: '#4dd4ac',
+                                            fontSize: 22,
+                                            mt: 0.2,
+                                            flexShrink: 0,
+                                        }}
+                                    />
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: alpha('#ffffff', 0.92),
+                                            lineHeight: 1.6,
+                                            fontSize: '0.9rem',
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        {item}
+                                    </Typography>
+                                </Box>
+                            </ScrollReveal>
                         ))}
                     </Box>
                 </Box>

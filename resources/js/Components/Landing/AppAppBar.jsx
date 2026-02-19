@@ -34,6 +34,7 @@ const navItems = [
     { label: 'Timeline', target: 'timeline' },
     { label: 'Resources', target: 'resources' },
     { label: 'Speakers', target: 'speakers' },
+    { label: 'Event Partners', target: 'partners' },
     { label: 'FAQ', target: 'faq' },
     { label: 'Contact', target: 'venue' },
 ];
