@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RegistrationConfirmation;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -50,6 +53,13 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+
+        // Send registration confirmation email
+        try {
+            Mail::to($user->email)->queue(new RegistrationConfirmation($user));
+        } catch (\Exception $e) {
+            Log::warning('Failed to send registration email to ' . $user->email . ': ' . $e->getMessage());
+        }
 
         return redirect()->route('login')->with('flash.success', 'Registration successful! Please log in.');
     }
