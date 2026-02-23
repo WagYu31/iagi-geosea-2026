@@ -520,6 +520,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     <TableCell sx={headCellSx}>Paper Theme</TableCell>
                                     <TableCell sx={headCellSx}>Paper Sub Theme</TableCell>
                                     <TableCell sx={headCellSx}>Type</TableCell>
+                                    <TableCell sx={headCellSx}>Publication Pref.</TableCell>
                                     <TableCell sx={headCellSx}>Submitted</TableCell>
                                     <TableCell sx={headCellSx}>Status</TableCell>
                                     <TableCell sx={headCellSx}>Payment</TableCell>
@@ -530,7 +531,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             <TableBody>
                                 {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={15} align="center" sx={cellSx}>
+                                        <TableCell colSpan={16} align="center" sx={cellSx}>
                                             <Box sx={{ py: 5 }}>
                                                 <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} />
                                                 <Typography variant="body2" sx={{ color: c.textMuted }}>
@@ -716,6 +717,41 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                             height: 24,
                                                         }}
                                                     />
+                                                </TableCell>
+                                                <TableCell sx={{ ...cellSx, maxWidth: 140 }}>
+                                                    {submission.publication_option ? (
+                                                        <Box>
+                                                            <Chip
+                                                                label={submission.publication_option === 'yes' ? 'Journal' : 'Proceedings'}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: submission.publication_option === 'yes'
+                                                                        ? (isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed')
+                                                                        : (isDark ? 'rgba(107, 114, 128, 0.15)' : '#f3f4f6'),
+                                                                    color: submission.publication_option === 'yes' ? '#ea580c' : '#6b7280',
+                                                                    fontWeight: 600,
+                                                                    fontSize: '0.7rem',
+                                                                    borderRadius: '6px',
+                                                                    height: 22,
+                                                                    mb: 0.4,
+                                                                }}
+                                                            />
+                                                            {submission.preferred_publication && (
+                                                                <Typography variant="body2" sx={{
+                                                                    fontSize: '0.7rem',
+                                                                    color: c.textMuted,
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                    maxWidth: 130,
+                                                                }}>
+                                                                    {submission.preferred_publication === 'scopus_proceedings' ? 'Scopus Proc.' : submission.preferred_publication === 'iagi_journal' ? 'IAGI Journal' : submission.preferred_publication}
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
+                                                    ) : (
+                                                        <Typography variant="body2" sx={{ fontSize: '0.75rem', color: c.textMuted, fontStyle: 'italic' }}>—</Typography>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
                                                     <Typography variant="body2" sx={{ fontSize: '0.75rem', color: c.textMuted }}>

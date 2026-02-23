@@ -17,8 +17,8 @@
       "_vendor-mui-icons-C8sdnAIj.js"
     ]
   },
-  "_pages-admin-uez57xSV.js": {
-    "file": "assets/pages-admin-uez57xSV.js",
+  "_pages-admin-ClpLrkCp.js": {
+    "file": "assets/pages-admin-ClpLrkCp.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -170,7 +170,7 @@
     ]
   },
   "resources/js/Pages/LandingPage.jsx": {
-    "file": "assets/LandingPage-B2300-eH.js",
+    "file": "assets/LandingPage-DA7BHtma.js",
     "name": "LandingPage",
     "src": "resources/js/Pages/LandingPage.jsx",
     "isDynamicEntry": true,
@@ -287,7 +287,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-CbAv_B_v.js",
+    "file": "assets/app-C3eZoesk.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -299,12 +299,12 @@
       "_vendor-mui-icons-C8sdnAIj.js"
     ],
     "dynamicImports": [
-      "_pages-admin-uez57xSV.js",
+      "_pages-admin-ClpLrkCp.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-uez57xSV.js",
+      "_pages-admin-ClpLrkCp.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-uez57xSV.js",
+      "_pages-admin-ClpLrkCp.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-CT5x7mk1.js",
       "_pages-auth-CT5x7mk1.js",
