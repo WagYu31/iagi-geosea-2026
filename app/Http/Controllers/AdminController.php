@@ -423,17 +423,51 @@ class AdminController extends Controller
         $submissions = Submission::with(['user', 'payment'])
             ->get()
             ->map(function ($submission) {
+                $publicationOption = $submission->publication_option;
+                $preferredPub = $submission->preferred_publication;
+
+                $publicationLabel = match($publicationOption) {
+                    'yes' => 'Journal Publication',
+                    'no'  => 'Proceedings Only',
+                    default => 'N/A',
+                };
+
+                $preferredPubLabel = match($preferredPub) {
+                    'scopus_proceedings' => 'Scopus Proceedings',
+                    'iagi_journal'       => 'IAGI Journal',
+                    default => $preferredPub ?? 'N/A',
+                };
+
                 return [
-                    'ID' => $submission->id,
-                    'Title' => $submission->title,
-                    'Author' => $submission->author_full_name ?? $submission->user->name,
-                    'Email' => $submission->corresponding_author_email ?? $submission->user->email,
-                    'Phone' => $submission->user->whatsapp ?? 'N/A',
-                    'Institute' => $submission->institute_organization ?? $submission->affiliation,
-                    'Sub Theme' => $submission->paper_sub_theme ?? $submission->topic,
-                    'Status' => $submission->status,
-                    'Payment Status' => $submission->payment?->verified ? 'Paid' : 'Unpaid',
-                    'Submitted At' => $submission->created_at->format('Y-m-d H:i:s'),
+                    'ID'                      => $submission->id,
+                    'Submission Code'         => $submission->submission_code ?? 'N/A',
+                    'Title'                   => $submission->title,
+                    'Author Full Name'        => $submission->author_full_name ?? $submission->user->name,
+                    'Corresponding Email'     => $submission->corresponding_author_email ?? $submission->user->email,
+                    'Phone / WhatsApp'        => $submission->user->whatsapp ?? 'N/A',
+                    'Institute / Organization'=> $submission->institute_organization ?? $submission->affiliation ?? 'N/A',
+                    'Participant Category'    => $submission->user->category ?? 'N/A',
+                    'Paper Theme'             => $submission->paper_theme ?? 'N/A',
+                    'Paper Sub Theme'         => $submission->paper_sub_theme ?? $submission->topic ?? 'N/A',
+                    'Presentation Type'       => $submission->presentation_preference ?? $submission->category_submission ?? 'N/A',
+                    'Publication Preference'  => $publicationLabel,
+                    'Preferred Publication'   => $preferredPubLabel,
+                    'Co-Author 1'             => $submission->co_author_1 ?? '',
+                    'Co-Author 1 Institute'   => $submission->co_author_1_institute ?? '',
+                    'Co-Author 2'             => $submission->co_author_2 ?? '',
+                    'Co-Author 2 Institute'   => $submission->co_author_2_institute ?? '',
+                    'Co-Author 3'             => $submission->co_author_3 ?? '',
+                    'Co-Author 3 Institute'   => $submission->co_author_3_institute ?? '',
+                    'Co-Author 4'             => $submission->co_author_4 ?? '',
+                    'Co-Author 4 Institute'   => $submission->co_author_4_institute ?? '',
+                    'Co-Author 5'             => $submission->co_author_5 ?? '',
+                    'Co-Author 5 Institute'   => $submission->co_author_5_institute ?? '',
+                    'Keywords'                => $submission->keywords ?? 'N/A',
+                    'Abstract'                => $submission->abstract ?? 'N/A',
+                    'Status'                  => $submission->status,
+                    'Payment Status'          => $submission->payment?->verified ? 'Paid' : 'Unpaid',
+                    'Payment Amount'          => $submission->payment?->amount ?? 'N/A',
+                    'Submitted At'            => $submission->created_at->format('Y-m-d H:i:s'),
                 ];
             });
 
