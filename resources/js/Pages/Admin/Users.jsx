@@ -173,14 +173,14 @@ export default function AdminUsers({ users = [] }) {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    {['Name', 'Email', 'Role', 'Account Status', 'Registered', 'Actions'].map(h => (
+                                    {['Name', 'Email', 'WhatsApp', 'Affiliation', 'Category', 'Role', 'Account Status', 'Registered', 'Actions'].map(h => (
                                         <TableCell key={h} sx={headCellSx}>{h}</TableCell>
                                     ))}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {filteredUsers.length === 0 ? (
-                                    <TableRow><TableCell colSpan={6} align="center" sx={cellSx}>
+                                    <TableRow><TableCell colSpan={9} align="center" sx={cellSx}>
                                         <Box sx={{ py: 5 }}><PersonOffIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} /><Typography variant="body2" sx={{ color: c.textMuted }}>No users found</Typography></Box>
                                     </TableCell></TableRow>
                                 ) : filteredUsers.map((user) => {
@@ -195,6 +195,23 @@ export default function AdminUsers({ users = [] }) {
                                             </TableCell>
                                             <TableCell sx={cellSx}>
                                                 <Typography variant="body2" sx={{ fontSize: '0.825rem', color: c.textMuted }}>{user.email}</Typography>
+                                            </TableCell>
+                                            <TableCell sx={cellSx}>
+                                                <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>{user.whatsapp || '—'}</Typography>
+                                            </TableCell>
+                                            <TableCell sx={{ ...cellSx, maxWidth: 160 }}>
+                                                <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>{user.affiliation || '—'}</Typography>
+                                            </TableCell>
+                                            <TableCell sx={cellSx}>
+                                                {user.category ? (
+                                                    <Chip label={user.category} size="small" sx={{
+                                                        bgcolor: user.category === 'Student' ? (isDark ? 'rgba(59,130,246,0.15)' : '#dbeafe') : user.category === 'Professional' ? (isDark ? 'rgba(147,51,234,0.15)' : '#f3e8ff') : (isDark ? 'rgba(234,88,12,0.15)' : '#fff7ed'),
+                                                        color: user.category === 'Student' ? '#2563eb' : user.category === 'Professional' ? '#9333ea' : '#ea580c',
+                                                        fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24,
+                                                    }} />
+                                                ) : (
+                                                    <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted, fontStyle: 'italic' }}>—</Typography>
+                                                )}
                                             </TableCell>
                                             <TableCell sx={cellSx}>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
