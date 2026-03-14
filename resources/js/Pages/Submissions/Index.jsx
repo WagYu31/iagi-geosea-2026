@@ -38,6 +38,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import RichTextEditor from '@/Components/RichTextEditor';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -175,15 +176,9 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         preferred_publication: '',
     });
 
-    const handleAbstractChange = (e) => {
-        const text = e.target.value;
-        const words = text.trim().split(/\s+/).filter(word => word.length > 0);
-        const count = words.length;
-
-        if (count <= MAX_WORDS) {
-            setData('abstract', text);
-            setWordCount(count);
-        }
+    const handleAbstractChange = (content, wc) => {
+        setData('abstract', content);
+        setWordCount(wc);
     };
 
     const handleThemeChange = (e) => {
@@ -1554,57 +1549,19 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                 }}
                                             />
 
-                                            {/* Abstract - Full width vertical */}
-                                            <Box sx={{ position: 'relative' }}>
-                                                <TextField
-                                                    fullWidth
-                                                    multiline
-                                                    rows={6}
-                                                    label="Abstract *"
-                                                    value={data.abstract}
-                                                    onChange={handleAbstractChange}
-                                                    error={!!errors.abstract || wordCount > MAX_WORDS}
-                                                    helperText={
-                                                        errors.abstract ||
-                                                        (wordCount > MAX_WORDS
-                                                            ? `Word limit exceeded! Maximum ${MAX_WORDS} words allowed.`
-                                                            : "Please provide a detailed abstract (max 400 words)")
-                                                    }
-                                                    placeholder="Enter your paper abstract here..."
-                                                    required
-                                                    InputProps={{
-                                                        sx: {
-                                                            fontSize: { xs: '16px', md: '1rem' },
-                                                            pb: 3
-                                                        }
-                                                    }}
-                                                    InputLabelProps={{
-                                                        sx: { fontSize: { xs: '16px', md: '1rem' } }
-                                                    }}
-                                                    FormHelperTextProps={{
-                                                        sx: {
-                                                            color: wordCount > MAX_WORDS ? '#d32f2f' : 'text.secondary'
-                                                        }
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        bottom: { xs: '50px', md: '52px' },
-                                                        right: '14px',
-                                                        color: wordCount > MAX_WORDS ? '#d32f2f' : wordCount > MAX_WORDS * 0.9 ? '#f57c00' : '#666',
-                                                        fontWeight: 600,
-                                                        fontSize: { xs: '0.75rem', md: '0.875rem' },
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                                        px: 1,
-                                                        py: 0.5,
-                                                        borderRadius: 1
-                                                    }}
-                                                >
-                                                    {wordCount}/{MAX_WORDS} words
-                                                </Typography>
-                                            </Box>
+                                            {/* Abstract - Rich Text Editor */}
+                                            <RichTextEditor
+                                                value={data.abstract}
+                                                onChange={handleAbstractChange}
+                                                maxWords={MAX_WORDS}
+                                                error={!!errors.abstract || wordCount > MAX_WORDS}
+                                                helperText={
+                                                    errors.abstract ||
+                                                    (wordCount > MAX_WORDS
+                                                        ? `Word limit exceeded! Maximum ${MAX_WORDS} words allowed.`
+                                                        : 'Please provide a detailed abstract (max 400 words)')
+                                                }
+                                            />
 
                                             {/* Keywords Field - Full width vertical */}
                                             <TextField

@@ -23,6 +23,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
 import { styled } from '@mui/material/styles';
+import RichTextEditor from '@/Components/RichTextEditor';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -210,7 +211,13 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                         <TextField fullWidth label="Paper Title *" value={data.title} onChange={(e) => setData('title', e.target.value)} error={!!errors.title} helperText={errors.title} required sx={inputSx} />
                                     </Grid>
                                     <Grid size={12}>
-                                        <TextField fullWidth multiline rows={8} label="Abstract *" value={data.abstract} onChange={(e) => setData('abstract', e.target.value)} error={!!errors.abstract} helperText={errors.abstract} required sx={inputSx} />
+                                        <RichTextEditor
+                                            value={data.abstract}
+                                            onChange={(content) => setData('abstract', content)}
+                                            maxWords={400}
+                                            error={!!errors.abstract}
+                                            helperText={errors.abstract}
+                                        />
                                     </Grid>
 
                                     {/* File uploads */}
@@ -486,18 +493,17 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                             bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
                                             border: `1px solid ${c.cardBorder}`,
                                         }}>
-                                            <Typography
-                                                variant="body2"
+                                            <Box
                                                 sx={{
-                                                    whiteSpace: 'pre-wrap',
                                                     lineHeight: 1.8,
                                                     color: c.textPrimary,
                                                     textAlign: 'justify',
                                                     fontSize: '0.9rem',
+                                                    '& p': { margin: '0.5em 0' },
+                                                    '& ul, & ol': { pl: 3 },
                                                 }}
-                                            >
-                                                {submission.abstract}
-                                            </Typography>
+                                                dangerouslySetInnerHTML={{ __html: submission.abstract }}
+                                            />
                                         </Box>
                                     </Box>
 
