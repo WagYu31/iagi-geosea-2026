@@ -140,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/users/{id}/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('users.updateProfile');
         Route::patch('/users/{id}/toggle-verification', [App\Http\Controllers\AdminController::class, 'toggleVerification'])->name('users.toggleVerification');
         Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+        Route::get('/users/export', [App\Http\Controllers\AdminController::class, 'exportUsers'])->name('users.export');
 
         // Scores Management
         Route::get('/scores', [App\Http\Controllers\AdminController::class, 'scores'])->name('scores');

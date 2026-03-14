@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import DownloadIcon from '@mui/icons-material/Download';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PeopleIcon from '@mui/icons-material/People';
@@ -126,9 +127,14 @@ export default function AdminUsers({ users = [] }) {
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{users.length} registered users</Typography>
                     </Box>
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateDialog({ open: true, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '', showPassword: false, showConfirmPassword: false })} sx={{ ...tealBtn, boxShadow: '0 4px 14px rgba(26,188,156,0.35)', py: 1.2 }}>
-                        Add User
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                        <Button variant="outlined" startIcon={<DownloadIcon />} onClick={() => window.location.href = route('admin.users.export')} sx={{ borderColor: '#1abc9c', color: '#1abc9c', px: 2.5, py: 1.2, borderRadius: '12px', textTransform: 'none', fontWeight: 600, fontSize: '0.875rem', '&:hover': { borderColor: '#16a085', bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#ecfdf5' }, transition: 'all 0.25s ease' }}>
+                            Export Excel
+                        </Button>
+                        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateDialog({ open: true, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '', showPassword: false, showConfirmPassword: false })} sx={{ ...tealBtn, boxShadow: '0 4px 14px rgba(26,188,156,0.35)', py: 1.2 }}>
+                            Add User
+                        </Button>
+                    </Box>
                 </Box>
 
                 {/* Search */}

@@ -601,6 +601,48 @@ class AdminController extends Controller
         ]);
     }
 
+    public function exportUsers()
+    {
+        $users = User::withCount('submissions')->latest()->get()
+            ->map(function ($user) {
+                return [
+                    'ID'                => $user->id,
+                    'Name'              => $user->name,
+                    'Full Name'         => $user->full_name ?? $user->name,
+                    'Email'             => $user->email,
+                    'WhatsApp'          => $user->whatsapp ?? 'N/A',
+                    'Affiliation'       => $user->affiliation ?? 'N/A',
+                    'Category'          => $user->category ?? 'N/A',
+                    'Role'              => $user->role ?? 'Author',
+                    'Email Verified'    => $user->email_verified_at ? 'Yes' : 'No',
+                    'Total Submissions' => $user->submissions_count,
+                    'Registered At'     => $user->created_at->format('Y-m-d H:i:s'),
+                ];
+            });
+
+        $filename = 'users_' . date('Y-m-d_His') . '.csv';
+        $handle = fopen('php://temp', 'r+');
+
+        // Add BOM for UTF-8 Excel compatibility
+        fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        if ($users->count() > 0) {
+            fputcsv($handle, array_keys($users->first()));
+            foreach ($users as $user) {
+                fputcsv($handle, $user);
+            }
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function updateUserRole(Request $request, $id)
     {
         $request->validate([
