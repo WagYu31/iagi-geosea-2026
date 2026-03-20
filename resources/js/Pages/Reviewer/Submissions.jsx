@@ -320,37 +320,40 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                                     }} />
                                             </TableCell>
                                             <TableCell>
-                                                <Stack direction="row" spacing={1}>
+                                                <Stack direction="row" spacing={0.5}>
                                                     <Button size="small" variant="outlined"
-                                                        startIcon={<VisibilityIcon sx={{ fontSize: 16 }} />}
+                                                        startIcon={<VisibilityIcon sx={{ fontSize: 14 }} />}
                                                         onClick={() => handleViewSubmission(review.submission?.id)}
                                                         sx={{
                                                             color: '#1abc9c', borderColor: isDark ? 'rgba(26,188,156,0.3)' : '#d1fae5',
-                                                            textTransform: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '0.75rem',
+                                                            textTransform: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '0.72rem',
+                                                            px: 1.2, py: 0.3, minWidth: 'auto',
                                                             '&:hover': { borderColor: '#1abc9c', bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#ecfdf5' },
                                                         }}
                                                     >
                                                         View
                                                     </Button>
-                                                    <Button size="small" variant="contained"
-                                                        startIcon={<RateReviewIcon sx={{ fontSize: 16 }} />}
+                                                    <Button size="small" variant="outlined"
+                                                        startIcon={<RateReviewIcon sx={{ fontSize: 14 }} />}
                                                         onClick={() => handleOpenCommentDialog(review)}
                                                         sx={{
-                                                            textTransform: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '0.75rem',
-                                                            bgcolor: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff',
+                                                            textTransform: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '0.72rem',
+                                                            px: 1.2, py: 0.3, minWidth: 'auto',
                                                             color: isDark ? '#93c5fd' : '#2563eb',
-                                                            boxShadow: 'none',
-                                                            '&:hover': { bgcolor: isDark ? 'rgba(59,130,246,0.25)' : '#dbeafe', boxShadow: 'none' },
+                                                            borderColor: isDark ? 'rgba(59,130,246,0.3)' : '#bfdbfe',
+                                                            '&:hover': { borderColor: '#2563eb', bgcolor: isDark ? 'rgba(59,130,246,0.08)' : '#eff6ff' },
                                                         }}
                                                     >
-                                                        💬 Review
+                                                        Review
                                                     </Button>
                                                     <Button size="small" variant="contained"
-                                                        startIcon={<StarIcon sx={{ fontSize: 16 }} />}
+                                                        startIcon={<StarIcon sx={{ fontSize: 14 }} />}
                                                         onClick={() => handleOpenScoringDialog(review)}
-                                                        sx={{ ...tealBtnSx, px: 1.5, py: 0.5, fontSize: '0.75rem' }}
+                                                        sx={{
+                                                            ...tealBtnSx, px: 1.2, py: 0.3, fontSize: '0.72rem', minWidth: 'auto',
+                                                        }}
                                                     >
-                                                        ⭐ Scoring
+                                                        Scoring
                                                     </Button>
                                                 </Stack>
                                             </TableCell>
