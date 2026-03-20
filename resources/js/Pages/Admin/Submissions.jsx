@@ -464,10 +464,10 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     >
                                         <MenuItem value="pending">Pending</MenuItem>
                                         <MenuItem value="under_review">Under Review</MenuItem>
-                                        <MenuItem value="revision_required_phase1">Revision Phase 1</MenuItem>
-                                        <MenuItem value="revision_required_phase2">Revision Phase 2</MenuItem>
                                         <MenuItem value="accepted">Accepted</MenuItem>
                                         <MenuItem value="rejected">Rejected</MenuItem>
+                                        <MenuItem value="revision_required_phase1">Revision P1</MenuItem>
+                                        <MenuItem value="revision_required_phase2">Revision P2</MenuItem>
                                     </Select>
                                 </FormControl>
                                 <Button
@@ -781,10 +781,10 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                                     >
                                                         <MenuItem value="pending" sx={{ fontSize: '0.85rem' }}>Pending</MenuItem>
                                                         <MenuItem value="under_review" sx={{ fontSize: '0.85rem' }}>Under Review</MenuItem>
-                                                        <MenuItem value="revision_required_phase1" sx={{ fontSize: '0.85rem' }}>Revision P1</MenuItem>
-                                                        <MenuItem value="revision_required_phase2" sx={{ fontSize: '0.85rem' }}>Revision P2</MenuItem>
                                                         <MenuItem value="accepted" sx={{ fontSize: '0.85rem' }}>Accepted</MenuItem>
                                                         <MenuItem value="rejected" sx={{ fontSize: '0.85rem' }}>Rejected</MenuItem>
+                                                        <MenuItem value="revision_required_phase1" sx={{ fontSize: '0.85rem' }}>Revision P1</MenuItem>
+                                                        <MenuItem value="revision_required_phase2" sx={{ fontSize: '0.85rem' }}>Revision P2</MenuItem>
                                                     </Select>
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
