@@ -589,39 +589,62 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     </Button>
                                                 </Box>
 
-                                                {/* Inline PDF Viewer */}
-                                                {isPdf ? (
-                                                    <Box sx={{
-                                                        borderRadius: '12px',
-                                                        overflow: 'hidden',
-                                                        border: `1px solid ${c.cardBorder}`,
-                                                        bgcolor: isDark ? '#1a1a1a' : '#f5f5f5',
-                                                    }}>
-                                                        <iframe
-                                                            src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-                                                            width="100%"
-                                                            height="600"
-                                                            style={{
-                                                                border: 'none',
-                                                                display: 'block',
-                                                            }}
-                                                            title={item.label}
-                                                        />
-                                                    </Box>
-                                                ) : (
-                                                    <Box sx={{
-                                                        p: 3,
-                                                        textAlign: 'center',
-                                                        borderRadius: '12px',
-                                                        border: `1px dashed ${c.cardBorder}`,
-                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                                    }}>
-                                                        <DescriptionIcon sx={{ fontSize: 40, color: c.textMuted, mb: 1 }} />
-                                                        <Typography variant="body2" sx={{ color: c.textMuted }}>
-                                                            Preview not available for this file type. Please download to view.
-                                                        </Typography>
-                                                    </Box>
-                                                )}
+                                                {/* Inline Document Viewer */}
+                                                {(() => {
+                                                    const fullUrl = `${window.location.origin}${fileUrl}`;
+                                                    const isDoc = item.file?.toLowerCase().match(/\.(doc|docx)$/);
+                                                    
+                                                    if (isPdf) {
+                                                        return (
+                                                            <Box sx={{
+                                                                borderRadius: '12px',
+                                                                overflow: 'hidden',
+                                                                border: `1px solid ${c.cardBorder}`,
+                                                                bgcolor: isDark ? '#1a1a1a' : '#f5f5f5',
+                                                            }}>
+                                                                <iframe
+                                                                    src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                                                                    width="100%"
+                                                                    height="600"
+                                                                    style={{ border: 'none', display: 'block' }}
+                                                                    title={item.label}
+                                                                />
+                                                            </Box>
+                                                        );
+                                                    } else if (isDoc) {
+                                                        return (
+                                                            <Box sx={{
+                                                                borderRadius: '12px',
+                                                                overflow: 'hidden',
+                                                                border: `1px solid ${c.cardBorder}`,
+                                                                bgcolor: isDark ? '#1a1a1a' : '#f5f5f5',
+                                                            }}>
+                                                                <iframe
+                                                                    src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`}
+                                                                    width="100%"
+                                                                    height="600"
+                                                                    style={{ border: 'none', display: 'block' }}
+                                                                    title={item.label}
+                                                                />
+                                                            </Box>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <Box sx={{
+                                                                p: 3,
+                                                                textAlign: 'center',
+                                                                borderRadius: '12px',
+                                                                border: `1px dashed ${c.cardBorder}`,
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                            }}>
+                                                                <DescriptionIcon sx={{ fontSize: 40, color: c.textMuted, mb: 1 }} />
+                                                                <Typography variant="body2" sx={{ color: c.textMuted }}>
+                                                                    Preview not available for this file type. Please download to view.
+                                                                </Typography>
+                                                            </Box>
+                                                        );
+                                                    }
+                                                })()}
                                             </Box>
                                         );
                                     })}
