@@ -236,7 +236,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         <SidebarLayout>
             <Head title="Submissions" />
 
-            <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
+            <Box component="main" role="main" aria-label="My Submissions" sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
                 {/* Page Header */}
                 <Box sx={{
                     display: 'flex',
@@ -286,7 +286,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                 </Box>
 
                 {/* Submissions Table */}
-                <Paper elevation={0} sx={{
+                <Paper elevation={0} role="region" aria-label="Submission List" sx={{
                     p: { xs: 2, md: 3 },
                     mb: 3,
                     border: `1px solid ${c.cardBorder}`,
@@ -302,6 +302,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
                                 displayEmpty
+                                aria-label="Filter submissions by status"
                                 startAdornment={<FilterListIcon sx={{ mr: 0.5, fontSize: '1rem', color: '#9ca3af' }} />}
                                 sx={{
                                     borderRadius: '10px',
@@ -341,7 +342,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         <>
                             {/* Desktop/Tablet: Table View */}
                             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                                <TableContainer>
+                                <TableContainer role="table" aria-label="Submissions table">
                                     <Table>
                                         <TableHead>
                                             <TableRow sx={{ backgroundColor: c.headerBg }}>
@@ -771,7 +772,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
                 {/* Submit New Paper Form - MOBILE FIRST RESPONSIVE */}
                 {showForm && (
-                    <Paper ref={formRef} elevation={0} sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
+                    <Paper ref={formRef} elevation={0} role="form" aria-label="Submit New Paper" sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
                         <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5, fontSize: { xs: '1.25rem', md: '1.5rem' }, letterSpacing: '-0.02em' }}>
                             Submit New Paper
                         </Typography>

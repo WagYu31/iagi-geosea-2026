@@ -41,7 +41,7 @@ export default function Edit({ mustVerifyEmail, status }) {
         <SidebarLayout>
             <Head title="Profile" />
 
-            <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
+            <Box component="main" role="main" aria-label="Profile Settings" sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
                 {/* Page Header */}
                 <Box sx={{ mb: 3 }}>
                     <Typography sx={{
@@ -59,7 +59,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 </Box>
 
                 {/* Profile Card */}
-                <Paper elevation={0} sx={{
+                <Paper elevation={0} role="region" aria-label="User Profile Summary" sx={{
                     p: { xs: 2.5, md: 3 },
                     mb: 3,
                     border: `1px solid ${c.cardBorder}`,
@@ -83,7 +83,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         alignItems: { xs: 'center', sm: 'flex-start' },
                         gap: { xs: 2, sm: 3 },
                     }}>
-                        <Avatar sx={{
+                        <Avatar aria-hidden="true" sx={{
                             width: { xs: 64, sm: 72 },
                             height: { xs: 64, sm: 72 },
                             bgcolor: '#ecfdf5',
@@ -137,7 +137,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <Grid container spacing={2.5}>
                     {/* Profile Information */}
                     <Grid item xs={12} lg={8}>
-                        <Paper elevation={0} sx={{
+                        <Paper elevation={0} role="region" aria-label="Profile Information" sx={{
                             p: { xs: 2.5, md: 3 },
                             border: `1px solid ${c.cardBorder}`,
                             borderRadius: '16px',
@@ -162,7 +162,7 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                     {/* Account Info Card */}
                     <Grid item xs={12} lg={4}>
-                        <Paper elevation={0} sx={{
+                        <Paper elevation={0} role="region" aria-label="Account Details" sx={{
                             p: { xs: 2.5, md: 3 },
                             border: `1px solid ${c.cardBorder}`,
                             borderRadius: '16px',
@@ -248,7 +248,7 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                     {/* Update Password */}
                     <Grid item xs={12}>
-                        <Paper elevation={0} sx={{
+                        <Paper elevation={0} role="region" aria-label="Update Password" sx={{
                             p: { xs: 2.5, md: 3 },
                             border: `1px solid ${c.cardBorder}`,
                             borderRadius: '16px',

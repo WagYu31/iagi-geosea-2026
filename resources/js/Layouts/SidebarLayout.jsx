@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -87,7 +87,7 @@ function SidebarLayout({ children }) {
       display: 'flex',
       flexDirection: 'column',
       bgcolor: c.sidebarBg,
-    }}>
+    }} role="navigation" aria-label="Main navigation">
       {/* ─── Unified Header: Brand + User ─── */}
       <Box sx={{
         background: c.sidebarHeaderBg,
@@ -179,13 +179,14 @@ function SidebarLayout({ children }) {
       )}
 
       {/* ─── Menu Items ─── */}
-      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1 }}>
+      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1 }} aria-label="Navigation menu">
         {menuItems.map((item) => {
           const active = isActive(item.href);
           const button = (
             <ListItemButton
               component={Link}
               href={item.href}
+              aria-current={active ? 'page' : undefined}
               sx={{
                 borderRadius: '12px',
                 py: 1.1,
@@ -398,6 +399,7 @@ function SidebarLayout({ children }) {
           <Tooltip title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
             <IconButton
               onClick={toggleMode}
+              aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               sx={{
                 mr: 1.5,
                 width: 36,
@@ -422,6 +424,7 @@ function SidebarLayout({ children }) {
           <Box
             component={Link}
             href={route('profile.edit')}
+            aria-label={`Profile: ${auth.user?.name}`}
             sx={{
               display: 'flex',
               alignItems: 'center',

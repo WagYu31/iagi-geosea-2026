@@ -132,7 +132,7 @@ export default function Dashboard({ submissions = [], user }) {
         <SidebarLayout>
             <Head title="Dashboard" />
 
-            <Box sx={{
+            <Box component="main" role="main" aria-label="Dashboard" sx={{
                 p: { xs: 2, sm: 3.5 },
                 minHeight: '100vh',
                 bgcolor: c.surfaceBg,
@@ -201,7 +201,7 @@ export default function Dashboard({ submissions = [], user }) {
                 </Box>
 
                 {/* Stat Cards */}
-                <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
+                <Grid container spacing={2.5} sx={{ mb: 3.5 }} role="region" aria-label="Submission Statistics">
                     {statCards.map((card, index) => (
                         <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
                             <Card
@@ -246,7 +246,7 @@ export default function Dashboard({ submissions = [], user }) {
                                             }}
                                             variant="rounded"
                                         >
-                                            {React.cloneElement(card.icon, { sx: { color: card.color, fontSize: { xs: 20, sm: 24 } } })}
+                                            {React.cloneElement(card.icon, { sx: { color: card.color, fontSize: { xs: 20, sm: 24 } }, 'aria-hidden': true })}
                                         </Avatar>
                                         <Chip
                                             label={card.trend}
@@ -309,7 +309,7 @@ export default function Dashboard({ submissions = [], user }) {
                 {/* Main Content Grid */}
                 <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
                     {/* Chart Section */}
-                    <Grid size={{ xs: 12, lg: 5 }}>
+                    <Grid size={{ xs: 12, lg: 5 }} role="region" aria-label="Submission Overview Chart">
                         <Card
                             elevation={0}
                             sx={{
@@ -384,7 +384,7 @@ export default function Dashboard({ submissions = [], user }) {
                     </Grid>
 
                     {/* Recent Submissions */}
-                    <Grid size={{ xs: 12, lg: 7 }}>
+                    <Grid size={{ xs: 12, lg: 7 }} role="region" aria-label="Recent Submissions">
                         <Card
                             elevation={0}
                             sx={{
@@ -433,7 +433,7 @@ export default function Dashboard({ submissions = [], user }) {
                                 </Box>
 
                                 {recentSubmissions.length > 0 ? (
-                                    <Stack spacing={0} divider={<Divider sx={{ borderColor: c.cardBorder }} />}>
+                                    <Stack spacing={0} divider={<Divider sx={{ borderColor: c.cardBorder }} />} role="list" aria-label="Recent paper submissions">
                                         {recentSubmissions.map((sub, idx) => {
                                             const status = getStatusColor(sub.status);
                                             return (
@@ -519,6 +519,8 @@ export default function Dashboard({ submissions = [], user }) {
                 {/* Quick Actions */}
                 <Card
                     elevation={0}
+                    role="region"
+                    aria-label="Quick Actions"
                     sx={{
                         borderRadius: '16px',
                         border: `1px solid ${c.cardBorder}`,
@@ -705,8 +707,8 @@ export default function Dashboard({ submissions = [], user }) {
                 )}
             </Box>
 
-            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }}>{snackbar.message}</Alert>
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} role="alert">
+                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }} role="alert">{snackbar.message}</Alert>
             </Snackbar>
         </SidebarLayout>
     );
