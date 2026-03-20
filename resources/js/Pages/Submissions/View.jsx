@@ -22,6 +22,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import { styled } from '@mui/material/styles';
 import RichTextEditor from '@/Components/RichTextEditor';
 
@@ -851,6 +852,99 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                 </Stack>
                             </CardContent>
                         </Card>
+
+                        {/* ── 💬 Reviewer Comments ── */}
+                        {reviews.length > 0 && reviews.some(r => r.comments || r.comments_phase2) && (
+                            <Card elevation={0} sx={cardSx}>
+                                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                                    <Typography variant="h6" sx={sectionTitleSx}>
+                                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(59,130,246,0.12)' : '#eff6ff', width: 36, height: 36, borderRadius: '10px' }}>
+                                            <RateReviewIcon sx={{ color: '#2563eb', fontSize: 20 }} />
+                                        </Avatar>
+                                        Reviewer Comments
+                                    </Typography>
+
+                                    <Grid container spacing={2}>
+                                        {reviews.filter(r => r.comments || r.comments_phase2).map((review, index) => {
+                                            const getRecConfig = (rec) => {
+                                                if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
+                                                const r = rec.toLowerCase();
+                                                if (r.includes('accept')) return { bg: c.chipGreenBg, color: c.chipGreenText, label: 'Accepted' };
+                                                if (r.includes('reject')) return { bg: isDark ? 'rgba(239,68,68,0.15)' : '#fef2f2', color: isDark ? '#fca5a5' : '#dc2626', label: 'Rejected' };
+                                                if (r.includes('minor')) return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: 'Minor Revision' };
+                                                if (r.includes('major') || r.includes('revision')) return { bg: c.chipAmberBg, color: c.chipAmberText, label: rec };
+                                                return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: rec };
+                                            };
+
+                                            return (
+                                                <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
+                                                    <Box sx={{
+                                                        p: 2.5, borderRadius: '14px',
+                                                        border: `1px solid ${c.cardBorder}`,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                        height: '100%', display: 'flex', flexDirection: 'column',
+                                                        transition: 'all 0.2s ease',
+                                                        '&:hover': { borderColor: '#2563eb', boxShadow: `0 4px 16px ${isDark ? 'rgba(59,130,246,0.1)' : 'rgba(0,0,0,0.06)'}`, transform: 'translateY(-2px)' },
+                                                    }}>
+                                                        {/* Reviewer header */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                                <Avatar sx={{ width: 40, height: 40, background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)', fontWeight: 700, fontSize: '0.85rem' }}>
+                                                                    {(review.reviewer?.name || 'R').charAt(0).toUpperCase()}
+                                                                </Avatar>
+                                                                <Box>
+                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
+                                                                        {review.reviewer?.name || 'Reviewer'}
+                                                                    </Typography>
+                                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
+                                                                        Reviewer #{index + 1}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+
+                                                        {/* Phase 1 comment */}
+                                                        {review.comments && (
+                                                            <Box sx={{ mb: review.comments_phase2 ? 2 : 0, flex: review.comments_phase2 ? 'none' : 1 }}>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                                    <Chip label="Phase 1" size="small" sx={{ bgcolor: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', fontWeight: 700, fontSize: '0.65rem', height: 22, borderRadius: '6px' }} />
+                                                                    {review.recommendation && (() => { const rc = getRecConfig(review.recommendation); return <Chip label={rc.label} size="small" sx={{ bgcolor: rc.bg, color: rc.color, fontWeight: 700, fontSize: '0.65rem', height: 22, borderRadius: '6px' }} />; })()}
+                                                                </Box>
+                                                                <Typography variant="body2" sx={{ color: c.textPrimary, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontSize: '0.85rem' }}>
+                                                                    {review.comments}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
+
+                                                        {/* Phase 2 comment */}
+                                                        {review.comments_phase2 && (
+                                                            <Box sx={{ flex: 1 }}>
+                                                                {review.comments && <Divider sx={{ my: 1.5, borderColor: c.cardBorder }} />}
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                                    <Chip label="Revision 2" size="small" sx={{ bgcolor: isDark ? 'rgba(168,85,247,0.15)' : '#f3e8ff', color: isDark ? '#c4b5fd' : '#7c3aed', fontWeight: 700, fontSize: '0.65rem', height: 22, borderRadius: '6px' }} />
+                                                                    {review.recommendation_phase2 && (() => { const rc = getRecConfig(review.recommendation_phase2); return <Chip label={rc.label} size="small" sx={{ bgcolor: rc.bg, color: rc.color, fontWeight: 700, fontSize: '0.65rem', height: 22, borderRadius: '6px' }} />; })()}
+                                                                </Box>
+                                                                <Typography variant="body2" sx={{ color: c.textPrimary, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontSize: '0.85rem' }}>
+                                                                    {review.comments_phase2}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
+
+                                                        {/* Date footer */}
+                                                        <Box sx={{ pt: 2, mt: 'auto', borderTop: `1px solid ${c.cardBorder}`, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                            <CalendarTodayIcon sx={{ fontSize: 13, color: c.textMuted }} />
+                                                            <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.72rem', fontStyle: 'italic' }}>
+                                                                {new Date(review.updated_at || review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                </Grid>
+                                            );
+                                        })}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* Reviewer Scores (at the bottom) */}
                         {reviews.length > 0 && reviews.some(r => r.overall_score) && (
