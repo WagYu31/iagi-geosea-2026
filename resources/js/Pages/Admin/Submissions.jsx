@@ -121,6 +121,8 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [presentationFilter, setPresentationFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [coAuthorPopover, setCoAuthorPopover] = useState(null);
+    const [changeAllStatus, setChangeAllStatus] = useState('');
+    const [changeAllDialog, setChangeAllDialog] = useState(false);
 
     // Filter submissions
     const filteredSubmissions = submissions.filter(submission => {
@@ -172,6 +174,18 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
             }, {
                 preserveScroll: true,
                 onSuccess: () => { setSelected([]); setBulkStatus(''); },
+            });
+        }
+    };
+
+    const handleChangeAllStatus = () => {
+        if (changeAllStatus && filteredSubmissions.length > 0) {
+            router.post(route('admin.submissions.bulkUpdate'), {
+                submission_ids: filteredSubmissions.map(s => s.id),
+                status: changeAllStatus,
+            }, {
+                preserveScroll: true,
+                onSuccess: () => { setChangeAllStatus(''); setChangeAllDialog(false); },
             });
         }
     };
@@ -431,6 +445,57 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     borderRadius: '8px',
                                 }}
                             />
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                {/* Change All Status - Always Visible */}
+                <Card elevation={0} sx={{
+                    borderRadius: '14px',
+                    border: `1px solid ${isDark ? 'rgba(26, 188, 156, 0.2)' : '#e0e0e0'}`,
+                    bgcolor: c.cardBg,
+                    mb: 2.5,
+                }}>
+                    <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                Change All Status:
+                            </Typography>
+                            <FormControl size="small" sx={{ minWidth: 180 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Select Status</InputLabel>
+                                <Select
+                                    value={changeAllStatus}
+                                    onChange={(e) => setChangeAllStatus(e.target.value)}
+                                    label="Select Status"
+                                    sx={{ borderRadius: '10px', fontSize: '0.85rem' }}
+                                >
+                                    <MenuItem value="pending">Pending</MenuItem>
+                                    <MenuItem value="under_review">Under Review</MenuItem>
+                                    <MenuItem value="accepted">Accepted</MenuItem>
+                                    <MenuItem value="rejected">Rejected</MenuItem>
+                                    <MenuItem value="revision_required_phase1">Revision P1</MenuItem>
+                                    <MenuItem value="revision_required_phase2">Revision P2</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <Button
+                                variant="contained"
+                                onClick={() => setChangeAllDialog(true)}
+                                disabled={!changeAllStatus || filteredSubmissions.length === 0}
+                                size="small"
+                                sx={{
+                                    bgcolor: '#e67e22',
+                                    '&:hover': { bgcolor: '#d35400' },
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    px: 2.5,
+                                }}
+                            >
+                                Apply to All ({filteredSubmissions.length})
+                            </Button>
+                            <Typography variant="caption" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
+                                Applies to all {filteredSubmissions.length} currently filtered submissions
+                            </Typography>
                         </Box>
                     </CardContent>
                 </Card>
@@ -1264,6 +1329,69 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                     </Box>
                 )}
             </Popover>
+
+            {/* Change All Status Confirmation Dialog */}
+            <Dialog
+                open={changeAllDialog}
+                onClose={() => setChangeAllDialog(false)}
+                PaperProps={{
+                    sx: {
+                        borderRadius: '16px',
+                        bgcolor: c.cardBg,
+                        minWidth: 400,
+                    }
+                }}
+            >
+                <DialogTitle sx={{ fontWeight: 700, color: c.textPrimary }}>
+                    ⚠️ Confirm Bulk Status Change
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1" sx={{ color: c.textPrimary, mb: 2 }}>
+                        You are about to change the status of <strong>{filteredSubmissions.length}</strong> submission{filteredSubmissions.length !== 1 ? 's' : ''} to:
+                    </Typography>
+                    <Chip
+                        label={changeAllStatus === 'pending' ? 'Pending' :
+                               changeAllStatus === 'under_review' ? 'Under Review' :
+                               changeAllStatus === 'accepted' ? 'Accepted' :
+                               changeAllStatus === 'rejected' ? 'Rejected' :
+                               changeAllStatus === 'revision_required_phase1' ? 'Revision P1' :
+                               changeAllStatus === 'revision_required_phase2' ? 'Revision P2' : changeAllStatus}
+                        sx={{
+                            fontWeight: 700,
+                            fontSize: '0.9rem',
+                            py: 2,
+                            px: 1,
+                            bgcolor: '#1abc9c',
+                            color: 'white',
+                        }}
+                    />
+                    <Typography variant="body2" sx={{ color: '#e74c3c', mt: 2, fontWeight: 600 }}>
+                        This action cannot be undone. Are you sure?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2.5, pt: 1 }}>
+                    <Button
+                        onClick={() => setChangeAllDialog(false)}
+                        sx={{ textTransform: 'none', color: c.textMuted, fontWeight: 600 }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleChangeAllStatus}
+                        sx={{
+                            bgcolor: '#e67e22',
+                            '&:hover': { bgcolor: '#d35400' },
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            borderRadius: '10px',
+                            px: 3,
+                        }}
+                    >
+                        Yes, Change All ({filteredSubmissions.length})
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
         </SidebarLayout>
     );
