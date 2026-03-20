@@ -61,9 +61,13 @@ export default function ReviewerSubmissions({ reviews = [] }) {
 
     const handleSubmitReview = () => {
         if (reviewDialog.review) {
-            router.post(route('reviewer.reviews.submit', reviewDialog.review.id), {
-                ...scores, comments, recommendation,
-            }, { onSuccess: () => handleCloseReviewDialog() });
+            const isPhase2 = reviewDialog.review.phase === 2;
+            const payload = isPhase2
+                ? { comments, recommendation }
+                : { ...scores, comments, recommendation };
+            router.post(route('reviewer.reviews.submit', reviewDialog.review.id), payload, {
+                onSuccess: () => handleCloseReviewDialog(),
+            });
         }
     };
 
@@ -218,7 +222,7 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                         <Table>
                             <TableHead>
                                 <TableRow sx={{ bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' }}>
-                                    {['Submission Code', 'Title', 'Sub Theme', 'Author', 'Category', 'Type', 'Submitted', 'Status', 'Review', 'Actions'].map((h) => (
+                                    {['Submission Code', 'Title', 'Sub Theme', 'Author', 'Category', 'Type', 'Submitted', 'Status', 'Phase', 'Review', 'Actions'].map((h) => (
                                         <TableCell key={h} sx={{ fontWeight: 700, color: c.textMuted, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: `1px solid ${c.cardBorder}`, py: 1.5 }}>
                                             {h}
                                         </TableCell>
@@ -228,7 +232,7 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                             <TableBody>
                                 {filteredReviews.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={10} align="center" sx={{ py: 6, borderBottom: 'none' }}>
+                                        <TableCell colSpan={11} align="center" sx={{ py: 6, borderBottom: 'none' }}>
                                             <AssignmentIcon sx={{ fontSize: 48, color: c.textMuted, mb: 1, opacity: 0.4 }} />
                                             <Typography variant="body2" sx={{ color: c.textMuted }}>No submissions found.</Typography>
                                         </TableCell>
@@ -296,6 +300,14 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                                         fontWeight: 600, fontSize: '0.65rem', borderRadius: '6px', height: 22,
                                                         bgcolor: review.submission?.status === 'accepted' ? c.chipGreenBg : (isDark ? '#374151' : '#f3f4f6'),
                                                         color: review.submission?.status === 'accepted' ? c.chipGreenText : c.textMuted,
+                                                    }} />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Chip label={`P${review.phase || 1}`} size="small"
+                                                    sx={{
+                                                        fontWeight: 700, fontSize: '0.65rem', borderRadius: '6px', height: 22,
+                                                        bgcolor: (review.phase || 1) === 2 ? (isDark ? 'rgba(168,85,247,0.12)' : '#f3e8ff') : (isDark ? 'rgba(59,130,246,0.12)' : '#eff6ff'),
+                                                        color: (review.phase || 1) === 2 ? (isDark ? '#c4b5fd' : '#7c3aed') : (isDark ? '#93c5fd' : '#2563eb'),
                                                     }} />
                                             </TableCell>
                                             <TableCell>
@@ -370,6 +382,9 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                             <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
                                 {reviewDialog.review?.submission?.title ? `Reviewing: ${reviewDialog.review.submission.title.substring(0, 60)}...` : 'Score each category from 1-5'}
                             </Typography>
+                            {reviewDialog.review?.phase === 2 && (
+                                <Chip label="Phase 2 — Comments Only" size="small" sx={{ bgcolor: isDark ? 'rgba(168,85,247,0.15)' : '#f3e8ff', color: isDark ? '#c4b5fd' : '#7c3aed', fontWeight: 700, fontSize: '0.7rem', borderRadius: '6px', mt: 0.5 }} />
+                            )}
                         </Box>
                     </Box>
                     <IconButton onClick={handleCloseReviewDialog} sx={{ color: c.textMuted, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6' } }}>
@@ -379,6 +394,8 @@ export default function ReviewerSubmissions({ reviews = [] }) {
 
                 <DialogContent sx={{ px: 3, py: 3 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                        {/* Score fields - only show for Phase 1 */}
+                        {(!reviewDialog.review?.phase || reviewDialog.review?.phase === 1) && (<>
                         {scoreFields.map((field) => (
                             <Box key={field.key} sx={{
                                 p: 2, borderRadius: '14px',
@@ -423,6 +440,7 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                 </Typography>
                             </Box>
                         ))}
+                        </>)}
 
                         {/* Comments */}
                         <Box sx={{
@@ -509,12 +527,14 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                         variant="contained"
                         startIcon={<RateReviewIcon />}
                         disabled={
-                            !scores.originality_score ||
-                            !scores.relevance_score ||
-                            !scores.clarity_score ||
-                            !scores.methodology_score ||
-                            !scores.overall_score ||
-                            !comments
+                            reviewDialog.review?.phase === 2
+                                ? !comments
+                                : (!scores.originality_score ||
+                                   !scores.relevance_score ||
+                                   !scores.clarity_score ||
+                                   !scores.methodology_score ||
+                                   !scores.overall_score ||
+                                   !comments)
                         }
                         sx={{ ...tealBtnSx, px: 3, py: 1 }}
                     >

@@ -70,29 +70,43 @@ class ReviewerController extends Controller
 
     public function submitReview(Request $request, $reviewId)
     {
-        $request->validate([
-            'originality_score' => 'required|integer|min:1|max:5',
-            'relevance_score' => 'required|integer|min:1|max:5',
-            'clarity_score' => 'required|integer|min:1|max:5',
-            'methodology_score' => 'required|integer|min:1|max:5',
-            'overall_score' => 'required|integer|min:1|max:5',
-            'comments' => 'required|string',
-            'recommendation' => 'nullable|string|max:255',
-        ]);
-
         $review = Review::where('id', $reviewId)
             ->where('reviewer_id', Auth::id())
             ->firstOrFail();
 
-        $review->update([
-            'originality_score' => $request->originality_score,
-            'relevance_score' => $request->relevance_score,
-            'clarity_score' => $request->clarity_score,
-            'methodology_score' => $request->methodology_score,
-            'overall_score' => $request->overall_score,
-            'comments' => $request->comments,
-            'recommendation' => $request->recommendation,
-        ]);
+        if ($review->phase == 2) {
+            // Phase 2: comments + recommendation only, no scoring
+            $request->validate([
+                'comments' => 'required|string',
+                'recommendation' => 'nullable|string|max:255',
+            ]);
+
+            $review->update([
+                'comments' => $request->comments,
+                'recommendation' => $request->recommendation,
+            ]);
+        } else {
+            // Phase 1: full scoring + comments
+            $request->validate([
+                'originality_score' => 'required|integer|min:1|max:5',
+                'relevance_score' => 'required|integer|min:1|max:5',
+                'clarity_score' => 'required|integer|min:1|max:5',
+                'methodology_score' => 'required|integer|min:1|max:5',
+                'overall_score' => 'required|integer|min:1|max:5',
+                'comments' => 'required|string',
+                'recommendation' => 'nullable|string|max:255',
+            ]);
+
+            $review->update([
+                'originality_score' => $request->originality_score,
+                'relevance_score' => $request->relevance_score,
+                'clarity_score' => $request->clarity_score,
+                'methodology_score' => $request->methodology_score,
+                'overall_score' => $request->overall_score,
+                'comments' => $request->comments,
+                'recommendation' => $request->recommendation,
+            ]);
+        }
 
         return back()->with('success', 'Review submitted successfully!');
     }

@@ -646,8 +646,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     }
                                                 })()}
 
-                                                {/* Reviewer Feedback below Full Paper (Revision 1) */}
-                                                {item.feedbackType === 'revision1' && reviews.length > 0 && (
+                                                {item.feedbackType === 'revision1' && reviews.filter(r => !r.phase || r.phase === 1).length > 0 && (
                                                     <Box sx={{ mt: 2 }}>
                                                         <Box sx={{
                                                             display: 'flex', alignItems: 'center', gap: 1, mb: 2,
@@ -660,7 +659,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                             </Typography>
                                                         </Box>
                                                         <Grid container spacing={2}>
-                                                            {reviews.map((review, index) => {
+                                                            {reviews.filter(r => !r.phase || r.phase === 1).map((review, index) => {
                                                                 const getRecConfig = (rec) => {
                                                                     if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
                                                                     const r = rec.toLowerCase();
@@ -744,30 +743,86 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                 )}
 
                                                 {/* Reviewer Feedback below Layouting File (Revision 2) */}
-                                                {item.feedbackType === 'revision2' && reviews.length > 0 && (
-                                                    <Box sx={{ mt: 2 }}>
-                                                        <Box sx={{
-                                                            display: 'flex', alignItems: 'center', gap: 1, mb: 1.5,
-                                                            p: 1.5, borderRadius: '10px',
-                                                            bgcolor: isDark ? 'rgba(168,85,247,0.08)' : '#faf5ff',
-                                                            border: `1px solid ${isDark ? 'rgba(168,85,247,0.2)' : '#e9d5ff'}`,
-                                                        }}>
-                                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#c084fc' : '#7c3aed', fontSize: '0.85rem' }}>
-                                                                📝 Revision 2 — Reviewer Comments
-                                                            </Typography>
+                                                {item.feedbackType === 'revision2' && (() => {
+                                                    const phase2Reviews = reviews.filter(r => r.phase === 2);
+                                                    const hasPhase2Comments = phase2Reviews.some(r => r.comments);
+                                                    return phase2Reviews.length > 0 ? (
+                                                        <Box sx={{ mt: 2 }}>
+                                                            <Box sx={{
+                                                                display: 'flex', alignItems: 'center', gap: 1, mb: 2,
+                                                                p: 1.5, borderRadius: '10px',
+                                                                bgcolor: isDark ? 'rgba(168,85,247,0.08)' : '#faf5ff',
+                                                                border: `1px solid ${isDark ? 'rgba(168,85,247,0.2)' : '#e9d5ff'}`,
+                                                            }}>
+                                                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#c084fc' : '#7c3aed', fontSize: '0.85rem' }}>
+                                                                    📝 Revision 2 — Reviewer Comments
+                                                                </Typography>
+                                                            </Box>
+                                                            {hasPhase2Comments ? (
+                                                                <Grid container spacing={2}>
+                                                                    {phase2Reviews.filter(r => r.comments).map((review, index) => {
+                                                                        const getRecConfig = (rec) => {
+                                                                            if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
+                                                                            const r = rec.toLowerCase();
+                                                                            if (r.includes('accept')) return { bg: c.chipGreenBg, color: c.chipGreenText, label: 'Accepted' };
+                                                                            if (r.includes('reject')) return { bg: isDark ? 'rgba(239,68,68,0.15)' : '#fef2f2', color: isDark ? '#fca5a5' : '#dc2626', label: 'Rejected' };
+                                                                            if (r.includes('minor')) return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: 'Minor Revision' };
+                                                                            if (r.includes('major') || r.includes('revision')) return { bg: c.chipAmberBg, color: c.chipAmberText, label: rec };
+                                                                            return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: rec };
+                                                                        };
+                                                                        const recConfig = getRecConfig(review.recommendation);
+                                                                        return (
+                                                                            <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
+                                                                                <Box sx={{
+                                                                                    p: 2.5, borderRadius: '14px',
+                                                                                    border: `1px solid ${c.cardBorder}`,
+                                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                                                    height: '100%', display: 'flex', flexDirection: 'column',
+                                                                                    transition: 'all 0.2s ease',
+                                                                                    '&:hover': { borderColor: '#7c3aed', boxShadow: `0 4px 16px ${isDark ? 'rgba(124,58,237,0.1)' : 'rgba(0,0,0,0.06)'}`, transform: 'translateY(-2px)' },
+                                                                                }}>
+                                                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                                                            <Avatar sx={{ width: 40, height: 40, background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)', fontWeight: 700, fontSize: '0.85rem' }}>
+                                                                                                {(review.reviewer?.name || 'A').charAt(0).toUpperCase()}
+                                                                                            </Avatar>
+                                                                                            <Box>
+                                                                                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
+                                                                                                    {review.reviewer?.name || 'Admin'}
+                                                                                                </Typography>
+                                                                                                <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
+                                                                                                    Reviewer #{index + 1}
+                                                                                                </Typography>
+                                                                                            </Box>
+                                                                                        </Box>
+                                                                                        <Chip label={recConfig.label} size="small" sx={{ bgcolor: recConfig.bg, color: recConfig.color, fontWeight: 700, fontSize: '0.65rem', height: 24, borderRadius: '6px' }} />
+                                                                                    </Box>
+                                                                                    <Box sx={{ mb: 2, flex: 1 }}>
+                                                                                        <Typography variant="body2" sx={{ color: c.textPrimary, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontSize: '0.85rem' }}>
+                                                                                            {review.comments}
+                                                                                        </Typography>
+                                                                                    </Box>
+                                                                                    <Box sx={{ pt: 2, borderTop: `1px solid ${c.cardBorder}`, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                                        <CalendarTodayIcon sx={{ fontSize: 13, color: c.textMuted }} />
+                                                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.72rem', fontStyle: 'italic' }}>
+                                                                                            Reviewed on {new Date(review.updated_at || review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                                                        </Typography>
+                                                                                    </Box>
+                                                                                </Box>
+                                                                            </Grid>
+                                                                        );
+                                                                    })}
+                                                                </Grid>
+                                                            ) : (
+                                                                <Box sx={{ p: 2.5, borderRadius: '14px', border: `1px dashed ${c.cardBorder}`, bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa', textAlign: 'center' }}>
+                                                                    <Typography variant="body2" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
+                                                                        Waiting for reviewer comments on Revision 2.
+                                                                    </Typography>
+                                                                </Box>
+                                                            )}
                                                         </Box>
-                                                        <Box sx={{
-                                                            p: 2.5, borderRadius: '14px',
-                                                            border: `1px dashed ${c.cardBorder}`,
-                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                                            textAlign: 'center',
-                                                        }}>
-                                                            <Typography variant="body2" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
-                                                                Reviewer feedback for Revision 2 will be available after review.
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-                                                )}
+                                                    ) : null;
+                                                })()}
 
                                                 {/* Editor notes below Editor Feedback file */}
                                                 {item.feedbackType === 'editor' && (
