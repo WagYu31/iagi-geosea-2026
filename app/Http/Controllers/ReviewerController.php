@@ -50,7 +50,6 @@ class ReviewerController extends Controller
     {
         $reviewerId = Auth::id();
 
-        // Check if reviewer is assigned to this submission
         $review = Review::where('reviewer_id', $reviewerId)
             ->where('submission_id', $id)
             ->first();
@@ -60,11 +59,13 @@ class ReviewerController extends Controller
         }
 
         $submission = Submission::with(['user', 'reviews.reviewer'])->findOrFail($id);
+        $isPhase2 = in_array($submission->status, ['revision_required_phase2']);
 
         return Inertia::render('Submissions/View', [
             'submission' => $submission,
             'reviews' => $submission->reviews,
             'isReviewer' => true,
+            'isPhase2' => $isPhase2,
         ]);
     }
 
@@ -72,18 +73,21 @@ class ReviewerController extends Controller
     {
         $review = Review::where('id', $reviewId)
             ->where('reviewer_id', Auth::id())
+            ->with('submission')
             ->firstOrFail();
 
-        if ($review->phase == 2) {
-            // Phase 2: comments + recommendation only, no scoring
+        $isPhase2 = in_array($review->submission->status, ['revision_required_phase2']);
+
+        if ($isPhase2) {
+            // Phase 2: comments only (saved in separate columns)
             $request->validate([
-                'comments' => 'required|string',
-                'recommendation' => 'nullable|string|max:255',
+                'comments_phase2' => 'required|string',
+                'recommendation_phase2' => 'nullable|string|max:255',
             ]);
 
             $review->update([
-                'comments' => $request->comments,
-                'recommendation' => $request->recommendation,
+                'comments_phase2' => $request->comments_phase2,
+                'recommendation_phase2' => $request->recommendation_phase2,
             ]);
         } else {
             // Phase 1: full scoring + comments

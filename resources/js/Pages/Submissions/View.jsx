@@ -744,9 +744,9 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
 
                                                 {/* Reviewer Feedback below Layouting File (Revision 2) */}
                                                 {item.feedbackType === 'revision2' && (() => {
-                                                    const phase2Reviews = reviews.filter(r => r.phase === 2);
-                                                    const hasPhase2Comments = phase2Reviews.some(r => r.comments);
-                                                    return phase2Reviews.length > 0 ? (
+                                                    const p2Reviews = reviews.filter(r => r.comments_phase2);
+                                                    const hasPhase2Comments = p2Reviews.length > 0;
+                                                    return reviews.length > 0 ? (
                                                         <Box sx={{ mt: 2 }}>
                                                             <Box sx={{
                                                                 display: 'flex', alignItems: 'center', gap: 1, mb: 2,
@@ -760,7 +760,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                             </Box>
                                                             {hasPhase2Comments ? (
                                                                 <Grid container spacing={2}>
-                                                                    {phase2Reviews.filter(r => r.comments).map((review, index) => {
+                                                                    {p2Reviews.map((review, index) => {
                                                                         const getRecConfig = (rec) => {
                                                                             if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
                                                                             const r = rec.toLowerCase();
@@ -770,7 +770,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                                             if (r.includes('major') || r.includes('revision')) return { bg: c.chipAmberBg, color: c.chipAmberText, label: rec };
                                                                             return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: rec };
                                                                         };
-                                                                        const recConfig = getRecConfig(review.recommendation);
+                                                                        const recConfig = getRecConfig(review.recommendation_phase2);
                                                                         return (
                                                                             <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
                                                                                 <Box sx={{
@@ -799,7 +799,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                                                     </Box>
                                                                                     <Box sx={{ mb: 2, flex: 1 }}>
                                                                                         <Typography variant="body2" sx={{ color: c.textPrimary, lineHeight: 1.7, whiteSpace: 'pre-wrap', fontSize: '0.85rem' }}>
-                                                                                            {review.comments}
+                                                                                            {review.comments_phase2}
                                                                                         </Typography>
                                                                                     </Box>
                                                                                     <Box sx={{ pt: 2, borderTop: `1px solid ${c.cardBorder}`, display: 'flex', alignItems: 'center', gap: 0.5 }}>

@@ -261,17 +261,6 @@ class AdminController extends Controller
         $oldStatus = $submission->status;
         $submission->update(['status' => $request->status]);
 
-        // Auto-create Phase 2 review records when status changes to revision_required_phase2
-        if ($request->status === 'revision_required_phase2' && $oldStatus !== 'revision_required_phase2') {
-            $phase1Reviews = Review::where('submission_id', $id)->where('phase', 1)->get();
-            foreach ($phase1Reviews as $p1) {
-                Review::firstOrCreate(
-                    ['submission_id' => $id, 'reviewer_id' => $p1->reviewer_id, 'phase' => 2],
-                    ['originality_score' => 0, 'relevance_score' => 0, 'clarity_score' => 0, 'methodology_score' => 0, 'overall_score' => 0]
-                );
-            }
-        }
-
         // Send notifications if status changed
         if ($oldStatus !== $request->status) {
             // Send WhatsApp notification

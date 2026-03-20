@@ -240,7 +240,7 @@
     ]
   },
   "resources/js/Pages/Reviewer/Submissions.jsx": {
-    "file": "assets/Submissions-DgRkyaak.js",
+    "file": "assets/Submissions-CqQ_uXw1.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Reviewer/Submissions.jsx",
     "isDynamicEntry": true,
@@ -267,7 +267,7 @@
     ]
   },
   "resources/js/Pages/Submissions/View.jsx": {
-    "file": "assets/View-Bzsh7DlV.js",
+    "file": "assets/View-CXfdvluE.js",
     "name": "View",
     "src": "resources/js/Pages/Submissions/View.jsx",
     "isDynamicEntry": true,
@@ -305,7 +305,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Bkzq_G2Y.js",
+    "file": "assets/app-CaB7Bi9P.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

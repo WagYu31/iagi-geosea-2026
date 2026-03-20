@@ -19,7 +19,8 @@ class Review extends Model
         'overall_score',
         'comments',
         'recommendation',
-        'phase',
+        'comments_phase2',
+        'recommendation_phase2',
     ];
 
     public function submission()
