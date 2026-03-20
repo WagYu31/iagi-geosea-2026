@@ -658,155 +658,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                             </CardContent>
                         </Card>
 
-                        {/* SECTION 6A: Reviewer Scores */}
-                        {reviews.length > 0 && reviews.some(r => r.overall_score) && (
-                            <Card elevation={0} sx={cardSx}>
-                                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-                                    <Typography variant="h6" sx={sectionTitleSx}>
-                                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 36, height: 36, borderRadius: '10px' }}>
-                                            <StarIcon sx={{ color: '#1abc9c', fontSize: 20 }} />
-                                        </Avatar>
-                                        Reviewer Scores
-                                    </Typography>
-
-                                    {/* Final Average Score Summary */}
-                                    <Box sx={{
-                                        mb: 3,
-                                        p: 3,
-                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                        borderRadius: '14px',
-                                        boxShadow: '0 4px 20px rgba(26,188,156,0.25)',
-                                        textAlign: 'center',
-                                    }}>
-                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', mb: 1, fontSize: '0.7rem' }}>
-                                            Final Average Score
-                                        </Typography>
-                                        <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800, mb: 0.5, fontSize: '2.5rem' }}>
-                                            {(() => {
-                                                const validReviews = reviews.filter(r => r.overall_score);
-                                                if (validReviews.length === 0) return '0.0';
-                                                const totalAvg = validReviews.reduce((sum, r) => {
-                                                    const o = parseInt(r.originality_score || 0, 10);
-                                                    const re = parseInt(r.relevance_score || 0, 10);
-                                                    const cl = parseInt(r.clarity_score || 0, 10);
-                                                    const m = parseInt(r.methodology_score || 0, 10);
-                                                    const ov = parseInt(r.overall_score || 0, 10);
-                                                    return sum + ((o + re + cl + m + ov) / 5);
-                                                }, 0) / validReviews.length;
-                                                return totalAvg.toFixed(1);
-                                            })()}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem' }}>
-                                            Based on {reviews.filter(r => r.overall_score).length} reviewer{reviews.filter(r => r.overall_score).length !== 1 ? 's' : ''}
-                                        </Typography>
-                                    </Box>
-
-                                    {/* Per-reviewer Scores */}
-                                    <Grid container spacing={2.5}>
-                                        {reviews.filter(r => r.overall_score).map((review, index) => {
-                                            const avgScore = (
-                                                (parseInt(review.originality_score || 0, 10) +
-                                                    parseInt(review.relevance_score || 0, 10) +
-                                                    parseInt(review.clarity_score || 0, 10) +
-                                                    parseInt(review.methodology_score || 0, 10) +
-                                                    parseInt(review.overall_score || 0, 10)) / 5
-                                            ).toFixed(1);
-                                            const isGood = avgScore >= 4;
-                                            const scoreItems = [
-                                                { label: 'Originality', value: review.originality_score },
-                                                { label: 'Relevance', value: review.relevance_score },
-                                                { label: 'Clarity', value: review.clarity_score },
-                                                { label: 'Methodology', value: review.methodology_score },
-                                                { label: 'Overall', value: review.overall_score },
-                                            ];
-
-                                            return (
-                                                <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
-                                                    <Box sx={{
-                                                        p: 2.5,
-                                                        borderRadius: '14px',
-                                                        border: `1px solid ${c.cardBorder}`,
-                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                                        height: '100%',
-                                                        transition: 'all 0.2s ease',
-                                                        '&:hover': {
-                                                            borderColor: '#1abc9c',
-                                                            boxShadow: `0 4px 16px ${isDark ? 'rgba(26,188,156,0.1)' : 'rgba(0,0,0,0.06)'}`,
-                                                            transform: 'translateY(-2px)',
-                                                        },
-                                                    }}>
-                                                        {/* Reviewer Header */}
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                                                            <Avatar sx={{
-                                                                width: 40, height: 40,
-                                                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                                                fontWeight: 700, fontSize: '0.85rem',
-                                                            }}>
-                                                                {(review.reviewer?.name || 'A').charAt(0).toUpperCase()}
-                                                            </Avatar>
-                                                            <Box>
-                                                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
-                                                                    {review.reviewer?.name || 'Admin'}
-                                                                </Typography>
-                                                                <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
-                                                                    Reviewer #{reviews.indexOf(review) + 1}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-
-                                                        {/* Average Score Badge */}
-                                                        <Box sx={{
-                                                            mb: 2, p: 1.5, borderRadius: '10px', textAlign: 'center',
-                                                            bgcolor: isGood
-                                                                ? (isDark ? 'rgba(22,163,74,0.1)' : '#f0fdf4')
-                                                                : (isDark ? 'rgba(202,138,4,0.1)' : '#fffbeb'),
-                                                            border: `1px solid ${isGood
-                                                                ? (isDark ? 'rgba(22,163,74,0.2)' : '#86efac')
-                                                                : (isDark ? 'rgba(202,138,4,0.2)' : '#fde68a')}`,
-                                                        }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                                                <StarIcon sx={{ fontSize: 18, color: isGood ? '#16a34a' : '#ca8a04' }} />
-                                                                <Typography variant="h6" sx={{
-                                                                    fontWeight: 800,
-                                                                    color: isGood ? (isDark ? '#4ade80' : '#15803d') : (isDark ? '#fbbf24' : '#ca8a04'),
-                                                                }}>
-                                                                    Average: {avgScore}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-
-                                                        {/* Score Breakdown */}
-                                                        <Stack spacing={1}>
-                                                            {scoreItems.filter(s => s.value).map((item) => (
-                                                                <Box key={item.label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                    <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
-                                                                        {item.label}
-                                                                    </Typography>
-                                                                    <Chip
-                                                                        label={item.value}
-                                                                        size="small"
-                                                                        sx={{
-                                                                            minWidth: 36,
-                                                                            fontWeight: 700,
-                                                                            fontSize: '0.75rem',
-                                                                            height: 24,
-                                                                            bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5',
-                                                                            color: '#1abc9c',
-                                                                        }}
-                                                                    />
-                                                                </Box>
-                                                            ))}
-                                                        </Stack>
-                                                    </Box>
-                                                </Grid>
-                                            );
-                                        })}
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* SECTION 6B: Reviewer Feedback (Revision 1 & Revision 2) */}
+                        {/* Reviewer Feedback (Revision 1 & Revision 2) */}
                         {reviews.length > 0 && (
                             <Card elevation={0} sx={cardSx}>
                                 <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
@@ -975,6 +827,154 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                             </Box>
                                         )}
                                     </Box>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Reviewer Scores (at the bottom) */}
+                        {reviews.length > 0 && reviews.some(r => r.overall_score) && (
+                            <Card elevation={0} sx={cardSx}>
+                                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+                                    <Typography variant="h6" sx={sectionTitleSx}>
+                                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 36, height: 36, borderRadius: '10px' }}>
+                                            <StarIcon sx={{ color: '#1abc9c', fontSize: 20 }} />
+                                        </Avatar>
+                                        Reviewer Scores
+                                    </Typography>
+
+                                    {/* Final Average Score Summary */}
+                                    <Box sx={{
+                                        mb: 3,
+                                        p: 3,
+                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                        borderRadius: '14px',
+                                        boxShadow: '0 4px 20px rgba(26,188,156,0.25)',
+                                        textAlign: 'center',
+                                    }}>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', mb: 1, fontSize: '0.7rem' }}>
+                                            Final Average Score
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800, mb: 0.5, fontSize: '2.5rem' }}>
+                                            {(() => {
+                                                const validReviews = reviews.filter(r => r.overall_score);
+                                                if (validReviews.length === 0) return '0.0';
+                                                const totalAvg = validReviews.reduce((sum, r) => {
+                                                    const o = parseInt(r.originality_score || 0, 10);
+                                                    const re = parseInt(r.relevance_score || 0, 10);
+                                                    const cl = parseInt(r.clarity_score || 0, 10);
+                                                    const m = parseInt(r.methodology_score || 0, 10);
+                                                    const ov = parseInt(r.overall_score || 0, 10);
+                                                    return sum + ((o + re + cl + m + ov) / 5);
+                                                }, 0) / validReviews.length;
+                                                return totalAvg.toFixed(1);
+                                            })()}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem' }}>
+                                            Based on {reviews.filter(r => r.overall_score).length} reviewer{reviews.filter(r => r.overall_score).length !== 1 ? 's' : ''}
+                                        </Typography>
+                                    </Box>
+
+                                    {/* Per-reviewer Scores */}
+                                    <Grid container spacing={2.5}>
+                                        {reviews.filter(r => r.overall_score).map((review, index) => {
+                                            const avgScore = (
+                                                (parseInt(review.originality_score || 0, 10) +
+                                                    parseInt(review.relevance_score || 0, 10) +
+                                                    parseInt(review.clarity_score || 0, 10) +
+                                                    parseInt(review.methodology_score || 0, 10) +
+                                                    parseInt(review.overall_score || 0, 10)) / 5
+                                            ).toFixed(1);
+                                            const isGood = avgScore >= 4;
+                                            const scoreItems = [
+                                                { label: 'Originality', value: review.originality_score },
+                                                { label: 'Relevance', value: review.relevance_score },
+                                                { label: 'Clarity', value: review.clarity_score },
+                                                { label: 'Methodology', value: review.methodology_score },
+                                                { label: 'Overall', value: review.overall_score },
+                                            ];
+
+                                            return (
+                                                <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
+                                                    <Box sx={{
+                                                        p: 2.5,
+                                                        borderRadius: '14px',
+                                                        border: `1px solid ${c.cardBorder}`,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                        height: '100%',
+                                                        transition: 'all 0.2s ease',
+                                                        '&:hover': {
+                                                            borderColor: '#1abc9c',
+                                                            boxShadow: `0 4px 16px ${isDark ? 'rgba(26,188,156,0.1)' : 'rgba(0,0,0,0.06)'}`,
+                                                            transform: 'translateY(-2px)',
+                                                        },
+                                                    }}>
+                                                        {/* Reviewer Header */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                                                            <Avatar sx={{
+                                                                width: 40, height: 40,
+                                                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                                fontWeight: 700, fontSize: '0.85rem',
+                                                            }}>
+                                                                {(review.reviewer?.name || 'A').charAt(0).toUpperCase()}
+                                                            </Avatar>
+                                                            <Box>
+                                                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
+                                                                    {review.reviewer?.name || 'Admin'}
+                                                                </Typography>
+                                                                <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
+                                                                    Reviewer #{reviews.indexOf(review) + 1}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+
+                                                        {/* Average Score Badge */}
+                                                        <Box sx={{
+                                                            mb: 2, p: 1.5, borderRadius: '10px', textAlign: 'center',
+                                                            bgcolor: isGood
+                                                                ? (isDark ? 'rgba(22,163,74,0.1)' : '#f0fdf4')
+                                                                : (isDark ? 'rgba(202,138,4,0.1)' : '#fffbeb'),
+                                                            border: `1px solid ${isGood
+                                                                ? (isDark ? 'rgba(22,163,74,0.2)' : '#86efac')
+                                                                : (isDark ? 'rgba(202,138,4,0.2)' : '#fde68a')}`,
+                                                        }}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                                                                <StarIcon sx={{ fontSize: 18, color: isGood ? '#16a34a' : '#ca8a04' }} />
+                                                                <Typography variant="h6" sx={{
+                                                                    fontWeight: 800,
+                                                                    color: isGood ? (isDark ? '#4ade80' : '#15803d') : (isDark ? '#fbbf24' : '#ca8a04'),
+                                                                }}>
+                                                                    Average: {avgScore}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+
+                                                        {/* Score Breakdown */}
+                                                        <Stack spacing={1}>
+                                                            {scoreItems.filter(s => s.value).map((item) => (
+                                                                <Box key={item.label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                    <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                                                        {item.label}
+                                                                    </Typography>
+                                                                    <Chip
+                                                                        label={item.value}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            minWidth: 36,
+                                                                            fontWeight: 700,
+                                                                            fontSize: '0.75rem',
+                                                                            height: 24,
+                                                                            bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5',
+                                                                            color: '#1abc9c',
+                                                                        }}
+                                                                    />
+                                                                </Box>
+                                                            ))}
+                                                        </Stack>
+                                                    </Box>
+                                                </Grid>
+                                            );
+                                        })}
+                                    </Grid>
                                 </CardContent>
                             </Card>
                         )}
