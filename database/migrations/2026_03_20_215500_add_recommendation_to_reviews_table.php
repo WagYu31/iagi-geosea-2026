@@ -8,6 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Drop phase column if it exists (separate call to avoid MySQL issues)
+        if (Schema::hasColumn('reviews', 'phase')) {
+            Schema::table('reviews', function (Blueprint $table) {
+                $table->dropColumn('phase');
+            });
+        }
+
+        // Add new columns
         Schema::table('reviews', function (Blueprint $table) {
             if (!Schema::hasColumn('reviews', 'recommendation')) {
                 $table->string('recommendation')->nullable()->after('comments');
@@ -17,10 +25,6 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('reviews', 'recommendation_phase2')) {
                 $table->string('recommendation_phase2')->nullable()->after('comments_phase2');
-            }
-            // Remove phase column if it was added
-            if (Schema::hasColumn('reviews', 'phase')) {
-                $table->dropColumn('phase');
             }
         });
     }

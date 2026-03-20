@@ -646,7 +646,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     }
                                                 })()}
 
-                                                {item.feedbackType === 'revision1' && reviews.filter(r => !r.phase || r.phase === 1).length > 0 && (
+                                                {item.feedbackType === 'revision1' && reviews.filter(r => r.comments).length > 0 && (
                                                     <Box sx={{ mt: 2 }}>
                                                         <Box sx={{
                                                             display: 'flex', alignItems: 'center', gap: 1, mb: 2,
@@ -659,7 +659,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                             </Typography>
                                                         </Box>
                                                         <Grid container spacing={2}>
-                                                            {reviews.filter(r => !r.phase || r.phase === 1).map((review, index) => {
+                                                            {reviews.filter(r => r.comments).map((review, index) => {
                                                                 const getRecConfig = (rec) => {
                                                                     if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
                                                                     const r = rec.toLowerCase();
