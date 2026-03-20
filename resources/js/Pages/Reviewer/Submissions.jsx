@@ -29,6 +29,7 @@ export default function ReviewerSubmissions({ reviews = [] }) {
         overall_score: 0,
     });
     const [comments, setComments] = useState('');
+    const [recommendation, setRecommendation] = useState('');
     const [reviewStatusFilter, setReviewStatusFilter] = useState('all');
 
     const filteredReviews = reviews.filter(review => {
@@ -48,18 +49,20 @@ export default function ReviewerSubmissions({ reviews = [] }) {
             overall_score: review.overall_score || 0,
         });
         setComments(review.comments || '');
+        setRecommendation(review.recommendation || '');
     };
 
     const handleCloseReviewDialog = () => {
         setReviewDialog({ open: false, review: null });
         setScores({ originality_score: 0, relevance_score: 0, clarity_score: 0, methodology_score: 0, overall_score: 0 });
         setComments('');
+        setRecommendation('');
     };
 
     const handleSubmitReview = () => {
         if (reviewDialog.review) {
             router.post(route('reviewer.reviews.submit', reviewDialog.review.id), {
-                ...scores, comments,
+                ...scores, comments, recommendation,
             }, { onSuccess: () => handleCloseReviewDialog() });
         }
     };
@@ -450,6 +453,36 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                     '& textarea::placeholder': { color: c.textMuted, opacity: 1 },
                                 }}
                             />
+                        </Box>
+
+                        {/* Recommendation */}
+                        <Box sx={{
+                            p: 2, borderRadius: '14px',
+                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                            border: `1px solid ${c.cardBorder}`,
+                            '&:hover': { borderColor: '#1abc9c' },
+                            transition: 'border-color 0.2s ease',
+                        }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                                <Typography sx={{ fontSize: '1.1rem' }}>📋</Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                    Recommendation
+                                </Typography>
+                            </Box>
+                            <FormControl fullWidth size="small" sx={selectSx}>
+                                <Select
+                                    value={recommendation}
+                                    onChange={(e) => setRecommendation(e.target.value)}
+                                    displayEmpty
+                                    sx={{ borderRadius: '10px', bgcolor: c.cardBg }}
+                                >
+                                    <MenuItem value="" disabled><em style={{ color: c.textMuted }}>Select recommendation</em></MenuItem>
+                                    <MenuItem value="Accept" sx={{ color: '#16a34a', fontWeight: 600 }}>✅ Accept</MenuItem>
+                                    <MenuItem value="Minor Revision" sx={{ color: '#2563eb', fontWeight: 600 }}>🔧 Minor Revision</MenuItem>
+                                    <MenuItem value="Major Revision" sx={{ color: '#d97706', fontWeight: 600 }}>⚠️ Major Revision</MenuItem>
+                                    <MenuItem value="Reject" sx={{ color: '#dc2626', fontWeight: 600 }}>❌ Reject</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Box>
                     </Box>
                 </DialogContent>

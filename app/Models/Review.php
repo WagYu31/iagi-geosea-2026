@@ -18,6 +18,7 @@ class Review extends Model
         'methodology_score',
         'overall_score',
         'comments',
+        'recommendation',
     ];
 
     public function submission()

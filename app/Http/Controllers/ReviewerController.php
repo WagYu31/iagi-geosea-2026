@@ -77,6 +77,7 @@ class ReviewerController extends Controller
             'methodology_score' => 'required|integer|min:1|max:5',
             'overall_score' => 'required|integer|min:1|max:5',
             'comments' => 'required|string',
+            'recommendation' => 'nullable|string|max:255',
         ]);
 
         $review = Review::where('id', $reviewId)
@@ -90,6 +91,7 @@ class ReviewerController extends Controller
             'methodology_score' => $request->methodology_score,
             'overall_score' => $request->overall_score,
             'comments' => $request->comments,
+            'recommendation' => $request->recommendation,
         ]);
 
         return back()->with('success', 'Review submitted successfully!');

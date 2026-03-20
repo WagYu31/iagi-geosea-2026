@@ -1,0 +1,12 @@
+node_modules
+vendor
+.git
+.env.save
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+*.sql
+!pitiagic_geosea.sql
+temp_log.txt
+backup_production_.sql
