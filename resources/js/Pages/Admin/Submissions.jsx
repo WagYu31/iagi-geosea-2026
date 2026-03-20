@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Head, router } from '@inertiajs/react';
+import axios from 'axios';
 import Draggable from 'react-draggable';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
@@ -123,9 +124,15 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     const [coAuthorPopover, setCoAuthorPopover] = useState(null);
     const [changeAllStatus, setChangeAllStatus] = useState('');
     const [changeAllDialog, setChangeAllDialog] = useState(false);
+    const [localSubmissions, setLocalSubmissions] = useState(submissions);
 
-    // Filter submissions
-    const filteredSubmissions = submissions.filter(submission => {
+    // Sync with server props when they update
+    React.useEffect(() => {
+        setLocalSubmissions(submissions);
+    }, [submissions]);
+
+    // Filter submissions using local state
+    const filteredSubmissions = localSubmissions.filter(submission => {
         const matchesStatus = statusFilter === 'all' || submission.status === statusFilter;
         const matchesPresentation = presentationFilter === 'all' || submission.presentation_preference === presentationFilter;
         const matchesSearch = searchTerm === '' ||
@@ -161,6 +168,10 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
     };
 
     const handleStatusChange = (submissionId, newStatus) => {
+        // Optimistic UI update
+        setLocalSubmissions(prev => prev.map(s =>
+            s.id === submissionId ? { ...s, status: newStatus } : s
+        ));
         router.patch(route('admin.submissions.updateStatus', submissionId), {
             status: newStatus,
         }, { preserveScroll: true });
@@ -168,28 +179,45 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
 
     const handleBulkUpdate = () => {
         if (selected.length > 0 && bulkStatus) {
-            router.post(route('admin.submissions.bulkUpdate'), {
+            // Optimistic UI update
+            setLocalSubmissions(prev => prev.map(s =>
+                selected.includes(s.id) ? { ...s, status: bulkStatus } : s
+            ));
+            setSelected([]);
+            const targetBulkStatus = bulkStatus;
+            setBulkStatus('');
+            
+            axios.post(route('admin.submissions.bulkUpdate'), {
                 submission_ids: selected,
-                status: bulkStatus,
-            }, {
-                preserveScroll: true,
-                onSuccess: () => { setSelected([]); setBulkStatus(''); },
+                status: targetBulkStatus,
+            }).catch(() => {
+                // Revert on error - reload from server
+                router.reload({ preserveScroll: true });
             });
         }
     };
 
     const handleChangeAllStatus = () => {
         if (changeAllStatus && filteredSubmissions.length > 0) {
-            // Close dialog immediately - don't wait for server
-            setChangeAllDialog(false);
             const targetStatus = changeAllStatus;
+            const targetIds = filteredSubmissions.map(s => s.id);
+            
+            // Close dialog & reset immediately
+            setChangeAllDialog(false);
             setChangeAllStatus('');
             
-            router.post(route('admin.submissions.bulkUpdate'), {
-                submission_ids: filteredSubmissions.map(s => s.id),
+            // Optimistic UI update
+            setLocalSubmissions(prev => prev.map(s =>
+                targetIds.includes(s.id) ? { ...s, status: targetStatus } : s
+            ));
+            
+            // Fire-and-forget to server
+            axios.post(route('admin.submissions.bulkUpdate'), {
+                submission_ids: targetIds,
                 status: targetStatus,
-            }, {
-                preserveScroll: true,
+            }).catch(() => {
+                // Revert on error - reload from server
+                router.reload({ preserveScroll: true });
             });
         }
     };
@@ -335,7 +363,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             Manage Submissions 📄
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5, fontSize: '0.85rem' }}>
-                            {submissions.length} total submissions
+                            {localSubmissions.length} total submissions
                         </Typography>
                     </Box>
                     <Button
@@ -410,14 +438,14 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         '& fieldset': { borderColor: c.cardBorder },
                                     }}
                                 >
-                                    <MenuItem value="all">All ({submissions.length})</MenuItem>
-                                    <MenuItem value="pending">Pending ({submissions.filter(s => s.status === 'pending').length})</MenuItem>
-                                    <MenuItem value="under_review">In Review ({submissions.filter(s => s.status === 'under_review').length})</MenuItem>
-                                    <MenuItem value="revision_required_phase1">Revision P1 ({submissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
-                                    <MenuItem value="revision_required_phase2">Revision P2 ({submissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
-                                    <MenuItem value="accepted">Accepted ({submissions.filter(s => s.status === 'accepted').length})</MenuItem>
-                                    <MenuItem value="rejected">Rejected ({submissions.filter(s => s.status === 'rejected').length})</MenuItem>
-                                    <MenuItem value="deletion_requested">Delete Requested ({submissions.filter(s => s.status === 'deletion_requested').length})</MenuItem>
+                                    <MenuItem value="all">All ({localSubmissions.length})</MenuItem>
+                                    <MenuItem value="pending">Pending ({localSubmissions.filter(s => s.status === 'pending').length})</MenuItem>
+                                    <MenuItem value="under_review">In Review ({localSubmissions.filter(s => s.status === 'under_review').length})</MenuItem>
+                                    <MenuItem value="revision_required_phase1">Revision P1 ({localSubmissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
+                                    <MenuItem value="revision_required_phase2">Revision P2 ({localSubmissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
+                                    <MenuItem value="accepted">Accepted ({localSubmissions.filter(s => s.status === 'accepted').length})</MenuItem>
+                                    <MenuItem value="rejected">Rejected ({localSubmissions.filter(s => s.status === 'rejected').length})</MenuItem>
+                                    <MenuItem value="deletion_requested">Delete Requested ({localSubmissions.filter(s => s.status === 'deletion_requested').length})</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl size="small" sx={{ minWidth: 160 }}>
@@ -433,13 +461,13 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         '& fieldset': { borderColor: c.cardBorder },
                                     }}
                                 >
-                                    <MenuItem value="all">All ({submissions.length})</MenuItem>
-                                    <MenuItem value="Oral Presentation">Oral ({submissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
-                                    <MenuItem value="Poster Presentation">Poster ({submissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
+                                    <MenuItem value="all">All ({localSubmissions.length})</MenuItem>
+                                    <MenuItem value="Oral Presentation">Oral ({localSubmissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
+                                    <MenuItem value="Poster Presentation">Poster ({localSubmissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
                                 </Select>
                             </FormControl>
                             <Chip
-                                label={`${filteredSubmissions.length} of ${submissions.length}`}
+                                label={`${filteredSubmissions.length} of ${localSubmissions.length}`}
                                 size="small"
                                 sx={{
                                     bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
