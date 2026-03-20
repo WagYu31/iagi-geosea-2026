@@ -122,6 +122,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const MAX_WORDS = 400;
     const [statusFilter, setStatusFilter] = useState('all');
     const [editingSubmissionId, setEditingSubmissionId] = useState(null);
+    const [existingFiles, setExistingFiles] = useState({ full_paper_file: null, layouting_file: null, editor_feedback_file: null });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deletingSubmissionId, setDeletingSubmissionId] = useState(null);
     const [deletionReason, setDeletionReason] = useState('');
@@ -488,6 +489,11 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 size="small"
                                                                 onClick={() => {
                                                                     setEditingSubmissionId(submission.id);
+                                                                    setExistingFiles({
+                                                                        full_paper_file: submission.full_paper_file || null,
+                                                                        layouting_file: submission.layouting_file || null,
+                                                                        editor_feedback_file: submission.editor_feedback_file || null,
+                                                                    });
                                                                     setData({
                                                                         author_full_name: submission.author_full_name || '',
                                                                         co_author_1: submission.co_author_1 || '',
@@ -672,6 +678,11 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         fullWidth
                                                         onClick={() => {
                                                             setEditingSubmissionId(submission.id);
+                                                            setExistingFiles({
+                                                                full_paper_file: submission.full_paper_file || null,
+                                                                layouting_file: submission.layouting_file || null,
+                                                                editor_feedback_file: submission.editor_feedback_file || null,
+                                                            });
                                                             setData({
                                                                 author_full_name: submission.author_full_name || '',
                                                                 co_author_1: submission.co_author_1 || '',
@@ -1740,11 +1751,15 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 onChange={(e) => setData('full_paper_file', e.target.files[0])}
                                                             />
                                                         </Button>
-                                                        {data.full_paper_file && (
+                                                        {data.full_paper_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ {data.full_paper_file.name}
+                                                                ✓ New: {data.full_paper_file.name}
                                                             </Typography>
-                                                        )}
+                                                        ) : existingFiles.full_paper_file ? (
+                                                            <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                                                                📄 {existingFiles.full_paper_file.split('/').pop()}
+                                                            </Typography>
+                                                        ) : null}
                                                         {errors.full_paper_file && (
                                                             <Typography variant="caption" color="error" display="block">
                                                                 {errors.full_paper_file}
@@ -1792,11 +1807,15 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 onChange={(e) => setData('layouting_file', e.target.files[0])}
                                                             />
                                                         </Button>
-                                                        {data.layouting_file && (
+                                                        {data.layouting_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ {data.layouting_file.name}
+                                                                ✓ New: {data.layouting_file.name}
                                                             </Typography>
-                                                        )}
+                                                        ) : existingFiles.layouting_file ? (
+                                                            <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                                                                📄 {existingFiles.layouting_file.split('/').pop()}
+                                                            </Typography>
+                                                        ) : null}
                                                     </Box>
                                                 </Grid>
                                                 )}
@@ -1839,11 +1858,15 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 onChange={(e) => setData('editor_feedback_file', e.target.files[0])}
                                                             />
                                                         </Button>
-                                                        {data.editor_feedback_file && (
+                                                        {data.editor_feedback_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ {data.editor_feedback_file.name}
+                                                                ✓ New: {data.editor_feedback_file.name}
                                                             </Typography>
-                                                        )}
+                                                        ) : existingFiles.editor_feedback_file ? (
+                                                            <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                                                                📄 {existingFiles.editor_feedback_file.split('/').pop()}
+                                                            </Typography>
+                                                        ) : null}
                                                     </Box>
                                                 </Grid>
                                                 )}
