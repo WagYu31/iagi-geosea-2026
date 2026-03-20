@@ -1691,8 +1691,8 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 </Card>
 
 
-                                {/* SECTION 4: File Uploads - Only visible when status is 'accepted' */}
-                                {data.submission_status === 'accepted' && (
+                                {/* SECTION 4: File Uploads - Conditional per status */}
+                                {['accepted', 'revision_required_phase1', 'revision_required_phase2'].includes(data.submission_status) && (
                                     <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
                                         <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                                             <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
@@ -1703,7 +1703,8 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                             </Typography>
 
                                             <Grid container spacing={{ xs: 2, md: 3 }}>
-                                                {/* Full Paper File */}
+                                                {/* Full Paper File - Only when Accepted */}
+                                                {data.submission_status === 'accepted' && (
                                                 <Grid item xs={12} md={4}>
                                                     <Box sx={{
                                                         border: '2px dashed #e0e0e0',
@@ -1751,8 +1752,10 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         )}
                                                     </Box>
                                                 </Grid>
+                                                )}
 
-                                                {/* Layouting File */}
+                                                {/* Layouting File - Only when Revision P1 */}
+                                                {data.submission_status === 'revision_required_phase1' && (
                                                 <Grid item xs={12} md={4}>
                                                     <Box sx={{
                                                         border: '2px dashed #e0e0e0',
@@ -1796,8 +1799,10 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         )}
                                                     </Box>
                                                 </Grid>
+                                                )}
 
-                                                {/* Editor Feedback File */}
+                                                {/* Editor Feedback File - Only when Revision P2 */}
+                                                {data.submission_status === 'revision_required_phase2' && (
                                                 <Grid item xs={12} md={4}>
                                                     <Box sx={{
                                                         border: '2px dashed #e0e0e0',
@@ -1841,6 +1846,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                         )}
                                                     </Box>
                                                 </Grid>
+                                                )}
                                             </Grid>
                                         </CardContent>
                                     </Card>
