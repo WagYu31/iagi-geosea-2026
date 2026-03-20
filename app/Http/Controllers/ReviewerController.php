@@ -69,8 +69,40 @@ class ReviewerController extends Controller
         ]);
     }
 
-    public function submitReview(Request $request, $reviewId)
+    // Submit scores only
+    public function submitScoring(Request $request, $reviewId)
     {
+        $request->validate([
+            'originality_score' => 'required|integer|min:1|max:5',
+            'relevance_score' => 'required|integer|min:1|max:5',
+            'clarity_score' => 'required|integer|min:1|max:5',
+            'methodology_score' => 'required|integer|min:1|max:5',
+            'overall_score' => 'required|integer|min:1|max:5',
+        ]);
+
+        $review = Review::where('id', $reviewId)
+            ->where('reviewer_id', Auth::id())
+            ->firstOrFail();
+
+        $review->update([
+            'originality_score' => $request->originality_score,
+            'relevance_score' => $request->relevance_score,
+            'clarity_score' => $request->clarity_score,
+            'methodology_score' => $request->methodology_score,
+            'overall_score' => $request->overall_score,
+        ]);
+
+        return back()->with('success', 'Scores submitted successfully!');
+    }
+
+    // Submit comments + recommendation
+    public function submitComment(Request $request, $reviewId)
+    {
+        $request->validate([
+            'comments' => 'required|string',
+            'recommendation' => 'nullable|string|max:255',
+        ]);
+
         $review = Review::where('id', $reviewId)
             ->where('reviewer_id', Auth::id())
             ->with('submission')
@@ -79,39 +111,17 @@ class ReviewerController extends Controller
         $isPhase2 = in_array($review->submission->status, ['revision_required_phase2']);
 
         if ($isPhase2) {
-            // Phase 2: comments only (saved in separate columns)
-            $request->validate([
-                'comments_phase2' => 'required|string',
-                'recommendation_phase2' => 'nullable|string|max:255',
-            ]);
-
             $review->update([
-                'comments_phase2' => $request->comments_phase2,
-                'recommendation_phase2' => $request->recommendation_phase2,
+                'comments_phase2' => $request->comments,
+                'recommendation_phase2' => $request->recommendation,
             ]);
         } else {
-            // Phase 1: full scoring + comments
-            $request->validate([
-                'originality_score' => 'required|integer|min:1|max:5',
-                'relevance_score' => 'required|integer|min:1|max:5',
-                'clarity_score' => 'required|integer|min:1|max:5',
-                'methodology_score' => 'required|integer|min:1|max:5',
-                'overall_score' => 'required|integer|min:1|max:5',
-                'comments' => 'required|string',
-                'recommendation' => 'nullable|string|max:255',
-            ]);
-
             $review->update([
-                'originality_score' => $request->originality_score,
-                'relevance_score' => $request->relevance_score,
-                'clarity_score' => $request->clarity_score,
-                'methodology_score' => $request->methodology_score,
-                'overall_score' => $request->overall_score,
                 'comments' => $request->comments,
                 'recommendation' => $request->recommendation,
             ]);
         }
 
-        return back()->with('success', 'Review submitted successfully!');
+        return back()->with('success', 'Review comment submitted successfully!');
     }
 }

@@ -187,6 +187,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Assigned Submissions
         Route::get('/submissions', [App\Http\Controllers\ReviewerController::class, 'submissions'])->name('submissions');
         Route::get('/submissions/{id}', [App\Http\Controllers\ReviewerController::class, 'viewSubmission'])->name('submissions.view');
-        Route::post('/reviews/{id}/submit', [App\Http\Controllers\ReviewerController::class, 'submitReview'])->name('reviews.submit');
+        Route::post('/reviews/{id}/scoring', [App\Http\Controllers\ReviewerController::class, 'submitScoring'])->name('reviews.scoring');
+        Route::post('/reviews/{id}/comment', [App\Http\Controllers\ReviewerController::class, 'submitComment'])->name('reviews.comment');
     });
 });

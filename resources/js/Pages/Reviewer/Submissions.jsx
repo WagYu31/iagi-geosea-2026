@@ -20,14 +20,12 @@ export default function ReviewerSubmissions({ reviews = [] }) {
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
 
-    const [reviewDialog, setReviewDialog] = useState({ open: false, review: null });
-    const [scores, setScores] = useState({
-        originality_score: 0,
-        relevance_score: 0,
-        clarity_score: 0,
-        methodology_score: 0,
-        overall_score: 0,
-    });
+    // ── Scoring Dialog State ──
+    const [scoringDialog, setScoringDialog] = useState({ open: false, review: null });
+    const [scores, setScores] = useState({ originality_score: 0, relevance_score: 0, clarity_score: 0, methodology_score: 0, overall_score: 0 });
+
+    // ── Review (Comment) Dialog State ──
+    const [commentDialog, setCommentDialog] = useState({ open: false, review: null });
     const [comments, setComments] = useState('');
     const [recommendation, setRecommendation] = useState('');
     const [reviewStatusFilter, setReviewStatusFilter] = useState('all');
@@ -39,8 +37,9 @@ export default function ReviewerSubmissions({ reviews = [] }) {
         return true;
     });
 
-    const handleOpenReviewDialog = (review) => {
-        setReviewDialog({ open: true, review });
+    // ── Scoring Dialog Handlers ──
+    const handleOpenScoringDialog = (review) => {
+        setScoringDialog({ open: true, review });
         setScores({
             originality_score: review.originality_score || 0,
             relevance_score: review.relevance_score || 0,
@@ -48,25 +47,35 @@ export default function ReviewerSubmissions({ reviews = [] }) {
             methodology_score: review.methodology_score || 0,
             overall_score: review.overall_score || 0,
         });
-        setComments(review.comments || '');
-        setRecommendation(review.recommendation || '');
+    };
+    const handleCloseScoringDialog = () => {
+        setScoringDialog({ open: false, review: null });
+        setScores({ originality_score: 0, relevance_score: 0, clarity_score: 0, methodology_score: 0, overall_score: 0 });
+    };
+    const handleSubmitScoring = () => {
+        if (scoringDialog.review) {
+            router.post(route('reviewer.reviews.scoring', scoringDialog.review.id), scores, {
+                onSuccess: () => handleCloseScoringDialog(),
+            });
+        }
     };
 
-    const handleCloseReviewDialog = () => {
-        setReviewDialog({ open: false, review: null });
-        setScores({ originality_score: 0, relevance_score: 0, clarity_score: 0, methodology_score: 0, overall_score: 0 });
+    // ── Comment Dialog Handlers ──
+    const handleOpenCommentDialog = (review) => {
+        const isP2 = review.submission?.status === 'revision_required_phase2';
+        setCommentDialog({ open: true, review });
+        setComments(isP2 ? (review.comments_phase2 || '') : (review.comments || ''));
+        setRecommendation(isP2 ? (review.recommendation_phase2 || '') : (review.recommendation || ''));
+    };
+    const handleCloseCommentDialog = () => {
+        setCommentDialog({ open: false, review: null });
         setComments('');
         setRecommendation('');
     };
-
-    const handleSubmitReview = () => {
-        if (reviewDialog.review) {
-            const isP2 = reviewDialog.review.submission?.status === 'revision_required_phase2';
-            const payload = isP2
-                ? { comments_phase2: comments, recommendation_phase2: recommendation }
-                : { ...scores, comments, recommendation };
-            router.post(route('reviewer.reviews.submit', reviewDialog.review.id), payload, {
-                onSuccess: () => handleCloseReviewDialog(),
+    const handleSubmitComment = () => {
+        if (commentDialog.review) {
+            router.post(route('reviewer.reviews.comment', commentDialog.review.id), { comments, recommendation }, {
+                onSuccess: () => handleCloseCommentDialog(),
             });
         }
     };
@@ -325,10 +334,23 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                                     </Button>
                                                     <Button size="small" variant="contained"
                                                         startIcon={<RateReviewIcon sx={{ fontSize: 16 }} />}
-                                                        onClick={() => handleOpenReviewDialog(review)}
+                                                        onClick={() => handleOpenCommentDialog(review)}
+                                                        sx={{
+                                                            textTransform: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '0.75rem',
+                                                            bgcolor: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff',
+                                                            color: isDark ? '#93c5fd' : '#2563eb',
+                                                            boxShadow: 'none',
+                                                            '&:hover': { bgcolor: isDark ? 'rgba(59,130,246,0.25)' : '#dbeafe', boxShadow: 'none' },
+                                                        }}
+                                                    >
+                                                        💬 Review
+                                                    </Button>
+                                                    <Button size="small" variant="contained"
+                                                        startIcon={<StarIcon sx={{ fontSize: 16 }} />}
+                                                        onClick={() => handleOpenScoringDialog(review)}
                                                         sx={{ ...tealBtnSx, px: 1.5, py: 0.5, fontSize: '0.75rem' }}
                                                     >
-                                                        {review.originality_score ? 'Scoring' : 'Review'}
+                                                        ⭐ Scoring
                                                     </Button>
                                                 </Stack>
                                             </TableCell>
@@ -341,61 +363,116 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                 </Card>
             </Box>
 
-            {/* ── Review Dialog ── */}
+            {/* ── 💬 COMMENT Dialog ── */}
             <Dialog
-                open={reviewDialog.open}
-                onClose={handleCloseReviewDialog}
-                maxWidth="md"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: '20px',
-                        bgcolor: c.cardBg,
-                        border: `1px solid ${c.cardBorder}`,
-                        backgroundImage: 'none',
-                    },
-                }}
+                open={commentDialog.open}
+                onClose={handleCloseCommentDialog}
+                maxWidth="sm" fullWidth
+                PaperProps={{ sx: { borderRadius: '20px', bgcolor: c.cardBg, border: `1px solid ${c.cardBorder}`, boxShadow: isDark ? '0 24px 48px rgba(0,0,0,0.4)' : '0 24px 48px rgba(0,0,0,0.12)' } }}
             >
-                {/* Dialog Header */}
-                <DialogTitle sx={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    px: 3, py: 2.5,
-                    borderBottom: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb',
-                }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 42, height: 42, borderRadius: '12px' }}>
-                            <RateReviewIcon sx={{ color: '#1abc9c', fontSize: 24 }} />
+                <DialogTitle sx={{ px: 3, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${c.cardBorder}` }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(59,130,246,0.12)' : '#eff6ff', width: 42, height: 42, borderRadius: '12px' }}>
+                            <RateReviewIcon sx={{ color: '#2563eb', fontSize: 24 }} />
                         </Avatar>
                         <Box>
                             <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.1rem', lineHeight: 1.2 }}>
-                                Submit Review
+                                💬 Submit Review Comment
                             </Typography>
                             <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
-                                {reviewDialog.review?.submission?.title ? `Reviewing: ${reviewDialog.review.submission.title.substring(0, 60)}...` : 'Score each category from 1-5'}
+                                {commentDialog.review?.submission?.title ? `Reviewing: ${commentDialog.review.submission.title.substring(0, 60)}...` : 'Provide your feedback'}
                             </Typography>
-                            {reviewDialog.review?.submission?.status === 'revision_required_phase2' && (
-                                <Chip label="Phase 2 — Comments Only" size="small" sx={{ bgcolor: isDark ? 'rgba(168,85,247,0.15)' : '#f3e8ff', color: isDark ? '#c4b5fd' : '#7c3aed', fontWeight: 700, fontSize: '0.7rem', borderRadius: '6px', mt: 0.5 }} />
+                            {commentDialog.review?.submission?.status === 'revision_required_phase2' && (
+                                <Chip label="Revision 2" size="small" sx={{ bgcolor: isDark ? 'rgba(168,85,247,0.15)' : '#f3e8ff', color: isDark ? '#c4b5fd' : '#7c3aed', fontWeight: 700, fontSize: '0.7rem', borderRadius: '6px', mt: 0.5, ml: 1 }} />
                             )}
                         </Box>
                     </Box>
-                    <IconButton onClick={handleCloseReviewDialog} sx={{ color: c.textMuted, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6' } }}>
+                    <IconButton onClick={handleCloseCommentDialog} sx={{ color: c.textMuted, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6' } }}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
 
                 <DialogContent sx={{ px: 3, py: 3 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                        {/* Score fields - only show when NOT revision_required_phase2 */}
-                        {reviewDialog.review?.submission?.status !== 'revision_required_phase2' && (<>
+                        {/* Comments */}
+                        <Box sx={{ p: 2, borderRadius: '14px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa', border: `1px solid ${c.cardBorder}`, '&:hover': { borderColor: '#2563eb' }, transition: 'border-color 0.2s ease' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                                <Typography sx={{ fontSize: '1.1rem' }}>💬</Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                    Comments <span style={{ color: '#ef4444' }}>*</span>
+                                </Typography>
+                            </Box>
+                            <TextField
+                                multiline rows={4} fullWidth value={comments}
+                                onChange={(e) => setComments(e.target.value)}
+                                placeholder="Provide detailed feedback including strengths, weaknesses, and suggestions for improvement..."
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: c.cardBg, '& fieldset': { borderColor: c.cardBorder }, '&:hover fieldset': { borderColor: '#2563eb' }, '&.Mui-focused fieldset': { borderColor: '#2563eb' } }, '& textarea': { color: c.textPrimary, fontSize: '0.85rem' }, '& textarea::placeholder': { color: c.textMuted, opacity: 1 } }}
+                            />
+                        </Box>
+
+                        {/* Recommendation */}
+                        <Box sx={{ p: 2, borderRadius: '14px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa', border: `1px solid ${c.cardBorder}`, '&:hover': { borderColor: '#2563eb' }, transition: 'border-color 0.2s ease' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                                <Typography sx={{ fontSize: '1.1rem' }}>📋</Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                    Recommendation
+                                </Typography>
+                            </Box>
+                            <FormControl fullWidth size="small" sx={selectSx}>
+                                <Select value={recommendation} onChange={(e) => setRecommendation(e.target.value)} displayEmpty sx={{ borderRadius: '10px', bgcolor: c.cardBg }}>
+                                    <MenuItem value="" disabled><em style={{ color: c.textMuted }}>Select recommendation</em></MenuItem>
+                                    <MenuItem value="Accept" sx={{ color: '#16a34a', fontWeight: 600 }}>✅ Accept</MenuItem>
+                                    <MenuItem value="Minor Revision" sx={{ color: '#2563eb', fontWeight: 600 }}>🔧 Minor Revision</MenuItem>
+                                    <MenuItem value="Major Revision" sx={{ color: '#d97706', fontWeight: 600 }}>⚠️ Major Revision</MenuItem>
+                                    <MenuItem value="Reject" sx={{ color: '#dc2626', fontWeight: 600 }}>❌ Reject</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${c.cardBorder}`, bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb', gap: 1.5 }}>
+                    <Button onClick={handleCloseCommentDialog} sx={{ textTransform: 'none', borderRadius: '10px', fontWeight: 600, px: 3, color: c.textSecondary, border: `1px solid ${c.cardBorder}`, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6', borderColor: c.textMuted } }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmitComment} variant="contained" startIcon={<RateReviewIcon />} disabled={!comments}
+                        sx={{ textTransform: 'none', borderRadius: '10px', fontWeight: 700, bgcolor: '#2563eb', '&:hover': { bgcolor: '#1d4ed8' }, '&:disabled': { bgcolor: isDark ? '#374151' : '#e5e7eb' }, px: 3, py: 1 }}
+                    >
+                        Submit Comment
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* ── ⭐ SCORING Dialog ── */}
+            <Dialog
+                open={scoringDialog.open}
+                onClose={handleCloseScoringDialog}
+                maxWidth="md" fullWidth
+                PaperProps={{ sx: { borderRadius: '20px', bgcolor: c.cardBg, border: `1px solid ${c.cardBorder}`, boxShadow: isDark ? '0 24px 48px rgba(0,0,0,0.4)' : '0 24px 48px rgba(0,0,0,0.12)' } }}
+            >
+                <DialogTitle sx={{ px: 3, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${c.cardBorder}` }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 42, height: 42, borderRadius: '12px' }}>
+                            <StarIcon sx={{ color: '#1abc9c', fontSize: 24 }} />
+                        </Avatar>
+                        <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.1rem', lineHeight: 1.2 }}>
+                                ⭐ Submit Scoring
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                {scoringDialog.review?.submission?.title ? `Scoring: ${scoringDialog.review.submission.title.substring(0, 60)}...` : 'Score each category from 1-5'}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <IconButton onClick={handleCloseScoringDialog} sx={{ color: c.textMuted, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6' } }}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent sx={{ px: 3, py: 3 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                         {scoreFields.map((field) => (
-                            <Box key={field.key} sx={{
-                                p: 2, borderRadius: '14px',
-                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                border: `1px solid ${c.cardBorder}`,
-                                transition: 'border-color 0.2s ease',
-                                '&:hover': { borderColor: '#1abc9c' },
-                            }}>
+                            <Box key={field.key} sx={{ p: 2, borderRadius: '14px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa', border: `1px solid ${c.cardBorder}`, transition: 'border-color 0.2s ease', '&:hover': { borderColor: '#1abc9c' } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                                     <Typography sx={{ fontSize: '1.1rem' }}>{field.icon}</Typography>
                                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
@@ -403,19 +480,14 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                     </Typography>
                                     {scores[field.key] > 0 && (
                                         <Chip label={`${scores[field.key]}/5`} size="small"
-                                            sx={{
-                                                ml: 'auto', fontWeight: 700, fontSize: '0.7rem', height: 22, borderRadius: '6px',
+                                            sx={{ ml: 'auto', fontWeight: 700, fontSize: '0.7rem', height: 22, borderRadius: '6px',
                                                 bgcolor: scores[field.key] >= 4 ? c.chipGreenBg : scores[field.key] >= 3 ? c.chipAmberBg : (isDark ? 'rgba(239,68,68,0.15)' : '#fef2f2'),
                                                 color: scores[field.key] >= 4 ? c.chipGreenText : scores[field.key] >= 3 ? c.chipAmberText : (isDark ? '#fca5a5' : '#dc2626'),
-                                            }}
-                                        />
+                                            }} />
                                     )}
                                 </Box>
                                 <FormControl fullWidth size="small" sx={selectSx}>
-                                    <Select
-                                        value={scores[field.key]}
-                                        onChange={(e) => setScores({ ...scores, [field.key]: e.target.value })}
-                                        displayEmpty
+                                    <Select value={scores[field.key]} onChange={(e) => setScores({ ...scores, [field.key]: e.target.value })} displayEmpty
                                         sx={{ borderRadius: '10px', bgcolor: c.cardBg }}
                                         MenuProps={{ PaperProps: { sx: { maxWidth: 600, bgcolor: c.cardBg, border: `1px solid ${c.cardBorder}`, borderRadius: '12px' } } }}
                                     >
@@ -432,108 +504,22 @@ export default function ReviewerSubmissions({ reviews = [] }) {
                                 </Typography>
                             </Box>
                         ))}
-                        </>)}
-
-                        {/* Comments */}
-                        <Box sx={{
-                            p: 2, borderRadius: '14px',
-                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                            border: `1px solid ${c.cardBorder}`,
-                            '&:hover': { borderColor: '#1abc9c' },
-                            transition: 'border-color 0.2s ease',
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                <Typography sx={{ fontSize: '1.1rem' }}>💬</Typography>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
-                                    Comments <span style={{ color: '#ef4444' }}>*</span>
-                                </Typography>
-                            </Box>
-                            <TextField
-                                multiline rows={4} fullWidth value={comments}
-                                onChange={(e) => setComments(e.target.value)}
-                                placeholder="Provide detailed feedback including strengths, weaknesses, and suggestions for improvement..."
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '10px', bgcolor: c.cardBg,
-                                        '& fieldset': { borderColor: c.cardBorder },
-                                        '&:hover fieldset': { borderColor: '#1abc9c' },
-                                        '&.Mui-focused fieldset': { borderColor: '#1abc9c' },
-                                    },
-                                    '& textarea': { color: c.textPrimary, fontSize: '0.85rem' },
-                                    '& textarea::placeholder': { color: c.textMuted, opacity: 1 },
-                                }}
-                            />
-                        </Box>
-
-                        {/* Recommendation */}
-                        <Box sx={{
-                            p: 2, borderRadius: '14px',
-                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                            border: `1px solid ${c.cardBorder}`,
-                            '&:hover': { borderColor: '#1abc9c' },
-                            transition: 'border-color 0.2s ease',
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                <Typography sx={{ fontSize: '1.1rem' }}>📋</Typography>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.85rem' }}>
-                                    Recommendation
-                                </Typography>
-                            </Box>
-                            <FormControl fullWidth size="small" sx={selectSx}>
-                                <Select
-                                    value={recommendation}
-                                    onChange={(e) => setRecommendation(e.target.value)}
-                                    displayEmpty
-                                    sx={{ borderRadius: '10px', bgcolor: c.cardBg }}
-                                >
-                                    <MenuItem value="" disabled><em style={{ color: c.textMuted }}>Select recommendation</em></MenuItem>
-                                    <MenuItem value="Accept" sx={{ color: '#16a34a', fontWeight: 600 }}>✅ Accept</MenuItem>
-                                    <MenuItem value="Minor Revision" sx={{ color: '#2563eb', fontWeight: 600 }}>🔧 Minor Revision</MenuItem>
-                                    <MenuItem value="Major Revision" sx={{ color: '#d97706', fontWeight: 600 }}>⚠️ Major Revision</MenuItem>
-                                    <MenuItem value="Reject" sx={{ color: '#dc2626', fontWeight: 600 }}>❌ Reject</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
                     </Box>
                 </DialogContent>
 
-                {/* Dialog Footer */}
-                <DialogActions sx={{
-                    px: 3, py: 2,
-                    borderTop: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb',
-                    gap: 1.5,
-                }}>
-                    <Button
-                        onClick={handleCloseReviewDialog}
-                        sx={{
-                            textTransform: 'none', borderRadius: '10px', fontWeight: 600, px: 3,
-                            color: c.textSecondary, border: `1px solid ${c.cardBorder}`,
-                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6', borderColor: c.textMuted },
-                        }}
-                    >
+                <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${c.cardBorder}`, bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb', gap: 1.5 }}>
+                    <Button onClick={handleCloseScoringDialog} sx={{ textTransform: 'none', borderRadius: '10px', fontWeight: 600, px: 3, color: c.textSecondary, border: `1px solid ${c.cardBorder}`, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6', borderColor: c.textMuted } }}>
                         Cancel
                     </Button>
-                    <Button
-                        onClick={handleSubmitReview}
-                        variant="contained"
-                        startIcon={<RateReviewIcon />}
-                        disabled={
-                            reviewDialog.review?.submission?.status === 'revision_required_phase2'
-                                ? !comments
-                                : (!scores.originality_score ||
-                                   !scores.relevance_score ||
-                                   !scores.clarity_score ||
-                                   !scores.methodology_score ||
-                                   !scores.overall_score ||
-                                   !comments)
-                        }
+                    <Button onClick={handleSubmitScoring} variant="contained" startIcon={<StarIcon />}
+                        disabled={!scores.originality_score || !scores.relevance_score || !scores.clarity_score || !scores.methodology_score || !scores.overall_score}
                         sx={{ ...tealBtnSx, px: 3, py: 1 }}
                     >
-                        Submit Review
+                        Submit Scores
                     </Button>
                 </DialogActions>
             </Dialog>
         </SidebarLayout>
     );
 }
+
