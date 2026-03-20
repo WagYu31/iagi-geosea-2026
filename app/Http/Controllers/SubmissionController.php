@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Submission;
 use App\Models\Setting;
 use App\Mail\SubmissionConfirmation;
+use App\Mail\RevisionUploaded;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -115,11 +116,32 @@ class SubmissionController extends Controller
         }
 
         // Update status back to under_review if it was revision required
-        if (in_array($submission->status, ['revision_required_phase1', 'revision_required_phase2'])) {
+        $wasRevisionRequired = in_array($submission->status, ['revision_required_phase1', 'revision_required_phase2']);
+        $revisionPhase = null;
+        if ($wasRevisionRequired) {
+            $revisionPhase = $submission->status === 'revision_required_phase1' ? 'phase1' : 'phase2';
             $validated['status'] = 'under_review';
         }
 
         $submission->update($validated);
+
+        // Send email notification to assigned reviewers when revision is uploaded
+        if ($wasRevisionRequired) {
+            try {
+                $submission->load('reviews.reviewer', 'user');
+                $authorName = $submission->user->name ?? $submission->author_full_name ?? 'Participant';
+
+                foreach ($submission->reviews as $review) {
+                    if ($review->reviewer && $review->reviewer->email) {
+                        Mail::to($review->reviewer->email)->send(
+                            new RevisionUploaded($submission, $review->reviewer->name, $authorName, $revisionPhase)
+                        );
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send revision notification email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('submissions.index')->with('success', 'Submission updated successfully!');
     }
