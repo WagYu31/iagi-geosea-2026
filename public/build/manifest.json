@@ -33,8 +33,8 @@
       "_vendor-mui-icons-C8sdnAIj.js"
     ]
   },
-  "_pages-admin-DYdQ9Ya_.js": {
-    "file": "assets/pages-admin-DYdQ9Ya_.js",
+  "_pages-admin-DgXV2WLq.js": {
+    "file": "assets/pages-admin-DgXV2WLq.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -305,7 +305,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Df00YV4w.js",
+    "file": "assets/app-CWIga1em.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -317,12 +317,12 @@
       "_vendor-mui-icons-C8sdnAIj.js"
     ],
     "dynamicImports": [
-      "_pages-admin-DYdQ9Ya_.js",
+      "_pages-admin-DgXV2WLq.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-DYdQ9Ya_.js",
+      "_pages-admin-DgXV2WLq.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-DYdQ9Ya_.js",
+      "_pages-admin-DgXV2WLq.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-DnRDlN6_.js",
       "_pages-auth-DnRDlN6_.js",

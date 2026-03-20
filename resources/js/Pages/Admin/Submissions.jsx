@@ -180,12 +180,16 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
 
     const handleChangeAllStatus = () => {
         if (changeAllStatus && filteredSubmissions.length > 0) {
+            // Close dialog immediately - don't wait for server
+            setChangeAllDialog(false);
+            const targetStatus = changeAllStatus;
+            setChangeAllStatus('');
+            
             router.post(route('admin.submissions.bulkUpdate'), {
                 submission_ids: filteredSubmissions.map(s => s.id),
-                status: changeAllStatus,
+                status: targetStatus,
             }, {
                 preserveScroll: true,
-                onSuccess: () => { setChangeAllStatus(''); setChangeAllDialog(false); },
             });
         }
     };
