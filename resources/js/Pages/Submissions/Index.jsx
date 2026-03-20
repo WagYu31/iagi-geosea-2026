@@ -587,12 +587,12 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                             key={submission.id}
                                             variant="outlined"
                                             sx={{
-                                                borderRadius: '14px',
-                                                border: '1px solid #f0f0f0',
+                                                borderRadius: '16px',
+                                                border: `1px solid ${c.cardBorder}`,
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': {
                                                     boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-                                                    borderColor: '#e5e7eb',
+                                                    borderColor: c.cardBorderHover,
                                                 }
                                             }}
                                         >
@@ -640,12 +640,12 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                 </Box>
 
                                                 {/* Title */}
-                                                <Typography sx={{ fontWeight: 700, mb: 0.5, fontSize: '0.9rem', color: '#111827', lineHeight: 1.4 }}>
+                                                <Typography sx={{ fontWeight: 700, mb: 0.5, fontSize: '0.9rem', color: c.textPrimary, lineHeight: 1.4 }}>
                                                     {submission.title}
                                                 </Typography>
 
                                                 {/* Sub Theme */}
-                                                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', mb: 2 }}>
+                                                <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, mb: 2 }}>
                                                     {submission.paper_sub_theme || submission.topic || '—'}
                                                 </Typography>
 
@@ -772,11 +772,11 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
                 {/* Submit New Paper Form - MOBILE FIRST RESPONSIVE */}
                 {showForm && (
-                    <Paper ref={formRef} elevation={0} role="form" aria-label="Submit New Paper" sx={{ p: { xs: 2, sm: 3, md: 4 }, border: '1px solid #f0f0f0', borderRadius: '16px' }}>
-                        <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5, fontSize: { xs: '1.25rem', md: '1.5rem' }, letterSpacing: '-0.02em' }}>
+                    <Paper ref={formRef} elevation={0} role="form" aria-label="Submit New Paper" sx={{ p: { xs: 2, sm: 3, md: 4 }, border: `1px solid ${c.cardBorder}`, borderRadius: '16px', bgcolor: c.cardBg }}>
+                        <Typography sx={{ fontWeight: 800, color: c.textPrimary, mb: 0.5, fontSize: { xs: '1.25rem', md: '1.5rem' }, letterSpacing: '-0.02em' }}>
                             Submit New Paper
                         </Typography>
-                        <Typography sx={{ mb: { xs: 3, md: 4 }, fontSize: { xs: '0.85rem', md: '0.9rem' }, color: '#9ca3af' }}>
+                        <Typography sx={{ mb: { xs: 3, md: 4 }, fontSize: { xs: '0.85rem', md: '0.9rem' }, color: c.textMuted }}>
                             Please fill in all required fields marked with an asterisk (*)
                         </Typography>
 
@@ -784,7 +784,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                             <Stack spacing={{ xs: 3, md: 4 }}>
 
                                 {/* SECTION 1: Author Information */}
-                                <Card variant="outlined" sx={{ borderRadius: '14px', border: '1px solid #f0f0f0' }}>
+                                <Card variant="outlined" sx={{ borderRadius: '16px', border: `1px solid ${c.cardBorder}` }}>
                                     <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                                         <Typography variant="h6" sx={{ fontWeight: 700, color: '#0d7a6a', mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                                             Author Information
@@ -2081,7 +2081,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                             },
                             '&:disabled': {
                                 background: '#e5e7eb',
-                                color: '#9ca3af',
+                                color: c.textMuted,
                             },
                         }}
                     >

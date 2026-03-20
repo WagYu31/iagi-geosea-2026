@@ -96,7 +96,7 @@ export default function Index({ payments = [], submissions = [] }) {
         <SidebarLayout>
             <Head title="Payments" />
 
-            <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
+            <Box component="main" role="main" aria-label="Payments" sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
                 {/* Page Header */}
                 <Box sx={{ mb: 3 }}>
                     <Typography sx={{
@@ -118,9 +118,9 @@ export default function Index({ payments = [], submissions = [] }) {
                     <Paper elevation={0} sx={{
                         p: { xs: 2, md: 3 },
                         mb: 3,
-                        border: '1px solid #fde68a',
+                        border: `1px solid ${c.alertBorder}`,
                         borderRadius: '16px',
-                        bgcolor: '#fffef5',
+                        bgcolor: c.alertBg,
                         position: 'relative',
                         overflow: 'hidden',
                         '&::before': {
@@ -152,21 +152,21 @@ export default function Index({ payments = [], submissions = [] }) {
                                     justifyContent: 'space-between',
                                     alignItems: { xs: 'stretch', sm: 'center' },
                                     gap: { xs: 1.5, sm: 2 },
-                                    border: '1px solid #f0f0f0',
+                                    border: `1px solid ${c.cardBorder}`,
                                     borderRadius: '12px',
-                                    bgcolor: '#fff',
+                                    bgcolor: c.cardBg,
                                     maxWidth: '700px',
                                     transition: 'all 0.2s ease',
                                     '&:hover': {
-                                        borderColor: '#e5e7eb',
+                                        borderColor: c.cardBorderHover,
                                         boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                                     },
                                 }}>
                                     <Box sx={{ minWidth: 0 }}>
-                                        <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: '#111827', lineHeight: 1.3 }} noWrap>
+                                        <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary, lineHeight: 1.3 }} noWrap>
                                             {submission.title}
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', mt: 0.3 }}>
+                                        <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, mt: 0.3 }}>
                                             Submitted: {new Date(submission.created_at).toLocaleDateString('id-ID')}
                                         </Typography>
                                     </Box>
@@ -203,13 +203,13 @@ export default function Index({ payments = [], submissions = [] }) {
                 {/* Payment History */}
                 <Paper elevation={0} sx={{
                     p: { xs: 2, md: 3 },
-                    border: '1px solid #f0f0f0',
+                    border: `1px solid ${c.cardBorder}`,
                     borderRadius: '16px',
-                    bgcolor: '#fff',
+                    bgcolor: c.cardBg,
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                         <ReceiptLongIcon sx={{ color: '#6b7280', fontSize: '1.1rem' }} />
-                        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#111827' }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
                             Payment History
                         </Typography>
                     </Box>
@@ -265,23 +265,23 @@ export default function Index({ payments = [], submissions = [] }) {
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
-                                            <TableRow sx={{ backgroundColor: '#f8fafb' }}>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: '2px solid #f0f0f0' }}>Submission</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: '2px solid #f0f0f0' }}>Amount</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: '2px solid #f0f0f0' }}>Status</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: '2px solid #f0f0f0' }}>Uploaded</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: '2px solid #f0f0f0' }}>Actions</TableCell>
+                                            <TableRow sx={{ backgroundColor: c.headerBg }}>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Submission</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Amount</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Status</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Uploaded</TableCell>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Actions</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {payments.map((payment) => (
                                                 <TableRow key={payment.id} sx={{
                                                     transition: 'background-color 0.15s ease',
-                                                    '&:hover': { bgcolor: '#f9fafb' },
-                                                    '& td': { borderBottom: '1px solid #f3f4f6', py: 1.8, fontSize: '0.85rem', color: '#374151' },
+                                                    '&:hover': { bgcolor: c.rowHover },
+                                                    '& td': { borderBottom: `1px solid ${c.cardBorder}`, py: 1.8, fontSize: '0.85rem', color: c.textSecondary },
                                                 }}>
                                                     <TableCell>
-                                                        <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#111827' }}>
+                                                        <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: c.textPrimary }}>
                                                             {payment.submission?.title || 'N/A'}
                                                         </Typography>
                                                     </TableCell>
@@ -307,7 +307,7 @@ export default function Index({ payments = [], submissions = [] }) {
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography sx={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                                                        <Typography sx={{ fontSize: '0.8rem', color: c.textSecondary }}>
                                                             {payment.created_at ? new Date(payment.created_at).toLocaleDateString('id-ID') : 'N/A'}
                                                         </Typography>
                                                     </TableCell>
@@ -350,18 +350,18 @@ export default function Index({ payments = [], submissions = [] }) {
                                 <Stack spacing={1.5}>
                                     {payments.map((payment) => (
                                         <Card key={payment.id} variant="outlined" sx={{
-                                            borderRadius: '14px',
-                                            border: '1px solid #f0f0f0',
+                                            borderRadius: '16px',
+                                            border: `1px solid ${c.cardBorder}`,
                                             transition: 'all 0.2s ease',
                                             '&:hover': {
                                                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-                                                borderColor: '#e5e7eb',
+                                                borderColor: c.cardBorderHover,
                                             },
                                         }}>
                                             <CardContent sx={{ p: 2.5 }}>
                                                 {/* Header: Amount + Status */}
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                                    <Typography sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.9rem', color: '#111827' }}>
+                                                    <Typography sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.9rem', color: c.textPrimary }}>
                                                         {payment.amount ? `Rp ${parseFloat(payment.amount).toLocaleString('id-ID')}` : 'N/A'}
                                                     </Typography>
                                                     <Chip
@@ -386,7 +386,7 @@ export default function Index({ payments = [], submissions = [] }) {
                                                 </Typography>
 
                                                 {/* Date */}
-                                                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', mb: 2 }}>
+                                                <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, mb: 2 }}>
                                                     Uploaded: {payment.created_at ? new Date(payment.created_at).toLocaleDateString('id-ID') : 'N/A'}
                                                 </Typography>
 
@@ -462,11 +462,11 @@ export default function Index({ payments = [], submissions = [] }) {
                 <form onSubmit={handleSubmit}>
                     <DialogContent sx={{ pt: 3 }}>
                         {selectedSubmission && (
-                            <Box sx={{ mb: 3, p: 2, bgcolor: '#f8fafb', borderRadius: '12px', border: '1px solid #f0f0f0' }}>
-                                <Typography sx={{ fontSize: '0.7rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, mb: 0.3 }}>
+                            <Box sx={{ mb: 3, p: 2, bgcolor: c.headerBg, borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
+                                <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, mb: 0.3 }}>
                                     Submission
                                 </Typography>
-                                <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: '#111827' }}>
+                                <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary }}>
                                     {selectedSubmission.title}
                                 </Typography>
                             </Box>
@@ -516,10 +516,10 @@ export default function Index({ payments = [], submissions = [] }) {
                                     }}>
                                         <CloudUploadIcon sx={{ fontSize: '1.4rem', color: '#0d7a6a' }} />
                                     </Box>
-                                    <Typography sx={{ mb: 0.5, fontWeight: 700, fontSize: '0.9rem', color: '#111827' }}>
+                                    <Typography sx={{ mb: 0.5, fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary }}>
                                         Upload Payment Proof *
                                     </Typography>
-                                    <Typography sx={{ mb: 2, fontSize: '0.75rem', color: '#9ca3af' }}>
+                                    <Typography sx={{ mb: 2, fontSize: '0.75rem', color: c.textMuted }}>
                                         Screenshot or photo of your payment receipt
                                         <br />
                                         (JPG, PNG, or PDF — Max 5MB)
@@ -607,7 +607,7 @@ export default function Index({ payments = [], submissions = [] }) {
                                 },
                                 '&:disabled': {
                                     background: '#e5e7eb',
-                                    color: '#9ca3af',
+                                    color: c.textMuted,
                                     boxShadow: 'none',
                                 },
                                 textTransform: 'none',

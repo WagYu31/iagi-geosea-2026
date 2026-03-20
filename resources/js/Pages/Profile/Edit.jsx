@@ -95,7 +95,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                             {user.name?.charAt(0).toUpperCase() || 'U'}
                         </Avatar>
                         <Box sx={{ textAlign: { xs: 'center', sm: 'left' }, flex: 1 }}>
-                            <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: '#111827', lineHeight: 1.3 }}>
+                            <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: c.textPrimary, lineHeight: 1.3 }}>
                                 {user.name}
                             </Typography>
                             <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mt: 0.3 }}>
