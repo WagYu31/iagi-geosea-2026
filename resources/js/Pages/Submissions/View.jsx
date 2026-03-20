@@ -533,7 +533,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                             </CardContent>
                         </Card>
 
-                        {/* SECTION 5: Uploaded Files */}
+                        {/* SECTION 5: Uploaded Files - Inline PDF Viewer */}
                         <Card elevation={0} sx={cardSx}>
                             <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
                                 <Typography variant="h6" sx={sectionTitleSx}>
@@ -543,44 +543,88 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                     Uploaded Files
                                 </Typography>
 
-                                <Stack spacing={1.5}>
+                                <Stack spacing={3}>
                                     {[
                                         { file: submission.full_paper_file, label: 'Full Paper', icon: <DescriptionIcon /> },
                                         { file: submission.layouting_file, label: 'Layouting File', icon: <DescriptionIcon /> },
                                         { file: submission.editor_feedback_file, label: 'Editor Feedback', icon: <CommentIcon /> },
-                                    ].filter(f => f.file).map((item, idx) => (
-                                        <Button
-                                            key={idx}
-                                            variant="outlined"
-                                            startIcon={item.icon}
-                                            endIcon={<DownloadIcon />}
-                                            component="a"
-                                            href={`/storage/${item.file}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            fullWidth
-                                            sx={{
-                                                justifyContent: 'space-between',
-                                                textTransform: 'none',
-                                                color: '#1abc9c',
-                                                borderColor: isDark ? 'rgba(26,188,156,0.2)' : '#d1fae5',
-                                                borderRadius: '12px',
-                                                py: 1.5,
-                                                fontWeight: 600,
-                                                fontSize: '0.85rem',
-                                                bgcolor: isDark ? 'rgba(26,188,156,0.05)' : '#f0fdf9',
-                                                '&:hover': {
-                                                    borderColor: '#1abc9c',
-                                                    bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5',
-                                                    transform: 'translateY(-1px)',
-                                                    boxShadow: '0 4px 12px rgba(26,188,156,0.15)',
-                                                },
-                                                transition: 'all 0.2s ease',
-                                            }}
-                                        >
-                                            {item.label}
-                                        </Button>
-                                    ))}
+                                    ].filter(f => f.file).map((item, idx) => {
+                                        const fileUrl = `/storage/${item.file}`;
+                                        const isPdf = item.file?.toLowerCase().endsWith('.pdf');
+                                        return (
+                                            <Box key={idx}>
+                                                {/* File header with download button */}
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    mb: 1.5,
+                                                    p: 1.5,
+                                                    borderRadius: '10px',
+                                                    bgcolor: isDark ? 'rgba(26,188,156,0.05)' : '#f0fdf9',
+                                                    border: `1px solid ${isDark ? 'rgba(26,188,156,0.15)' : '#d1fae5'}`,
+                                                }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Box sx={{ color: '#1abc9c' }}>{item.icon}</Box>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary }}>
+                                                            {item.label}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Button
+                                                        component="a"
+                                                        href={fileUrl}
+                                                        download
+                                                        size="small"
+                                                        startIcon={<DownloadIcon />}
+                                                        sx={{
+                                                            textTransform: 'none',
+                                                            color: '#1abc9c',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.8rem',
+                                                            borderRadius: '8px',
+                                                            '&:hover': { bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#ecfdf5' },
+                                                        }}
+                                                    >
+                                                        Download
+                                                    </Button>
+                                                </Box>
+
+                                                {/* Inline PDF Viewer */}
+                                                {isPdf ? (
+                                                    <Box sx={{
+                                                        borderRadius: '12px',
+                                                        overflow: 'hidden',
+                                                        border: `1px solid ${c.cardBorder}`,
+                                                        bgcolor: isDark ? '#1a1a1a' : '#f5f5f5',
+                                                    }}>
+                                                        <iframe
+                                                            src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                                                            width="100%"
+                                                            height="600"
+                                                            style={{
+                                                                border: 'none',
+                                                                display: 'block',
+                                                            }}
+                                                            title={item.label}
+                                                        />
+                                                    </Box>
+                                                ) : (
+                                                    <Box sx={{
+                                                        p: 3,
+                                                        textAlign: 'center',
+                                                        borderRadius: '12px',
+                                                        border: `1px dashed ${c.cardBorder}`,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                    }}>
+                                                        <DescriptionIcon sx={{ fontSize: 40, color: c.textMuted, mb: 1 }} />
+                                                        <Typography variant="body2" sx={{ color: c.textMuted }}>
+                                                            Preview not available for this file type. Please download to view.
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        );
+                                    })}
                                     {!submission.full_paper_file && !submission.layouting_file && !submission.editor_feedback_file && (
                                         <Box sx={{ textAlign: 'center', py: 4 }}>
                                             <CloudUploadIcon sx={{ fontSize: 48, color: c.textMuted, mb: 1, opacity: 0.4 }} />
