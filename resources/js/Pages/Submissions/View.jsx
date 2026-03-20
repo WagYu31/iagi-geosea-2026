@@ -545,9 +545,9 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
 
                                 <Stack spacing={3}>
                                     {[
-                                        { file: submission.full_paper_file, label: 'Full Paper', icon: <DescriptionIcon /> },
-                                        { file: submission.layouting_file, label: 'Layouting File', icon: <DescriptionIcon /> },
-                                        { file: submission.editor_feedback_file, label: 'Editor Feedback', icon: <CommentIcon /> },
+                                        { file: submission.full_paper_file, label: 'Full Paper', icon: <DescriptionIcon />, feedbackType: 'revision1' },
+                                        { file: submission.layouting_file, label: 'Layouting File', icon: <DescriptionIcon />, feedbackType: 'revision2' },
+                                        { file: submission.editor_feedback_file, label: 'Editor Feedback', icon: <CommentIcon />, feedbackType: 'editor' },
                                     ].filter(f => f.file).map((item, idx) => {
                                         const fileUrl = `/storage/${item.file}`;
                                         const isPdf = item.file?.toLowerCase().endsWith('.pdf');
@@ -645,6 +645,145 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                         );
                                                     }
                                                 })()}
+
+                                                {/* Reviewer Feedback below Full Paper (Revision 1) */}
+                                                {item.feedbackType === 'revision1' && reviews.length > 0 && (
+                                                    <Box sx={{ mt: 2 }}>
+                                                        <Box sx={{
+                                                            display: 'flex', alignItems: 'center', gap: 1, mb: 2,
+                                                            p: 1.5, borderRadius: '10px',
+                                                            bgcolor: isDark ? 'rgba(59,130,246,0.08)' : '#eff6ff',
+                                                            border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#bfdbfe'}`,
+                                                        }}>
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#93c5fd' : '#2563eb', fontSize: '0.85rem' }}>
+                                                                📝 Revision 1 — Reviewer Comments
+                                                            </Typography>
+                                                        </Box>
+                                                        <Grid container spacing={2}>
+                                                            {reviews.map((review, index) => {
+                                                                const getRecConfig = (rec) => {
+                                                                    if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
+                                                                    const r = rec.toLowerCase();
+                                                                    if (r.includes('accept')) return { bg: c.chipGreenBg, color: c.chipGreenText, label: 'Accepted' };
+                                                                    if (r.includes('reject')) return { bg: isDark ? 'rgba(239,68,68,0.15)' : '#fef2f2', color: isDark ? '#fca5a5' : '#dc2626', label: 'Rejected' };
+                                                                    if (r.includes('minor')) return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: 'Minor Revision' };
+                                                                    if (r.includes('major') || r.includes('revision')) return { bg: c.chipAmberBg, color: c.chipAmberText, label: rec };
+                                                                    return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: rec };
+                                                                };
+                                                                const recConfig = getRecConfig(review.recommendation);
+                                                                return (
+                                                                    <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
+                                                                        <Box sx={{
+                                                                            p: 2.5,
+                                                                            borderRadius: '14px',
+                                                                            border: `1px solid ${c.cardBorder}`,
+                                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                                            height: '100%',
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            transition: 'all 0.2s ease',
+                                                                            '&:hover': {
+                                                                                borderColor: '#1abc9c',
+                                                                                boxShadow: `0 4px 16px ${isDark ? 'rgba(26,188,156,0.1)' : 'rgba(0,0,0,0.06)'}`,
+                                                                                transform: 'translateY(-2px)',
+                                                                            },
+                                                                        }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                                                    <Avatar sx={{
+                                                                                        width: 40, height: 40,
+                                                                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                                                        fontWeight: 700, fontSize: '0.85rem',
+                                                                                    }}>
+                                                                                        {(review.reviewer?.name || 'A').charAt(0).toUpperCase()}
+                                                                                    </Avatar>
+                                                                                    <Box>
+                                                                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
+                                                                                            {review.reviewer?.name || 'Admin'}
+                                                                                        </Typography>
+                                                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
+                                                                                            Reviewer #{index + 1}
+                                                                                        </Typography>
+                                                                                    </Box>
+                                                                                </Box>
+                                                                                <Chip
+                                                                                    label={recConfig.label}
+                                                                                    size="small"
+                                                                                    sx={{
+                                                                                        bgcolor: recConfig.bg,
+                                                                                        color: recConfig.color,
+                                                                                        fontWeight: 700,
+                                                                                        fontSize: '0.65rem',
+                                                                                        height: 24,
+                                                                                        borderRadius: '6px',
+                                                                                    }}
+                                                                                />
+                                                                            </Box>
+                                                                            <Box sx={{ mb: 2, flex: 1 }}>
+                                                                                <Typography variant="body2" sx={{
+                                                                                    color: c.textPrimary,
+                                                                                    lineHeight: 1.7,
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    fontSize: '0.85rem',
+                                                                                }}>
+                                                                                    {review.comments || review.feedback || 'No feedback provided'}
+                                                                                </Typography>
+                                                                            </Box>
+                                                                            <Box sx={{ pt: 2, borderTop: `1px solid ${c.cardBorder}`, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                                <CalendarTodayIcon sx={{ fontSize: 13, color: c.textMuted }} />
+                                                                                <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.72rem', fontStyle: 'italic' }}>
+                                                                                    Reviewed on {new Date(review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                                                                </Typography>
+                                                                            </Box>
+                                                                        </Box>
+                                                                    </Grid>
+                                                                );
+                                                            })}
+                                                        </Grid>
+                                                    </Box>
+                                                )}
+
+                                                {/* Reviewer Feedback below Layouting File (Revision 2) */}
+                                                {item.feedbackType === 'revision2' && reviews.length > 0 && (
+                                                    <Box sx={{ mt: 2 }}>
+                                                        <Box sx={{
+                                                            display: 'flex', alignItems: 'center', gap: 1, mb: 1.5,
+                                                            p: 1.5, borderRadius: '10px',
+                                                            bgcolor: isDark ? 'rgba(168,85,247,0.08)' : '#faf5ff',
+                                                            border: `1px solid ${isDark ? 'rgba(168,85,247,0.2)' : '#e9d5ff'}`,
+                                                        }}>
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#c084fc' : '#7c3aed', fontSize: '0.85rem' }}>
+                                                                📝 Revision 2 — Reviewer Comments
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{
+                                                            p: 2.5, borderRadius: '14px',
+                                                            border: `1px dashed ${c.cardBorder}`,
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
+                                                            textAlign: 'center',
+                                                        }}>
+                                                            <Typography variant="body2" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
+                                                                Reviewer feedback for Revision 2 will be available after review.
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
+
+                                                {/* Editor notes below Editor Feedback file */}
+                                                {item.feedbackType === 'editor' && (
+                                                    <Box sx={{ mt: 2 }}>
+                                                        <Box sx={{
+                                                            display: 'flex', alignItems: 'center', gap: 1,
+                                                            p: 1.5, borderRadius: '10px',
+                                                            bgcolor: isDark ? 'rgba(245,158,11,0.08)' : '#fffbeb',
+                                                            border: `1px solid ${isDark ? 'rgba(245,158,11,0.2)' : '#fde68a'}`,
+                                                        }}>
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fbbf24' : '#d97706', fontSize: '0.85rem' }}>
+                                                                ✏️ Editor Feedback — File uploaded by admin/editor
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
                                             </Box>
                                         );
                                     })}
@@ -657,179 +796,6 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                 </Stack>
                             </CardContent>
                         </Card>
-
-                        {/* Reviewer Feedback (Revision 1 & Revision 2) */}
-                        {reviews.length > 0 && (
-                            <Card elevation={0} sx={cardSx}>
-                                <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
-                                    <Typography variant="h6" sx={sectionTitleSx}>
-                                        <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 36, height: 36, borderRadius: '10px' }}>
-                                            <CommentIcon sx={{ color: '#1abc9c', fontSize: 20 }} />
-                                        </Avatar>
-                                        Reviewer Feedback
-                                    </Typography>
-
-                                    {/* Revision 1 Feedback */}
-                                    <Box sx={{ mb: 3 }}>
-                                        <Box sx={{
-                                            display: 'flex', alignItems: 'center', gap: 1, mb: 2,
-                                            p: 1.5, borderRadius: '10px',
-                                            bgcolor: isDark ? 'rgba(59,130,246,0.08)' : '#eff6ff',
-                                            border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#bfdbfe'}`,
-                                        }}>
-                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#93c5fd' : '#2563eb', fontSize: '0.85rem' }}>
-                                                📝 Revision 1 — Reviewer Comments
-                                            </Typography>
-                                        </Box>
-                                        <Grid container spacing={2}>
-                                            {reviews.map((review, index) => {
-                                                const getRecConfig = (rec) => {
-                                                    if (!rec) return { bg: isDark ? '#374151' : '#f3f4f6', color: c.textMuted, label: 'Pending' };
-                                                    const r = rec.toLowerCase();
-                                                    if (r.includes('accept')) return { bg: c.chipGreenBg, color: c.chipGreenText, label: 'Accepted' };
-                                                    if (r.includes('reject')) return { bg: isDark ? 'rgba(239,68,68,0.15)' : '#fef2f2', color: isDark ? '#fca5a5' : '#dc2626', label: 'Rejected' };
-                                                    if (r.includes('minor')) return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: 'Minor Revision' };
-                                                    if (r.includes('major') || r.includes('revision')) return { bg: c.chipAmberBg, color: c.chipAmberText, label: rec };
-                                                    return { bg: isDark ? 'rgba(59,130,246,0.15)' : '#eff6ff', color: isDark ? '#93c5fd' : '#2563eb', label: rec };
-                                                };
-                                                const recConfig = getRecConfig(review.recommendation);
-
-                                                return (
-                                                    <Grid size={{ xs: 12, md: 6 }} key={review.id || index}>
-                                                        <Box sx={{
-                                                            p: 2.5,
-                                                            borderRadius: '14px',
-                                                            border: `1px solid ${c.cardBorder}`,
-                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            transition: 'all 0.2s ease',
-                                                            '&:hover': {
-                                                                borderColor: '#1abc9c',
-                                                                boxShadow: `0 4px 16px ${isDark ? 'rgba(26,188,156,0.1)' : 'rgba(0,0,0,0.06)'}`,
-                                                                transform: 'translateY(-2px)',
-                                                            },
-                                                        }}>
-                                                            {/* Header */}
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                                    <Avatar sx={{
-                                                                        width: 40, height: 40,
-                                                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                                                        fontWeight: 700, fontSize: '0.85rem',
-                                                                    }}>
-                                                                        {(review.reviewer?.name || 'A').charAt(0).toUpperCase()}
-                                                                    </Avatar>
-                                                                    <Box>
-                                                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.3 }}>
-                                                                            {review.reviewer?.name || 'Admin'}
-                                                                        </Typography>
-                                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
-                                                                            Reviewer #{index + 1}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                                <Chip
-                                                                    label={recConfig.label}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        bgcolor: recConfig.bg,
-                                                                        color: recConfig.color,
-                                                                        fontWeight: 700,
-                                                                        fontSize: '0.65rem',
-                                                                        height: 24,
-                                                                        borderRadius: '6px',
-                                                                    }}
-                                                                />
-                                                            </Box>
-
-                                                            {/* Feedback */}
-                                                            <Box sx={{ mb: 2, flex: 1 }}>
-                                                                <Typography variant="body2" sx={{
-                                                                    color: c.textPrimary,
-                                                                    lineHeight: 1.7,
-                                                                    whiteSpace: 'pre-wrap',
-                                                                    fontSize: '0.85rem',
-                                                                }}>
-                                                                    {review.comments || review.feedback || 'No feedback provided'}
-                                                                </Typography>
-                                                            </Box>
-
-                                                            {/* Date */}
-                                                            <Box sx={{ pt: 2, borderTop: `1px solid ${c.cardBorder}`, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                                <CalendarTodayIcon sx={{ fontSize: 13, color: c.textMuted }} />
-                                                                <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.72rem', fontStyle: 'italic' }}>
-                                                                    Reviewed on {new Date(review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    </Grid>
-                                                );
-                                            })}
-                                        </Grid>
-                                    </Box>
-
-                                    {/* Revision 2 Feedback */}
-                                    <Box>
-                                        <Box sx={{
-                                            display: 'flex', alignItems: 'center', gap: 1, mb: 2,
-                                            p: 1.5, borderRadius: '10px',
-                                            bgcolor: isDark ? 'rgba(168,85,247,0.08)' : '#faf5ff',
-                                            border: `1px solid ${isDark ? 'rgba(168,85,247,0.2)' : '#e9d5ff'}`,
-                                        }}>
-                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#c084fc' : '#7c3aed', fontSize: '0.85rem' }}>
-                                                📝 Revision 2 — Editor Feedback
-                                            </Typography>
-                                        </Box>
-                                        {submission.editor_feedback_file ? (
-                                            <Box sx={{
-                                                p: 2.5,
-                                                borderRadius: '14px',
-                                                border: `1px solid ${c.cardBorder}`,
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                            }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                                                    <DescriptionIcon sx={{ color: '#7c3aed', fontSize: 22 }} />
-                                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: c.textPrimary }}>
-                                                        Editor Feedback File
-                                                    </Typography>
-                                                    <Button
-                                                        component="a"
-                                                        href={`/storage/${submission.editor_feedback_file}`}
-                                                        download
-                                                        size="small"
-                                                        startIcon={<DownloadIcon />}
-                                                        sx={{
-                                                            ml: 'auto',
-                                                            textTransform: 'none',
-                                                            color: '#7c3aed',
-                                                            fontWeight: 600,
-                                                            fontSize: '0.8rem',
-                                                        }}
-                                                    >
-                                                        Download
-                                                    </Button>
-                                                </Box>
-                                                <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.82rem' }}>
-                                                    📄 {submission.editor_feedback_file.split('/').pop()}
-                                                </Typography>
-                                            </Box>
-                                        ) : (
-                                            <Box sx={{
-                                                p: 3, textAlign: 'center', borderRadius: '14px',
-                                                border: `1px dashed ${c.cardBorder}`,
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                            }}>
-                                                <Typography variant="body2" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
-                                                    No editor feedback available yet for Revision 2.
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        )}
 
                         {/* Reviewer Scores (at the bottom) */}
                         {reviews.length > 0 && reviews.some(r => r.overall_score) && (
