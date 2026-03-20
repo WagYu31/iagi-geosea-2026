@@ -1334,11 +1334,13 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
             <Dialog
                 open={changeAllDialog}
                 onClose={() => setChangeAllDialog(false)}
+                sx={{ zIndex: 1500 }}
                 PaperProps={{
                     sx: {
                         borderRadius: '16px',
                         bgcolor: c.cardBg,
                         minWidth: 400,
+                        zIndex: 1501,
                     }
                 }}
             >
