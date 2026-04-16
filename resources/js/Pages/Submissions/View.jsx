@@ -298,7 +298,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
 
                                 <Grid container spacing={2.5}>
                                     {/* Status */}
-                                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                    <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
                                         <Typography sx={labelSx}>Status</Typography>
                                         <Chip
                                             label={statusConfig.label}
@@ -306,14 +306,14 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                         />
                                     </Grid>
                                     {/* Submission Code */}
-                                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                    <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
                                         <Typography sx={labelSx}>Submission Code</Typography>
                                         <Typography variant="body1" sx={{ fontWeight: 700, color: '#1abc9c', fontFamily: 'monospace', fontSize: '1.05rem' }}>
                                             {submission.submission_code || 'N/A'}
                                         </Typography>
                                     </Grid>
                                     {/* Submitted On */}
-                                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                    <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
                                         <Typography sx={labelSx}>Submitted On</Typography>
                                         <Typography variant="body2" sx={{ color: c.textPrimary, display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                             <CalendarTodayIcon sx={{ fontSize: 14, color: c.textMuted }} />
@@ -325,7 +325,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                     </Grid>
                                     {/* Category */}
                                     {submission.category && (
-                                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
                                             <Typography sx={labelSx}>Category</Typography>
                                             <Chip
                                                 label={submission.category}
@@ -341,7 +341,7 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                     )}
                                     {/* Presentation Type */}
                                     {submission.category_submission && (
-                                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                                        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
                                             <Typography sx={labelSx}>Presentation Type</Typography>
                                             <Typography variant="body2" sx={{ color: c.textPrimary, fontWeight: 500 }}>
                                                 {submission.category_submission}
