@@ -567,6 +567,20 @@ export default function Footer({ settings, auth }) {
                         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', textAlign: { xs: 'center', md: 'left' } }}>
                             © 2026 PIT IAGI-GEOSEA XIX. All rights reserved.
                         </Typography>
+                        {/* ISO Compliance Badges */}
+                        <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+                            {['ISO 9241', 'ISO 40500'].map((label) => (
+                                <Box key={label} sx={{
+                                    px: 1, py: 0.3, borderRadius: '4px',
+                                    bgcolor: 'rgba(77,212,172,0.08)',
+                                    border: '1px solid rgba(77,212,172,0.2)',
+                                }}>
+                                    <Typography sx={{ fontSize: '0.55rem', fontWeight: 700, color: '#4dd4ac', letterSpacing: '0.06em' }}>
+                                        {label}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
                         <Box sx={{ display: 'flex', gap: 3 }}>
                             {['Privacy Policy', 'Terms of Service'].map((item) => (
                                 <Typography
