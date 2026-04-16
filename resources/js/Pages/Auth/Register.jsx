@@ -92,7 +92,7 @@ export default function Register() {
                     sx={{
                         fontWeight: 800,
                         color: '#111827',
-                        fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                        fontSize: { xs: '1.5rem', sm: '1.85rem' },
                         mb: 0.5,
                     }}
                 >
@@ -101,7 +101,7 @@ export default function Register() {
                 <Typography
                     sx={{
                         color: '#6b7280',
-                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        fontSize: '0.875rem',
                     }}
                 >
                     Register for 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
@@ -132,7 +132,7 @@ export default function Register() {
                         sx={{
                             fontWeight: 700,
                             color: tealDark,
-                            fontSize: { xs: '0.9rem', sm: '1rem' },
+                            fontSize: '1rem',
                             mb: 2,
                             pb: 1,
                             borderBottom: `2px solid ${alpha(tealLight, 0.2)}`,
@@ -245,7 +245,7 @@ export default function Register() {
                         sx={{
                             fontWeight: 700,
                             color: tealDark,
-                            fontSize: { xs: '0.9rem', sm: '1rem' },
+                            fontSize: '1rem',
                             mb: 2,
                             pb: 1,
                             borderBottom: `2px solid ${alpha(tealLight, 0.2)}`,

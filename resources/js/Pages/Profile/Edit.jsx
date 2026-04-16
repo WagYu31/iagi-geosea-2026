@@ -41,19 +41,19 @@ export default function Edit({ mustVerifyEmail, status }) {
         <SidebarLayout>
             <Head title="Profile" />
 
-            <Box component="main" role="main" aria-label="Profile Settings" sx={{ p: { xs: 2, md: 3 }, maxWidth: '1400px', margin: '0 auto' }}>
+            <Box component="main" role="main" aria-label="Profile Settings" sx={{ p: { xs: 2, sm: 3.5 }, maxWidth: '1400px', margin: '0 auto' }}>
                 {/* Page Header */}
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{ mb: 3.5 }}>
                     <Typography sx={{
                         fontWeight: 800,
                         color: c.textPrimary,
-                        fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
+                        fontSize: { xs: '1.5rem', sm: '1.85rem' },
                         letterSpacing: '-0.02em',
                         lineHeight: 1.2,
                     }}>
-                        Profile
+                        Profile 👤
                     </Typography>
-                    <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mt: 0.5 }}>
+                    <Typography sx={{ color: c.textMuted, fontSize: '0.875rem', mt: 0.5 }}>
                         Manage your account information and security
                     </Typography>
                 </Box>

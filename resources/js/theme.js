@@ -100,6 +100,30 @@ export const getDesignTokens = (mode) => ({
       // Info box
       infoBg: mode === 'dark' ? 'rgba(37, 99, 235, 0.1)' : '#eff6ff',
       infoBorder: mode === 'dark' ? 'rgba(37, 99, 235, 0.2)' : '#dbeafe',
+      // ── ISO 9241-303 / ISO 40500 (WCAG 2.1) Design Tokens ──
+      iso: {
+        fontSize: {
+          pageTitle: { xs: '1.5rem', sm: '1.85rem' },
+          sectionTitle: '1rem',
+          cardValue: { xs: '1.75rem', sm: '2.25rem' },
+          body: '0.875rem',
+          bodySmall: '0.8rem',
+          caption: '0.75rem',
+          captionSmall: '0.7rem',
+          chip: '0.65rem',
+          tableHeader: '0.75rem',
+        },
+        card: {
+          borderRadius: '16px',
+          padding: { xs: 2, sm: 2.5, md: 3 },
+          paddingCompact: { xs: 2, sm: 2.5 },
+        },
+        spacing: {
+          sectionGap: 2.5,
+          headerMb: 3.5,
+          pagePadding: { xs: 2, sm: 3.5 },
+        },
+      },
     },
     // Gradient definitions
     gradient: {

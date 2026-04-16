@@ -65,7 +65,7 @@ export default function Login({ status, canResetPassword }) {
                     sx={{
                         fontWeight: 800,
                         color: '#111827',
-                        fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                        fontSize: { xs: '1.5rem', sm: '1.85rem' },
                         mb: 0.5,
                     }}
                 >
@@ -74,7 +74,7 @@ export default function Login({ status, canResetPassword }) {
                 <Typography
                     sx={{
                         color: '#6b7280',
-                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        fontSize: '0.875rem',
                     }}
                 >
                     Sign in to access your account

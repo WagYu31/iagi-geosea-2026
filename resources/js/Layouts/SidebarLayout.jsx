@@ -339,6 +339,28 @@ function SidebarLayout({ children }) {
           <Typography sx={{ color: isDark ? '#4b5563' : '#d1d5db', fontSize: '0.6rem', fontWeight: 500 }}>
             © 2026 PIT IAGI-GEOSEA
           </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mt: 0.75 }}>
+            <Box sx={{
+              display: 'inline-flex', alignItems: 'center', gap: 0.3,
+              px: 0.8, py: 0.2, borderRadius: '4px',
+              bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
+              border: `1px solid ${isDark ? 'rgba(26,188,156,0.15)' : '#d1fae5'}`,
+            }}>
+              <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: '#1abc9c', letterSpacing: '0.05em' }}>
+                ISO 9241
+              </Typography>
+            </Box>
+            <Box sx={{
+              display: 'inline-flex', alignItems: 'center', gap: 0.3,
+              px: 0.8, py: 0.2, borderRadius: '4px',
+              bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
+              border: `1px solid ${isDark ? 'rgba(26,188,156,0.15)' : '#d1fae5'}`,
+            }}>
+              <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: '#1abc9c', letterSpacing: '0.05em' }}>
+                ISO 40500
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       )}
     </Box>
