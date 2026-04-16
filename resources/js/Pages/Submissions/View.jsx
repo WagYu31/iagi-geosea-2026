@@ -486,30 +486,34 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                     </Box>
 
                                     {/* Abstract */}
-                                    <Box>
+                                    <Box sx={{ minWidth: 0, overflow: 'hidden' }}>
                                         <Typography sx={labelSx}>Abstract</Typography>
                                         <Box sx={{
-                                            p: 2.5,
+                                            p: { xs: 1.5, sm: 2.5 },
                                             borderRadius: '12px',
                                             bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
                                             border: `1px solid ${c.cardBorder}`,
                                             overflow: 'hidden',
-                                            maxWidth: '100%',
+                                            width: '100%',
+                                            boxSizing: 'border-box',
                                         }}>
                                             <Box
                                                 sx={{
                                                     lineHeight: 1.8,
                                                     color: c.textPrimary,
-                                                    textAlign: 'justify',
                                                     fontSize: '0.9rem',
                                                     wordBreak: 'break-word',
-                                                    overflowWrap: 'break-word',
+                                                    overflowWrap: 'anywhere',
                                                     overflow: 'hidden',
-                                                    '& p': { margin: '0.5em 0' },
+                                                    width: '100%',
+                                                    '& *': { maxWidth: '100% !important', boxSizing: 'border-box' },
+                                                    '& p': { margin: '0.5em 0', wordBreak: 'break-word' },
                                                     '& ul, & ol': { pl: 3 },
                                                     '& img': { maxWidth: '100%', height: 'auto' },
-                                                    '& table': { maxWidth: '100%', overflowX: 'auto', display: 'block' },
-                                                    '& pre': { maxWidth: '100%', overflowX: 'auto' },
+                                                    '& table': { maxWidth: '100%', overflowX: 'auto', display: 'block', wordBreak: 'break-word' },
+                                                    '& pre': { maxWidth: '100%', overflowX: 'auto', whiteSpace: 'pre-wrap' },
+                                                    '& span': { wordBreak: 'break-word', overflowWrap: 'anywhere' },
+                                                    '& sub, & sup': { lineHeight: 0 },
                                                 }}
                                                 dangerouslySetInnerHTML={{ __html: submission.abstract }}
                                             />
