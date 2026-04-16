@@ -493,6 +493,8 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                             borderRadius: '12px',
                                             bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
                                             border: `1px solid ${c.cardBorder}`,
+                                            overflow: 'hidden',
+                                            maxWidth: '100%',
                                         }}>
                                             <Box
                                                 sx={{
@@ -500,8 +502,14 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     color: c.textPrimary,
                                                     textAlign: 'justify',
                                                     fontSize: '0.9rem',
+                                                    wordBreak: 'break-word',
+                                                    overflowWrap: 'break-word',
+                                                    overflow: 'hidden',
                                                     '& p': { margin: '0.5em 0' },
                                                     '& ul, & ol': { pl: 3 },
+                                                    '& img': { maxWidth: '100%', height: 'auto' },
+                                                    '& table': { maxWidth: '100%', overflowX: 'auto', display: 'block' },
+                                                    '& pre': { maxWidth: '100%', overflowX: 'auto' },
                                                 }}
                                                 dangerouslySetInnerHTML={{ __html: submission.abstract }}
                                             />
