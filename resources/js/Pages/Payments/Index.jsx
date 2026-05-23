@@ -30,7 +30,11 @@ import StarIcon from '@mui/icons-material/Star';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import DescriptionIcon from '@mui/icons-material/Description';
 
-export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing = {} }) {
+export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing: rawPricing = {} }) {
+    // Normalize pricing keys to lowercase to match categoryConfig
+    const pricing = Object.fromEntries(
+        Object.entries(rawPricing).map(([k, v]) => [k.toLowerCase(), v])
+    );
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -266,7 +270,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                             transition: 'transform 0.3s ease',
                                             '&:hover': { transform: 'rotate(5deg) scale(1.05)' },
                                         }}>
-                                            {React.cloneElement(cfg.icon, { sx: { fontSize: 26, color: isDark ? cfg.lightColor : cfg.color } })}
+                                            {cfg.icon ? React.cloneElement(cfg.icon, { sx: { fontSize: 26, color: isDark ? cfg.lightColor : cfg.color } }) : <PaymentIcon sx={{ fontSize: 26, color: c.textMuted }} />}
                                         </Box>
 
                                         <Typography sx={{ fontWeight: 800, fontSize: '0.95rem', color: c.textPrimary, mb: 0.3, lineHeight: 1.2 }}>
@@ -345,7 +349,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                                                     {catCfg && (
                                                         <Chip
-                                                            icon={React.cloneElement(catCfg.icon, { sx: { fontSize: '12px !important' } })}
+                                                            icon={catCfg.icon ? React.cloneElement(catCfg.icon, { sx: { fontSize: '12px !important' } }) : undefined}
                                                             label={catCfg.shortLabel}
                                                             size="small"
                                                             sx={{
