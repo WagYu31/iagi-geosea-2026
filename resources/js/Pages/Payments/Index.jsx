@@ -229,7 +229,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             backgroundSize: '48px 48px', pointerEvents: 'none',
                         }} />
 
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 3, md: 6 }, alignItems: { md: 'center' } }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3, lg: 6 }, alignItems: { lg: 'center' } }}>
                             <Box sx={{ flex: 1 }}>
                                 {/* Badge */}
                                 <Box sx={{
@@ -338,7 +338,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         <Box sx={{ width: 4, height: 28, borderRadius: 2, background: 'linear-gradient(180deg, #059669 0%, #34d399 100%)' }} />
                         <Typography component="h2" sx={{ fontWeight: 800, fontSize: '1.15rem', color: c.textPrimary }}>Registration Fees</Typography>
                     </Box>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2.5 }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }, gap: 2.5 }}>
                         {Object.keys(pricing).map((catKey, idx) => {
                             const amount = pricing[catKey];
                             const cat = CATEGORIES[catKey] || { label: catKey, short: catKey, desc: '', color: '#6b7280', gradient: 'linear-gradient(135deg, #6b7280, #9ca3af)', bgGlow: '' };
@@ -467,14 +467,14 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                                             <Box sx={{
                                                 px: { xs: 2.5, md: 4 }, py: { xs: 2.5, md: 3 },
-                                                display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, gap: 2.5,
+                                                display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, gap: 2.5,
                                                 position: 'relative', zIndex: 1,
                                             }}>
                                                 {/* Icon */}
                                                 <Box sx={{
                                                     width: 52, height: 52, borderRadius: '16px',
                                                     background: isDark ? 'rgba(26,188,156,0.06)' : 'linear-gradient(135deg, #f0fdf9, #ecfdf5)',
-                                                    display: { xs: 'none', sm: 'flex' }, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                                                    display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                                                     border: `1px solid ${isDark ? 'rgba(26,188,156,0.1)' : 'rgba(26,188,156,0.15)'}`,
                                                 }}>
                                                     <CatIcon category={sub.participant_category} size={24} color={cat ? cat.color : '#1abc9c'} />
@@ -498,7 +498,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
                                                     {fee && (
-                                                        <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>
+                                                        <Box sx={{ textAlign: 'right', display: { xs: 'none', lg: 'block' } }}>
                                                             <Typography sx={{ fontSize: '0.62rem', color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Amount</Typography>
                                                             <Typography sx={{ fontSize: '1.15rem', fontWeight: 900, color: isDark ? '#34d399' : '#059669', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{fmtRp(fee)}</Typography>
                                                         </Box>
@@ -581,7 +581,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     ) : (
                         <React.Fragment>
                             {/* Desktop Table */}
-                            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                            <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
@@ -645,7 +645,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             </Box>
 
                             {/* Mobile Cards */}
-                            <Box sx={{ display: { xs: 'block', md: 'none' }, p: 2.5 }}>
+                            <Box sx={{ display: { xs: 'block', lg: 'none' }, p: 2.5 }}>
                                 <Stack spacing={2}>
                                     {payments.map((p) => {
                                         const pCatKey = (p.submission && p.submission.participant_category) ? p.submission.participant_category.toLowerCase() : '';
