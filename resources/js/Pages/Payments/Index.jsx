@@ -168,15 +168,32 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 <Fade in={mounted} timeout={650}>
                     <Box sx={{
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
-                        background: 'linear-gradient(135deg, #0a2427 0%, #0e3b38 35%, #15534e 60%, #1a8a7a 85%, #5dd8c0 100%)',
+                        background: 'linear-gradient(135deg, #0c1f2e 0%, #0f3040 20%, #156259 45%, #1a8a7a 65%, #3bbfa0 82%, #8eecd6 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
                         p: { xs: 3, sm: 4, md: 5 },
                         border: '1px solid rgba(26,188,156,0.12)',
                     }}>
-                        {/* Large radial glow (right side teal) */}
-                        <Box sx={{ position: 'absolute', top: '-30%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(45,212,191,0.18) 0%, rgba(45,212,191,0.05) 40%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
-                        {/* Subtle dark glow (left bottom) */}
-                        <Box sx={{ position: 'absolute', bottom: '-20%', left: '5%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(10,36,39,0.5) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                        {/* Large arc/circle shape (center-left) — mimics gambar 1 */}
+                        <Box sx={{
+                            position: 'absolute', top: '-40%', left: '10%',
+                            width: '70%', height: '180%', borderRadius: '50%',
+                            background: 'radial-gradient(ellipse at center, rgba(26,138,122,0.35) 0%, rgba(21,98,89,0.2) 40%, transparent 70%)',
+                            pointerEvents: 'none',
+                        }} />
+                        {/* Bright mint glow (top-right) */}
+                        <Box sx={{
+                            position: 'absolute', top: '-50%', right: '-10%',
+                            width: 600, height: 600, borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(142,236,214,0.25) 0%, rgba(59,191,160,0.1) 40%, transparent 70%)',
+                            filter: 'blur(40px)', pointerEvents: 'none',
+                        }} />
+                        {/* Dark depth (bottom-left) */}
+                        <Box sx={{
+                            position: 'absolute', bottom: '-30%', left: '-5%',
+                            width: 400, height: 400, borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(12,31,46,0.6) 0%, transparent 65%)',
+                            pointerEvents: 'none',
+                        }} />
                         
                         <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3.5, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Column 1: Title and Subtitle */}
