@@ -154,7 +154,7 @@ class LandingPageSettingController extends Controller
 
         Log::info('Registration pricing updated', $pricing);
 
-        return redirect()->back()->with('success', 'Registration pricing updated successfully!');
+        return response()->json(['success' => true, 'message' => 'Registration pricing updated successfully!']);
     }
 
     /**

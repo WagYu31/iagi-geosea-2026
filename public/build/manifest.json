@@ -146,7 +146,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-BjXOiIVh.js",
+    "file": "assets/Settings-DhIhSZhK.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -305,7 +305,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-C7I_1BU2.js",
+    "file": "assets/app-BnxlBiRY.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

@@ -136,23 +136,18 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
         { key: 'student', label: 'Student', icon: '🎓', desc: 'For undergraduate/postgraduate students' },
     ];
 
-    const savePricing = () => {
+    const savePricing = async () => {
         setSaving(true);
-        router.post(route('admin.settings.savePricing'), {
-            pricing,
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                alert('Registration pricing updated successfully!');
-                setSaving(false);
-            },
-            onError: (errors) => {
-                console.error('Save failed:', errors);
-                alert('Failed to save pricing settings');
-                setSaving(false);
-            },
-            onFinish: () => setSaving(false),
-        });
+        try {
+            await axios.post(route('admin.settings.savePricing'), { pricing });
+            alert('Registration pricing updated successfully!');
+            router.reload({ preserveScroll: true });
+        } catch (error) {
+            console.error('Save failed:', error.response?.data || error);
+            alert('Failed to save: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
