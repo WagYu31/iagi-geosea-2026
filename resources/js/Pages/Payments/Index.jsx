@@ -168,30 +168,29 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 <Fade in={mounted} timeout={650}>
                     <Box sx={{
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
-                        background: 'linear-gradient(to right, #0b1d2c 0%, #0f2f3d 30%, #17665c 55%, #2a9d8a 75%, #5ec4a8 90%, #a5e8d5 100%)',
+                        background: 'linear-gradient(to right, #0e3d3a 0%, #147060 25%, #1a8a7a 50%, #3bb99e 70%, #6dd4b8 85%, #a5e8d5 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
                         p: { xs: 3, sm: 4, md: 5 },
                         border: '1px solid rgba(26,188,156,0.12)',
                     }}>
-                        {/* === LARGE ARC / CIRCLE SHAPE — matching gambar 1 === */}
-                        {/* This is the main visible arc with a clear edge */}
+                        {/* === LARGE ARC / CIRCLE SHAPE === */}
                         <Box sx={{
                             position: 'absolute',
                             top: '-80%', left: '5%',
                             width: '75%', height: '260%',
                             borderRadius: '50%',
-                            background: 'linear-gradient(160deg, rgba(15,48,64,0.9) 0%, rgba(23,102,92,0.7) 50%, rgba(42,157,138,0.4) 100%)',
+                            background: 'linear-gradient(160deg, rgba(14,61,58,0.85) 0%, rgba(20,112,96,0.5) 50%, rgba(59,185,158,0.2) 100%)',
                             boxShadow: '60px 0 120px -20px rgba(90,200,170,0.15)',
                             pointerEvents: 'none',
                         }} />
-                        {/* Inner highlight on the arc edge */}
+                        {/* Inner highlight on arc edge */}
                         <Box sx={{
                             position: 'absolute',
                             top: '-75%', left: '8%',
                             width: '70%', height: '250%',
                             borderRadius: '50%',
                             background: 'transparent',
-                            border: '1px solid rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.05)',
                             pointerEvents: 'none',
                         }} />
                         {/* Bright mint glow (top-right corner) */}
