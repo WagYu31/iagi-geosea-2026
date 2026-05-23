@@ -201,7 +201,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             filter: 'blur(30px)', pointerEvents: 'none',
                         }} />
                         
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 2, md: 4, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Column 1: Title and Subtitle */}
                             <Box sx={{ flex: 1.3, minWidth: 0 }}>
                                 <Typography component="h1" sx={{
@@ -223,7 +223,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             <Box sx={{
                                 flexShrink: 0,
                                 perspective: '1000px',
-                                display: { xs: 'none', md: 'block' },
+                                display: { xs: 'none', lg: 'block' },
                             }}>
                                 <Box sx={{
                                     width: 270, height: 168, borderRadius: '20px', p: 2.8,
@@ -286,7 +286,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             <Box sx={{
                                 flexShrink: 0,
                                 width: 280,
-                                display: { xs: 'none', md: 'block' },
+                                display: { xs: 'none', lg: 'block' },
                                 p: 3, borderRadius: '20px',
                                 background: 'rgba(46, 204, 113, 0.12)',
                                 border: '1px solid rgba(255, 255, 255, 0.2)',
