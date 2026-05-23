@@ -101,6 +101,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     const handleOpenDialog = (sub) => { setSelectedSubmission(sub); setOpenDialog(true); };
     const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); };
 
+    const waitForSnap = () => new Promise((resolve, reject) => {
+        if (window.snap) return resolve(window.snap);
+        let tries = 0;
+        const interval = setInterval(() => {
+            if (window.snap) { clearInterval(interval); resolve(window.snap); }
+            if (++tries > 50) { clearInterval(interval); reject(new Error('Midtrans Snap failed to load. Please refresh.')); }
+        }, 200);
+    });
+
     const handleMidtransPayment = async () => {
         if (!selectedSubmission) return;
         const fee = getSubFee(selectedSubmission);
@@ -114,29 +123,16 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 body: JSON.stringify({ submission_id: selectedSubmission.id }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || data.message || 'Server error: ' + res.status);
+            if (!res.ok) throw new Error(data.error || 'Payment failed');
             handleCloseDialog();
-
-            // Wait for Snap.js to load if not yet available (max 5 seconds)
-            let snapReady = !!window.snap;
-            if (!snapReady) {
-                for (let i = 0; i < 10; i++) {
-                    await new Promise(r => setTimeout(r, 500));
-                    if (window.snap) { snapReady = true; break; }
-                }
-            }
-
-            if (snapReady) {
-                window.snap.pay(data.snap_token, {
-                    onSuccess: () => { setSnackbar({ open: true, message: 'Payment successful!', severity: 'success' }); setTimeout(() => router.reload(), 1500); },
-                    onPending: () => { setSnackbar({ open: true, message: 'Payment pending. Complete payment to finish.', severity: 'info' }); setTimeout(() => router.reload(), 1500); },
-                    onError: (result) => { setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Transaction error'), severity: 'error' }); setTimeout(() => router.reload(), 1500); },
-                    onClose: () => { setSnackbar({ open: true, message: 'Payment popup closed.', severity: 'info' }); router.reload(); },
-                });
-            } else {
-                throw new Error('Midtrans payment module not loaded. Please refresh the page and try again.');
-            }
-        } catch (e) { setSnackbar({ open: true, message: e.message, severity: 'error' }); }
+            const snap = await waitForSnap();
+            snap.pay(data.snap_token, {
+                onSuccess: (result) => { console.log('Midtrans success:', result); setSnackbar({ open: true, message: 'Payment successful!', severity: 'success' }); setTimeout(() => router.reload(), 1500); },
+                onPending: (result) => { console.log('Midtrans pending:', result); setSnackbar({ open: true, message: 'Payment pending. Complete your payment.', severity: 'info' }); setTimeout(() => router.reload(), 1500); },
+                onError: (result) => { console.error('Midtrans error:', result); setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Unknown error'), severity: 'error' }); setTimeout(() => router.reload(), 2000); },
+                onClose: () => { setSnackbar({ open: true, message: 'Payment window closed.', severity: 'info' }); router.reload(); },
+            });
+        } catch (e) { console.error('Payment error:', e); setSnackbar({ open: true, message: e.message, severity: 'error' }); }
         finally { setPaymentLoading(false); }
     };
 

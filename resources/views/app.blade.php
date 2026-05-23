@@ -28,11 +28,11 @@
     <body class="font-sans antialiased">
         @inertia
 
-        <!-- Midtrans Snap.js (defer to avoid blocking but ensure loaded before interaction) -->
+        <!-- Midtrans Snap.js (loaded async to avoid blocking page render) -->
         <script
             src="{{ config('midtrans.snap_url') }}"
             data-client-key="{{ config('midtrans.client_key') }}"
-            defer
+            async
         ></script>
     </body>
 </html>
