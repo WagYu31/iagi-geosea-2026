@@ -170,7 +170,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
                         background: 'linear-gradient(to right, #0e3d3a 0%, #147060 25%, #1a8a7a 50%, #3bb99e 70%, #6dd4b8 85%, #a5e8d5 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
-                        p: { xs: 3, sm: 4, md: 5 },
+                        p: { xs: 2.5, sm: 3, md: 3.5, lg: 5 },
                         border: '1px solid rgba(26,188,156,0.12)',
                     }}>
                         {/* === LARGE ARC / CIRCLE SHAPE === */}
@@ -201,20 +201,20 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             filter: 'blur(30px)', pointerEvents: 'none',
                         }} />
                         
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 2, md: 2.5, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Column 1: Title and Subtitle */}
                             <Box sx={{ flex: 1.3, minWidth: 0 }}>
                                 <Typography component="h1" sx={{
                                     fontWeight: 900, color: 'white',
-                                    fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.5rem' },
-                                    letterSpacing: '-0.03em', lineHeight: 1.15, mb: 2,
+                                    fontSize: { xs: '1.4rem', sm: '1.75rem', md: '2rem', lg: '2.5rem' },
+                                    letterSpacing: '-0.03em', lineHeight: 1.15, mb: 1.5,
                                     fontFamily: 'Inter, sans-serif',
                                     textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                                 }}>
                                     Premium Conference
                                     <Box component="span" sx={{ display: 'block', mt: 0.5, color: '#2dd4bf' }}>Payment Center</Box>
                                 </Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: { xs: '0.85rem', sm: '0.92rem', md: '0.95rem' }, maxWidth: 450, lineHeight: 1.7, fontWeight: 400, fontFamily: 'Inter, sans-serif' }}>
+                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem', lg: '0.95rem' }, maxWidth: { xs: '100%', lg: 450 }, lineHeight: 1.6, fontWeight: 400, fontFamily: 'Inter, sans-serif' }}>
                                     Complete your conference registration fee securely via bank transfer, e-wallet, QRIS, or credit card.
                                 </Typography>
                             </Box>
@@ -223,9 +223,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             <Box sx={{
                                 flexShrink: 0,
                                 perspective: '1000px',
-                                display: { xs: 'none', md: 'block' },
-                                transform: { md: 'scale(0.75)', lg: 'scale(1)' },
-                                transformOrigin: 'center center',
+                                display: { xs: 'none', lg: 'block' },
                             }}>
                                 <Box sx={{
                                     width: 270, height: 168, borderRadius: '20px', p: 2.8,
@@ -287,11 +285,9 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             {/* Column 3: Payment Methods frosted card */}
                             <Box sx={{
                                 flexShrink: 0,
-                                width: { md: 220, lg: 280 },
-                                display: { xs: 'none', md: 'block' },
-                                transform: { md: 'scale(0.8)', lg: 'scale(1)' },
-                                transformOrigin: 'center center',
-                                p: { md: 2, lg: 3 }, borderRadius: '20px',
+                                width: 280,
+                                display: { xs: 'none', lg: 'block' },
+                                p: 3, borderRadius: '20px',
                                 background: 'rgba(46, 204, 113, 0.12)',
                                 border: '1px solid rgba(255, 255, 255, 0.2)',
                                 backdropFilter: 'blur(20px)',
