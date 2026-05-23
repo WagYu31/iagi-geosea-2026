@@ -229,8 +229,8 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             backgroundSize: '48px 48px', pointerEvents: 'none',
                         }} />
 
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3, lg: 4 }, alignItems: { lg: 'center' } }}>
-                            {/* Left: Text content */}
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3, lg: 5 }, alignItems: { lg: 'center' } }}>
+                            {/* Left: Text content + Stats */}
                             <Box sx={{ flex: 1, minWidth: 0 }}>
                                 {/* Badge */}
                                 <Box sx={{
@@ -258,6 +258,33 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                     Complete your conference registration fee securely via bank transfer, e-wallet, QRIS, or credit card.
                                 </Typography>
 
+                                {/* Stats inline */}
+                                <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
+                                    {[
+                                        { icon: AccessTimeIcon, count: totalPending, label: 'Pending', color: '#f59e0b', bg: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb' },
+                                        { icon: CheckCircleOutlineIcon, count: totalPaid, label: 'Completed', color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5' },
+                                    ].map((stat) => (
+                                        <Zoom key={stat.label} in={mounted} timeout={600}>
+                                            <Box sx={{
+                                                minWidth: 100, p: 2, borderRadius: '18px',
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'white',
+                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+                                                backdropFilter: 'blur(12px)', textAlign: 'center',
+                                                transition: 'all 0.3s ease',
+                                                '&:hover': { transform: 'scale(1.05)', boxShadow: `0 8px 24px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.05)'}` },
+                                            }}>
+                                                <Box sx={{ width: 32, height: 32, borderRadius: '10px', bgcolor: stat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 0.8 }}>
+                                                    <stat.icon sx={{ fontSize: 16, color: stat.color }} />
+                                                </Box>
+                                                <Typography sx={{ fontWeight: 900, fontSize: '1.5rem', color: c.textPrimary, lineHeight: 1 }}>
+                                                    <AnimatedCount target={stat.count} />
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontWeight: 600, mt: 0.3 }}>{stat.label}</Typography>
+                                            </Box>
+                                        </Zoom>
+                                    ))}
+                                </Box>
+
                                 {/* Trust badges */}
                                 <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5, flexWrap: 'wrap' }}>
                                     {[
@@ -279,60 +306,162 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 </Box>
                             </Box>
 
-                            {/* Center: Hero illustration */}
+                            {/* Right: CSS-based 3D Payment Visual */}
                             <Fade in={mounted} timeout={1000}>
                                 <Box sx={{
-                                    display: { xs: 'none', md: 'flex' },
+                                    display: { xs: 'none', lg: 'flex' },
                                     alignItems: 'center', justifyContent: 'center',
-                                    flexShrink: 0,
-                                    '@keyframes heroFloat': {
-                                        '0%, 100%': { transform: 'translateY(0px)' },
-                                        '50%': { transform: 'translateY(-12px)' },
+                                    flexShrink: 0, width: 320, height: 240,
+                                    position: 'relative', perspective: '800px',
+                                    '@keyframes cardFloat': {
+                                        '0%, 100%': { transform: 'rotateY(-8deg) rotateX(4deg) translateY(0px)' },
+                                        '50%': { transform: 'rotateY(-4deg) rotateX(2deg) translateY(-8px)' },
+                                    },
+                                    '@keyframes cardFloat2': {
+                                        '0%, 100%': { transform: 'rotateY(5deg) rotateX(-3deg) translateY(0px)' },
+                                        '50%': { transform: 'rotateY(8deg) rotateX(-1deg) translateY(-6px)' },
                                     },
                                 }}>
-                                    <Box
-                                        component="img"
-                                        src="/images/payment-hero.png"
-                                        alt="Secure Payment"
-                                        sx={{
-                                            width: { md: 200, lg: 260 },
-                                            height: 'auto',
-                                            objectFit: 'contain',
-                                            animation: 'heroFloat 4s ease-in-out infinite',
-                                            filter: isDark ? 'brightness(0.85) saturate(1.2)' : 'none',
-                                            pointerEvents: 'none',
-                                        }}
-                                    />
-                                </Box>
-                            </Fade>
-
-                            {/* Right: Stats cards */}
-                            <Box sx={{ display: 'flex', flexDirection: { xs: 'row', lg: 'column' }, gap: 2, flexShrink: 0 }}>
-                                {[
-                                    { icon: AccessTimeIcon, count: totalPending, label: 'Pending', color: '#f59e0b', bg: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb' },
-                                    { icon: CheckCircleOutlineIcon, count: totalPaid, label: 'Completed', color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5' },
-                                ].map((stat) => (
-                                    <Zoom key={stat.label} in={mounted} timeout={600}>
+                                    {/* Main payment card */}
+                                    <Box sx={{
+                                        position: 'absolute', width: 260, height: 155,
+                                        borderRadius: '18px', p: 2.5,
+                                        background: isDark
+                                            ? 'linear-gradient(145deg, #1a3a4a 0%, #0d2836 50%, #0a1f2d 100%)'
+                                            : 'linear-gradient(145deg, #059669 0%, #047857 50%, #065f46 100%)',
+                                        boxShadow: isDark
+                                            ? '0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)'
+                                            : '0 20px 50px rgba(5,150,105,0.3), 0 0 0 1px rgba(255,255,255,0.1)',
+                                        animation: 'cardFloat 5s ease-in-out infinite',
+                                        transformStyle: 'preserve-3d',
+                                        zIndex: 2,
+                                        overflow: 'hidden',
+                                        '&::before': {
+                                            content: '""', position: 'absolute',
+                                            top: 0, right: 0, width: '60%', height: '100%',
+                                            background: 'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 60%)',
+                                            borderRadius: '18px',
+                                        },
+                                    }}>
+                                        {/* Card chip */}
                                         <Box sx={{
-                                            minWidth: 110, p: 2.5, borderRadius: '20px',
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'white',
-                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-                                            backdropFilter: 'blur(12px)',
-                                            textAlign: 'center',
-                                            transition: 'all 0.3s ease',
-                                            '&:hover': { transform: 'scale(1.05)', boxShadow: `0 12px 36px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.06)'}` },
-                                        }}>
-                                            <Box sx={{ width: 36, height: 36, borderRadius: '12px', bgcolor: stat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1 }}>
-                                                <stat.icon sx={{ fontSize: 18, color: stat.color }} />
+                                            width: 36, height: 28, borderRadius: '6px',
+                                            background: 'linear-gradient(145deg, #fbbf24 0%, #d97706 100%)',
+                                            mb: 2.5, position: 'relative',
+                                            boxShadow: '0 2px 8px rgba(251,191,36,0.3)',
+                                            '&::after': {
+                                                content: '""', position: 'absolute',
+                                                top: '30%', left: '15%', right: '15%', height: '1px',
+                                                bgcolor: 'rgba(0,0,0,0.15)',
+                                            },
+                                        }} />
+                                        {/* Card number placeholder */}
+                                        <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
+                                            {[0, 1, 2, 3].map((g) => (
+                                                <Box key={g} sx={{ display: 'flex', gap: 0.4 }}>
+                                                    {[0, 1, 2, 3].map((d) => (
+                                                        <Box key={d} sx={{
+                                                            width: g < 3 ? 6 : 8, height: 6, borderRadius: '50%',
+                                                            bgcolor: g < 3 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.6)',
+                                                        }} />
+                                                    ))}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                        {/* Card footer */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                            <Box>
+                                                <Typography sx={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1 }}>
+                                                    Card Holder
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600, letterSpacing: '0.04em' }}>
+                                                    IAGI CONFERENCE
+                                                </Typography>
                                             </Box>
-                                            <Typography sx={{ fontWeight: 900, fontSize: '1.8rem', color: c.textPrimary, lineHeight: 1 }}>
-                                                <AnimatedCount target={stat.count} />
-                                            </Typography>
-                                            <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 600, mt: 0.3 }}>{stat.label}</Typography>
+                                            <Box sx={{ textAlign: 'right' }}>
+                                                <Typography sx={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1 }}>
+                                                    Valid
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>
+                                                    12/26
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Background payment methods card */}
+                                    <Box sx={{
+                                        position: 'absolute', width: 220, height: 130,
+                                        borderRadius: '16px', top: 10, right: -10,
+                                        background: isDark
+                                            ? 'linear-gradient(145deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%)'
+                                            : 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.95) 100%)',
+                                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+                                        boxShadow: isDark
+                                            ? '0 16px 40px rgba(0,0,0,0.3)'
+                                            : '0 16px 40px rgba(0,0,0,0.06)',
+                                        animation: 'cardFloat2 6s ease-in-out infinite',
+                                        transformStyle: 'preserve-3d',
+                                        zIndex: 1, p: 2,
+                                        backdropFilter: 'blur(12px)',
+                                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1.5,
+                                    }}>
+                                        <Typography sx={{ fontSize: '0.58rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                            Payment Methods
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', gap: 1.2 }}>
+                                            {[
+                                                { icon: AccountBalanceIcon, color: '#2563eb' },
+                                                { icon: QrCode2Icon, color: '#7c3aed' },
+                                                { icon: CreditCardIcon, color: '#059669' },
+                                                { icon: AccountBalanceWalletIcon, color: '#ea580c' },
+                                            ].map((m, i) => (
+                                                <Box key={i} sx={{
+                                                    width: 38, height: 38, borderRadius: '10px',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    bgcolor: isDark ? `${m.color}12` : `${m.color}08`,
+                                                    border: `1px solid ${m.color}15`,
+                                                    transition: 'transform 0.3s ease',
+                                                    '&:hover': { transform: 'scale(1.15)' },
+                                                }}>
+                                                    <m.icon sx={{ fontSize: 17, color: m.color }} />
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                        {/* Verified check */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                            <CheckCircleOutlineIcon sx={{ fontSize: 12, color: '#059669' }} />
+                                            <Typography sx={{ fontSize: '0.55rem', fontWeight: 600, color: '#059669' }}>All methods verified</Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Floating success notification */}
+                                    <Zoom in={mounted} timeout={1200}>
+                                        <Box sx={{
+                                            position: 'absolute', bottom: 5, left: -15,
+                                            px: 1.8, py: 1, borderRadius: '12px',
+                                            bgcolor: isDark ? 'rgba(5,150,105,0.12)' : 'white',
+                                            border: `1px solid ${isDark ? 'rgba(5,150,105,0.2)' : '#d1fae5'}`,
+                                            boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.3)' : '0 8px 24px rgba(0,0,0,0.06)',
+                                            display: 'flex', alignItems: 'center', gap: 1,
+                                            zIndex: 3, backdropFilter: 'blur(12px)',
+                                            animation: 'cardFloat2 4s ease-in-out infinite',
+                                        }}>
+                                            <Box sx={{
+                                                width: 28, height: 28, borderRadius: '8px',
+                                                bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            }}>
+                                                <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#10b981' }} />
+                                            </Box>
+                                            <Box>
+                                                <Typography sx={{ fontSize: '0.6rem', fontWeight: 700, color: '#059669', lineHeight: 1.2 }}>Payment Secured</Typography>
+                                                <Typography sx={{ fontSize: '0.5rem', color: c.textMuted, lineHeight: 1.2 }}>256-bit encryption</Typography>
+                                            </Box>
                                         </Box>
                                     </Zoom>
-                                ))}
-                            </Box>
+                                </Box>
+                            </Fade>
                         </Box>
 
                         {/* Progress bar */}
