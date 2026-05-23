@@ -39,14 +39,13 @@ class PaymentController extends Controller
             ], 422);
         }
 
-        // Determine amount from user category
-        $user = Auth::user();
+        // Determine amount from submission's participant category
         $pricing = config('midtrans.pricing', []);
-        $amount = $pricing[$user->category] ?? null;
+        $amount = $pricing[$submission->participant_category] ?? null;
 
         if (!$amount) {
             return response()->json([
-                'error' => 'Unable to determine registration fee. Please ensure your participant category is set in your profile.',
+                'error' => 'Unable to determine registration fee. Participant category "' . ($submission->participant_category ?? 'None') . '" is not recognized.',
             ], 422);
         }
 

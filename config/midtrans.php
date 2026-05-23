@@ -51,14 +51,14 @@ return [
     | Registration Fee Pricing
     |--------------------------------------------------------------------------
     |
-    | Harga registrasi berdasarkan kategori peserta (user.category).
-    | Key = nilai dari kolom `category` di tabel users.
+    | Harga registrasi berdasarkan kategori peserta (submission.participant_category).
+    | Key = nilai dari kolom `participant_category` di tabel submissions (lowercase).
     |
     */
     'pricing' => [
-        'Professional'           => 2500000,  // Professional and IAGI member
-        'International Delegate' => 3000000,  // Professional and Non-IAGI member
-        'Student'                => 750000,   // Student
+        'professional'  => 2500000,  // Professional and IAGI member
+        'international' => 3000000,  // International Delegate (Non-IAGI)
+        'student'       => 750000,   // Student
     ],
 
 ];
