@@ -24,13 +24,15 @@
         @vite('resources/js/app.jsx')
         @inertiaHead
 
-        <!-- Midtrans Snap.js -->
-        <script
-            src="{{ config('midtrans.snap_url') }}"
-            data-client-key="{{ config('midtrans.client_key') }}"
-        ></script>
     </head>
     <body class="font-sans antialiased">
         @inertia
+
+        <!-- Midtrans Snap.js (loaded async to avoid blocking page render) -->
+        <script
+            src="{{ config('midtrans.snap_url') }}"
+            data-client-key="{{ config('midtrans.client_key') }}"
+            async
+        ></script>
     </body>
 </html>
