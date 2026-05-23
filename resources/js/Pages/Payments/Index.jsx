@@ -229,8 +229,9 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             backgroundSize: '48px 48px', pointerEvents: 'none',
                         }} />
 
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3, lg: 6 }, alignItems: { lg: 'center' } }}>
-                            <Box sx={{ flex: 1 }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3, lg: 4 }, alignItems: { lg: 'center' } }}>
+                            {/* Left: Text content */}
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
                                 {/* Badge */}
                                 <Box sx={{
                                     display: 'inline-flex', alignItems: 'center', gap: 0.8, px: 2, py: 0.6, borderRadius: '24px',
@@ -246,19 +247,19 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                                 <Typography component="h1" sx={{
                                     fontWeight: 900, color: c.textPrimary,
-                                    fontSize: { xs: '2rem', sm: '2.6rem', md: '3rem' },
+                                    fontSize: { xs: '2rem', sm: '2.4rem', lg: '2.8rem' },
                                     letterSpacing: '-0.04em', lineHeight: 1.05, mb: 1.5,
                                     background: isDark ? 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)' : 'linear-gradient(135deg, #111827 0%, #374151 100%)',
                                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                                 }}>
                                     Payment Center
                                 </Typography>
-                                <Typography sx={{ color: c.textMuted, fontSize: { xs: '0.88rem', md: '1rem' }, maxWidth: 480, lineHeight: 1.8 }}>
+                                <Typography sx={{ color: c.textMuted, fontSize: { xs: '0.85rem', lg: '0.95rem' }, maxWidth: 420, lineHeight: 1.8 }}>
                                     Complete your conference registration fee securely via bank transfer, e-wallet, QRIS, or credit card.
                                 </Typography>
 
                                 {/* Trust badges */}
-                                <Box sx={{ display: 'flex', gap: 2, mt: 3, flexWrap: 'wrap' }}>
+                                <Box sx={{ display: 'flex', gap: 1.5, mt: 2.5, flexWrap: 'wrap' }}>
                                     {[
                                         { icon: VerifiedIcon, label: 'SSL Encrypted' },
                                         { icon: SecurityIcon, label: 'PCI DSS' },
@@ -278,8 +279,35 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 </Box>
                             </Box>
 
-                            {/* Stats cards */}
-                            <Box sx={{ display: 'flex', gap: 2 }}>
+                            {/* Center: Hero illustration */}
+                            <Fade in={mounted} timeout={1000}>
+                                <Box sx={{
+                                    display: { xs: 'none', md: 'flex' },
+                                    alignItems: 'center', justifyContent: 'center',
+                                    flexShrink: 0,
+                                    '@keyframes heroFloat': {
+                                        '0%, 100%': { transform: 'translateY(0px)' },
+                                        '50%': { transform: 'translateY(-12px)' },
+                                    },
+                                }}>
+                                    <Box
+                                        component="img"
+                                        src="/images/payment-hero.png"
+                                        alt="Secure Payment"
+                                        sx={{
+                                            width: { md: 200, lg: 260 },
+                                            height: 'auto',
+                                            objectFit: 'contain',
+                                            animation: 'heroFloat 4s ease-in-out infinite',
+                                            filter: isDark ? 'brightness(0.85) saturate(1.2)' : 'none',
+                                            pointerEvents: 'none',
+                                        }}
+                                    />
+                                </Box>
+                            </Fade>
+
+                            {/* Right: Stats cards */}
+                            <Box sx={{ display: 'flex', flexDirection: { xs: 'row', lg: 'column' }, gap: 2, flexShrink: 0 }}>
                                 {[
                                     { icon: AccessTimeIcon, count: totalPending, label: 'Pending', color: '#f59e0b', bg: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb' },
                                     { icon: CheckCircleOutlineIcon, count: totalPaid, label: 'Completed', color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5' },
