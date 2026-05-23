@@ -28,17 +28,14 @@ class MidtransService
      */
     public function createSnapToken(Payment $payment): array
     {
-        // Reuse existing token if still pending
-        if ($payment->snap_token && $payment->status === 'pending') {
-            Log::info("Reusing existing Snap token for payment #{$payment->id}");
-            return [
-                'snap_token' => $payment->snap_token,
-                'order_id'   => $payment->order_id,
-            ];
-        }
-
-        // Generate unique order ID: IAGI-{PaymentID}-{Timestamp}
+        // Always generate a fresh token to avoid expired token issues
         $orderId = 'IAGI-' . $payment->id . '-' . time();
+
+        // Truncate item name to max 50 chars (Midtrans limit)
+        $itemName = 'Conference Registration - ' . ($payment->submission->title ?? 'Submission #' . $payment->submission_id);
+        if (strlen($itemName) > 50) {
+            $itemName = substr($itemName, 0, 47) . '...';
+        }
 
         $params = [
             'transaction_details' => [
@@ -50,7 +47,7 @@ class MidtransService
                     'id'       => 'REG-' . $payment->submission_id,
                     'price'    => (int) $payment->amount,
                     'quantity' => 1,
-                    'name'     => 'Conference Registration - ' . ($payment->submission->title ?? 'Submission #' . $payment->submission_id),
+                    'name'     => $itemName,
                 ],
             ],
             'customer_details' => [
