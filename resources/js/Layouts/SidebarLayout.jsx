@@ -361,8 +361,8 @@ function SidebarLayout({ children }) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${currentDrawerWidth}px)` },
-          ml: { sm: `${currentDrawerWidth}px` },
+          width: { sm: `calc(100% - ${currentDrawerWidth + 24}px)` },
+          ml: { sm: `${currentDrawerWidth + 24}px` },
           background: c.appBarBg,
           backdropFilter: 'blur(16px)',
           color: c.textPrimary,
@@ -474,7 +474,7 @@ function SidebarLayout({ children }) {
       <Box
         component="nav"
         sx={{
-          width: { sm: currentDrawerWidth },
+          width: { sm: currentDrawerWidth + 24 },
           flexShrink: { sm: 0 },
           transition: 'width 0.3s ease',
         }}
@@ -492,7 +492,9 @@ function SidebarLayout({ children }) {
               boxSizing: 'border-box',
               width: drawerWidth,
               borderRight: 'none',
-              boxShadow: '4px 0 32px rgba(0,0,0,0.12)',
+              boxShadow: '4px 0 32px rgba(0,0,0,0.25)',
+              borderRadius: '0 24px 24px 0',
+              overflow: 'hidden',
             },
           }}
         >
@@ -507,22 +509,28 @@ function SidebarLayout({ children }) {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: currentDrawerWidth,
-              borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)'}`,
+              borderRight: 'none',
               transition: 'width 0.3s ease',
               overflowX: 'hidden',
-              bgcolor: c.sidebarBg,
+              overflow: 'hidden',
+              background: 'transparent',
+              m: 1.5,
+              height: 'calc(100vh - 24px)',
+              borderRadius: '20px',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.2)',
             },
           }}
           open
         >
           {drawer}
         </Drawer>
+
       </Box>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          width: { sm: `calc(100% - ${currentDrawerWidth}px)` },
+          width: { sm: `calc(100% - ${currentDrawerWidth + 24}px)` },
           backgroundColor: c.surfaceBg,
           minHeight: '100vh',
           transition: 'all 0.3s ease',
