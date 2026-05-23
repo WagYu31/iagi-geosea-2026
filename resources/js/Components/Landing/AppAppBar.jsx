@@ -105,7 +105,7 @@ export default function AppAppBar({ auth }) {
                             </Box>
                         </Box>
                         {/* Desktop nav links */}
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, ml: 3 }}>
+                        <Box sx={{ display: { xs: 'none', lg: 'flex' }, ml: 3 }}>
                             {navItems.map((item) => (
                                 <Button
                                     key={item.target}
@@ -115,8 +115,11 @@ export default function AppAppBar({ auth }) {
                                     sx={{
                                         color: '#374151',
                                         fontWeight: 500,
-                                        fontSize: '0.85rem',
+                                        fontSize: '0.8rem',
                                         textTransform: 'none',
+                                        px: 1,
+                                        minWidth: 'auto',
+                                        whiteSpace: 'nowrap',
                                         '&:hover': { color: '#094d42', bgcolor: alpha('#094d42', 0.06) },
                                     }}
                                 >
@@ -127,7 +130,7 @@ export default function AppAppBar({ auth }) {
                     </Box>
 
                     {/* Desktop CTA */}
-                    <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center' }}>
+                    <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, alignItems: 'center' }}>
                         {auth?.user ? (
                             <Button
                                 component={Link}
@@ -187,7 +190,7 @@ export default function AppAppBar({ auth }) {
                     </Box>
 
                     {/* Mobile menu button */}
-                    <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
+                    <Box sx={{ display: { xs: 'flex', lg: 'none' }, gap: 1 }}>
                         <IconButton aria-label="Menu" onClick={() => setOpen(true)} sx={{ color: '#094d42' }}>
                             <MenuIcon />
                         </IconButton>
