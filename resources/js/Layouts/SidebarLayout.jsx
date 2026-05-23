@@ -363,8 +363,8 @@ function SidebarLayout({ children }) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${currentDrawerWidth + 24}px)` },
-          ml: { sm: `${currentDrawerWidth + 24}px` },
+          width: { md: `calc(100% - ${currentDrawerWidth + 24}px)` },
+          ml: { md: `${currentDrawerWidth + 24}px` },
           background: c.appBarBg,
           backdropFilter: 'blur(16px)',
           color: c.textPrimary,
@@ -379,7 +379,7 @@ function SidebarLayout({ children }) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { md: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -391,7 +391,7 @@ function SidebarLayout({ children }) {
             onClick={handleCollapseToggle}
             sx={{
               mr: 2,
-              display: { xs: 'none', sm: 'flex' },
+              display: { xs: 'none', md: 'flex' },
               width: 34, height: 34,
               borderRadius: '10px',
               border: `1.5px solid ${isDark ? '#374151' : '#e5e7eb'}`,
@@ -449,7 +449,7 @@ function SidebarLayout({ children }) {
               },
             }}
           >
-            <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
+            <Box sx={{ textAlign: 'right', display: { xs: 'none', md: 'block' } }}>
               <Typography sx={{ fontSize: '0.825rem', fontWeight: 600, color: c.textPrimary, lineHeight: 1.2 }}>
                 {auth.user?.name}
               </Typography>
@@ -476,8 +476,8 @@ function SidebarLayout({ children }) {
       <Box
         component="nav"
         sx={{
-          width: { sm: currentDrawerWidth + 24 },
-          flexShrink: { sm: 0 },
+          width: { md: currentDrawerWidth + 24 },
+          flexShrink: { md: 0 },
           transition: 'width 0.3s ease',
         }}
         aria-label="sidebar navigation"
@@ -489,7 +489,7 @@ function SidebarLayout({ children }) {
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
@@ -507,7 +507,7 @@ function SidebarLayout({ children }) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: currentDrawerWidth,
@@ -532,7 +532,7 @@ function SidebarLayout({ children }) {
         component="main"
         sx={{
           flexGrow: 1,
-          width: { sm: `calc(100% - ${currentDrawerWidth + 24}px)` },
+          width: { md: `calc(100% - ${currentDrawerWidth + 24}px)` },
           backgroundColor: c.surfaceBg,
           minHeight: '100vh',
           transition: 'all 0.3s ease',
