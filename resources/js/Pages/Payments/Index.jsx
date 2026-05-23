@@ -168,31 +168,38 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 <Fade in={mounted} timeout={650}>
                     <Box sx={{
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
-                        background: 'linear-gradient(135deg, #0c1f2e 0%, #0f3040 20%, #156259 45%, #1a8a7a 65%, #3bbfa0 82%, #8eecd6 100%)',
+                        background: 'linear-gradient(to right, #0b1d2c 0%, #0f2f3d 30%, #17665c 55%, #2a9d8a 75%, #5ec4a8 90%, #a5e8d5 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
                         p: { xs: 3, sm: 4, md: 5 },
                         border: '1px solid rgba(26,188,156,0.12)',
                     }}>
-                        {/* Large arc/circle shape (center-left) — mimics gambar 1 */}
+                        {/* === LARGE ARC / CIRCLE SHAPE — matching gambar 1 === */}
+                        {/* This is the main visible arc with a clear edge */}
                         <Box sx={{
-                            position: 'absolute', top: '-40%', left: '10%',
-                            width: '70%', height: '180%', borderRadius: '50%',
-                            background: 'radial-gradient(ellipse at center, rgba(26,138,122,0.35) 0%, rgba(21,98,89,0.2) 40%, transparent 70%)',
+                            position: 'absolute',
+                            top: '-80%', left: '5%',
+                            width: '75%', height: '260%',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(160deg, rgba(15,48,64,0.9) 0%, rgba(23,102,92,0.7) 50%, rgba(42,157,138,0.4) 100%)',
+                            boxShadow: '60px 0 120px -20px rgba(90,200,170,0.15)',
                             pointerEvents: 'none',
                         }} />
-                        {/* Bright mint glow (top-right) */}
+                        {/* Inner highlight on the arc edge */}
                         <Box sx={{
-                            position: 'absolute', top: '-50%', right: '-10%',
-                            width: 600, height: 600, borderRadius: '50%',
-                            background: 'radial-gradient(circle, rgba(142,236,214,0.25) 0%, rgba(59,191,160,0.1) 40%, transparent 70%)',
-                            filter: 'blur(40px)', pointerEvents: 'none',
-                        }} />
-                        {/* Dark depth (bottom-left) */}
-                        <Box sx={{
-                            position: 'absolute', bottom: '-30%', left: '-5%',
-                            width: 400, height: 400, borderRadius: '50%',
-                            background: 'radial-gradient(circle, rgba(12,31,46,0.6) 0%, transparent 65%)',
+                            position: 'absolute',
+                            top: '-75%', left: '8%',
+                            width: '70%', height: '250%',
+                            borderRadius: '50%',
+                            background: 'transparent',
+                            border: '1px solid rgba(255,255,255,0.04)',
                             pointerEvents: 'none',
+                        }} />
+                        {/* Bright mint glow (top-right corner) */}
+                        <Box sx={{
+                            position: 'absolute', top: '-60%', right: '-15%',
+                            width: 650, height: 650, borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(165,232,213,0.3) 0%, rgba(94,196,168,0.12) 40%, transparent 65%)',
+                            filter: 'blur(30px)', pointerEvents: 'none',
                         }} />
                         
                         <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3.5, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
