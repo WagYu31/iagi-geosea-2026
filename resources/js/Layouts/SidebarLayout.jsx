@@ -83,100 +83,152 @@ function SidebarLayout({ children }) {
     return currentRoute.includes(href.replace(window.location.origin, ''));
   };
 
+  // ─── Outline-style SVG icons to match Stitch mockup ───
+  const OutlineDashboard = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+      <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  );
+  const OutlineSubmissions = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="3" width="16" height="18" rx="2"/>
+      <line x1="8" y1="8" x2="16" y2="8"/>
+      <line x1="8" y1="12" x2="14" y2="12"/>
+      <line x1="8" y1="16" x2="12" y2="16"/>
+    </svg>
+  );
+  const OutlinePayments = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <line x1="2" y1="10" x2="22" y2="10"/>
+      <rect x="6" y="14" width="4" height="2" rx="0.5"/>
+    </svg>
+  );
+  const OutlineProfile = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"/>
+    </svg>
+  );
+  const OutlineScores = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/>
+    </svg>
+  );
+  const OutlinePeople = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="7" r="3.5"/>
+      <path d="M2 20c0-3 2.7-5.5 7-5.5s7 2.5 7 5.5"/>
+      <circle cx="17.5" cy="8.5" r="2.5"/>
+      <path d="M18 14.5c2.5.3 4 2 4 4"/>
+    </svg>
+  );
+  const OutlineSettings = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  );
+  const OutlineEmail = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/>
+      <polyline points="22,4 12,13 2,4"/>
+    </svg>
+  );
+  const OutlineLogout = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+      <polyline points="16,17 21,12 16,7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+  );
+
+  // Map icon names to outline SVGs
+  const outlineIconMap = {
+    'Dashboard': <OutlineDashboard />,
+    'Admin Dashboard': <OutlineDashboard />,
+    'Submissions': <OutlineSubmissions />,
+    'Manage Submissions': <OutlineSubmissions />,
+    'Assigned Submissions': <OutlineSubmissions />,
+    'Payments': <OutlinePayments />,
+    'Manage Payments': <OutlinePayments />,
+    'Profile': <OutlineProfile />,
+    'Manage Users': <OutlinePeople />,
+    'Scores': <OutlineScores />,
+    'Settings': <OutlineSettings />,
+    'Email Settings': <OutlineEmail />,
+  };
+
   const drawer = (
     <Box sx={{
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      bgcolor: c.sidebarBg,
+      background: 'linear-gradient(180deg, #0a3d33 0%, #063b2e 30%, #042f24 60%, #021f18 100%)',
       position: 'relative',
       overflow: 'hidden',
     }} role="navigation" aria-label="Main navigation">
 
-      {/* ─── Background decorative elements ─── */}
+      {/* ─── Dot pattern overlay ─── */}
       <Box sx={{
         position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
-        '&::before': {
-          content: '""', position: 'absolute',
-          top: '60%', left: '-20%', width: '140%', height: '50%',
-          background: isDark
-            ? 'radial-gradient(ellipse, rgba(26,188,156,0.03) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse, rgba(26,188,156,0.04) 0%, transparent 70%)',
-          borderRadius: '50%',
-        },
+        opacity: 0.25,
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
+        backgroundSize: '20px 20px',
       }} />
 
-      {/* ─── Unified Header: Brand ─── */}
+      {/* ─── Subtle glow at top ─── */}
       <Box sx={{
-        background: c.sidebarHeaderBg,
-        p: isCollapsed ? 1.5 : 0,
-        position: 'relative',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""', position: 'absolute',
-          top: -40, right: -40, width: 120, height: 120,
-          background: 'rgba(255,255,255,0.06)', borderRadius: '50%',
-        },
-        '&::after': {
-          content: '""', position: 'absolute',
-          bottom: -20, left: -20, width: 80, height: 80,
-          background: 'rgba(255,255,255,0.04)', borderRadius: '50%',
-        },
-      }}>
-        {/* Brand Row */}
-        <Box sx={{
-          px: isCollapsed ? 0 : 2.5,
-          py: isCollapsed ? 1.5 : 2.5,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
-          gap: 1.2,
-          position: 'relative', zIndex: 1,
-        }}>
-          <Box
-            component="img" src="/favicon.ico" alt="IAGI-GEOSEA"
-            sx={{
-              width: isCollapsed ? 36 : 34, height: isCollapsed ? 36 : 34,
-              borderRadius: '10px', flexShrink: 0, objectFit: 'contain',
-              filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.15))',
-            }}
-          />
-          {!isCollapsed && (
-            <Box>
-              <Typography sx={{
-                fontWeight: 800, fontSize: '0.95rem', color: 'white',
-                letterSpacing: '-0.01em', lineHeight: 1.15,
-              }}>
-                IAGI-GEOSEA
-              </Typography>
-              <Typography sx={{
-                fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)',
-                fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
-              }}>
-                Conference 2026
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </Box>
+        position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)',
+        width: 300, height: 200,
+        background: 'radial-gradient(ellipse, rgba(16,185,129,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
 
-      {/* ─── Menu Label ─── */}
-      {!isCollapsed && (
-        <Box sx={{ px: 2.5, pt: 2.5, pb: 0.8 }}>
-          <Typography sx={{
-            fontSize: '0.58rem', fontWeight: 700,
-            color: isDark ? '#4b5563' : '#9ca3af',
-            textTransform: 'uppercase', letterSpacing: '0.15em',
-          }}>
-            Navigation
-          </Typography>
-        </Box>
-      )}
+      {/* ─── Brand Header ─── */}
+      <Box sx={{
+        px: isCollapsed ? 1 : 2.5,
+        py: isCollapsed ? 2 : 3,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: isCollapsed ? 'center' : 'flex-start',
+        gap: 1.5,
+        position: 'relative', zIndex: 1,
+      }}>
+        <Box
+          component="img" src="/favicon.png" alt="IAGI-GEOSEA"
+          sx={{
+            width: isCollapsed ? 38 : 42, height: isCollapsed ? 38 : 42,
+            borderRadius: '12px', flexShrink: 0, objectFit: 'contain',
+            filter: 'drop-shadow(0 2px 8px rgba(16,185,129,0.3))',
+          }}
+        />
+        {!isCollapsed && (
+          <Box>
+            <Typography sx={{
+              fontWeight: 800, fontSize: '1.05rem', color: '#ffffff',
+              letterSpacing: '-0.01em', lineHeight: 1.2,
+            }}>
+              IAGI-GEOSEA
+            </Typography>
+            <Typography sx={{
+              fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)',
+              fontWeight: 500, letterSpacing: '0.02em',
+            }}>
+              Conference 2026
+            </Typography>
+          </Box>
+        )}
+      </Box>
 
       {/* ─── Menu Items ─── */}
       <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1, position: 'relative', zIndex: 1 }} aria-label="Navigation menu">
         {menuItems.map((item) => {
           const active = isActive(item.href);
+          const outlineIcon = outlineIconMap[item.text] || item.icon;
           const button = (
             <ListItemButton
               component={Link}
@@ -184,84 +236,51 @@ function SidebarLayout({ children }) {
               aria-current={active ? 'page' : undefined}
               sx={{
                 borderRadius: '14px',
-                py: 1.2,
-                px: isCollapsed ? 1 : 1.8,
+                py: 1.3,
+                px: isCollapsed ? 1 : 2,
                 justifyContent: isCollapsed ? 'center' : 'flex-start',
                 backgroundColor: active
-                  ? isDark ? `${item.color}18` : `${item.color}0c`
+                  ? 'rgba(255,255,255,0.08)'
                   : 'transparent',
-                border: active ? `1.5px solid ${item.color}25` : '1.5px solid transparent',
+                backdropFilter: active ? 'blur(12px)' : 'none',
+                border: active ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
                 position: 'relative',
                 overflow: 'hidden',
-                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                /* Active left accent */
-                '&::before': {
-                  content: '""', position: 'absolute',
-                  left: 0, top: '50%', transform: 'translateY(-50%)',
-                  width: active ? 3 : 0, height: active ? '55%' : 0,
-                  backgroundColor: item.color,
-                  borderRadius: '0 4px 4px 0',
-                  transition: 'all 0.3s ease',
-                },
-                /* Hover glow */
-                '&::after': {
-                  content: '""', position: 'absolute',
-                  inset: 0, borderRadius: '14px',
-                  background: `radial-gradient(ellipse at 0% 50%, ${item.color}06 0%, transparent 70%)`,
-                  opacity: 0, transition: 'opacity 0.3s ease',
-                },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
                   backgroundColor: active
-                    ? isDark ? `${item.color}22` : `${item.color}12`
-                    : isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                    ? 'rgba(255,255,255,0.12)'
+                    : 'rgba(255,255,255,0.05)',
                   transform: !isCollapsed ? 'translateX(4px)' : 'scale(1.05)',
-                  '&::after': { opacity: 1 },
                 },
               }}
             >
               <ListItemIcon sx={{
-                color: active ? item.color : isDark ? '#6b7280' : '#9ca3af',
+                color: active ? '#10b981' : 'rgba(255,255,255,0.5)',
                 minWidth: isCollapsed ? 'auto' : 40,
                 justifyContent: 'center',
-                '& .MuiSvgIcon-root': {
-                  fontSize: 21,
-                  transition: 'all 0.25s ease',
-                  ...(active && { filter: `drop-shadow(0 0 6px ${item.color}40)` }),
-                },
                 transition: 'color 0.25s ease',
+                '& .MuiSvgIcon-root': { fontSize: 21 },
               }}>
-                {item.icon}
+                {outlineIcon}
               </ListItemIcon>
               {!isCollapsed && (
                 <ListItemText
                   primary={item.text}
                   primaryTypographyProps={{
-                    fontSize: '0.84rem',
-                    fontWeight: active ? 700 : 500,
-                    color: active ? (isDark ? item.color : item.color) : (isDark ? '#d1d5db' : '#4b5563'),
+                    fontSize: '0.88rem',
+                    fontWeight: active ? 600 : 450,
+                    color: active ? '#ffffff' : 'rgba(255,255,255,0.65)',
                     letterSpacing: '-0.01em',
                     transition: 'all 0.25s ease',
                   }}
                 />
               )}
-              {active && !isCollapsed && (
-                <Box sx={{
-                  width: 7, height: 7, borderRadius: '50%',
-                  bgcolor: item.color,
-                  boxShadow: `0 0 10px ${item.color}60`,
-                  flexShrink: 0,
-                  animation: 'sidebarPulse 2s ease-in-out infinite',
-                  '@keyframes sidebarPulse': {
-                    '0%, 100%': { opacity: 1, transform: 'scale(1)' },
-                    '50%': { opacity: 0.6, transform: 'scale(0.85)' },
-                  },
-                }} />
-              )}
             </ListItemButton>
           );
 
           return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
+            <ListItem key={item.text} disablePadding sx={{ mb: 0.4 }}>
               {isCollapsed ? (
                 <Tooltip title={item.text} placement="right" arrow>{button}</Tooltip>
               ) : button}
@@ -270,103 +289,72 @@ function SidebarLayout({ children }) {
         })}
       </List>
 
-      {/* ─── Divider with gradient ─── */}
-      <Box sx={{
-        mx: isCollapsed ? 1 : 2, height: '1px', position: 'relative', zIndex: 1,
-        background: isDark
-          ? 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)'
-          : 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.06) 50%, transparent 100%)',
-      }} />
-
-      {/* ─── Logout ─── */}
-      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 1.5, position: 'relative', zIndex: 1 }}>
-        <ListItem disablePadding>
-          {isCollapsed ? (
-            <Tooltip title="Logout" placement="right" arrow>
-              <ListItemButton
-                component={Link} href={route('logout')} method="post"
-                sx={{
-                  borderRadius: '14px', py: 1.1, px: 1,
-                  justifyContent: 'center',
-                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.06)' : 'rgba(239, 68, 68, 0.04)',
-                  border: isDark ? '1.5px solid rgba(239, 68, 68, 0.12)' : '1.5px solid rgba(239, 68, 68, 0.08)',
-                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
-                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)',
-                    borderColor: isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(239, 68, 68, 0.15)',
-                    transform: 'scale(1.05)',
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: '#ef4444', minWidth: 'auto', justifyContent: 'center', '& .MuiSvgIcon-root': { fontSize: 21 } }}>
-                  <LogoutIcon />
-                </ListItemIcon>
-              </ListItemButton>
-            </Tooltip>
-          ) : (
+      {/* ─── Logout (frosted glass container) ─── */}
+      <Box sx={{ px: isCollapsed ? 0.75 : 1.5, pb: 1, position: 'relative', zIndex: 1 }}>
+        {isCollapsed ? (
+          <Tooltip title="Logout" placement="right" arrow>
             <ListItemButton
               component={Link} href={route('logout')} method="post"
               sx={{
-                borderRadius: '14px', py: 1.1, px: 1.8,
-                bgcolor: isDark ? 'rgba(239, 68, 68, 0.06)' : 'rgba(239, 68, 68, 0.04)',
-                border: isDark ? '1.5px solid rgba(239, 68, 68, 0.12)' : '1.5px solid rgba(239, 68, 68, 0.08)',
+                borderRadius: '14px', py: 1.2, px: 1,
+                justifyContent: 'center',
+                bgcolor: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(8px)',
                 transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
-                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)',
-                  borderColor: isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(239, 68, 68, 0.15)',
-                  transform: 'translateX(4px)',
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                  borderColor: 'rgba(255,255,255,0.15)',
+                  transform: 'scale(1.05)',
                 },
               }}
             >
-              <ListItemIcon sx={{ color: '#ef4444', minWidth: 40, '& .MuiSvgIcon-root': { fontSize: 21 } }}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Logout"
-                primaryTypographyProps={{ fontSize: '0.84rem', fontWeight: 600, color: '#ef4444' }}
-              />
+              <Box sx={{ color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center' }}>
+                <OutlineLogout />
+              </Box>
             </ListItemButton>
-          )}
-        </ListItem>
-      </List>
+          </Tooltip>
+        ) : (
+          <ListItemButton
+            component={Link} href={route('logout')} method="post"
+            sx={{
+              borderRadius: '14px', py: 1.2, px: 2,
+              bgcolor: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(8px)',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.1)',
+                borderColor: 'rgba(255,255,255,0.15)',
+                transform: 'translateX(4px)',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: 'rgba(255,255,255,0.6)', minWidth: 40 }}>
+              <OutlineLogout />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{ fontSize: '0.88rem', fontWeight: 500, color: 'rgba(255,255,255,0.65)' }}
+            />
+          </ListItemButton>
+        )}
+      </Box>
 
-      {/* ─── Footer — Premium compliance badges ─── */}
+      {/* ─── Copyright Footer ─── */}
       {!isCollapsed && (
         <Box sx={{ px: 2, pb: 2.5, pt: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <Typography sx={{ color: isDark ? '#374151' : '#d1d5db', fontSize: '0.58rem', fontWeight: 500, mb: 1 }}>
-            © 2026 PIT IAGI-GEOSEA 2026
+          <Typography sx={{
+            color: 'rgba(255,255,255,0.25)',
+            fontSize: '0.62rem', fontWeight: 500,
+          }}>
+            Copyright © 2022 IAGREA, Inc.
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.6 }}>
-            {[
-              { label: 'ISO 9241', icon: ShieldIcon },
-              { label: 'WCAG 2.1', icon: VerifiedIcon },
-            ].map((badge) => (
-              <Tooltip key={badge.label} title={`${badge.label} Compliant`} arrow placement="top">
-                <Box sx={{
-                  display: 'inline-flex', alignItems: 'center', gap: 0.4,
-                  px: 0.8, py: 0.3, borderRadius: '6px',
-                  bgcolor: isDark ? 'rgba(26,188,156,0.05)' : 'rgba(26,188,156,0.03)',
-                  border: `1px solid ${isDark ? 'rgba(26,188,156,0.08)' : 'rgba(26,188,156,0.06)'}`,
-                  transition: 'all 0.2s ease',
-                  cursor: 'default',
-                  '&:hover': {
-                    bgcolor: isDark ? 'rgba(26,188,156,0.08)' : 'rgba(26,188,156,0.06)',
-                    borderColor: isDark ? 'rgba(26,188,156,0.15)' : 'rgba(26,188,156,0.12)',
-                    transform: 'translateY(-1px)',
-                  },
-                }}>
-                  <badge.icon sx={{ fontSize: 9, color: isDark ? '#1abc9c' : '#10b981', opacity: 0.7 }} />
-                  <Typography sx={{ fontSize: '0.48rem', fontWeight: 700, color: isDark ? '#1abc9c' : '#10b981', letterSpacing: '0.06em', opacity: 0.7 }}>
-                    {badge.label}
-                  </Typography>
-                </Box>
-              </Tooltip>
-            ))}
-          </Box>
         </Box>
       )}
     </Box>
   );
+
 
   return (
     <Box sx={{ display: 'flex' }}>
