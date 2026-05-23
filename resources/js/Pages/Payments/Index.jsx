@@ -651,68 +651,199 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             {/* ════════════════════════════════════════════
                 CHECKOUT DIALOG
             ════════════════════════════════════════════ */}
-            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth
-                PaperProps={{ sx: { borderRadius: '16px', overflow: 'hidden', bgcolor: isDark ? 'rgba(17,24,39,0.98)' : 'white', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` } }}
+            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth
+                PaperProps={{ sx: { 
+                    borderRadius: '20px', overflow: 'hidden', 
+                    bgcolor: isDark ? 'rgba(17,24,39,0.98)' : 'white', 
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'}`,
+                    boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+                } }}
             >
+                {/* ─── Premium Header with decorative elements ─── */}
                 <Box sx={{
-                    px: 3.5, py: 3.5, position: 'relative', overflow: 'hidden',
-                    background: 'linear-gradient(135deg, #064e3b, #065f46, #047857)',
+                    px: 3.5, pt: 3.5, pb: 3, position: 'relative', overflow: 'hidden',
+                    background: 'linear-gradient(145deg, #064e3b 0%, #065f46 35%, #047857 65%, #059669 100%)',
                 }}>
-                    <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1.2, py: 0.3, borderRadius: '20px', bgcolor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.08)', mb: 1.5 }}>
-                                <LockIcon sx={{ fontSize: 11, color: 'white' }} />
-                                <Typography sx={{ fontSize: '0.55rem', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Secure Payment</Typography>
+                    {/* Decorative circles */}
+                    <Box sx={{ position: 'absolute', top: -40, right: -40, width: 120, height: 120, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.04)' }} />
+                    <Box sx={{ position: 'absolute', top: 20, right: 20, width: 60, height: 60, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.03)' }} />
+                    <Box sx={{ position: 'absolute', bottom: -20, left: -20, width: 80, height: 80, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.02)' }} />
+                    
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <Box>
+                                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1.4, py: 0.4, borderRadius: '20px', bgcolor: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', mb: 1.8 }}>
+                                    <LockIcon sx={{ fontSize: 10, color: '#34d399' }} />
+                                    <Typography sx={{ fontSize: '0.5rem', fontWeight: 800, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>Secure Payment</Typography>
+                                </Box>
+                                <Typography sx={{ fontWeight: 900, fontSize: '1.4rem', color: 'white', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>Payment Checkout</Typography>
+                                <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', mt: 0.5, fontFamily: 'Inter, sans-serif' }}>
+                                    Order #{selectedSubmission ? `IAGI-${selectedSubmission.id}` : '---'}
+                                </Typography>
                             </Box>
-                            <Typography sx={{ fontWeight: 900, fontSize: '1.25rem', color: 'white', fontFamily: 'Inter, sans-serif' }}>Checkout</Typography>
+                            <IconButton onClick={handleCloseDialog} size="small" sx={{ color: 'rgba(255,255,255,0.4)', mt: -0.5, '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}>
+                                <CloseIcon sx={{ fontSize: 18 }} />
+                            </IconButton>
                         </Box>
-                        <IconButton onClick={handleCloseDialog} size="small" sx={{ color: 'rgba(255,255,255,0.5)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.08)' } }}>
-                            <CloseIcon fontSize="small" />
-                        </IconButton>
                     </Box>
                 </Box>
-                <DialogContent sx={{ p: 3 }}>
+
+                <DialogContent sx={{ p: 0 }}>
                     {selectedSubmission && (
-                        <>
-                            <Box sx={{ mb: 2.5, p: 2, borderRadius: '12px', bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f9fafb', border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}` }}>
-                                <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#9ca3af' : '#6b7280', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800, mb: 0.3 }}>Paper</Typography>
-                                <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#1f2937' }}>{selectedSubmission.title}</Typography>
-                            </Box>
-                            <Box sx={{ p: 2.5, borderRadius: '14px', mb: 2.5, bgcolor: isDark ? 'rgba(5,150,105,0.03)' : '#f0fdf4', border: `1.5px solid ${isDark ? 'rgba(5,150,105,0.08)' : '#d1fae5'}` }}>
-                                {[
-                                    { label: 'Category', value: selCat?.label || selectedSubmission.participant_category || '—' },
-                                    { label: 'Participant', value: user?.name || '—' },
-                                    { label: 'Fee', value: selFee ? fmtRp(selFee) : '—' },
-                                ].map(row => (
-                                    <Box key={row.label} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.2 }}>
-                                        <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#9ca3af' : '#6b7280' }}>{row.label}</Typography>
-                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: isDark ? '#f3f4f6' : '#1f2937' }}>{row.value}</Typography>
+                        <Box sx={{ px: 3, py: 2.5 }}>
+                            {/* ─── Paper / Submission Info ─── */}
+                            <Box sx={{ 
+                                mb: 2.5, p: 2.5, borderRadius: '14px', 
+                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', 
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                            }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    {/* Category Icon */}
+                                    <Box sx={{
+                                        width: 48, height: 48, borderRadius: '12px',
+                                        background: selCat ? `linear-gradient(135deg, ${selCat.color}15, ${selCat.color}08)` : 'rgba(107,114,128,0.1)',
+                                        border: `1.5px solid ${selCat?.color || '#6b7280'}20`,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        flexShrink: 0,
+                                    }}>
+                                        <CatIcon category={selectedSubmission.participant_category} size={22} color={selCat?.color} />
                                     </Box>
-                                ))}
-                                <Divider sx={{ my: 1.5, borderColor: isDark ? 'rgba(5,150,105,0.08)' : '#d1fae5', borderStyle: 'dashed' }} />
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography sx={{ fontWeight: 800, color: isDark ? '#f3f4f6' : '#1f2937' }}>Total</Typography>
-                                    <Typography sx={{ fontSize: '1.35rem', fontWeight: 900, color: isDark ? '#34d399' : '#059669', fontFamily: 'Inter, sans-serif' }}>{selFee ? fmtRp(selFee) : '—'}</Typography>
+                                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', mb: 0.3 }} noWrap>
+                                            {selectedSubmission.title}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: selCat?.color || '#6b7280' }} />
+                                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>
+                                                {selCat?.label || selectedSubmission.participant_category || 'Unknown'}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
                                 </Box>
                             </Box>
-                        </>
+
+                            {/* ─── Receipt Breakdown ─── */}
+                            <Box sx={{ 
+                                borderRadius: '14px', overflow: 'hidden',
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                mb: 2.5,
+                            }}>
+                                {[
+                                    { label: 'Category', value: selCat?.short || selectedSubmission.participant_category || '—' },
+                                    { label: 'Participant', value: user?.name || '—' },
+                                    { label: 'Email', value: user?.email || '—' },
+                                    { label: 'Registration Fee', value: selFee ? fmtRp(selFee) : '—', highlight: true },
+                                ].map((row, i) => (
+                                    <Box key={row.label} sx={{ 
+                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                        px: 2.5, py: 1.5,
+                                        bgcolor: i % 2 === 0 
+                                            ? (isDark ? 'rgba(255,255,255,0.02)' : '#fafbfc') 
+                                            : (isDark ? 'transparent' : 'white'),
+                                        borderBottom: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.03)' : '#f1f5f9'}` : 'none',
+                                    }}>
+                                        <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#9ca3af' : '#64748b', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
+                                        <Typography sx={{ 
+                                            fontSize: '0.78rem', fontWeight: row.highlight ? 800 : 600, 
+                                            color: row.highlight 
+                                                ? (isDark ? '#34d399' : '#059669') 
+                                                : (isDark ? '#e5e7eb' : '#1e293b'),
+                                            fontFamily: 'Inter, sans-serif',
+                                            fontVariantNumeric: 'tabular-nums',
+                                        }}>{row.value}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+
+                            {/* ─── Total Section ─── */}
+                            <Box sx={{ 
+                                p: 2.5, borderRadius: '14px',
+                                background: isDark 
+                                    ? 'linear-gradient(135deg, rgba(5,150,105,0.08), rgba(16,185,129,0.04))' 
+                                    : 'linear-gradient(135deg, #ecfdf5, #f0fdf4)',
+                                border: `1.5px solid ${isDark ? 'rgba(5,150,105,0.12)' : '#a7f3d0'}`,
+                                mb: 2.5,
+                            }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#6ee7b7' : '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.2, fontFamily: 'Inter, sans-serif' }}>Total Amount</Typography>
+                                        <Typography sx={{ fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>Including all fees</Typography>
+                                    </Box>
+                                    <Typography sx={{ 
+                                        fontSize: '1.6rem', fontWeight: 900, 
+                                        color: isDark ? '#34d399' : '#047857',
+                                        fontFamily: 'Inter, sans-serif',
+                                        letterSpacing: '-0.02em',
+                                        fontVariantNumeric: 'tabular-nums',
+                                    }}>
+                                        {selFee ? fmtRp(selFee) : '—'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* ─── Security Badges ─── */}
+                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5, mb: 1 }}>
+                                {[
+                                    { icon: '🔒', text: '256-bit SSL' },
+                                    { icon: '🛡️', text: 'PCI Certified' },
+                                    { icon: '✓', text: 'Verified by Midtrans' },
+                                ].map(b => (
+                                    <Box key={b.text} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <Typography sx={{ fontSize: '0.6rem' }}>{b.icon}</Typography>
+                                        <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6b7280' : '#94a3b8', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{b.text}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
                     )}
                 </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
-                    <Button onClick={handleCloseDialog} disabled={paymentLoading} sx={{ color: isDark ? '#9ca3af' : '#6b7280', textTransform: 'none', fontWeight: 700, borderRadius: '8px', px: 3, fontSize: '0.85rem' }}>Cancel</Button>
-                    <Button variant="contained" onClick={handleMidtransPayment} disabled={paymentLoading || !selFee}
-                        startIcon={paymentLoading ? <CircularProgress size={14} sx={{ color: 'white' }} /> : <LockIcon sx={{ fontSize: 13 }} />}
-                        sx={{
-                            background: 'linear-gradient(135deg, #059669, #10b981)', boxShadow: '0 4px 14px rgba(5,150,105,0.22)',
-                            '&:hover': { boxShadow: '0 6px 20px rgba(5,150,105,0.35)' },
-                            '&:disabled': { background: isDark ? '#1f2937' : '#e5e7eb', boxShadow: 'none' },
-                            textTransform: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '0.82rem', px: 3, py: 1,
-                            fontFamily: 'Inter, sans-serif'
+
+                {/* ─── Action Buttons ─── */}
+                <Box sx={{ px: 3, pb: 3, display: 'flex', gap: 1.5 }}>
+                    <Button 
+                        onClick={handleCloseDialog} 
+                        disabled={paymentLoading} 
+                        sx={{ 
+                            flex: '0 0 auto',
+                            color: isDark ? '#9ca3af' : '#64748b', 
+                            textTransform: 'none', fontWeight: 700, 
+                            borderRadius: '12px', px: 3, py: 1.2,
+                            fontSize: '0.82rem',
+                            border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`,
+                            '&:hover': { 
+                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1',
+                            },
+                            fontFamily: 'Inter, sans-serif',
                         }}
                     >
-                        {paymentLoading ? 'Processing...' : ('Pay ' + (selFee ? fmtRp(selFee) : ''))}
+                        Cancel
                     </Button>
-                </DialogActions>
+                    <Button 
+                        variant="contained" 
+                        onClick={handleMidtransPayment} 
+                        disabled={paymentLoading || !selFee}
+                        fullWidth
+                        startIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <LockIcon sx={{ fontSize: 15 }} />}
+                        sx={{
+                            background: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+                            backgroundSize: '200% 100%',
+                            boxShadow: '0 6px 20px rgba(5,150,105,0.25)',
+                            '&:hover': { 
+                                backgroundPosition: '100% 0',
+                                boxShadow: '0 8px 28px rgba(5,150,105,0.35)',
+                            },
+                            '&:disabled': { background: isDark ? '#1f2937' : '#e2e8f0', boxShadow: 'none', color: isDark ? '#4b5563' : '#94a3b8' },
+                            textTransform: 'none', borderRadius: '12px', fontWeight: 800, 
+                            fontSize: '0.88rem', py: 1.4,
+                            fontFamily: 'Inter, sans-serif',
+                            letterSpacing: '-0.01em',
+                            transition: 'all 0.4s ease',
+                        }}
+                    >
+                        {paymentLoading ? 'Processing...' : `Pay ${selFee ? fmtRp(selFee) : ''}`}
+                    </Button>
+                </Box>
             </Dialog>
 
             <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ open: false, message: '', severity: 'info' })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
