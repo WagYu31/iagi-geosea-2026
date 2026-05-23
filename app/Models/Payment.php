@@ -16,12 +16,25 @@ class Payment extends Model
         'amount',
         'verified',
         'verified_at',
+        // Midtrans fields
+        'snap_token',
+        'order_id',
+        'payment_type',
+        'transaction_id',
+        'status',
+        'paid_at',
+        'midtrans_response',
     ];
 
     protected $casts = [
         'verified' => 'boolean',
         'verified_at' => 'datetime',
+        'paid_at' => 'datetime',
+        'midtrans_response' => 'array',
+        'amount' => 'decimal:2',
     ];
+
+    // ============ RELATIONSHIPS ============
 
     public function user()
     {
@@ -31,5 +44,59 @@ class Payment extends Model
     public function submission()
     {
         return $this->belongsTo(Submission::class);
+    }
+
+    // ============ STATUS HELPERS ============
+
+    /**
+     * Check if payment was completed (either via Midtrans or manual verification).
+     */
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid' || $this->verified === true;
+    }
+
+    /**
+     * Check if payment is still pending.
+     */
+    public function isPending(): bool
+    {
+        return $this->status === 'pending' && !$this->verified;
+    }
+
+    /**
+     * Check if this is a Midtrans payment (has order_id).
+     */
+    public function isMidtrans(): bool
+    {
+        return !empty($this->order_id);
+    }
+
+    /**
+     * Check if this is a legacy manual upload payment.
+     */
+    public function isManual(): bool
+    {
+        return !empty($this->payment_proof_url) && empty($this->order_id);
+    }
+
+    /**
+     * Get a unified display status.
+     */
+    public function getDisplayStatusAttribute(): string
+    {
+        if ($this->isPaid()) {
+            return 'Paid';
+        }
+
+        if ($this->status === 'failed' || $this->status === 'expired') {
+            return ucfirst($this->status);
+        }
+
+        if ($this->isManual() && !$this->verified) {
+            return 'Pending Verification';
+        }
+
+        return 'Pending Payment';
     }
 }

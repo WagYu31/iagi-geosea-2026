@@ -28,6 +28,11 @@ Route::get('/', function () {
 Route::get('/api/landing-settings', [App\Http\Controllers\LandingPageSettingController::class, 'getPublicSettings']);
 Route::get('/download/resource/{index}', [App\Http\Controllers\LandingPageSettingController::class, 'downloadResource'])->name('download.resource');
 
+// Midtrans webhook (public, no auth, no CSRF — called by Midtrans servers)
+Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentController::class, 'handleNotification'])
+    ->name('midtrans.notification')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
@@ -103,9 +108,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Payments/Index', [
             'payments' => $payments,
             'submissions' => $submissions,
+            'midtrans_client_key' => config('midtrans.client_key'),
         ]);
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
+    Route::post('/payments/snap-token', [App\Http\Controllers\PaymentController::class, 'createSnapToken'])->name('payments.createSnapToken');
     Route::delete('/payments/{id}', [App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
 
     // Admin routes

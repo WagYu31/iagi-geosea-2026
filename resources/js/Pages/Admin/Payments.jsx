@@ -4,7 +4,7 @@ import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions,
-    IconButton, Avatar, Stack, Tooltip, useTheme,
+    IconButton, Avatar, Stack, Tooltip, useTheme, Tabs, Tab,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -13,12 +13,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import PaymentIcon from '@mui/icons-material/Payment';
 
 export default function AdminPayments({ payments = [] }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
     const [proofDialog, setProofDialog] = useState({ open: false, payment: null });
+    const [tabFilter, setTabFilter] = useState('all');
 
     const handleVerify = (paymentId) => {
         if (confirm('Are you sure you want to verify this payment?')) {
@@ -31,18 +35,70 @@ export default function AdminPayments({ payments = [] }) {
         }
     };
 
-    const verifiedCount = payments.filter(p => p.verified).length;
-    const pendingCount = payments.filter(p => !p.verified).length;
-    const totalAmount = payments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+    // Stats
+    const paidPayments = payments.filter(p => p.status === 'paid' || p.verified);
+    const pendingPayments = payments.filter(p => p.status === 'pending' && !p.verified);
+    const midtransPayments = payments.filter(p => !!p.order_id);
+    const manualPayments = payments.filter(p => !p.order_id && !!p.payment_proof_url);
+    const totalAmount = paidPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+
+    // Filter payments by tab
+    const filteredPayments = (() => {
+        switch (tabFilter) {
+            case 'midtrans': return midtransPayments;
+            case 'manual': return manualPayments;
+            case 'paid': return paidPayments;
+            case 'pending': return pendingPayments;
+            default: return payments;
+        }
+    })();
 
     const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.5, fontSize: '0.825rem', color: c.textPrimary };
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
 
     const stats = [
         { label: 'Total Revenue', value: `Rp ${totalAmount.toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
-        { label: 'Verified', value: verifiedCount, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
-        { label: 'Pending', value: pendingCount, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
+        { label: 'Paid', value: paidPayments.length, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
+        { label: 'Pending', value: pendingPayments.length, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
+        { label: 'Via Midtrans', value: midtransPayments.length, icon: <CreditCardIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
     ];
+
+    // Payment method helper
+    const getMethodLabel = (p) => {
+        if (p.order_id) {
+            const typeMap = {
+                bank_transfer: 'Bank Transfer',
+                gopay: 'GoPay',
+                shopeepay: 'ShopeePay',
+                qris: 'QRIS',
+                credit_card: 'Credit Card',
+                cstore: 'Convenience Store',
+                echannel: 'Mandiri Bill',
+            };
+            return typeMap[p.payment_type] || p.payment_type || 'Midtrans';
+        }
+        return p.payment_proof_url ? 'Manual Upload' : 'N/A';
+    };
+
+    // Status chip
+    const getStatusChip = (p) => {
+        const isPaid = p.status === 'paid' || p.verified;
+        const isFailed = p.status === 'failed' || p.status === 'expired';
+        const isRefunded = p.status === 'refunded';
+
+        if (isPaid) {
+            return <Chip label="Paid" size="small" sx={{ bgcolor: isDark ? 'rgba(22,163,74,0.15)' : '#dcfce7', color: '#16a34a', fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24 }} />;
+        }
+        if (isFailed) {
+            return <Chip label={p.status === 'expired' ? 'Expired' : 'Failed'} size="small" sx={{ bgcolor: isDark ? 'rgba(239,68,68,0.15)' : '#fee2e2', color: '#dc2626', fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24 }} />;
+        }
+        if (isRefunded) {
+            return <Chip label="Refunded" size="small" sx={{ bgcolor: isDark ? 'rgba(37,99,235,0.15)' : '#dbeafe', color: '#2563eb', fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24 }} />;
+        }
+        // Pending
+        const label = p.order_id ? 'Pending Payment' : 'Pending Verification';
+        return <Chip label={label} size="small" sx={{ bgcolor: isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7', color: '#d97706', fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24 }} />;
+    };
 
     return (
         <SidebarLayout>
@@ -56,7 +112,7 @@ export default function AdminPayments({ payments = [] }) {
                 </Box>
 
                 {/* Stats */}
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2, mb: 3 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 3 }}>
                     {stats.map((s) => (
                         <Card key={s.label} elevation={0} sx={{ borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, transition: 'all 0.25s', '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 8px 25px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.08)'}` } }}>
                             <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
@@ -74,23 +130,50 @@ export default function AdminPayments({ payments = [] }) {
                     ))}
                 </Box>
 
-                {/* Table */}
+                {/* Filter Tabs */}
                 <Card elevation={0} sx={{ borderRadius: '16px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, overflow: 'hidden' }}>
+                    <Box sx={{ borderBottom: `1px solid ${c.cardBorder}`, px: 2 }}>
+                        <Tabs
+                            value={tabFilter}
+                            onChange={(_, v) => setTabFilter(v)}
+                            variant="scrollable"
+                            scrollButtons="auto"
+                            sx={{
+                                '& .MuiTab-root': {
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    fontSize: '0.8rem',
+                                    color: c.textMuted,
+                                    minHeight: 48,
+                                    '&.Mui-selected': { color: '#1abc9c' },
+                                },
+                                '& .MuiTabs-indicator': { backgroundColor: '#1abc9c', height: 3, borderRadius: '3px 3px 0 0' },
+                            }}
+                        >
+                            <Tab value="all" label={`All (${payments.length})`} />
+                            <Tab value="paid" label={`Paid (${paidPayments.length})`} />
+                            <Tab value="pending" label={`Pending (${pendingPayments.length})`} />
+                            <Tab value="midtrans" label={`Midtrans (${midtransPayments.length})`} />
+                            <Tab value="manual" label={`Manual (${manualPayments.length})`} />
+                        </Tabs>
+                    </Box>
+
+                    {/* Table */}
                     <TableContainer>
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    {['ID', 'User', 'Submission', 'Amount', 'Status', 'Uploaded', 'Actions'].map(h => (
+                                    {['ID', 'User', 'Submission', 'Amount', 'Method', 'Status', 'Date', 'Actions'].map(h => (
                                         <TableCell key={h} sx={headCellSx}>{h}</TableCell>
                                     ))}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {payments.length === 0 ? (
-                                    <TableRow><TableCell colSpan={7} align="center" sx={cellSx}>
+                                {filteredPayments.length === 0 ? (
+                                    <TableRow><TableCell colSpan={8} align="center" sx={cellSx}>
                                         <Box sx={{ py: 5 }}><ReceiptLongIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} /><Typography variant="body2" sx={{ color: c.textMuted }}>No payments found</Typography></Box>
                                     </TableCell></TableRow>
-                                ) : payments.map((p) => (
+                                ) : filteredPayments.map((p) => (
                                     <TableRow key={p.id} hover sx={{ '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb' } }}>
                                         <TableCell sx={{ ...cellSx, fontWeight: 600, color: c.textMuted }}>#{p.id}</TableCell>
                                         <TableCell sx={cellSx}>
@@ -109,18 +192,48 @@ export default function AdminPayments({ payments = [] }) {
                                             <Typography sx={{ fontWeight: 700, color: '#1abc9c', fontSize: '0.9rem' }}>{p.amount ? `Rp ${parseFloat(p.amount).toLocaleString('id-ID')}` : 'N/A'}</Typography>
                                         </TableCell>
                                         <TableCell sx={cellSx}>
-                                            <Chip label={p.verified ? 'Verified' : 'Pending'} size="small" sx={{ bgcolor: p.verified ? (isDark ? 'rgba(22,163,74,0.15)' : '#dcfce7') : (isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7'), color: p.verified ? '#16a34a' : '#d97706', fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24 }} />
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                {p.order_id ? (
+                                                    <CreditCardIcon sx={{ fontSize: '0.85rem', color: '#2563eb' }} />
+                                                ) : (
+                                                    <CloudUploadIcon sx={{ fontSize: '0.85rem', color: '#6b7280' }} />
+                                                )}
+                                                <Typography sx={{ fontSize: '0.8rem', color: c.textSecondary }}>
+                                                    {getMethodLabel(p)}
+                                                </Typography>
+                                            </Box>
+                                            {p.transaction_id && (
+                                                <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontFamily: 'monospace', mt: 0.3 }}>
+                                                    {p.transaction_id.substring(0, 20)}...
+                                                </Typography>
+                                            )}
                                         </TableCell>
                                         <TableCell sx={cellSx}>
-                                            <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>{p.created_at ? new Date(p.created_at).toLocaleDateString('id-ID') : 'N/A'}</Typography>
+                                            {getStatusChip(p)}
                                         </TableCell>
                                         <TableCell sx={cellSx}>
-                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                            <Typography variant="body2" sx={{ fontSize: '0.8rem', color: c.textMuted }}>
+                                                {p.paid_at
+                                                    ? new Date(p.paid_at).toLocaleDateString('id-ID')
+                                                    : p.created_at
+                                                        ? new Date(p.created_at).toLocaleDateString('id-ID')
+                                                        : 'N/A'}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell sx={cellSx}>
+                                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                                {/* View proof for manual payments */}
                                                 {p.payment_proof_url && (
                                                     <Button size="small" startIcon={<VisibilityIcon sx={{ fontSize: 16 }} />} onClick={() => setProofDialog({ open: true, payment: p })} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: '#2563eb', bgcolor: isDark ? 'rgba(37,99,235,0.1)' : '#dbeafe', '&:hover': { bgcolor: isDark ? 'rgba(37,99,235,0.2)' : '#bfdbfe' }, px: 1.5 }}>View</Button>
                                                 )}
-                                                {!p.verified ? (
-                                                    <Button size="small" startIcon={<CheckCircleIcon sx={{ fontSize: 16 }} />} onClick={() => handleVerify(p.id)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: 'white', background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)', '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' }, px: 1.5 }}>Verify</Button>
+                                                {/* Verify/Reject buttons */}
+                                                {!(p.status === 'paid' || p.verified) ? (
+                                                    <>
+                                                        {/* Only show verify for manual payments or pending Midtrans */}
+                                                        {(!p.order_id || p.status === 'pending') && (
+                                                            <Button size="small" startIcon={<CheckCircleIcon sx={{ fontSize: 16 }} />} onClick={() => handleVerify(p.id)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: 'white', background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)', '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' }, px: 1.5 }}>Verify</Button>
+                                                        )}
+                                                    </>
                                                 ) : (
                                                     <Button size="small" startIcon={<CancelIcon sx={{ fontSize: 16 }} />} onClick={() => handleReject(p.id)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: isDark ? '#f87171' : '#dc2626', bgcolor: isDark ? 'rgba(239,68,68,0.1)' : '#fee2e2', '&:hover': { bgcolor: isDark ? 'rgba(239,68,68,0.2)' : '#fecaca' }, px: 1.5 }}>Reject</Button>
                                                 )}
@@ -141,7 +254,7 @@ export default function AdminPayments({ payments = [] }) {
                         <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 40, height: 40, borderRadius: '10px' }}>
                             <ReceiptLongIcon sx={{ color: '#1abc9c', fontSize: 22 }} />
                         </Avatar>
-                        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>Payment Proof</Typography>
+                        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>Payment Details</Typography>
                     </Box>
                     <IconButton onClick={() => setProofDialog({ open: false, payment: null })} sx={{ color: c.textMuted }}><CloseIcon /></IconButton>
                 </DialogTitle>
@@ -150,10 +263,19 @@ export default function AdminPayments({ payments = [] }) {
                         <Box>
                             <Box sx={{ mb: 2.5, p: 2, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb', borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
                                 <Stack spacing={1.5}>
-                                    {[{ l: 'User', v: proofDialog.payment.user?.name }, { l: 'Submission', v: proofDialog.payment.submission?.title }, { l: 'Amount', v: `Rp ${parseFloat(proofDialog.payment.amount || 0).toLocaleString('id-ID')}`, hl: true }].map((i) => (
+                                    {[
+                                        { l: 'User', v: proofDialog.payment.user?.name },
+                                        { l: 'Submission', v: proofDialog.payment.submission?.title },
+                                        { l: 'Amount', v: `Rp ${parseFloat(proofDialog.payment.amount || 0).toLocaleString('id-ID')}`, hl: true },
+                                        { l: 'Method', v: getMethodLabel(proofDialog.payment) },
+                                        ...(proofDialog.payment.order_id ? [
+                                            { l: 'Order ID', v: proofDialog.payment.order_id },
+                                            { l: 'Transaction ID', v: proofDialog.payment.transaction_id || 'N/A' },
+                                        ] : []),
+                                    ].map((i) => (
                                         <Box key={i.l}>
                                             <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.65rem' }}>{i.l}</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 600, color: i.hl ? '#1abc9c' : c.textPrimary, fontSize: i.hl ? '1rem' : '0.85rem' }}>{i.v}</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 600, color: i.hl ? '#1abc9c' : c.textPrimary, fontSize: i.hl ? '1rem' : '0.85rem', fontFamily: i.l === 'Order ID' || i.l === 'Transaction ID' ? 'monospace' : 'inherit' }}>{i.v}</Typography>
                                         </Box>
                                     ))}
                                 </Stack>
@@ -169,7 +291,7 @@ export default function AdminPayments({ payments = [] }) {
                     )}
                 </DialogContent>
                 <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}` }}>
-                    {proofDialog.payment && !proofDialog.payment.verified && (
+                    {proofDialog.payment && !(proofDialog.payment.status === 'paid' || proofDialog.payment.verified) && (
                         <Button variant="contained" startIcon={<CheckCircleIcon />} onClick={() => { handleVerify(proofDialog.payment.id); setProofDialog({ open: false, payment: null }); }} sx={{ background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)', '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' }, borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 3 }}>Verify Payment</Button>
                     )}
                     <Button onClick={() => setProofDialog({ open: false, payment: null })} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Close</Button>

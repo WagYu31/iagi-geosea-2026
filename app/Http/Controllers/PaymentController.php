@@ -4,12 +4,121 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Submission;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
+    /**
+     * Create a Snap token for Midtrans payment.
+     *
+     * Flow:
+     * 1. Validate submission ownership and status
+     * 2. Find or create Payment record
+     * 3. Generate Snap token (or reuse existing pending one)
+     * 4. Return snap_token to frontend
+     */
+    public function createSnapToken(Request $request, MidtransService $midtransService)
+    {
+        $request->validate([
+            'submission_id' => 'required|exists:submissions,id',
+            'amount'        => 'required|numeric|min:1000',
+        ]);
+
+        // Verify user owns this submission
+        $submission = Submission::where('id', $request->submission_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Only allow payment for accepted submissions
+        if (strtolower($submission->status) !== 'accepted') {
+            return response()->json([
+                'error' => 'Payment is only available for accepted submissions.',
+            ], 422);
+        }
+
+        // Find existing payment or create new one
+        $payment = Payment::where('submission_id', $request->submission_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($payment) {
+            // If already paid, reject
+            if ($payment->isPaid()) {
+                return response()->json([
+                    'error' => 'This submission has already been paid.',
+                ], 422);
+            }
+
+            // Update amount if changed
+            if ((float) $payment->amount !== (float) $request->amount) {
+                $payment->update([
+                    'amount'     => $request->amount,
+                    'snap_token' => null, // Force new token for new amount
+                ]);
+            }
+        } else {
+            // Create new payment record
+            $payment = Payment::create([
+                'user_id'       => Auth::id(),
+                'submission_id' => $request->submission_id,
+                'amount'        => $request->amount,
+                'status'        => 'pending',
+                'verified'      => false,
+            ]);
+        }
+
+        try {
+            $result = $midtransService->createSnapToken($payment);
+
+            return response()->json([
+                'snap_token' => $result['snap_token'],
+                'order_id'   => $result['order_id'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Snap token creation failed: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Failed to create payment. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle Midtrans webhook notification.
+     *
+     * This endpoint is called by Midtrans servers (not by users).
+     * It must be publicly accessible (no auth) and excluded from CSRF.
+     */
+    public function handleNotification(Request $request, MidtransService $midtransService)
+    {
+        $payload = $request->all();
+
+        Log::info('Midtrans notification received', ['order_id' => $payload['order_id'] ?? 'unknown']);
+
+        try {
+            $payment = $midtransService->handleNotification($payload);
+
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::error('Midtrans notification error: ' . $e->getMessage());
+
+            // Still return 200 to prevent Midtrans from retrying on known errors
+            if ($e->getMessage() === 'Invalid signature') {
+                return response()->json(['status' => 'invalid signature'], 401);
+            }
+
+            return response()->json(['status' => 'error'], 500);
+        }
+    }
+
+    /**
+     * Legacy: Store payment proof (manual upload).
+     * Kept for backward compatibility.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -55,6 +164,7 @@ class PaymentController extends Controller
             'payment_proof_url' => $proofPath,
             'amount' => $request->amount,
             'verified' => false,
+            'status' => 'pending',
         ]);
 
         return back()->with('success', 'Payment proof uploaded successfully! Waiting for admin verification.');
@@ -65,6 +175,11 @@ class PaymentController extends Controller
         $payment = Payment::where('id', $id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+
+        // Don't allow deleting paid Midtrans payments
+        if ($payment->isMidtrans() && $payment->isPaid()) {
+            return back()->withErrors(['error' => 'Cannot delete a completed Midtrans payment.']);
+        }
 
         // Delete file
         if ($payment->payment_proof_url) {

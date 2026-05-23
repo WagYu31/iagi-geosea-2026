@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box,
@@ -25,6 +25,8 @@ import {
     Card,
     CardContent,
     useTheme,
+    CircularProgress,
+    Snackbar,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -32,6 +34,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import PaymentIcon from '@mui/icons-material/Payment';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -45,52 +52,191 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function Index({ payments = [], submissions = [] }) {
+export default function Index({ payments = [], submissions = [], midtrans_client_key }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
+    const [paymentLoading, setPaymentLoading] = useState(false);
+    const [amount, setAmount] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        submission_id: '',
-        amount: '',
-        payment_proof: null,
+    // Get submissions that need payment (accepted but not paid)
+    const submissionsNeedingPayment = submissions.filter(sub => {
+        const payment = payments.find(p => p.submission_id === sub.id);
+        const isAccepted = sub.status && sub.status.toLowerCase() === 'accepted';
+        return isAccepted && (!payment || (!payment.verified && payment.status !== 'paid'));
     });
 
     const handleOpenDialog = (submission) => {
         setSelectedSubmission(submission);
-        setData({
-            submission_id: submission.id,
-            amount: '',
-            payment_proof: null,
-        });
+        setAmount('');
         setOpenDialog(true);
     };
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setSelectedSubmission(null);
-        reset();
+        setAmount('');
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post(route('payments.store'), {
-            forceFormData: true,
-            onSuccess: () => {
-                handleCloseDialog();
-            },
-        });
+    /**
+     * Midtrans Snap Payment Flow:
+     * 1. Request snap_token from backend
+     * 2. Open Snap popup using window.snap.pay()
+     * 3. Handle success/pending/error/close callbacks
+     */
+    const handleMidtransPayment = async () => {
+        if (!amount || parseFloat(amount) < 1000) {
+            setSnackbar({ open: true, message: 'Minimum payment amount is Rp 1.000', severity: 'warning' });
+            return;
+        }
+
+        setPaymentLoading(true);
+
+        try {
+            // 1. Request Snap token from backend
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const response = await fetch(route('payments.createSnapToken'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    submission_id: selectedSubmission.id,
+                    amount: parseFloat(amount),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create payment');
+            }
+
+            handleCloseDialog();
+
+            // 2. Open Snap popup
+            if (window.snap) {
+                window.snap.pay(data.snap_token, {
+                    onSuccess: function (result) {
+                        setSnackbar({
+                            open: true,
+                            message: '🎉 Payment successful! Your payment has been verified.',
+                            severity: 'success',
+                        });
+                        // Refresh page to show updated status
+                        setTimeout(() => router.reload(), 1500);
+                    },
+                    onPending: function (result) {
+                        setSnackbar({
+                            open: true,
+                            message: '⏳ Payment pending. Please complete your payment.',
+                            severity: 'info',
+                        });
+                        setTimeout(() => router.reload(), 1500);
+                    },
+                    onError: function (result) {
+                        setSnackbar({
+                            open: true,
+                            message: '❌ Payment failed. Please try again.',
+                            severity: 'error',
+                        });
+                        setTimeout(() => router.reload(), 1500);
+                    },
+                    onClose: function () {
+                        setSnackbar({
+                            open: true,
+                            message: 'Payment window closed. You can try again anytime.',
+                            severity: 'info',
+                        });
+                        router.reload();
+                    },
+                });
+            } else {
+                throw new Error('Midtrans Snap is not loaded. Please refresh the page.');
+            }
+        } catch (error) {
+            setSnackbar({
+                open: true,
+                message: error.message || 'Something went wrong. Please try again.',
+                severity: 'error',
+            });
+        } finally {
+            setPaymentLoading(false);
+        }
     };
 
-    // Get submissions that don't have payment yet or payment not verified
-    // AND only show if submission status is 'accepted'
-    const submissionsNeedingPayment = submissions.filter(sub => {
-        const payment = payments.find(p => p.submission_id === sub.id);
-        const isAccepted = sub.status && sub.status.toLowerCase() === 'accepted';
-        return isAccepted && (!payment || !payment.verified);
-    });
+    // Status chip styling
+    const getStatusChip = (payment) => {
+        // Midtrans payment
+        if (payment.order_id) {
+            const statusMap = {
+                paid: { label: 'Paid', icon: <CheckCircleOutlineIcon sx={{ fontSize: '0.9rem' }} />, bg: '#ecfdf5', color: '#059669', border: '#d1fae5' },
+                pending: { label: 'Pending Payment', icon: <AccessTimeIcon sx={{ fontSize: '0.9rem' }} />, bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
+                failed: { label: 'Failed', icon: <ErrorOutlineIcon sx={{ fontSize: '0.9rem' }} />, bg: '#fef2f2', color: '#dc2626', border: '#fecaca' },
+                expired: { label: 'Expired', icon: <ErrorOutlineIcon sx={{ fontSize: '0.9rem' }} />, bg: '#fef2f2', color: '#dc2626', border: '#fecaca' },
+                refunded: { label: 'Refunded', icon: <ErrorOutlineIcon sx={{ fontSize: '0.9rem' }} />, bg: '#eff6ff', color: '#2563eb', border: '#dbeafe' },
+            };
+            const s = statusMap[payment.status] || statusMap.pending;
+            return (
+                <Chip
+                    icon={s.icon}
+                    label={s.label}
+                    size="small"
+                    sx={{
+                        fontWeight: 700, fontSize: '0.65rem', borderRadius: '8px',
+                        bgcolor: isDark ? `${s.color}18` : s.bg,
+                        color: s.color,
+                        border: `1px solid ${isDark ? `${s.color}30` : s.border}`,
+                        '& .MuiChip-icon': { color: s.color },
+                    }}
+                />
+            );
+        }
+
+        // Legacy manual payment
+        return (
+            <Chip
+                label={payment.verified ? 'Verified' : 'Pending Verification'}
+                size="small"
+                sx={{
+                    fontWeight: 700, fontSize: '0.65rem', borderRadius: '8px',
+                    ...(payment.verified ? {
+                        bgcolor: isDark ? 'rgba(5,150,105,0.15)' : '#ecfdf5',
+                        color: '#059669',
+                        border: `1px solid ${isDark ? 'rgba(5,150,105,0.3)' : '#d1fae5'}`,
+                    } : {
+                        bgcolor: isDark ? 'rgba(217,119,6,0.15)' : '#fffbeb',
+                        color: '#d97706',
+                        border: `1px solid ${isDark ? 'rgba(217,119,6,0.3)' : '#fde68a'}`,
+                    }),
+                }}
+            />
+        );
+    };
+
+    // Payment method label
+    const getPaymentMethod = (payment) => {
+        if (payment.order_id) {
+            const typeMap = {
+                bank_transfer: 'Bank Transfer',
+                gopay: 'GoPay',
+                shopeepay: 'ShopeePay',
+                qris: 'QRIS',
+                credit_card: 'Credit Card',
+                cstore: 'Convenience Store',
+                echannel: 'Mandiri Bill',
+                bca_klikpay: 'BCA KlikPay',
+                bca_klikbca: 'KlikBCA',
+            };
+            return typeMap[payment.payment_type] || payment.payment_type || 'Midtrans';
+        }
+        return 'Manual Upload';
+    };
 
     return (
         <SidebarLayout>
@@ -109,7 +255,7 @@ export default function Index({ payments = [], submissions = [] }) {
                         My Payments 💳
                     </Typography>
                     <Typography sx={{ color: c.textMuted, fontSize: '0.875rem', mt: 0.5 }}>
-                        Upload payment proofs and track verification status
+                        Pay for your accepted submissions securely via Midtrans
                     </Typography>
                 </Box>
 
@@ -135,12 +281,12 @@ export default function Index({ payments = [], submissions = [] }) {
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                             <WarningAmberRoundedIcon sx={{ color: '#d97706', fontSize: '1.2rem' }} />
-                            <Typography sx={{ fontWeight: 700, color: '#92400e', fontSize: '0.95rem' }}>
+                            <Typography sx={{ fontWeight: 700, color: isDark ? '#fbbf24' : '#92400e', fontSize: '0.95rem' }}>
                                 Submissions Requiring Payment
                             </Typography>
                         </Box>
-                        <Typography sx={{ color: '#a16207', fontSize: '0.8rem', mb: 2.5, pl: 3.5 }}>
-                            The following accepted submissions need payment proof upload
+                        <Typography sx={{ color: isDark ? '#fcd34d' : '#a16207', fontSize: '0.8rem', mb: 2.5, pl: 3.5 }}>
+                            Click "Pay Now" to securely pay via Midtrans (VA, e-wallet, credit card, QRIS)
                         </Typography>
 
                         <Stack spacing={1.5}>
@@ -172,7 +318,7 @@ export default function Index({ payments = [], submissions = [] }) {
                                     </Box>
                                     <Button
                                         variant="contained"
-                                        startIcon={<CloudUploadIcon sx={{ fontSize: '1rem !important' }} />}
+                                        startIcon={<PaymentIcon sx={{ fontSize: '1rem !important' }} />}
                                         onClick={() => handleOpenDialog(submission)}
                                         sx={{
                                             background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
@@ -192,7 +338,7 @@ export default function Index({ payments = [], submissions = [] }) {
                                             transition: 'all 0.2s ease',
                                         }}
                                     >
-                                        Upload Payment
+                                        Pay Now
                                     </Button>
                                 </Paper>
                             ))}
@@ -208,7 +354,7 @@ export default function Index({ payments = [], submissions = [] }) {
                     bgcolor: c.cardBg,
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                        <ReceiptLongIcon sx={{ color: '#6b7280', fontSize: '1.1rem' }} />
+                        <ReceiptLongIcon sx={{ color: c.textMuted, fontSize: '1.1rem' }} />
                         <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
                             Payment History
                         </Typography>
@@ -266,11 +412,9 @@ export default function Index({ payments = [], submissions = [] }) {
                                     <Table>
                                         <TableHead>
                                             <TableRow sx={{ backgroundColor: c.headerBg }}>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Submission</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Amount</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Status</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Uploaded</TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>Actions</TableCell>
+                                                {['Submission', 'Amount', 'Method', 'Status', 'Date', 'Actions'].map(h => (
+                                                    <TableCell key={h} sx={{ fontWeight: 700, fontSize: '0.75rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.05em', py: 1.5, borderBottom: `2px solid ${c.cardBorder}` }}>{h}</TableCell>
+                                                ))}
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -291,52 +435,81 @@ export default function Index({ payments = [], submissions = [] }) {
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Chip
-                                                            label={payment.verified ? 'Verified' : 'Pending Verification'}
-                                                            size="small"
-                                                            sx={{
-                                                                fontWeight: 700,
-                                                                fontSize: '0.65rem',
-                                                                borderRadius: '8px',
-                                                                ...(payment.verified ? {
-                                                                    bgcolor: '#ecfdf5', color: '#059669', border: '1px solid #d1fae5',
-                                                                } : {
-                                                                    bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a',
-                                                                }),
-                                                            }}
-                                                        />
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                            {payment.order_id ? (
+                                                                <CreditCardIcon sx={{ fontSize: '0.9rem', color: '#6b7280' }} />
+                                                            ) : (
+                                                                <CloudUploadIcon sx={{ fontSize: '0.9rem', color: '#6b7280' }} />
+                                                            )}
+                                                            <Typography sx={{ fontSize: '0.8rem', color: c.textSecondary }}>
+                                                                {getPaymentMethod(payment)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {getStatusChip(payment)}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography sx={{ fontSize: '0.8rem', color: c.textSecondary }}>
-                                                            {payment.created_at ? new Date(payment.created_at).toLocaleDateString('id-ID') : 'N/A'}
+                                                            {payment.paid_at
+                                                                ? new Date(payment.paid_at).toLocaleDateString('id-ID')
+                                                                : payment.created_at
+                                                                    ? new Date(payment.created_at).toLocaleDateString('id-ID')
+                                                                    : 'N/A'}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        {payment.payment_proof_url && (
-                                                            <Button
-                                                                size="small"
-                                                                variant="outlined"
-                                                                startIcon={<VisibilityIcon sx={{ fontSize: '0.9rem !important' }} />}
-                                                                href={`/storage/${payment.payment_proof_url}`}
-                                                                target="_blank"
-                                                                sx={{
-                                                                    color: '#0d7a6a',
-                                                                    borderColor: '#d1fae5',
-                                                                    bgcolor: '#f0fdf4',
-                                                                    borderRadius: '8px',
-                                                                    textTransform: 'none',
-                                                                    fontWeight: 600,
-                                                                    fontSize: '0.75rem',
-                                                                    px: 1.5,
-                                                                    '&:hover': {
-                                                                        borderColor: '#0d7a6a',
-                                                                        bgcolor: '#ecfdf5',
-                                                                    },
-                                                                }}
-                                                            >
-                                                                View Proof
-                                                            </Button>
-                                                        )}
+                                                        <Box sx={{ display: 'flex', gap: 1 }}>
+                                                            {payment.payment_proof_url && (
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    startIcon={<VisibilityIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                                                    href={`/storage/${payment.payment_proof_url}`}
+                                                                    target="_blank"
+                                                                    sx={{
+                                                                        color: '#0d7a6a',
+                                                                        borderColor: isDark ? 'rgba(209,250,229,0.2)' : '#d1fae5',
+                                                                        bgcolor: isDark ? 'rgba(13,122,106,0.08)' : '#f0fdf4',
+                                                                        borderRadius: '8px',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.75rem',
+                                                                        px: 1.5,
+                                                                        '&:hover': {
+                                                                            borderColor: '#0d7a6a',
+                                                                            bgcolor: isDark ? 'rgba(13,122,106,0.15)' : '#ecfdf5',
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    View Proof
+                                                                </Button>
+                                                            )}
+                                                            {/* Show retry button for failed/expired Midtrans payments */}
+                                                            {payment.order_id && (payment.status === 'failed' || payment.status === 'expired') && (
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="contained"
+                                                                    startIcon={<PaymentIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                                                    onClick={() => {
+                                                                        const sub = submissions.find(s => s.id === payment.submission_id);
+                                                                        if (sub) handleOpenDialog(sub);
+                                                                    }}
+                                                                    sx={{
+                                                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                                        borderRadius: '8px',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.75rem',
+                                                                        px: 1.5,
+                                                                        boxShadow: 'none',
+                                                                        '&:hover': { boxShadow: '0 4px 12px rgba(13,122,106,0.3)' },
+                                                                    }}
+                                                                >
+                                                                    Retry
+                                                                </Button>
+                                                            )}
+                                                        </Box>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -364,59 +537,77 @@ export default function Index({ payments = [], submissions = [] }) {
                                                     <Typography sx={{ fontWeight: 700, fontFamily: 'monospace', fontSize: '0.9rem', color: c.textPrimary }}>
                                                         {payment.amount ? `Rp ${parseFloat(payment.amount).toLocaleString('id-ID')}` : 'N/A'}
                                                     </Typography>
-                                                    <Chip
-                                                        label={payment.verified ? 'Verified' : 'Pending'}
-                                                        size="small"
-                                                        sx={{
-                                                            fontWeight: 700,
-                                                            fontSize: '0.65rem',
-                                                            borderRadius: '8px',
-                                                            ...(payment.verified ? {
-                                                                bgcolor: '#ecfdf5', color: '#059669', border: '1px solid #d1fae5',
-                                                            } : {
-                                                                bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a',
-                                                            }),
-                                                        }}
-                                                    />
+                                                    {getStatusChip(payment)}
                                                 </Box>
 
                                                 {/* Title */}
-                                                <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#374151', mb: 0.3 }}>
+                                                <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: c.textPrimary, mb: 0.3 }}>
                                                     {payment.submission?.title || 'N/A'}
                                                 </Typography>
 
-                                                {/* Date */}
-                                                <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, mb: 2 }}>
-                                                    Uploaded: {payment.created_at ? new Date(payment.created_at).toLocaleDateString('id-ID') : 'N/A'}
-                                                </Typography>
+                                                {/* Method + Date */}
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                                    <Typography sx={{ fontSize: '0.75rem', color: c.textMuted }}>
+                                                        {getPaymentMethod(payment)}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.75rem', color: c.textMuted }}>
+                                                        {payment.paid_at
+                                                            ? new Date(payment.paid_at).toLocaleDateString('id-ID')
+                                                            : payment.created_at
+                                                                ? new Date(payment.created_at).toLocaleDateString('id-ID')
+                                                                : 'N/A'}
+                                                    </Typography>
+                                                </Box>
 
-                                                {/* Action */}
-                                                {payment.payment_proof_url && (
-                                                    <Button
-                                                        size="small"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        startIcon={<VisibilityIcon sx={{ fontSize: '0.9rem !important' }} />}
-                                                        href={`/storage/${payment.payment_proof_url}`}
-                                                        target="_blank"
-                                                        sx={{
-                                                            color: '#0d7a6a',
-                                                            borderColor: '#d1fae5',
-                                                            bgcolor: '#f0fdf4',
-                                                            borderRadius: '10px',
-                                                            textTransform: 'none',
-                                                            fontWeight: 600,
-                                                            fontSize: '0.8rem',
-                                                            py: 0.8,
-                                                            '&:hover': {
-                                                                borderColor: '#0d7a6a',
-                                                                bgcolor: '#ecfdf5',
-                                                            },
-                                                        }}
-                                                    >
-                                                        View Proof
-                                                    </Button>
-                                                )}
+                                                {/* Actions */}
+                                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                                    {payment.payment_proof_url && (
+                                                        <Button
+                                                            size="small"
+                                                            variant="outlined"
+                                                            fullWidth
+                                                            startIcon={<VisibilityIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                                            href={`/storage/${payment.payment_proof_url}`}
+                                                            target="_blank"
+                                                            sx={{
+                                                                color: '#0d7a6a',
+                                                                borderColor: isDark ? 'rgba(209,250,229,0.2)' : '#d1fae5',
+                                                                bgcolor: isDark ? 'rgba(13,122,106,0.08)' : '#f0fdf4',
+                                                                borderRadius: '10px',
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.8rem',
+                                                                py: 0.8,
+                                                                '&:hover': { borderColor: '#0d7a6a', bgcolor: isDark ? 'rgba(13,122,106,0.15)' : '#ecfdf5' },
+                                                            }}
+                                                        >
+                                                            View Proof
+                                                        </Button>
+                                                    )}
+                                                    {payment.order_id && (payment.status === 'failed' || payment.status === 'expired') && (
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            fullWidth
+                                                            startIcon={<PaymentIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                                            onClick={() => {
+                                                                const sub = submissions.find(s => s.id === payment.submission_id);
+                                                                if (sub) handleOpenDialog(sub);
+                                                            }}
+                                                            sx={{
+                                                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                                borderRadius: '10px',
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.8rem',
+                                                                py: 0.8,
+                                                                boxShadow: 'none',
+                                                            }}
+                                                        >
+                                                            Retry Payment
+                                                        </Button>
+                                                    )}
+                                                </Box>
                                             </CardContent>
                                         </Card>
                                     ))}
@@ -427,7 +618,7 @@ export default function Index({ payments = [], submissions = [] }) {
                 </Paper>
             </Box>
 
-            {/* Upload Payment Dialog */}
+            {/* Pay Now Dialog (Midtrans) */}
             <Dialog
                 open={openDialog}
                 onClose={handleCloseDialog}
@@ -437,6 +628,7 @@ export default function Index({ payments = [], submissions = [] }) {
                     sx: {
                         borderRadius: '16px',
                         overflow: 'hidden',
+                        bgcolor: c.cardBg,
                     },
                 }}
             >
@@ -448,9 +640,12 @@ export default function Index({ payments = [], submissions = [] }) {
                     alignItems: 'center',
                     py: 2,
                 }}>
-                    <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>
-                        Upload Payment Proof
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <PaymentIcon sx={{ fontSize: '1.3rem' }} />
+                        <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>
+                            Pay with Midtrans
+                        </Typography>
+                    </Box>
                     <IconButton
                         onClick={handleCloseDialog}
                         sx={{ color: 'rgba(255,255,255,0.8)', '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.15)' } }}
@@ -459,170 +654,113 @@ export default function Index({ payments = [], submissions = [] }) {
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 </DialogTitle>
-                <form onSubmit={handleSubmit}>
-                    <DialogContent sx={{ pt: 3 }}>
-                        {selectedSubmission && (
-                            <Box sx={{ mb: 3, p: 2, bgcolor: c.headerBg, borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
-                                <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, mb: 0.3 }}>
-                                    Submission
+                <DialogContent sx={{ pt: 3 }}>
+                    {selectedSubmission && (
+                        <Box sx={{ mb: 3, p: 2, bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f9fafb', borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
+                            <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, mb: 0.3 }}>
+                                Submission
+                            </Typography>
+                            <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary }}>
+                                {selectedSubmission.title}
+                            </Typography>
+                        </Box>
+                    )}
+
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label="Payment Amount (Rp) *"
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                helperText="Enter the registration fee amount"
+                                required
+                                inputProps={{ min: 1000, step: 1000 }}
+                                InputProps={{
+                                    sx: { borderRadius: '10px' },
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Box sx={{
+                                p: 2,
+                                bgcolor: isDark ? 'rgba(37,99,235,0.08)' : '#eff6ff',
+                                borderRadius: '12px',
+                                border: `1px solid ${isDark ? 'rgba(37,99,235,0.2)' : '#dbeafe'}`,
+                            }}>
+                                <Typography sx={{ fontWeight: 700, fontSize: '0.8rem', color: isDark ? '#93c5fd' : '#1e40af', mb: 0.5 }}>
+                                    🔒 Secure Payment via Midtrans
                                 </Typography>
-                                <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary }}>
-                                    {selectedSubmission.title}
+                                <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#93c5fd' : '#3b82f6', lineHeight: 1.6 }}>
+                                    You will be redirected to Midtrans secure payment popup where you can pay via:
+                                    <br />
+                                    <strong>Bank Transfer (VA)</strong> • <strong>GoPay</strong> • <strong>ShopeePay</strong> • <strong>QRIS</strong> • <strong>Credit Card</strong>
                                 </Typography>
                             </Box>
-                        )}
-
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Payment Amount (Rp) *"
-                                    type="number"
-                                    value={data.amount}
-                                    onChange={(e) => setData('amount', e.target.value)}
-                                    error={!!errors.amount}
-                                    helperText={errors.amount || 'Enter the amount you paid'}
-                                    required
-                                    inputProps={{ min: 0, step: 0.01 }}
-                                    InputProps={{
-                                        sx: { borderRadius: '10px' },
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Box sx={{
-                                    border: '2px dashed #e5e7eb',
-                                    borderRadius: '14px',
-                                    p: { xs: 2.5, md: 3 },
-                                    textAlign: 'center',
-                                    bgcolor: '#fafafa',
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': {
-                                        borderColor: '#0d7a6a',
-                                        bgcolor: '#f0fdf4',
-                                    },
-                                }}>
-                                    <Box sx={{
-                                        width: 48,
-                                        height: 48,
-                                        borderRadius: '12px',
-                                        bgcolor: '#ecfdf5',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        margin: '0 auto',
-                                        mb: 1.5,
-                                    }}>
-                                        <CloudUploadIcon sx={{ fontSize: '1.4rem', color: '#0d7a6a' }} />
-                                    </Box>
-                                    <Typography sx={{ mb: 0.5, fontWeight: 700, fontSize: '0.9rem', color: c.textPrimary }}>
-                                        Upload Payment Proof *
-                                    </Typography>
-                                    <Typography sx={{ mb: 2, fontSize: '0.75rem', color: c.textMuted }}>
-                                        Screenshot or photo of your payment receipt
-                                        <br />
-                                        (JPG, PNG, or PDF — Max 5MB)
-                                    </Typography>
-                                    <Button
-                                        component="label"
-                                        variant="contained"
-                                        startIcon={<CloudUploadIcon sx={{ fontSize: '1rem !important' }} />}
-                                        sx={{
-                                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                            boxShadow: 'none',
-                                            borderRadius: '10px',
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                            fontSize: '0.8rem',
-                                            px: 3,
-                                            py: 1,
-                                            '&:hover': {
-                                                boxShadow: '0 4px 14px rgba(13, 122, 106, 0.3)',
-                                            },
-                                        }}
-                                    >
-                                        Choose File
-                                        <VisuallyHiddenInput
-                                            type="file"
-                                            accept=".jpg,.jpeg,.png,.pdf"
-                                            onChange={(e) => setData('payment_proof', e.target.files[0])}
-                                            required
-                                        />
-                                    </Button>
-                                    {data.payment_proof && (
-                                        <Typography sx={{ mt: 2, color: '#059669', fontWeight: 700, fontSize: '0.8rem' }}>
-                                            ✓ {data.payment_proof.name}
-                                        </Typography>
-                                    )}
-                                    {errors.payment_proof && (
-                                        <Typography variant="caption" color="error" display="block" sx={{ mt: 1 }}>
-                                            {errors.payment_proof}
-                                        </Typography>
-                                    )}
-                                </Box>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Box sx={{
-                                    p: 2,
-                                    bgcolor: '#eff6ff',
-                                    borderRadius: '12px',
-                                    border: '1px solid #dbeafe',
-                                }}>
-                                    <Typography sx={{ fontWeight: 700, fontSize: '0.8rem', color: '#1e40af', mb: 0.5 }}>
-                                        Payment Information
-                                    </Typography>
-                                    <Typography sx={{ fontSize: '0.75rem', color: '#3b82f6', lineHeight: 1.6 }}>
-                                        Please transfer to the conference account and upload your payment proof here.
-                                        Admin will verify your payment within 1-2 business days.
-                                    </Typography>
-                                </Box>
-                            </Grid>
                         </Grid>
-                    </DialogContent>
-                    <DialogActions sx={{ p: 2.5, gap: 1 }}>
-                        <Button
-                            onClick={handleCloseDialog}
-                            disabled={processing}
-                            sx={{
-                                color: '#6b7280',
-                                textTransform: 'none',
-                                fontWeight: 600,
-                                borderRadius: '10px',
-                                px: 2.5,
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={processing || !data.payment_proof}
-                            sx={{
-                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                boxShadow: '0 4px 14px rgba(13, 122, 106, 0.25)',
-                                '&:hover': {
-                                    boxShadow: '0 6px 20px rgba(13, 122, 106, 0.35)',
-                                },
-                                '&:disabled': {
-                                    background: '#e5e7eb',
-                                    color: c.textMuted,
-                                    boxShadow: 'none',
-                                },
-                                textTransform: 'none',
-                                borderRadius: '10px',
-                                fontWeight: 700,
-                                fontSize: '0.85rem',
-                                px: 3,
-                                py: 1,
-                            }}
-                        >
-                            {processing ? 'Uploading...' : 'Upload Payment'}
-                        </Button>
-                    </DialogActions>
-                </form>
+                    </Grid>
+                </DialogContent>
+                <DialogActions sx={{ p: 2.5, gap: 1 }}>
+                    <Button
+                        onClick={handleCloseDialog}
+                        disabled={paymentLoading}
+                        sx={{
+                            color: c.textMuted,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            borderRadius: '10px',
+                            px: 2.5,
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleMidtransPayment}
+                        disabled={paymentLoading || !amount || parseFloat(amount) < 1000}
+                        startIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <PaymentIcon />}
+                        sx={{
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                            boxShadow: '0 4px 14px rgba(13, 122, 106, 0.25)',
+                            '&:hover': {
+                                boxShadow: '0 6px 20px rgba(13, 122, 106, 0.35)',
+                            },
+                            '&:disabled': {
+                                background: isDark ? '#374151' : '#e5e7eb',
+                                color: c.textMuted,
+                                boxShadow: 'none',
+                            },
+                            textTransform: 'none',
+                            borderRadius: '10px',
+                            fontWeight: 700,
+                            fontSize: '0.85rem',
+                            px: 3,
+                            py: 1,
+                        }}
+                    >
+                        {paymentLoading ? 'Processing...' : `Pay Rp ${amount ? parseFloat(amount).toLocaleString('id-ID') : '0'}`}
+                    </Button>
+                </DialogActions>
             </Dialog>
+
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={5000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </SidebarLayout>
     );
 }
