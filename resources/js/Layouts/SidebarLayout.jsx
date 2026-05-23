@@ -199,11 +199,13 @@ function SidebarLayout({ children }) {
         position: 'relative', zIndex: 1,
       }}>
         <Box
-          component="img" src="/favicon.png" alt="IAGI-GEOSEA"
+          component="img" src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png" alt="IAGI-GEOSEA"
           sx={{
-            width: isCollapsed ? 38 : 42, height: isCollapsed ? 38 : 42,
-            borderRadius: '12px', flexShrink: 0, objectFit: 'contain',
+            width: isCollapsed ? 38 : 44, height: isCollapsed ? 38 : 44,
+            borderRadius: '50%', flexShrink: 0, objectFit: 'contain',
             filter: 'drop-shadow(0 2px 8px rgba(16,185,129,0.3))',
+            border: '2px solid rgba(255,255,255,0.15)',
+            backgroundColor: 'rgba(255,255,255,0.08)',
           }}
         />
         {!isCollapsed && (
