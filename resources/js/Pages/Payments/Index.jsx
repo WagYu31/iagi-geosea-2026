@@ -381,50 +381,60 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                         <Card elevation={0} sx={{
                                             ...cardBase,
                                             position: 'relative',
+                                            overflow: 'hidden',
                                             border: activeBorder,
                                             boxShadow: activeShadow,
                                             bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white',
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            '&:hover': { transform: 'translateY(-4px)', boxShadow: isDark ? '0 12px 32px rgba(0,0,0,0.45)' : '0 12px 32px rgba(0,0,0,0.05)' },
+                                            transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            '&:hover': { 
+                                                transform: 'translateY(-6px)', 
+                                                boxShadow: isDark 
+                                                    ? `0 16px 40px rgba(0,0,0,0.5), 0 0 20px ${cat.color}15` 
+                                                    : `0 16px 40px rgba(0,0,0,0.06), 0 0 20px ${cat.color}10`,
+                                            },
                                         }}>
-                                            <CardContent sx={{ p: 3, textAlign: 'left', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                                {/* Left Aligned Icon Box */}
+                                            {/* Gradient accent strip at top */}
+                                            <Box sx={{ height: 4, background: cat.gradient }} />
+                                            
+                                            <CardContent sx={{ p: 3, pt: 2.5, textAlign: 'left', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                                {/* Icon with gradient background */}
                                                 <Box sx={{
-                                                    width: 44, height: 44, borderRadius: '10px', mb: 2.2,
-                                                    background: isDark ? 'rgba(255,255,255,0.03)' : '#f9fafb',
-                                                    border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'}`,
+                                                    width: 52, height: 52, borderRadius: '14px', mb: 2.2,
+                                                    background: isDark 
+                                                        ? `linear-gradient(135deg, ${cat.color}18, ${cat.color}08)` 
+                                                        : `linear-gradient(135deg, ${cat.color}12, ${cat.color}05)`,
+                                                    border: `1.5px solid ${cat.color}20`,
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
                                                 }}>
-                                                    <CatIcon category={catKey} size={20} color={isDark ? cat.lightColor || cat.color : cat.color} />
+                                                    <CatIcon category={catKey} size={24} color={cat.color} />
                                                 </Box>
                                                 
                                                 {/* Title */}
-                                                <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: isDark ? '#f3f4f6' : '#1f2937', mb: 2, height: 36, display: 'flex', alignItems: 'center', fontFamily: 'Inter, sans-serif' }}>
+                                                <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', mb: 1, lineHeight: 1.3, fontFamily: 'Inter, sans-serif' }}>
                                                     {cat.label}
                                                 </Typography>
 
                                                 {/* Active Glowing Badge */}
                                                 {isActive && (
-                                                    <Box sx={{ mb: 2 }}>
+                                                    <Box sx={{ mb: 1.5 }}>
                                                         <Chip label="YOUR SUBMISSION" size="small" sx={{
-                                                            fontWeight: 800, fontSize: '0.55rem', borderRadius: '4px',
+                                                            fontWeight: 800, fontSize: '0.55rem', borderRadius: '6px',
                                                             bgcolor: cat.badgeBg, color: cat.color,
-                                                            border: `1px solid ${cat.color}25`,
-                                                            letterSpacing: '0.04em',
-                                                            height: 18,
-                                                            boxShadow: `0 0 12px ${cat.color}15`,
+                                                            border: `1px solid ${cat.color}30`,
+                                                            letterSpacing: '0.06em',
+                                                            height: 22,
+                                                            boxShadow: `0 0 16px ${cat.color}20`,
                                                         }} />
                                                     </Box>
                                                 )}
 
-                                                <Box sx={{ mt: 'auto' }}>
+                                                <Box sx={{ mt: 'auto', pt: 2, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}` }}>
                                                     {/* Price */}
-                                                    <Typography sx={{ fontWeight: 900, fontSize: '1.25rem', color: isDark ? 'white' : '#111827', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
+                                                    <Typography sx={{ fontWeight: 900, fontSize: '1.35rem', color: isDark ? 'white' : '#111827', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
                                                         {fmtIdr(amount)}
                                                     </Typography>
                                                     {/* Subtitle */}
-                                                    <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.5, fontFamily: 'Inter, sans-serif' }}>
+                                                    <Typography sx={{ fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.3, fontFamily: 'Inter, sans-serif' }}>
                                                         per participant
                                                     </Typography>
                                                 </Box>
@@ -439,19 +449,23 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     {/* Action Required Panel */}
                     {submissionsNeedingPayment.length > 0 && (
                         <Fade in={mounted} timeout={700}>
-                            <Paper elevation={0} sx={{ ...cardBase, display: 'flex', flexDirection: 'column', bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white' }}>
-                                {/* Panel Header: Aligns title left, and first item price right */}
+                            <Paper elevation={0} sx={{ ...cardBase, display: 'flex', flexDirection: 'column', bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white', overflow: 'hidden' }}>
+                                {/* Gradient accent line */}
+                                <Box sx={{ height: 3, background: 'linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6)' }} />
+                                
+                                {/* Panel Header */}
                                 <Box sx={{
                                     px: 3, py: 2.2, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                                     borderBottom: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}`,
                                 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f59e0b', boxShadow: '0 0 8px rgba(245,158,11,0.4)', animation: 'pulse 2s infinite' }} />
                                         <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>
                                             Action Required ({submissionsNeedingPayment.length})
                                         </Typography>
                                     </Box>
                                     {firstActionItemFee && (
-                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
+                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#fbbf24' : '#d97706', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
                                             {fmtRp(firstActionItemFee)}
                                         </Typography>
                                     )}
@@ -533,15 +547,21 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 {/* ════════════════════════════════════════════
                     PAYMENT HISTORY TABLE
                 ════════════════════════════════════════════ */}
-                <Paper elevation={0} sx={{ ...cardBase, bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white' }} role="region" aria-label="Payment History">
+                <Paper elevation={0} sx={{ ...cardBase, bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white', overflow: 'hidden' }} role="region" aria-label="Payment History">
                     <Box sx={{
                         px: 3, py: 2.5,
                         borderBottom: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}`,
+                        background: isDark ? 'rgba(0,0,0,0.15)' : 'linear-gradient(180deg, #f8fafc, white)',
                     }}>
-                        <Typography component="h2" sx={{ fontWeight: 800, fontSize: '0.95rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>Payment History</Typography>
-                        <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.3, fontFamily: 'Inter, sans-serif' }}>
-                            {payments.length > 0 ? `${payments.length} transaction${payments.length > 1 ? 's' : ''} recorded` : 'No transactions yet'}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <ReceiptLongIcon sx={{ fontSize: 20, color: isDark ? '#6b7280' : '#9ca3af' }} />
+                            <Box>
+                                <Typography component="h2" sx={{ fontWeight: 800, fontSize: '0.95rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>Payment History</Typography>
+                                <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.1, fontFamily: 'Inter, sans-serif' }}>
+                                    {payments.length > 0 ? `${payments.length} transaction${payments.length > 1 ? 's' : ''} recorded` : 'No transactions yet'}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </Box>
 
                     {payments.length === 0 ? (
@@ -582,7 +602,12 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                         '& td': { borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}`, py: 2, color: isDark ? '#d1d5db' : '#4b5563' },
                                                     }}>
                                                         <TableCell><Typography sx={{ fontWeight: 800, fontSize: '0.82rem', color: isDark ? '#f3f4f6' : '#1f2937' }} noWrap>{p.submission?.title || '—'}</Typography></TableCell>
-                                                        <TableCell><Typography sx={{ fontSize: '0.8rem' }}>{pCat ? pCat.short : '—'}</Typography></TableCell>
+                                                        <TableCell>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: pCat?.color || '#6b7280', flexShrink: 0 }} />
+                                                                <Typography sx={{ fontSize: '0.8rem', color: isDark ? '#d1d5db' : '#4b5563' }}>{pCat ? pCat.short : '—'}</Typography>
+                                                            </Box>
+                                                        </TableCell>
                                                         <TableCell><Typography sx={{ fontWeight: 800, fontSize: '0.82rem', color: isDark ? '#f3f4f6' : '#1f2937', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>{p.amount ? fmtRp(p.amount) : '—'}</Typography></TableCell>
                                                         <TableCell><Typography sx={{ fontSize: '0.8rem' }}>{getMethod(p)}</Typography></TableCell>
                                                         <TableCell>{getStatusChip(p)}</TableCell>
