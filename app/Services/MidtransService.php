@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Payment;
+use App\Mail\PaymentConfirmation;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
@@ -166,6 +168,19 @@ class MidtransService
         $payment->update($updateData);
 
         Log::info("Webhook processed for payment #{$payment->id}: status={$transactionStatus}, mapped={$updateData['status']}");
+
+        // Send payment confirmation email when payment is successful
+        if (isset($updateData['status']) && $updateData['status'] === 'paid') {
+            try {
+                $payment->load(['user', 'submission']);
+                if ($payment->user && $payment->user->email) {
+                    Mail::to($payment->user->email)->queue(new PaymentConfirmation($payment));
+                    Log::info("Payment confirmation email queued for payment #{$payment->id} to {$payment->user->email}");
+                }
+            } catch (\Exception $e) {
+                Log::error("Failed to queue payment confirmation email for payment #{$payment->id}: " . $e->getMessage());
+            }
+        }
 
         return $payment;
     }
