@@ -29,6 +29,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
+import ShieldIcon from '@mui/icons-material/Shield';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import { useThemeMode } from '../ThemeContext';
 
 const drawerWidth = 270;
@@ -87,32 +89,38 @@ function SidebarLayout({ children }) {
       display: 'flex',
       flexDirection: 'column',
       bgcolor: c.sidebarBg,
+      position: 'relative',
+      overflow: 'hidden',
     }} role="navigation" aria-label="Main navigation">
-      {/* ─── Unified Header: Brand + User ─── */}
+
+      {/* ─── Background decorative elements ─── */}
+      <Box sx={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+        '&::before': {
+          content: '""', position: 'absolute',
+          top: '60%', left: '-20%', width: '140%', height: '50%',
+          background: isDark
+            ? 'radial-gradient(ellipse, rgba(26,188,156,0.03) 0%, transparent 70%)'
+            : 'radial-gradient(ellipse, rgba(26,188,156,0.04) 0%, transparent 70%)',
+          borderRadius: '50%',
+        },
+      }} />
+
+      {/* ─── Unified Header: Brand ─── */}
       <Box sx={{
         background: c.sidebarHeaderBg,
         p: isCollapsed ? 1.5 : 0,
         position: 'relative',
         overflow: 'hidden',
         '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: -40,
-          right: -40,
-          width: 120,
-          height: 120,
-          background: 'rgba(255,255,255,0.06)',
-          borderRadius: '50%',
+          content: '""', position: 'absolute',
+          top: -40, right: -40, width: 120, height: 120,
+          background: 'rgba(255,255,255,0.06)', borderRadius: '50%',
         },
         '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: -20,
-          left: -20,
-          width: 80,
-          height: 80,
-          background: 'rgba(255,255,255,0.04)',
-          borderRadius: '50%',
+          content: '""', position: 'absolute',
+          bottom: -20, left: -20, width: 80, height: 80,
+          background: 'rgba(255,255,255,0.04)', borderRadius: '50%',
         },
       }}>
         {/* Brand Row */}
@@ -123,38 +131,27 @@ function SidebarLayout({ children }) {
           alignItems: 'center',
           justifyContent: isCollapsed ? 'center' : 'flex-start',
           gap: 1.2,
-          position: 'relative',
-          zIndex: 1,
+          position: 'relative', zIndex: 1,
         }}>
           <Box
-            component="img"
-            src="/favicon.ico"
-            alt="IAGI-GEOSEA"
+            component="img" src="/favicon.ico" alt="IAGI-GEOSEA"
             sx={{
-              width: isCollapsed ? 36 : 34,
-              height: isCollapsed ? 36 : 34,
-              borderRadius: '10px',
-              flexShrink: 0,
-              objectFit: 'contain',
+              width: isCollapsed ? 36 : 34, height: isCollapsed ? 36 : 34,
+              borderRadius: '10px', flexShrink: 0, objectFit: 'contain',
+              filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.15))',
             }}
           />
           {!isCollapsed && (
             <Box>
               <Typography sx={{
-                fontWeight: 800,
-                fontSize: '0.95rem',
-                color: 'white',
-                letterSpacing: '-0.01em',
-                lineHeight: 1.15,
+                fontWeight: 800, fontSize: '0.95rem', color: 'white',
+                letterSpacing: '-0.01em', lineHeight: 1.15,
               }}>
                 IAGI-GEOSEA
               </Typography>
               <Typography sx={{
-                fontSize: '0.6rem',
-                color: 'rgba(255,255,255,0.55)',
-                fontWeight: 500,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
+                fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)',
+                fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
               }}>
                 Conference 2026
               </Typography>
@@ -165,13 +162,11 @@ function SidebarLayout({ children }) {
 
       {/* ─── Menu Label ─── */}
       {!isCollapsed && (
-        <Box sx={{ px: 2.5, pt: 2, pb: 0.5 }}>
+        <Box sx={{ px: 2.5, pt: 2.5, pb: 0.8 }}>
           <Typography sx={{
-            fontSize: '0.6rem',
-            fontWeight: 700,
-            color: isDark ? '#6b7280' : '#b0b8c4',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            fontSize: '0.58rem', fontWeight: 700,
+            color: isDark ? '#4b5563' : '#9ca3af',
+            textTransform: 'uppercase', letterSpacing: '0.15em',
           }}>
             Navigation
           </Typography>
@@ -179,7 +174,7 @@ function SidebarLayout({ children }) {
       )}
 
       {/* ─── Menu Items ─── */}
-      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1 }} aria-label="Navigation menu">
+      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1, position: 'relative', zIndex: 1 }} aria-label="Navigation menu">
         {menuItems.map((item) => {
           const active = isActive(item.href);
           const button = (
@@ -188,39 +183,52 @@ function SidebarLayout({ children }) {
               href={item.href}
               aria-current={active ? 'page' : undefined}
               sx={{
-                borderRadius: '12px',
-                py: 1.1,
-                px: isCollapsed ? 1 : 1.5,
+                borderRadius: '14px',
+                py: 1.2,
+                px: isCollapsed ? 1 : 1.8,
                 justifyContent: isCollapsed ? 'center' : 'flex-start',
-                backgroundColor: active ? `${item.color}14` : 'transparent',
-                border: active ? `1.5px solid ${item.color}30` : '1.5px solid transparent',
+                backgroundColor: active
+                  ? isDark ? `${item.color}18` : `${item.color}0c`
+                  : 'transparent',
+                border: active ? `1.5px solid ${item.color}25` : '1.5px solid transparent',
                 position: 'relative',
                 overflow: 'hidden',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                /* Active left accent */
                 '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  left: 0,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: active ? 3 : 0,
-                  height: active ? '60%' : 0,
+                  content: '""', position: 'absolute',
+                  left: 0, top: '50%', transform: 'translateY(-50%)',
+                  width: active ? 3 : 0, height: active ? '55%' : 0,
                   backgroundColor: item.color,
                   borderRadius: '0 4px 4px 0',
                   transition: 'all 0.3s ease',
                 },
+                /* Hover glow */
+                '&::after': {
+                  content: '""', position: 'absolute',
+                  inset: 0, borderRadius: '14px',
+                  background: `radial-gradient(ellipse at 0% 50%, ${item.color}06 0%, transparent 70%)`,
+                  opacity: 0, transition: 'opacity 0.3s ease',
+                },
                 '&:hover': {
-                  backgroundColor: active ? `${item.color}1a` : (isDark ? 'rgba(255,255,255,0.04)' : '#f8f9fa'),
-                  transform: !isCollapsed ? 'translateX(3px)' : 'none',
+                  backgroundColor: active
+                    ? isDark ? `${item.color}22` : `${item.color}12`
+                    : isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                  transform: !isCollapsed ? 'translateX(4px)' : 'scale(1.05)',
+                  '&::after': { opacity: 1 },
                 },
               }}
             >
               <ListItemIcon sx={{
-                color: active ? item.color : (isDark ? '#9ca3af' : '#9ca3af'),
-                minWidth: isCollapsed ? 'auto' : 38,
+                color: active ? item.color : isDark ? '#6b7280' : '#9ca3af',
+                minWidth: isCollapsed ? 'auto' : 40,
                 justifyContent: 'center',
-                '& .MuiSvgIcon-root': { fontSize: 22 },
-                transition: 'color 0.2s ease',
+                '& .MuiSvgIcon-root': {
+                  fontSize: 21,
+                  transition: 'all 0.25s ease',
+                  ...(active && { filter: `drop-shadow(0 0 6px ${item.color}40)` }),
+                },
+                transition: 'color 0.25s ease',
               }}>
                 {item.icon}
               </ListItemIcon>
@@ -228,138 +236,132 @@ function SidebarLayout({ children }) {
                 <ListItemText
                   primary={item.text}
                   primaryTypographyProps={{
-                    fontSize: '0.85rem',
+                    fontSize: '0.84rem',
                     fontWeight: active ? 700 : 500,
-                    color: active ? item.color : (isDark ? '#d1d5db' : '#4b5563'),
+                    color: active ? (isDark ? item.color : item.color) : (isDark ? '#d1d5db' : '#4b5563'),
                     letterSpacing: '-0.01em',
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.25s ease',
                   }}
                 />
               )}
               {active && !isCollapsed && (
                 <Box sx={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
+                  width: 7, height: 7, borderRadius: '50%',
                   bgcolor: item.color,
-                  boxShadow: `0 0 8px ${item.color}80`,
+                  boxShadow: `0 0 10px ${item.color}60`,
                   flexShrink: 0,
+                  animation: 'sidebarPulse 2s ease-in-out infinite',
+                  '@keyframes sidebarPulse': {
+                    '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                    '50%': { opacity: 0.6, transform: 'scale(0.85)' },
+                  },
                 }} />
               )}
             </ListItemButton>
           );
 
           return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 0.4 }}>
+            <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
               {isCollapsed ? (
-                <Tooltip title={item.text} placement="right">{button}</Tooltip>
+                <Tooltip title={item.text} placement="right" arrow>{button}</Tooltip>
               ) : button}
             </ListItem>
           );
         })}
       </List>
 
-      <Divider sx={{ mx: isCollapsed ? 1 : 2, borderColor: isDark ? '#2d3748' : '#f0f0f0' }} />
+      {/* ─── Divider with gradient ─── */}
+      <Box sx={{
+        mx: isCollapsed ? 1 : 2, height: '1px', position: 'relative', zIndex: 1,
+        background: isDark
+          ? 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)'
+          : 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.06) 50%, transparent 100%)',
+      }} />
 
       {/* ─── Logout ─── */}
-      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 1.5 }}>
+      <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 1.5, position: 'relative', zIndex: 1 }}>
         <ListItem disablePadding>
           {isCollapsed ? (
-            <Tooltip title="Logout" placement="right">
+            <Tooltip title="Logout" placement="right" arrow>
               <ListItemButton
-                component={Link}
-                href={route('logout')}
-                method="post"
+                component={Link} href={route('logout')} method="post"
                 sx={{
-                  borderRadius: '12px',
-                  py: 1.1,
-                  px: 1,
+                  borderRadius: '14px', py: 1.1, px: 1,
                   justifyContent: 'center',
-                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fff5f5',
-                  border: isDark ? '1.5px solid rgba(239, 68, 68, 0.2)' : '1.5px solid #fed7d7',
-                  transition: 'all 0.2s ease',
+                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.06)' : 'rgba(239, 68, 68, 0.04)',
+                  border: isDark ? '1.5px solid rgba(239, 68, 68, 0.12)' : '1.5px solid rgba(239, 68, 68, 0.08)',
+                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
-                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
-                    borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fca5a5',
+                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)',
+                    borderColor: isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(239, 68, 68, 0.15)',
+                    transform: 'scale(1.05)',
                   },
                 }}
               >
-                <ListItemIcon sx={{
-                  color: '#ef4444',
-                  minWidth: 'auto',
-                  justifyContent: 'center',
-                  '& .MuiSvgIcon-root': { fontSize: 22 },
-                }}>
+                <ListItemIcon sx={{ color: '#ef4444', minWidth: 'auto', justifyContent: 'center', '& .MuiSvgIcon-root': { fontSize: 21 } }}>
                   <LogoutIcon />
                 </ListItemIcon>
               </ListItemButton>
             </Tooltip>
           ) : (
             <ListItemButton
-              component={Link}
-              href={route('logout')}
-              method="post"
+              component={Link} href={route('logout')} method="post"
               sx={{
-                borderRadius: '12px',
-                py: 1.1,
-                px: 1.5,
-                bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fff5f5',
-                border: isDark ? '1.5px solid rgba(239, 68, 68, 0.2)' : '1.5px solid #fed7d7',
-                transition: 'all 0.2s ease',
+                borderRadius: '14px', py: 1.1, px: 1.8,
+                bgcolor: isDark ? 'rgba(239, 68, 68, 0.06)' : 'rgba(239, 68, 68, 0.04)',
+                border: isDark ? '1.5px solid rgba(239, 68, 68, 0.12)' : '1.5px solid rgba(239, 68, 68, 0.08)',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
-                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
-                  borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fca5a5',
-                  transform: 'translateX(3px)',
+                  bgcolor: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)',
+                  borderColor: isDark ? 'rgba(239, 68, 68, 0.25)' : 'rgba(239, 68, 68, 0.15)',
+                  transform: 'translateX(4px)',
                 },
               }}
             >
-              <ListItemIcon sx={{
-                color: '#ef4444',
-                minWidth: 38,
-                '& .MuiSvgIcon-root': { fontSize: 22 },
-              }}>
+              <ListItemIcon sx={{ color: '#ef4444', minWidth: 40, '& .MuiSvgIcon-root': { fontSize: 21 } }}>
                 <LogoutIcon />
               </ListItemIcon>
               <ListItemText
                 primary="Logout"
-                primaryTypographyProps={{
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#ef4444',
-                }}
+                primaryTypographyProps={{ fontSize: '0.84rem', fontWeight: 600, color: '#ef4444' }}
               />
             </ListItemButton>
           )}
         </ListItem>
       </List>
 
-      {/* ─── Footer ─── */}
+      {/* ─── Footer — Premium compliance badges ─── */}
       {!isCollapsed && (
-        <Box sx={{ px: 2, pb: 2, pt: 0.5, textAlign: 'center' }}>
-          <Typography sx={{ color: isDark ? '#4b5563' : '#d1d5db', fontSize: '0.6rem', fontWeight: 500 }}>
-            © 2026 PIT IAGI-GEOSEA
+        <Box sx={{ px: 2, pb: 2.5, pt: 1, textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <Typography sx={{ color: isDark ? '#374151' : '#d1d5db', fontSize: '0.58rem', fontWeight: 500, mb: 1 }}>
+            © 2026 PIT IAGI-GEOSEA 2026
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mt: 0.75 }}>
-            <Box sx={{
-              display: 'inline-flex', alignItems: 'center', gap: 0.3,
-              px: 0.8, py: 0.2, borderRadius: '4px',
-              bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
-              border: `1px solid ${isDark ? 'rgba(26,188,156,0.15)' : '#d1fae5'}`,
-            }}>
-              <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: '#1abc9c', letterSpacing: '0.05em' }}>
-                ISO 9241
-              </Typography>
-            </Box>
-            <Box sx={{
-              display: 'inline-flex', alignItems: 'center', gap: 0.3,
-              px: 0.8, py: 0.2, borderRadius: '4px',
-              bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
-              border: `1px solid ${isDark ? 'rgba(26,188,156,0.15)' : '#d1fae5'}`,
-            }}>
-              <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: '#1abc9c', letterSpacing: '0.05em' }}>
-                ISO 40500
-              </Typography>
-            </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.6 }}>
+            {[
+              { label: 'ISO 9241', icon: ShieldIcon },
+              { label: 'WCAG 2.1', icon: VerifiedIcon },
+            ].map((badge) => (
+              <Tooltip key={badge.label} title={`${badge.label} Compliant`} arrow placement="top">
+                <Box sx={{
+                  display: 'inline-flex', alignItems: 'center', gap: 0.4,
+                  px: 0.8, py: 0.3, borderRadius: '6px',
+                  bgcolor: isDark ? 'rgba(26,188,156,0.05)' : 'rgba(26,188,156,0.03)',
+                  border: `1px solid ${isDark ? 'rgba(26,188,156,0.08)' : 'rgba(26,188,156,0.06)'}`,
+                  transition: 'all 0.2s ease',
+                  cursor: 'default',
+                  '&:hover': {
+                    bgcolor: isDark ? 'rgba(26,188,156,0.08)' : 'rgba(26,188,156,0.06)',
+                    borderColor: isDark ? 'rgba(26,188,156,0.15)' : 'rgba(26,188,156,0.12)',
+                    transform: 'translateY(-1px)',
+                  },
+                }}>
+                  <badge.icon sx={{ fontSize: 9, color: isDark ? '#1abc9c' : '#10b981', opacity: 0.7 }} />
+                  <Typography sx={{ fontSize: '0.48rem', fontWeight: 700, color: isDark ? '#1abc9c' : '#10b981', letterSpacing: '0.06em', opacity: 0.7 }}>
+                    {badge.label}
+                  </Typography>
+                </Box>
+              </Tooltip>
+            ))}
           </Box>
         </Box>
       )}
@@ -400,15 +402,15 @@ function SidebarLayout({ children }) {
             sx={{
               mr: 2,
               display: { xs: 'none', sm: 'flex' },
-              width: 34,
-              height: 34,
+              width: 34, height: 34,
               borderRadius: '10px',
               border: `1.5px solid ${isDark ? '#374151' : '#e5e7eb'}`,
               bgcolor: isDark ? '#1f2937' : '#fafbfc',
-              transition: 'all 0.2s ease',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
                 bgcolor: isDark ? '#374151' : '#f3f4f6',
                 borderColor: isDark ? '#4b5563' : '#d1d5db',
+                transform: 'scale(1.05)',
               },
             }}
           >
@@ -424,17 +426,16 @@ function SidebarLayout({ children }) {
               aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               sx={{
                 mr: 1.5,
-                width: 36,
-                height: 36,
+                width: 36, height: 36,
                 borderRadius: '10px',
                 border: `1.5px solid ${isDark ? '#374151' : '#e5e7eb'}`,
                 bgcolor: isDark ? '#1f2937' : '#fafbfc',
                 color: isDark ? '#fbbf24' : '#6b7280',
-                transition: 'all 0.3s ease',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&:hover': {
                   bgcolor: isDark ? '#374151' : '#f3f4f6',
                   borderColor: isDark ? '#4b5563' : '#d1d5db',
-                  transform: 'rotate(20deg)',
+                  transform: 'rotate(20deg) scale(1.05)',
                 },
               }}
             >
@@ -448,17 +449,13 @@ function SidebarLayout({ children }) {
             href={route('profile.edit')}
             aria-label={`Profile: ${auth.user?.name}`}
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.5,
-              textDecoration: 'none',
-              cursor: 'pointer',
-              borderRadius: '12px',
-              px: 1.5,
-              py: 0.8,
-              transition: 'all 0.2s ease',
+              display: 'flex', alignItems: 'center', gap: 1.5,
+              textDecoration: 'none', cursor: 'pointer',
+              borderRadius: '14px', px: 1.5, py: 0.8,
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
-                bgcolor: isDark ? '#1f2937' : '#f3f4f6',
+                bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                transform: 'translateY(-1px)',
               },
             }}
           >
@@ -472,13 +469,12 @@ function SidebarLayout({ children }) {
             </Box>
             <Avatar
               sx={{
-                width: 36,
-                height: 36,
-                bgcolor: '#0d7a6a',
-                fontWeight: 700,
-                fontSize: '0.85rem',
+                width: 36, height: 36,
+                background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                fontWeight: 700, fontSize: '0.85rem',
                 borderRadius: '10px',
-                boxShadow: '0 2px 8px rgba(13, 122, 106, 0.2)',
+                boxShadow: '0 2px 10px rgba(5, 150, 105, 0.25)',
+                border: '2px solid rgba(255,255,255,0.15)',
               }}
               variant="rounded"
             >
@@ -508,7 +504,7 @@ function SidebarLayout({ children }) {
               boxSizing: 'border-box',
               width: drawerWidth,
               borderRight: 'none',
-              boxShadow: '4px 0 24px rgba(0,0,0,0.08)',
+              boxShadow: '4px 0 32px rgba(0,0,0,0.12)',
             },
           }}
         >
@@ -523,7 +519,7 @@ function SidebarLayout({ children }) {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: currentDrawerWidth,
-              borderRight: `1px solid ${isDark ? '#2d3748' : '#f0f0f0'}`,
+              borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)'}`,
               transition: 'width 0.3s ease',
               overflowX: 'hidden',
               bgcolor: c.sidebarBg,
