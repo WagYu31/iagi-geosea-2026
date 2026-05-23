@@ -119,7 +119,132 @@ function ResourceUploadForm({ onUpload, uploading }) {
     );
 }
 
-export default function Settings({ settings, submissionSettings }) {
+// Pricing Settings Tab Component
+function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c }) {
+    const [pricing, setPricing] = useState({
+        professional: initialPricing?.professional || 2500000,
+        international: initialPricing?.international || 3000000,
+        student: initialPricing?.student || 750000,
+    });
+    const [saving, setSaving] = useState(false);
+
+    const formatIDR = (num) => new Intl.NumberFormat('id-ID').format(num);
+
+    const categories = [
+        { key: 'professional', label: 'Professional & IAGI Member', icon: '🏢', desc: 'For professionals and IAGI organization members' },
+        { key: 'international', label: 'International Delegate', icon: '🌍', desc: 'For international participants (Non-IAGI)' },
+        { key: 'student', label: 'Student', icon: '🎓', desc: 'For undergraduate/postgraduate students' },
+    ];
+
+    const savePricing = () => {
+        setSaving(true);
+        router.post(route('admin.settings.savePricing'), {
+            pricing,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                alert('Registration pricing updated successfully!');
+                setSaving(false);
+            },
+            onError: (errors) => {
+                console.error('Save failed:', errors);
+                alert('Failed to save pricing settings');
+                setSaving(false);
+            },
+            onFinish: () => setSaving(false),
+        });
+    };
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Stack spacing={3}>
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            💰 Registration Fee Pricing
+                        </Typography>
+                        <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mb: 3 }}>
+                            Set the registration fee for each participant category. Changes will take effect immediately for new payments.
+                        </Typography>
+
+                        <Stack spacing={3}>
+                            {categories.map((cat) => (
+                                <Card key={cat.key} elevation={0} sx={{
+                                    border: `1px solid ${c.cardBorder}`,
+                                    borderRadius: '12px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafbfc',
+                                }}>
+                                    <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+                                            <Typography sx={{ fontSize: '1.5rem' }}>{cat.icon}</Typography>
+                                            <Box>
+                                                <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: c.textPrimary }}>
+                                                    {cat.label}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.75rem', color: c.textMuted }}>
+                                                    {cat.desc}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <Typography sx={{ fontWeight: 600, color: '#1abc9c', fontSize: '0.9rem', minWidth: 40 }}>
+                                                IDR
+                                            </Typography>
+                                            <TextField
+                                                type="number"
+                                                value={pricing[cat.key]}
+                                                onChange={(e) => setPricing({ ...pricing, [cat.key]: parseInt(e.target.value) || 0 })}
+                                                fullWidth
+                                                size="small"
+                                                sx={inputSx}
+                                                inputProps={{ min: 0, step: 50000 }}
+                                                helperText={`Rp ${formatIDR(pricing[cat.key])}`}
+                                            />
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Stack>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 3, gap: 2 }}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => setPricing({
+                                    professional: initialPricing?.professional || 2500000,
+                                    international: initialPricing?.international || 3000000,
+                                    student: initialPricing?.student || 750000,
+                                })}
+                                sx={{
+                                    color: c.textMuted,
+                                    borderColor: c.cardBorder,
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    '&:hover': {
+                                        borderColor: '#1abc9c',
+                                        backgroundColor: isDark ? 'rgba(26,188,156,0.06)' : '#f9fafb',
+                                    },
+                                }}
+                            >
+                                Reset
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={savePricing}
+                                disabled={saving}
+                                sx={tealBtnSx}
+                            >
+                                {saving ? 'Saving...' : 'Save Pricing'}
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Stack>
+        </Box>
+    );
+}
+
+export default function Settings({ settings, submissionSettings, pricing: initialPricing }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -1385,6 +1510,7 @@ export default function Settings({ settings, submissionSettings }) {
                     >
                         <Tab label="Landing Page Settings" />
                         <Tab label="Submission Deadline" />
+                        <Tab label="Pricing Settings" />
                     </Tabs>
 
                     {/* Landing Page Settings Tab */}
@@ -3337,6 +3463,11 @@ export default function Settings({ settings, submissionSettings }) {
                                 </CardContent>
                             </Card>
                         </Box>
+                    </TabPanel>
+
+                    {/* Pricing Settings Tab */}
+                    <TabPanel value={tabValue} index={2}>
+                        <PricingSettingsTab initialPricing={initialPricing} inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} />
                     </TabPanel>
                 </Card>
             </Box>

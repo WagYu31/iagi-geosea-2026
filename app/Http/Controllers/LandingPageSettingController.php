@@ -25,9 +25,16 @@ class LandingPageSettingController extends Controller
             'submission_enabled' => Setting::get('submission_enabled', '1'),
         ];
 
+        // Load pricing: DB override first, then config fallback
+        $pricingSetting = LandingPageSetting::where('key', 'registration_pricing')->first();
+        $pricing = $pricingSetting 
+            ? json_decode($pricingSetting->value, true) 
+            : config('midtrans.pricing', []);
+
         return Inertia::render('Admin/Settings', [
             'settings' => $settings,
             'submissionSettings' => $submissionSettings,
+            'pricing' => $pricing,
         ]);
     }
 
@@ -94,6 +101,60 @@ class LandingPageSettingController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Setting created successfully');
+    }
+
+    /**
+     * Save registration pricing settings
+     */
+    public function savePricing(Request $request)
+    {
+        $request->validate([
+            'pricing' => 'required|array',
+            'pricing.professional' => 'required|numeric|min:0',
+            'pricing.international' => 'required|numeric|min:0',
+            'pricing.student' => 'required|numeric|min:0',
+        ]);
+
+        $pricing = $request->input('pricing');
+
+        // Save to database (landing_page_settings table)
+        $setting = LandingPageSetting::where('key', 'registration_pricing')->first();
+        if ($setting) {
+            $setting->update(['value' => json_encode($pricing)]);
+        } else {
+            LandingPageSetting::create([
+                'key' => 'registration_pricing',
+                'value' => json_encode($pricing),
+                'section' => 'payment',
+                'type' => 'json',
+            ]);
+        }
+
+        // Also update config file so PaymentController picks it up immediately
+        $configPath = config_path('midtrans.php');
+        if (file_exists($configPath)) {
+            $content = file_get_contents($configPath);
+            $content = preg_replace(
+                "/'professional'\s*=>\s*\d+/",
+                "'professional'  => " . (int) $pricing['professional'],
+                $content
+            );
+            $content = preg_replace(
+                "/'international'\s*=>\s*\d+/",
+                "'international' => " . (int) $pricing['international'],
+                $content
+            );
+            $content = preg_replace(
+                "/'student'\s*=>\s*\d+/",
+                "'student'       => " . (int) $pricing['student'],
+                $content
+            );
+            file_put_contents($configPath, $content);
+        }
+
+        Log::info('Registration pricing updated', $pricing);
+
+        return redirect()->back()->with('success', 'Registration pricing updated successfully!');
     }
 
     /**

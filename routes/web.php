@@ -105,11 +105,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->with('submission')
             ->get();
 
+        // Load pricing: DB override first, then config fallback
+        $pricingSetting = App\Models\LandingPageSetting::where('key', 'registration_pricing')->first();
+        $pricing = $pricingSetting 
+            ? json_decode($pricingSetting->value, true) 
+            : config('midtrans.pricing');
+
         return Inertia::render('Payments/Index', [
             'payments' => $payments,
             'submissions' => $submissions,
             'midtrans_client_key' => config('midtrans.client_key'),
-            'pricing' => config('midtrans.pricing'),
+            'pricing' => $pricing,
         ]);
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
@@ -174,6 +180,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/faq-background', [App\Http\Controllers\LandingPageSettingController::class, 'uploadFaqBackground'])->name('settings.uploadFaqBackground');
         Route::post('/settings/upload-partner-poster', [App\Http\Controllers\LandingPageSettingController::class, 'uploadPartnerPoster'])->name('settings.uploadPartnerPoster');
 
+        // Registration Pricing Settings
+        Route::post('/settings/save-pricing', [App\Http\Controllers\LandingPageSettingController::class, 'savePricing'])->name('settings.savePricing');
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs
         Route::post('/submission-settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('submission.settings.update');

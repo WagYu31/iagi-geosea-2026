@@ -40,7 +40,11 @@ class PaymentController extends Controller
         }
 
         // Determine amount from submission's participant category
-        $pricing = config('midtrans.pricing', []);
+        // DB override first, then config fallback
+        $pricingSetting = \App\Models\LandingPageSetting::where('key', 'registration_pricing')->first();
+        $pricing = $pricingSetting 
+            ? json_decode($pricingSetting->value, true) 
+            : config('midtrans.pricing', []);
         $amount = $pricing[$submission->participant_category] ?? null;
 
         if (!$amount) {
