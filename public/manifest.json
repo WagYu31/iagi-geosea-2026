@@ -1,0 +1,23 @@
+{
+  "name": "IAGI-GEOSEA Conference 2026",
+  "short_name": "IAGI-GEOSEA",
+  "description": "Premium Conference Payment Center and Registration System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#004D40",
+  "theme_color": "#004D40",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

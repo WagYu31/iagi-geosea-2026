@@ -8,9 +8,14 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Favicon -->
+        <!-- Favicon & PWA -->
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <link rel="icon" type="image/png" href="/favicon.ico">
+        <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+        <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon.png">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#004D40">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
