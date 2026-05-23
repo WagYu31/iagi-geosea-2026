@@ -25,7 +25,6 @@ class PaymentController extends Controller
     {
         $request->validate([
             'submission_id' => 'required|exists:submissions,id',
-            'amount'        => 'required|numeric|min:1000',
         ]);
 
         // Verify user owns this submission
@@ -37,6 +36,17 @@ class PaymentController extends Controller
         if (strtolower($submission->status) !== 'accepted') {
             return response()->json([
                 'error' => 'Payment is only available for accepted submissions.',
+            ], 422);
+        }
+
+        // Determine amount from user category
+        $user = Auth::user();
+        $pricing = config('midtrans.pricing', []);
+        $amount = $pricing[$user->category] ?? null;
+
+        if (!$amount) {
+            return response()->json([
+                'error' => 'Unable to determine registration fee. Please ensure your participant category is set in your profile.',
             ], 422);
         }
 
@@ -53,10 +63,10 @@ class PaymentController extends Controller
                 ], 422);
             }
 
-            // Update amount if changed
-            if ((float) $payment->amount !== (float) $request->amount) {
+            // Update amount if category pricing changed
+            if ((float) $payment->amount !== (float) $amount) {
                 $payment->update([
-                    'amount'     => $request->amount,
+                    'amount'     => $amount,
                     'snap_token' => null, // Force new token for new amount
                 ]);
             }
@@ -65,7 +75,7 @@ class PaymentController extends Controller
             $payment = Payment::create([
                 'user_id'       => Auth::id(),
                 'submission_id' => $request->submission_id,
-                'amount'        => $request->amount,
+                'amount'        => $amount,
                 'status'        => 'pending',
                 'verified'      => false,
             ]);

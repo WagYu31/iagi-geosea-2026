@@ -109,6 +109,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'payments' => $payments,
             'submissions' => $submissions,
             'midtrans_client_key' => config('midtrans.client_key'),
+            'pricing' => config('midtrans.pricing'),
         ]);
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');

@@ -6,10 +6,6 @@ return [
     |--------------------------------------------------------------------------
     | Midtrans Server Key
     |--------------------------------------------------------------------------
-    |
-    | Server key digunakan untuk komunikasi server-to-server dengan Midtrans.
-    | JANGAN pernah expose key ini di frontend.
-    |
     */
     'server_key' => env('MIDTRANS_SERVER_KEY', ''),
 
@@ -17,9 +13,6 @@ return [
     |--------------------------------------------------------------------------
     | Midtrans Client Key
     |--------------------------------------------------------------------------
-    |
-    | Client key digunakan di frontend untuk inisialisasi Snap.js popup.
-    |
     */
     'client_key' => env('MIDTRANS_CLIENT_KEY', ''),
 
@@ -27,9 +20,6 @@ return [
     |--------------------------------------------------------------------------
     | Production Mode
     |--------------------------------------------------------------------------
-    |
-    | Set true untuk production, false untuk sandbox.
-    |
     */
     'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
 
@@ -44,9 +34,6 @@ return [
     |--------------------------------------------------------------------------
     | 3D Secure
     |--------------------------------------------------------------------------
-    |
-    | Enable 3DS untuk transaksi kartu kredit.
-    |
     */
     'is_3ds' => true,
 
@@ -58,5 +45,20 @@ return [
     'snap_url' => env('MIDTRANS_IS_PRODUCTION', false)
         ? 'https://app.midtrans.com/snap/snap.js'
         : 'https://app.sandbox.midtrans.com/snap/snap.js',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Registration Fee Pricing
+    |--------------------------------------------------------------------------
+    |
+    | Harga registrasi berdasarkan kategori peserta (user.category).
+    | Key = nilai dari kolom `category` di tabel users.
+    |
+    */
+    'pricing' => [
+        'Professional'           => 2500000,  // Professional and IAGI member
+        'International Delegate' => 3000000,  // Professional and Non-IAGI member
+        'Student'                => 750000,   // Student
+    ],
 
 ];
