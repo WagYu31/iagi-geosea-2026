@@ -139,7 +139,7 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
     const savePricing = async () => {
         setSaving(true);
         try {
-            await axios.post('/admin/settings/save-pricing', { pricing });
+            await axios.post('/admin/pricing-settings', { pricing });
             alert('Registration pricing updated successfully!');
             router.reload({ preserveScroll: true });
         } catch (error) {

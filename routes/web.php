@@ -181,7 +181,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/upload-partner-poster', [App\Http\Controllers\LandingPageSettingController::class, 'uploadPartnerPoster'])->name('settings.uploadPartnerPoster');
 
         // Registration Pricing Settings
-        Route::post('/settings/save-pricing', [App\Http\Controllers\LandingPageSettingController::class, 'savePricing'])->name('settings.savePricing');
+        Route::post('/pricing-settings', [App\Http\Controllers\LandingPageSettingController::class, 'savePricing'])->name('settings.savePricing');
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs
         Route::post('/submission-settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('submission.settings.update');
