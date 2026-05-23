@@ -66,13 +66,11 @@ class PaymentController extends Controller
                 ], 422);
             }
 
-            // Update amount if category pricing changed
-            if ((float) $payment->amount !== (float) $amount) {
-                $payment->update([
-                    'amount'     => $amount,
-                    'snap_token' => null, // Force new token for new amount
-                ]);
-            }
+            // Always refresh: update amount + clear old snap_token to force fresh token
+            $payment->update([
+                'amount'     => $amount,
+                'snap_token' => null,
+            ]);
         } else {
             // Create new payment record
             $payment = Payment::create([
