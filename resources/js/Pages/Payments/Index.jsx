@@ -114,16 +114,28 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 body: JSON.stringify({ submission_id: selectedSubmission.id }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Payment failed');
+            if (!res.ok) throw new Error(data.error || data.message || 'Server error: ' + res.status);
             handleCloseDialog();
-            if (window.snap) {
+
+            // Wait for Snap.js to load if not yet available (max 5 seconds)
+            let snapReady = !!window.snap;
+            if (!snapReady) {
+                for (let i = 0; i < 10; i++) {
+                    await new Promise(r => setTimeout(r, 500));
+                    if (window.snap) { snapReady = true; break; }
+                }
+            }
+
+            if (snapReady) {
                 window.snap.pay(data.snap_token, {
                     onSuccess: () => { setSnackbar({ open: true, message: 'Payment successful!', severity: 'success' }); setTimeout(() => router.reload(), 1500); },
-                    onPending: () => { setSnackbar({ open: true, message: 'Payment pending.', severity: 'info' }); setTimeout(() => router.reload(), 1500); },
-                    onError: () => { setSnackbar({ open: true, message: 'Payment failed.', severity: 'error' }); setTimeout(() => router.reload(), 1500); },
-                    onClose: () => { setSnackbar({ open: true, message: 'Payment cancelled.', severity: 'info' }); router.reload(); },
+                    onPending: () => { setSnackbar({ open: true, message: 'Payment pending. Complete payment to finish.', severity: 'info' }); setTimeout(() => router.reload(), 1500); },
+                    onError: (result) => { setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Transaction error'), severity: 'error' }); setTimeout(() => router.reload(), 1500); },
+                    onClose: () => { setSnackbar({ open: true, message: 'Payment popup closed.', severity: 'info' }); router.reload(); },
                 });
-            } else throw new Error('Snap not loaded.');
+            } else {
+                throw new Error('Midtrans payment module not loaded. Please refresh the page and try again.');
+            }
         } catch (e) { setSnackbar({ open: true, message: e.message, severity: 'error' }); }
         finally { setPaymentLoading(false); }
     };
