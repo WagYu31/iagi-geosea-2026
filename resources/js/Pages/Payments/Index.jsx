@@ -17,6 +17,9 @@ import SchoolIcon from '@mui/icons-material/School';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
+import CheckIcon from '@mui/icons-material/Check';
+import StarIcon from '@mui/icons-material/Star';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 /* ─── Category config ─── */
 const CATEGORIES = {
@@ -26,7 +29,10 @@ const CATEGORIES = {
         color: '#6366f1', 
         lightColor: '#a5b4fc', 
         badgeBg: 'rgba(99,102,241,0.12)',
-        gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' 
+        gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+        description: 'For professionals and IAGI organization members',
+        features: ['Full conference access', 'Networking sessions', 'Conference materials', 'Certificate of attendance'],
+        recommended: true,
     },
     'international': { 
         label: 'International Delegate', 
@@ -34,7 +40,9 @@ const CATEGORIES = {
         color: '#ec4899', 
         lightColor: '#f9a8d4', 
         badgeBg: 'rgba(236,72,153,0.12)',
-        gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)' 
+        gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
+        description: 'For international participants (Non-IAGI)',
+        features: ['Full conference access', 'Networking sessions', 'Conference materials', 'International delegate kit'],
     },
     'student': { 
         label: 'Student', 
@@ -42,7 +50,9 @@ const CATEGORIES = {
         color: '#2563eb', 
         lightColor: '#93c5fd', 
         badgeBg: 'rgba(37,99,235,0.12)',
-        gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)' 
+        gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+        description: 'For undergraduate/postgraduate students',
+        features: ['Full conference access', 'Student workshop', 'Conference materials', 'Student certificate'],
     },
 };
 
@@ -356,87 +366,133 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 {/* ════════════════════════════════════════════
                     MIDDLE ROW — Pricing (Left) + Action (Right)
                 ════════════════════════════════════════════ */}
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: submissionsNeedingPayment.length > 0 ? '1fr 420px' : '1fr' }, gap: 3.5, mb: 4 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: submissionsNeedingPayment.length > 0 ? '1fr 380px' : '1fr' }, gap: 3, mb: 4 }}>
                     
-                    {/* 3 Pricing Cards */}
+                    {/* ─── Registration Tiers ─── */}
                     <Box>
-                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: `repeat(${Object.keys(pricing).length || 3}, 1fr)` }, gap: 2.5 }}>
+                        <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: isDark ? '#f3f4f6' : '#111827', fontFamily: 'Inter, sans-serif' }}>Registration Tiers</Typography>
+                            <Box sx={{ flex: 1, height: 1, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb' }} />
+                        </Box>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: `repeat(${Object.keys(pricing).length || 3}, 1fr)` }, gap: 2 }}>
                             {Object.keys(pricing).map((catKey, idx) => {
                                 const amount = pricing[catKey];
-                                const cat = CATEGORIES[catKey] || { label: catKey, short: catKey, color: '#6b7280', badgeBg: 'rgba(107,114,128,0.1)', gradient: 'linear-gradient(135deg, #6b7280, #9ca3af)' };
+                                const cat = CATEGORIES[catKey] || { label: catKey, short: catKey, color: '#6b7280', badgeBg: 'rgba(107,114,128,0.1)', gradient: 'linear-gradient(135deg, #6b7280, #9ca3af)', description: '', features: [] };
                                 const isActive = submissionsNeedingPayment.some(s => s.participant_category && s.participant_category.toLowerCase() === catKey);
                                 
-                                // Specific student card borders
-                                const isStudent = catKey === 'student';
-                                const activeBorder = isStudent 
-                                    ? `1.5px solid #2563eb` 
-                                    : `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`;
-                                    
-                                const activeShadow = (isActive && isStudent) 
-                                    ? '0 10px 25px -5px rgba(37, 99, 235, 0.15), 0 8px 10px -6px rgba(37, 99, 235, 0.15)' 
-                                    : (isDark ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 20px rgba(0,0,0,0.02)');
-
                                 return (
-                                    <Fade key={catKey} in={mounted} timeout={450 + idx * 100}>
+                                    <Fade key={catKey} in={mounted} timeout={450 + idx * 120}>
                                         <Card elevation={0} sx={{
-                                            ...cardBase,
-                                            position: 'relative',
-                                            overflow: 'hidden',
-                                            border: activeBorder,
-                                            boxShadow: activeShadow,
-                                            bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white',
+                                            position: 'relative', overflow: 'hidden',
+                                            borderRadius: '18px',
+                                            border: isActive 
+                                                ? `2px solid ${cat.color}` 
+                                                : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb'}`,
+                                            bgcolor: isDark ? 'rgba(17,24,39,0.8)' : 'white',
+                                            boxShadow: isActive 
+                                                ? `0 0 0 3px ${cat.color}15, 0 10px 30px ${cat.color}10` 
+                                                : (isDark ? '0 2px 12px rgba(0,0,0,0.2)' : '0 2px 12px rgba(0,0,0,0.03)'),
                                             transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                                             '&:hover': { 
                                                 transform: 'translateY(-6px)', 
-                                                boxShadow: isDark 
-                                                    ? `0 16px 40px rgba(0,0,0,0.5), 0 0 20px ${cat.color}15` 
-                                                    : `0 16px 40px rgba(0,0,0,0.06), 0 0 20px ${cat.color}10`,
+                                                boxShadow: `0 20px 50px ${cat.color}12, 0 0 0 1px ${cat.color}25`,
                                             },
                                         }}>
-                                            {/* Gradient accent strip at top */}
-                                            <Box sx={{ height: 4, background: cat.gradient }} />
+                                            {/* ── Gradient Header Bar ── */}
+                                            <Box sx={{ 
+                                                height: 6, 
+                                                background: cat.gradient,
+                                                opacity: isActive ? 1 : 0.6,
+                                            }} />
                                             
-                                            <CardContent sx={{ p: 3, pt: 2.5, textAlign: 'left', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                                {/* Icon with gradient background */}
-                                                <Box sx={{
-                                                    width: 52, height: 52, borderRadius: '14px', mb: 2.2,
-                                                    background: isDark 
-                                                        ? `linear-gradient(135deg, ${cat.color}18, ${cat.color}08)` 
-                                                        : `linear-gradient(135deg, ${cat.color}12, ${cat.color}05)`,
-                                                    border: `1.5px solid ${cat.color}20`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                }}>
-                                                    <CatIcon category={catKey} size={24} color={cat.color} />
-                                                </Box>
-                                                
-                                                {/* Title */}
-                                                <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', mb: 1, lineHeight: 1.3, fontFamily: 'Inter, sans-serif' }}>
-                                                    {cat.label}
-                                                </Typography>
+                                            <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+                                                {/* Top section */}
+                                                <Box sx={{ p: 3, pb: 2 }}>
+                                                    {/* Recommended badge */}
+                                                    {cat.recommended && (
+                                                        <Box sx={{ 
+                                                            display: 'inline-flex', alignItems: 'center', gap: 0.5, 
+                                                            px: 1.2, py: 0.35, borderRadius: '20px', mb: 1.8,
+                                                            background: cat.gradient,
+                                                            boxShadow: `0 2px 8px ${cat.color}30`,
+                                                        }}>
+                                                            <StarIcon sx={{ fontSize: 11, color: 'white' }} />
+                                                            <Typography sx={{ fontSize: '0.52rem', fontWeight: 800, color: 'white', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>Recommended</Typography>
+                                                        </Box>
+                                                    )}
 
-                                                {/* Active Glowing Badge */}
-                                                {isActive && (
-                                                    <Box sx={{ mb: 1.5 }}>
-                                                        <Chip label="YOUR SUBMISSION" size="small" sx={{
-                                                            fontWeight: 800, fontSize: '0.55rem', borderRadius: '6px',
-                                                            bgcolor: cat.badgeBg, color: cat.color,
-                                                            border: `1px solid ${cat.color}30`,
-                                                            letterSpacing: '0.06em',
-                                                            height: 22,
-                                                            boxShadow: `0 0 16px ${cat.color}20`,
-                                                        }} />
+                                                    {/* Icon + Title */}
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                                                        <Box sx={{
+                                                            width: 44, height: 44, borderRadius: '12px',
+                                                            background: `linear-gradient(135deg, ${cat.color}15, ${cat.color}08)`,
+                                                            border: `1.5px solid ${cat.color}20`,
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            flexShrink: 0,
+                                                        }}>
+                                                            <CatIcon category={catKey} size={22} color={cat.color} />
+                                                        </Box>
+                                                        <Box sx={{ minWidth: 0 }}>
+                                                            <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: isDark ? '#f3f4f6' : '#111827', lineHeight: 1.25, fontFamily: 'Inter, sans-serif' }}>
+                                                                {cat.label}
+                                                            </Typography>
+                                                        </Box>
                                                     </Box>
-                                                )}
 
-                                                <Box sx={{ mt: 'auto', pt: 2, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}` }}>
+                                                    {/* Description */}
+                                                    <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280', lineHeight: 1.5, mb: 2, fontFamily: 'Inter, sans-serif' }}>
+                                                        {cat.description}
+                                                    </Typography>
+
+                                                    {/* Active Submission Indicator */}
+                                                    {isActive && (
+                                                        <Box sx={{ 
+                                                            display: 'flex', alignItems: 'center', gap: 0.8, 
+                                                            px: 1.5, py: 0.6, borderRadius: '8px',
+                                                            bgcolor: `${cat.color}10`, border: `1px solid ${cat.color}25`,
+                                                            mb: 2,
+                                                        }}>
+                                                            <Box sx={{ 
+                                                                width: 7, height: 7, borderRadius: '50%', bgcolor: cat.color,
+                                                                boxShadow: `0 0 6px ${cat.color}60`,
+                                                                animation: 'pulse 2s infinite',
+                                                            }} />
+                                                            <Typography sx={{ fontSize: '0.62rem', fontWeight: 700, color: cat.color, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Inter, sans-serif' }}>
+                                                                Your Submission
+                                                            </Typography>
+                                                        </Box>
+                                                    )}
+
                                                     {/* Price */}
-                                                    <Typography sx={{ fontWeight: 900, fontSize: '1.35rem', color: isDark ? 'white' : '#111827', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
-                                                        {fmtIdr(amount)}
+                                                    <Box sx={{ mb: 2 }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                                            <Typography sx={{ fontWeight: 900, fontSize: '1.5rem', color: isDark ? 'white' : '#111827', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
+                                                                {fmtRp(amount)}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#6b7280' : '#9ca3af', mt: 0.3, fontFamily: 'Inter, sans-serif' }}>
+                                                            per participant
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+
+                                                {/* ── Features ── */}
+                                                <Box sx={{ 
+                                                    px: 3, py: 2, 
+                                                    borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'}`,
+                                                    bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#fafbfd',
+                                                }}>
+                                                    <Typography sx={{ fontSize: '0.58rem', fontWeight: 800, color: isDark ? '#6b7280' : '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.12em', mb: 1.2, fontFamily: 'Inter, sans-serif' }}>
+                                                        What's included
                                                     </Typography>
-                                                    {/* Subtitle */}
-                                                    <Typography sx={{ fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.3, fontFamily: 'Inter, sans-serif' }}>
-                                                        per participant
-                                                    </Typography>
+                                                    {(cat.features || []).map((feature, fi) => (
+                                                        <Box key={fi} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
+                                                            <CheckIcon sx={{ fontSize: 14, color: '#10b981' }} />
+                                                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#d1d5db' : '#4b5563', fontFamily: 'Inter, sans-serif' }}>
+                                                                {feature}
+                                                            </Typography>
+                                                        </Box>
+                                                    ))}
                                                 </Box>
                                             </CardContent>
                                         </Card>
@@ -446,94 +502,95 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         </Box>
                     </Box>
 
-                    {/* Action Required Panel */}
+                    {/* ─── Action Required Panel ─── */}
                     {submissionsNeedingPayment.length > 0 && (
                         <Fade in={mounted} timeout={700}>
-                            <Paper elevation={0} sx={{ ...cardBase, display: 'flex', flexDirection: 'column', bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white', overflow: 'hidden' }}>
-                                {/* Gradient accent line */}
-                                <Box sx={{ height: 3, background: 'linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6)' }} />
-                                
-                                {/* Panel Header */}
+                            <Paper elevation={0} sx={{ 
+                                borderRadius: '18px', overflow: 'hidden',
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb'}`,
+                                bgcolor: isDark ? 'rgba(17,24,39,0.8)' : 'white',
+                                boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.2)' : '0 2px 12px rgba(0,0,0,0.03)',
+                                display: 'flex', flexDirection: 'column',
+                                alignSelf: 'flex-start',
+                            }}>
+                                {/* Header */}
                                 <Box sx={{
-                                    px: 3, py: 2.2, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                    borderBottom: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}`,
+                                    px: 3, py: 2.5,
+                                    background: isDark 
+                                        ? 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04))' 
+                                        : 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+                                    borderBottom: `1px solid ${isDark ? 'rgba(245,158,11,0.1)' : '#fde68a'}`,
                                 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f59e0b', boxShadow: '0 0 8px rgba(245,158,11,0.4)', animation: 'pulse 2s infinite' }} />
-                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>
-                                            Action Required ({submissionsNeedingPayment.length})
-                                        </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                                        <Box sx={{ 
+                                            width: 32, height: 32, borderRadius: '8px',
+                                            bgcolor: isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7',
+                                            border: `1px solid ${isDark ? 'rgba(245,158,11,0.2)' : '#fde68a'}`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        }}>
+                                            <WarningAmberIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                        </Box>
+                                        <Box>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: isDark ? '#fbbf24' : '#92400e', fontFamily: 'Inter, sans-serif' }}>
+                                                Action Required
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#d97706' : '#b45309', fontFamily: 'Inter, sans-serif' }}>
+                                                {submissionsNeedingPayment.length} pending payment{submissionsNeedingPayment.length > 1 ? 's' : ''}
+                                            </Typography>
+                                        </Box>
                                     </Box>
-                                    {firstActionItemFee && (
-                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#fbbf24' : '#d97706', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
-                                            {fmtRp(firstActionItemFee)}
-                                        </Typography>
-                                    )}
                                 </Box>
 
-                                {/* List Items */}
-                                <Box sx={{ flex: 1, p: 2.5, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {submissionsNeedingPayment.map((sub, idx) => {
+                                {/* Action Items */}
+                                <Box sx={{ p: 2.5, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {submissionsNeedingPayment.map((sub) => {
                                         const fee = getSubFee(sub);
                                         const cat = getSubCat(sub);
-                                        const hasMultiple = submissionsNeedingPayment.length > 1;
-                                        
-                                        // The first item (idx 0) in the list has a shorter design (price shown in header).
-                                        // Subsequent items (idx > 0) show their price inside their own box above "Pay Now".
-                                        const showPriceInsideCard = idx > 0;
 
                                         return (
                                             <Box key={sub.id} sx={{
-                                                p: 2.5, borderRadius: '12px',
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafafa',
-                                                border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)'}`,
+                                                p: 2.5, borderRadius: '14px',
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafbfd',
+                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#e5e7eb'}`,
+                                                borderLeft: `4px solid ${cat?.color || '#6b7280'}`,
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': { 
-                                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f6f6f6',
-                                                    borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f5f6f8',
+                                                    boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.04)',
                                                 },
                                             }}>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    {/* Left: Title & Description */}
-                                                    <Box sx={{ minWidth: 0, flex: 1, mr: 2 }}>
-                                                        <Typography sx={{ fontWeight: 800, fontSize: '0.82rem', color: isDark ? '#e5e7eb' : '#1f2937', mb: 0.6 }} noWrap>
-                                                            {sub.title} - {cat ? cat.short : ''}
-                                                        </Typography>
-                                                        
-                                                        {/* Description */}
-                                                        {idx === 1 && (
-                                                            <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', mb: 0.5 }} noWrap>
-                                                                Your cwint description
-                                                            </Typography>
-                                                        )}
-                                                        
-                                                        {/* Date subtext */}
-                                                        <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }} noWrap>
-                                                            {sub.title} - {cat ? cat.short : ''} - {new Date(sub.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                {/* Title + Category */}
+                                                <Box sx={{ mb: 1.5 }}>
+                                                    <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#111827', mb: 0.3, fontFamily: 'Inter, sans-serif' }} noWrap>
+                                                        {sub.title}
+                                                    </Typography>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: cat?.color || '#6b7280' }} />
+                                                        <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>
+                                                            {cat ? cat.short : ''} · {new Date(sub.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                         </Typography>
                                                     </Box>
+                                                </Box>
 
-                                                    {/* Right: Price + Pay Now Button */}
-                                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: showPriceInsideCard ? 1 : 0, flexShrink: 0 }}>
-                                                        {showPriceInsideCard && fee && (
-                                                            <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#1f2937', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
-                                                                {fmtRp(fee)}
-                                                            </Typography>
-                                                        )}
-                                                        <Button
-                                                            variant="contained" size="small"
-                                                            onClick={() => handleOpenDialog(sub)} disabled={!fee}
-                                                            sx={{
-                                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                                                boxShadow: '0 4px 12px rgba(16,185,129,0.22)',
-                                                                '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', boxShadow: '0 6px 16px rgba(16,185,129,0.35)' },
-                                                                textTransform: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '0.72rem', px: 2.2, py: 0.8, whiteSpace: 'nowrap',
-                                                                fontFamily: 'Inter, sans-serif'
-                                                            }}
-                                                        >
-                                                            Pay Now
-                                                        </Button>
-                                                    </Box>
+                                                {/* Price + Pay Button */}
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <Typography sx={{ fontWeight: 900, fontSize: '1.1rem', color: isDark ? 'white' : '#111827', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
+                                                        {fee ? fmtRp(fee) : '—'}
+                                                    </Typography>
+                                                    <Button
+                                                        variant="contained" size="small"
+                                                        onClick={() => handleOpenDialog(sub)} disabled={!fee}
+                                                        sx={{
+                                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                            boxShadow: '0 4px 14px rgba(16,185,129,0.2)',
+                                                            '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', boxShadow: '0 6px 18px rgba(16,185,129,0.3)' },
+                                                            textTransform: 'none', borderRadius: '10px', fontWeight: 800, 
+                                                            fontSize: '0.75rem', px: 2.5, py: 0.8,
+                                                            fontFamily: 'Inter, sans-serif',
+                                                        }}
+                                                    >
+                                                        Pay Now →
+                                                    </Button>
                                                 </Box>
                                             </Box>
                                         );
@@ -547,16 +604,28 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 {/* ════════════════════════════════════════════
                     PAYMENT HISTORY TABLE
                 ════════════════════════════════════════════ */}
-                <Paper elevation={0} sx={{ ...cardBase, bgcolor: isDark ? 'rgba(17,24,39,0.7)' : 'white', overflow: 'hidden' }} role="region" aria-label="Payment History">
+                <Paper elevation={0} sx={{ 
+                    borderRadius: '18px', overflow: 'hidden',
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb'}`,
+                    bgcolor: isDark ? 'rgba(17,24,39,0.8)' : 'white',
+                    boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.2)' : '0 2px 12px rgba(0,0,0,0.03)',
+                }} role="region" aria-label="Payment History">
                     <Box sx={{
                         px: 3, py: 2.5,
-                        borderBottom: `1.5px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'}`,
-                        background: isDark ? 'rgba(0,0,0,0.15)' : 'linear-gradient(180deg, #f8fafc, white)',
+                        borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e5e7eb'}`,
+                        background: isDark ? 'rgba(0,0,0,0.12)' : '#fafbfd',
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <ReceiptLongIcon sx={{ fontSize: 20, color: isDark ? '#6b7280' : '#9ca3af' }} />
+                            <Box sx={{ 
+                                width: 36, height: 36, borderRadius: '10px',
+                                bgcolor: isDark ? 'rgba(107,114,128,0.1)' : '#f1f5f9',
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                                <ReceiptLongIcon sx={{ fontSize: 18, color: isDark ? '#6b7280' : '#94a3b8' }} />
+                            </Box>
                             <Box>
-                                <Typography component="h2" sx={{ fontWeight: 800, fontSize: '0.95rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>Payment History</Typography>
+                                <Typography component="h2" sx={{ fontWeight: 800, fontSize: '0.95rem', color: isDark ? '#f3f4f6' : '#111827', fontFamily: 'Inter, sans-serif' }}>Payment History</Typography>
                                 <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', mt: 0.1, fontFamily: 'Inter, sans-serif' }}>
                                     {payments.length > 0 ? `${payments.length} transaction${payments.length > 1 ? 's' : ''} recorded` : 'No transactions yet'}
                                 </Typography>
