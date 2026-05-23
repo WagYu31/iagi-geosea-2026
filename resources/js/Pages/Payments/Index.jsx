@@ -201,7 +201,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             filter: 'blur(30px)', pointerEvents: 'none',
                         }} />
                         
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3.5, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Column 1: Title and Subtitle */}
                             <Box sx={{ flex: 1.3, minWidth: 0 }}>
                                 <Typography component="h1" sx={{
@@ -223,21 +223,21 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             <Box sx={{
                                 flexShrink: 0,
                                 perspective: '1000px',
-                                display: { xs: 'none', md: 'block' },
+                                display: { xs: 'none', lg: 'block' },
                             }}>
                                 <Box sx={{
-                                    width: 270, height: 168, borderRadius: '18px', p: 2.8,
-                                    background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%)',
-                                    border: '1px solid rgba(255,255,255,0.18)',
-                                    backdropFilter: 'blur(24px)',
-                                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)',
+                                    width: 270, height: 168, borderRadius: '20px', p: 2.8,
+                                    background: 'rgba(46, 204, 113, 0.15)',
+                                    backdropFilter: 'blur(20px)',
+                                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), 0 0 60px -10px rgba(46, 204, 113, 0.12), inset 0 1px 0 rgba(255,255,255,0.15)',
                                     transition: 'all 0.5s ease',
                                     position: 'relative', overflow: 'hidden',
                                     transform: 'rotateY(-6deg) rotateX(3deg)',
                                     transformStyle: 'preserve-3d',
                                     '&::before': {
                                         content: '""', position: 'absolute', top: 0, right: 0, width: '50%', height: '100%',
-                                        background: 'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 60%)',
+                                        background: 'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 60%)',
                                     },
                                 }}>
                                     {/* Card Name + Lock */}
@@ -285,12 +285,13 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             {/* Column 3: Payment Methods frosted card */}
                             <Box sx={{
                                 flexShrink: 0,
-                                width: { xs: '100%', sm: 280 },
-                                p: 3, borderRadius: '18px',
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)',
-                                border: '1px solid rgba(255, 255, 255, 0.12)',
+                                width: 280,
+                                display: { xs: 'none', lg: 'block' },
+                                p: 3, borderRadius: '20px',
+                                background: 'rgba(46, 204, 113, 0.12)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
                                 backdropFilter: 'blur(20px)',
-                                boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 0 40px -10px rgba(46, 204, 113, 0.08)',
                             }}>
                                 <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.12em', mb: 2, textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
                                     Payment Methods
