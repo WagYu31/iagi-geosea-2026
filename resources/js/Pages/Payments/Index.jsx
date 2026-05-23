@@ -287,7 +287,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 {/* ════════════════════════════════════════════
                     MIDDLE ROW — Pricing Cards + Action Required
                 ════════════════════════════════════════════ */}
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: submissionsNeedingPayment.length > 0 ? '1fr 380px' : '1fr' }, gap: 3, mb: 3 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: submissionsNeedingPayment.length > 0 ? '1fr 380px' : '1fr' }, gap: 3, mb: 3 }}>
                     {/* Pricing Cards */}
                     <Box>
                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: `repeat(${Object.keys(pricing).length || 3}, 1fr)` }, gap: 2 }}>
@@ -368,37 +368,39 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                         const cat = getSubCat(sub);
                                         return (
                                             <Box key={sub.id} sx={{
-                                                px: 3, py: 2,
+                                                px: 3, py: 2.5,
                                                 borderBottom: idx < submissionsNeedingPayment.length - 1 ? `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}` : 'none',
                                                 transition: 'background 0.2s',
                                                 '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)' },
                                             }}>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.8 }}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    {/* Left: Title + desc */}
                                                     <Box sx={{ minWidth: 0, flex: 1, mr: 2 }}>
-                                                        <Typography sx={{ fontWeight: 700, fontSize: '0.88rem', color: c.textPrimary, mb: 0.3 }} noWrap>
-                                                            {sub.title}
+                                                        <Typography sx={{ fontWeight: 700, fontSize: '0.88rem', color: c.textPrimary, mb: 0.2 }} noWrap>
+                                                            {sub.title} – {cat ? cat.short : ''}
                                                         </Typography>
-                                                        <Typography sx={{ fontSize: '0.72rem', color: c.textMuted }} noWrap>
+                                                        <Typography sx={{ fontSize: '0.68rem', color: c.textMuted }} noWrap>
                                                             {sub.title} – {cat ? cat.short : ''} – {new Date(sub.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                         </Typography>
                                                     </Box>
-                                                    {fee && (
-                                                        <Typography sx={{ fontWeight: 800, fontSize: '0.9rem', color: c.textPrimary, flexShrink: 0 }}>{fmtRp(fee)}</Typography>
-                                                    )}
-                                                </Box>
-                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                    <Button
-                                                        variant="contained" size="small"
-                                                        onClick={() => handleOpenDialog(sub)} disabled={!fee}
-                                                        sx={{
-                                                            background: 'linear-gradient(135deg, #059669, #10b981)',
-                                                            boxShadow: '0 4px 14px rgba(5,150,105,0.25)',
-                                                            '&:hover': { background: 'linear-gradient(135deg, #047857, #059669)', boxShadow: '0 6px 20px rgba(5,150,105,0.35)' },
-                                                            textTransform: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.78rem', px: 2.5, py: 0.6,
-                                                        }}
-                                                    >
-                                                        Pay Now
-                                                    </Button>
+                                                    {/* Right: Price + button */}
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+                                                        {fee && (
+                                                            <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: c.textPrimary, display: { xs: 'none', sm: 'block' } }}>{fmtRp(fee)}</Typography>
+                                                        )}
+                                                        <Button
+                                                            variant="contained" size="small"
+                                                            onClick={() => handleOpenDialog(sub)} disabled={!fee}
+                                                            sx={{
+                                                                background: 'linear-gradient(135deg, #059669, #10b981)',
+                                                                boxShadow: '0 4px 14px rgba(5,150,105,0.25)',
+                                                                '&:hover': { background: 'linear-gradient(135deg, #047857, #059669)', boxShadow: '0 6px 20px rgba(5,150,105,0.35)' },
+                                                                textTransform: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '0.78rem', px: 2.5, py: 0.6, whiteSpace: 'nowrap',
+                                                            }}
+                                                        >
+                                                            Pay Now
+                                                        </Button>
+                                                    </Box>
                                                 </Box>
                                             </Box>
                                         );
