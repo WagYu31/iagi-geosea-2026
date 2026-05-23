@@ -163,26 +163,27 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             <Box component="main" role="main" aria-label="Payment Center" sx={{ p: { xs: 2.5, sm: 3.5 }, maxWidth: '1440px', mx: 'auto', bgcolor: isDark ? '#0b0f17' : '#f4f6fa', minHeight: 'calc(100vh - 60px)', transition: 'background-color 0.3s' }}>
 
                 {/* ════════════════════════════════════════════
-                    HERO — Premium Dark Teal Gradient
+                    HERO — Premium Dark Teal Gradient (Stitch Mockup Match)
                 ════════════════════════════════════════════ */}
                 <Fade in={mounted} timeout={650}>
                     <Box sx={{
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
-                        background: 'linear-gradient(135deg, #091c24 0%, #0c2e35 45%, #124d47 75%, #1a6d5f 100%)',
+                        background: 'linear-gradient(135deg, #0a2427 0%, #0e3b38 35%, #15534e 60%, #1a8a7a 85%, #5dd8c0 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
-                        p: { xs: 3, sm: 4, md: 4.5 },
-                        border: '1px solid rgba(26,188,156,0.15)',
+                        p: { xs: 3, sm: 4, md: 5 },
+                        border: '1px solid rgba(26,188,156,0.12)',
                     }}>
-                        {/* Interactive lighting decorative orbs */}
-                        <Box sx={{ position: 'absolute', top: '-10%', right: '15%', width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, rgba(45,212,191,0.12) 0%, transparent 70%)', filter: 'blur(45px)', pointerEvents: 'none' }} />
-                        <Box sx={{ position: 'absolute', bottom: '-20%', left: '10%', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+                        {/* Large radial glow (right side teal) */}
+                        <Box sx={{ position: 'absolute', top: '-30%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(45,212,191,0.18) 0%, rgba(45,212,191,0.05) 40%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+                        {/* Subtle dark glow (left bottom) */}
+                        <Box sx={{ position: 'absolute', bottom: '-20%', left: '5%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(10,36,39,0.5) 0%, transparent 70%)', pointerEvents: 'none' }} />
                         
-                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3.5, lg: 4 }, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 3.5, lg: 5 }, alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Column 1: Title and Subtitle */}
                             <Box sx={{ flex: 1.3, minWidth: 0 }}>
                                 <Typography component="h1" sx={{
                                     fontWeight: 900, color: 'white',
-                                    fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.4rem' },
+                                    fontSize: { xs: '1.75rem', sm: '2.1rem', md: '2.5rem' },
                                     letterSpacing: '-0.03em', lineHeight: 1.15, mb: 2,
                                     fontFamily: 'Inter, sans-serif',
                                     textShadow: '0 2px 10px rgba(0,0,0,0.2)',
@@ -190,7 +191,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                     Premium Conference
                                     <Box component="span" sx={{ display: 'block', mt: 0.5, color: '#2dd4bf' }}>Payment Center</Box>
                                 </Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.65)', fontSize: { xs: '0.85rem', sm: '0.88rem', md: '0.92rem' }, maxWidth: 450, lineHeight: 1.7, fontWeight: 400, fontFamily: 'Inter, sans-serif' }}>
+                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: { xs: '0.85rem', sm: '0.92rem', md: '0.95rem' }, maxWidth: 450, lineHeight: 1.7, fontWeight: 400, fontFamily: 'Inter, sans-serif' }}>
                                     Complete your conference registration fee securely via bank transfer, e-wallet, QRIS, or credit card.
                                 </Typography>
                             </Box>
@@ -202,54 +203,57 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 display: { xs: 'none', md: 'block' },
                             }}>
                                 <Box sx={{
-                                    width: 240, height: 148, borderRadius: '16px', p: 2.5,
-                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
-                                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                                    backdropFilter: 'blur(20px)',
-                                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+                                    width: 270, height: 168, borderRadius: '18px', p: 2.8,
+                                    background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%)',
+                                    border: '1px solid rgba(255,255,255,0.18)',
+                                    backdropFilter: 'blur(24px)',
+                                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)',
                                     transition: 'all 0.5s ease',
                                     position: 'relative', overflow: 'hidden',
-                                    transform: 'rotateY(-8deg) rotateX(4deg)',
+                                    transform: 'rotateY(-6deg) rotateX(3deg)',
                                     transformStyle: 'preserve-3d',
                                     '&::before': {
                                         content: '""', position: 'absolute', top: 0, right: 0, width: '50%', height: '100%',
-                                        background: 'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 60%)',
+                                        background: 'radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 60%)',
                                     },
                                 }}>
                                     {/* Card Name + Lock */}
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.06em', fontFamily: 'Inter, sans-serif' }}>IAGI CONFERENCE</Typography>
-                                        <LockIcon sx={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }} />
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                                        <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, color: 'rgba(255,255,255,0.9)', letterSpacing: '0.08em', fontFamily: 'Inter, sans-serif' }}>IAGI CONFERENCE</Typography>
+                                        <LockIcon sx={{ fontSize: 15, color: 'rgba(255,255,255,0.55)' }} />
                                     </Box>
                                     
                                     {/* Golden Metallic contact chip */}
                                     <Box sx={{
-                                        width: 34, height: 26, borderRadius: '6px',
+                                        width: 40, height: 30, borderRadius: '7px',
                                         background: 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%)',
-                                        boxShadow: '0 2px 8px rgba(245,158,11,0.3)',
-                                        position: 'relative', overflow: 'hidden', mb: 2.2,
-                                        border: '0.5px solid rgba(255,255,255,0.1)',
+                                        boxShadow: '0 2px 8px rgba(245,158,11,0.35)',
+                                        position: 'relative', overflow: 'hidden', mb: 2.5,
+                                        border: '0.5px solid rgba(255,255,255,0.15)',
                                         '&::after': {
                                             content: '""', position: 'absolute', top: '35%', left: '15%', right: '15%', height: '1px', bgcolor: 'rgba(0,0,0,0.15)'
                                         }
                                     }} />
 
                                     {/* Card numbers dot matrix */}
-                                    <Box sx={{ display: 'flex', gap: 1.2, mb: 2 }}>
-                                        {[0,1,2,3].map(g => <Box key={g} sx={{ display: 'flex', gap: 0.3 }}>{[0,1,2,3].map(d => <Box key={d} sx={{ width: 4.5, height: 4.5, borderRadius: '50%', bgcolor: g < 3 ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.6)' }} />)}</Box>)}
+                                    <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5 }}>
+                                        {[0,1,2,3].map(g => <Box key={g} sx={{ display: 'flex', gap: 0.4 }}>{[0,1,2,3].map(d => <Box key={d} sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: g < 3 ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.65)' }} />)}</Box>)}
                                     </Box>
 
-                                    {/* Card Valid + overlapping circles */}
+                                    {/* Card Valid + NFC Contactless icon */}
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                                         <Box>
-                                            <Typography sx={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.08em' }}>VALID THRU</Typography>
-                                            <Typography sx={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.85)', fontWeight: 700, mt: 0.1 }}>12/26</Typography>
+                                            <Typography sx={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.08em' }}>VALID</Typography>
+                                            <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.9)', fontWeight: 700, mt: 0.1 }}>12/26</Typography>
                                         </Box>
                                         
-                                        {/* Mastercard-like overlapping frosted circles */}
-                                        <Box sx={{ display: 'flex', position: 'relative', width: 28, height: 18 }}>
-                                            <Box sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.25)', border: '0.5px solid rgba(255,255,255,0.15)' }} />
-                                            <Box sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.4)', border: '0.5px solid rgba(255,255,255,0.15)', position: 'absolute', right: 0 }} />
+                                        {/* NFC Contactless symbol */}
+                                        <Box sx={{ color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center' }}>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                                <path d="M8.5 16.5c-1.5-1.5-2.5-3.5-2.5-5.5s1-4 2.5-5.5"/>
+                                                <path d="M12 19c-2.5-2-4-5-4-7.5s1.5-5.5 4-7.5"/>
+                                                <path d="M15.5 21.5c-3.5-2.5-5.5-6.5-5.5-9.5s2-7 5.5-9.5"/>
+                                            </svg>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -258,70 +262,66 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             {/* Column 3: Payment Methods frosted card */}
                             <Box sx={{
                                 flexShrink: 0,
-                                width: { xs: '100%', sm: 260 },
-                                p: 2.5, borderRadius: '16px',
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
+                                width: { xs: '100%', sm: 280 },
+                                p: 3, borderRadius: '18px',
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)',
                                 border: '1px solid rgba(255, 255, 255, 0.12)',
-                                backdropFilter: 'blur(16px)',
+                                backdropFilter: 'blur(20px)',
                                 boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
                             }}>
-                                <Typography sx={{ fontSize: '0.62rem', fontWeight: 800, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.12em', mb: 1.5, textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+                                <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.12em', mb: 2, textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
                                     Payment Methods
                                 </Typography>
                                 
-                                {/* White cards with Brand Logos SVGs */}
-                                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', mb: 1.8 }}>
+                                {/* Large Brand Logos */}
+                                <Box sx={{ display: 'flex', gap: 1.2, justifyContent: 'center', mb: 2 }}>
                                     {/* VISA */}
-                                    <Box sx={{ flex: 1, height: 26, borderRadius: '6px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
-                                        <svg viewBox="0 0 100 32" style={{ height: 10, width: 'auto' }}>
-                                            <path d="M12.24 3.02L8.06 28.98H0L5.3 3.02h6.94zm23.6 0l-5.63 20.3L27.08 6.55c-.53-2.07-2.02-3.16-4.08-3.48L11.53 3.02v.42c2.32.48 4.4 1.34 5.92 2.58l5.88 18.06L30.34 3.02h7.68c1.36 0 2.22.84 2.44 2.12l4.82 23.84H37.3l-1.46-7.98H29.1zm18.3 12.06c.02-4.14 4.88-4.66 4.9-7.22 0-2.04-1.92-2.88-3.76-2.88-2.6 0-4.48.98-5.32 1.38l-.68.32-.82-4.3 1.08-.48c1.64-.7 3.96-1.12 6.32-1.12 5.34 0 8.78 2.38 8.8 6.34.02 5.04-6.32 5.34-6.3 7.82 0 1.2.94 2.06 2.48 2.06 1.76 0 3.32-.66 4.28-1.12l.62-.3 1.06 4.2-.82.4c-1.84.82-4.32 1.28-6.96 1.28-6.24 0-9.84-2.88-9.86-6.68z" fill="#1a1f71" />
-                                        </svg>
+                                    <Box sx={{ flex: 1, height: 38, borderRadius: '8px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1.2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                                        <Typography sx={{ fontWeight: 900, fontSize: '1rem', color: '#1a1f71', fontFamily: 'Inter, sans-serif', fontStyle: 'italic', letterSpacing: '-0.02em' }}>Visa</Typography>
                                     </Box>
                                     
                                     {/* MasterCard */}
-                                    <Box sx={{ flex: 1, height: 26, borderRadius: '6px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
-                                        <svg viewBox="0 0 80 48" style={{ height: 13, width: 'auto' }}>
-                                            <circle cx="28" cy="24" r="20" fill="#eb001b" opacity="0.9" />
-                                            <circle cx="52" cy="24" r="20" fill="#ff5f00" opacity="0.9" />
-                                            <path d="M40 37.4c-3.7-3.1-6-7.8-6-13.4s2.3-10.3 6-13.4c3.7 3.1 6 7.8 6 13.4s-2.3 10.3-6 13.4z" fill="#f79e1b" />
+                                    <Box sx={{ flex: 1, height: 38, borderRadius: '8px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1.2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                                        <svg viewBox="0 0 80 48" style={{ height: 22, width: 'auto' }}>
+                                            <circle cx="26" cy="24" r="18" fill="#eb001b" opacity="0.9" />
+                                            <circle cx="54" cy="24" r="18" fill="#ff5f00" opacity="0.9" />
+                                            <path d="M40 38c-3.5-3.2-5.6-7.8-5.6-12.8s2.1-9.6 5.6-12.8c3.5 3.2 5.6 7.8 5.6 12.8s-2.1 9.6-5.6 12.8z" fill="#f79e1b" />
                                         </svg>
                                     </Box>
                                     
                                     {/* QRIS */}
-                                    <Box sx={{ flex: 1, height: 26, borderRadius: '6px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
-                                        <svg viewBox="0 0 120 40" style={{ height: 10, width: 'auto' }}>
-                                            <path d="M22 6c-8.8 0-16 7.2-16 16s7.2 16 16 16c3.4 0 6.6-1.1 9.2-2.9l5 5 4.8-4.8-5-5c1.8-2.6 2.9-5.8 2.9-9.2 0-8.8-7.2-16-16-16zm0 25.6c-5.3 0-9.6-4.3-9.6-9.6s4.3-9.6 9.6-9.6 9.6 4.3 9.6 9.6-4.3 9.6-9.6 9.6z" fill="#1F2937" />
-                                            <path d="M42 8h10c4.4 0 8 3.6 8 8 0 3.2-1.9 6-4.7 7.2l5.7 12.8H54l-5.1-11.8H48v11.8H42V8zm6 11.2h4c1.8 0 3.2-1.4 3.2-3.2s-1.4-3.2-3.2-3.2H48v6.4z" fill="#1F2937" />
-                                            <rect x="66" y="8" width="6" height="28" rx="2" fill="#1F2937" />
-                                            <path d="M84 21.6c0-2 1.6-3 3.6-3s3.6 1 3.6 3v2.4h6v-2.4c0-5-4.3-9-9.6-9s-9.6 4-9.6 9c0 4.6 3.6 7 7.8 8.2l1.8.5c2 .6 2.8 1.4 2.8 2.5s-1 2.2-3 2.2-3-1-3-2.2v-1.6h-6v1.6c0 4.6 4.3 8.2 9 8.2s9-3.6 9-8.2c0-4.6-3.8-7-7.8-8.2l-1.8-.5c-2-.6-2.8-1.4-2.8-2.5z" fill="#1F2937" />
-                                            <rect x="106" y="8" width="4" height="28" fill="#1b63b2" />
-                                            <rect x="112" y="8" width="4" height="28" fill="#e92d24" />
-                                        </svg>
+                                    <Box sx={{ flex: 1, height: 38, borderRadius: '8px', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1.2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                                        <Typography sx={{ fontWeight: 900, fontSize: '0.82rem', color: '#1F2937', fontFamily: 'Inter, sans-serif', letterSpacing: '0.04em' }}>QRIS</Typography>
                                     </Box>
                                 </Box>
 
-                                {/* Small Pill Security Badges */}
-                                <Box sx={{ display: 'flex', gap: 0.8, justifyContent: 'center', mb: 2 }}>
-                                    {['SSL Encrypted', 'PCI DSS', 'ISO 27001'].map((label) => (
-                                        <Box key={label} sx={{
-                                            px: 1, py: 0.4, borderRadius: '6px',
-                                            bgcolor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
-                                            textAlign: 'center', minWidth: 50
+                                {/* Two-line Security Badges */}
+                                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', mb: 2.5 }}>
+                                    {[
+                                        { top: 'SSL', bottom: 'Encrypted' },
+                                        { top: 'PCI', bottom: 'DSS' },
+                                        { top: 'ISO', bottom: '27001' },
+                                    ].map((badge) => (
+                                        <Box key={badge.top} sx={{
+                                            flex: 1, py: 0.8, borderRadius: '8px',
+                                            bgcolor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                                            textAlign: 'center',
                                         }}>
-                                            <Typography sx={{ fontSize: '0.48rem', fontWeight: 700, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{label}</Typography>
+                                            <Typography sx={{ fontSize: '0.6rem', fontWeight: 800, color: 'rgba(255,255,255,0.7)', lineHeight: 1.2, letterSpacing: '0.04em' }}>{badge.top}</Typography>
+                                            <Typography sx={{ fontSize: '0.48rem', fontWeight: 600, color: 'rgba(255,255,255,0.4)', lineHeight: 1.2 }}>{badge.bottom}</Typography>
                                         </Box>
                                     ))}
                                 </Box>
 
                                 {/* Payment Progress */}
                                 <Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
-                                        <Typography sx={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>Payment Progress</Typography>
-                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: '#2dd4bf', fontFamily: 'Inter, sans-serif' }}>{progressPercent}%</Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}>Payment Progress</Typography>
+                                        <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: '#2dd4bf', fontFamily: 'Inter, sans-serif' }}>{progressPercent}%</Typography>
                                     </Box>
                                     <LinearProgress variant="determinate" value={progressPercent} sx={{
-                                        height: 4, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.08)',
-                                        '& .MuiLinearProgress-bar': { borderRadius: 2, background: 'linear-gradient(90deg, #10b981, #2dd4bf)' },
+                                        height: 5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.08)',
+                                        '& .MuiLinearProgress-bar': { borderRadius: 3, background: 'linear-gradient(90deg, #10b981, #2dd4bf)' },
                                     }} />
                                 </Box>
                             </Box>
