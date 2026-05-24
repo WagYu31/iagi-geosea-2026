@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Submission;
 use App\Models\Setting;
+use App\Models\PdfAnnotation;
 use App\Mail\SubmissionConfirmation;
 use App\Mail\RevisionUploaded;
 use Illuminate\Http\Request;
@@ -51,9 +52,17 @@ class SubmissionController extends Controller
     {
         $submission = Auth::user()->submissions()->with('reviews.reviewer')->findOrFail($id);
 
+        // Get all annotations for this submission (from all reviewers)
+        $annotations = PdfAnnotation::where('submission_id', $id)
+            ->with('user:id,name')
+            ->orderBy('page_number')
+            ->orderBy('created_at')
+            ->get();
+
         return Inertia::render('Submissions/View', [
             'submission' => $submission,
             'reviews' => $submission->reviews,
+            'annotations' => $annotations,
         ]);
     }
 

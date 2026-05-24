@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Submission;
 use App\Models\Review;
+use App\Models\PdfAnnotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -61,11 +62,20 @@ class ReviewerController extends Controller
         $submission = Submission::with(['user', 'reviews.reviewer'])->findOrFail($id);
         $isPhase2 = in_array($submission->status, ['revision_required_phase2']);
 
+        // Get all annotations for this submission (from all reviewers)
+        $annotations = PdfAnnotation::where('submission_id', $id)
+            ->with('user:id,name')
+            ->orderBy('page_number')
+            ->orderBy('created_at')
+            ->get();
+
         return Inertia::render('Submissions/View', [
             'submission' => $submission,
             'reviews' => $submission->reviews,
             'isReviewer' => true,
             'isPhase2' => $isPhase2,
+            'annotations' => $annotations,
+            'currentReviewId' => $review->id,
         ]);
     }
 
@@ -123,5 +133,64 @@ class ReviewerController extends Controller
         }
 
         return back()->with('success', 'Review comment submitted successfully!');
+    }
+
+    // ── PDF Annotation CRUD ──
+
+    public function storeAnnotation(Request $request, $submissionId)
+    {
+        $request->validate([
+            'page_number' => 'required|integer|min:1',
+            'highlight_color' => 'required|string|in:yellow,red,green,blue',
+            'selected_text' => 'required|string',
+            'comment' => 'nullable|string|max:2000',
+            'position_data' => 'required|array',
+        ]);
+
+        $reviewerId = Auth::id();
+        $review = Review::where('reviewer_id', $reviewerId)
+            ->where('submission_id', $submissionId)
+            ->firstOrFail();
+
+        $annotation = PdfAnnotation::create([
+            'review_id' => $review->id,
+            'submission_id' => $submissionId,
+            'user_id' => $reviewerId,
+            'page_number' => $request->page_number,
+            'highlight_color' => $request->highlight_color,
+            'selected_text' => $request->selected_text,
+            'comment' => $request->comment,
+            'position_data' => $request->position_data,
+        ]);
+
+        return response()->json($annotation->load('user:id,name'), 201);
+    }
+
+    public function updateAnnotation(Request $request, $annotationId)
+    {
+        $annotation = PdfAnnotation::where('id', $annotationId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $request->validate([
+            'comment' => 'nullable|string|max:2000',
+            'resolved' => 'nullable|boolean',
+            'highlight_color' => 'nullable|string|in:yellow,red,green,blue',
+        ]);
+
+        $annotation->update($request->only(['comment', 'resolved', 'highlight_color']));
+
+        return response()->json($annotation->load('user:id,name'));
+    }
+
+    public function deleteAnnotation($annotationId)
+    {
+        $annotation = PdfAnnotation::where('id', $annotationId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $annotation->delete();
+
+        return response()->json(['message' => 'Annotation deleted']);
     }
 }

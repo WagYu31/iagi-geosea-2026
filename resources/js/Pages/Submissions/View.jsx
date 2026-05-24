@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Paper, Grid, Chip, Button, Divider, TextField, Alert, Card,
@@ -25,6 +25,7 @@ import StarIcon from '@mui/icons-material/Star';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import { styled } from '@mui/material/styles';
 import RichTextEditor from '@/Components/RichTextEditor';
+import PdfAnnotator from '@/Components/PdfAnnotator';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -38,10 +39,11 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function ViewSubmission({ submission, reviews = [], isReviewer = false }) {
+export default function ViewSubmission({ submission, reviews = [], isReviewer = false, annotations = [], currentReviewId = null }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
+    const { auth } = usePage().props;
 
     const [isEditing, setIsEditing] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
@@ -608,6 +610,21 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     const isDoc = item.file?.toLowerCase().match(/\.(doc|docx)$/);
                                                     
                                                     if (isPdf) {
+                                                        // Use PdfAnnotator for reviewers (editable) or authors with annotations (read-only)
+                                                        const hasAnnotations = annotations && annotations.length > 0;
+                                                        if (item.feedbackType === 'revision1' && (isReviewer || hasAnnotations)) {
+                                                            return (
+                                                                <PdfAnnotator
+                                                                    fileUrl={fileUrl}
+                                                                    submissionId={submission.id}
+                                                                    annotations={annotations}
+                                                                    isReviewer={isReviewer}
+                                                                    isDark={isDark}
+                                                                    currentReviewId={currentReviewId}
+                                                                    currentUserId={auth?.user?.id}
+                                                                />
+                                                            );
+                                                        }
                                                         return (
                                                             <Box sx={{
                                                                 borderRadius: '12px',
