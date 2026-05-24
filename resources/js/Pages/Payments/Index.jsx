@@ -121,13 +121,40 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Payment failed');
+            const currentOrderId = data.order_id;
             handleCloseDialog();
             const snap = await waitForSnap();
+
+            // Helper: call backend to check & sync Midtrans status
+            const syncPaymentStatus = async () => {
+                try {
+                    await fetch(route('payments.checkStatus'), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                        body: JSON.stringify({ order_id: currentOrderId }),
+                    });
+                } catch (err) { console.warn('Status sync failed:', err); }
+            };
+
             snap.pay(data.snap_token, {
-                onSuccess: (result) => { setSnackbar({ open: true, message: '✅ Payment successful! Redirecting...', severity: 'success' }); setTimeout(() => router.reload(), 1500); },
-                onPending: (result) => { setSnackbar({ open: true, message: '⏳ Payment pending. Complete your payment.', severity: 'info' }); setTimeout(() => router.reload(), 1500); },
-                onError: (result) => { setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Unknown error'), severity: 'error' }); setTimeout(() => router.reload(), 2000); },
-                onClose: () => { setSnackbar({ open: true, message: 'Payment window closed.', severity: 'info' }); router.reload(); },
+                onSuccess: async (result) => {
+                    setSnackbar({ open: true, message: '✅ Payment successful! Updating status...', severity: 'success' });
+                    await syncPaymentStatus();
+                    setTimeout(() => router.reload(), 800);
+                },
+                onPending: (result) => {
+                    setSnackbar({ open: true, message: '⏳ Payment pending. Complete your payment.', severity: 'info' });
+                    setTimeout(() => router.reload(), 1500);
+                },
+                onError: (result) => {
+                    setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Unknown error'), severity: 'error' });
+                    setTimeout(() => router.reload(), 2000);
+                },
+                onClose: async () => {
+                    setSnackbar({ open: true, message: 'Checking payment status...', severity: 'info' });
+                    await syncPaymentStatus();
+                    setTimeout(() => router.reload(), 800);
+                },
             });
         } catch (e) { setSnackbar({ open: true, message: e.message, severity: 'error' }); }
         finally { setPaymentLoading(false); }
@@ -170,7 +197,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     return (
         <SidebarLayout>
             <Head title="Payment Center | IAGI-GEOSEA 2026" />
-            <Box component="main" role="main" aria-label="Payment Center" sx={{ p: { xs: 2.5, sm: 3.5 }, maxWidth: '1440px', mx: 'auto', bgcolor: isDark ? '#0b0f17' : '#f4f6fa', minHeight: 'calc(100vh - 60px)', transition: 'background-color 0.3s' }}>
+            <Box component="main" role="main" aria-label="Payment Center" sx={{ p: { xs: 2.5, sm: 3.5 }, maxWidth: '1440px', mx: 'auto', bgcolor: isDark ? '#0b0f17' : '#f4f6fa', minHeight: '100vh', transition: 'background-color 0.3s', pb: 6 }}>
 
                 {/* ════════════════════════════════════════════
                     HERO — Premium Dark Teal Gradient (Stitch Mockup Match)

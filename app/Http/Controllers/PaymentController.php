@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Submission;
 use App\Services\MidtransService;
+use App\Mail\PaymentConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
 {
@@ -200,5 +203,95 @@ class PaymentController extends Controller
         $payment->delete();
 
         return back()->with('success', 'Payment deleted successfully.');
+    }
+
+    /**
+     * Check payment status directly from Midtrans API.
+     * Called by frontend after Snap onSuccess to ensure DB is updated
+     * even if webhook hasn't arrived yet.
+     */
+    public function checkPaymentStatus(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|string',
+        ]);
+
+        $orderId = $request->order_id;
+        $payment = Payment::where('order_id', $orderId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$payment) {
+            return response()->json(['status' => 'not_found'], 404);
+        }
+
+        // Already paid? Skip API call
+        if ($payment->status === 'paid') {
+            return response()->json(['status' => 'paid']);
+        }
+
+        // Query Midtrans API directly
+        try {
+            $serverKey = config('midtrans.server_key');
+            $isProduction = config('midtrans.is_production');
+            $baseUrl = $isProduction
+                ? 'https://api.midtrans.com/v2'
+                : 'https://api.sandbox.midtrans.com/v2';
+
+            $response = Http::withBasicAuth($serverKey, '')
+                ->accept('application/json')
+                ->get("{$baseUrl}/{$orderId}/status");
+
+            if (!$response->ok()) {
+                Log::warning("Midtrans status check failed for {$orderId}: HTTP {$response->status()}");
+                return response()->json(['status' => $payment->status]);
+            }
+
+            $data = $response->json();
+            $transactionStatus = $data['transaction_status'] ?? '';
+            $fraudStatus = $data['fraud_status'] ?? 'accept';
+
+            Log::info("Midtrans status check for {$orderId}: {$transactionStatus}");
+
+            $updateData = [
+                'payment_type' => $data['payment_type'] ?? $payment->payment_type,
+                'transaction_id' => $data['transaction_id'] ?? $payment->transaction_id,
+            ];
+
+            $shouldMarkPaid = false;
+
+            if ($transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept')) {
+                $updateData['status'] = 'paid';
+                $updateData['paid_at'] = now();
+                $updateData['verified'] = true;
+                $updateData['verified_at'] = now();
+                $shouldMarkPaid = true;
+            } elseif (in_array($transactionStatus, ['deny', 'cancel', 'expire'])) {
+                $updateData['status'] = 'failed';
+                $updateData['snap_token'] = null;
+            } elseif ($transactionStatus === 'pending') {
+                $updateData['status'] = 'pending';
+            }
+
+            $payment->update($updateData);
+
+            // Send confirmation email if just marked paid
+            if ($shouldMarkPaid) {
+                try {
+                    $payment->load(['user', 'submission']);
+                    if ($payment->user && $payment->user->email) {
+                        Mail::to($payment->user->email)->queue(new PaymentConfirmation($payment));
+                        Log::info("Payment confirmation email queued for payment #{$payment->id}");
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Failed to queue email for payment #{$payment->id}: " . $e->getMessage());
+                }
+            }
+
+            return response()->json(['status' => $updateData['status'] ?? $payment->status]);
+        } catch (\Exception $e) {
+            Log::error("Midtrans status check error for {$orderId}: " . $e->getMessage());
+            return response()->json(['status' => $payment->status]);
+        }
     }
 }

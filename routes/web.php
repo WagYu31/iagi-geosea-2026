@@ -121,6 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
     Route::post('/payments/snap-token', [App\Http\Controllers\PaymentController::class, 'createSnapToken'])->name('payments.createSnapToken');
+    Route::post('/payments/check-status', [App\Http\Controllers\PaymentController::class, 'checkPaymentStatus'])->name('payments.checkStatus');
     Route::delete('/payments/{id}', [App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
 
     // Author certificates routes
