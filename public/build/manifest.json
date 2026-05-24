@@ -33,8 +33,8 @@
       "_vendor-mui-icons-Cun6d-Jj.js"
     ]
   },
-  "_pages-admin-DEQxJsYl.js": {
-    "file": "assets/pages-admin-DEQxJsYl.js",
+  "_pages-admin-TNjGo_1e.js": {
+    "file": "assets/pages-admin-TNjGo_1e.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -133,7 +133,7 @@
     ]
   },
   "resources/js/Pages/Admin/Scores.jsx": {
-    "file": "assets/Scores-DLry66Ln.js",
+    "file": "assets/Scores-CBns0gpW.js",
     "name": "Scores",
     "src": "resources/js/Pages/Admin/Scores.jsx",
     "isDynamicEntry": true,
@@ -159,7 +159,7 @@
     ]
   },
   "resources/js/Pages/Admin/Users.jsx": {
-    "file": "assets/Users-C-v5_xIb.js",
+    "file": "assets/Users-5EHOxi9p.js",
     "name": "Users",
     "src": "resources/js/Pages/Admin/Users.jsx",
     "isDynamicEntry": true,
@@ -305,7 +305,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-aihqyCMp.js",
+    "file": "assets/app-DyuJwiwY.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -317,12 +317,12 @@
       "_vendor-mui-icons-Cun6d-Jj.js"
     ],
     "dynamicImports": [
-      "_pages-admin-DEQxJsYl.js",
+      "_pages-admin-TNjGo_1e.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-DEQxJsYl.js",
+      "_pages-admin-TNjGo_1e.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-DEQxJsYl.js",
+      "_pages-admin-TNjGo_1e.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-B0_-VRUE.js",
       "_pages-auth-B0_-VRUE.js",

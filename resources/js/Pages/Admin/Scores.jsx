@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer,
@@ -14,7 +14,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
-export default function AdminScores({ submissions = [] }) {
+export default function AdminScores({ submissions = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -47,7 +47,13 @@ export default function AdminScores({ submissions = [] }) {
         return s;
     };
 
-    let filteredSubmissions = submissions.filter(sub =>
+    // submissions is now a paginator object
+    const submissionsData = submissions.data || [];
+    const totalSubmissions = submissions.total || 0;
+    const currentPage = submissions.current_page || 1;
+    const lastPage = submissions.last_page || 1;
+
+    let filteredSubmissions = submissionsData.filter(sub =>
         sub.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sub.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -66,8 +72,8 @@ export default function AdminScores({ submissions = [] }) {
     const totalFiltered = filteredSubmissions.length;
     if (limitResults !== 'all') filteredSubmissions = filteredSubmissions.slice(0, parseInt(limitResults));
 
-    const withScores = submissions.filter(s => s.reviews?.some(r => r.overall_score)).length;
-    const pendingReview = submissions.length - withScores;
+    const withScores = submissionsData.filter(s => s.reviews?.some(r => r.overall_score)).length;
+    const pendingReview = submissionsData.length - withScores;
 
     const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.5, fontSize: '0.825rem', color: c.textPrimary };
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
@@ -116,7 +122,7 @@ export default function AdminScores({ submissions = [] }) {
     };
 
     const stats = [
-        { label: 'Total Submissions', value: submissions.length, icon: <AssignmentIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
+        { label: 'Total Submissions', value: totalSubmissions, icon: <AssignmentIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
         { label: 'With Scores', value: withScores, icon: <CheckCircleIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
         { label: 'Pending Review', value: pendingReview, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
     ];
@@ -130,7 +136,7 @@ export default function AdminScores({ submissions = [] }) {
                     <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
                         Scores & Rankings 📊
                     </Typography>
-                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{submissions.length} submissions tracked</Typography>
+                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalSubmissions} submissions tracked</Typography>
                     <Button
                         variant="contained"
                         startIcon={<FileDownloadIcon />}
@@ -276,6 +282,53 @@ export default function AdminScores({ submissions = [] }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {/* Pagination Controls */}
+                    {lastPage > 1 && (
+                        <Box sx={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            px: 2.5, py: 1.5,
+                            borderTop: `1px solid ${c.cardBorder}`,
+                            bgcolor: isDark ? 'rgba(0,0,0,0.08)' : '#f9fafb',
+                        }}>
+                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                Showing {((currentPage - 1) * 25) + 1}–{Math.min(currentPage * 25, totalSubmissions)} of {totalSubmissions}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {currentPage > 1 && (
+                                    <Button size="small"
+                                        onClick={() => router.get(route('admin.scores'), { page: currentPage - 1 }, { preserveState: true })}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        ‹ Prev
+                                    </Button>
+                                )}
+                                {Array.from({ length: Math.min(lastPage, 7) }, (_, i) => {
+                                    let page;
+                                    if (lastPage <= 7) page = i + 1;
+                                    else if (currentPage <= 4) page = i + 1;
+                                    else if (currentPage >= lastPage - 3) page = lastPage - 6 + i;
+                                    else page = currentPage - 3 + i;
+                                    return (
+                                        <Button key={page} size="small"
+                                            onClick={() => router.get(route('admin.scores'), { page }, { preserveState: true })}
+                                            sx={{
+                                                minWidth: 32, height: 32, borderRadius: '8px',
+                                                fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
+                                                background: page === currentPage ? 'linear-gradient(135deg, #0d7a6a, #1abc9c)' : 'transparent',
+                                                color: page === currentPage ? '#fff' : c.textMuted,
+                                                '&:hover': { bgcolor: page === currentPage ? '#16a085' : 'rgba(26,188,156,0.08)' },
+                                            }}>{page}</Button>
+                                    );
+                                })}
+                                {currentPage < lastPage && (
+                                    <Button size="small"
+                                        onClick={() => router.get(route('admin.scores'), { page: currentPage + 1 }, { preserveState: true })}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        Next ›
+                                    </Button>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
                 </Card>
             </Box>
         </SidebarLayout>

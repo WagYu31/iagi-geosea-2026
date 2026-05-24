@@ -17,7 +17,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PaymentIcon from '@mui/icons-material/Payment';
 
-export default function AdminPayments({ payments = [] }) {
+export default function AdminPayments({ payments = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -35,21 +35,27 @@ export default function AdminPayments({ payments = [] }) {
         }
     };
 
-    // Stats
-    const paidPayments = payments.filter(p => p.status === 'paid' || p.verified);
-    const pendingPayments = payments.filter(p => p.status === 'pending' && !p.verified);
-    const midtransPayments = payments.filter(p => !!p.order_id);
-    const manualPayments = payments.filter(p => !p.order_id && !!p.payment_proof_url);
+    // payments is now a paginator object
+    const paymentsData = payments.data || [];
+    const totalPayments = payments.total || 0;
+    const currentPage = payments.current_page || 1;
+    const lastPage = payments.last_page || 1;
+
+    // Stats (from current page only - for accurate counts, server-side would be ideal)
+    const paidPayments = paymentsData.filter(p => p.status === 'paid' || p.verified);
+    const pendingPaymentsArr = paymentsData.filter(p => p.status === 'pending' && !p.verified);
+    const midtransPayments = paymentsData.filter(p => !!p.order_id);
+    const manualPayments = paymentsData.filter(p => !p.order_id && !!p.payment_proof_url);
     const totalAmount = paidPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
 
-    // Filter payments by tab
+    // Filter payments by tab (from current page data)
     const filteredPayments = (() => {
         switch (tabFilter) {
             case 'midtrans': return midtransPayments;
             case 'manual': return manualPayments;
             case 'paid': return paidPayments;
-            case 'pending': return pendingPayments;
-            default: return payments;
+            case 'pending': return pendingPaymentsArr;
+            default: return paymentsData;
         }
     })();
 
@@ -59,7 +65,7 @@ export default function AdminPayments({ payments = [] }) {
     const stats = [
         { label: 'Total Revenue', value: `Rp ${totalAmount.toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
         { label: 'Paid', value: paidPayments.length, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
-        { label: 'Pending', value: pendingPayments.length, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
+        { label: 'Pending', value: pendingPaymentsArr.length, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
         { label: 'Via Midtrans', value: midtransPayments.length, icon: <CreditCardIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
     ];
 
@@ -108,7 +114,7 @@ export default function AdminPayments({ payments = [] }) {
                     <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
                         Manage Payments 💳
                     </Typography>
-                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{payments.length} total payments</Typography>
+                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalPayments} total payments</Typography>
                 </Box>
 
                 {/* Stats */}
@@ -150,9 +156,9 @@ export default function AdminPayments({ payments = [] }) {
                                 '& .MuiTabs-indicator': { backgroundColor: '#1abc9c', height: 3, borderRadius: '3px 3px 0 0' },
                             }}
                         >
-                            <Tab value="all" label={`All (${payments.length})`} />
+                            <Tab value="all" label={`All (${paymentsData.length})`} />
                             <Tab value="paid" label={`Paid (${paidPayments.length})`} />
-                            <Tab value="pending" label={`Pending (${pendingPayments.length})`} />
+                            <Tab value="pending" label={`Pending (${pendingPaymentsArr.length})`} />
                             <Tab value="midtrans" label={`Midtrans (${midtransPayments.length})`} />
                             <Tab value="manual" label={`Manual (${manualPayments.length})`} />
                         </Tabs>
@@ -244,6 +250,53 @@ export default function AdminPayments({ payments = [] }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {/* Pagination Controls */}
+                    {lastPage > 1 && (
+                        <Box sx={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            px: 2.5, py: 1.5,
+                            borderTop: `1px solid ${c.cardBorder}`,
+                            bgcolor: isDark ? 'rgba(0,0,0,0.08)' : '#f9fafb',
+                        }}>
+                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                Showing {((currentPage - 1) * 25) + 1}–{Math.min(currentPage * 25, totalPayments)} of {totalPayments}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {currentPage > 1 && (
+                                    <Button size="small"
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage - 1 }, { preserveState: true })}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        ‹ Prev
+                                    </Button>
+                                )}
+                                {Array.from({ length: Math.min(lastPage, 7) }, (_, i) => {
+                                    let page;
+                                    if (lastPage <= 7) page = i + 1;
+                                    else if (currentPage <= 4) page = i + 1;
+                                    else if (currentPage >= lastPage - 3) page = lastPage - 6 + i;
+                                    else page = currentPage - 3 + i;
+                                    return (
+                                        <Button key={page} size="small"
+                                            onClick={() => router.get(route('admin.payments'), { page }, { preserveState: true })}
+                                            sx={{
+                                                minWidth: 32, height: 32, borderRadius: '8px',
+                                                fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
+                                                background: page === currentPage ? 'linear-gradient(135deg, #0d7a6a, #1abc9c)' : 'transparent',
+                                                color: page === currentPage ? '#fff' : c.textMuted,
+                                                '&:hover': { bgcolor: page === currentPage ? '#16a085' : 'rgba(26,188,156,0.08)' },
+                                            }}>{page}</Button>
+                                    );
+                                })}
+                                {currentPage < lastPage && (
+                                    <Button size="small"
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage + 1 }, { preserveState: true })}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        Next ›
+                                    </Button>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
                 </Card>
             </Box>
 

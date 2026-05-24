@@ -18,7 +18,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 
-export default function AdminUsers({ users = [] }) {
+export default function AdminUsers({ users = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -93,7 +93,13 @@ export default function AdminUsers({ users = [] }) {
         });
     };
 
-    const filteredUsers = users.filter(u => {
+    // users is now a paginator object: { data: [...], total, current_page, last_page }
+    const usersData = users.data || [];
+    const totalUsers = users.total || 0;
+    const currentPage = users.current_page || 1;
+    const lastPage = users.last_page || 1;
+
+    const filteredUsers = usersData.filter(u => {
         const matchesSearch = searchTerm === '' || u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = roleFilter === 'all' || (u.role || 'Author') === roleFilter;
         return matchesSearch && matchesRole;
@@ -125,7 +131,7 @@ export default function AdminUsers({ users = [] }) {
                         <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
                             User Management 👥
                         </Typography>
-                        <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{users.length} registered users</Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalUsers} registered users</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 1.5 }}>
                         <Button variant="outlined" startIcon={<DownloadIcon />} onClick={() => window.location.href = route('admin.users.export')} sx={{ borderColor: '#1abc9c', color: '#1abc9c', px: 2.5, py: 1.2, borderRadius: '12px', textTransform: 'none', fontWeight: 600, fontSize: '0.875rem', '&:hover': { borderColor: '#16a085', bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#ecfdf5' }, transition: 'all 0.25s ease' }}>
@@ -160,10 +166,10 @@ export default function AdminUsers({ users = [] }) {
                                         '&.Mui-focused fieldset': { borderColor: '#1abc9c' },
                                     }}
                                 >
-                                    <MenuItem value="all">All ({users.length})</MenuItem>
-                                    <MenuItem value="Author">Author ({users.filter(u => (u.role || 'Author') === 'Author').length})</MenuItem>
-                                    <MenuItem value="Reviewer">Reviewer ({users.filter(u => u.role === 'Reviewer').length})</MenuItem>
-                                    <MenuItem value="Admin">Admin ({users.filter(u => u.role === 'Admin').length})</MenuItem>
+                                    <MenuItem value="all">All ({totalUsers})</MenuItem>
+                                    <MenuItem value="Author">Author</MenuItem>
+                                    <MenuItem value="Reviewer">Reviewer</MenuItem>
+                                    <MenuItem value="Admin">Admin</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
@@ -257,6 +263,53 @@ export default function AdminUsers({ users = [] }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {/* Pagination Controls */}
+                    {lastPage > 1 && (
+                        <Box sx={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            px: 2.5, py: 1.5,
+                            borderTop: `1px solid ${c.cardBorder}`,
+                            bgcolor: isDark ? 'rgba(0,0,0,0.08)' : '#f9fafb',
+                        }}>
+                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                Showing {((currentPage - 1) * 25) + 1}–{Math.min(currentPage * 25, totalUsers)} of {totalUsers}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {currentPage > 1 && (
+                                    <Button size="small" component="a" href={`?page=${currentPage - 1}`}
+                                        onClick={(e) => { e.preventDefault(); router.get(route('admin.users'), { page: currentPage - 1 }, { preserveState: true }); }}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        ‹ Prev
+                                    </Button>
+                                )}
+                                {Array.from({ length: Math.min(lastPage, 7) }, (_, i) => {
+                                    let page;
+                                    if (lastPage <= 7) page = i + 1;
+                                    else if (currentPage <= 4) page = i + 1;
+                                    else if (currentPage >= lastPage - 3) page = lastPage - 6 + i;
+                                    else page = currentPage - 3 + i;
+                                    return (
+                                        <Button key={page} size="small"
+                                            onClick={() => router.get(route('admin.users'), { page }, { preserveState: true })}
+                                            sx={{
+                                                minWidth: 32, height: 32, borderRadius: '8px',
+                                                fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
+                                                background: page === currentPage ? 'linear-gradient(135deg, #0d7a6a, #1abc9c)' : 'transparent',
+                                                color: page === currentPage ? '#fff' : c.textMuted,
+                                                '&:hover': { bgcolor: page === currentPage ? '#16a085' : 'rgba(26,188,156,0.08)' },
+                                            }}>{page}</Button>
+                                    );
+                                })}
+                                {currentPage < lastPage && (
+                                    <Button size="small"
+                                        onClick={() => router.get(route('admin.users'), { page: currentPage + 1 }, { preserveState: true })}
+                                        sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
+                                        Next ›
+                                    </Button>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
                 </Card>
             </Box>
 
