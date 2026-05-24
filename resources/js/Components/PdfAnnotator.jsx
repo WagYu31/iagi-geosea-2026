@@ -368,10 +368,30 @@ export default function PdfAnnotator({
     };
 
     // ═══════════════════════════════════════════════
-    // DOCX MODE (Google Docs iframe)
+    // DOCX MODE (Google Docs iframe + popup editor)
     // ═══════════════════════════════════════════════
     if (!isPdf) {
         const fullUrl = `${window.location.origin}${fileUrl}`;
+        const gDocsUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}`;
+
+        const openInGoogleDocs = () => {
+            // Open in popup window (not tab) so it stays alongside the review page
+            const w = Math.min(1100, window.screen.width * 0.55);
+            const h = Math.min(800, window.screen.height * 0.85);
+            const left = window.screen.width - w - 30;
+            const top = 50;
+            window.open(gDocsUrl, 'GoogleDocsEditor', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+        };
+
+        const openInOfficeOnline = () => {
+            const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fullUrl)}`;
+            const w = Math.min(1100, window.screen.width * 0.55);
+            const h = Math.min(800, window.screen.height * 0.85);
+            const left = window.screen.width - w - 30;
+            const top = 50;
+            window.open(officeUrl, 'OfficeViewer', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+        };
+
         return (
             <Box>
                 <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, p: 1.5, mb: 1.5, borderRadius: '12px', bgcolor: '#f8fafc', border: `1px solid ${borderColor}` }}>
@@ -379,17 +399,41 @@ export default function PdfAnnotator({
                         <RateReviewIcon sx={{ fontSize: 20, color: '#1abc9c' }} />
                         <Typography sx={{ fontSize: '0.85rem', fontWeight: 800, color: textPrimary, fontFamily: 'Inter,sans-serif' }}>Mode Review Dokumen</Typography>
                     </Box>
-                    <Button size="small"
-                        startIcon={<Badge badgeContent={annotationCount} color="primary" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', minWidth: 16, height: 16 } }}><FormatListBulletedIcon fontSize="small" /></Badge>}
-                        onClick={() => setShowSidebar(!showSidebar)}
-                        sx={{ textTransform: 'none', fontWeight: 700, fontSize: '0.8rem', borderRadius: '10px', px: 2, color: showSidebar ? '#fff' : textSecondary, bgcolor: showSidebar ? '#1abc9c' : 'transparent', '&:hover': { bgcolor: showSidebar ? '#16a085' : '#f0fdf9' } }}>
-                        Review Panel
-                    </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Tooltip title="Buka Google Docs di jendela samping — bisa edit & komentar" arrow>
+                            <Button size="small" onClick={openInGoogleDocs}
+                                sx={{
+                                    textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', borderRadius: '10px', px: 2,
+                                    background: 'linear-gradient(135deg,#4285f4,#34a853)', color: '#fff',
+                                    boxShadow: '0 2px 8px rgba(66,133,244,0.3)',
+                                    '&:hover': { background: 'linear-gradient(135deg,#3367d6,#2d8e47)', boxShadow: '0 4px 12px rgba(66,133,244,0.4)' },
+                                }}>
+                                📝 Buka di Google Docs
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title="Buka di Microsoft Office Online" arrow>
+                            <Button size="small" onClick={openInOfficeOnline}
+                                sx={{
+                                    textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', borderRadius: '10px', px: 2,
+                                    background: 'linear-gradient(135deg,#d83b01,#ea4300)', color: '#fff',
+                                    boxShadow: '0 2px 8px rgba(216,59,1,0.3)',
+                                    '&:hover': { background: 'linear-gradient(135deg,#b83301,#c43900)', boxShadow: '0 4px 12px rgba(216,59,1,0.4)' },
+                                }}>
+                                📄 Office Online
+                            </Button>
+                        </Tooltip>
+                        <Button size="small"
+                            startIcon={<Badge badgeContent={annotationCount} color="primary" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', minWidth: 16, height: 16 } }}><FormatListBulletedIcon fontSize="small" /></Badge>}
+                            onClick={() => setShowSidebar(!showSidebar)}
+                            sx={{ textTransform: 'none', fontWeight: 700, fontSize: '0.8rem', borderRadius: '10px', px: 2, color: showSidebar ? '#fff' : textSecondary, bgcolor: showSidebar ? '#1abc9c' : 'transparent', '&:hover': { bgcolor: showSidebar ? '#16a085' : '#f0fdf9' } }}>
+                            Review Panel
+                        </Button>
+                    </Box>
                 </Paper>
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row' } }}>
                     <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#f5f5f5', position: 'relative' }}>
                         <PageIndicatorOverlay />
-                        <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Document Viewer" />
+                        <iframe src={`${gDocsUrl}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Document Viewer" />
                     </Box>
                     {showSidebar && <Sidebar />}
                 </Box>
