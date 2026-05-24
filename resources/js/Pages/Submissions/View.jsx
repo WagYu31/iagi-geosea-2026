@@ -609,22 +609,23 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     const fullUrl = `${window.location.origin}${fileUrl}`;
                                                     const isDoc = item.file?.toLowerCase().match(/\.(doc|docx)$/);
                                                     
+                                                    // Use PdfAnnotator for Full Paper when reviewer is viewing or annotations exist
+                                                    const hasAnnotations = annotations && annotations.length > 0;
+                                                    if (item.feedbackType === 'revision1' && (isReviewer || hasAnnotations)) {
+                                                        return (
+                                                            <PdfAnnotator
+                                                                fileUrl={fileUrl}
+                                                                submissionId={submission.id}
+                                                                annotations={annotations}
+                                                                isReviewer={isReviewer}
+                                                                isDark={isDark}
+                                                                currentReviewId={currentReviewId}
+                                                                currentUserId={auth?.user?.id}
+                                                            />
+                                                        );
+                                                    }
+
                                                     if (isPdf) {
-                                                        // Use PdfAnnotator for reviewers (editable) or authors with annotations (read-only)
-                                                        const hasAnnotations = annotations && annotations.length > 0;
-                                                        if (item.feedbackType === 'revision1' && (isReviewer || hasAnnotations)) {
-                                                            return (
-                                                                <PdfAnnotator
-                                                                    fileUrl={fileUrl}
-                                                                    submissionId={submission.id}
-                                                                    annotations={annotations}
-                                                                    isReviewer={isReviewer}
-                                                                    isDark={isDark}
-                                                                    currentReviewId={currentReviewId}
-                                                                    currentUserId={auth?.user?.id}
-                                                                />
-                                                            );
-                                                        }
                                                         return (
                                                             <Box sx={{
                                                                 borderRadius: '12px',
