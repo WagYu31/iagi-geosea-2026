@@ -79,7 +79,7 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
 
     useEffect(() => {
         fetchVisitorData(visitorPeriod);
-        refreshTimerRef.current = setInterval(() => fetchVisitorData(visitorPeriod), 10000);
+        refreshTimerRef.current = setInterval(() => fetchVisitorData(visitorPeriod), 60000);
         return () => clearInterval(refreshTimerRef.current);
     }, [visitorPeriod, fetchVisitorData]);
 
@@ -116,7 +116,7 @@ export default function AdminDashboard({ analytics, recentSubmissions = [], pend
 
     useEffect(() => {
         fetchSubData(subPeriod);
-        subRefreshTimerRef.current = setInterval(() => fetchSubData(subPeriod), 15000);
+        subRefreshTimerRef.current = setInterval(() => fetchSubData(subPeriod), 60000);
         return () => clearInterval(subRefreshTimerRef.current);
     }, [subPeriod, fetchSubData]);
 

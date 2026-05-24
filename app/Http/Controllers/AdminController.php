@@ -23,28 +23,30 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $analytics = [
-            'totalSubmissions' => Submission::count(),
-            'pendingReviews' => Submission::where('status', 'pending')->count(),
-            'verifiedPayments' => Payment::where('verified', true)->count(),
-            'acceptedSubmissions' => Submission::where('status', 'accepted')->count(),
-            'rejectedSubmissions' => Submission::where('status', 'rejected')->count(),
-            'totalUsers' => User::where('role', 'Author')->count(),
-        ];
+        // Cache heavy aggregations for 60 seconds
+        $analytics = cache()->remember('admin_dashboard_analytics', 60, function() {
+            return [
+                'totalSubmissions' => Submission::count(),
+                'pendingReviews' => Submission::where('status', 'pending')->count(),
+                'verifiedPayments' => Payment::where('verified', true)->count(),
+                'acceptedSubmissions' => Submission::where('status', 'accepted')->count(),
+                'rejectedSubmissions' => Submission::where('status', 'rejected')->count(),
+                'totalUsers' => User::where('role', 'Author')->count(),
+            ];
+        });
 
-        // Recent submissions
-        $recentSubmissions = Submission::with('user')
+        // Recent submissions (light query, no cache needed)
+        $recentSubmissions = Submission::with('user:id,name,email')
             ->latest()
             ->take(5)
-            ->get();
+            ->get(['id', 'title', 'status', 'user_id', 'created_at']);
 
-        // Pending payments
-        $pendingPayments = Payment::with(['user', 'submission'])
-            ->where('verified', false)
-            ->count();
+        // Pending payments count
+        $pendingPayments = Payment::where('verified', false)->count();
 
-        // Submissions per topic statistics with category breakdown
-        $submissionsPerTopic = Submission::selectRaw('
+        // Cache topic statistics for 60 seconds
+        $submissionsPerTopic = cache()->remember('admin_topic_stats', 60, function() {
+            return Submission::selectRaw('
                 COALESCE(NULLIF(paper_sub_theme, ""), NULLIF(topic, ""), "Tidak Ditentukan") as topic_name,
                 COUNT(*) as count,
                 SUM(CASE WHEN category_submission = "Oral Presentation" THEN 1 ELSE 0 END) as oral_presentation_count,
@@ -53,44 +55,42 @@ class AdminController extends Controller
             ->groupBy('topic_name')
             ->orderBy('count', 'DESC')
             ->get()
-            ->map(function ($item) {
-                return [
-                    'topic' => $item->topic_name,
-                    'count' => (int) $item->count,
-                    'oral_presentation_count' => (int) $item->oral_presentation_count,
-                    'poster_presentation_count' => (int) $item->poster_presentation_count,
-                ];
-            });
+            ->map(fn($item) => [
+                'topic' => $item->topic_name,
+                'count' => (int) $item->count,
+                'oral_presentation_count' => (int) $item->oral_presentation_count,
+                'poster_presentation_count' => (int) $item->poster_presentation_count,
+            ]);
+        });
 
-        // Participant category statistics
-        $participantStats = [
-            'student' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
-                ->where('users.category', 'Student')
-                ->count(),
-            'professional' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
-                ->where('users.category', 'Professional')
-                ->count(),
-            'international' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
-                ->where('users.category', 'International Delegate')
-                ->count(),
-        ];
+        // Cache participant stats
+        $participantStats = cache()->remember('admin_participant_stats', 60, function() {
+            return [
+                'student' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
+                    ->where('users.category', 'Student')->count(),
+                'professional' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
+                    ->where('users.category', 'Professional')->count(),
+                'international' => Submission::join('users', 'submissions.user_id', '=', 'users.id')
+                    ->where('users.category', 'International Delegate')->count(),
+            ];
+        });
 
-        // Submissions per topic by participant category (with presentation type breakdown)
-        $submissionsPerTopicByParticipant = Submission::join('users', 'submissions.user_id', '=', 'users.id')
-            ->selectRaw('
-                COALESCE(NULLIF(submissions.paper_sub_theme, ""), NULLIF(submissions.topic, ""), "Tidak Ditentukan") as topic_name,
-                COUNT(*) as count,
-                SUM(CASE WHEN users.category = "Student" THEN 1 ELSE 0 END) as student_count,
-                SUM(CASE WHEN users.category = "Professional" THEN 1 ELSE 0 END) as professional_count,
-                SUM(CASE WHEN users.category = "International Delegate" THEN 1 ELSE 0 END) as international_count,
-                SUM(CASE WHEN submissions.category_submission = "Oral Presentation" THEN 1 ELSE 0 END) as oral_presentation_count,
-                SUM(CASE WHEN submissions.category_submission = "Poster Presentation" THEN 1 ELSE 0 END) as poster_presentation_count
-            ')
-            ->groupBy('topic_name')
-            ->orderBy('count', 'DESC')
-            ->get()
-            ->map(function ($item) {
-                return [
+        // Cache topic by participant stats
+        $submissionsPerTopicByParticipant = cache()->remember('admin_topic_participant_stats', 60, function() {
+            return Submission::join('users', 'submissions.user_id', '=', 'users.id')
+                ->selectRaw('
+                    COALESCE(NULLIF(submissions.paper_sub_theme, ""), NULLIF(submissions.topic, ""), "Tidak Ditentukan") as topic_name,
+                    COUNT(*) as count,
+                    SUM(CASE WHEN users.category = "Student" THEN 1 ELSE 0 END) as student_count,
+                    SUM(CASE WHEN users.category = "Professional" THEN 1 ELSE 0 END) as professional_count,
+                    SUM(CASE WHEN users.category = "International Delegate" THEN 1 ELSE 0 END) as international_count,
+                    SUM(CASE WHEN submissions.category_submission = "Oral Presentation" THEN 1 ELSE 0 END) as oral_presentation_count,
+                    SUM(CASE WHEN submissions.category_submission = "Poster Presentation" THEN 1 ELSE 0 END) as poster_presentation_count
+                ')
+                ->groupBy('topic_name')
+                ->orderBy('count', 'DESC')
+                ->get()
+                ->map(fn($item) => [
                     'topic' => $item->topic_name,
                     'count' => (int) $item->count,
                     'student_count' => (int) $item->student_count,
@@ -98,10 +98,10 @@ class AdminController extends Controller
                     'international_count' => (int) $item->international_count,
                     'oral_presentation_count' => (int) $item->oral_presentation_count,
                     'poster_presentation_count' => (int) $item->poster_presentation_count,
-                ];
-            });
+                ]);
+        });
 
-        // Visitor analytics
+        // Visitor analytics (light queries)
         $visitorAnalytics = [
             'today' => PageVisit::where('page', '/')->whereDate('visited_at', today())->count(),
             'last7days' => PageVisit::where('page', '/')->where('visited_at', '>=', now()->subDays(7))->count(),
@@ -609,9 +609,9 @@ class AdminController extends Controller
 
     public function payments()
     {
-        $payments = Payment::with(['user', 'submission'])
+        $payments = Payment::with(['user:id,name,email', 'submission:id,title,submission_code'])
             ->latest()
-            ->get();
+            ->paginate(25);
 
         return Inertia::render('Admin/Payments', [
             'payments' => $payments,
@@ -642,7 +642,7 @@ class AdminController extends Controller
 
     public function users()
     {
-        $users = User::latest()->get();
+        $users = User::latest()->paginate(25);
 
         return Inertia::render('Admin/Users', [
             'users' => $users,
@@ -759,9 +759,9 @@ class AdminController extends Controller
 
     public function scores()
     {
-        $submissions = Submission::with(['user', 'reviews.reviewer'])
+        $submissions = Submission::with(['user:id,name,email', 'reviews:id,submission_id,reviewer_id,originality_score,relevance_score,clarity_score,methodology_score,overall_score,comments', 'reviews.reviewer:id,name'])
             ->latest()
-            ->get();
+            ->paginate(25);
 
         return Inertia::render('Admin/Scores', [
             'submissions' => $submissions,
