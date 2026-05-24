@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
     Box, Typography, IconButton, Button, TextField, Paper, Chip,
-    Tooltip, Divider, Stack, Badge, Fade, Alert,
+    Tooltip, Divider, Stack, Badge, Fade, Alert, Snackbar,
 } from '@mui/material';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -20,13 +20,15 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 import axios from 'axios';
 
 const HIGHLIGHT_COLORS = {
-    yellow: { bg: 'rgba(250,204,21,0.35)', border: '#facc15', label: 'Catatan', icon: '📝', desc: 'Catatan umum' },
-    red:    { bg: 'rgba(239,68,68,0.3)', border: '#ef4444', label: 'Kesalahan', icon: '❌', desc: 'Perlu diperbaiki' },
-    green:  { bg: 'rgba(34,197,94,0.3)', border: '#22c55e', label: 'Sudah Baik', icon: '✅', desc: 'Bagian yang bagus' },
-    blue:   { bg: 'rgba(59,130,246,0.3)', border: '#3b82f6', label: 'Saran', icon: 'ℹ️', desc: 'Saran perbaikan' },
+    yellow: { bg: 'rgba(250,204,21,0.35)', border: '#facc15', label: 'Catatan', icon: '📝' },
+    red:    { bg: 'rgba(239,68,68,0.3)', border: '#ef4444', label: 'Kesalahan', icon: '❌' },
+    green:  { bg: 'rgba(34,197,94,0.3)', border: '#22c55e', label: 'Sudah Baik', icon: '✅' },
+    blue:   { bg: 'rgba(59,130,246,0.3)', border: '#3b82f6', label: 'Saran', icon: 'ℹ️' },
 };
 
 export default function PdfAnnotator({
@@ -51,6 +53,8 @@ export default function PdfAnnotator({
     const [saving, setSaving] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
     const [activeAnnotationId, setActiveAnnotationId] = useState(null);
+    const [pageIndicator, setPageIndicator] = useState(null);
+    const [snackbar, setSnackbar] = useState({ open: false, msg: '' });
     const renderTaskRef = useRef(null);
 
     // Manual form
@@ -84,7 +88,7 @@ export default function PdfAnnotator({
         return () => { cancelled = true; };
     }, [fileUrl, isPdf]);
 
-    // PDF: Render page
+    // PDF: Render
     useEffect(() => {
         if (!isPdf || !pdfDoc || !canvasRef.current) return;
         (async () => {
@@ -101,13 +105,34 @@ export default function PdfAnnotator({
         })();
     }, [pdfDoc, currentPage, scale, isPdf]);
 
-    // Click annotation → navigate to page (PDF mode)
+    // Click annotation
     const handleAnnotationClick = useCallback((ann) => {
-        if (isPdf && ann.page_number) {
+        setActiveAnnotationId(ann.id);
+
+        if (isPdf) {
+            // PDF: navigate to page
             setCurrentPage(ann.page_number);
-            setActiveAnnotationId(ann.id);
-            setTimeout(() => setActiveAnnotationId(null), 3000);
+        } else {
+            // DOCX: copy text + show page indicator overlay
+            const text = ann.selected_text?.substring(0, 60) || '';
+            if (text && navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    setSnackbar({
+                        open: true,
+                        msg: `📋 Teks disalin! Tekan Ctrl+F di dokumen lalu Paste untuk menemukan teks di halaman ${ann.page_number}.`
+                    });
+                });
+            }
+            // Show page indicator overlay on the document
+            setPageIndicator({
+                page: ann.page_number,
+                text: ann.selected_text?.substring(0, 80),
+                color: ann.highlight_color,
+            });
+            setTimeout(() => setPageIndicator(null), 5000);
         }
+
+        setTimeout(() => setActiveAnnotationId(null), 4000);
     }, [isPdf]);
 
     // Save
@@ -132,7 +157,7 @@ export default function PdfAnnotator({
 
     const handleSubmitManual = async () => {
         if (!manualText.trim()) return;
-        if (await saveAnnotation({ page_number: parseInt(manualPage) || currentPage, highlight_color: selectedColor, selected_text: manualText.trim(), comment: manualComment.trim() || null, position_data: { manual: true } })) {
+        if (await saveAnnotation({ page_number: parseInt(manualPage) || 1, highlight_color: selectedColor, selected_text: manualText.trim(), comment: manualComment.trim() || null, position_data: { manual: true } })) {
             setManualText(''); setManualComment(''); setManualPage(''); setShowAddForm(false);
         }
     };
@@ -192,7 +217,7 @@ export default function PdfAnnotator({
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#1abc9c', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📄 Halaman</Typography>
-                        <TextField fullWidth size="small" type="number" placeholder={`Halaman saat ini: ${currentPage}`} value={manualPage} onChange={(e) => setManualPage(e.target.value)} inputProps={{ min: 1 }} sx={inputSx} />
+                        <TextField fullWidth size="small" type="number" placeholder="Contoh: 5" value={manualPage} onChange={(e) => setManualPage(e.target.value)} inputProps={{ min: 1 }} sx={inputSx} />
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#1abc9c', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📝 Kutipan Teks *</Typography>
@@ -235,11 +260,14 @@ export default function PdfAnnotator({
                                 return cnt > 0 ? <Chip key={c} label={`${cfg.icon} ${cnt}`} size="small" sx={{ height: 22, fontSize: '0.68rem', fontWeight: 700, bgcolor: cfg.bg, color: textPrimary, borderRadius: '8px' }} /> : null;
                             })}
                         </Box>
-                        <Box sx={{ bgcolor: '#ecfdf5', borderRadius: '8px', p: 1, mb: 1.5, border: '1px solid #d1fae5' }}>
-                            <Typography sx={{ fontSize: '0.7rem', color: '#059669', textAlign: 'center', fontWeight: 600 }}>
-                                <MyLocationIcon sx={{ fontSize: 13, verticalAlign: 'middle', mr: 0.3 }} /> Klik anotasi → langsung pindah ke halaman dokumen
-                            </Typography>
-                        </Box>
+                        {!isPdf && (
+                            <Box sx={{ bgcolor: '#eff6ff', borderRadius: '8px', p: 1, mb: 1.5, border: '1px solid #dbeafe' }}>
+                                <Typography sx={{ fontSize: '0.7rem', color: '#1d4ed8', textAlign: 'center', fontWeight: 600, lineHeight: 1.5 }}>
+                                    <FindInPageIcon sx={{ fontSize: 13, verticalAlign: 'middle', mr: 0.3 }} />
+                                    Klik anotasi → teks <b>disalin otomatis</b> → tekan <b>Ctrl+F</b> di dokumen lalu <b>Paste</b>
+                                </Typography>
+                            </Box>
+                        )}
                         <Stack spacing={1}>
                             {annotations.map(ann => {
                                 const cc = HIGHLIGHT_COLORS[ann.highlight_color] || HIGHLIGHT_COLORS.yellow;
@@ -301,8 +329,46 @@ export default function PdfAnnotator({
         </Paper>
     );
 
+    // Page indicator overlay (for DOCX mode when clicking annotation)
+    const PageIndicatorOverlay = () => {
+        if (!pageIndicator) return null;
+        const cc = HIGHLIGHT_COLORS[pageIndicator.color] || HIGHLIGHT_COLORS.yellow;
+        return (
+            <Fade in>
+                <Box sx={{
+                    position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)',
+                    zIndex: 100, display: 'flex', alignItems: 'center', gap: 1.5,
+                    bgcolor: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(12px)',
+                    borderRadius: '16px', px: 3, py: 1.5,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)', border: `2px solid ${cc.border}`,
+                    maxWidth: '80%',
+                }}>
+                    <Box sx={{
+                        bgcolor: cc.border, borderRadius: '12px', width: 48, height: 48,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    }}>
+                        <Typography sx={{ fontSize: '1.2rem', fontWeight: 900, color: '#fff' }}>
+                            {pageIndicator.page}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography sx={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Halaman {pageIndicator.page}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.8rem', color: '#fff', fontWeight: 600, lineHeight: 1.4 }}>
+                            "{pageIndicator.text}..."
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.68rem', color: '#fbbf24', mt: 0.3, display: 'flex', alignItems: 'center', gap: 0.3 }}>
+                            <ContentCopyIcon sx={{ fontSize: 11 }} /> Teks disalin — tekan Ctrl+F lalu Paste
+                        </Typography>
+                    </Box>
+                </Box>
+            </Fade>
+        );
+    };
+
     // ═══════════════════════════════════════════════
-    // NON-PDF FALLBACK (when LibreOffice not available)
+    // DOCX MODE (Google Docs iframe)
     // ═══════════════════════════════════════════════
     if (!isPdf) {
         const fullUrl = `${window.location.origin}${fileUrl}`;
@@ -321,17 +387,23 @@ export default function PdfAnnotator({
                     </Button>
                 </Paper>
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row' } }}>
-                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#f5f5f5' }}>
+                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#f5f5f5', position: 'relative' }}>
+                        <PageIndicatorOverlay />
                         <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Document Viewer" />
                     </Box>
                     {showSidebar && <Sidebar />}
                 </Box>
+                <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ open: false, msg: '' })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                    <Alert severity="info" variant="filled" onClose={() => setSnackbar({ open: false, msg: '' })} sx={{ borderRadius: '12px', fontSize: '0.82rem', fontWeight: 600 }}>
+                        {snackbar.msg}
+                    </Alert>
+                </Snackbar>
             </Box>
         );
     }
 
     // ═══════════════════════════════════════════════
-    // PDF MODE (native PDF or converted DOCX→PDF)
+    // PDF MODE
     // ═══════════════════════════════════════════════
     const handleMouseUp = () => {
         if (!isReviewer) return;

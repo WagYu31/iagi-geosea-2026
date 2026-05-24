@@ -71,13 +71,6 @@ class ReviewerController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        // Convert DOCX to PDF for review (if applicable)
-        $previewPdfUrl = null;
-        $fullPaperFile = $submission->full_paper_file;
-        if ($fullPaperFile && preg_match('/\.(docx?)$/i', $fullPaperFile)) {
-            $previewPdfUrl = $this->getOrConvertToPdf($fullPaperFile);
-        }
-
         return Inertia::render('Submissions/View', [
             'submission' => $submission,
             'reviews' => $submission->reviews,
@@ -85,7 +78,6 @@ class ReviewerController extends Controller
             'isPhase2' => $isPhase2,
             'annotations' => $annotations,
             'currentReviewId' => $review->id,
-            'previewPdfUrl' => $previewPdfUrl,
         ]);
     }
 
@@ -202,57 +194,5 @@ class ReviewerController extends Controller
         $annotation->delete();
 
         return response()->json(['message' => 'Annotation deleted']);
-    }
-
-    /**
-     * Convert a DOCX file to PDF using PHPWord + DomPDF (pure PHP, no external tools needed).
-     * Returns the public URL of the converted PDF, or null on failure.
-     */
-    private function getOrConvertToPdf(string $storagePath): ?string
-    {
-        $fullPath = storage_path('app/public/' . $storagePath);
-
-        if (!file_exists($fullPath)) {
-            Log::warning('DOCX file not found for conversion: ' . $fullPath);
-            return null;
-        }
-
-        // Build the expected PDF path (same dir, .pdf extension)
-        $pdfPath = preg_replace('/\.(docx?)$/i', '.pdf', $storagePath);
-        $pdfFullPath = storage_path('app/public/' . $pdfPath);
-
-        // Return cached PDF if it exists and is newer than the source
-        if (file_exists($pdfFullPath) && filemtime($pdfFullPath) >= filemtime($fullPath)) {
-            return '/storage/' . $pdfPath;
-        }
-
-        try {
-            // Set DomPDF as the PDF writer
-            \PhpOffice\PhpWord\Settings::setPdfRendererName(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF);
-            \PhpOffice\PhpWord\Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
-
-            // Read the DOCX file
-            $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath, 'Word2007');
-
-            // Ensure output directory exists
-            $outputDir = dirname($pdfFullPath);
-            if (!is_dir($outputDir)) {
-                mkdir($outputDir, 0755, true);
-            }
-
-            // Write as PDF
-            $pdfWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'PDF');
-            $pdfWriter->save($pdfFullPath);
-
-            Log::info('DOCX converted to PDF via PHPWord+DomPDF: ' . $pdfPath);
-            return '/storage/' . $pdfPath;
-
-        } catch (\Exception $e) {
-            Log::error('PHPWord DOCX→PDF conversion failed', [
-                'file' => $storagePath,
-                'error' => $e->getMessage(),
-            ]);
-            return null;
-        }
     }
 }

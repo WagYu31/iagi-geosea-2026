@@ -39,7 +39,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-export default function ViewSubmission({ submission, reviews = [], isReviewer = false, annotations = [], currentReviewId = null, previewPdfUrl = null }) {
+export default function ViewSubmission({ submission, reviews = [], isReviewer = false, annotations = [], currentReviewId = null }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -612,11 +612,9 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     // Use PdfAnnotator for Full Paper when reviewer is viewing or annotations exist
                                                     const hasAnnotations = annotations && annotations.length > 0;
                                                     if (item.feedbackType === 'revision1' && (isReviewer || hasAnnotations)) {
-                                                        // If server converted DOCX→PDF, use that for perfect rendering
-                                                        const annotatorUrl = previewPdfUrl || fileUrl;
                                                         return (
                                                             <PdfAnnotator
-                                                                fileUrl={annotatorUrl}
+                                                                fileUrl={fileUrl}
                                                                 submissionId={submission.id}
                                                                 annotations={annotations}
                                                                 isReviewer={isReviewer}
