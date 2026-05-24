@@ -21,6 +21,7 @@ class Review extends Model
         'recommendation',
         'comments_phase2',
         'recommendation_phase2',
+        'reviewed_file',
     ];
 
     public function submission()

@@ -205,6 +205,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/submissions/{id}', [App\Http\Controllers\ReviewerController::class, 'viewSubmission'])->name('submissions.view');
         Route::post('/reviews/{id}/scoring', [App\Http\Controllers\ReviewerController::class, 'submitScoring'])->name('reviews.scoring');
         Route::post('/reviews/{id}/comment', [App\Http\Controllers\ReviewerController::class, 'submitComment'])->name('reviews.comment');
+        Route::post('/reviews/{id}/upload-reviewed-file', [App\Http\Controllers\ReviewerController::class, 'uploadReviewedFile'])->name('reviews.uploadReviewedFile');
+        Route::delete('/reviews/{id}/reviewed-file', [App\Http\Controllers\ReviewerController::class, 'deleteReviewedFile'])->name('reviews.deleteReviewedFile');
 
         // PDF Annotations
         Route::post('/submissions/{id}/annotations', [App\Http\Controllers\ReviewerController::class, 'storeAnnotation'])->name('annotations.store');

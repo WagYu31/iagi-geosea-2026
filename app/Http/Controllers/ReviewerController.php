@@ -137,6 +137,44 @@ class ReviewerController extends Controller
         return back()->with('success', 'Review comment submitted successfully!');
     }
 
+    // Upload reviewed/annotated file
+    public function uploadReviewedFile(Request $request, $reviewId)
+    {
+        $request->validate([
+            'reviewed_file' => 'required|file|mimes:doc,docx,pdf|max:20480', // max 20MB
+        ]);
+
+        $review = Review::where('id', $reviewId)
+            ->where('reviewer_id', Auth::id())
+            ->firstOrFail();
+
+        // Delete old file if exists
+        if ($review->reviewed_file) {
+            Storage::disk('public')->delete($review->reviewed_file);
+        }
+
+        // Store the file
+        $path = $request->file('reviewed_file')->store('reviewed_files', 'public');
+        $review->update(['reviewed_file' => $path]);
+
+        return back()->with('success', 'Reviewed file uploaded successfully!');
+    }
+
+    // Delete reviewed file
+    public function deleteReviewedFile($reviewId)
+    {
+        $review = Review::where('id', $reviewId)
+            ->where('reviewer_id', Auth::id())
+            ->firstOrFail();
+
+        if ($review->reviewed_file) {
+            Storage::disk('public')->delete($review->reviewed_file);
+            $review->update(['reviewed_file' => null]);
+        }
+
+        return back()->with('success', 'Reviewed file deleted.');
+    }
+
     // ── PDF Annotation CRUD ──
 
     public function storeAnnotation(Request $request, $submissionId)

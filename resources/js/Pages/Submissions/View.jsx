@@ -25,7 +25,7 @@ import StarIcon from '@mui/icons-material/Star';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import { styled } from '@mui/material/styles';
 import RichTextEditor from '@/Components/RichTextEditor';
-import PdfAnnotator from '@/Components/PdfAnnotator';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -38,6 +38,197 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
+
+// ─── Reviewer: Upload Reviewed File Component ───
+function ReviewedFileUpload({ reviewId, currentFile, isDark, c }) {
+    const [uploading, setUploading] = useState(false);
+    const [dragOver, setDragOver] = useState(false);
+
+    const handleUpload = (file) => {
+        if (!file) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('reviewed_file', file);
+        router.post(`/reviewer/reviews/${reviewId}/upload-reviewed-file`, formData, {
+            forceFormData: true,
+            onFinish: () => setUploading(false),
+        });
+    };
+
+    const handleDelete = () => {
+        if (!confirm('Hapus file review yang sudah diupload?')) return;
+        router.delete(`/reviewer/reviews/${reviewId}/reviewed-file`);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files[0];
+        if (file) handleUpload(file);
+    };
+
+    return (
+        <Box sx={{ mt: 2 }}>
+            <Box sx={{
+                display: 'flex', alignItems: 'center', gap: 1, mb: 1.5,
+                p: 1.5, borderRadius: '10px',
+                bgcolor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
+                border: `1px solid ${isDark ? 'rgba(26,188,156,0.2)' : '#bbf7d0'}`,
+            }}>
+                <RateReviewIcon sx={{ fontSize: 20, color: '#1abc9c' }} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#6ee7b7' : '#059669', fontSize: '0.85rem' }}>
+                    📤 Upload File yang Sudah Di-Review
+                </Typography>
+            </Box>
+
+            {currentFile ? (
+                <Paper elevation={0} sx={{
+                    p: 2, borderRadius: '12px',
+                    border: `1px solid ${isDark ? 'rgba(26,188,156,0.3)' : '#bbf7d0'}`,
+                    bgcolor: isDark ? 'rgba(26,188,156,0.05)' : '#f0fdf9',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1,
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box sx={{ bgcolor: '#1abc9c', borderRadius: '10px', p: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <DescriptionIcon sx={{ color: '#fff', fontSize: 20 }} />
+                        </Box>
+                        <Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#111827' }}>
+                                ✅ File review sudah diupload
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280' }}>
+                                {currentFile.split('/').pop()}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button size="small" variant="outlined" startIcon={<DownloadIcon />}
+                            href={`/storage/${currentFile}`} download
+                            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: '8px', borderColor: '#1abc9c', color: '#1abc9c', fontSize: '0.78rem' }}>
+                            Download
+                        </Button>
+                        <Button size="small" variant="outlined" startIcon={<DeleteIcon />}
+                            onClick={handleDelete} color="error"
+                            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: '8px', fontSize: '0.78rem' }}>
+                            Hapus
+                        </Button>
+                        <Button size="small" variant="contained" component="label" startIcon={<CloudUploadIcon />}
+                            sx={{ textTransform: 'none', fontWeight: 700, borderRadius: '8px', fontSize: '0.78rem', background: 'linear-gradient(135deg,#0d7a6a,#1abc9c)', '&:hover': { background: 'linear-gradient(135deg,#16a085,#0d7a6a)' } }}>
+                            {uploading ? 'Uploading...' : 'Ganti File'}
+                            <VisuallyHiddenInput type="file" accept=".doc,.docx,.pdf" onChange={(e) => handleUpload(e.target.files[0])} disabled={uploading} />
+                        </Button>
+                    </Box>
+                </Paper>
+            ) : (
+                <Paper elevation={0}
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={handleDrop}
+                    sx={{
+                        p: 4, borderRadius: '14px', textAlign: 'center',
+                        border: dragOver ? '2px solid #1abc9c' : `2px dashed ${isDark ? 'rgba(255,255,255,0.15)' : '#d1d5db'}`,
+                        bgcolor: dragOver ? (isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9') : (isDark ? 'rgba(255,255,255,0.02)' : '#fafafa'),
+                        transition: 'all 0.3s',
+                        cursor: 'pointer',
+                        '&:hover': { borderColor: '#1abc9c', bgcolor: isDark ? 'rgba(26,188,156,0.05)' : '#f0fdf9' },
+                    }}>
+                    <CloudUploadIcon sx={{ fontSize: 40, color: '#1abc9c', mb: 1, opacity: 0.7 }} />
+                    <Typography sx={{ fontWeight: 700, fontSize: '0.9rem', color: isDark ? '#f3f4f6' : '#111827', mb: 0.5 }}>
+                        Drag & drop file disini, atau klik tombol di bawah
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#9ca3af' : '#6b7280', mb: 2 }}>
+                        Upload file Word/PDF yang sudah anda review (dengan Track Changes / komentar)
+                    </Typography>
+                    <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} disabled={uploading}
+                        sx={{ textTransform: 'none', fontWeight: 700, borderRadius: '12px', px: 3, py: 1, fontSize: '0.88rem', background: 'linear-gradient(135deg,#0d7a6a,#1abc9c)', boxShadow: '0 4px 14px rgba(26,188,156,0.3)', '&:hover': { background: 'linear-gradient(135deg,#16a085,#0d7a6a)' } }}>
+                        {uploading ? 'Uploading...' : '📄 Pilih File (.doc, .docx, .pdf)'}
+                        <VisuallyHiddenInput type="file" accept=".doc,.docx,.pdf" onChange={(e) => handleUpload(e.target.files[0])} disabled={uploading} />
+                    </Button>
+                    <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#6b7280' : '#9ca3af', mt: 1 }}>
+                        Maks. 20MB
+                    </Typography>
+                </Paper>
+            )}
+        </Box>
+    );
+}
+
+// ─── Author/All: Show Reviewed Files from Reviewers ───
+function ReviewedFilesDisplay({ reviews, isDark, c, isReviewer }) {
+    return (
+        <Box sx={{ mt: 2 }}>
+            <Box sx={{
+                display: 'flex', alignItems: 'center', gap: 1, mb: 1.5,
+                p: 1.5, borderRadius: '10px',
+                bgcolor: isDark ? 'rgba(59,130,246,0.08)' : '#eff6ff',
+                border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#bfdbfe'}`,
+            }}>
+                <RateReviewIcon sx={{ fontSize: 20, color: isDark ? '#93c5fd' : '#2563eb' }} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#93c5fd' : '#2563eb', fontSize: '0.85rem' }}>
+                    📎 File Review dari Reviewer ({reviews.length})
+                </Typography>
+            </Box>
+            <Grid container spacing={1.5}>
+                {reviews.map((review, index) => {
+                    const fileName = review.reviewed_file?.split('/').pop() || 'reviewed_file';
+                    const fileUrl = `/storage/${review.reviewed_file}`;
+                    const fullUrl = `${window.location.origin}${fileUrl}`;
+                    const isDocFile = fileName.toLowerCase().match(/\.(doc|docx)$/);
+                    const isPdfFile = fileName.toLowerCase().endsWith('.pdf');
+                    const viewerUrl = isDocFile
+                        ? `https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`
+                        : isPdfFile
+                            ? `${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`
+                            : null;
+
+                    return (
+                        <Grid item xs={12} key={review.id}>
+                            <Paper elevation={0} sx={{
+                                borderRadius: '14px', overflow: 'hidden',
+                                border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#dbeafe'}`,
+                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafbff',
+                            }}>
+                                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, borderBottom: viewerUrl ? `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb'}` : 'none' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Avatar sx={{ width: 36, height: 36, bgcolor: isDark ? '#1e40af' : '#3b82f6', fontSize: '0.85rem', fontWeight: 700 }}>
+                                            R{index + 1}
+                                        </Avatar>
+                                        <Box>
+                                            <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#111827' }}>
+                                                {isReviewer ? (review.reviewer?.name || `Reviewer #${index + 1}`) : `Reviewer #${index + 1}`}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280' }}>
+                                                📄 {fileName}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 1 }}>
+                                        <Button size="small" variant="outlined" startIcon={<DownloadIcon />}
+                                            href={fileUrl} download
+                                            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: '8px', borderColor: '#3b82f6', color: '#3b82f6', fontSize: '0.78rem' }}>
+                                            Download
+                                        </Button>
+                                    </Box>
+                                </Box>
+                                {viewerUrl && (
+                                    <Box sx={{ bgcolor: isDark ? '#1a1a1a' : '#f5f5f5' }}>
+                                        <iframe
+                                            src={viewerUrl}
+                                            width="100%"
+                                            height="500"
+                                            style={{ border: 'none', display: 'block' }}
+                                            title={`Review from Reviewer ${index + 1}`}
+                                        />
+                                    </Box>
+                                )}
+                            </Paper>
+                        </Grid>
+                    );
+                })}
+            </Grid>
+        </Box>
+    );
+}
 
 export default function ViewSubmission({ submission, reviews = [], isReviewer = false, annotations = [], currentReviewId = null }) {
     const theme = useTheme();
@@ -608,22 +799,6 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                 {(() => {
                                                     const fullUrl = `${window.location.origin}${fileUrl}`;
                                                     const isDoc = item.file?.toLowerCase().match(/\.(doc|docx)$/);
-                                                    
-                                                    // Use PdfAnnotator for Full Paper when reviewer is viewing or annotations exist
-                                                    const hasAnnotations = annotations && annotations.length > 0;
-                                                    if (item.feedbackType === 'revision1' && (isReviewer || hasAnnotations)) {
-                                                        return (
-                                                            <PdfAnnotator
-                                                                fileUrl={fileUrl}
-                                                                submissionId={submission.id}
-                                                                annotations={annotations}
-                                                                isReviewer={isReviewer}
-                                                                isDark={isDark}
-                                                                currentReviewId={currentReviewId}
-                                                                currentUserId={auth?.user?.id}
-                                                            />
-                                                        );
-                                                    }
 
                                                     if (isPdf) {
                                                         return (
@@ -676,6 +851,26 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                         );
                                                     }
                                                 })()}
+
+                                                {/* ─── Reviewer: Upload Reviewed File ─── */}
+                                                {item.feedbackType === 'revision1' && isReviewer && currentReviewId && (
+                                                    <ReviewedFileUpload
+                                                        reviewId={currentReviewId}
+                                                        currentFile={reviews.find(r => r.id === currentReviewId)?.reviewed_file}
+                                                        isDark={isDark}
+                                                        c={c}
+                                                    />
+                                                )}
+
+                                                {/* ─── Author/All: Show Reviewed Files from Reviewers ─── */}
+                                                {item.feedbackType === 'revision1' && reviews.filter(r => r.reviewed_file).length > 0 && (
+                                                    <ReviewedFilesDisplay
+                                                        reviews={reviews.filter(r => r.reviewed_file)}
+                                                        isDark={isDark}
+                                                        c={c}
+                                                        isReviewer={isReviewer}
+                                                    />
+                                                )}
 
                                                 {item.feedbackType === 'revision1' && reviews.filter(r => r.comments).length > 0 && (
                                                     <Box sx={{ mt: 2 }}>
