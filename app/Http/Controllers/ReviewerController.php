@@ -205,7 +205,7 @@ class ReviewerController extends Controller
     }
 
     /**
-     * Convert a DOCX file to PDF using LibreOffice and cache the result.
+     * Convert a DOCX file to PDF using PHPWord + DomPDF (pure PHP, no external tools needed).
      * Returns the public URL of the converted PDF, or null on failure.
      */
     private function getOrConvertToPdf(string $storagePath): ?string
@@ -226,28 +226,33 @@ class ReviewerController extends Controller
             return '/storage/' . $pdfPath;
         }
 
-        // Convert using LibreOffice
-        $outputDir = dirname($pdfFullPath);
-        $command = sprintf(
-            'libreoffice --headless --convert-to pdf --outdir %s %s 2>&1',
-            escapeshellarg($outputDir),
-            escapeshellarg($fullPath)
-        );
+        try {
+            // Set DomPDF as the PDF writer
+            \PhpOffice\PhpWord\Settings::setPdfRendererName(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF);
+            \PhpOffice\PhpWord\Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
 
-        $output = [];
-        $exitCode = 0;
-        exec($command, $output, $exitCode);
+            // Read the DOCX file
+            $phpWord = \PhpOffice\PhpWord\IOFactory::load($fullPath, 'Word2007');
 
-        if ($exitCode !== 0 || !file_exists($pdfFullPath)) {
-            Log::error('LibreOffice DOCX→PDF conversion failed', [
-                'command' => $command,
-                'exit_code' => $exitCode,
-                'output' => implode("\n", $output),
+            // Ensure output directory exists
+            $outputDir = dirname($pdfFullPath);
+            if (!is_dir($outputDir)) {
+                mkdir($outputDir, 0755, true);
+            }
+
+            // Write as PDF
+            $pdfWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'PDF');
+            $pdfWriter->save($pdfFullPath);
+
+            Log::info('DOCX converted to PDF via PHPWord+DomPDF: ' . $pdfPath);
+            return '/storage/' . $pdfPath;
+
+        } catch (\Exception $e) {
+            Log::error('PHPWord DOCX→PDF conversion failed', [
+                'file' => $storagePath,
+                'error' => $e->getMessage(),
             ]);
             return null;
         }
-
-        Log::info('DOCX converted to PDF: ' . $pdfPath);
-        return '/storage/' . $pdfPath;
     }
 }
