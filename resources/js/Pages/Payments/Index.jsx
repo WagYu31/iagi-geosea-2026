@@ -94,10 +94,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         return payment.status === 'paid' || !!payment.verified || !!payment.paid_at;
     };
 
-    const submissionsNeedingPayment = submissions.filter(sub => {
+    // All accepted submissions (both paid and unpaid) for the panel
+    const acceptedSubmissions = submissions.filter(sub =>
+        sub.status && sub.status.toLowerCase() === 'accepted'
+    );
+
+    // Only unpaid ones (for count + preventing double pay)
+    const submissionsNeedingPayment = acceptedSubmissions.filter(sub => {
         const payment = payments.find(p => p.submission_id === sub.id);
-        const isAccepted = sub.status && sub.status.toLowerCase() === 'accepted';
-        return isAccepted && !isPaymentCompleted(payment);
+        return !isPaymentCompleted(payment);
     });
 
     const handleOpenDialog = (sub) => { setSelectedSubmission(sub); setOpenDialog(true); };
@@ -534,8 +539,8 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         </Box>
                     </Box>
 
-                    {/* ─── Action Required Panel ─── */}
-                    {submissionsNeedingPayment.length > 0 && (
+                    {/* ─── Payment Status Panel ─── */}
+                    {acceptedSubmissions.length > 0 && (
                         <Fade in={mounted} timeout={700}>
                             <Paper elevation={0} sx={{ 
                                 borderRadius: '18px', overflow: 'hidden',
@@ -548,46 +553,70 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 {/* Header */}
                                 <Box sx={{
                                     px: 3, py: 2.5,
-                                    background: isDark 
-                                        ? 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04))' 
-                                        : 'linear-gradient(135deg, #fffbeb, #fef3c7)',
-                                    borderBottom: `1px solid ${isDark ? 'rgba(245,158,11,0.1)' : '#fde68a'}`,
+                                    background: submissionsNeedingPayment.length > 0
+                                        ? (isDark 
+                                            ? 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04))' 
+                                            : 'linear-gradient(135deg, #fffbeb, #fef3c7)')
+                                        : (isDark
+                                            ? 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.04))'
+                                            : 'linear-gradient(135deg, #ecfdf5, #d1fae5)'),
+                                    borderBottom: `1px solid ${submissionsNeedingPayment.length > 0
+                                        ? (isDark ? 'rgba(245,158,11,0.1)' : '#fde68a')
+                                        : (isDark ? 'rgba(16,185,129,0.1)' : '#a7f3d0')}`,
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
                                         <Box sx={{ 
                                             width: 32, height: 32, borderRadius: '8px',
-                                            bgcolor: isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7',
-                                            border: `1px solid ${isDark ? 'rgba(245,158,11,0.2)' : '#fde68a'}`,
+                                            bgcolor: submissionsNeedingPayment.length > 0
+                                                ? (isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7')
+                                                : (isDark ? 'rgba(16,185,129,0.15)' : '#d1fae5'),
+                                            border: `1px solid ${submissionsNeedingPayment.length > 0
+                                                ? (isDark ? 'rgba(245,158,11,0.2)' : '#fde68a')
+                                                : (isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0')}`,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         }}>
-                                            <WarningAmberIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                            {submissionsNeedingPayment.length > 0
+                                                ? <WarningAmberIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                                : <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#10b981' }} />
+                                            }
                                         </Box>
                                         <Box>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: isDark ? '#fbbf24' : '#92400e', fontFamily: 'Inter, sans-serif' }}>
-                                                Action Required
+                                            <Typography sx={{ fontWeight: 800, fontSize: '0.88rem', color: submissionsNeedingPayment.length > 0 ? (isDark ? '#fbbf24' : '#92400e') : (isDark ? '#34d399' : '#065f46'), fontFamily: 'Inter, sans-serif' }}>
+                                                {submissionsNeedingPayment.length > 0 ? 'Action Required' : 'Payment Status'}
                                             </Typography>
-                                            <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#d97706' : '#b45309', fontFamily: 'Inter, sans-serif' }}>
-                                                {submissionsNeedingPayment.length} pending payment{submissionsNeedingPayment.length > 1 ? 's' : ''}
+                                            <Typography sx={{ fontSize: '0.65rem', color: submissionsNeedingPayment.length > 0 ? (isDark ? '#d97706' : '#b45309') : (isDark ? '#6ee7b7' : '#047857'), fontFamily: 'Inter, sans-serif' }}>
+                                                {submissionsNeedingPayment.length > 0
+                                                    ? `${submissionsNeedingPayment.length} pending payment${submissionsNeedingPayment.length > 1 ? 's' : ''}`
+                                                    : 'All payments completed ✓'
+                                                }
                                             </Typography>
                                         </Box>
                                     </Box>
                                 </Box>
 
-                                {/* Action Items */}
+                                {/* Submission Items */}
                                 <Box sx={{ p: 2.5, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    {submissionsNeedingPayment.map((sub) => {
+                                    {acceptedSubmissions.map((sub) => {
                                         const fee = getSubFee(sub);
                                         const cat = getSubCat(sub);
+                                        const payment = payments.find(p => p.submission_id === sub.id);
+                                        const isPaid = isPaymentCompleted(payment);
 
                                         return (
                                             <Box key={sub.id} sx={{
                                                 p: 2.5, borderRadius: '14px',
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#fafbfd',
-                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#e5e7eb'}`,
-                                                borderLeft: `4px solid ${cat?.color || '#6b7280'}`,
+                                                bgcolor: isPaid
+                                                    ? (isDark ? 'rgba(16,185,129,0.04)' : '#f0fdf4')
+                                                    : (isDark ? 'rgba(255,255,255,0.02)' : '#fafbfd'),
+                                                border: `1px solid ${isPaid
+                                                    ? (isDark ? 'rgba(16,185,129,0.12)' : '#bbf7d0')
+                                                    : (isDark ? 'rgba(255,255,255,0.04)' : '#e5e7eb')}`,
+                                                borderLeft: `4px solid ${isPaid ? '#10b981' : (cat?.color || '#6b7280')}`,
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': { 
-                                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f5f6f8',
+                                                    bgcolor: isPaid
+                                                        ? (isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5')
+                                                        : (isDark ? 'rgba(255,255,255,0.03)' : '#f5f6f8'),
                                                     boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.2)' : '0 4px 16px rgba(0,0,0,0.04)',
                                                 },
                                             }}>
@@ -604,25 +633,40 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     </Box>
                                                 </Box>
 
-                                                {/* Price + Pay Button */}
+                                                {/* Price + Button/Badge */}
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                     <Typography sx={{ fontWeight: 900, fontSize: '1.1rem', color: isDark ? 'white' : '#111827', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
                                                         {fee ? fmtRp(fee) : '—'}
                                                     </Typography>
-                                                    <Button
-                                                        variant="contained" size="small"
-                                                        onClick={() => handleOpenDialog(sub)} disabled={!fee}
-                                                        sx={{
-                                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                                            boxShadow: '0 4px 14px rgba(16,185,129,0.2)',
-                                                            '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', boxShadow: '0 6px 18px rgba(16,185,129,0.3)' },
-                                                            textTransform: 'none', borderRadius: '10px', fontWeight: 800, 
-                                                            fontSize: '0.75rem', px: 2.5, py: 0.8,
-                                                            fontFamily: 'Inter, sans-serif',
-                                                        }}
-                                                    >
-                                                        Pay Now →
-                                                    </Button>
+                                                    {isPaid ? (
+                                                        <Chip
+                                                            icon={<CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#059669 !important' }} />}
+                                                            label="Paid"
+                                                            size="small"
+                                                            sx={{
+                                                                fontWeight: 800, fontSize: '0.72rem', borderRadius: '10px',
+                                                                bgcolor: isDark ? 'rgba(16,185,129,0.12)' : '#d1fae5',
+                                                                color: '#059669',
+                                                                border: `1px solid ${isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0'}`,
+                                                                px: 0.5,
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained" size="small"
+                                                            onClick={() => handleOpenDialog(sub)} disabled={!fee}
+                                                            sx={{
+                                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                                boxShadow: '0 4px 14px rgba(16,185,129,0.2)',
+                                                                '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', boxShadow: '0 6px 18px rgba(16,185,129,0.3)' },
+                                                                textTransform: 'none', borderRadius: '10px', fontWeight: 800, 
+                                                                fontSize: '0.75rem', px: 2.5, py: 0.8,
+                                                                fontFamily: 'Inter, sans-serif',
+                                                            }}
+                                                        >
+                                                            Pay Now →
+                                                        </Button>
+                                                    )}
                                                 </Box>
                                             </Box>
                                         );
