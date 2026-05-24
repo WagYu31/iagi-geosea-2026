@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
     Box, Typography, IconButton, Button, TextField, Paper, Chip,
-    Tooltip, Divider, Stack, Badge, Fade, Alert,
+    Tooltip, Divider, Stack, Badge, Fade, Alert, Snackbar,
 } from '@mui/material';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -19,7 +19,7 @@ import SendIcon from '@mui/icons-material/Send';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import RateReviewIcon from '@mui/icons-material/RateReview';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import axios from 'axios';
 
@@ -42,7 +42,6 @@ export default function PdfAnnotator({
     const isPdf = fileUrl?.toLowerCase().endsWith('.pdf');
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
-    const docViewerRef = useRef(null);
     const [pdfDoc, setPdfDoc] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -52,14 +51,12 @@ export default function PdfAnnotator({
     const [showSidebar, setShowSidebar] = useState(true);
     const [selectionPopup, setSelectionPopup] = useState(null);
     const [newComment, setNewComment] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(isPdf);
     const [saving, setSaving] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, msg: '' });
     const [activeAnnotationId, setActiveAnnotationId] = useState(null);
     const renderTaskRef = useRef(null);
-
-    // DOCX state
-    const [docHtml, setDocHtml] = useState('');
 
     // Manual form
     const [showAddForm, setShowAddForm] = useState(false);
@@ -78,28 +75,7 @@ export default function PdfAnnotator({
         if (t) axios.defaults.headers.common['X-CSRF-TOKEN'] = t.content;
     }, []);
 
-    // ─── DOCX: Load with mammoth ───
-    useEffect(() => {
-        if (isPdf) return;
-        const loadDocx = async () => {
-            try {
-                const mammoth = await import('mammoth');
-                const response = await fetch(fileUrl);
-                const buffer = await response.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer: buffer });
-                setDocHtml(result.value);
-                setLoading(false);
-            } catch (err) {
-                console.error('DOCX load error:', err);
-                // Fallback: show google docs iframe
-                setDocHtml('__FALLBACK__');
-                setLoading(false);
-            }
-        };
-        loadDocx();
-    }, [fileUrl, isPdf]);
-
-    // ─── PDF: Load ───
+    // PDF: Load
     useEffect(() => {
         if (!isPdf) return;
         let cancelled = false;
@@ -134,80 +110,21 @@ export default function PdfAnnotator({
         renderPage();
     }, [pdfDoc, currentPage, scale, isPdf]);
 
-    // ─── DOCX: Handle text selection for inline annotation ───
-    const handleDocTextSelect = useCallback(() => {
-        if (!isReviewer || isPdf) return;
-        const sel = window.getSelection();
-        if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
-        const text = sel.toString().trim();
-        if (text.length < 2) return;
-
-        // Pre-fill the add form with selected text
-        setManualText(text);
-        setShowAddForm(true);
-        // Keep selection visible
-    }, [isReviewer, isPdf]);
-
-    // ─── DOCX: Scroll to and highlight text in document ───
-    const scrollToTextInDoc = useCallback((searchText, annotationId) => {
-        if (!docViewerRef.current || !searchText) return;
-        setActiveAnnotationId(annotationId);
-
-        // Remove previous highlights
-        const existing = docViewerRef.current.querySelectorAll('.annotation-highlight-active');
-        existing.forEach(el => {
-            const parent = el.parentNode;
-            parent.replaceChild(document.createTextNode(el.textContent), el);
-            parent.normalize();
-        });
-
-        // Search text in document
-        const walker = document.createTreeWalker(docViewerRef.current, NodeFilter.SHOW_TEXT, null, false);
-        const normalizedSearch = searchText.toLowerCase().trim().substring(0, 60);
-        let found = false;
-
-        while (walker.nextNode()) {
-            const node = walker.currentNode;
-            const nodeText = node.textContent.toLowerCase();
-            const idx = nodeText.indexOf(normalizedSearch);
-
-            if (idx !== -1) {
-                // Split text node and wrap matched part
-                const range = document.createRange();
-                range.setStart(node, idx);
-                range.setEnd(node, Math.min(idx + normalizedSearch.length, node.textContent.length));
-
-                const highlight = document.createElement('mark');
-                highlight.className = 'annotation-highlight-active';
-                highlight.style.cssText = 'background: linear-gradient(135deg, rgba(250,204,21,0.5), rgba(250,204,21,0.3)); padding: 2px 4px; border-radius: 4px; border-bottom: 3px solid #facc15; scroll-margin-top: 120px; transition: all 0.3s ease; animation: highlightPulse 1.5s ease-in-out 2;';
-
-                try {
-                    range.surroundContents(highlight);
-                    highlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    found = true;
-                } catch (e) {
-                    // Complex DOM, try simpler approach
-                    console.warn('Complex DOM structure, using fallback scroll');
-                }
-                break;
-            }
+    // Copy text to clipboard and show tip
+    const handleAnnotationClick = useCallback(async (ann) => {
+        if (isPdf) {
+            setCurrentPage(ann.page_number);
+            return;
         }
-
-        if (!found) {
-            // Fallback: just flash the annotation card
-            setTimeout(() => setActiveAnnotationId(null), 2000);
+        setActiveAnnotationId(ann.id);
+        try {
+            await navigator.clipboard.writeText(ann.selected_text || '');
+            setSnackbar({ open: true, msg: `📋 Teks "${(ann.selected_text || '').substring(0, 30)}..." disalin! Tekan Ctrl+F di dokumen lalu Paste untuk menemukannya.` });
+        } catch {
+            setSnackbar({ open: true, msg: `📄 Halaman ${ann.page_number}: Cari teks "${(ann.selected_text || '').substring(0, 40)}..." secara manual di dokumen.` });
         }
-
-        // Auto-clear highlight after 5s
-        setTimeout(() => {
-            const marks = docViewerRef.current?.querySelectorAll('.annotation-highlight-active');
-            marks?.forEach(el => {
-                el.style.background = 'rgba(250,204,21,0.15)';
-                el.style.borderBottom = '2px dashed #facc1580';
-            });
-            setActiveAnnotationId(null);
-        }, 5000);
-    }, []);
+        setTimeout(() => setActiveAnnotationId(null), 3000);
+    }, [isPdf]);
 
     // Save annotation
     const saveAnnotation = async (payload) => {
@@ -242,7 +159,7 @@ export default function PdfAnnotator({
             selected_text: manualText.trim(), comment: manualComment.trim() || null,
             position_data: { top: 0, left: 0, width: 0, height: 0, manual: true },
         });
-        if (ok) { setManualText(''); setManualComment(''); setManualPage(''); setShowAddForm(false); window.getSelection()?.removeAllRanges(); }
+        if (ok) { setManualText(''); setManualComment(''); setManualPage(''); setShowAddForm(false); }
     };
 
     const handleDelete = async (id) => {
@@ -271,7 +188,7 @@ export default function PdfAnnotator({
         );
     }
 
-    // ─── SIDEBAR ─────────────────────────────────────────
+    // ─── SIDEBAR ─────────────────────────────────
     const Sidebar = () => (
         <Paper elevation={0} sx={{
             width: { xs: '100%', md: 360 }, flexShrink: 0,
@@ -308,16 +225,6 @@ export default function PdfAnnotator({
                         </Typography>
                         <IconButton size="small" onClick={() => { setShowAddForm(false); setManualText(''); setManualComment(''); }} sx={{ color: textSecondary }}><CloseIcon sx={{ fontSize: 16 }} /></IconButton>
                     </Box>
-
-                    {/* Instruction */}
-                    {!isPdf && (
-                        <Box sx={{ bgcolor: isDark ? 'rgba(59,130,246,0.08)' : '#eff6ff', borderRadius: '10px', p: 1.5, mb: 2, border: `1px solid ${isDark ? 'rgba(59,130,246,0.15)' : '#dbeafe'}` }}>
-                            <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#93c5fd' : '#1d4ed8', lineHeight: 1.6 }}>
-                                <TouchAppIcon sx={{ fontSize: 14, mr: 0.5, verticalAlign: 'middle' }} />
-                                <b>💡 Tip:</b> Select/blok teks di dokumen → otomatis terisi di form ini. Atau tulis manual.
-                            </Typography>
-                        </Box>
-                    )}
 
                     <Box sx={{ mb: 2 }}>
                         <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#1abc9c', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📄 Halaman</Typography>
@@ -369,7 +276,7 @@ export default function PdfAnnotator({
                         <RateReviewIcon sx={{ fontSize: 28, color: '#1abc9c', opacity: 0.4, mb: 1 }} />
                         <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: textPrimary, mb: 0.5 }}>Belum ada anotasi</Typography>
                         <Typography sx={{ fontSize: '0.75rem', color: textSecondary, lineHeight: 1.6 }}>
-                            {isReviewer ? 'Blok teks di dokumen atau klik "Tambah Anotasi Baru"' : 'Reviewer belum memberikan anotasi.'}
+                            {isReviewer ? 'Klik "Tambah Anotasi Baru" untuk mulai review.' : 'Reviewer belum memberikan anotasi.'}
                         </Typography>
                     </Box>
                 ) : (
@@ -383,11 +290,11 @@ export default function PdfAnnotator({
                             })}
                         </Box>
 
-                        {/* Clickable hint */}
+                        {/* Click-to-find hint */}
                         {!isPdf && (
                             <Box sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.05)' : '#ecfdf5', borderRadius: '8px', p: 1, mb: 1.5, border: `1px solid ${isDark ? 'rgba(26,188,156,0.1)' : '#d1fae5'}` }}>
                                 <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#6ee7b7' : '#059669', textAlign: 'center', fontWeight: 600 }}>
-                                    👆 Klik anotasi di bawah untuk scroll ke teks di dokumen
+                                    👆 Klik anotasi → teks disalin, lalu tekan <b>Ctrl+F</b> di dokumen & paste
                                 </Typography>
                             </Box>
                         )}
@@ -399,11 +306,9 @@ export default function PdfAnnotator({
                                 const isActive = activeAnnotationId === ann.id;
                                 return (
                                     <Paper key={ann.id} elevation={0}
-                                        onClick={() => {
-                                            if (!isPdf) scrollToTextInDoc(ann.selected_text, ann.id);
-                                        }}
+                                        onClick={() => handleAnnotationClick(ann)}
                                         sx={{
-                                            p: 1.5, borderRadius: '12px', cursor: !isPdf ? 'pointer' : 'default',
+                                            p: 1.5, borderRadius: '12px', cursor: 'pointer',
                                             border: isActive ? `2px solid ${cc.border}` : `1px solid ${borderColor}`,
                                             borderLeft: `4px solid ${cc.border}`,
                                             bgcolor: isActive ? cc.bg : (ann.resolved ? (isDark ? 'rgba(34,197,94,0.03)' : '#f0fdf4') : (isDark ? 'rgba(255,255,255,0.02)' : '#fafafa')),
@@ -455,11 +360,17 @@ export default function PdfAnnotator({
 
                                         {ann.resolved && <Chip label="✓ Sudah Dikoreksi" size="small" sx={{ mt: 1, height: 20, fontSize: '0.63rem', fontWeight: 700, bgcolor: isDark ? 'rgba(34,197,94,0.1)' : '#dcfce7', color: '#16a34a', borderRadius: '6px' }} />}
 
-                                        {/* Click indicator for DOCX */}
-                                        {!isPdf && (
-                                            <Typography sx={{ fontSize: '0.6rem', color: textSecondary, mt: 0.8, textAlign: 'right', opacity: 0.5 }}>
-                                                👆 Klik untuk lihat di dokumen
-                                            </Typography>
+                                        {/* Copy hint for DOCX */}
+                                        {!isPdf && !isActive && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.8, justifyContent: 'flex-end' }}>
+                                                <ContentCopyIcon sx={{ fontSize: 10, color: textSecondary, opacity: 0.4 }} />
+                                                <Typography sx={{ fontSize: '0.58rem', color: textSecondary, opacity: 0.4 }}>Klik untuk salin & cari</Typography>
+                                            </Box>
+                                        )}
+                                        {isActive && (
+                                            <Alert severity="info" sx={{ mt: 1, borderRadius: '8px', fontSize: '0.72rem', py: 0, '& .MuiAlert-icon': { fontSize: 16 } }}>
+                                                Teks disalin! Tekan <b>Ctrl+F</b> lalu <b>Paste</b>
+                                            </Alert>
                                         )}
                                     </Paper>
                                 );
@@ -471,50 +382,19 @@ export default function PdfAnnotator({
         </Paper>
     );
 
-    // ═══════════════════════════════════════════════════
-    // DOCX MODE: Native HTML Viewer (mammoth) + Sidebar
-    // ═══════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════
+    // DOCX MODE: Google Docs iframe + Sidebar
+    // ═══════════════════════════════════════════════
     if (!isPdf) {
         const fullUrl = `${window.location.origin}${fileUrl}`;
-        const useFallback = docHtml === '__FALLBACK__';
-
         return (
             <Box>
-                <style>{`
-                    @keyframes highlightPulse {
-                        0%, 100% { box-shadow: 0 0 0 0 rgba(250,204,21,0.4); }
-                        50% { box-shadow: 0 0 12px 4px rgba(250,204,21,0.6); }
-                    }
-                    .docx-viewer { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.8; color: #1a1a1a; max-width: 210mm; margin: 0 auto; padding: 40px 50px; }
-                    .docx-viewer p { margin-bottom: 12px; text-align: justify; }
-                    .docx-viewer h1, .docx-viewer h2, .docx-viewer h3 { font-weight: bold; margin: 20px 0 10px; }
-                    .docx-viewer h1 { font-size: 18pt; }
-                    .docx-viewer h2 { font-size: 16pt; }
-                    .docx-viewer h3 { font-size: 14pt; }
-                    .docx-viewer table { border-collapse: collapse; width: 100%; margin: 10px 0; }
-                    .docx-viewer td, .docx-viewer th { border: 1px solid #ccc; padding: 6px 10px; }
-                    .docx-viewer img { max-width: 100%; height: auto; }
-                    .docx-viewer strong, .docx-viewer b { font-weight: bold; }
-                    .docx-viewer em, .docx-viewer i { font-style: italic; }
-                    .docx-viewer ::selection { background: rgba(26,188,156,0.3); }
-                `}</style>
-
                 {/* Toolbar */}
                 <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, p: 1.5, mb: 1.5, borderRadius: '12px', bgcolor: isDark ? 'rgba(0,0,0,0.3)' : '#f8fafc', border: `1px solid ${borderColor}` }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <RateReviewIcon sx={{ fontSize: 20, color: '#1abc9c' }} />
                         <Typography sx={{ fontSize: '0.85rem', fontWeight: 800, color: textPrimary, fontFamily: 'Inter, sans-serif' }}>Mode Review Dokumen</Typography>
                     </Box>
-
-                    {isReviewer && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <TouchAppIcon sx={{ fontSize: 16, color: textSecondary }} />
-                            <Typography sx={{ fontSize: '0.72rem', color: textSecondary, fontWeight: 600 }}>
-                                Blok teks → otomatis isi form
-                            </Typography>
-                        </Box>
-                    )}
-
                     <Button size="small"
                         startIcon={<Badge badgeContent={annotationCount} color="primary" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', minWidth: 16, height: 16 } }}><FormatListBulletedIcon fontSize="small" /></Badge>}
                         onClick={() => setShowSidebar(!showSidebar)}
@@ -524,30 +404,37 @@ export default function PdfAnnotator({
                 </Paper>
 
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row' } }}>
-                    {/* Document Viewer */}
-                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#fff', maxHeight: 700, overflowY: 'auto' }}>
-                        {useFallback ? (
-                            <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Document Viewer" />
-                        ) : (
-                            <Box
-                                ref={docViewerRef}
-                                className="docx-viewer"
-                                onMouseUp={handleDocTextSelect}
-                                dangerouslySetInnerHTML={{ __html: docHtml }}
-                                sx={{ bgcolor: '#fff', minHeight: 700, cursor: isReviewer ? 'text' : 'default', userSelect: 'text' }}
-                            />
-                        )}
+                    {/* Google Docs iframe */}
+                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: isDark ? '#1a1a1a' : '#f5f5f5' }}>
+                        <iframe
+                            src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`}
+                            width="100%" height="700"
+                            style={{ border: 'none', display: 'block' }}
+                            title="Document Viewer"
+                        />
                     </Box>
-
                     {showSidebar && <Sidebar />}
                 </Box>
+
+                {/* Snackbar */}
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={5000}
+                    onClose={() => setSnackbar({ open: false, msg: '' })}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert onClose={() => setSnackbar({ open: false, msg: '' })} severity="info" variant="filled"
+                        sx={{ borderRadius: '12px', fontWeight: 600, fontSize: '0.82rem', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}>
+                        {snackbar.msg}
+                    </Alert>
+                </Snackbar>
             </Box>
         );
     }
 
-    // ═══════════════════════════════════════════════════
-    // PDF MODE (unchanged)
-    // ═══════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════
+    // PDF MODE
+    // ═══════════════════════════════════════════════
     const handleMouseUp = () => {
         if (!isReviewer) return;
         const sel = window.getSelection();
