@@ -91,8 +91,11 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
     const isPaymentCompleted = (payment) => {
         if (!payment) return false;
-        return payment.status === 'paid' || !!payment.verified || !!payment.paid_at;
+        return payment.status === 'paid' || payment.verified == true || !!payment.paid_at;
     };
+
+    // Helper: find payment for a submission (loose ID comparison to handle string/number)
+    const findPaymentForSub = (subId) => payments.find(p => p.submission_id == subId);
 
     // All accepted submissions (both paid and unpaid) for the panel
     const acceptedSubmissions = submissions.filter(sub =>
@@ -101,13 +104,12 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
     // Only unpaid ones (for count + preventing double pay)
     const submissionsNeedingPayment = acceptedSubmissions.filter(sub => {
-        const payment = payments.find(p => p.submission_id === sub.id);
-        return !isPaymentCompleted(payment);
+        return !isPaymentCompleted(findPaymentForSub(sub.id));
     });
 
     const handleOpenDialog = (sub) => {
         // Guard: prevent opening checkout for already-paid submissions
-        const existingPayment = payments.find(p => p.submission_id === sub.id);
+        const existingPayment = findPaymentForSub(sub.id);
         if (isPaymentCompleted(existingPayment)) {
             setSnackbar({ open: true, message: '✅ This submission has already been paid.', severity: 'info' });
             return;
@@ -608,7 +610,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                     {acceptedSubmissions.map((sub) => {
                                         const fee = getSubFee(sub);
                                         const cat = getSubCat(sub);
-                                        const payment = payments.find(p => p.submission_id === sub.id);
+                                        const payment = findPaymentForSub(sub.id);
                                         const isPaid = isPaymentCompleted(payment);
 
                                         return (
