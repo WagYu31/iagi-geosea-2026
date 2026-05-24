@@ -237,17 +237,65 @@ class AdminController extends Controller
         ]);
     }
 
-    public function submissions()
+    public function submissions(Request $request)
     {
-        $submissions = Submission::with(['user', 'reviews.reviewer', 'payment'])
-            ->latest()
-            ->get();
+        $query = Submission::with([
+            'user:id,name,email,whatsapp,category',
+            'reviews:id,submission_id,reviewer_id',
+            'reviews.reviewer:id,name,email',
+            'payment:id,submission_id,verified,amount',
+        ]);
 
-        $reviewers = User::whereRaw('LOWER(role) = ?', ['reviewer'])->get();
+        // Server-side search
+        if ($search = $request->get('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhere('author_full_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Server-side status filter
+        if ($status = $request->get('status')) {
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+        }
+
+        // Server-side presentation filter
+        if ($presentation = $request->get('presentation')) {
+            if ($presentation !== 'all') {
+                $query->where('presentation_preference', $presentation);
+            }
+        }
+
+        $submissions = $query->latest()->paginate(25)->withQueryString();
+
+        // Status counts for filter badges (fast COUNT queries)
+        $statusCounts = [
+            'all' => Submission::count(),
+            'pending' => Submission::where('status', 'pending')->count(),
+            'under_review' => Submission::where('status', 'under_review')->count(),
+            'revision_required_phase1' => Submission::where('status', 'revision_required_phase1')->count(),
+            'revision_required_phase2' => Submission::where('status', 'revision_required_phase2')->count(),
+            'accepted' => Submission::where('status', 'accepted')->count(),
+            'rejected' => Submission::where('status', 'rejected')->count(),
+            'deletion_requested' => Submission::where('status', 'deletion_requested')->count(),
+        ];
+
+        $reviewers = User::whereRaw('LOWER(role) = ?', ['reviewer'])->get(['id', 'name', 'email', 'affiliation']);
 
         return Inertia::render('Admin/Submissions', [
             'submissions' => $submissions,
             'reviewers' => $reviewers,
+            'statusCounts' => $statusCounts,
+            'filters' => [
+                'search' => $request->get('search', ''),
+                'status' => $request->get('status', 'all'),
+                'presentation' => $request->get('presentation', 'all'),
+            ],
         ]);
     }
 

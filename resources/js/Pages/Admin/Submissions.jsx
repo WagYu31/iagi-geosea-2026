@@ -109,37 +109,83 @@ const getThemeFromSubTheme = (subTheme) => {
     return subTheme;
 };
 
-export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
+export default function AdminSubmissions({ submissions = {}, reviewers = [], statusCounts = {}, filters = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
+
+    // submissions is now a Laravel paginator object: { data: [...], links: {...}, current_page, last_page, total, ... }
+    const paginatedData = submissions.data || [];
+    const totalItems = submissions.total || 0;
+    const currentPage = submissions.current_page || 1;
+    const lastPage = submissions.last_page || 1;
 
     const [selected, setSelected] = useState([]);
     const [bulkStatus, setBulkStatus] = useState('');
     const [assignDialog, setAssignDialog] = useState({ open: false, submission: null });
     const [selectedReviewers, setSelectedReviewers] = useState([]);
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [presentationFilter, setPresentationFilter] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
+    const [presentationFilter, setPresentationFilter] = useState(filters.presentation || 'all');
     const [coAuthorPopover, setCoAuthorPopover] = useState(null);
     const [changeAllStatus, setChangeAllStatus] = useState('');
     const [changeAllDialog, setChangeAllDialog] = useState(false);
-    const [localSubmissions, setLocalSubmissions] = useState(submissions);
+    const [localSubmissions, setLocalSubmissions] = useState(paginatedData);
 
     // Sync with server props when they update
     React.useEffect(() => {
-        setLocalSubmissions(submissions);
+        setLocalSubmissions(paginatedData);
     }, [submissions]);
 
-    // Filter submissions using local state
-    const filteredSubmissions = localSubmissions.filter(submission => {
-        const matchesStatus = statusFilter === 'all' || submission.status === statusFilter;
-        const matchesPresentation = presentationFilter === 'all' || submission.presentation_preference === presentationFilter;
-        const matchesSearch = searchTerm === '' ||
-            submission.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            submission.user?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesPresentation && matchesSearch;
-    });
+    // Debounced server-side search
+    const searchTimeout = useRef(null);
+    const navigateWithFilters = (overrides = {}) => {
+        const params = {
+            search: overrides.search !== undefined ? overrides.search : searchTerm,
+            status: overrides.status !== undefined ? overrides.status : statusFilter,
+            presentation: overrides.presentation !== undefined ? overrides.presentation : presentationFilter,
+            page: overrides.page || 1,
+        };
+        // Remove defaults to keep URL clean
+        if (params.search === '') delete params.search;
+        if (params.status === 'all') delete params.status;
+        if (params.presentation === 'all') delete params.presentation;
+        if (params.page === 1) delete params.page;
+
+        router.get(route('admin.submissions'), params, {
+            preserveState: true,
+            preserveScroll: overrides.page ? false : true,
+            replace: true,
+        });
+    };
+
+    const handleSearchChange = (value) => {
+        setSearchTerm(value);
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+        searchTimeout.current = setTimeout(() => {
+            navigateWithFilters({ search: value, page: 1 });
+        }, 400);
+    };
+
+    const handleStatusFilterChange = (value) => {
+        setStatusFilter(value);
+        setSelected([]);
+        navigateWithFilters({ status: value, page: 1 });
+    };
+
+    const handlePresentationFilterChange = (value) => {
+        setPresentationFilter(value);
+        setSelected([]);
+        navigateWithFilters({ presentation: value, page: 1 });
+    };
+
+    const handlePageChange = (page) => {
+        setSelected([]);
+        navigateWithFilters({ page });
+    };
+
+    // The filtered list for the current page (already filtered server-side)
+    const filteredSubmissions = localSubmissions;
 
     const handleSelectAll = (event) => {
         if (event.target.checked) {
@@ -363,7 +409,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             Manage Submissions 📄
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5, fontSize: '0.85rem' }}>
-                            {localSubmissions.length} total submissions
+                            {totalItems} total submissions
                         </Typography>
                     </Box>
                     <Button
@@ -403,7 +449,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             <TextField
                                 placeholder="Search by title or author..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => handleSearchChange(e.target.value)}
                                 size="small"
                                 InputProps={{
                                     startAdornment: (
@@ -430,7 +476,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                 <Select
                                     value={statusFilter}
                                     label="Status"
-                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    onChange={(e) => handleStatusFilterChange(e.target.value)}
                                     sx={{
                                         borderRadius: '10px',
                                         bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
@@ -438,14 +484,14 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         '& fieldset': { borderColor: c.cardBorder },
                                     }}
                                 >
-                                    <MenuItem value="all">All ({localSubmissions.length})</MenuItem>
-                                    <MenuItem value="pending">Pending ({localSubmissions.filter(s => s.status === 'pending').length})</MenuItem>
-                                    <MenuItem value="under_review">In Review ({localSubmissions.filter(s => s.status === 'under_review').length})</MenuItem>
-                                    <MenuItem value="revision_required_phase1">Revision P1 ({localSubmissions.filter(s => s.status === 'revision_required_phase1').length})</MenuItem>
-                                    <MenuItem value="revision_required_phase2">Revision P2 ({localSubmissions.filter(s => s.status === 'revision_required_phase2').length})</MenuItem>
-                                    <MenuItem value="accepted">Accepted ({localSubmissions.filter(s => s.status === 'accepted').length})</MenuItem>
-                                    <MenuItem value="rejected">Rejected ({localSubmissions.filter(s => s.status === 'rejected').length})</MenuItem>
-                                    <MenuItem value="deletion_requested">Delete Requested ({localSubmissions.filter(s => s.status === 'deletion_requested').length})</MenuItem>
+                                    <MenuItem value="all">All ({statusCounts.all || 0})</MenuItem>
+                                    <MenuItem value="pending">Pending ({statusCounts.pending || 0})</MenuItem>
+                                    <MenuItem value="under_review">In Review ({statusCounts.under_review || 0})</MenuItem>
+                                    <MenuItem value="revision_required_phase1">Revision P1 ({statusCounts.revision_required_phase1 || 0})</MenuItem>
+                                    <MenuItem value="revision_required_phase2">Revision P2 ({statusCounts.revision_required_phase2 || 0})</MenuItem>
+                                    <MenuItem value="accepted">Accepted ({statusCounts.accepted || 0})</MenuItem>
+                                    <MenuItem value="rejected">Rejected ({statusCounts.rejected || 0})</MenuItem>
+                                    <MenuItem value="deletion_requested">Delete Requested ({statusCounts.deletion_requested || 0})</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl size="small" sx={{ minWidth: 160 }}>
@@ -453,7 +499,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                 <Select
                                     value={presentationFilter}
                                     label="Type"
-                                    onChange={(e) => setPresentationFilter(e.target.value)}
+                                    onChange={(e) => handlePresentationFilterChange(e.target.value)}
                                     sx={{
                                         borderRadius: '10px',
                                         bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
@@ -461,13 +507,13 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                         '& fieldset': { borderColor: c.cardBorder },
                                     }}
                                 >
-                                    <MenuItem value="all">All ({localSubmissions.length})</MenuItem>
-                                    <MenuItem value="Oral Presentation">Oral ({localSubmissions.filter(s => s.presentation_preference === 'Oral Presentation').length})</MenuItem>
-                                    <MenuItem value="Poster Presentation">Poster ({localSubmissions.filter(s => s.presentation_preference === 'Poster Presentation').length})</MenuItem>
+                                    <MenuItem value="all">All ({statusCounts.all || 0})</MenuItem>
+                                    <MenuItem value="Oral Presentation">Oral</MenuItem>
+                                    <MenuItem value="Poster Presentation">Poster</MenuItem>
                                 </Select>
                             </FormControl>
                             <Chip
-                                label={`${filteredSubmissions.length} of ${localSubmissions.length}`}
+                                label={`Page ${currentPage} of ${lastPage} (${totalItems} total)`}
                                 size="small"
                                 sx={{
                                     bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
@@ -512,7 +558,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             <Button
                                 variant="contained"
                                 onClick={() => setChangeAllDialog(true)}
-                                disabled={!changeAllStatus || filteredSubmissions.length === 0}
+                                disabled={!changeAllStatus || totalItems === 0}
                                 size="small"
                                 sx={{
                                     bgcolor: '#e67e22',
@@ -523,10 +569,10 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                                     px: 2.5,
                                 }}
                             >
-                                Apply to All ({filteredSubmissions.length})
+                                Apply to All ({totalItems})
                             </Button>
                             <Typography variant="caption" sx={{ color: c.textMuted, fontStyle: 'italic' }}>
-                                Applies to all {filteredSubmissions.length} currently filtered submissions
+                                Applies to all {totalItems} currently filtered submissions
                             </Typography>
                         </Box>
                     </CardContent>
@@ -1077,6 +1123,82 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             </TableBody>
                         </Table>
                     </TableContainer>
+
+                    {/* Pagination Controls */}
+                    {lastPage > 1 && (
+                        <Box sx={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            px: 2.5, py: 1.5,
+                            borderTop: `1px solid ${c.cardBorder}`,
+                            bgcolor: isDark ? 'rgba(0,0,0,0.08)' : '#f9fafb',
+                        }}>
+                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                Showing {((currentPage - 1) * 25) + 1}–{Math.min(currentPage * 25, totalItems)} of {totalItems}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Button
+                                    size="small"
+                                    disabled={currentPage <= 1}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    sx={{
+                                        minWidth: 36, borderRadius: '8px', textTransform: 'none',
+                                        fontWeight: 700, fontSize: '0.78rem', color: c.textMuted,
+                                        '&:hover': { bgcolor: 'rgba(26,188,156,0.08)' },
+                                    }}
+                                >
+                                    ‹ Prev
+                                </Button>
+                                {Array.from({ length: Math.min(lastPage, 7) }, (_, i) => {
+                                    let page;
+                                    if (lastPage <= 7) {
+                                        page = i + 1;
+                                    } else if (currentPage <= 4) {
+                                        page = i + 1;
+                                    } else if (currentPage >= lastPage - 3) {
+                                        page = lastPage - 6 + i;
+                                    } else {
+                                        page = currentPage - 3 + i;
+                                    }
+                                    return (
+                                        <Button
+                                            key={page}
+                                            size="small"
+                                            onClick={() => handlePageChange(page)}
+                                            sx={{
+                                                minWidth: 32, height: 32, borderRadius: '8px',
+                                                fontWeight: page === currentPage ? 800 : 600,
+                                                fontSize: '0.78rem',
+                                                bgcolor: page === currentPage
+                                                    ? 'linear-gradient(135deg, #0d7a6a, #1abc9c)'
+                                                    : 'transparent',
+                                                background: page === currentPage
+                                                    ? 'linear-gradient(135deg, #0d7a6a, #1abc9c)'
+                                                    : 'transparent',
+                                                color: page === currentPage ? '#fff' : c.textMuted,
+                                                '&:hover': {
+                                                    bgcolor: page === currentPage ? '#16a085' : 'rgba(26,188,156,0.08)',
+                                                },
+                                            }}
+                                        >
+                                            {page}
+                                        </Button>
+                                    );
+                                })}
+                                <Button
+                                    size="small"
+                                    disabled={currentPage >= lastPage}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    sx={{
+                                        minWidth: 36, borderRadius: '8px', textTransform: 'none',
+                                        fontWeight: 700, fontSize: '0.78rem', color: c.textMuted,
+                                        '&:hover': { bgcolor: 'rgba(26,188,156,0.08)' },
+                                    }}
+                                >
+                                    Next ›
+                                </Button>
+                            </Box>
+                        </Box>
+                    )}
                 </Card>
             </Box>
 
@@ -1381,7 +1503,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body1" sx={{ color: c.textPrimary, mb: 2 }}>
-                        You are about to change the status of <strong>{filteredSubmissions.length}</strong> submission{filteredSubmissions.length !== 1 ? 's' : ''} to:
+                        You are about to change the status of <strong>{totalItems}</strong> submission{totalItems !== 1 ? 's' : ''} to:
                     </Typography>
                     <Chip
                         label={changeAllStatus === 'pending' ? 'Pending' :
@@ -1422,7 +1544,7 @@ export default function AdminSubmissions({ submissions = [], reviewers = [] }) {
                             px: 3,
                         }}
                     >
-                        Yes, Change All ({filteredSubmissions.length})
+                        Yes, Change All ({totalItems})
                     </Button>
                 </DialogActions>
             </Dialog>
