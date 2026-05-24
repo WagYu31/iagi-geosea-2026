@@ -65,6 +65,7 @@ function SidebarLayout({ children }) {
     { text: 'Manage Payments', icon: <PaymentIcon />, href: route('admin.payments'), color: '#ea580c' },
     { text: 'Manage Users', icon: <PeopleIcon />, href: route('admin.users'), color: '#9333ea' },
     { text: 'Scores', icon: <GradeIcon />, href: route('admin.scores'), color: '#ca8a04' },
+    { text: 'Certificates', icon: <GradeIcon />, href: route('admin.certificates'), color: '#7c3aed' },
     { text: 'Settings', icon: <SettingsIcon />, href: route('admin.settings'), color: '#0891b2' },
     { text: 'Email Settings', icon: <EmailIcon />, href: route('admin.email.settings.page'), color: '#db2777' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
@@ -76,6 +77,7 @@ function SidebarLayout({ children }) {
     { text: 'Dashboard', icon: <DashboardIcon />, href: route('dashboard'), color: '#059669' },
     { text: 'Submissions', icon: <ArticleIcon />, href: route('submissions.index'), color: '#2563eb' },
     { text: 'Payments', icon: <PaymentIcon />, href: route('payments.index'), color: '#ea580c' },
+    { text: 'Certificates', icon: <GradeIcon />, href: route('certificates.index'), color: '#7c3aed' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
   ];
 
@@ -158,6 +160,17 @@ function SidebarLayout({ children }) {
     'Profile': <OutlineProfile />,
     'Manage Users': <OutlinePeople />,
     'Scores': <OutlineScores />,
+    'Certificates': (() => {
+      const CertIcon = () => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="2" width="16" height="16" rx="2"/>
+          <path d="M8 7h8M8 11h5"/>
+          <circle cx="16" cy="18" r="4"/>
+          <path d="M14 21l2-1 2 1v-3"/>
+        </svg>
+      );
+      return <CertIcon />;
+    })(),
     'Settings': <OutlineSettings />,
     'Email Settings': <OutlineEmail />,
   };

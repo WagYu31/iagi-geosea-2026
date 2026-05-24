@@ -8,6 +8,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Models\PageVisit;
 use App\Models\EmailSetting;
+use App\Models\Certificate;
 use App\Mail\SubmissionStatusChanged;
 use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\Request;
@@ -880,5 +881,88 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to send email: ' . $e->getMessage()], 500);
         }
+    }
+
+    // ========== CERTIFICATES ==========
+
+    public function certificates(Request $request)
+    {
+        $query = Submission::with(['user:id,name,email', 'certificates.uploader:id,name']);
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('submission_code', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        // Filter by certificate status
+        if ($request->filled('cert_status')) {
+            if ($request->cert_status === 'has_certificate') {
+                $query->whereHas('certificates');
+            } elseif ($request->cert_status === 'no_certificate') {
+                $query->whereDoesntHave('certificates');
+            }
+        }
+
+        $submissions = $query->latest()->paginate(25)->withQueryString();
+
+        return Inertia::render('Admin/Certificates', [
+            'submissions' => $submissions,
+            'filters' => $request->only(['search', 'cert_status']),
+        ]);
+    }
+
+    public function uploadCertificate(Request $request, $submissionId)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'certificate_type' => 'required|in:participation,presenter,best_paper',
+            'label' => 'nullable|string|max:255',
+        ]);
+
+        $submission = Submission::findOrFail($submissionId);
+
+        $file = $request->file('file');
+        $filename = 'cert_' . $submission->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('certificates', $filename, 'public');
+
+        Certificate::create([
+            'submission_id' => $submission->id,
+            'user_id' => $submission->user_id,
+            'file_path' => $path,
+            'certificate_type' => $request->certificate_type,
+            'label' => $request->label ?: $this->getDefaultLabel($request->certificate_type),
+            'uploaded_by' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Certificate uploaded successfully.');
+    }
+
+    public function deleteCertificate($id)
+    {
+        $certificate = Certificate::findOrFail($id);
+
+        // Delete file from storage
+        if (Storage::disk('public')->exists($certificate->file_path)) {
+            Storage::disk('public')->delete($certificate->file_path);
+        }
+
+        $certificate->delete();
+
+        return redirect()->back()->with('success', 'Certificate deleted.');
+    }
+
+    private function getDefaultLabel($type)
+    {
+        return match ($type) {
+            'participation' => 'Certificate of Participation',
+            'presenter' => 'Certificate of Presenter',
+            'best_paper' => 'Best Paper Award',
+            default => 'Certificate',
+        };
     }
 }

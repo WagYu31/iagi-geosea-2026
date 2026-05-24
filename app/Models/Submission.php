@@ -66,4 +66,9 @@ class Submission extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

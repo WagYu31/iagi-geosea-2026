@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 use Illuminate\Support\Facades\Cache;
@@ -122,6 +123,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/payments/snap-token', [App\Http\Controllers\PaymentController::class, 'createSnapToken'])->name('payments.createSnapToken');
     Route::delete('/payments/{id}', [App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
 
+    // Author certificates routes
+    Route::get('/certificates', function () {
+        $user = Auth::user();
+        $certificates = App\Models\Certificate::with('submission:id,title,submission_code')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return Inertia::render('Certificates/Index', [
+            'certificates' => $certificates,
+        ]);
+    })->name('certificates.index');
+    Route::get('/certificates/{id}/download', function ($id) {
+        $certificate = App\Models\Certificate::where('user_id', Auth::id())->findOrFail($id);
+        return Storage::disk('public')->download($certificate->file_path, $certificate->label . '.' . pathinfo($certificate->file_path, PATHINFO_EXTENSION));
+    })->name('certificates.download');
+
     // Admin routes
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         // Dashboard
@@ -158,6 +176,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Scores Management
         Route::get('/scores', [App\Http\Controllers\AdminController::class, 'scores'])->name('scores');
+
+        // Certificates Management
+        Route::get('/certificates', [App\Http\Controllers\AdminController::class, 'certificates'])->name('certificates');
+        Route::post('/certificates/{submissionId}', [App\Http\Controllers\AdminController::class, 'uploadCertificate'])->name('certificates.upload');
+        Route::delete('/certificates/{id}', [App\Http\Controllers\AdminController::class, 'deleteCertificate'])->name('certificates.delete');
 
         // Landing Page Settings
         Route::get('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'index'])->name('settings');
