@@ -139,8 +139,8 @@ export default function AuthorCertificates({ certificates = [] }) {
                         </Box>
                     </Card>
                 ) : (
-                    /* ─── Certificate Cards Grid ─── */
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                    /* ─── Certificate Cards ─── */
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
                         {certificates.map((cert, index) => {
                             const tc = getTypeConfig(cert.certificate_type);
                             return (
@@ -150,16 +150,22 @@ export default function AuthorCertificates({ certificates = [] }) {
                                     bgcolor: c.cardBg,
                                     overflow: 'hidden',
                                     position: 'relative',
-                                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    animation: `fadeInUp 0.5s ease ${index * 0.1}s both`,
+                                    width: '100%',
+                                    maxWidth: 520,
+                                    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+                                    animation: `fadeInUp 0.6s ease ${index * 0.15}s both, gentleFloat 4s ease-in-out ${index * 0.5}s infinite`,
                                     '@keyframes fadeInUp': {
-                                        '0%': { opacity: 0, transform: 'translateY(20px)' },
-                                        '100%': { opacity: 1, transform: 'translateY(0)' },
+                                        '0%': { opacity: 0, transform: 'translateY(30px) scale(0.97)' },
+                                        '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+                                    },
+                                    '@keyframes gentleFloat': {
+                                        '0%, 100%': { transform: 'translateY(0px)' },
+                                        '50%': { transform: 'translateY(-8px)' },
                                     },
                                     '&:hover': {
-                                        transform: 'translateY(-6px)',
-                                        boxShadow: `0 20px 50px ${isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.12)'}`,
+                                        boxShadow: `0 24px 60px ${isDark ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.14)'}`,
                                         borderColor: tc.accentColor,
+                                        animationPlayState: 'paused',
                                     },
                                 }}>
                                     {/* ─── Certificate Header with gradient ─── */}
