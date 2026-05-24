@@ -887,7 +887,8 @@ class AdminController extends Controller
 
     public function certificates(Request $request)
     {
-        $query = Submission::with(['user:id,name,email', 'certificates.uploader:id,name']);
+        $query = Submission::with(['user:id,name,email', 'certificates.uploader:id,name'])
+            ->where('status', 'accepted');
 
         // Search
         if ($request->filled('search')) {

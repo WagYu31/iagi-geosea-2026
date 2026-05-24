@@ -107,7 +107,7 @@ export default function AdminCertificates({ submissions = {}, filters = {} }) {
     const totalCerts = submissionsData.reduce((sum, s) => sum + (s.certificates?.length || 0), 0);
 
     const stats = [
-        { label: 'Total Submissions', value: totalSubmissions, icon: <WorkspacePremiumIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
+        { label: 'Accepted Submissions', value: totalSubmissions, icon: <WorkspacePremiumIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
         { label: 'With Certificate', value: withCerts, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
         { label: 'No Certificate', value: withoutCerts, icon: <HighlightOffIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
         { label: 'Certificates Uploaded', value: totalCerts, icon: <PictureAsPdfIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
@@ -122,7 +122,7 @@ export default function AdminCertificates({ submissions = {}, filters = {} }) {
                     <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
                         Certificates 🏆
                     </Typography>
-                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>Upload and manage certificates for participants</Typography>
+                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>Upload and manage certificates for accepted submissions only</Typography>
                 </Box>
 
                 {/* Stats */}
