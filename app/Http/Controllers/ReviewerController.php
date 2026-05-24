@@ -7,6 +7,8 @@ use App\Models\Review;
 use App\Models\PdfAnnotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ReviewerController extends Controller
@@ -69,6 +71,13 @@ class ReviewerController extends Controller
             ->orderBy('created_at')
             ->get();
 
+        // Convert DOCX to PDF for review (if applicable)
+        $previewPdfUrl = null;
+        $fullPaperFile = $submission->full_paper_file;
+        if ($fullPaperFile && preg_match('/\.(docx?)$/i', $fullPaperFile)) {
+            $previewPdfUrl = $this->getOrConvertToPdf($fullPaperFile);
+        }
+
         return Inertia::render('Submissions/View', [
             'submission' => $submission,
             'reviews' => $submission->reviews,
@@ -76,6 +85,7 @@ class ReviewerController extends Controller
             'isPhase2' => $isPhase2,
             'annotations' => $annotations,
             'currentReviewId' => $review->id,
+            'previewPdfUrl' => $previewPdfUrl,
         ]);
     }
 
@@ -192,5 +202,52 @@ class ReviewerController extends Controller
         $annotation->delete();
 
         return response()->json(['message' => 'Annotation deleted']);
+    }
+
+    /**
+     * Convert a DOCX file to PDF using LibreOffice and cache the result.
+     * Returns the public URL of the converted PDF, or null on failure.
+     */
+    private function getOrConvertToPdf(string $storagePath): ?string
+    {
+        $fullPath = storage_path('app/public/' . $storagePath);
+
+        if (!file_exists($fullPath)) {
+            Log::warning('DOCX file not found for conversion: ' . $fullPath);
+            return null;
+        }
+
+        // Build the expected PDF path (same dir, .pdf extension)
+        $pdfPath = preg_replace('/\.(docx?)$/i', '.pdf', $storagePath);
+        $pdfFullPath = storage_path('app/public/' . $pdfPath);
+
+        // Return cached PDF if it exists and is newer than the source
+        if (file_exists($pdfFullPath) && filemtime($pdfFullPath) >= filemtime($fullPath)) {
+            return '/storage/' . $pdfPath;
+        }
+
+        // Convert using LibreOffice
+        $outputDir = dirname($pdfFullPath);
+        $command = sprintf(
+            'libreoffice --headless --convert-to pdf --outdir %s %s 2>&1',
+            escapeshellarg($outputDir),
+            escapeshellarg($fullPath)
+        );
+
+        $output = [];
+        $exitCode = 0;
+        exec($command, $output, $exitCode);
+
+        if ($exitCode !== 0 || !file_exists($pdfFullPath)) {
+            Log::error('LibreOffice DOCX→PDF conversion failed', [
+                'command' => $command,
+                'exit_code' => $exitCode,
+                'output' => implode("\n", $output),
+            ]);
+            return null;
+        }
+
+        Log::info('DOCX converted to PDF: ' . $pdfPath);
+        return '/storage/' . $pdfPath;
     }
 }

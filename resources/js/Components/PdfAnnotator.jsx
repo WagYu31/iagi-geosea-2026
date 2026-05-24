@@ -29,89 +29,6 @@ const HIGHLIGHT_COLORS = {
     blue:   { bg: 'rgba(59,130,246,0.3)', border: '#3b82f6', label: 'Saran', icon: 'ℹ️', desc: 'Saran perbaikan' },
 };
 
-// Styles for the DOCX document
-const DOCX_STYLES = `
-    .docx-page-wrap {
-        background: #fff;
-        max-width: 850px;
-        margin: 20px auto;
-        padding: 60px 70px;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.08);
-        border-radius: 4px;
-        min-height: 1100px;
-        position: relative;
-    }
-    .docx-page-wrap * { box-sizing: border-box; }
-    .docx-page-wrap p {
-        font-family: 'Times New Roman', 'Serif', Georgia, serif;
-        font-size: 12pt;
-        line-height: 2;
-        color: #1a1a1a;
-        margin: 0 0 6px 0;
-        text-align: justify;
-        word-wrap: break-word;
-    }
-    .docx-page-wrap h1, .docx-page-wrap h2, .docx-page-wrap h3, .docx-page-wrap h4 {
-        font-family: 'Times New Roman', serif;
-        color: #111;
-        margin: 16px 0 8px;
-        line-height: 1.4;
-    }
-    .docx-page-wrap h1 { font-size: 16pt; font-weight: bold; }
-    .docx-page-wrap h2 { font-size: 14pt; font-weight: bold; }
-    .docx-page-wrap h3 { font-size: 13pt; font-weight: bold; }
-    .docx-page-wrap h4 { font-size: 12pt; font-weight: bold; }
-    .docx-page-wrap strong, .docx-page-wrap b { font-weight: bold; }
-    .docx-page-wrap em, .docx-page-wrap i { font-style: italic; }
-    .docx-page-wrap u { text-decoration: underline; }
-    .docx-page-wrap img {
-        display: block;
-        max-width: 60%;
-        height: auto;
-        margin: 16px auto;
-    }
-    .docx-page-wrap table {
-        border-collapse: collapse;
-        width: 100%;
-        margin: 12px 0;
-        font-size: 11pt;
-    }
-    .docx-page-wrap td, .docx-page-wrap th {
-        border: 1px solid #999;
-        padding: 6px 10px;
-        font-family: 'Times New Roman', serif;
-        vertical-align: top;
-    }
-    .docx-page-wrap th {
-        background: #f0f0f0;
-        font-weight: bold;
-    }
-    .docx-page-wrap ul, .docx-page-wrap ol {
-        margin: 6px 0 6px 24px;
-        font-family: 'Times New Roman', serif;
-        font-size: 12pt;
-        line-height: 2;
-    }
-    .docx-page-wrap a { color: #1a73e8; text-decoration: underline; }
-    .docx-page-wrap sup { font-size: 8pt; vertical-align: super; }
-    .docx-page-wrap sub { font-size: 8pt; vertical-align: sub; }
-    .docx-page-wrap ::selection { background: rgba(26,188,156,0.35); }
-
-    @keyframes scrollHighlight {
-        0% { background: rgba(250,204,21,0.7); box-shadow: 0 0 0 4px rgba(250,204,21,0.3); }
-        50% { background: rgba(250,204,21,0.4); box-shadow: 0 0 0 8px rgba(250,204,21,0.15); }
-        100% { background: rgba(250,204,21,0.2); box-shadow: none; }
-    }
-    .annotation-scroll-target {
-        background: rgba(250,204,21,0.5) !important;
-        border-radius: 3px;
-        padding: 1px 3px;
-        border-bottom: 3px solid #facc15;
-        animation: scrollHighlight 2s ease-out 1 forwards;
-        scroll-margin-top: 80px;
-    }
-`;
-
 export default function PdfAnnotator({
     fileUrl, submissionId,
     annotations: initialAnnotations = [],
@@ -121,7 +38,6 @@ export default function PdfAnnotator({
     const isPdf = fileUrl?.toLowerCase().endsWith('.pdf');
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
-    const docViewerRef = useRef(null);
     const [pdfDoc, setPdfDoc] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -131,15 +47,11 @@ export default function PdfAnnotator({
     const [showSidebar, setShowSidebar] = useState(true);
     const [selectionPopup, setSelectionPopup] = useState(null);
     const [newComment, setNewComment] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(isPdf);
     const [saving, setSaving] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
     const [activeAnnotationId, setActiveAnnotationId] = useState(null);
     const renderTaskRef = useRef(null);
-
-    // DOCX
-    const [docHtml, setDocHtml] = useState('');
-    const [docError, setDocError] = useState(false);
 
     // Manual form
     const [showAddForm, setShowAddForm] = useState(false);
@@ -156,33 +68,6 @@ export default function PdfAnnotator({
         const t = document.head.querySelector('meta[name="csrf-token"]');
         if (t) axios.defaults.headers.common['X-CSRF-TOKEN'] = t.content;
     }, []);
-
-    // ─── DOCX: Load with mammoth ───
-    useEffect(() => {
-        if (isPdf) return;
-        const loadDocx = async () => {
-            try {
-                const mammoth = await import('mammoth');
-                const resp = await fetch(fileUrl);
-                if (!resp.ok) throw new Error('Fetch failed');
-                const buf = await resp.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer: buf }, {
-                    styleMap: [
-                        "p[style-name='Title'] => h1:fresh",
-                        "p[style-name='Heading 1'] => h1:fresh",
-                        "p[style-name='Heading 2'] => h2:fresh",
-                        "p[style-name='Heading 3'] => h3:fresh",
-                    ],
-                });
-                setDocHtml(result.value);
-            } catch (err) {
-                console.error('DOCX load error:', err);
-                setDocError(true);
-            }
-            setLoading(false);
-        };
-        loadDocx();
-    }, [fileUrl, isPdf]);
 
     // ─── PDF: Load ───
     useEffect(() => {
@@ -216,85 +101,16 @@ export default function PdfAnnotator({
         })();
     }, [pdfDoc, currentPage, scale, isPdf]);
 
-    // ─── DOCX: Text selection → auto fill form ───
-    const handleDocSelect = useCallback(() => {
-        if (!isReviewer) return;
-        const sel = window.getSelection();
-        if (!sel || sel.isCollapsed) return;
-        const text = sel.toString().trim();
-        if (text.length >= 3) {
-            setManualText(text);
-            setShowAddForm(true);
+    // Click annotation → navigate to page (PDF mode)
+    const handleAnnotationClick = useCallback((ann) => {
+        if (isPdf && ann.page_number) {
+            setCurrentPage(ann.page_number);
+            setActiveAnnotationId(ann.id);
+            setTimeout(() => setActiveAnnotationId(null), 3000);
         }
-    }, [isReviewer]);
+    }, [isPdf]);
 
-    // ─── DOCX: Scroll to text ───
-    const scrollToText = useCallback((searchText, annotationId) => {
-        if (!docViewerRef.current || !searchText) return;
-        setActiveAnnotationId(annotationId);
-
-        // Clear previous highlights
-        docViewerRef.current.querySelectorAll('.annotation-scroll-target').forEach(el => {
-            const parent = el.parentNode;
-            if (parent) {
-                parent.replaceChild(document.createTextNode(el.textContent), el);
-                parent.normalize();
-            }
-        });
-
-        // Search for text
-        const search = searchText.toLowerCase().trim();
-        // Try first 50 chars for matching
-        const query = search.substring(0, 50);
-        const walker = document.createTreeWalker(docViewerRef.current, NodeFilter.SHOW_TEXT);
-        let found = false;
-
-        while (walker.nextNode()) {
-            const node = walker.currentNode;
-            const idx = node.textContent.toLowerCase().indexOf(query);
-            if (idx === -1) continue;
-
-            try {
-                const range = document.createRange();
-                range.setStart(node, idx);
-                range.setEnd(node, Math.min(idx + query.length, node.textContent.length));
-                const mark = document.createElement('mark');
-                mark.className = 'annotation-scroll-target';
-                range.surroundContents(mark);
-                mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                found = true;
-                break;
-            } catch (e) {
-                // If surroundContents fails (spans multiple elements), try scrolling to the node
-                const parent = node.parentElement;
-                if (parent) {
-                    parent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    parent.style.transition = 'background 0.3s';
-                    parent.style.background = 'rgba(250,204,21,0.4)';
-                    parent.style.borderRadius = '4px';
-                    setTimeout(() => { parent.style.background = ''; }, 4000);
-                    found = true;
-                }
-                break;
-            }
-        }
-
-        // Auto-clear highlight
-        setTimeout(() => {
-            docViewerRef.current?.querySelectorAll('.annotation-scroll-target').forEach(el => {
-                const parent = el.parentNode;
-                if (parent) {
-                    parent.replaceChild(document.createTextNode(el.textContent), el);
-                    parent.normalize();
-                }
-            });
-            setActiveAnnotationId(null);
-        }, 4000);
-
-        if (!found) setTimeout(() => setActiveAnnotationId(null), 1500);
-    }, []);
-
-    // ─── Save / Delete / Toggle ───
+    // Save
     const saveAnnotation = async (payload) => {
         setSaving(true);
         try {
@@ -316,8 +132,8 @@ export default function PdfAnnotator({
 
     const handleSubmitManual = async () => {
         if (!manualText.trim()) return;
-        if (await saveAnnotation({ page_number: parseInt(manualPage) || 1, highlight_color: selectedColor, selected_text: manualText.trim(), comment: manualComment.trim() || null, position_data: { manual: true } })) {
-            setManualText(''); setManualComment(''); setManualPage(''); setShowAddForm(false); window.getSelection()?.removeAllRanges();
+        if (await saveAnnotation({ page_number: parseInt(manualPage) || currentPage, highlight_color: selectedColor, selected_text: manualText.trim(), comment: manualComment.trim() || null, position_data: { manual: true } })) {
+            setManualText(''); setManualComment(''); setManualPage(''); setShowAddForm(false);
         }
     };
 
@@ -333,7 +149,7 @@ export default function PdfAnnotator({
     const annotationCount = annotations.length;
     const inputSx = {
         '& .MuiOutlinedInput-root': { borderRadius: '10px', fontSize: '0.85rem', fontFamily: 'Inter,sans-serif', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#fff', '& fieldset': { borderColor }, '&:hover fieldset': { borderColor: '#1abc9c' }, '&.Mui-focused fieldset': { borderColor: '#1abc9c', borderWidth: 2 } },
-        '& textarea, & input': { color: textPrimary }, '& .MuiInputLabel-root': { color: textSecondary, fontSize: '0.82rem' }, '& .MuiInputLabel-root.Mui-focused': { color: '#1abc9c' },
+        '& textarea, & input': { color: textPrimary },
     };
 
     if (loading) return (
@@ -374,16 +190,9 @@ export default function PdfAnnotator({
                         </Typography>
                         <IconButton size="small" onClick={() => { setShowAddForm(false); setManualText(''); setManualComment(''); }} sx={{ color: textSecondary }}><CloseIcon sx={{ fontSize: 16 }} /></IconButton>
                     </Box>
-                    {!isPdf && (
-                        <Box sx={{ bgcolor: '#eff6ff', borderRadius: '10px', p: 1.5, mb: 2, border: '1px solid #dbeafe' }}>
-                            <Typography sx={{ fontSize: '0.73rem', color: '#1d4ed8', lineHeight: 1.6 }}>
-                                💡 <b>Tip:</b> Blok/select teks di dokumen → otomatis terisi di sini!
-                            </Typography>
-                        </Box>
-                    )}
                     <Box sx={{ mb: 2 }}>
                         <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#1abc9c', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📄 Halaman</Typography>
-                        <TextField fullWidth size="small" type="number" placeholder="Contoh: 5" value={manualPage} onChange={(e) => setManualPage(e.target.value)} inputProps={{ min: 1 }} sx={inputSx} />
+                        <TextField fullWidth size="small" type="number" placeholder={`Halaman saat ini: ${currentPage}`} value={manualPage} onChange={(e) => setManualPage(e.target.value)} inputProps={{ min: 1 }} sx={inputSx} />
                     </Box>
                     <Box sx={{ mb: 2 }}>
                         <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#1abc9c', mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>📝 Kutipan Teks *</Typography>
@@ -415,7 +224,7 @@ export default function PdfAnnotator({
                         <RateReviewIcon sx={{ fontSize: 28, color: '#1abc9c', opacity: 0.4, mb: 1 }} />
                         <Typography sx={{ fontSize: '0.88rem', fontWeight: 700, color: textPrimary, mb: 0.5 }}>Belum ada anotasi</Typography>
                         <Typography sx={{ fontSize: '0.75rem', color: textSecondary, lineHeight: 1.6 }}>
-                            {isReviewer ? 'Blok teks di dokumen atau klik "Tambah Anotasi Baru".' : 'Reviewer belum memberikan anotasi.'}
+                            {isReviewer ? 'Klik "Tambah Anotasi Baru" untuk mulai review.' : 'Reviewer belum memberikan anotasi.'}
                         </Typography>
                     </Box>
                 ) : (
@@ -426,13 +235,11 @@ export default function PdfAnnotator({
                                 return cnt > 0 ? <Chip key={c} label={`${cfg.icon} ${cnt}`} size="small" sx={{ height: 22, fontSize: '0.68rem', fontWeight: 700, bgcolor: cfg.bg, color: textPrimary, borderRadius: '8px' }} /> : null;
                             })}
                         </Box>
-                        {!isPdf && (
-                            <Box sx={{ bgcolor: '#ecfdf5', borderRadius: '8px', p: 1, mb: 1.5, border: '1px solid #d1fae5' }}>
-                                <Typography sx={{ fontSize: '0.7rem', color: '#059669', textAlign: 'center', fontWeight: 600 }}>
-                                    <MyLocationIcon sx={{ fontSize: 13, verticalAlign: 'middle', mr: 0.3 }} /> Klik anotasi → langsung scroll ke teks di dokumen
-                                </Typography>
-                            </Box>
-                        )}
+                        <Box sx={{ bgcolor: '#ecfdf5', borderRadius: '8px', p: 1, mb: 1.5, border: '1px solid #d1fae5' }}>
+                            <Typography sx={{ fontSize: '0.7rem', color: '#059669', textAlign: 'center', fontWeight: 600 }}>
+                                <MyLocationIcon sx={{ fontSize: 13, verticalAlign: 'middle', mr: 0.3 }} /> Klik anotasi → langsung pindah ke halaman dokumen
+                            </Typography>
+                        </Box>
                         <Stack spacing={1}>
                             {annotations.map(ann => {
                                 const cc = HIGHLIGHT_COLORS[ann.highlight_color] || HIGHLIGHT_COLORS.yellow;
@@ -440,7 +247,7 @@ export default function PdfAnnotator({
                                 const isActive = activeAnnotationId === ann.id;
                                 return (
                                     <Paper key={ann.id} elevation={0}
-                                        onClick={() => { if (!isPdf) scrollToText(ann.selected_text, ann.id); else setCurrentPage(ann.page_number); }}
+                                        onClick={() => handleAnnotationClick(ann)}
                                         sx={{
                                             p: 1.5, borderRadius: '12px', cursor: 'pointer',
                                             border: isActive ? `2px solid ${cc.border}` : `1px solid ${borderColor}`,
@@ -495,13 +302,12 @@ export default function PdfAnnotator({
     );
 
     // ═══════════════════════════════════════════════
-    // DOCX MODE
+    // NON-PDF FALLBACK (when LibreOffice not available)
     // ═══════════════════════════════════════════════
     if (!isPdf) {
         const fullUrl = `${window.location.origin}${fileUrl}`;
         return (
             <Box>
-                <style>{DOCX_STYLES}</style>
                 <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, p: 1.5, mb: 1.5, borderRadius: '12px', bgcolor: '#f8fafc', border: `1px solid ${borderColor}` }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <RateReviewIcon sx={{ fontSize: 20, color: '#1abc9c' }} />
@@ -514,17 +320,9 @@ export default function PdfAnnotator({
                         Review Panel
                     </Button>
                 </Paper>
-
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row' } }}>
-                    {/* Document */}
-                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#e8e8e8', maxHeight: 700, overflowY: 'auto' }}>
-                        {docError ? (
-                            <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Doc" />
-                        ) : (
-                            <Box ref={docViewerRef} className="docx-page-wrap" onMouseUp={handleDocSelect}
-                                dangerouslySetInnerHTML={{ __html: docHtml }}
-                            />
-                        )}
+                    <Box sx={{ flex: 1, borderRadius: '14px', overflow: 'hidden', border: `1px solid ${borderColor}`, bgcolor: '#f5f5f5' }}>
+                        <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(fullUrl)}&embedded=true`} width="100%" height="700" style={{ border: 'none', display: 'block' }} title="Document Viewer" />
                     </Box>
                     {showSidebar && <Sidebar />}
                 </Box>
@@ -533,7 +331,7 @@ export default function PdfAnnotator({
     }
 
     // ═══════════════════════════════════════════════
-    // PDF MODE
+    // PDF MODE (native PDF or converted DOCX→PDF)
     // ═══════════════════════════════════════════════
     const handleMouseUp = () => {
         if (!isReviewer) return;
@@ -585,7 +383,7 @@ export default function PdfAnnotator({
                             {annotations.filter(a => a.page_number === currentPage).map(ann => {
                                 const pos = ann.position_data; if (!pos || pos.manual) return null;
                                 const cc = HIGHLIGHT_COLORS[ann.highlight_color] || HIGHLIGHT_COLORS.yellow;
-                                return (<Tooltip key={ann.id} title={<Box sx={{ p: 0.5 }}><Typography sx={{ fontSize: '0.7rem', fontWeight: 700 }}>{ann.user?.name}</Typography><Typography sx={{ fontSize: '0.75rem', fontStyle: 'italic' }}>"{ann.selected_text?.substring(0, 80)}"</Typography>{ann.comment && <Typography sx={{ fontSize: '0.72rem', mt: 0.5, pt: 0.5, borderTop: '1px solid rgba(255,255,255,0.2)' }}>💬 {ann.comment}</Typography>}</Box>} arrow>
+                                return (<Tooltip key={ann.id} title={<Box sx={{ p: 0.5 }}><Typography sx={{ fontSize: '0.75rem', fontStyle: 'italic' }}>"{ann.selected_text?.substring(0, 80)}"</Typography>{ann.comment && <Typography sx={{ fontSize: '0.72rem', mt: 0.5, pt: 0.5, borderTop: '1px solid rgba(255,255,255,0.2)' }}>💬 {ann.comment}</Typography>}</Box>} arrow>
                                     <Box sx={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.width, height: pos.height, bgcolor: cc.bg, borderBottom: `2px solid ${cc.border}`, borderRadius: '2px', pointerEvents: 'auto', cursor: 'pointer', opacity: ann.resolved ? 0.4 : 1, '&:hover': { opacity: 1, boxShadow: `0 0 8px ${cc.border}` } }} />
                                 </Tooltip>);
                             })}
