@@ -105,7 +105,16 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         return !isPaymentCompleted(payment);
     });
 
-    const handleOpenDialog = (sub) => { setSelectedSubmission(sub); setOpenDialog(true); };
+    const handleOpenDialog = (sub) => {
+        // Guard: prevent opening checkout for already-paid submissions
+        const existingPayment = payments.find(p => p.submission_id === sub.id);
+        if (isPaymentCompleted(existingPayment)) {
+            setSnackbar({ open: true, message: '✅ This submission has already been paid.', severity: 'info' });
+            return;
+        }
+        setSelectedSubmission(sub);
+        setOpenDialog(true);
+    };
     const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); };
 
     const waitForSnap = () => new Promise((resolve, reject) => {
