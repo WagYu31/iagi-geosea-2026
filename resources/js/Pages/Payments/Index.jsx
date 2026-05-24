@@ -89,10 +89,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     const getSubFee = (sub) => (!sub || !sub.participant_category) ? null : (pricing[sub.participant_category.toLowerCase()] || null);
     const getSubCat = (sub) => (!sub || !sub.participant_category) ? null : (CATEGORIES[sub.participant_category.toLowerCase()] || null);
 
+    const isPaymentCompleted = (payment) => {
+        if (!payment) return false;
+        return payment.status === 'paid' || !!payment.verified || !!payment.paid_at;
+    };
+
     const submissionsNeedingPayment = submissions.filter(sub => {
         const payment = payments.find(p => p.submission_id === sub.id);
         const isAccepted = sub.status && sub.status.toLowerCase() === 'accepted';
-        return isAccepted && (!payment || (!payment.verified && payment.status !== 'paid'));
+        return isAccepted && !isPaymentCompleted(payment);
     });
 
     const handleOpenDialog = (sub) => { setSelectedSubmission(sub); setOpenDialog(true); };
