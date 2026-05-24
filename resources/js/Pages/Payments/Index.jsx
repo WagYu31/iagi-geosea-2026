@@ -370,11 +370,11 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     
                     {/* ─── Registration Tiers ─── */}
                     <Box>
-                        <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: isDark ? '#f3f4f6' : '#111827', fontFamily: 'Inter, sans-serif' }}>Registration Tiers</Typography>
+                        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Typography sx={{ fontWeight: 800, fontSize: { xs: '0.9rem', sm: '1.05rem' }, color: isDark ? '#f3f4f6' : '#111827', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>Registration Tiers</Typography>
                             <Box sx={{ flex: 1, height: 1, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb' }} />
                         </Box>
-                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: `repeat(${Object.keys(pricing).length || 3}, 1fr)` }, gap: 2 }}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: `repeat(${Object.keys(pricing).length || 3}, 1fr)` }, gap: 2 }}>
                             {Object.keys(pricing).map((catKey, idx) => {
                                 const amount = pricing[catKey];
                                 const cat = CATEGORIES[catKey] || { label: catKey, short: catKey, color: '#6b7280', badgeBg: 'rgba(107,114,128,0.1)', gradient: 'linear-gradient(135deg, #6b7280, #9ca3af)', description: '', features: [] };
@@ -424,7 +424,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     {/* Icon + Title */}
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
                                                         <Box sx={{
-                                                            width: 44, height: 44, borderRadius: '12px',
+                                                            width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: '12px',
                                                             background: `linear-gradient(135deg, ${cat.color}15, ${cat.color}08)`,
                                                             border: `1.5px solid ${cat.color}20`,
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -440,7 +440,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     </Box>
 
                                                     {/* Description */}
-                                                    <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280', lineHeight: 1.5, mb: 2, fontFamily: 'Inter, sans-serif' }}>
+                                                    <Typography sx={{ fontSize: { xs: '0.7rem', sm: '0.72rem' }, color: isDark ? '#9ca3af' : '#6b7280', lineHeight: 1.5, mb: 1.5, fontFamily: 'Inter, sans-serif' }}>
                                                         {cat.description}
                                                     </Typography>
 
@@ -466,7 +466,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     {/* Price */}
                                                     <Box sx={{ mb: 2 }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                                                            <Typography sx={{ fontWeight: 900, fontSize: '1.5rem', color: isDark ? 'white' : '#111827', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
+                                                            <Typography sx={{ fontWeight: 900, fontSize: { xs: '1.25rem', sm: '1.5rem' }, color: isDark ? 'white' : '#111827', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
                                                                 {fmtRp(amount)}
                                                             </Typography>
                                                         </Box>
