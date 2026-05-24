@@ -264,7 +264,7 @@ function ReviewedFilesDisplay({ reviews, isDark, c, isReviewer }) {
         }}>
             {/* Header */}
             <Box sx={{
-                px: 2.5, py: 1.8,
+                px: 2.5, py: 1.5,
                 background: isDark ? 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(99,102,241,0.06))' : 'linear-gradient(135deg, #eff6ff, #eef2ff)',
                 borderBottom: `1px solid ${isDark ? 'rgba(59,130,246,0.15)' : '#bfdbfe'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -283,24 +283,37 @@ function ReviewedFilesDisplay({ reviews, isDark, c, isReviewer }) {
                             File Review dari Reviewer
                         </Typography>
                         <Typography sx={{ fontSize: '0.68rem', color: mutedText, lineHeight: 1.3 }}>
-                            Dokumen yang sudah di-review dan dikoreksi
+                            {reviews.length} reviewer telah mengirim file review
                         </Typography>
                     </Box>
                 </Box>
-                <Chip
-                    label={`${reviews.length} file`}
-                    size="small"
-                    sx={{
-                        height: 24, fontSize: '0.7rem', fontWeight: 800,
-                        background: accentBlue, color: '#fff',
-                        borderRadius: '8px',
-                    }}
-                />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {expandedId && (
+                        <Button size="small" onClick={() => setExpandedId(null)}
+                            sx={{
+                                textTransform: 'none', fontWeight: 700, borderRadius: '8px',
+                                fontSize: '0.68rem', py: 0.3, px: 1,
+                                color: mutedText,
+                                '&:hover': { bgcolor: 'rgba(59,130,246,0.06)' },
+                            }}>
+                            ✕ Tutup Preview
+                        </Button>
+                    )}
+                    <Chip
+                        label={`${reviews.length} file`}
+                        size="small"
+                        sx={{
+                            height: 24, fontSize: '0.7rem', fontWeight: 800,
+                            background: accentBlue, color: '#fff',
+                            borderRadius: '8px',
+                        }}
+                    />
+                </Box>
             </Box>
 
             {/* Files List */}
-            <Box sx={{ p: 2 }}>
-                <Stack spacing={1.5}>
+            <Box sx={{ p: 1.5 }}>
+                <Stack spacing={1}>
                     {reviews.map((review, index) => {
                         const fileName = review.reviewed_file?.split('/').pop() || 'reviewed_file';
                         const fileUrl = `/storage/${review.reviewed_file}`;
