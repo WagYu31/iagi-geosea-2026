@@ -28,7 +28,7 @@ class MidtransService
      * If the payment already has a snap_token and is still pending,
      * return the existing token instead of creating a new one.
      */
-    public function createSnapToken(Payment $payment): array
+    public function createSnapToken(Payment $payment, array $enabledPayments = []): array
     {
         // Always generate a fresh token to avoid expired token issues
         $orderId = 'IAGI-' . $payment->id . '-' . time();
@@ -62,6 +62,11 @@ class MidtransService
             ],
         ];
 
+        // Filter payment methods if specified by user
+        if (!empty($enabledPayments)) {
+            $params['enabled_payments'] = $enabledPayments;
+        }
+
         try {
             $snapToken = Snap::getSnapToken($params);
 
@@ -72,7 +77,9 @@ class MidtransService
                 'status'     => 'pending',
             ]);
 
-            Log::info("Created Snap token for payment #{$payment->id}, order: {$orderId}");
+            Log::info("Created Snap token for payment #{$payment->id}, order: {$orderId}", [
+                'enabled_payments' => $enabledPayments ?: 'all',
+            ]);
 
             return [
                 'snap_token' => $snapToken,

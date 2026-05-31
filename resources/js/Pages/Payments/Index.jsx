@@ -20,6 +20,56 @@ import LockIcon from '@mui/icons-material/Lock';
 import CheckIcon from '@mui/icons-material/Check';
 import StarIcon from '@mui/icons-material/Star';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+
+/* ─── Payment Method config ─── */
+const PAYMENT_METHODS = [
+    {
+        key: 'bank_transfer',
+        label: 'Bank Transfer',
+        description: 'Virtual Account (BCA, BNI, BRI, Mandiri, Permata)',
+        icon: AccountBalanceIcon,
+        color: '#2563eb',
+        bgColor: 'rgba(37,99,235,0.08)',
+        enabledPayments: ['bca_va', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'other_va'],
+        logos: ['BCA', 'BNI', 'BRI', 'Mandiri'],
+    },
+    {
+        key: 'ewallet_qris',
+        label: 'E-Wallet & QRIS',
+        description: 'GoPay, ShopeePay, DANA, LinkAja, OVO via QRIS',
+        icon: QrCode2Icon,
+        color: '#059669',
+        bgColor: 'rgba(5,150,105,0.08)',
+        enabledPayments: ['gopay', 'shopeepay', 'qris'],
+        logos: ['GoPay', 'QRIS'],
+    },
+    {
+        key: 'credit_card',
+        label: 'Credit / Debit Card',
+        description: 'Visa, Mastercard, JCB, American Express',
+        icon: CreditCardIcon,
+        color: '#7c3aed',
+        bgColor: 'rgba(124,58,237,0.08)',
+        enabledPayments: ['credit_card'],
+        logos: ['Visa', 'MC', 'JCB'],
+    },
+    {
+        key: 'cstore',
+        label: 'Convenience Store',
+        description: 'Pay at Indomaret or Alfamart',
+        icon: StorefrontIcon,
+        color: '#ea580c',
+        bgColor: 'rgba(234,88,12,0.08)',
+        enabledPayments: ['indomaret', 'alfamart'],
+        logos: ['Indomaret', 'Alfamart'],
+    },
+];
 
 /* ─── Category config ─── */
 const CATEGORIES = {
@@ -85,6 +135,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
     const [mounted, setMounted] = useState(false);
     const [agreeTerms, setAgreeTerms] = useState(false);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     useEffect(() => { setMounted(true); }, []);
 
     const getSubFee = (sub) => (!sub || !sub.participant_category) ? null : (pricing[sub.participant_category.toLowerCase()] || null);
@@ -117,9 +168,10 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         }
         setSelectedSubmission(sub);
         setAgreeTerms(false);
+        setSelectedPaymentMethod(null);
         setOpenDialog(true);
     };
-    const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); setAgreeTerms(false); };
+    const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); setAgreeTerms(false); setSelectedPaymentMethod(null); };
 
     const waitForSnap = () => new Promise((resolve, reject) => {
         if (window.snap) return resolve(window.snap);
@@ -140,7 +192,10 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             const res = await fetch(route('payments.createSnapToken'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-                body: JSON.stringify({ submission_id: selectedSubmission.id }),
+                body: JSON.stringify({ 
+                    submission_id: selectedSubmission.id,
+                    payment_method: selectedPaymentMethod || null,
+                }),
             });
             
             // Handle non-JSON response (e.g., 500 HTML error page)
@@ -953,6 +1008,77 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 </Box>
                             </Box>
 
+                            {/* ─── Payment Method Selection ─── */}
+                            <Box sx={{ mb: 2.5 }}>
+                                <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: isDark ? '#d1d5db' : '#374151', mb: 1.5, fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                                    Select Payment Method
+                                </Typography>
+                                <Stack spacing={1}>
+                                    {PAYMENT_METHODS.map((method) => {
+                                        const isSelected = selectedPaymentMethod === method.key;
+                                        const MethodIcon = method.icon;
+                                        return (
+                                            <Box
+                                                key={method.key}
+                                                onClick={() => setSelectedPaymentMethod(method.key)}
+                                                sx={{
+                                                    display: 'flex', alignItems: 'center', gap: 1.5,
+                                                    p: 1.8, borderRadius: '12px', cursor: 'pointer',
+                                                    border: `1.5px solid ${isSelected
+                                                        ? (isDark ? 'rgba(16,185,129,0.4)' : '#34d399')
+                                                        : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0')}`,
+                                                    bgcolor: isSelected
+                                                        ? (isDark ? 'rgba(16,185,129,0.06)' : '#f0fdf4')
+                                                        : (isDark ? 'rgba(255,255,255,0.01)' : 'white'),
+                                                    transition: 'all 0.2s ease',
+                                                    '&:hover': {
+                                                        borderColor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+                                                        bgcolor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                                    },
+                                                }}
+                                            >
+                                                {/* Radio indicator */}
+                                                {isSelected
+                                                    ? <RadioButtonCheckedIcon sx={{ fontSize: 20, color: '#10b981', flexShrink: 0 }} />
+                                                    : <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: isDark ? '#4b5563' : '#cbd5e1', flexShrink: 0 }} />
+                                                }
+                                                {/* Icon */}
+                                                <Box sx={{
+                                                    width: 38, height: 38, borderRadius: '10px',
+                                                    bgcolor: isDark ? `${method.color}15` : method.bgColor,
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                    border: `1px solid ${method.color}20`,
+                                                }}>
+                                                    <MethodIcon sx={{ fontSize: 18, color: method.color }} />
+                                                </Box>
+                                                {/* Label & desc */}
+                                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', lineHeight: 1.3 }}>
+                                                        {method.label}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.62rem', color: isDark ? '#6b7280' : '#94a3b8', fontFamily: 'Inter, sans-serif', mt: 0.2 }} noWrap>
+                                                        {method.description}
+                                                    </Typography>
+                                                </Box>
+                                                {/* Logos */}
+                                                <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+                                                    {method.logos.map(logo => (
+                                                        <Box key={logo} sx={{
+                                                            px: 0.8, py: 0.3, borderRadius: '4px', fontSize: '0.52rem',
+                                                            fontWeight: 800, fontFamily: 'Inter, sans-serif',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                            color: isDark ? '#9ca3af' : '#64748b',
+                                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#e2e8f0'}`,
+                                                        }}>{logo}</Box>
+                                                    ))}
+                                                </Box>
+                                            </Box>
+                                        );
+                                    })}
+                                </Stack>
+                            </Box>
+
                             {/* ─── Security Badges ─── */}
                             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5, mb: 2 }}>
                                 {[
@@ -1029,7 +1155,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     <Button 
                         variant="contained" 
                         onClick={handleMidtransPayment} 
-                        disabled={paymentLoading || !selFee || !agreeTerms}
+                        disabled={paymentLoading || !selFee || !agreeTerms || !selectedPaymentMethod}
                         fullWidth
                         endIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 14 }}>›</Box>}
                         sx={{

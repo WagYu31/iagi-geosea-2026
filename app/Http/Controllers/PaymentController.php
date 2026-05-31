@@ -86,7 +86,21 @@ class PaymentController extends Controller
         }
 
         try {
-            $result = $midtransService->createSnapToken($payment);
+            // Map frontend payment method key to Midtrans enabled_payments
+            $enabledPayments = [];
+            $paymentMethodMap = [
+                'bank_transfer' => ['bca_va', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'other_va'],
+                'ewallet_qris'  => ['gopay', 'shopeepay', 'qris'],
+                'credit_card'   => ['credit_card'],
+                'cstore'        => ['indomaret', 'alfamart'],
+            ];
+
+            $paymentMethod = $request->input('payment_method');
+            if ($paymentMethod && isset($paymentMethodMap[$paymentMethod])) {
+                $enabledPayments = $paymentMethodMap[$paymentMethod];
+            }
+
+            $result = $midtransService->createSnapToken($payment, $enabledPayments);
 
             return response()->json([
                 'snap_token' => $result['snap_token'],
