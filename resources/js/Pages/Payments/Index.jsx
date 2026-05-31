@@ -878,7 +878,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             {/* ════════════════════════════════════════════
                 CHECKOUT DIALOG
             ════════════════════════════════════════════ */}
-            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth
+            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth
                 PaperProps={{ sx: { 
                     borderRadius: '20px', overflow: 'hidden', 
                     bgcolor: isDark ? 'rgba(17,24,39,0.98)' : 'white', 
@@ -886,130 +886,41 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
                 } }}
             >
-                {/* ─── Premium Header with decorative elements ─── */}
+                {/* ─── Premium Header ─── */}
                 <Box sx={{
-                    px: 3.5, pt: 3.5, pb: 3, position: 'relative', overflow: 'hidden',
+                    px: 3.5, pt: 3, pb: 2.5, position: 'relative', overflow: 'hidden',
                     background: 'linear-gradient(145deg, #064e3b 0%, #065f46 35%, #047857 65%, #059669 100%)',
                 }}>
-                    {/* Decorative circles */}
                     <Box sx={{ position: 'absolute', top: -40, right: -40, width: 120, height: 120, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.04)' }} />
-                    <Box sx={{ position: 'absolute', top: 20, right: 20, width: 60, height: 60, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.03)' }} />
                     <Box sx={{ position: 'absolute', bottom: -20, left: -20, width: 80, height: 80, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.02)' }} />
-                    
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <Box>
-                                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1.4, py: 0.4, borderRadius: '20px', bgcolor: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', mb: 1.8 }}>
-                                    <LockIcon sx={{ fontSize: 10, color: '#34d399' }} />
-                                    <Typography sx={{ fontSize: '0.5rem', fontWeight: 800, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>Secure Payment</Typography>
-                                </Box>
-                                <Typography sx={{ fontWeight: 900, fontSize: '1.4rem', color: 'white', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>Payment Checkout</Typography>
-                                <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', mt: 0.5, fontFamily: 'Inter, sans-serif' }}>
-                                    Order #{selectedSubmission ? `IAGI-${selectedSubmission.id}` : '---'}
-                                </Typography>
+                    <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6, px: 1.4, py: 0.4, borderRadius: '20px', bgcolor: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', mb: 1.2 }}>
+                                <LockIcon sx={{ fontSize: 10, color: '#34d399' }} />
+                                <Typography sx={{ fontSize: '0.5rem', fontWeight: 800, color: 'rgba(255,255,255,0.9)', textTransform: 'uppercase', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>Secure Payment</Typography>
                             </Box>
-                            <IconButton onClick={handleCloseDialog} size="small" sx={{ color: 'rgba(255,255,255,0.4)', mt: -0.5, '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}>
-                                <CloseIcon sx={{ fontSize: 18 }} />
-                            </IconButton>
+                            <Typography sx={{ fontWeight: 900, fontSize: '1.3rem', color: 'white', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em' }}>Payment Checkout</Typography>
+                            <Typography sx={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', mt: 0.3, fontFamily: 'Inter, sans-serif' }}>
+                                Order #{selectedSubmission ? `IAGI-${selectedSubmission.id}` : '---'}
+                            </Typography>
                         </Box>
+                        <IconButton onClick={handleCloseDialog} size="small" sx={{ color: 'rgba(255,255,255,0.4)', mt: -0.5, '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.1)' } }}>
+                            <CloseIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
                     </Box>
                 </Box>
 
                 <DialogContent sx={{ p: 0 }}>
                     {selectedSubmission && (
-                        <Box sx={{ px: 3, py: 2.5 }}>
-                            {/* ─── Paper / Submission Info ─── */}
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, minHeight: { md: 420 } }}>
+                            
+                            {/* ════════ LEFT COLUMN: Payment Methods ════════ */}
                             <Box sx={{ 
-                                mb: 2.5, p: 2.5, borderRadius: '14px', 
-                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', 
-                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                flex: '1 1 50%', 
+                                px: 3, py: 2.5,
+                                borderRight: { md: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}` },
+                                borderBottom: { xs: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}`, md: 'none' },
                             }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    {/* Category Icon */}
-                                    <Box sx={{
-                                        width: 48, height: 48, borderRadius: '12px',
-                                        background: selCat ? `linear-gradient(135deg, ${selCat.color}15, ${selCat.color}08)` : 'rgba(107,114,128,0.1)',
-                                        border: `1.5px solid ${selCat?.color || '#6b7280'}20`,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        flexShrink: 0,
-                                    }}>
-                                        <CatIcon category={selectedSubmission.participant_category} size={22} color={selCat?.color} />
-                                    </Box>
-                                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                                        <Typography sx={{ fontWeight: 800, fontSize: '0.92rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', mb: 0.3 }} noWrap>
-                                            {selectedSubmission.title}
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: selCat?.color || '#6b7280' }} />
-                                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>
-                                                {selCat?.label || selectedSubmission.participant_category || 'Unknown'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Box>
-
-                            {/* ─── Receipt Breakdown ─── */}
-                            <Box sx={{ 
-                                borderRadius: '14px', overflow: 'hidden',
-                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
-                                mb: 2.5,
-                            }}>
-                                {[
-                                    { label: 'Category', value: selCat?.short || selectedSubmission.participant_category || '—' },
-                                    { label: 'Participant', value: user?.name || '—' },
-                                    { label: 'Email', value: user?.email || '—' },
-                                    { label: 'Registration Fee', value: selFee ? fmtRp(selFee) : '—', highlight: true },
-                                ].map((row, i) => (
-                                    <Box key={row.label} sx={{ 
-                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                        px: 2.5, py: 1.5,
-                                        bgcolor: i % 2 === 0 
-                                            ? (isDark ? 'rgba(255,255,255,0.02)' : '#fafbfc') 
-                                            : (isDark ? 'transparent' : 'white'),
-                                        borderBottom: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.03)' : '#f1f5f9'}` : 'none',
-                                    }}>
-                                        <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#9ca3af' : '#64748b', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
-                                        <Typography sx={{ 
-                                            fontSize: '0.78rem', fontWeight: row.highlight ? 800 : 600, 
-                                            color: row.highlight 
-                                                ? (isDark ? '#34d399' : '#059669') 
-                                                : (isDark ? '#e5e7eb' : '#1e293b'),
-                                            fontFamily: 'Inter, sans-serif',
-                                            fontVariantNumeric: 'tabular-nums',
-                                        }}>{row.value}</Typography>
-                                    </Box>
-                                ))}
-                            </Box>
-
-                            {/* ─── Total Section ─── */}
-                            <Box sx={{ 
-                                p: 2.5, borderRadius: '14px',
-                                background: isDark 
-                                    ? 'linear-gradient(135deg, rgba(5,150,105,0.08), rgba(16,185,129,0.04))' 
-                                    : 'linear-gradient(135deg, #ecfdf5, #f0fdf4)',
-                                border: `1.5px solid ${isDark ? 'rgba(5,150,105,0.12)' : '#a7f3d0'}`,
-                                mb: 2.5,
-                            }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Box>
-                                        <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#6ee7b7' : '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.2, fontFamily: 'Inter, sans-serif' }}>Total Amount</Typography>
-                                        <Typography sx={{ fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>Including all fees</Typography>
-                                    </Box>
-                                    <Typography sx={{ 
-                                        fontSize: '1.6rem', fontWeight: 900, 
-                                        color: isDark ? '#34d399' : '#047857',
-                                        fontFamily: 'Inter, sans-serif',
-                                        letterSpacing: '-0.02em',
-                                        fontVariantNumeric: 'tabular-nums',
-                                    }}>
-                                        {selFee ? fmtRp(selFee) : '—'}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            {/* ─── Payment Method Selection ─── */}
-                            <Box sx={{ mb: 2.5 }}>
                                 <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: isDark ? '#d1d5db' : '#374151', mb: 1.5, fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                                     Select Payment Method
                                 </Typography>
@@ -1023,7 +934,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                 onClick={() => setSelectedPaymentMethod(method.key)}
                                                 sx={{
                                                     display: 'flex', alignItems: 'center', gap: 1.5,
-                                                    p: 1.8, borderRadius: '12px', cursor: 'pointer',
+                                                    p: 1.5, borderRadius: '12px', cursor: 'pointer',
                                                     border: `1.5px solid ${isSelected
                                                         ? (isDark ? 'rgba(16,185,129,0.4)' : '#34d399')
                                                         : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0')}`,
@@ -1034,38 +945,34 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     '&:hover': {
                                                         borderColor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
                                                         bgcolor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                                        transform: 'translateY(-1px)',
                                                     },
                                                 }}
                                             >
-                                                {/* Radio indicator */}
                                                 {isSelected
                                                     ? <RadioButtonCheckedIcon sx={{ fontSize: 20, color: '#10b981', flexShrink: 0 }} />
                                                     : <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: isDark ? '#4b5563' : '#cbd5e1', flexShrink: 0 }} />
                                                 }
-                                                {/* Icon */}
                                                 <Box sx={{
-                                                    width: 38, height: 38, borderRadius: '10px',
+                                                    width: 36, height: 36, borderRadius: '10px',
                                                     bgcolor: isDark ? `${method.color}15` : method.bgColor,
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    flexShrink: 0,
-                                                    border: `1px solid ${method.color}20`,
+                                                    flexShrink: 0, border: `1px solid ${method.color}20`,
                                                 }}>
-                                                    <MethodIcon sx={{ fontSize: 18, color: method.color }} />
+                                                    <MethodIcon sx={{ fontSize: 17, color: method.color }} />
                                                 </Box>
-                                                {/* Label & desc */}
                                                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', lineHeight: 1.3 }}>
+                                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', lineHeight: 1.3 }}>
                                                         {method.label}
                                                     </Typography>
-                                                    <Typography sx={{ fontSize: '0.62rem', color: isDark ? '#6b7280' : '#94a3b8', fontFamily: 'Inter, sans-serif', mt: 0.2 }} noWrap>
+                                                    <Typography sx={{ fontSize: '0.6rem', color: isDark ? '#6b7280' : '#94a3b8', fontFamily: 'Inter, sans-serif', mt: 0.2 }} noWrap>
                                                         {method.description}
                                                     </Typography>
                                                 </Box>
-                                                {/* Logos */}
-                                                <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+                                                <Box sx={{ display: 'flex', gap: 0.4, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 100 }}>
                                                     {method.logos.map(logo => (
                                                         <Box key={logo} sx={{
-                                                            px: 0.8, py: 0.3, borderRadius: '4px', fontSize: '0.52rem',
+                                                            px: 0.7, py: 0.25, borderRadius: '4px', fontSize: '0.5rem',
                                                             fontWeight: 800, fontFamily: 'Inter, sans-serif',
                                                             bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
                                                             color: isDark ? '#9ca3af' : '#64748b',
@@ -1077,99 +984,192 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                         );
                                     })}
                                 </Stack>
+
+                                {/* Security Badges */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                                    {[
+                                        { icon: '🔒', text: '256-bit SSL' },
+                                        { icon: '🛡️', text: 'PCI Certified' },
+                                        { icon: '✓', text: 'Verified by Midtrans' },
+                                    ].map(b => (
+                                        <Box key={b.text} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                            <Typography sx={{ fontSize: '0.55rem' }}>{b.icon}</Typography>
+                                            <Typography sx={{ fontSize: '0.55rem', color: isDark ? '#6b7280' : '#94a3b8', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{b.text}</Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
                             </Box>
 
-                            {/* ─── Security Badges ─── */}
-                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5, mb: 2 }}>
-                                {[
-                                    { icon: '🔒', text: '256-bit SSL' },
-                                    { icon: '🛡️', text: 'PCI Certified' },
-                                    { icon: '✓', text: 'Verified by Midtrans' },
-                                ].map(b => (
-                                    <Box key={b.text} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                        <Typography sx={{ fontSize: '0.6rem' }}>{b.icon}</Typography>
-                                        <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6b7280' : '#94a3b8', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{b.text}</Typography>
-                                    </Box>
-                                ))}
-                            </Box>
-
-                            {/* ─── Terms & Conditions Agreement ─── */}
-                            <Box sx={{
-                                p: 2, borderRadius: '12px',
-                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
-                                mb: 1,
+                            {/* ════════ RIGHT COLUMN: Order Summary ════════ */}
+                            <Box sx={{ 
+                                flex: '1 1 50%', 
+                                px: 3, py: 2.5,
+                                bgcolor: isDark ? 'rgba(255,255,255,0.01)' : '#fafbfc',
+                                display: 'flex', flexDirection: 'column',
                             }}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={agreeTerms}
-                                            onChange={(e) => setAgreeTerms(e.target.checked)}
-                                            size="small"
-                                            sx={{
-                                                color: isDark ? '#6b7280' : '#94a3b8',
-                                                '&.Mui-checked': { color: '#059669' },
-                                                p: 0.5,
-                                            }}
-                                        />
-                                    }
-                                    label={
-                                        <Typography sx={{
-                                            fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#64748b',
-                                            fontFamily: 'Inter, sans-serif', lineHeight: 1.6, ml: 0.5,
+                                <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: isDark ? '#d1d5db' : '#374151', mb: 1.5, fontFamily: 'Inter, sans-serif', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                                    Order Summary
+                                </Typography>
+
+                                {/* Paper / Submission Info */}
+                                <Box sx={{ 
+                                    mb: 2, p: 2, borderRadius: '12px', 
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'white', 
+                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Box sx={{
+                                            width: 40, height: 40, borderRadius: '10px',
+                                            background: selCat ? `linear-gradient(135deg, ${selCat.color}15, ${selCat.color}08)` : 'rgba(107,114,128,0.1)',
+                                            border: `1.5px solid ${selCat?.color || '#6b7280'}20`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                                         }}>
-                                            I have read and agree to the{' '}
-                                            <Link href="/privacy-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Privacy Policy</Link>,{' '}
-                                            <Link href="/terms-and-conditions" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Terms and Conditions</Link>{' '}and{' '}
-                                            <Link href="/refund-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Refund Policy</Link>.
+                                            <CatIcon category={selectedSubmission.participant_category} size={20} color={selCat?.color} />
+                                        </Box>
+                                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', mb: 0.2 }} noWrap>
+                                                {selectedSubmission.title}
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <Box sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: selCat?.color || '#6b7280' }} />
+                                                <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>
+                                                    {selCat?.label || selectedSubmission.participant_category || 'Unknown'}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Box>
+
+                                {/* Receipt Breakdown */}
+                                <Box sx={{ 
+                                    borderRadius: '12px', overflow: 'hidden',
+                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                    mb: 2,
+                                }}>
+                                    {[
+                                        { label: 'Category', value: selCat?.short || selectedSubmission.participant_category || '—' },
+                                        { label: 'Participant', value: user?.name || '—' },
+                                        { label: 'Email', value: user?.email || '—' },
+                                    ].map((row, i) => (
+                                        <Box key={row.label} sx={{ 
+                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                            px: 2, py: 1.2,
+                                            bgcolor: i % 2 === 0 
+                                                ? (isDark ? 'rgba(255,255,255,0.02)' : '#fafbfc') 
+                                                : (isDark ? 'transparent' : 'white'),
+                                            borderBottom: i < 2 ? `1px solid ${isDark ? 'rgba(255,255,255,0.03)' : '#f1f5f9'}` : 'none',
+                                        }}>
+                                            <Typography sx={{ fontSize: '0.72rem', color: isDark ? '#9ca3af' : '#64748b', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
+                                            <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: isDark ? '#e5e7eb' : '#1e293b', fontFamily: 'Inter, sans-serif' }}>{row.value}</Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+
+                                {/* Total Section */}
+                                <Box sx={{ 
+                                    p: 2, borderRadius: '12px',
+                                    background: isDark 
+                                        ? 'linear-gradient(135deg, rgba(5,150,105,0.08), rgba(16,185,129,0.04))' 
+                                        : 'linear-gradient(135deg, #ecfdf5, #f0fdf4)',
+                                    border: `1.5px solid ${isDark ? 'rgba(5,150,105,0.12)' : '#a7f3d0'}`,
+                                    mb: 2,
+                                }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Box>
+                                            <Typography sx={{ fontSize: '0.6rem', color: isDark ? '#6ee7b7' : '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.1, fontFamily: 'Inter, sans-serif' }}>Total Amount</Typography>
+                                            <Typography sx={{ fontSize: '0.62rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>Including all fees</Typography>
+                                        </Box>
+                                        <Typography sx={{ 
+                                            fontSize: '1.5rem', fontWeight: 900, 
+                                            color: isDark ? '#34d399' : '#047857',
+                                            fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums',
+                                        }}>
+                                            {selFee ? fmtRp(selFee) : '—'}
                                         </Typography>
-                                    }
-                                    sx={{ alignItems: 'flex-start', m: 0, gap: 0 }}
-                                />
+                                    </Box>
+                                </Box>
+
+                                {/* Terms & Conditions */}
+                                <Box sx={{
+                                    p: 1.5, borderRadius: '10px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'white',
+                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                    mb: 2,
+                                }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={agreeTerms}
+                                                onChange={(e) => setAgreeTerms(e.target.checked)}
+                                                size="small"
+                                                sx={{
+                                                    color: isDark ? '#6b7280' : '#94a3b8',
+                                                    '&.Mui-checked': { color: '#059669' },
+                                                    p: 0.5,
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography sx={{
+                                                fontSize: '0.65rem', color: isDark ? '#9ca3af' : '#64748b',
+                                                fontFamily: 'Inter, sans-serif', lineHeight: 1.6, ml: 0.3,
+                                            }}>
+                                                I have read and agree to the{' '}
+                                                <Link href="/privacy-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Privacy Policy</Link>,{' '}
+                                                <Link href="/terms-and-conditions" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Terms and Conditions</Link>{' '}and{' '}
+                                                <Link href="/refund-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Refund Policy</Link>.
+                                            </Typography>
+                                        }
+                                        sx={{ alignItems: 'flex-start', m: 0, gap: 0 }}
+                                    />
+                                </Box>
+
+                                {/* CTA Button */}
+                                <Box sx={{ mt: 'auto' }}>
+                                    <Button 
+                                        variant="contained" 
+                                        onClick={handleMidtransPayment} 
+                                        disabled={paymentLoading || !selFee || !agreeTerms || !selectedPaymentMethod}
+                                        fullWidth
+                                        endIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 16 }}>›</Box>}
+                                        sx={{
+                                            background: (agreeTerms && selectedPaymentMethod)
+                                                ? 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)'
+                                                : (isDark ? '#1f2937' : '#e2e8f0'),
+                                            backgroundSize: '200% 100%',
+                                            boxShadow: (agreeTerms && selectedPaymentMethod) ? '0 6px 20px rgba(5,150,105,0.25)' : 'none',
+                                            '&:hover': { 
+                                                backgroundPosition: '100% 0',
+                                                boxShadow: '0 8px 28px rgba(5,150,105,0.35)',
+                                            },
+                                            '&:disabled': { background: isDark ? '#1f2937' : '#e2e8f0', boxShadow: 'none', color: isDark ? '#4b5563' : '#94a3b8' },
+                                            textTransform: 'none', borderRadius: '12px', fontWeight: 800, 
+                                            fontSize: '0.88rem', py: 1.5,
+                                            fontFamily: 'Inter, sans-serif',
+                                            letterSpacing: '-0.01em',
+                                            transition: 'all 0.4s ease',
+                                        }}
+                                    >
+                                        {paymentLoading ? 'Processing...' : 'Proceed to Secure Payment'}
+                                    </Button>
+                                    <Button 
+                                        onClick={handleCloseDialog} 
+                                        disabled={paymentLoading} 
+                                        fullWidth
+                                        sx={{ 
+                                            mt: 1, color: isDark ? '#6b7280' : '#94a3b8', 
+                                            textTransform: 'none', fontWeight: 600, fontSize: '0.75rem',
+                                            '&:hover': { bgcolor: 'transparent', color: isDark ? '#9ca3af' : '#64748b' },
+                                            fontFamily: 'Inter, sans-serif',
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Box>
                             </Box>
                         </Box>
                     )}
                 </DialogContent>
-
-                {/* ─── Action Buttons ─── */}
-                <Box sx={{ px: 3, pb: 3, display: 'flex', gap: 1.5 }}>
-                    <Button 
-                        onClick={handleCloseDialog} 
-                        disabled={paymentLoading} 
-                        sx={{ 
-                            flex: '0 0 auto',
-                            color: isDark ? '#9ca3af' : '#64748b', 
-                            textTransform: 'none', fontWeight: 700, 
-                            borderRadius: '12px', px: 3, py: 1.2,
-                            fontSize: '0.82rem',
-                            border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`,
-                            '&:hover': { 
-                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
-                                borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1',
-                            },
-                            fontFamily: 'Inter, sans-serif',
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                    <Button 
-                        variant="contained" 
-                        onClick={handleMidtransPayment} 
-                        disabled={paymentLoading || !selFee || !agreeTerms || !selectedPaymentMethod}
-                        fullWidth
-                        endIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 14 }}>›</Box>}
-                        sx={{
-                            background: agreeTerms 
-                                ? 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)'
-                                : (isDark ? '#1f2937' : '#e2e8f0'),
-                            backgroundSize: '200% 100%',
-                            boxShadow: agreeTerms ? '0 6px 20px rgba(5,150,105,0.25)' : 'none',
-                            '&:hover': { 
-                                backgroundPosition: '100% 0',
-                                boxShadow: '0 8px 28px rgba(5,150,105,0.35)',
-                            },
-                            '&:disabled': { background: isDark ? '#1f2937' : '#e2e8f0', boxShadow: 'none', color: isDark ? '#4b5563' : '#94a3b8' },
-                            textTransform: 'none', borderRadius: '12px', fontWeight: 800, 
                             fontSize: '0.88rem', py: 1.4,
                             fontFamily: 'Inter, sans-serif',
                             letterSpacing: '-0.01em',
