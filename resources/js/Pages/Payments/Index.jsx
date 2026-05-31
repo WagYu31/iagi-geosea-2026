@@ -140,8 +140,22 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
                 body: JSON.stringify({ submission_id: selectedSubmission.id }),
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Payment failed');
+            
+            // Handle non-JSON response (e.g., 500 HTML error page)
+            const contentType = res.headers.get('content-type') || '';
+            let data;
+            if (contentType.includes('application/json')) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                console.error('Non-JSON response from snap-token:', res.status, text.substring(0, 500));
+                throw new Error(`Server error (${res.status}). Check server logs.`);
+            }
+            
+            if (!res.ok) {
+                console.error('Snap token error:', res.status, data);
+                throw new Error(data.error || data.message || `Payment failed (${res.status})`);
+            }
             const currentOrderId = data.order_id;
             handleCloseDialog();
             const snap = await waitForSnap();

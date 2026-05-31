@@ -93,10 +93,14 @@ class PaymentController extends Controller
                 'order_id'   => $result['order_id'],
             ]);
         } catch (\Exception $e) {
-            Log::error('Snap token creation failed: ' . $e->getMessage());
+            Log::error('Snap token creation failed: ' . $e->getMessage(), [
+                'payment_id' => $payment->id ?? null,
+                'amount' => $payment->amount ?? null,
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return response()->json([
-                'error' => 'Failed to create payment. Please try again.',
+                'error' => 'Failed to create payment: ' . $e->getMessage(),
             ], 500);
         }
     }
