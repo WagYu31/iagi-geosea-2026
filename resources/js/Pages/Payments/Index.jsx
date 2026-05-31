@@ -1170,15 +1170,6 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         </Box>
                     )}
                 </DialogContent>
-                            fontSize: '0.88rem', py: 1.4,
-                            fontFamily: 'Inter, sans-serif',
-                            letterSpacing: '-0.01em',
-                            transition: 'all 0.4s ease',
-                        }}
-                    >
-                        {paymentLoading ? 'Processing...' : 'Proceed to Secure Payment'}
-                    </Button>
-                </Box>
             </Dialog>
 
             <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ open: false, message: '', severity: 'info' })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
