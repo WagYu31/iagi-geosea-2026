@@ -31,6 +31,10 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import DescriptionIcon from '@mui/icons-material/Description';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import PaymentIcon from '@mui/icons-material/Payment';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -230,6 +234,157 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
                                 sx={tealBtnSx}
                             >
                                 {saving ? 'Saving...' : 'Save Pricing'}
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Stack>
+        </Box>
+    );
+}
+
+// Menu Visibility Tab Component
+function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue, getSettingId }) {
+    const [visibility, setVisibility] = useState(() => {
+        const data = getSettingValue('menu_visibility', null);
+        if (data && typeof data === 'object') return data;
+        return { payments: true, certificates: true };
+    });
+    const [saving, setSaving] = useState(false);
+
+    const menus = [
+        { 
+            key: 'payments', 
+            label: 'Payments', 
+            description: 'Payment Center for conference registration fees via Midtrans',
+            icon: <PaymentIcon sx={{ fontSize: 28 }} />,
+            color: '#ea580c',
+            bgColor: isDark ? 'rgba(234,88,12,0.08)' : '#fff7ed',
+        },
+        { 
+            key: 'certificates', 
+            label: 'Certificates', 
+            description: 'Certificate download page for accepted authors',
+            icon: <WorkspacePremiumIcon sx={{ fontSize: 28 }} />,
+            color: '#7c3aed',
+            bgColor: isDark ? 'rgba(124,58,237,0.08)' : '#f5f3ff',
+        },
+    ];
+
+    const handleToggle = (key) => {
+        setVisibility(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const saveVisibility = async () => {
+        setSaving(true);
+        try {
+            const settingId = getSettingId('menu_visibility');
+            if (settingId) {
+                await axios.patch(`/admin/settings/${settingId}`, {
+                    value: JSON.stringify(visibility),
+                });
+            } else {
+                await axios.post('/admin/settings', {
+                    key: 'menu_visibility',
+                    value: JSON.stringify(visibility),
+                    group: 'system',
+                    type: 'json',
+                });
+            }
+            // Clear cache
+            await axios.post('/admin/clear-menu-cache');
+            alert('Menu visibility saved! Changes will take effect on next page load.');
+            router.reload({ preserveScroll: true });
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert('Failed to save: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Stack spacing={3}>
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            👁️ Menu Visibility Control
+                        </Typography>
+                        <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mb: 3 }}>
+                            Toggle which menus are visible to regular users (authors). Admin menus are always visible regardless of these settings.
+                        </Typography>
+
+                        <Alert severity="info" sx={{ mb: 3, borderRadius: '12px' }}>
+                            <strong>Note:</strong> Hiding a menu only removes it from the sidebar navigation. Direct URL access is still possible. Use this to temporarily hide features that are not yet ready (e.g., Payments before Midtrans production is activated).
+                        </Alert>
+
+                        <Stack spacing={2}>
+                            {menus.map((menu) => (
+                                <Card key={menu.key} elevation={0} sx={{
+                                    border: `1.5px solid ${visibility[menu.key] 
+                                        ? (isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0') 
+                                        : (isDark ? 'rgba(239,68,68,0.2)' : '#fecaca')}`,
+                                    borderRadius: '14px',
+                                    bgcolor: visibility[menu.key] 
+                                        ? (isDark ? 'rgba(16,185,129,0.04)' : '#f0fdf4')
+                                        : (isDark ? 'rgba(239,68,68,0.04)' : '#fef2f2'),
+                                    transition: 'all 0.3s ease',
+                                }}>
+                                    <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <Box sx={{
+                                                    width: 48, height: 48, borderRadius: '12px',
+                                                    bgcolor: menu.bgColor,
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    color: menu.color,
+                                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+                                                }}>
+                                                    {menu.icon}
+                                                </Box>
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: c.textPrimary }}>
+                                                            {menu.label}
+                                                        </Typography>
+                                                        {visibility[menu.key] ? (
+                                                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.2, borderRadius: '6px', bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#d1fae5', color: '#059669', fontSize: '0.65rem', fontWeight: 700 }}>
+                                                                <VisibilityIcon sx={{ fontSize: 12 }} /> Visible
+                                                            </Box>
+                                                        ) : (
+                                                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.2, borderRadius: '6px', bgcolor: isDark ? 'rgba(239,68,68,0.15)' : '#fee2e2', color: '#dc2626', fontSize: '0.65rem', fontWeight: 700 }}>
+                                                                <VisibilityOffIcon sx={{ fontSize: 12 }} /> Hidden
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                    <Typography sx={{ fontSize: '0.78rem', color: c.textMuted, mt: 0.3 }}>
+                                                        {menu.description}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Switch
+                                                checked={visibility[menu.key]}
+                                                onChange={() => handleToggle(menu.key)}
+                                                sx={{
+                                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#10b981' },
+                                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#10b981' },
+                                                }}
+                                            />
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Stack>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 3 }}>
+                            <Button
+                                variant="contained"
+                                onClick={saveVisibility}
+                                disabled={saving}
+                                sx={tealBtnSx}
+                            >
+                                {saving ? 'Saving...' : 'Save Visibility Settings'}
                             </Button>
                         </Box>
                     </CardContent>
@@ -1506,6 +1661,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                         <Tab label="Landing Page Settings" />
                         <Tab label="Submission Deadline" />
                         <Tab label="Pricing Settings" />
+                        <Tab label="Menu Visibility" />
                     </Tabs>
 
                     {/* Landing Page Settings Tab */}
@@ -3463,6 +3619,11 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                     {/* Pricing Settings Tab */}
                     <TabPanel value={tabValue} index={2}>
                         <PricingSettingsTab initialPricing={initialPricing} inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} />
+                    </TabPanel>
+
+                    {/* Menu Visibility Tab */}
+                    <TabPanel value={tabValue} index={3}>
+                        <MenuVisibilityTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} getSettingId={getSettingId} />
                     </TabPanel>
                 </Card>
             </Box>

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 
@@ -41,6 +42,26 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'success' => fn () => $request->session()->get('success'),
             ],
+            'menuVisibility' => fn () => $this->getMenuVisibility(),
         ];
+    }
+
+    /**
+     * Get menu visibility settings from DB with cache.
+     */
+    private function getMenuVisibility(): array
+    {
+        return Cache::remember('menu_visibility', 300, function () {
+            $setting = \App\Models\LandingPageSetting::where('key', 'menu_visibility')->first();
+            if ($setting) {
+                $value = json_decode($setting->value, true);
+                if (is_array($value)) return $value;
+            }
+            // Default: all menus visible
+            return [
+                'payments' => true,
+                'certificates' => true,
+            ];
+        });
     }
 }

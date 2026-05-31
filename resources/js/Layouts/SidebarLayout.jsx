@@ -37,7 +37,7 @@ const drawerWidth = 270;
 const collapsedDrawerWidth = 70;
 
 function SidebarLayout({ children }) {
-  const { auth, ziggy } = usePage().props;
+  const { auth, ziggy, menuVisibility } = usePage().props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const currentRoute = ziggy?.location || '';
@@ -59,6 +59,12 @@ function SidebarLayout({ children }) {
   const isAdmin = auth.user?.role?.toLowerCase() === 'admin';
   const isReviewer = auth.user?.role?.toLowerCase() === 'reviewer';
 
+  // Menu visibility map: menu text → visibility key
+  const menuVisibilityMap = {
+    'Payments': 'payments',
+    'Certificates': 'certificates',
+  };
+
   const menuItems = isAdmin ? [
     { text: 'Admin Dashboard', icon: <DashboardIcon />, href: route('admin.dashboard'), color: '#059669' },
     { text: 'Manage Submissions', icon: <ArticleIcon />, href: route('admin.submissions'), color: '#2563eb' },
@@ -79,7 +85,12 @@ function SidebarLayout({ children }) {
     { text: 'Payments', icon: <PaymentIcon />, href: route('payments.index'), color: '#ea580c' },
     { text: 'Certificates', icon: <GradeIcon />, href: route('certificates.index'), color: '#7c3aed' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
-  ];
+  ].filter(item => {
+    // Filter out hidden menus for non-admin users
+    const visKey = menuVisibilityMap[item.text];
+    if (visKey && menuVisibility && menuVisibility[visKey] === false) return false;
+    return true;
+  });
 
   const isActive = (href) => {
     return currentRoute.includes(href.replace(window.location.origin, ''));
