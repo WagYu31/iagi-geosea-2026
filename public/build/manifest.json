@@ -224,7 +224,7 @@
     ]
   },
   "resources/js/Pages/Payments/Index.jsx": {
-    "file": "assets/Index-C0mYumoH.js",
+    "file": "assets/Index-Cl67NGNH.js",
     "name": "Index",
     "src": "resources/js/Pages/Payments/Index.jsx",
     "isDynamicEntry": true,
@@ -232,6 +232,18 @@
       "_vendor-mui-core-BigPUkVs.js",
       "_vendor-inertia-QOFxDWCO.js",
       "_layouts-DHLsB56m.js",
+      "_vendor-mui-icons-DdLEMx8j.js",
+      "_vendor-react-zq6P3Ky3.js"
+    ]
+  },
+  "resources/js/Pages/PrivacyPolicy.jsx": {
+    "file": "assets/PrivacyPolicy-BNO8WUdf.js",
+    "name": "PrivacyPolicy",
+    "src": "resources/js/Pages/PrivacyPolicy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-mui-core-BigPUkVs.js",
+      "_vendor-inertia-QOFxDWCO.js",
       "_vendor-mui-icons-DdLEMx8j.js",
       "_vendor-react-zq6P3Ky3.js"
     ]
@@ -249,6 +261,18 @@
       "_pages-profile-JO6LCH9m.js",
       "_layouts-DHLsB56m.js",
       "_vendor-mui-icons-DdLEMx8j.js"
+    ]
+  },
+  "resources/js/Pages/RefundPolicy.jsx": {
+    "file": "assets/RefundPolicy-BxYSYdQC.js",
+    "name": "RefundPolicy",
+    "src": "resources/js/Pages/RefundPolicy.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-mui-core-BigPUkVs.js",
+      "_vendor-inertia-QOFxDWCO.js",
+      "_vendor-mui-icons-DdLEMx8j.js",
+      "_vendor-react-zq6P3Ky3.js"
     ]
   },
   "resources/js/Pages/Reviewer/Dashboard.jsx": {
@@ -306,6 +330,18 @@
       "_vendor-react-zq6P3Ky3.js"
     ]
   },
+  "resources/js/Pages/TermsAndConditions.jsx": {
+    "file": "assets/TermsAndConditions-DBYMVrXG.js",
+    "name": "TermsAndConditions",
+    "src": "resources/js/Pages/TermsAndConditions.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-mui-core-BigPUkVs.js",
+      "_vendor-inertia-QOFxDWCO.js",
+      "_vendor-mui-icons-DdLEMx8j.js",
+      "_vendor-react-zq6P3Ky3.js"
+    ]
+  },
   "resources/js/Pages/TestAdmin.jsx": {
     "file": "assets/TestAdmin-DfNgxCMc.js",
     "name": "TestAdmin",
@@ -331,7 +367,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-1ibG4qBw.js",
+    "file": "assets/app-DgG4QHax.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -361,14 +397,17 @@
       "resources/js/Pages/Dashboard.jsx",
       "resources/js/Pages/LandingPage.jsx",
       "resources/js/Pages/Payments/Index.jsx",
+      "resources/js/Pages/PrivacyPolicy.jsx",
       "_pages-profile-JO6LCH9m.js",
       "resources/js/Pages/Profile/Partials/DeleteUserForm.jsx",
       "_pages-profile-JO6LCH9m.js",
       "_pages-profile-JO6LCH9m.js",
+      "resources/js/Pages/RefundPolicy.jsx",
       "resources/js/Pages/Reviewer/Dashboard.jsx",
       "resources/js/Pages/Reviewer/Submissions.jsx",
       "resources/js/Pages/Submissions/Index.jsx",
       "resources/js/Pages/Submissions/View.jsx",
+      "resources/js/Pages/TermsAndConditions.jsx",
       "resources/js/Pages/TestAdmin.jsx",
       "resources/js/Pages/Welcome.jsx"
     ],

@@ -29,6 +29,11 @@ Route::get('/', function () {
 Route::get('/api/landing-settings', [App\Http\Controllers\LandingPageSettingController::class, 'getPublicSettings']);
 Route::get('/download/resource/{index}', [App\Http\Controllers\LandingPageSettingController::class, 'downloadResource'])->name('download.resource');
 
+// Legal/Policy Pages (public, required by Midtrans for production)
+Route::get('/privacy-policy', function () { return Inertia::render('PrivacyPolicy'); })->name('privacy.policy');
+Route::get('/terms-and-conditions', function () { return Inertia::render('TermsAndConditions'); })->name('terms.conditions');
+Route::get('/refund-policy', function () { return Inertia::render('RefundPolicy'); })->name('refund.policy');
+
 // Midtrans webhook (public, no auth, no CSRF — called by Midtrans servers)
 Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentController::class, 'handleNotification'])
     ->name('midtrans.notification')

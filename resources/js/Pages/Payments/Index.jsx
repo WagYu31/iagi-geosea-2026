@@ -6,7 +6,7 @@ import {
     TableHead, TableRow, Chip, Button, Dialog, DialogContent,
     DialogActions, IconButton, Stack, Card, CardContent, useTheme,
     CircularProgress, Snackbar, Alert, Divider, LinearProgress, Tooltip,
-    Fade,
+    Fade, Checkbox, FormControlLabel, Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -84,6 +84,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     const [paymentLoading, setPaymentLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
     const [mounted, setMounted] = useState(false);
+    const [agreeTerms, setAgreeTerms] = useState(false);
     useEffect(() => { setMounted(true); }, []);
 
     const getSubFee = (sub) => (!sub || !sub.participant_category) ? null : (pricing[sub.participant_category.toLowerCase()] || null);
@@ -115,9 +116,10 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             return;
         }
         setSelectedSubmission(sub);
+        setAgreeTerms(false);
         setOpenDialog(true);
     };
-    const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); };
+    const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); setAgreeTerms(false); };
 
     const waitForSnap = () => new Promise((resolve, reject) => {
         if (window.snap) return resolve(window.snap);
@@ -952,7 +954,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             </Box>
 
                             {/* ─── Security Badges ─── */}
-                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5, mb: 1 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5, mb: 2 }}>
                                 {[
                                     { icon: '🔒', text: '256-bit SSL' },
                                     { icon: '🛡️', text: 'PCI Certified' },
@@ -963,6 +965,41 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                         <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6b7280' : '#94a3b8', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{b.text}</Typography>
                                     </Box>
                                 ))}
+                            </Box>
+
+                            {/* ─── Terms & Conditions Agreement ─── */}
+                            <Box sx={{
+                                p: 2, borderRadius: '12px',
+                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'}`,
+                                mb: 1,
+                            }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={agreeTerms}
+                                            onChange={(e) => setAgreeTerms(e.target.checked)}
+                                            size="small"
+                                            sx={{
+                                                color: isDark ? '#6b7280' : '#94a3b8',
+                                                '&.Mui-checked': { color: '#059669' },
+                                                p: 0.5,
+                                            }}
+                                        />
+                                    }
+                                    label={
+                                        <Typography sx={{
+                                            fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#64748b',
+                                            fontFamily: 'Inter, sans-serif', lineHeight: 1.6, ml: 0.5,
+                                        }}>
+                                            I have read and agree to the{' '}
+                                            <Link href="/privacy-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Privacy Policy</Link>,{' '}
+                                            <Link href="/terms-and-conditions" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Terms and Conditions</Link>{' '}and{' '}
+                                            <Link href="/refund-policy" target="_blank" sx={{ color: '#059669', fontWeight: 700, textDecoration: 'underline', '&:hover': { color: '#10b981' } }}>Refund Policy</Link>.
+                                        </Typography>
+                                    }
+                                    sx={{ alignItems: 'flex-start', m: 0, gap: 0 }}
+                                />
                             </Box>
                         </Box>
                     )}
@@ -992,13 +1029,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     <Button 
                         variant="contained" 
                         onClick={handleMidtransPayment} 
-                        disabled={paymentLoading || !selFee}
+                        disabled={paymentLoading || !selFee || !agreeTerms}
                         fullWidth
-                        startIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <LockIcon sx={{ fontSize: 15 }} />}
+                        endIcon={paymentLoading ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 14 }}>›</Box>}
                         sx={{
-                            background: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+                            background: agreeTerms 
+                                ? 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)'
+                                : (isDark ? '#1f2937' : '#e2e8f0'),
                             backgroundSize: '200% 100%',
-                            boxShadow: '0 6px 20px rgba(5,150,105,0.25)',
+                            boxShadow: agreeTerms ? '0 6px 20px rgba(5,150,105,0.25)' : 'none',
                             '&:hover': { 
                                 backgroundPosition: '100% 0',
                                 boxShadow: '0 8px 28px rgba(5,150,105,0.35)',
@@ -1011,7 +1050,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                             transition: 'all 0.4s ease',
                         }}
                     >
-                        {paymentLoading ? 'Processing...' : `Pay ${selFee ? fmtRp(selFee) : ''}`}
+                        {paymentLoading ? 'Processing...' : 'Proceed to Secure Payment'}
                     </Button>
                 </Box>
             </Dialog>
