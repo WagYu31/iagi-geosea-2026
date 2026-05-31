@@ -207,11 +207,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Registration Pricing Settings
         Route::post('/pricing-settings', [App\Http\Controllers\LandingPageSettingController::class, 'savePricing'])->name('settings.savePricing');
 
-        // Menu Visibility Cache Clear
-        Route::post('/clear-menu-cache', function () {
+        // Menu Visibility Save + Cache Clear
+        Route::post('/save-menu-visibility', function (\Illuminate\Http\Request $request) {
+            $request->validate(['visibility' => 'required|array']);
+
+            $setting = \App\Models\LandingPageSetting::where('key', 'menu_visibility')->first();
+            $jsonValue = json_encode($request->visibility);
+
+            if ($setting) {
+                $setting->update(['value' => $jsonValue]);
+            } else {
+                \App\Models\LandingPageSetting::create([
+                    'key' => 'menu_visibility',
+                    'value' => $jsonValue,
+                    'section' => 'system',
+                    'type' => 'json',
+                ]);
+            }
+
             \Illuminate\Support\Facades\Cache::forget('menu_visibility');
-            return response()->json(['success' => true]);
-        })->name('settings.clearMenuCache');
+
+            return response()->json(['success' => true, 'message' => 'Menu visibility saved successfully']);
+        })->name('settings.saveMenuVisibility');
 
         // Submission Settings (Deadline Control) - Update only, displayed in Settings tabs
         Route::post('/submission-settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('submission.settings.update');

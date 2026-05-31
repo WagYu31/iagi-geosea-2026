@@ -278,21 +278,7 @@ function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const saveVisibility = async () => {
         setSaving(true);
         try {
-            const settingId = getSettingId('menu_visibility');
-            if (settingId) {
-                await axios.patch(`/admin/settings/${settingId}`, {
-                    value: JSON.stringify(visibility),
-                });
-            } else {
-                await axios.post('/admin/settings', {
-                    key: 'menu_visibility',
-                    value: JSON.stringify(visibility),
-                    group: 'system',
-                    type: 'json',
-                });
-            }
-            // Clear cache
-            await axios.post('/admin/clear-menu-cache');
+            await axios.post('/admin/save-menu-visibility', { visibility });
             alert('Menu visibility saved! Changes will take effect on next page load.');
             router.reload({ preserveScroll: true });
         } catch (error) {
