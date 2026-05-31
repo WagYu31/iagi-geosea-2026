@@ -26,7 +26,6 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 /* ─── Payment Method config ─── */
 const PAYMENT_METHODS = [
@@ -35,10 +34,9 @@ const PAYMENT_METHODS = [
         label: 'Bank Transfer',
         description: 'Virtual Account (BCA, BNI, BRI, Mandiri, Permata)',
         icon: AccountBalanceIcon,
-        lottieUrl: 'https://lottie.host/4db68bbd-31f6-4cd8-84eb-189de081159a/IGmMCqhzpt.lottie',
         color: '#3b82f6',
-        gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%)',
-        glowColor: 'rgba(59,130,246,0.35)',
+        gradient: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%)',
+        glowColor: 'rgba(59,130,246,0.4)',
         enabledPayments: ['bca_va', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'other_va'],
         logos: ['BCA', 'BNI', 'BRI', 'Mandiri'],
     },
@@ -47,10 +45,9 @@ const PAYMENT_METHODS = [
         label: 'E-Wallet & QRIS',
         description: 'GoPay, ShopeePay, DANA, LinkAja, OVO via QRIS',
         icon: QrCode2Icon,
-        lottieUrl: 'https://lottie.host/f2102e03-37cf-4ad0-b1af-d0e3ef52c6e6/SBRLNJbv4H.lottie',
         color: '#10b981',
-        gradient: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
-        glowColor: 'rgba(16,185,129,0.35)',
+        gradient: 'linear-gradient(135deg, #047857 0%, #10b981 50%, #34d399 100%)',
+        glowColor: 'rgba(16,185,129,0.4)',
         enabledPayments: ['gopay', 'shopeepay', 'qris'],
         logos: ['GoPay', 'QRIS'],
     },
@@ -59,10 +56,9 @@ const PAYMENT_METHODS = [
         label: 'Credit / Debit Card',
         description: 'Visa, Mastercard, JCB, American Express',
         icon: CreditCardIcon,
-        lottieUrl: 'https://lottie.host/b7e8c80e-9840-4e9f-8b6a-dba54ddb02d5/jlFpQOlIWl.lottie',
         color: '#8b5cf6',
-        gradient: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a78bfa 100%)',
-        glowColor: 'rgba(139,92,246,0.35)',
+        gradient: 'linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #a78bfa 100%)',
+        glowColor: 'rgba(139,92,246,0.4)',
         enabledPayments: ['credit_card'],
         logos: ['Visa', 'MC', 'JCB'],
     },
@@ -71,10 +67,9 @@ const PAYMENT_METHODS = [
         label: 'Convenience Store',
         description: 'Pay at Indomaret or Alfamart',
         icon: StorefrontIcon,
-        lottieUrl: 'https://lottie.host/ae78de72-b2f2-4e6d-8ed2-5cdd4f950cae/SgFKCL0bXh.lottie',
         color: '#f97316',
-        gradient: 'linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%)',
-        glowColor: 'rgba(249,115,22,0.35)',
+        gradient: 'linear-gradient(135deg, #c2410c 0%, #f97316 50%, #fb923c 100%)',
+        glowColor: 'rgba(249,115,22,0.4)',
         enabledPayments: ['indomaret', 'alfamart'],
         logos: ['Indomaret', 'Alfamart'],
     },
@@ -967,10 +962,10 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     ? <RadioButtonCheckedIcon sx={{ fontSize: 20, color: method.color, flexShrink: 0, filter: `drop-shadow(0 0 4px ${method.glowColor})` }} />
                                                     : <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: isDark ? '#4b5563' : '#cbd5e1', flexShrink: 0 }} />
                                                 }
-                                                {/* Premium Lottie icon box */}
+                                                {/* Premium icon box */}
                                                 <Box sx={{
                                                     width: 48, height: 48, borderRadius: '14px',
-                                                    background: isSelected ? method.gradient : (isDark ? `${method.color}10` : `${method.color}08`),
+                                                    background: isSelected ? method.gradient : (isDark ? `${method.color}12` : `${method.color}0a`),
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                     flexShrink: 0,
                                                     boxShadow: isSelected
@@ -986,28 +981,13 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                         borderRadius: '14px',
                                                     } : {},
                                                 }}>
-                                                    {method.lottieUrl ? (
-                                                        <Box sx={{ 
-                                                            width: 32, height: 32, position: 'relative', zIndex: 1,
-                                                            filter: isSelected ? 'brightness(10) saturate(0)' : 'none',
-                                                            transition: 'filter 0.3s ease',
-                                                        }}>
-                                                            <DotLottieReact
-                                                                src={method.lottieUrl}
-                                                                loop
-                                                                autoplay
-                                                                style={{ width: '100%', height: '100%' }}
-                                                            />
-                                                        </Box>
-                                                    ) : (
-                                                        <MethodIcon sx={{ 
-                                                            fontSize: 22, 
-                                                            color: isSelected ? 'white' : method.color,
-                                                            filter: isSelected ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' : 'none',
-                                                            transition: 'all 0.25s ease',
-                                                            position: 'relative', zIndex: 1,
-                                                        }} />
-                                                    )}
+                                                    <MethodIcon sx={{ 
+                                                        fontSize: 24, 
+                                                        color: isSelected ? 'white' : method.color,
+                                                        filter: isSelected ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.25))' : 'none',
+                                                        transition: 'all 0.3s ease',
+                                                        position: 'relative', zIndex: 1,
+                                                    }} />
                                                 </Box>
                                                 {/* Label & description */}
                                                 <Box sx={{ flex: 1, minWidth: 0 }}>
