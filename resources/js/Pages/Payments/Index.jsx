@@ -34,8 +34,9 @@ const PAYMENT_METHODS = [
         label: 'Bank Transfer',
         description: 'Virtual Account (BCA, BNI, BRI, Mandiri, Permata)',
         icon: AccountBalanceIcon,
-        color: '#2563eb',
-        bgColor: 'rgba(37,99,235,0.08)',
+        color: '#3b82f6',
+        gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%)',
+        glowColor: 'rgba(59,130,246,0.35)',
         enabledPayments: ['bca_va', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'other_va'],
         logos: ['BCA', 'BNI', 'BRI', 'Mandiri'],
     },
@@ -44,8 +45,9 @@ const PAYMENT_METHODS = [
         label: 'E-Wallet & QRIS',
         description: 'GoPay, ShopeePay, DANA, LinkAja, OVO via QRIS',
         icon: QrCode2Icon,
-        color: '#059669',
-        bgColor: 'rgba(5,150,105,0.08)',
+        color: '#10b981',
+        gradient: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+        glowColor: 'rgba(16,185,129,0.35)',
         enabledPayments: ['gopay', 'shopeepay', 'qris'],
         logos: ['GoPay', 'QRIS'],
     },
@@ -54,8 +56,9 @@ const PAYMENT_METHODS = [
         label: 'Credit / Debit Card',
         description: 'Visa, Mastercard, JCB, American Express',
         icon: CreditCardIcon,
-        color: '#7c3aed',
-        bgColor: 'rgba(124,58,237,0.08)',
+        color: '#8b5cf6',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a78bfa 100%)',
+        glowColor: 'rgba(139,92,246,0.35)',
         enabledPayments: ['credit_card'],
         logos: ['Visa', 'MC', 'JCB'],
     },
@@ -64,8 +67,9 @@ const PAYMENT_METHODS = [
         label: 'Convenience Store',
         description: 'Pay at Indomaret or Alfamart',
         icon: StorefrontIcon,
-        color: '#ea580c',
-        bgColor: 'rgba(234,88,12,0.08)',
+        color: '#f97316',
+        gradient: 'linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%)',
+        glowColor: 'rgba(249,115,22,0.35)',
         enabledPayments: ['indomaret', 'alfamart'],
         logos: ['Indomaret', 'Alfamart'],
     },
@@ -934,49 +938,83 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                 onClick={() => setSelectedPaymentMethod(method.key)}
                                                 sx={{
                                                     display: 'flex', alignItems: 'center', gap: 1.5,
-                                                    p: 1.5, borderRadius: '12px', cursor: 'pointer',
+                                                    p: 1.5, borderRadius: '14px', cursor: 'pointer',
                                                     border: `1.5px solid ${isSelected
-                                                        ? (isDark ? 'rgba(16,185,129,0.4)' : '#34d399')
+                                                        ? (isDark ? `${method.color}60` : `${method.color}50`)
                                                         : (isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0')}`,
                                                     bgcolor: isSelected
-                                                        ? (isDark ? 'rgba(16,185,129,0.06)' : '#f0fdf4')
+                                                        ? (isDark ? `${method.color}08` : `${method.color}06`)
                                                         : (isDark ? 'rgba(255,255,255,0.01)' : 'white'),
-                                                    transition: 'all 0.2s ease',
+                                                    boxShadow: isSelected
+                                                        ? `0 4px 16px ${method.glowColor}, inset 0 1px 0 rgba(255,255,255,0.05)`
+                                                        : 'none',
+                                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                                                     '&:hover': {
-                                                        borderColor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+                                                        borderColor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1'),
                                                         bgcolor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
-                                                        transform: 'translateY(-1px)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: isSelected ? undefined : '0 4px 12px rgba(0,0,0,0.06)',
                                                     },
                                                 }}
                                             >
+                                                {/* Radio with animated color */}
                                                 {isSelected
-                                                    ? <RadioButtonCheckedIcon sx={{ fontSize: 20, color: '#10b981', flexShrink: 0 }} />
+                                                    ? <RadioButtonCheckedIcon sx={{ fontSize: 20, color: method.color, flexShrink: 0, filter: `drop-shadow(0 0 4px ${method.glowColor})` }} />
                                                     : <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: isDark ? '#4b5563' : '#cbd5e1', flexShrink: 0 }} />
                                                 }
+                                                {/* Premium gradient icon box */}
                                                 <Box sx={{
-                                                    width: 36, height: 36, borderRadius: '10px',
-                                                    bgcolor: isDark ? `${method.color}15` : method.bgColor,
+                                                    width: 42, height: 42, borderRadius: '12px',
+                                                    background: isSelected ? method.gradient : (isDark ? `${method.color}12` : `${method.color}0a`),
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    flexShrink: 0, border: `1px solid ${method.color}20`,
+                                                    flexShrink: 0,
+                                                    boxShadow: isSelected
+                                                        ? `0 4px 14px ${method.glowColor}`
+                                                        : `0 2px 6px ${method.color}15`,
+                                                    border: isSelected ? 'none' : `1px solid ${method.color}18`,
+                                                    transition: 'all 0.25s ease',
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                    '&::after': isSelected ? {
+                                                        content: '""', position: 'absolute', inset: 0,
+                                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%)',
+                                                        borderRadius: '12px',
+                                                    } : {},
                                                 }}>
-                                                    <MethodIcon sx={{ fontSize: 17, color: method.color }} />
+                                                    <MethodIcon sx={{ 
+                                                        fontSize: 20, 
+                                                        color: isSelected ? 'white' : method.color,
+                                                        filter: isSelected ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' : 'none',
+                                                        transition: 'all 0.25s ease',
+                                                        position: 'relative', zIndex: 1,
+                                                    }} />
                                                 </Box>
+                                                {/* Label & description */}
                                                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: isDark ? '#f3f4f6' : '#1f2937', fontFamily: 'Inter, sans-serif', lineHeight: 1.3 }}>
+                                                    <Typography sx={{ 
+                                                        fontSize: '0.8rem', fontWeight: 700, 
+                                                        color: isSelected ? (isDark ? '#f3f4f6' : '#0f172a') : (isDark ? '#e5e7eb' : '#374151'),
+                                                        fontFamily: 'Inter, sans-serif', lineHeight: 1.3,
+                                                        transition: 'color 0.2s ease',
+                                                    }}>
                                                         {method.label}
                                                     </Typography>
                                                     <Typography sx={{ fontSize: '0.6rem', color: isDark ? '#6b7280' : '#94a3b8', fontFamily: 'Inter, sans-serif', mt: 0.2 }} noWrap>
                                                         {method.description}
                                                     </Typography>
                                                 </Box>
-                                                <Box sx={{ display: 'flex', gap: 0.4, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 100 }}>
+                                                {/* Brand logos */}
+                                                <Box sx={{ display: 'flex', gap: 0.4, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 110 }}>
                                                     {method.logos.map(logo => (
                                                         <Box key={logo} sx={{
-                                                            px: 0.7, py: 0.25, borderRadius: '4px', fontSize: '0.5rem',
+                                                            px: 0.8, py: 0.3, borderRadius: '5px', fontSize: '0.5rem',
                                                             fontWeight: 800, fontFamily: 'Inter, sans-serif',
-                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
-                                                            color: isDark ? '#9ca3af' : '#64748b',
-                                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#e2e8f0'}`,
+                                                            bgcolor: isSelected
+                                                                ? (isDark ? `${method.color}20` : `${method.color}10`)
+                                                                : (isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'),
+                                                            color: isSelected ? method.color : (isDark ? '#9ca3af' : '#64748b'),
+                                                            border: `1px solid ${isSelected ? `${method.color}25` : (isDark ? 'rgba(255,255,255,0.04)' : '#e2e8f0')}`,
+                                                            transition: 'all 0.2s ease',
                                                         }}>{logo}</Box>
                                                     ))}
                                                 </Box>
