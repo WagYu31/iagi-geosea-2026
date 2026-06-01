@@ -169,6 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/payments', [App\Http\Controllers\AdminController::class, 'payments'])->name('payments');
         Route::patch('/payments/{id}/verify', [App\Http\Controllers\AdminController::class, 'verifyPayment'])->name('payments.verify');
         Route::patch('/payments/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectPayment'])->name('payments.reject');
+        Route::delete('/payments/{id}', [App\Http\Controllers\AdminController::class, 'deletePayment'])->name('payments.delete');
 
         // Users Management
         Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');

@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -32,6 +33,11 @@ export default function AdminPayments({ payments = {} }) {
     const handleReject = (paymentId) => {
         if (confirm('Are you sure you want to reject this payment?')) {
             router.patch(route('admin.payments.reject', paymentId), {}, { preserveScroll: true });
+        }
+    };
+    const handleDelete = (paymentId) => {
+        if (confirm('⚠️ Delete this payment record?\n\nThe author will be able to re-submit payment for this submission.\n\nThis action cannot be undone.')) {
+            router.delete(route('admin.payments.delete', paymentId), { preserveScroll: true });
         }
     };
 
@@ -243,6 +249,12 @@ export default function AdminPayments({ payments = {} }) {
                                                 ) : (
                                                     <Button size="small" startIcon={<CancelIcon sx={{ fontSize: 16 }} />} onClick={() => handleReject(p.id)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: isDark ? '#f87171' : '#dc2626', bgcolor: isDark ? 'rgba(239,68,68,0.1)' : '#fee2e2', '&:hover': { bgcolor: isDark ? 'rgba(239,68,68,0.2)' : '#fecaca' }, px: 1.5 }}>Reject</Button>
                                                 )}
+                                                {/* Delete button */}
+                                                <Tooltip title="Delete payment — author can re-pay" arrow>
+                                                    <Button size="small" startIcon={<DeleteOutlineIcon sx={{ fontSize: 16 }} />} onClick={() => handleDelete(p.id)} sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.75rem', color: isDark ? '#f87171' : '#dc2626', bgcolor: 'transparent', border: `1px solid ${isDark ? 'rgba(239,68,68,0.25)' : '#fecaca'}`, '&:hover': { bgcolor: isDark ? 'rgba(239,68,68,0.12)' : '#fee2e2' }, px: 1, minWidth: 'auto' }}>
+                                                        Delete
+                                                    </Button>
+                                                </Tooltip>
                                             </Box>
                                         </TableCell>
                                     </TableRow>

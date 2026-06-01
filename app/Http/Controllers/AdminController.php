@@ -641,6 +641,20 @@ class AdminController extends Controller
         return back()->with('success', 'Payment status reset successfully!');
     }
 
+    public function deletePayment($id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        // Delete payment proof file if exists
+        if ($payment->payment_proof_url && Storage::disk('public')->exists($payment->payment_proof_url)) {
+            Storage::disk('public')->delete($payment->payment_proof_url);
+        }
+
+        $payment->delete();
+
+        return back()->with('success', 'Payment deleted. The author can now re-submit payment.');
+    }
+
     public function users()
     {
         $users = User::latest()->paginate(25);
