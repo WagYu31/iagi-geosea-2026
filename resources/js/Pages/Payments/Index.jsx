@@ -177,6 +177,23 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     };
     const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); setAgreeTerms(false); setSelectedPaymentMethod(null); };
 
+    // Success dialog state
+    const [successDialog, setSuccessDialog] = useState({ open: false, orderId: '', amount: '', category: '' });
+    const [successCountdown, setSuccessCountdown] = useState(5);
+
+    React.useEffect(() => {
+        if (!successDialog.open) return;
+        setSuccessCountdown(5);
+        const timer = setInterval(() => {
+            setSuccessCountdown(prev => {
+                if (prev <= 1) { clearInterval(timer); router.reload(); return 0; }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [successDialog.open]);
+
+
     const waitForSnap = () => new Promise((resolve, reject) => {
         if (window.snap) return resolve(window.snap);
         let tries = 0;
@@ -234,9 +251,14 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
             snap.pay(data.snap_token, {
                 onSuccess: async (result) => {
-                    setSnackbar({ open: true, message: '✅ Payment successful! Updating status...', severity: 'success' });
                     await syncPaymentStatus();
-                    setTimeout(() => router.reload(), 800);
+                    handleCloseDialog();
+                    setSuccessDialog({
+                        open: true,
+                        orderId: currentOrderId || `IAGI-${selectedSubmission?.id}`,
+                        amount: selFee ? fmtRp(selFee) : '',
+                        category: selCat?.label || selectedSubmission?.participant_category || '',
+                    });
                 },
                 onPending: (result) => {
                     setSnackbar({ open: true, message: '⏳ Payment pending. Complete your payment.', severity: 'info' });
@@ -1233,6 +1255,109 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         </Box>
                     )}
                 </DialogContent>
+            </Dialog>
+
+            {/* ═══ SUCCESS DIALOG ═══ */}
+            <Dialog open={successDialog.open} maxWidth="xs" fullWidth
+                PaperProps={{ sx: {
+                    borderRadius: '24px', overflow: 'hidden', textAlign: 'center',
+                    bgcolor: isDark ? 'rgba(17,24,39,0.98)' : '#ffffff',
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)'}`,
+                    boxShadow: '0 30px 80px rgba(0,0,0,0.2)',
+                }}}
+            >
+                {/* Decorative top gradient */}
+                <Box sx={{
+                    height: 6,
+                    background: 'linear-gradient(90deg, #059669 0%, #10b981 25%, #34d399 50%, #10b981 75%, #059669 100%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s ease infinite',
+                    '@keyframes shimmer': { '0%': { backgroundPosition: '200% 0' }, '100%': { backgroundPosition: '-200% 0' } },
+                }} />
+                <Box sx={{ px: 4, pt: 5, pb: 4 }}>
+                    {/* Animated checkmark */}
+                    <Box sx={{
+                        width: 80, height: 80, borderRadius: '50%', mx: 'auto', mb: 3,
+                        background: isDark
+                            ? 'linear-gradient(135deg, rgba(5,150,105,0.15), rgba(16,185,129,0.08))'
+                            : 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+                        border: `2px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        position: 'relative',
+                        animation: 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        '@keyframes popIn': { '0%': { transform: 'scale(0)', opacity: 0 }, '100%': { transform: 'scale(1)', opacity: 1 } },
+                        '&::after': {
+                            content: '""', position: 'absolute', inset: -8,
+                            borderRadius: '50%',
+                            border: `2px solid ${isDark ? 'rgba(16,185,129,0.1)' : 'rgba(16,185,129,0.15)'}`,
+                            animation: 'pulse 2s ease-in-out infinite',
+                            '@keyframes pulse': { '0%,100%': { transform: 'scale(1)', opacity: 1 }, '50%': { transform: 'scale(1.1)', opacity: 0.5 } },
+                        },
+                    }}>
+                        <CheckCircleOutlineIcon sx={{ fontSize: 40, color: '#10b981' }} />
+                    </Box>
+
+                    {/* Decorative dots */}
+                    {[{ top: 30, left: 25, size: 6, color: '#34d399' }, { top: 15, right: 40, size: 8, color: '#059669' }, { bottom: 80, left: 35, size: 5, color: '#6ee7b7' }, { bottom: 60, right: 30, size: 7, color: '#10b981' }].map((dot, i) => (
+                        <Box key={i} sx={{
+                            position: 'absolute', width: dot.size, height: dot.size, borderRadius: '50%', bgcolor: dot.color,
+                            opacity: 0.3, top: dot.top, left: dot.left, right: dot.right, bottom: dot.bottom,
+                            animation: `float${i} ${2 + i * 0.5}s ease-in-out infinite`,
+                            [`@keyframes float${i}`]: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: `translateY(${-8 - i * 3}px)` } },
+                        }} />
+                    ))}
+
+                    <Typography sx={{ fontWeight: 900, fontSize: '1.3rem', color: isDark ? '#f9fafb' : '#0f172a', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', mb: 0.5 }}>
+                        Payment Successful!
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif', mb: 3, lineHeight: 1.6 }}>
+                        Your registration has been confirmed.<br />Thank you for participating!
+                    </Typography>
+
+                    {/* Order details card */}
+                    <Box sx={{
+                        p: 2, borderRadius: '12px', mb: 3,
+                        bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f9fafb',
+                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#e5e7eb'}`,
+                    }}>
+                        {[
+                            { label: 'Order ID', value: successDialog.orderId },
+                            { label: 'Category', value: successDialog.category },
+                            { label: 'Amount Paid', value: successDialog.amount, highlight: true },
+                        ].filter(r => r.value).map((row, i) => (
+                            <Box key={row.label} sx={{
+                                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                py: 0.8,
+                                borderBottom: i < 2 ? `1px solid ${isDark ? 'rgba(255,255,255,0.03)' : '#f1f5f9'}` : 'none',
+                            }}>
+                                <Typography sx={{ fontSize: '0.7rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
+                                <Typography sx={{
+                                    fontSize: row.highlight ? '0.85rem' : '0.7rem',
+                                    fontWeight: row.highlight ? 900 : 600,
+                                    color: row.highlight ? '#059669' : (isDark ? '#e5e7eb' : '#1f2937'),
+                                    fontFamily: 'Inter, sans-serif',
+                                }}>{row.value}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+
+                    <Button
+                        variant="contained" fullWidth
+                        onClick={() => router.reload()}
+                        sx={{
+                            background: 'linear-gradient(135deg, #047857, #059669, #10b981)',
+                            textTransform: 'none', borderRadius: '12px', fontWeight: 800,
+                            fontSize: '0.85rem', py: 1.3, fontFamily: 'Inter, sans-serif',
+                            boxShadow: '0 4px 16px rgba(5,150,105,0.3)',
+                            '&:hover': { boxShadow: '0 6px 24px rgba(5,150,105,0.4)' },
+                        }}
+                    >
+                        Back to Dashboard
+                    </Button>
+                    <Typography sx={{ mt: 1.5, fontSize: '0.65rem', color: isDark ? '#6b7280' : '#9ca3af', fontFamily: 'Inter, sans-serif' }}>
+                        Redirecting in {successCountdown}s...
+                    </Typography>
+                </Box>
             </Dialog>
 
             <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ open: false, message: '', severity: 'info' })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
