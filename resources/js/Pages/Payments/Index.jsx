@@ -186,7 +186,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         setSuccessCountdown(5);
         const timer = setInterval(() => {
             setSuccessCountdown(prev => {
-                if (prev <= 1) { clearInterval(timer); router.reload(); return 0; }
+                if (prev <= 1) { clearInterval(timer); window.location.reload(); return 0; }
                 return prev - 1;
             });
         }, 1000);
@@ -268,11 +268,28 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             // Helper: call backend to check & sync Midtrans status
             const syncPaymentStatus = async () => {
                 try {
-                    await fetch(route('payments.checkStatus'), {
+                    const freshCsrf = getCsrf();
+                    const syncRes = await fetch(route('payments.checkStatus'), {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': freshCsrf, 'Accept': 'application/json' },
                         body: JSON.stringify({ order_id: currentOrderId }),
                     });
+                    // If CSRF fails, retry with refreshed token
+                    if (syncRes.status === 419) {
+                        try {
+                            const pageRes = await fetch(window.location.href, { method: 'GET', headers: { 'Accept': 'text/html' } });
+                            const html = await pageRes.text();
+                            const match = html.match(/meta[^>]*name="csrf-token"[^>]*content="([^"]+)"/);
+                            if (match && match[1]) {
+                                document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', match[1]);
+                            }
+                        } catch (e) { /* ignore */ }
+                        await fetch(route('payments.checkStatus'), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCsrf(), 'Accept': 'application/json' },
+                            body: JSON.stringify({ order_id: currentOrderId }),
+                        });
+                    }
                 } catch (err) { console.warn('Status sync failed:', err); }
             };
 
@@ -1392,7 +1409,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                     <Button
                         variant="contained" fullWidth
-                        onClick={() => router.reload()}
+                        onClick={() => window.location.reload()}
                         sx={{
                             background: 'linear-gradient(135deg, #047857, #059669, #10b981)',
                             textTransform: 'none', borderRadius: '12px', fontWeight: 800,
