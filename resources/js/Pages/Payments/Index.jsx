@@ -276,8 +276,21 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 } catch (err) { console.warn('Status sync failed:', err); }
             };
 
+            // Midtrans Snap adds overflow:hidden to body — always clean it up
+            const restoreBodyScroll = () => {
+                document.body.style.overflow = '';
+                document.body.style.overflowY = '';
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                // Also remove any Midtrans leftover overlay/iframe styles
+                document.documentElement.style.overflow = '';
+            };
+
             snap.pay(data.snap_token, {
                 onSuccess: async (result) => {
+                    restoreBodyScroll();
                     await syncPaymentStatus();
                     handleCloseDialog();
                     setSuccessDialog({
@@ -288,21 +301,30 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     });
                 },
                 onPending: (result) => {
+                    restoreBodyScroll();
                     setSnackbar({ open: true, message: '⏳ Payment pending. Complete your payment.', severity: 'info' });
                     setTimeout(() => router.reload(), 1500);
                 },
                 onError: (result) => {
+                    restoreBodyScroll();
                     setSnackbar({ open: true, message: 'Payment failed: ' + (result?.status_message || 'Unknown error'), severity: 'error' });
                     setTimeout(() => router.reload(), 2000);
                 },
                 onClose: async () => {
+                    restoreBodyScroll();
                     setSnackbar({ open: true, message: 'Checking payment status...', severity: 'info' });
                     await syncPaymentStatus();
                     setTimeout(() => router.reload(), 800);
                 },
             });
         } catch (e) { setSnackbar({ open: true, message: e.message, severity: 'error' }); }
-        finally { setPaymentLoading(false); }
+        finally {
+            setPaymentLoading(false);
+            // Final safety net — always restore scroll
+            document.body.style.overflow = '';
+            document.body.style.overflowY = '';
+            document.documentElement.style.overflow = '';
+        }
     };
 
     const fmtRp = (n) => { try { return 'Rp ' + parseFloat(n).toLocaleString('id-ID'); } catch { return 'Rp ' + n; } };
