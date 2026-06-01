@@ -37,7 +37,10 @@ Route::get('/refund-policy', function () { return Inertia::render('RefundPolicy'
 // Midtrans webhook (public, no auth, no CSRF — called by Midtrans servers)
 Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentController::class, 'handleNotification'])
     ->name('midtrans.notification')
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    ->withoutMiddleware([
+        \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+    ]);
 
 Route::get('/dashboard', function () {
     $user = Auth::user();

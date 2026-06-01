@@ -209,15 +209,39 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         if (!fee) { setSnackbar({ open: true, message: 'Fee not determined. Check category.', severity: 'warning' }); return; }
         setPaymentLoading(true);
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            const res = await fetch(route('payments.createSnapToken'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-                body: JSON.stringify({ 
-                    submission_id: selectedSubmission.id,
-                    payment_method: selectedPaymentMethod || null,
-                }),
-            });
+            // Helper to get fresh CSRF token
+            const getCsrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            // Helper to make the snap token request
+            const makeRequest = async (token) => {
+                return await fetch(route('payments.createSnapToken'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                    body: JSON.stringify({ 
+                        submission_id: selectedSubmission.id,
+                        payment_method: selectedPaymentMethod || null,
+                    }),
+                });
+            };
+
+            let res = await makeRequest(getCsrf());
+
+            // Handle CSRF token mismatch (419) - refresh token and retry once
+            if (res.status === 419) {
+                try {
+                    // Fetch fresh CSRF cookie
+                    await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin' });
+                    // Also try refreshing the page's meta tag via a quick HEAD request
+                    const pageRes = await fetch(window.location.href, { method: 'GET', headers: { 'Accept': 'text/html' } });
+                    const html = await pageRes.text();
+                    const match = html.match(/meta[^>]*name="csrf-token"[^>]*content="([^"]+)"/);
+                    if (match && match[1]) {
+                        document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', match[1]);
+                    }
+                } catch (e) { console.warn('CSRF refresh failed:', e); }
+                // Retry with fresh token
+                res = await makeRequest(getCsrf());
+            }
             
             // Handle non-JSON response (e.g., 500 HTML error page)
             const contentType = res.headers.get('content-type') || '';
@@ -227,7 +251,10 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             } else {
                 const text = await res.text();
                 console.error('Non-JSON response from snap-token:', res.status, text.substring(0, 500));
-                throw new Error(`Server error (${res.status}). Check server logs.`);
+                if (res.status === 419) {
+                    throw new Error('Session expired. Please refresh the page and try again.');
+                }
+                throw new Error(`Server error (${res.status}). Please refresh the page.`);
             }
             
             if (!res.ok) {
