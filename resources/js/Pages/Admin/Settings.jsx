@@ -35,6 +35,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PaymentIcon from '@mui/icons-material/Payment';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import CheckIcon from '@mui/icons-material/Check';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -243,6 +244,178 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
     );
 }
 
+// Payment Gateway Tab Component
+function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
+    const [gateway, setGateway] = useState(() => {
+        return getSettingValue('payment_gateway', 'xendit');
+    });
+    const [saving, setSaving] = useState(false);
+
+    const gateways = [
+        { 
+            key: 'xendit', 
+            name: 'Xendit', 
+            description: 'Redirect-based checkout — user pays on Xendit hosted page',
+            color: '#0064D2',
+            features: ['QRIS', 'Virtual Account', 'E-Wallet', 'Credit Card', 'Retail Outlet'],
+        },
+        { 
+            key: 'midtrans', 
+            name: 'Midtrans', 
+            description: 'Popup-based checkout — user pays without leaving the page',
+            color: '#0070BA',
+            features: ['QRIS', 'Bank Transfer (VA)', 'GoPay/ShopeePay', 'Credit Card', 'Indomaret/Alfamart'],
+        },
+    ];
+
+    const saveGateway = async () => {
+        setSaving(true);
+        try {
+            await axios.post('/admin/settings', { key: 'payment_gateway', value: gateway });
+            alert('Payment gateway updated successfully!');
+        } catch (err) {
+            alert('Failed to save gateway: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Stack spacing={3}>
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            Active Payment Gateway
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 3, lineHeight: 1.6 }}>
+                            Choose which payment gateway to use for conference registration payments.
+                            Both gateways are fully configured — switching takes effect immediately.
+                        </Typography>
+
+                        <Stack spacing={2}>
+                            {gateways.map((gw) => (
+                                <Card
+                                    key={gw.key}
+                                    elevation={0}
+                                    onClick={() => setGateway(gw.key)}
+                                    sx={{
+                                        border: `2px solid ${gateway === gw.key ? gw.color : (isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb')}`,
+                                        borderRadius: '14px',
+                                        bgcolor: gateway === gw.key
+                                            ? (isDark ? `${gw.color}11` : `${gw.color}08`)
+                                            : (isDark ? 'rgba(255,255,255,0.02)' : '#fafafa'),
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            borderColor: gw.color,
+                                            transform: 'translateY(-1px)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 2.5 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <Box sx={{
+                                                    width: 44, height: 44,
+                                                    borderRadius: '12px',
+                                                    bgcolor: `${gw.color}18`,
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                }}>
+                                                    <PaymentIcon sx={{ fontSize: 24, color: gw.color }} />
+                                                </Box>
+                                                <Box>
+                                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.text }}>
+                                                        {gw.name}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: c.textMuted }}>
+                                                        {gw.description}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Box sx={{
+                                                width: 24, height: 24,
+                                                borderRadius: '50%',
+                                                border: `2px solid ${gateway === gw.key ? gw.color : (isDark ? 'rgba(255,255,255,0.2)' : '#d1d5db')}`,
+                                                bgcolor: gateway === gw.key ? gw.color : 'transparent',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                transition: 'all 0.2s ease',
+                                            }}>
+                                                {gateway === gw.key && (
+                                                    <CheckIcon sx={{ fontSize: 16, color: '#fff' }} />
+                                                )}
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8, mt: 1.5, ml: 7.5 }}>
+                                            {gw.features.map((f) => (
+                                                <Chip key={f} label={f} size="small" sx={{
+                                                    fontSize: '0.7rem',
+                                                    height: 24,
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f3f4f6',
+                                                    color: c.textMuted,
+                                                    border: 'none',
+                                                }} />
+                                            ))}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Stack>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 3 }}>
+                            <Button
+                                variant="contained"
+                                onClick={saveGateway}
+                                disabled={saving}
+                                sx={tealBtnSx}
+                            >
+                                {saving ? 'Saving...' : 'Save Gateway'}
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            Webhook URLs
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, lineHeight: 1.6 }}>
+                            Configure these URLs in your payment gateway dashboard to receive payment notifications.
+                        </Typography>
+                        <Stack spacing={2}>
+                            <Box>
+                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, mb: 0.5, display: 'block' }}>
+                                    Xendit Callback URL
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={`${window.location.origin}/api/xendit/notification`}
+                                    InputProps={{ readOnly: true }}
+                                    sx={inputSx}
+                                />
+                            </Box>
+                            <Box>
+                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, mb: 0.5, display: 'block' }}>
+                                    Midtrans Notification URL
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={`${window.location.origin}/api/midtrans/notification`}
+                                    InputProps={{ readOnly: true }}
+                                    sx={inputSx}
+                                />
+                            </Box>
+                        </Stack>
+                    </CardContent>
+                </Card>
+            </Stack>
+        </Box>
+    );
+}
+
 // Menu Visibility Tab Component
 function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue, getSettingId }) {
     const [visibility, setVisibility] = useState(() => {
@@ -253,17 +426,17 @@ function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [saving, setSaving] = useState(false);
 
     const menus = [
-        { 
-            key: 'payments', 
-            label: 'Payments', 
+        {
+            key: 'payments',
+            label: 'Payments',
             description: 'Payment Center for conference registration fees via Midtrans',
             icon: <PaymentIcon sx={{ fontSize: 28 }} />,
             color: '#ea580c',
             bgColor: isDark ? 'rgba(234,88,12,0.08)' : '#fff7ed',
         },
-        { 
-            key: 'certificates', 
-            label: 'Certificates', 
+        {
+            key: 'certificates',
+            label: 'Certificates',
             description: 'Certificate download page for accepted authors',
             icon: <WorkspacePremiumIcon sx={{ fontSize: 28 }} />,
             color: '#7c3aed',
@@ -308,11 +481,11 @@ function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                         <Stack spacing={2}>
                             {menus.map((menu) => (
                                 <Card key={menu.key} elevation={0} sx={{
-                                    border: `1.5px solid ${visibility[menu.key] 
-                                        ? (isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0') 
+                                    border: `1.5px solid ${visibility[menu.key]
+                                        ? (isDark ? 'rgba(16,185,129,0.2)' : '#a7f3d0')
                                         : (isDark ? 'rgba(239,68,68,0.2)' : '#fecaca')}`,
                                     borderRadius: '14px',
-                                    bgcolor: visibility[menu.key] 
+                                    bgcolor: visibility[menu.key]
                                         ? (isDark ? 'rgba(16,185,129,0.04)' : '#f0fdf4')
                                         : (isDark ? 'rgba(239,68,68,0.04)' : '#fef2f2'),
                                     transition: 'all 0.3s ease',
@@ -1647,6 +1820,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                         <Tab label="Landing Page Settings" />
                         <Tab label="Submission Deadline" />
                         <Tab label="Pricing Settings" />
+                        <Tab label="Payment Gateway" />
                         <Tab label="Menu Visibility" />
                     </Tabs>
 
@@ -3607,8 +3781,13 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                         <PricingSettingsTab initialPricing={initialPricing} inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} />
                     </TabPanel>
 
-                    {/* Menu Visibility Tab */}
+                    {/* Payment Gateway Tab */}
                     <TabPanel value={tabValue} index={3}>
+                        <PaymentGatewayTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} />
+                    </TabPanel>
+
+                    {/* Menu Visibility Tab */}
+                    <TabPanel value={tabValue} index={4}>
                         <MenuVisibilityTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} getSettingId={getSettingId} />
                     </TabPanel>
                 </Card>

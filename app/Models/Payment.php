@@ -16,7 +16,7 @@ class Payment extends Model
         'amount',
         'verified',
         'verified_at',
-        // Midtrans fields
+        // Gateway fields
         'snap_token',
         'order_id',
         'payment_type',
@@ -24,6 +24,7 @@ class Payment extends Model
         'status',
         'paid_at',
         'midtrans_response',
+        'gateway',
     ];
 
     protected $casts = [
@@ -65,11 +66,19 @@ class Payment extends Model
     }
 
     /**
-     * Check if this is a Midtrans payment (has order_id).
+     * Check if this is a Midtrans payment (has order_id and gateway is midtrans).
      */
     public function isMidtrans(): bool
     {
-        return !empty($this->order_id);
+        return $this->gateway === 'midtrans' || (!empty($this->order_id) && empty($this->gateway));
+    }
+
+    /**
+     * Check if this is a Xendit payment.
+     */
+    public function isXendit(): bool
+    {
+        return $this->gateway === 'xendit';
     }
 
     /**
@@ -77,7 +86,7 @@ class Payment extends Model
      */
     public function isManual(): bool
     {
-        return !empty($this->payment_proof_url) && empty($this->order_id);
+        return $this->gateway === 'manual' || (!empty($this->payment_proof_url) && empty($this->order_id) && empty($this->gateway));
     }
 
     /**

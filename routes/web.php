@@ -42,6 +42,14 @@ Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentControlle
         \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ]);
 
+// Xendit webhook (public, no auth, no CSRF — called by Xendit servers)
+Route::post('/api/xendit/notification', [App\Http\Controllers\PaymentController::class, 'handleXenditWebhook'])
+    ->name('xendit.notification')
+    ->withoutMiddleware([
+        \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+    ]);
+
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
@@ -120,11 +128,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ? json_decode($pricingSetting->value, true) 
             : config('midtrans.pricing');
 
+        // Detect active payment gateway
+        $gatewaySetting = App\Models\LandingPageSetting::where('key', 'payment_gateway')->first();
+        $activeGateway = $gatewaySetting ? $gatewaySetting->value : env('PAYMENT_GATEWAY', 'xendit');
+
         return Inertia::render('Payments/Index', [
             'payments' => $payments,
             'submissions' => $submissions,
             'midtrans_client_key' => config('midtrans.client_key'),
             'pricing' => $pricing,
+            'active_gateway' => $activeGateway,
         ]);
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');

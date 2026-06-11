@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Submission;
 use App\Services\MidtransService;
+use App\Services\XenditService;
 use App\Mail\PaymentConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,14 @@ use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
 {
+    /**
+     * Get the active payment gateway from admin settings.
+     */
+    private function getActiveGateway(): string
+    {
+        $setting = \App\Models\LandingPageSetting::where('key', 'payment_gateway')->first();
+        return $setting ? $setting->value : env('PAYMENT_GATEWAY', 'xendit');
+    }
     /**
      * Create a Snap token for Midtrans payment.
      *
@@ -43,7 +52,6 @@ class PaymentController extends Controller
         }
 
         // Determine amount from submission's participant category
-        // DB override first, then config fallback
         $pricingSetting = \App\Models\LandingPageSetting::where('key', 'registration_pricing')->first();
         $pricing = $pricingSetting 
             ? json_decode($pricingSetting->value, true) 
@@ -62,20 +70,16 @@ class PaymentController extends Controller
             ->first();
 
         if ($payment) {
-            // If already paid, reject
             if ($payment->isPaid()) {
                 return response()->json([
                     'error' => 'This submission has already been paid.',
                 ], 422);
             }
-
-            // Always refresh: update amount + clear old snap_token to force fresh token
             $payment->update([
                 'amount'     => $amount,
                 'snap_token' => null,
             ]);
         } else {
-            // Create new payment record
             $payment = Payment::create([
                 'user_id'       => Auth::id(),
                 'submission_id' => $request->submission_id,
@@ -85,8 +89,23 @@ class PaymentController extends Controller
             ]);
         }
 
+        // Check active gateway
+        $gateway = $this->getActiveGateway();
+
+        if ($gateway === 'xendit') {
+            return $this->handleXenditPayment($payment, $request);
+        }
+
+        // Default: Midtrans
+        return $this->handleMidtransPayment($payment, $request, $midtransService);
+    }
+
+    /**
+     * Handle Midtrans payment flow (Snap token).
+     */
+    private function handleMidtransPayment(Payment $payment, Request $request, MidtransService $midtransService)
+    {
         try {
-            // Map frontend payment method key to Midtrans enabled_payments
             $enabledPayments = [];
             $paymentMethodMap = [
                 'bank_transfer' => ['bca_va', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'other_va'],
@@ -100,21 +119,49 @@ class PaymentController extends Controller
                 $enabledPayments = $paymentMethodMap[$paymentMethod];
             }
 
+            $payment->update(['gateway' => 'midtrans']);
             $result = $midtransService->createSnapToken($payment, $enabledPayments);
 
             return response()->json([
+                'gateway'    => 'midtrans',
                 'snap_token' => $result['snap_token'],
                 'order_id'   => $result['order_id'],
             ]);
         } catch (\Exception $e) {
-            Log::error('Snap token creation failed: ' . $e->getMessage(), [
+            Log::error('Midtrans Snap token creation failed: ' . $e->getMessage(), [
                 'payment_id' => $payment->id ?? null,
                 'amount' => $payment->amount ?? null,
                 'trace' => $e->getTraceAsString(),
             ]);
-
             return response()->json([
                 'error' => 'Failed to create payment: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle Xendit payment flow (Invoice redirect).
+     */
+    private function handleXenditPayment(Payment $payment, Request $request)
+    {
+        try {
+            $xenditService = app(XenditService::class);
+            $payment->update(['gateway' => 'xendit']);
+            $result = $xenditService->createInvoice($payment);
+
+            return response()->json([
+                'gateway'     => 'xendit',
+                'invoice_url' => $result['invoice_url'],
+                'order_id'    => $result['order_id'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Xendit invoice creation failed: ' . $e->getMessage(), [
+                'payment_id' => $payment->id ?? null,
+                'amount' => $payment->amount ?? null,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'error' => 'Failed to create Xendit invoice: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -143,6 +190,39 @@ class PaymentController extends Controller
                 return response()->json(['status' => 'invalid signature'], 401);
             }
 
+            return response()->json(['status' => 'error'], 500);
+        }
+    }
+
+    /**
+     * Handle Xendit webhook notification.
+     *
+     * Called by Xendit servers when invoice status changes.
+     * Must be publicly accessible (no auth) and excluded from CSRF.
+     */
+    public function handleXenditWebhook(Request $request)
+    {
+        $payload = $request->all();
+
+        Log::info('Xendit notification received', [
+            'external_id' => $payload['external_id'] ?? 'unknown',
+            'status' => $payload['status'] ?? 'unknown',
+        ]);
+
+        // Verify webhook token if configured
+        $webhookToken = config('xendit.webhook_token');
+        if ($webhookToken && $request->header('X-CALLBACK-TOKEN') !== $webhookToken) {
+            Log::warning('Invalid Xendit webhook token');
+            return response()->json(['status' => 'invalid token'], 401);
+        }
+
+        try {
+            $xenditService = app(XenditService::class);
+            $payment = $xenditService->handleWebhook($payload);
+
+            return response()->json(['status' => 'ok']);
+        } catch (\Exception $e) {
+            Log::error('Xendit webhook error: ' . $e->getMessage());
             return response()->json(['status' => 'error'], 500);
         }
     }
@@ -208,9 +288,9 @@ class PaymentController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Don't allow deleting paid Midtrans payments
-        if ($payment->isMidtrans() && $payment->isPaid()) {
-            return back()->withErrors(['error' => 'Cannot delete a completed Midtrans payment.']);
+        // Don't allow deleting paid payments
+        if ($payment->isPaid()) {
+            return back()->withErrors(['error' => 'Cannot delete a completed payment.']);
         }
 
         // Delete file
@@ -224,8 +304,8 @@ class PaymentController extends Controller
     }
 
     /**
-     * Check payment status directly from Midtrans API.
-     * Called by frontend after Snap onSuccess to ensure DB is updated
+     * Check payment status directly from gateway API.
+     * Called by frontend after payment to ensure DB is updated
      * even if webhook hasn't arrived yet.
      */
     public function checkPaymentStatus(Request $request)
@@ -248,7 +328,71 @@ class PaymentController extends Controller
             return response()->json(['status' => 'paid']);
         }
 
-        // Query Midtrans API directly
+        // Route to appropriate gateway checker
+        if ($payment->isXendit()) {
+            return $this->checkXenditStatus($payment);
+        }
+
+        return $this->checkMidtransStatus($payment, $orderId);
+    }
+
+    /**
+     * Check Xendit invoice status.
+     */
+    private function checkXenditStatus(Payment $payment)
+    {
+        try {
+            $invoiceId = $payment->snap_token; // we stored xendit invoice_id in snap_token
+            if (!$invoiceId) {
+                return response()->json(['status' => $payment->status]);
+            }
+
+            $xenditService = app(XenditService::class);
+            $data = $xenditService->checkInvoiceStatus($invoiceId);
+
+            if (!$data) {
+                return response()->json(['status' => $payment->status]);
+            }
+
+            $xenditStatus = strtoupper($data['status'] ?? '');
+            $updateData = [
+                'payment_type' => $data['payment_method'] ?? $payment->payment_type,
+                'transaction_id' => $data['id'] ?? $payment->transaction_id,
+            ];
+
+            $shouldMarkPaid = false;
+
+            if (in_array($xenditStatus, ['PAID', 'SETTLED'])) {
+                $updateData['status'] = 'paid';
+                $updateData['paid_at'] = now();
+                $updateData['verified'] = true;
+                $updateData['verified_at'] = now();
+                $shouldMarkPaid = true;
+            } elseif ($xenditStatus === 'EXPIRED') {
+                $updateData['status'] = 'failed';
+                $updateData['snap_token'] = null;
+            } elseif ($xenditStatus === 'PENDING') {
+                $updateData['status'] = 'pending';
+            }
+
+            $payment->update($updateData);
+
+            if ($shouldMarkPaid) {
+                $this->sendPaymentEmail($payment);
+            }
+
+            return response()->json(['status' => $updateData['status'] ?? $payment->status]);
+        } catch (\Exception $e) {
+            Log::error("Xendit status check error: " . $e->getMessage());
+            return response()->json(['status' => $payment->status]);
+        }
+    }
+
+    /**
+     * Check Midtrans transaction status.
+     */
+    private function checkMidtransStatus(Payment $payment, string $orderId)
+    {
         try {
             $serverKey = config('midtrans.server_key');
             $isProduction = config('midtrans.is_production');
@@ -293,23 +437,30 @@ class PaymentController extends Controller
 
             $payment->update($updateData);
 
-            // Send confirmation email if just marked paid
             if ($shouldMarkPaid) {
-                try {
-                    $payment->load(['user', 'submission']);
-                    if ($payment->user && $payment->user->email) {
-                        Mail::to($payment->user->email)->queue(new PaymentConfirmation($payment));
-                        Log::info("Payment confirmation email queued for payment #{$payment->id}");
-                    }
-                } catch (\Exception $e) {
-                    Log::error("Failed to queue email for payment #{$payment->id}: " . $e->getMessage());
-                }
+                $this->sendPaymentEmail($payment);
             }
 
             return response()->json(['status' => $updateData['status'] ?? $payment->status]);
         } catch (\Exception $e) {
             Log::error("Midtrans status check error for {$orderId}: " . $e->getMessage());
             return response()->json(['status' => $payment->status]);
+        }
+    }
+
+    /**
+     * Send payment confirmation email.
+     */
+    private function sendPaymentEmail(Payment $payment)
+    {
+        try {
+            $payment->load(['user', 'submission']);
+            if ($payment->user && $payment->user->email) {
+                Mail::to($payment->user->email)->queue(new PaymentConfirmation($payment));
+                Log::info("Payment confirmation email queued for payment #{$payment->id}");
+            }
+        } catch (\Exception $e) {
+            Log::error("Failed to queue email for payment #{$payment->id}: " . $e->getMessage());
         }
     }
 }

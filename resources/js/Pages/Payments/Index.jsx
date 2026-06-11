@@ -121,7 +121,7 @@ function CatIcon({ category, size = 20, color }) {
     return <Icon sx={{ fontSize: size, color: color || '#6b7280' }} />;
 }
 
-export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing: rawPricing = {} }) {
+export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing: rawPricing = {}, active_gateway = 'xendit' }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -193,6 +193,44 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         return () => clearInterval(timer);
     }, [successDialog.open]);
 
+    // Detect Xendit return via URL query params
+    React.useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const xenditStatus = params.get('xendit_status');
+        const orderId = params.get('order_id');
+        if (!xenditStatus) return;
+
+        // Clean URL
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+
+        if (xenditStatus === 'success' && orderId) {
+            // Sync payment status with backend
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            fetch(route('payments.checkStatus'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ order_id: orderId }),
+            }).then(() => {
+                setSuccessDialog({
+                    open: true,
+                    orderId: orderId,
+                    amount: '',
+                    category: '',
+                });
+            }).catch(() => {
+                setSuccessDialog({
+                    open: true,
+                    orderId: orderId,
+                    amount: '',
+                    category: '',
+                });
+            });
+        } else if (xenditStatus === 'failed') {
+            setSnackbar({ open: true, message: 'Payment was not completed. Please try again.', severity: 'warning' });
+        }
+    }, []);
+
 
     const waitForSnap = () => new Promise((resolve, reject) => {
         if (window.snap) return resolve(window.snap);
@@ -258,9 +296,24 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             }
             
             if (!res.ok) {
-                console.error('Snap token error:', res.status, data);
+                console.error('Payment error:', res.status, data);
                 throw new Error(data.error || data.message || `Payment failed (${res.status})`);
             }
+
+            // Branch based on gateway
+            const gateway = data.gateway || active_gateway;
+
+            if (gateway === 'xendit' && data.invoice_url) {
+                // Xendit: redirect to invoice page
+                handleCloseDialog();
+                setSnackbar({ open: true, message: 'Redirecting to payment page...', severity: 'info' });
+                setTimeout(() => {
+                    window.location.href = data.invoice_url;
+                }, 500);
+                return;
+            }
+
+            // Midtrans: use Snap popup
             const currentOrderId = data.order_id;
             handleCloseDialog();
             const snap = await waitForSnap();
