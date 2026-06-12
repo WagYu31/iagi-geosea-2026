@@ -39,5 +39,34 @@
             data-client-key="{{ config('midtrans.client_key') }}"
             async
         ></script>
+
+        <!-- Auto-refresh: detect new deployments -->
+        <script>
+        (function() {
+            var currentVersion = null;
+            var CHECK_INTERVAL = 30000; // 30 seconds
+
+            function checkVersion() {
+                fetch('/build/version.txt?t=' + Date.now())
+                    .then(function(r) { return r.text(); })
+                    .then(function(v) {
+                        v = v.trim();
+                        if (!currentVersion) {
+                            currentVersion = v;
+                        } else if (v !== currentVersion) {
+                            console.log('[AutoRefresh] New version detected, reloading...');
+                            window.location.reload();
+                        }
+                    })
+                    .catch(function() {}); // silently fail
+            }
+
+            // Start checking after page load
+            setTimeout(function() {
+                checkVersion();
+                setInterval(checkVersion, CHECK_INTERVAL);
+            }, 5000);
+        })();
+        </script>
     </body>
 </html>
