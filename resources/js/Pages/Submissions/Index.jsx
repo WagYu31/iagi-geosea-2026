@@ -1710,7 +1710,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
 
                                 {/* SECTION 4: File Uploads - Conditional per status */}
                                 {['accepted', 'revision_required_phase1', 'revision_required_phase2'].includes(data.submission_status) && (
-                                    <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                    <Card id="file-uploads-section" variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
                                         <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                                             <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
                                                 File Uploads
@@ -1882,7 +1882,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                 )}
 
                                 {/* SECTION 5: Terms & Conditions */}
-                                <Card variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                                <Card id="terms-section" variant="outlined" sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
                                     <CardContent sx={{ p: { xs: 2, md: 3 }, backgroundColor: '#f8f9fa' }}>
                                         <Typography variant="h6" sx={{ fontWeight: 600, color: '#1abc9c', mb: 2, fontSize: { xs: '1rem', md: '1.25rem' } }}>
                                             Terms & Conditions
@@ -1946,6 +1946,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                         Cancel
                                     </Button>
                                     <Button
+                                        id="submit-paper-btn"
                                         type="submit"
                                         variant="contained"
                                         disabled={processing || !data.consent_agreed}
@@ -2134,6 +2135,24 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         title: '🗑️ Request Deletion',
                         description: 'Need to remove a submission? Click "Delete" to request deletion. You\'ll be asked to provide a reason for the request.',
                         position: 'left',
+                    },
+                    {
+                        target: '#file-uploads-section',
+                        title: '📁 Upload Full Paper',
+                        description: 'After your paper is accepted, upload your Full Paper file here (PDF, DOC, or DOCX, max 10MB). This section only appears when your submission status is Accepted or Revision Required.',
+                        position: 'top',
+                    },
+                    {
+                        target: '#terms-section',
+                        title: '✅ Terms & Conditions',
+                        description: 'Read and agree to the conference terms. You must check the checkbox to confirm your submission is original and all information is accurate.',
+                        position: 'top',
+                    },
+                    {
+                        target: '#submit-paper-btn',
+                        title: '🚀 Submit Your Paper',
+                        description: 'Once everything is filled in and terms are agreed, click this button to submit! You can always edit your submission later.',
+                        position: 'top',
                     },
                 ]}
             />
