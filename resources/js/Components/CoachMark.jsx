@@ -180,8 +180,7 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
                     position: 'fixed',
                     inset: 0,
                     zIndex: 9998,
-                    bgcolor: 'rgba(0, 0, 0, 0.55)',
-                    backdropFilter: 'blur(2px)',
+                    bgcolor: 'rgba(0, 0, 0, 0.45)',
                     transition: 'opacity 0.3s ease',
                 }}
             />
@@ -209,7 +208,7 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
                         height: spotlightRect.height,
                         zIndex: 9999,
                         borderRadius: `${spotlightRect.borderRadius}px`,
-                        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.55)',
+                        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45)',
                         border: '2px solid rgba(26, 188, 156, 0.6)',
                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                         cursor: 'pointer',
