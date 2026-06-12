@@ -189,6 +189,16 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
             {/* Spotlight cutout */}
             {spotlightRect && (
                 <Box
+                    onClick={() => {
+                        // Click the actual target element
+                        const step = steps[currentStep];
+                        const el = document.querySelector(step.target);
+                        if (el) {
+                            el.click();
+                        }
+                        // Advance to next step or finish
+                        goNext();
+                    }}
                     sx={{
                         position: 'fixed',
                         top: spotlightRect.top,
@@ -200,7 +210,7 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
                         boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.55)',
                         border: '2px solid rgba(26, 188, 156, 0.6)',
                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                        pointerEvents: 'none',
+                        cursor: 'pointer',
                         '&::after': {
                             content: '""',
                             position: 'absolute',
