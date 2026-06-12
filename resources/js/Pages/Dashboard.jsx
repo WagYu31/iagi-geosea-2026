@@ -34,6 +34,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DescriptionIcon from '@mui/icons-material/Description';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import { PieChart } from '@mui/x-charts/PieChart';
+import CoachMark from '@/Components/CoachMark';
 
 export default function Dashboard({ submissions = [], user }) {
     const theme = useTheme();
@@ -175,6 +176,7 @@ export default function Dashboard({ submissions = [], user }) {
                         </Typography>
                     </Box>
                     <Button
+                        id="dashboard-submit-btn"
                         component={Link}
                         href={route('submissions.index')}
                         variant="contained"
@@ -201,7 +203,7 @@ export default function Dashboard({ submissions = [], user }) {
                 </Box>
 
                 {/* Stat Cards */}
-                <Grid container spacing={2.5} sx={{ mb: 3.5 }} role="region" aria-label="Submission Statistics">
+                <Grid id="dashboard-stats" container spacing={2.5} sx={{ mb: 3.5 }} role="region" aria-label="Submission Statistics">
                     {statCards.map((card, index) => (
                         <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
                             <Card
@@ -518,6 +520,7 @@ export default function Dashboard({ submissions = [], user }) {
 
                 {/* Quick Actions */}
                 <Card
+                    id="dashboard-quick-actions"
                     elevation={0}
                     role="region"
                     aria-label="Quick Actions"
@@ -710,6 +713,31 @@ export default function Dashboard({ submissions = [], user }) {
             <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} role="alert">
                 <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }} role="alert">{snackbar.message}</Alert>
             </Snackbar>
+
+            {/* Coach Mark - Guided Tour */}
+            <CoachMark
+                tourId="dashboard-author"
+                steps={[
+                    {
+                        target: '#dashboard-submit-btn',
+                        title: '📝 Submit New Paper',
+                        description: 'Start here! Click this button to go to the submission page and submit your paper for the conference.',
+                        position: 'bottom',
+                    },
+                    {
+                        target: '#dashboard-stats',
+                        title: '📊 Your Statistics',
+                        description: 'Track your progress at a glance — total submissions, accepted papers, reviews in progress, and payment status.',
+                        position: 'bottom',
+                    },
+                    {
+                        target: '#dashboard-quick-actions',
+                        title: '⚡ Quick Actions',
+                        description: 'Use these shortcuts to quickly navigate to submissions, view all papers, or manage your payments.',
+                        position: 'top',
+                    },
+                ]}
+            />
         </SidebarLayout>
     );
 }

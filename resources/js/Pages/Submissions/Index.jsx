@@ -39,6 +39,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import RichTextEditor from '@/Components/RichTextEditor';
+import CoachMark from '@/Components/CoachMark';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -261,6 +262,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         </Typography>
                     </Box>
                     <Button
+                        id="new-submission-btn"
                         variant="contained"
                         onClick={handleNewSubmissionClick}
                         sx={{
@@ -286,7 +288,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                 </Box>
 
                 {/* Submissions Table */}
-                <Paper elevation={0} role="region" aria-label="Submission List" sx={{
+                <Paper id="submission-list-panel" elevation={0} role="region" aria-label="Submission List" sx={{
                     p: { xs: 2, md: 3 },
                     mb: 3,
                     border: `1px solid ${c.cardBorder}`,
@@ -297,7 +299,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
                             Submission List
                         </Typography>
-                        <FormControl size="small" sx={{ minWidth: 180 }}>
+                        <FormControl id="status-filter" size="small" sx={{ minWidth: 180 }}>
                             <Select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -2089,6 +2091,31 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Coach Mark - Guided Tour */}
+            <CoachMark
+                tourId="submissions-author"
+                steps={[
+                    {
+                        target: '#new-submission-btn',
+                        title: '📝 Submit Your Paper',
+                        description: 'Click here to submit a new paper. You\'ll fill in author details, choose your theme, and upload your abstract.',
+                        position: 'bottom',
+                    },
+                    {
+                        target: '#submission-list-panel',
+                        title: '📋 Your Submissions',
+                        description: 'All your submitted papers appear here. Track submission code, status, and manage each submission.',
+                        position: 'top',
+                    },
+                    {
+                        target: '#status-filter',
+                        title: '🔍 Filter by Status',
+                        description: 'Use this filter to quickly find submissions by their status: Pending, Under Review, Accepted, or Revision Required.',
+                        position: 'bottom',
+                    },
+                ]}
+            />
         </SidebarLayout>
     );
 }

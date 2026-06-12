@@ -26,6 +26,7 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import CoachMark from '@/Components/CoachMark';
 
 /* ─── Payment Method config ─── */
 const PAYMENT_METHODS = [
@@ -440,7 +441,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     HERO — Premium Dark Teal Gradient (Stitch Mockup Match)
                 ════════════════════════════════════════════ */}
                 <Fade in={mounted} timeout={650}>
-                    <Box sx={{
+                    <Box id="payment-overview" sx={{
                         mb: 4, borderRadius: '20px', position: 'relative', overflow: 'hidden',
                         background: 'linear-gradient(to right, #0e3d3a 0%, #147060 25%, #1a8a7a 50%, #3bb99e 70%, #6dd4b8 85%, #a5e8d5 100%)',
                         boxShadow: '0 12px 36px rgba(12,46,53,0.15)',
@@ -633,7 +634,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: submissionsNeedingPayment.length > 0 ? '1fr 380px' : '1fr' }, gap: 3, mb: 4 }}>
                     
                     {/* ─── Registration Tiers ─── */}
-                    <Box>
+                    <Box id="pricing-tiers">
                         <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <Typography sx={{ fontWeight: 800, fontSize: { xs: '0.9rem', sm: '1.05rem' }, color: isDark ? '#f3f4f6' : '#111827', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>Registration Tiers</Typography>
                             <Box sx={{ flex: 1, height: 1, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb' }} />
@@ -907,7 +908,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 {/* ════════════════════════════════════════════
                     PAYMENT HISTORY TABLE
                 ════════════════════════════════════════════ */}
-                <Paper elevation={0} sx={{ 
+                <Paper id="payment-history" elevation={0} sx={{ 
                     borderRadius: '18px', overflow: 'hidden',
                     border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb'}`,
                     bgcolor: isDark ? 'rgba(17,24,39,0.8)' : 'white',
@@ -1482,6 +1483,31 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ open: false, message: '', severity: 'info' })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert onClose={() => setSnackbar({ open: false, message: '', severity: 'info' })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '8px', fontWeight: 700, fontSize: '0.82rem' }}>{snackbar.message}</Alert>
             </Snackbar>
+
+            {/* Coach Mark - Guided Tour */}
+            <CoachMark
+                tourId="payments-author"
+                steps={[
+                    {
+                        target: '#payment-overview',
+                        title: '💳 Payment Overview',
+                        description: 'This card shows your total payment status, pending amounts, and accepted payment methods at a glance.',
+                        position: 'bottom',
+                    },
+                    {
+                        target: '#pricing-tiers',
+                        title: '💰 Registration Pricing',
+                        description: 'Check the registration fee for your category: Student, Professional, or International. Price is based on your submission category.',
+                        position: 'top',
+                    },
+                    {
+                        target: '#payment-history',
+                        title: '📜 Payment History',
+                        description: 'View all your payment transactions here. Click "Pay Now" on pending items to complete payment via Xendit.',
+                        position: 'top',
+                    },
+                ]}
+            />
         </SidebarLayout>
     );
 }
