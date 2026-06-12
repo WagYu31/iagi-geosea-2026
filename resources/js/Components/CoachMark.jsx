@@ -29,10 +29,10 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
 
     const storageKey = `coachmark_${tourId}_completed`;
 
-    // Check if tour was already completed
+    // Always show tour on page load unless user has explicitly skipped/finished it
     useEffect(() => {
-        const completed = localStorage.getItem(storageKey);
-        if (!completed && steps.length > 0) {
+        const skipped = localStorage.getItem(storageKey);
+        if (!skipped && steps.length > 0) {
             // Delay start to let page render
             const timer = setTimeout(() => setIsActive(true), 800);
             return () => clearTimeout(timer);
@@ -177,9 +177,8 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
 
     return (
         <>
-            {/* Overlay */}
+            {/* Overlay - does NOT dismiss on click, user must use Skip/Finish */}
             <Box
-                onClick={skipTour}
                 sx={{
                     position: 'fixed',
                     inset: 0,
@@ -187,7 +186,6 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
                     bgcolor: 'rgba(0, 0, 0, 0.55)',
                     backdropFilter: 'blur(2px)',
                     transition: 'opacity 0.3s ease',
-                    cursor: 'pointer',
                 }}
             />
 
