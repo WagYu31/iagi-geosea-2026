@@ -28,21 +28,15 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
     const tooltipRef = useRef(null);
     const resizeTimer = useRef(null);
 
-    const storageKey = `cm_v2_${tourId}_skipped`;
-
-    // Always show tour on page load unless user has explicitly skipped/finished it
+    // Always show tour on every page load
     useEffect(() => {
-        const skipped = localStorage.getItem(storageKey);
-        console.log(`[CoachMark] tourId=${tourId}, skipped=${skipped}, steps=${steps.length}`);
-        if (!skipped && steps.length > 0) {
-            // Delay start to let page render
+        if (steps.length > 0) {
             const timer = setTimeout(() => {
-                console.log(`[CoachMark] Activating tour: ${tourId}`);
                 setIsActive(true);
             }, 800);
             return () => clearTimeout(timer);
         }
-    }, [storageKey, steps.length]);
+    }, [steps.length]);
 
     // Calculate target element position
     const updatePosition = useCallback(() => {
@@ -164,13 +158,11 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
     };
 
     const completeTour = () => {
-        localStorage.setItem(storageKey, 'true');
         setIsActive(false);
         onComplete?.();
     };
 
     const skipTour = () => {
-        localStorage.setItem(storageKey, 'true');
         setIsActive(false);
     };
 
@@ -377,15 +369,15 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
 }
 
 /**
- * Reset a tour so it shows again
+ * Reset a tour (no-op now, tours always show)
  */
 export function resetTour(tourId) {
-    localStorage.removeItem(`cm_v2_${tourId}_skipped`);
+    // No-op: tours now always show on page load
 }
 
 /**
- * Check if a tour has been skipped/completed
+ * Check if a tour has been completed (always false now)
  */
 export function isTourCompleted(tourId) {
-    return localStorage.getItem(`cm_v2_${tourId}_skipped`) === 'true';
+    return false;
 }
