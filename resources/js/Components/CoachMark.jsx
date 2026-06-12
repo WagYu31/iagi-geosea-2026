@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Box, Typography, Button, IconButton, LinearProgress } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -32,9 +33,13 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
     // Always show tour on page load unless user has explicitly skipped/finished it
     useEffect(() => {
         const skipped = localStorage.getItem(storageKey);
+        console.log(`[CoachMark] tourId=${tourId}, skipped=${skipped}, steps=${steps.length}`);
         if (!skipped && steps.length > 0) {
             // Delay start to let page render
-            const timer = setTimeout(() => setIsActive(true), 800);
+            const timer = setTimeout(() => {
+                console.log(`[CoachMark] Activating tour: ${tourId}`);
+                setIsActive(true);
+            }, 800);
             return () => clearTimeout(timer);
         }
     }, [storageKey, steps.length]);
@@ -175,7 +180,7 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
     const progress = ((currentStep + 1) / steps.length) * 100;
     const isLastStep = currentStep === steps.length - 1;
 
-    return (
+    return createPortal(
         <>
             {/* Overlay - does NOT dismiss on click, user must use Skip/Finish */}
             <Box
@@ -366,7 +371,8 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
                     </Box>
                 </Box>
             </Box>
-        </>
+        </>,
+        document.body
     );
 }
 
