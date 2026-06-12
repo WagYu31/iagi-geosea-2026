@@ -363,7 +363,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                 if (statusFilter === 'all') return true;
                                                 if (statusFilter === 'revision') return s.status?.includes('revision');
                                                 return s.status === statusFilter;
-                                            }).map((submission) => (
+                                            }).map((submission, sIdx) => (
                                                 <TableRow key={submission.id} sx={{
                                                     transition: 'background-color 0.15s ease',
                                                     '&:hover': { bgcolor: '#f9fafb' },
@@ -467,6 +467,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                     <TableCell>
                                                         <Box sx={{ display: 'flex', gap: 0.8 }}>
                                                             <Button
+                                                                {...(sIdx === 0 ? { id: 'action-view-btn' } : {})}
                                                                 variant="outlined"
                                                                 size="small"
                                                                 onClick={() => router.visit(route('submissions.show', submission.id))}
@@ -488,6 +489,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                                 View
                                                             </Button>
                                                             <Button
+                                                                {...(sIdx === 0 ? { id: 'action-edit-btn' } : {})}
                                                                 variant="contained"
                                                                 size="small"
                                                                 onClick={() => {
@@ -549,6 +551,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             </Button>
                                                             {submission.status !== 'deletion_requested' && (
                                                                 <Button
+                                                                    {...(sIdx === 0 ? { id: 'action-delete-btn' } : {})}
                                                                     variant="outlined"
                                                                     size="small"
                                                                     onClick={() => {
@@ -2113,6 +2116,24 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                         title: '🔍 Filter by Status',
                         description: 'Use this filter to quickly find submissions by their status: Pending, Under Review, Accepted, or Revision Required.',
                         position: 'bottom',
+                    },
+                    {
+                        target: '#action-view-btn',
+                        title: '👁️ View Details',
+                        description: 'Click "View" to see the full details of your submission including reviewer feedback and status history.',
+                        position: 'left',
+                    },
+                    {
+                        target: '#action-edit-btn',
+                        title: '✏️ Edit Submission',
+                        description: 'Click "Edit" to update your submission details, upload revised files, or modify author information.',
+                        position: 'left',
+                    },
+                    {
+                        target: '#action-delete-btn',
+                        title: '🗑️ Request Deletion',
+                        description: 'Need to remove a submission? Click "Delete" to request deletion. You\'ll be asked to provide a reason for the request.',
+                        position: 'left',
                     },
                 ]}
             />
