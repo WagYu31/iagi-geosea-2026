@@ -28,7 +28,7 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
     const tooltipRef = useRef(null);
     const resizeTimer = useRef(null);
 
-    const storageKey = `coachmark_${tourId}_completed`;
+    const storageKey = `cm_v2_${tourId}_skipped`;
 
     // Always show tour on page load unless user has explicitly skipped/finished it
     useEffect(() => {
@@ -380,12 +380,12 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
  * Reset a tour so it shows again
  */
 export function resetTour(tourId) {
-    localStorage.removeItem(`coachmark_${tourId}_completed`);
+    localStorage.removeItem(`cm_v2_${tourId}_skipped`);
 }
 
 /**
- * Check if a tour has been completed
+ * Check if a tour has been skipped/completed
  */
 export function isTourCompleted(tourId) {
-    return localStorage.getItem(`coachmark_${tourId}_completed`) === 'true';
+    return localStorage.getItem(`cm_v2_${tourId}_skipped`) === 'true';
 }
