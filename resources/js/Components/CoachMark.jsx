@@ -190,14 +190,16 @@ export default function CoachMark({ tourId, steps = [], onComplete }) {
             {spotlightRect && (
                 <Box
                     onClick={() => {
-                        // Click the actual target element
                         const step = steps[currentStep];
                         const el = document.querySelector(step.target);
-                        if (el) {
-                            el.click();
-                        }
-                        // Advance to next step or finish
-                        goNext();
+                        // Close coach mark first so overlay doesn't block
+                        setIsActive(false);
+                        // Then trigger the actual element click after overlay is gone
+                        setTimeout(() => {
+                            if (el) {
+                                el.click();
+                            }
+                        }, 150);
                     }}
                     sx={{
                         position: 'fixed',
