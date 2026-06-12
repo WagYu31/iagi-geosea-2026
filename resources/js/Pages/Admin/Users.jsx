@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
@@ -18,19 +18,35 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 
-export default function AdminUsers({ users = {} }) {
+export default function AdminUsers({ users = {}, filters = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [roleFilter, setRoleFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [roleFilter, setRoleFilter] = useState(filters.role || 'all');
     const [deleteDialog, setDeleteDialog] = useState({ open: false, user: null });
     const [roleDialog, setRoleDialog] = useState({ open: false, user: null, newRole: null });
     const [editDialog, setEditDialog] = useState({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' });
     const [createDialog, setCreateDialog] = useState({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '', showPassword: false, showConfirmPassword: false });
     const [loading, setLoading] = useState(null);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+    // Debounced server-side search
+    const searchTimer = useRef(null);
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        if (searchTimer.current) clearTimeout(searchTimer.current);
+        searchTimer.current = setTimeout(() => {
+            router.get(route('admin.users'), { search: searchTerm || undefined, role: roleFilter !== 'all' ? roleFilter : undefined }, { preserveState: true, preserveScroll: true });
+        }, 400);
+        return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+    }, [searchTerm, roleFilter]);
 
     const handleRoleChange = (user, newRole) => {
         const oldRole = user.role || 'Author';
@@ -93,17 +109,13 @@ export default function AdminUsers({ users = {} }) {
         });
     };
 
-    // users is now a paginator object: { data: [...], total, current_page, last_page }
     const usersData = users.data || [];
     const totalUsers = users.total || 0;
     const currentPage = users.current_page || 1;
     const lastPage = users.last_page || 1;
 
-    const filteredUsers = usersData.filter(u => {
-        const matchesSearch = searchTerm === '' || u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = roleFilter === 'all' || (u.role || 'Author') === roleFilter;
-        return matchesSearch && matchesRole;
-    });
+    // No client-side filtering — search and role filter are server-side
+    const filteredUsers = usersData;
 
     const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.5, fontSize: '0.825rem', color: c.textPrimary };
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
@@ -277,7 +289,7 @@ export default function AdminUsers({ users = {} }) {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {currentPage > 1 && (
                                     <Button size="small" component="a" href={`?page=${currentPage - 1}`}
-                                        onClick={(e) => { e.preventDefault(); router.get(route('admin.users'), { page: currentPage - 1 }, { preserveState: true }); }}
+                                        onClick={(e) => { e.preventDefault(); router.get(route('admin.users'), { page: currentPage - 1, search: searchTerm || undefined, role: roleFilter !== 'all' ? roleFilter : undefined }, { preserveState: true }); }}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         ‹ Prev
                                     </Button>
@@ -290,7 +302,7 @@ export default function AdminUsers({ users = {} }) {
                                     else page = currentPage - 3 + i;
                                     return (
                                         <Button key={page} size="small"
-                                            onClick={() => router.get(route('admin.users'), { page }, { preserveState: true })}
+                                            onClick={() => router.get(route('admin.users'), { page, search: searchTerm || undefined, role: roleFilter !== 'all' ? roleFilter : undefined }, { preserveState: true })}
                                             sx={{
                                                 minWidth: 32, height: 32, borderRadius: '8px',
                                                 fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
@@ -302,7 +314,7 @@ export default function AdminUsers({ users = {} }) {
                                 })}
                                 {currentPage < lastPage && (
                                     <Button size="small"
-                                        onClick={() => router.get(route('admin.users'), { page: currentPage + 1 }, { preserveState: true })}
+                                        onClick={() => router.get(route('admin.users'), { page: currentPage + 1, search: searchTerm || undefined, role: roleFilter !== 'all' ? roleFilter : undefined }, { preserveState: true })}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         Next ›
                                     </Button>

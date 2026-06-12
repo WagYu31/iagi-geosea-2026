@@ -655,12 +655,33 @@ class AdminController extends Controller
         return back()->with('success', 'Payment deleted. The author can now re-submit payment.');
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::latest()->paginate(25);
+        $query = User::latest();
+
+        // Server-side search by name or email
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Server-side role filter
+        if ($role = $request->input('role')) {
+            if ($role !== 'all') {
+                $query->where('role', $role);
+            }
+        }
+
+        $users = $query->paginate(25)->withQueryString();
 
         return Inertia::render('Admin/Users', [
             'users' => $users,
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'role' => $request->input('role', 'all'),
+            ],
         ]);
     }
 
