@@ -1061,7 +1061,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                                                 {/* Price + Button/Badge */}
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <Typography sx={{ fontWeight: 900, fontSize: '1.1rem', color: isDark ? 'white' : '#111827', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif' }}>
+                                                    <Typography noWrap sx={{ fontWeight: 900, fontSize: '1.1rem', color: isDark ? 'white' : '#111827', fontVariantNumeric: 'tabular-nums', fontFamily: 'Inter, sans-serif', mr: 1.5 }}>
                                                         {fee ? fmtRp(fee) : '—'}
                                                     </Typography>
                                                     {isPaid ? (
@@ -1078,13 +1078,13 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                             }}
                                                         />
                                                     ) : payment && (payment.status === 'pending' || payment.payment_proof_url) ? (
-                                                        <Stack direction="row" spacing={1.5} alignItems="center">
+                                                        <Stack direction="column" spacing={0.5} alignItems="flex-end">
                                                             <Chip
-                                                                icon={<AccessTimeIcon sx={{ fontSize: 14, color: '#3b82f6 !important' }} />}
+                                                                icon={<AccessTimeIcon sx={{ fontSize: 13, color: '#3b82f6 !important' }} />}
                                                                 label="Pending Verification"
                                                                 size="small"
                                                                 sx={{
-                                                                    fontWeight: 800, fontSize: '0.72rem', borderRadius: '10px',
+                                                                    fontWeight: 800, fontSize: '0.68rem', borderRadius: '10px',
                                                                     bgcolor: isDark ? 'rgba(59,130,246,0.12)' : '#dbeafe',
                                                                     color: '#3b82f6',
                                                                     border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#bfdbfe'}`,
@@ -1096,12 +1096,12 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                                 variant="text"
                                                                 onClick={() => handleOpenDialog(sub)}
                                                                 sx={{ 
-                                                                    fontSize: '0.68rem', textTransform: 'none', fontWeight: 700, color: '#1abc9c',
-                                                                    minWidth: 'auto', p: 0.5,
+                                                                    fontSize: '0.62rem', textTransform: 'none', fontWeight: 700, color: '#1abc9c',
+                                                                    minWidth: 'auto', p: 0, mt: -0.3,
                                                                     '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
                                                                 }}
                                                             >
-                                                                Re-upload
+                                                                Re-upload Proof
                                                             </Button>
                                                         </Stack>
                                                     ) : (
