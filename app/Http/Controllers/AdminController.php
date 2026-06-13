@@ -609,14 +609,39 @@ class AdminController extends Controller
         return back()->with('success', 'Deletion request rejected. Submission status reset to pending.');
     }
 
-    public function payments()
+    public function payments(Request $request)
     {
-        $payments = Payment::with(['user:id,name,email', 'submission:id,title,submission_code'])
-            ->latest()
-            ->paginate(25);
+        $search = $request->input('search');
+
+        $query = Payment::with(['user:id,name,email,category', 'submission:id,title,submission_code']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $cleanSearch = ltrim($search, '#');
+                
+                $q->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('submission', function ($sq) use ($search) {
+                    $sq->where('title', 'like', "%{$search}%")
+                       ->orWhere('submission_code', 'like', "%{$search}%");
+                })
+                ->orWhere('amount', 'like', "%{$search}%")
+                ->orWhere('order_id', 'like', "%{$search}%")
+                ->orWhere('transaction_id', 'like', "%{$search}%")
+                ->orWhere('gateway', 'like', "%{$search}%")
+                ->orWhere('id', $cleanSearch);
+            });
+        }
+
+        $payments = $query->latest()->paginate(25);
 
         return Inertia::render('Admin/Payments', [
             'payments' => $payments,
+            'filters' => [
+                'search' => $search ?? '',
+            ]
         ]);
     }
 

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions,
-    IconButton, Avatar, Stack, Tooltip, useTheme, Tabs, Tab,
+    IconButton, Avatar, Stack, Tooltip, useTheme, Tabs, Tab, TextField, InputAdornment,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -18,13 +18,67 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PaymentIcon from '@mui/icons-material/Payment';
 import LaunchIcon from '@mui/icons-material/Launch';
+import SearchIcon from '@mui/icons-material/Search';
 
-export default function AdminPayments({ payments = {} }) {
+export default function AdminPayments({ payments = {}, filters = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
     const [proofDialog, setProofDialog] = useState({ open: false, payment: null });
     const [tabFilter, setTabFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+    const searchTimer = useRef(null);
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        if (searchTimer.current) clearTimeout(searchTimer.current);
+        searchTimer.current = setTimeout(() => {
+            router.get(route('admin.payments'), { search: searchTerm || undefined }, { preserveState: true, preserveScroll: true });
+        }, 400);
+        return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+    }, [searchTerm]);
+
+    const getCategoryChip = (category) => {
+        if (!category) return null;
+        const isStudent = category === 'Student';
+        const isProfessional = category === 'Professional';
+        const isIntl = category.includes('International') || category === 'International Delegate';
+        
+        let bg = isDark ? 'rgba(107,114,128,0.15)' : '#f3f4f6';
+        let color = '#6b7280';
+        
+        if (isStudent) {
+            bg = isDark ? 'rgba(59,130,246,0.15)' : '#dbeafe';
+            color = '#2563eb';
+        } else if (isProfessional) {
+            bg = isDark ? 'rgba(147,51,234,0.15)' : '#f3e8ff';
+            color = '#9333ea';
+        } else if (isIntl) {
+            bg = isDark ? 'rgba(234,88,12,0.15)' : '#fff7ed';
+            color = '#ea580c';
+        }
+        
+        return (
+            <Chip 
+                label={category} 
+                size="small" 
+                sx={{ 
+                    bgcolor: bg, 
+                    color: color, 
+                    fontWeight: 600, 
+                    fontSize: '0.65rem', 
+                    borderRadius: '6px', 
+                    height: 18,
+                    mt: 0.5
+                }} 
+            />
+        );
+    };
 
     const handleVerify = (paymentId) => {
         if (confirm('Are you sure you want to verify this payment?')) {
@@ -120,11 +174,44 @@ export default function AdminPayments({ payments = {} }) {
         <SidebarLayout>
             <Head title="Manage Payments" />
             <Box sx={{ p: { xs: 2, sm: 3, md: 3.5 }, minHeight: '100vh', bgcolor: c.surfaceBg }}>
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
-                        Manage Payments 💳
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalPayments} total payments</Typography>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 3, gap: 2 }}>
+                    <Box>
+                        <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
+                            Manage Payments 💳
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalPayments} total payments</Typography>
+                    </Box>
+                    <TextField 
+                        placeholder="Search payments..." 
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
+                        size="small"
+                        InputProps={{ 
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ color: c.textMuted, fontSize: 18 }} />
+                                </InputAdornment>
+                            ),
+                            endAdornment: searchTerm && (
+                                <InputAdornment position="end">
+                                    <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: c.textMuted, p: 0.5 }}>
+                                        <CloseIcon sx={{ fontSize: 16 }} />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                        sx={{ 
+                            width: { xs: '100%', sm: 280, md: 320 },
+                            '& .MuiOutlinedInput-root': { 
+                                borderRadius: '12px', 
+                                bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                '& fieldset': { borderColor: c.cardBorder }, 
+                                '&:hover fieldset': { borderColor: '#1abc9c' }, 
+                                '&.Mui-focused fieldset': { borderColor: '#1abc9c' } 
+                            }, 
+                            '& input': { color: c.textPrimary, fontSize: '0.825rem', py: 1 } 
+                        }}
+                    />
                 </Box>
 
                 {/* Stats */}
@@ -195,9 +282,10 @@ export default function AdminPayments({ payments = {} }) {
                                         <TableCell sx={cellSx}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                                 <Avatar sx={{ width: 34, height: 34, bgcolor: '#1abc9c', fontSize: '0.8rem', fontWeight: 700 }}>{(p.user?.name || 'U').charAt(0)}</Avatar>
-                                                <Box>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                                                     <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>{p.user?.name || 'N/A'}</Typography>
                                                     <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>{p.user?.email || ''}</Typography>
+                                                    {getCategoryChip(p.user?.category)}
                                                 </Box>
                                             </Box>
                                         </TableCell>
@@ -280,7 +368,7 @@ export default function AdminPayments({ payments = {} }) {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {currentPage > 1 && (
                                     <Button size="small"
-                                        onClick={() => router.get(route('admin.payments'), { page: currentPage - 1 }, { preserveState: true })}
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage - 1, search: searchTerm || undefined }, { preserveState: true })}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         ‹ Prev
                                     </Button>
@@ -293,7 +381,7 @@ export default function AdminPayments({ payments = {} }) {
                                     else page = currentPage - 3 + i;
                                     return (
                                         <Button key={page} size="small"
-                                            onClick={() => router.get(route('admin.payments'), { page }, { preserveState: true })}
+                                            onClick={() => router.get(route('admin.payments'), { page, search: searchTerm || undefined }, { preserveState: true })}
                                             sx={{
                                                 minWidth: 32, height: 32, borderRadius: '8px',
                                                 fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
@@ -305,7 +393,7 @@ export default function AdminPayments({ payments = {} }) {
                                 })}
                                 {currentPage < lastPage && (
                                     <Button size="small"
-                                        onClick={() => router.get(route('admin.payments'), { page: currentPage + 1 }, { preserveState: true })}
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage + 1, search: searchTerm || undefined }, { preserveState: true })}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         Next ›
                                     </Button>
@@ -334,6 +422,7 @@ export default function AdminPayments({ payments = {} }) {
                                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5 }}>
                                     {[
                                         { l: 'User / Participant', v: proofDialog.payment.user?.name },
+                                        { l: 'User Category', v: proofDialog.payment.user?.category || '—' },
                                         { l: 'Submission Title', v: proofDialog.payment.submission?.title },
                                         { l: 'Total Amount', v: `Rp ${parseFloat(proofDialog.payment.amount || 0).toLocaleString('id-ID')}`, hl: true },
                                         { l: 'Payment Method', v: getMethodLabel(proofDialog.payment) },
