@@ -933,18 +933,19 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                 TransitionComponent={Transition}
                 keepMounted
                 onClose={handleDismissAnnouncement}
-                maxWidth="sm"
-                fullWidth
                 PaperProps={{
                     sx: {
-                        borderRadius: '24px',
+                        borderRadius: '16px',
                         bgcolor: c.cardBg,
                         backgroundImage: 'none',
                         border: `1px solid ${c.cardBorder}`,
                         boxShadow: isDark 
-                            ? '0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)' 
-                            : '0 20px 50px rgba(26,188,156,0.1)',
+                            ? '0 16px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)' 
+                            : '0 16px 40px rgba(26,188,156,0.08)',
                         overflow: 'hidden',
+                        width: '100%',
+                        maxWidth: '480px',
+                        mx: 2,
                     }
                 }}
             >
@@ -952,67 +953,81 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                 <Box
                     sx={{
                         background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                        px: 3,
-                        py: 2.5,
+                        px: 2.5,
+                        py: 1.8,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         color: '#ffffff',
-                        boxShadow: '0 4px 20px rgba(26,188,156,0.25)',
+                        boxShadow: '0 2px 10px rgba(26,188,156,0.15)',
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <CampaignIcon sx={{ fontSize: 28 }} />
-                        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                        <CampaignIcon sx={{ fontSize: 22 }} />
+                        <Typography sx={{ fontWeight: 700, fontSize: '0.975rem', letterSpacing: '0.2px', lineHeight: 1.2 }}>
                             {announcement?.title}
                         </Typography>
                     </Box>
                     <IconButton
                         onClick={handleDismissAnnouncement}
+                        size="small"
                         sx={{
                             color: 'rgba(255,255,255,0.8)',
                             '&:hover': {
                                 color: '#ffffff',
-                                bgcolor: 'rgba(255,255,255,0.1)',
+                                bgcolor: 'rgba(255,255,255,0.15)',
                             },
-                            borderRadius: '10px',
+                            borderRadius: '8px',
+                            p: 0.5,
                         }}
                     >
-                        <CloseIcon />
+                        <CloseIcon sx={{ fontSize: 18 }} />
                     </IconButton>
                 </Box>
 
                 {/* Content area */}
                 <DialogContent 
                     sx={{ 
-                        p: 4, 
+                        px: 3,
+                        py: 2.5,
                         color: c.textPrimary,
                         bgcolor: c.cardBg,
-                        lineHeight: 1.8,
-                        fontSize: '0.975rem',
+                        lineHeight: 1.6,
+                        fontSize: '0.85rem',
                         '& a': {
                             color: '#1abc9c',
                             textDecoration: 'none',
                             fontWeight: 600,
-                            borderBottom: '2px solid transparent',
+                            borderBottom: '1.5px solid transparent',
                             transition: 'all 0.2s ease',
                             '&:hover': {
                                 borderBottomColor: '#1abc9c',
                             }
                         },
                         '& p': {
-                            mb: 2,
+                            mb: 1.5,
                             '&:last-child': { mb: 0 }
                         },
                         '& strong': {
                             color: isDark ? '#ffffff' : '#0d7a6a',
                             fontWeight: 700
                         },
-                        '& ul, & ol': {
-                            pl: 3,
-                            mb: 2,
+                        '& ul': {
+                            listStyleType: 'disc',
+                            pl: 2.5,
+                            mb: 1.5,
                             '& li': {
-                                mb: 1,
+                                mb: 0.8,
+                                '&:last-child': { mb: 0 }
+                            }
+                        },
+                        '& ol': {
+                            listStyleType: 'decimal',
+                            pl: 2.5,
+                            mb: 1.5,
+                            '& li': {
+                                mb: 0.8,
+                                '&:last-child': { mb: 0 }
                             }
                         }
                     }}
@@ -1025,9 +1040,9 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                 {/* Footer action */}
                 <DialogActions 
                     sx={{ 
-                        px: 4, 
-                        pb: 3, 
-                        pt: 1, 
+                        px: 3, 
+                        pb: 2.5, 
+                        pt: 1.5, 
                         bgcolor: c.cardBg, 
                         justifyContent: 'flex-end',
                         borderTop: `1px solid ${c.cardBorder}`
@@ -1038,16 +1053,17 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                         variant="contained"
                         sx={{
                             background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                            boxShadow: '0 4px 14px rgba(26,188,156,0.35)',
+                            boxShadow: '0 2px 8px rgba(26,188,156,0.25)',
                             color: '#ffffff',
-                            fontWeight: 700,
-                            borderRadius: '12px',
+                            fontWeight: 600,
+                            borderRadius: '8px',
                             textTransform: 'none',
-                            px: 4,
-                            py: 1.2,
+                            px: 3,
+                            py: 0.8,
+                            fontSize: '0.8rem',
                             '&:hover': {
                                 background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
-                                boxShadow: '0 6px 20px rgba(26,188,156,0.45)',
+                                boxShadow: '0 4px 12px rgba(26,188,156,0.35)',
                             }
                         }}
                     >
