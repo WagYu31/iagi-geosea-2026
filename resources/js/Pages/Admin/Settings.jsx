@@ -24,6 +24,7 @@ import {
     MenuItem,
     Avatar,
     useTheme,
+    Chip,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
@@ -336,7 +337,7 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                                     <PaymentIcon sx={{ fontSize: 24, color: gw.color }} />
                                                 </Box>
                                                 <Box>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.text }}>
+                                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary }}>
                                                         {gw.name}
                                                     </Typography>
                                                     <Typography variant="caption" sx={{ color: c.textMuted }}>
@@ -374,7 +375,7 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                         </Stack>
 
                         <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'}` }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.text, mb: 1 }}>
+                             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, mb: 1 }}>
                                 Manual Payment Unique Code Prefix
                             </Typography>
                             <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, lineHeight: 1.6 }}>
