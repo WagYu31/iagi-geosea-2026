@@ -5,6 +5,7 @@ import {
     Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions,
     IconButton, Avatar, Stack, Tooltip, useTheme, Tabs, Tab, TextField, InputAdornment,
+    Select, MenuItem, FormControl, InputLabel,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -27,6 +28,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
     const [proofDialog, setProofDialog] = useState({ open: false, payment: null });
     const [tabFilter, setTabFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [categoryFilter, setCategoryFilter] = useState(filters.category || 'all');
 
     const searchTimer = useRef(null);
     const isFirstRender = useRef(true);
@@ -38,10 +40,13 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
         }
         if (searchTimer.current) clearTimeout(searchTimer.current);
         searchTimer.current = setTimeout(() => {
-            router.get(route('admin.payments'), { search: searchTerm || undefined }, { preserveState: true, preserveScroll: true });
+            router.get(route('admin.payments'), { 
+                search: searchTerm || undefined, 
+                category: categoryFilter !== 'all' ? categoryFilter : undefined 
+            }, { preserveState: true, preserveScroll: true });
         }, 400);
         return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
-    }, [searchTerm]);
+    }, [searchTerm, categoryFilter]);
 
     const getCategoryChip = (category) => {
         if (!category) return null;
@@ -174,44 +179,69 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
         <SidebarLayout>
             <Head title="Manage Payments" />
             <Box sx={{ p: { xs: 2, sm: 3, md: 3.5 }, minHeight: '100vh', bgcolor: c.surfaceBg }}>
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 3, gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', md: 'center' }, mb: 3, gap: 2 }}>
                     <Box>
                         <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '1.5rem', sm: '1.85rem' }, letterSpacing: '-0.02em' }}>
                             Manage Payments 💳
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>{totalPayments} total payments</Typography>
                     </Box>
-                    <TextField 
-                        placeholder="Search payments..." 
-                        value={searchTerm} 
-                        onChange={(e) => setSearchTerm(e.target.value)} 
-                        size="small"
-                        InputProps={{ 
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon sx={{ color: c.textMuted, fontSize: 18 }} />
-                                </InputAdornment>
-                            ),
-                            endAdornment: searchTerm && (
-                                <InputAdornment position="end">
-                                    <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: c.textMuted, p: 0.5 }}>
-                                        <CloseIcon sx={{ fontSize: 16 }} />
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
-                        sx={{ 
-                            width: { xs: '100%', sm: 280, md: 320 },
-                            '& .MuiOutlinedInput-root': { 
-                                borderRadius: '12px', 
-                                bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
-                                '& fieldset': { borderColor: c.cardBorder }, 
-                                '&:hover fieldset': { borderColor: '#1abc9c' }, 
-                                '&.Mui-focused fieldset': { borderColor: '#1abc9c' } 
-                            }, 
-                            '& input': { color: c.textPrimary, fontSize: '0.825rem', py: 1 } 
-                        }}
-                    />
+                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <TextField 
+                            placeholder="Search payments..." 
+                            value={searchTerm} 
+                            onChange={(e) => setSearchTerm(e.target.value)} 
+                            size="small"
+                            InputProps={{ 
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: c.textMuted, fontSize: 18 }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: searchTerm && (
+                                    <InputAdornment position="end">
+                                        <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: c.textMuted, p: 0.5 }}>
+                                            <CloseIcon sx={{ fontSize: 16 }} />
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                            sx={{ 
+                                width: { xs: '100%', sm: 240, md: 280 },
+                                '& .MuiOutlinedInput-root': { 
+                                    borderRadius: '12px', 
+                                    bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                    '& fieldset': { borderColor: c.cardBorder }, 
+                                    '&:hover fieldset': { borderColor: '#1abc9c' }, 
+                                    '&.Mui-focused fieldset': { borderColor: '#1abc9c' } 
+                                }, 
+                                '& input': { color: c.textPrimary, fontSize: '0.825rem', py: 1 } 
+                            }}
+                        />
+                        <FormControl size="small" sx={{ minWidth: 160, width: { xs: '100%', sm: 'auto' } }}>
+                            <InputLabel sx={{ fontSize: '0.85rem' }}>Category</InputLabel>
+                            <Select
+                                value={categoryFilter}
+                                label="Category"
+                                onChange={(e) => setCategoryFilter(e.target.value)}
+                                sx={{
+                                    borderRadius: '12px',
+                                    bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                    fontSize: '0.825rem',
+                                    color: c.textPrimary,
+                                    '& fieldset': { borderColor: c.cardBorder },
+                                    '&:hover fieldset': { borderColor: '#1abc9c' },
+                                    '&.Mui-focused fieldset': { borderColor: '#1abc9c' },
+                                    '& .MuiSelect-select': { py: 1 },
+                                }}
+                            >
+                                <MenuItem value="all">All Categories</MenuItem>
+                                <MenuItem value="Student">Student</MenuItem>
+                                <MenuItem value="Professional">Professional</MenuItem>
+                                <MenuItem value="International Delegate">International Delegate</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </Box>
 
                 {/* Stats */}
@@ -368,7 +398,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {currentPage > 1 && (
                                     <Button size="small"
-                                        onClick={() => router.get(route('admin.payments'), { page: currentPage - 1, search: searchTerm || undefined }, { preserveState: true })}
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage - 1, search: searchTerm || undefined, category: categoryFilter !== 'all' ? categoryFilter : undefined }, { preserveState: true })}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         ‹ Prev
                                     </Button>
@@ -381,7 +411,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                     else page = currentPage - 3 + i;
                                     return (
                                         <Button key={page} size="small"
-                                            onClick={() => router.get(route('admin.payments'), { page, search: searchTerm || undefined }, { preserveState: true })}
+                                            onClick={() => router.get(route('admin.payments'), { page, search: searchTerm || undefined, category: categoryFilter !== 'all' ? categoryFilter : undefined }, { preserveState: true })}
                                             sx={{
                                                 minWidth: 32, height: 32, borderRadius: '8px',
                                                 fontWeight: page === currentPage ? 800 : 600, fontSize: '0.78rem',
@@ -393,7 +423,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                 })}
                                 {currentPage < lastPage && (
                                     <Button size="small"
-                                        onClick={() => router.get(route('admin.payments'), { page: currentPage + 1, search: searchTerm || undefined }, { preserveState: true })}
+                                        onClick={() => router.get(route('admin.payments'), { page: currentPage + 1, search: searchTerm || undefined, category: categoryFilter !== 'all' ? categoryFilter : undefined }, { preserveState: true })}
                                         sx={{ minWidth: 36, borderRadius: '8px', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem', color: c.textMuted }}>
                                         Next ›
                                     </Button>

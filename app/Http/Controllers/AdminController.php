@@ -612,6 +612,7 @@ class AdminController extends Controller
     public function payments(Request $request)
     {
         $search = $request->input('search');
+        $category = $request->input('category');
 
         $query = Payment::with(['user:id,name,email,category', 'submission:id,title,submission_code']);
 
@@ -635,12 +636,19 @@ class AdminController extends Controller
             });
         }
 
+        if ($category && $category !== 'all') {
+            $query->whereHas('user', function ($uq) use ($category) {
+                $uq->where('category', $category);
+            });
+        }
+
         $payments = $query->latest()->paginate(25);
 
         return Inertia::render('Admin/Payments', [
             'payments' => $payments,
             'filters' => [
                 'search' => $search ?? '',
+                'category' => $category ?? 'all',
             ]
         ]);
     }
