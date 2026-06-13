@@ -137,25 +137,59 @@ export default function Dashboard({ submissions = [], user }) {
                 p: { xs: 2, sm: 3.5 },
                 minHeight: '100vh',
                 bgcolor: c.surfaceBg,
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: '-10%',
+                    left: '-10%',
+                    width: '40%',
+                    height: '40%',
+                    background: 'radial-gradient(circle, rgba(26,188,156,0.05) 0%, rgba(26,188,156,0) 70%)',
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                },
+                '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: '-10%',
+                    right: '-10%',
+                    width: '50%',
+                    height: '50%',
+                    background: 'radial-gradient(circle, rgba(37,99,235,0.03) 0%, rgba(37,99,235,0) 70%)',
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                }
             }}>
                 {/* Header Section */}
                 <Box sx={{
+                    position: 'relative',
+                    borderRadius: '20px',
+                    p: { xs: 3, sm: 4 },
+                    mb: 4,
+                    background: isDark
+                        ? 'linear-gradient(135deg, rgba(13, 122, 106, 0.15) 0%, rgba(26, 188, 156, 0.05) 100%)'
+                        : 'linear-gradient(135deg, rgba(13, 122, 106, 0.06) 0%, rgba(32, 201, 151, 0.03) 100%)',
+                    border: `1px solid ${isDark ? 'rgba(26, 188, 156, 0.15)' : 'rgba(13, 122, 106, 0.1)'}`,
+                    overflow: 'hidden',
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     justifyContent: 'space-between',
                     alignItems: { xs: 'flex-start', md: 'center' },
-                    mb: 3.5,
-                    gap: 2,
+                    gap: 3,
+                    zIndex: 1,
                 }}>
-                    <Box>
+                    <Box sx={{ zIndex: 1 }}>
                         <Typography
                             variant="h4"
                             sx={{
                                 fontWeight: 800,
                                 color: c.textPrimary,
-                                fontSize: { xs: '1.5rem', sm: '1.85rem' },
+                                fontSize: { xs: '1.6rem', sm: '2rem' },
                                 letterSpacing: '-0.02em',
                                 lineHeight: 1.2,
+                                mb: 1,
                             }}
                         >
                             Welcome back, {user?.name?.split(' ')[0] || 'User'} 👋
@@ -164,14 +198,13 @@ export default function Dashboard({ submissions = [], user }) {
                             variant="body2"
                             sx={{
                                 color: c.textSecondary,
-                                mt: 0.5,
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 0.75,
+                                gap: 1,
                                 fontSize: '0.875rem',
                             }}
                         >
-                            <CalendarTodayIcon sx={{ fontSize: 15 }} />
+                            <CalendarTodayIcon sx={{ fontSize: 16, color: '#1abc9c' }} />
                             {formattedDate}
                         </Typography>
                     </Box>
@@ -183,72 +216,96 @@ export default function Dashboard({ submissions = [], user }) {
                         startIcon={<AddIcon />}
                         sx={{
                             background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                            px: 3,
-                            py: 1.2,
+                            px: 3.5,
+                            py: 1.5,
                             borderRadius: '12px',
                             textTransform: 'none',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             fontSize: '0.9rem',
-                            boxShadow: '0 4px 14px rgba(26, 188, 156, 0.35)',
+                            zIndex: 1,
+                            boxShadow: '0 6px 20px rgba(26, 188, 156, 0.35)',
                             '&:hover': {
                                 background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
-                                boxShadow: '0 6px 20px rgba(26, 188, 156, 0.45)',
-                                transform: 'translateY(-1px)',
+                                boxShadow: '0 8px 24px rgba(26, 188, 156, 0.45)',
+                                transform: 'translateY(-2px)',
                             },
                             transition: 'all 0.25s ease',
                         }}
                     >
                         Submit New Paper
                     </Button>
+                    {/* Decorative radial glows inside banner */}
+                    <Box sx={{
+                        position: 'absolute',
+                        right: '-5%',
+                        top: '-20%',
+                        width: '180px',
+                        height: '180px',
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, rgba(26, 188, 156, 0.15) 0%, rgba(26, 188, 156, 0) 70%)',
+                        filter: 'blur(10px)',
+                        pointerEvents: 'none',
+                    }} />
                 </Box>
 
                 {/* Stat Cards */}
-                <Grid id="dashboard-stats" container spacing={2.5} sx={{ mb: 3.5 }} role="region" aria-label="Submission Statistics">
+                <Grid id="dashboard-stats" container spacing={2.5} sx={{ mb: 4 }} role="region" aria-label="Submission Statistics">
                     {statCards.map((card, index) => (
                         <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
                             <Card
                                 elevation={0}
                                 sx={{
-                                    borderRadius: '16px',
-                                    border: `1px solid ${c.cardBorder}`,
-                                    bgcolor: c.cardBg,
+                                    borderRadius: '20px',
+                                    border: isDark 
+                                        ? '1px solid rgba(255, 255, 255, 0.06)' 
+                                        : `1px solid ${alpha(card.color, 0.15)}`,
+                                    bgcolor: isDark ? 'rgba(26, 29, 39, 0.6)' : '#ffffff',
+                                    backdropFilter: 'blur(20px)',
                                     height: '100%',
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '&:hover': {
-                                        borderColor: card.color,
-                                        boxShadow: `0 8px 25px ${card.color}18`,
-                                        transform: 'translateY(-3px)',
-                                    },
                                     position: 'relative',
                                     overflow: 'hidden',
-                                    '&::after': {
+                                    '&:hover': {
+                                        borderColor: card.color,
+                                        boxShadow: isDark 
+                                            ? `0 12px 30px rgba(0,0,0,0.4), 0 0 20px ${alpha(card.color, 0.15)}`
+                                            : `0 12px 30px ${alpha(card.color, 0.12)}`,
+                                        transform: 'translateY(-4px)',
+                                    },
+                                    '&::before': {
                                         content: '""',
                                         position: 'absolute',
-                                        bottom: 0,
+                                        top: 0,
                                         left: 0,
                                         right: 0,
                                         height: '3px',
-                                        background: card.color,
-                                        opacity: 0,
-                                        transition: 'opacity 0.3s ease',
+                                        background: `linear-gradient(90deg, ${alpha(card.color, 0.2)} 0%, ${card.color} 50%, ${alpha(card.color, 0.2)} 100%)`,
+                                        opacity: 0.4,
+                                        transition: 'all 0.3s ease',
                                     },
-                                    '&:hover::after': {
+                                    '&:hover::before': {
+                                        height: '4px',
                                         opacity: 1,
-                                    },
+                                    }
                                 }}
                             >
-                                <CardContent sx={{ p: { xs: 2, sm: 2.5 }, '&:last-child': { pb: { xs: 2, sm: 2.5 } } }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1.5 }}>
+                                <CardContent sx={{ p: { xs: 2.5, sm: 3 }, '&:last-child': { pb: { xs: 2.5, sm: 3 } } }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
                                         <Avatar
                                             sx={{
                                                 bgcolor: card.bgColor,
-                                                width: { xs: 40, sm: 48 },
-                                                height: { xs: 40, sm: 48 },
-                                                borderRadius: '12px',
+                                                width: { xs: 44, sm: 52 },
+                                                height: { xs: 44, sm: 52 },
+                                                borderRadius: '14px',
+                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                transform: 'scale(1)',
+                                                '.MuiCard-root:hover &': {
+                                                    transform: 'scale(1.08) rotate(3deg)',
+                                                }
                                             }}
                                             variant="rounded"
                                         >
-                                            {React.cloneElement(card.icon, { sx: { color: card.color, fontSize: { xs: 20, sm: 24 } }, 'aria-hidden': true })}
+                                            {React.cloneElement(card.icon, { sx: { color: card.color, fontSize: { xs: 22, sm: 26 } }, 'aria-hidden': true })}
                                         </Avatar>
                                         <Chip
                                             label={card.trend}
@@ -256,7 +313,7 @@ export default function Dashboard({ submissions = [], user }) {
                                             sx={{
                                                 bgcolor: card.bgColor,
                                                 color: card.color,
-                                                fontWeight: 700,
+                                                fontWeight: 800,
                                                 fontSize: '0.7rem',
                                                 height: 24,
                                                 borderRadius: '6px',
@@ -268,7 +325,7 @@ export default function Dashboard({ submissions = [], user }) {
                                         sx={{
                                             fontWeight: 800,
                                             color: c.textPrimary,
-                                            mb: 0.25,
+                                            mb: 0.5,
                                             fontSize: { xs: '1.75rem', sm: '2.25rem' },
                                             lineHeight: 1,
                                             letterSpacing: '-0.02em',
@@ -280,7 +337,7 @@ export default function Dashboard({ submissions = [], user }) {
                                         variant="body2"
                                         sx={{
                                             color: c.textMuted,
-                                            fontWeight: 500,
+                                            fontWeight: 600,
                                             fontSize: { xs: '0.75rem', sm: '0.825rem' },
                                         }}
                                     >
@@ -291,8 +348,8 @@ export default function Dashboard({ submissions = [], user }) {
                                             variant="determinate"
                                             value={paymentProgress}
                                             sx={{
-                                                mt: 1.5,
-                                                height: 5,
+                                                mt: 2,
+                                                height: 6,
                                                 borderRadius: 3,
                                                 bgcolor: isDark ? '#374151' : '#e5e7eb',
                                                 '& .MuiLinearProgress-bar': {
@@ -307,21 +364,26 @@ export default function Dashboard({ submissions = [], user }) {
                         </Grid>
                     ))}
                 </Grid>
-
                 {/* Main Content Grid */}
-                <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
+                <Grid container spacing={2.5} sx={{ mb: 4 }} zIndex={1} position="relative">
                     {/* Chart Section */}
                     <Grid size={{ xs: 12, lg: 5 }} role="region" aria-label="Submission Overview Chart">
                         <Card
                             elevation={0}
                             sx={{
-                                borderRadius: '16px',
+                                borderRadius: '20px',
                                 border: `1px solid ${c.cardBorder}`,
-                                bgcolor: c.cardBg,
+                                bgcolor: isDark ? 'rgba(26, 29, 39, 0.6)' : '#ffffff',
+                                backdropFilter: 'blur(20px)',
                                 height: '100%',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    boxShadow: isDark ? '0 12px 30px rgba(0,0,0,0.3)' : '0 12px 30px rgba(0,0,0,0.04)',
+                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(13, 122, 106, 0.15)',
+                                }
                             }}
                         >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+                            <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
                                 <Typography
                                     variant="h6"
                                     sx={{
@@ -333,7 +395,7 @@ export default function Dashboard({ submissions = [], user }) {
                                 >
                                     Submission Overview
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, fontSize: '0.8rem' }}>
+                                <Typography variant="body2" sx={{ color: c.textMuted, mb: 2.5, fontSize: '0.8rem' }}>
                                     Status distribution of your papers
                                 </Typography>
 
@@ -374,8 +436,8 @@ export default function Dashboard({ submissions = [], user }) {
                                         />
                                     ) : (
                                         <Box sx={{ textAlign: 'center', py: 4 }}>
-                                            <DescriptionIcon sx={{ fontSize: 48, color: '#d1d5db', mb: 1 }} />
-                                            <Typography variant="body2" sx={{ color: '#9ca3af' }}>
+                                            <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} />
+                                            <Typography variant="body2" sx={{ color: c.textMuted }}>
                                                 No submissions yet
                                             </Typography>
                                         </Box>
@@ -390,14 +452,20 @@ export default function Dashboard({ submissions = [], user }) {
                         <Card
                             elevation={0}
                             sx={{
-                                borderRadius: '16px',
+                                borderRadius: '20px',
                                 border: `1px solid ${c.cardBorder}`,
-                                bgcolor: c.cardBg,
+                                bgcolor: isDark ? 'rgba(26, 29, 39, 0.6)' : '#ffffff',
+                                backdropFilter: 'blur(20px)',
                                 height: '100%',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    boxShadow: isDark ? '0 12px 30px rgba(0,0,0,0.3)' : '0 12px 30px rgba(0,0,0,0.04)',
+                                    borderColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(13, 122, 106, 0.15)',
+                                }
                             }}
                         >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                                     <Box>
                                         <Typography
                                             variant="h6"
@@ -421,13 +489,21 @@ export default function Dashboard({ submissions = [], user }) {
                                         endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
                                         sx={{
                                             textTransform: 'none',
-                                            fontWeight: 600,
+                                            fontWeight: 700,
                                             fontSize: '0.8rem',
                                             color: '#1abc9c',
                                             borderRadius: '8px',
+                                            px: 2,
+                                            py: 0.75,
+                                            bgcolor: isDark ? 'rgba(26,188,156,0.08)' : 'rgba(26,188,156,0.04)',
+                                            border: `1px solid ${isDark ? 'rgba(26,188,156,0.2)' : 'rgba(26,188,156,0.1)'}`,
                                             '&:hover': {
-                                                bgcolor: c.btnSoftBgHover,
+                                                bgcolor: '#1abc9c',
+                                                color: '#ffffff',
+                                                borderColor: '#1abc9c',
+                                                transform: 'translateY(-1px)',
                                             },
+                                            transition: 'all 0.2s ease',
                                         }}
                                     >
                                         View All
@@ -435,7 +511,7 @@ export default function Dashboard({ submissions = [], user }) {
                                 </Box>
 
                                 {recentSubmissions.length > 0 ? (
-                                    <Stack spacing={0} divider={<Divider sx={{ borderColor: c.cardBorder }} />} role="list" aria-label="Recent paper submissions">
+                                    <Stack spacing={0.75} divider={<Divider sx={{ borderColor: c.cardBorder, opacity: 0.5 }} />} role="list" aria-label="Recent paper submissions">
                                         {recentSubmissions.map((sub, idx) => {
                                             const status = getStatusColor(sub.status);
                                             return (
@@ -448,44 +524,59 @@ export default function Dashboard({ submissions = [], user }) {
                                                         alignItems: 'center',
                                                         gap: 2,
                                                         py: 1.5,
-                                                        px: 1,
-                                                        borderRadius: '10px',
+                                                        px: 1.5,
+                                                        borderRadius: '12px',
                                                         textDecoration: 'none',
                                                         color: 'inherit',
-                                                        transition: 'all 0.2s ease',
+                                                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                                                         '&:hover': {
                                                             bgcolor: c.rowHover,
+                                                            transform: 'translateX(6px)',
                                                         },
                                                     }}
                                                 >
                                                     <Avatar
                                                         variant="rounded"
                                                         sx={{
-                                                            bgcolor: isDark ? '#1f2937' : '#f3f4f6',
-                                                            width: 40,
-                                                            height: 40,
-                                                            borderRadius: '10px',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                                            width: 44,
+                                                            height: 44,
+                                                            borderRadius: '12px',
                                                             flexShrink: 0,
+                                                            border: `1px solid ${c.cardBorder}`,
+                                                            transition: 'all 0.3s ease',
+                                                            '.MuiBox-root:hover &': {
+                                                                bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                                                borderColor: '#1abc9c',
+                                                            }
                                                         }}
                                                     >
-                                                        <DescriptionIcon sx={{ color: '#6b7280', fontSize: 20 }} />
+                                                        <DescriptionIcon sx={{ 
+                                                            color: isDark ? '#9ca3af' : '#6b7280', 
+                                                            fontSize: 22,
+                                                            transition: 'all 0.3s ease',
+                                                            '.MuiBox-root:hover &': {
+                                                                color: '#1abc9c',
+                                                            }
+                                                        }} />
                                                     </Avatar>
                                                     <Box sx={{ flex: 1, minWidth: 0 }}>
                                                         <Typography
                                                             variant="body2"
                                                             sx={{
-                                                                fontWeight: 600,
+                                                                fontWeight: 700,
                                                                 color: c.textPrimary,
-                                                                fontSize: '0.85rem',
+                                                                fontSize: '0.875rem',
                                                                 overflow: 'hidden',
                                                                 textOverflow: 'ellipsis',
                                                                 whiteSpace: 'nowrap',
+                                                                mb: 0.25,
                                                             }}
                                                         >
                                                             {sub.title || 'Untitled Paper'}
                                                         </Typography>
-                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
-                                                            {sub.submission_code || '—'} • {sub.created_at ? new Date(sub.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
+                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem', fontWeight: 500 }}>
+                                                            {sub.submission_code || '—'} • {sub.created_at ? new Date(sub.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                                                         </Typography>
                                                     </Box>
                                                     <Chip
@@ -494,11 +585,14 @@ export default function Dashboard({ submissions = [], user }) {
                                                         sx={{
                                                             bgcolor: status.bg,
                                                             color: status.color,
-                                                            fontWeight: 600,
-                                                            fontSize: '0.7rem',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.65rem',
                                                             height: 24,
                                                             borderRadius: '6px',
                                                             flexShrink: 0,
+                                                            border: `1px solid ${status.color}33`,
+                                                            letterSpacing: '0.02em',
+                                                            textTransform: 'uppercase',
                                                         }}
                                                     />
                                                 </Box>
@@ -506,9 +600,9 @@ export default function Dashboard({ submissions = [], user }) {
                                         })}
                                     </Stack>
                                 ) : (
-                                    <Box sx={{ textAlign: 'center', py: 4 }}>
-                                        <DescriptionIcon sx={{ fontSize: 48, color: '#d1d5db', mb: 1 }} />
-                                        <Typography variant="body2" sx={{ color: '#9ca3af' }}>
+                                    <Box sx={{ textAlign: 'center', py: 6 }}>
+                                        <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1.5 }} />
+                                        <Typography variant="body2" sx={{ color: c.textMuted }}>
                                             No submissions yet
                                         </Typography>
                                     </Box>
@@ -518,121 +612,212 @@ export default function Dashboard({ submissions = [], user }) {
                     </Grid>
                 </Grid>
 
-                {/* Quick Actions */}
-                <Card
-                    id="dashboard-quick-actions"
-                    elevation={0}
-                    role="region"
-                    aria-label="Quick Actions"
-                    sx={{
-                        borderRadius: '16px',
-                        border: `1px solid ${c.cardBorder}`,
-                        bgcolor: c.cardBg,
-                        mb: 3.5,
+                {/* Quick Actions Title */}
+                <Typography 
+                    variant="h6" 
+                    sx={{ 
+                        fontWeight: 700, 
+                        fontSize: '1.05rem', 
+                        color: c.textPrimary, 
+                        mb: 2.5, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 1,
+                        zIndex: 1,
+                        position: 'relative'
                     }}
                 >
-                    <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
-                        <Typography
-                            variant="h6"
+                    ⚡ Quick Actions
+                </Typography>
+                
+                {/* Quick Actions Grid */}
+                <Grid id="dashboard-quick-actions" container spacing={2.5} sx={{ mb: 4 }} zIndex={1} position="relative">
+                    {/* Submit Paper Tile */}
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                        <Card
+                            component={Link}
+                            href={route('submissions.index')}
+                            elevation={0}
                             sx={{
-                                fontWeight: 700,
-                                fontSize: '1rem',
-                                color: c.textPrimary,
-                                mb: 2.5,
+                                borderRadius: '20px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: isDark ? 'rgba(26,29,39,0.6)' : '#ffffff',
+                                backdropFilter: 'blur(20px)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                p: 3,
+                                gap: 2.5,
+                                height: '100%',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    borderColor: '#1abc9c',
+                                    boxShadow: isDark 
+                                        ? '0 12px 30px rgba(26,188,156,0.12)' 
+                                        : '0 12px 30px rgba(26,188,156,0.08)',
+                                }
                             }}
                         >
-                            Quick Actions
-                        </Typography>
-                        <Grid container spacing={2}>
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                                <Button
-                                    component={Link}
-                                    href={route('submissions.index')}
-                                    variant="contained"
-                                    fullWidth
-                                    startIcon={<AddIcon />}
-                                    sx={{
-                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                                        '&:hover': {
-                                            background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 8px 20px rgba(26, 188, 156, 0.3)',
-                                        },
-                                        py: 1.8,
-                                        textTransform: 'none',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 600,
-                                        borderRadius: '12px',
-                                        transition: 'all 0.25s ease',
-                                        boxShadow: '0 2px 8px rgba(26, 188, 156, 0.2)',
-                                    }}
-                                >
+                            <Box sx={{
+                                width: 52, height: 52,
+                                borderRadius: '14px',
+                                bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: '#1abc9c',
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    bgcolor: '#1abc9c',
+                                    color: '#ffffff',
+                                }
+                            }}>
+                                <AddIcon sx={{ fontSize: 26 }} />
+                            </Box>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.95rem', mb: 0.5 }}>
                                     Submit New Paper
-                                </Button>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                                <Button
-                                    component={Link}
-                                    href={route('submissions.index')}
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<ListAltIcon />}
-                                    sx={{
-                                        color: '#1abc9c',
-                                        borderColor: isDark ? 'rgba(209, 250, 229, 0.2)' : '#d1fae5',
-                                        borderWidth: 2,
-                                        bgcolor: isDark ? 'rgba(26, 188, 156, 0.08)' : '#f0fdf9',
-                                        '&:hover': {
-                                            borderColor: '#1abc9c',
-                                            backgroundColor: isDark ? 'rgba(26, 188, 156, 0.15)' : '#ecfdf5',
-                                            borderWidth: 2,
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 4px 12px rgba(26, 188, 156, 0.15)',
-                                        },
-                                        py: 1.8,
-                                        textTransform: 'none',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 600,
-                                        borderRadius: '12px',
-                                        transition: 'all 0.25s ease',
-                                    }}
-                                >
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem', fontWeight: 500 }}>
+                                    Start your research submission
+                                </Typography>
+                            </Box>
+                            <ArrowForwardIcon className="action-arrow" sx={{
+                                color: c.textMuted,
+                                fontSize: 20,
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    color: '#1abc9c',
+                                    transform: 'translateX(4px)',
+                                }
+                            }} />
+                        </Card>
+                    </Grid>
+
+                    {/* View All Submissions Tile */}
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                        <Card
+                            component={Link}
+                            href={route('submissions.index')}
+                            elevation={0}
+                            sx={{
+                                borderRadius: '20px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: isDark ? 'rgba(26,29,39,0.6)' : '#ffffff',
+                                backdropFilter: 'blur(20px)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                p: 3,
+                                gap: 2.5,
+                                height: '100%',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    borderColor: '#1abc9c',
+                                    boxShadow: isDark 
+                                        ? '0 12px 30px rgba(26,188,156,0.12)' 
+                                        : '0 12px 30px rgba(26,188,156,0.08)',
+                                }
+                            }}
+                        >
+                            <Box sx={{
+                                width: 52, height: 52,
+                                borderRadius: '14px',
+                                bgcolor: isDark ? 'rgba(26, 188, 156, 0.12)' : '#ecfdf5',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: '#1abc9c',
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    bgcolor: '#1abc9c',
+                                    color: '#ffffff',
+                                }
+                            }}>
+                                <ListAltIcon sx={{ fontSize: 26 }} />
+                            </Box>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.95rem', mb: 0.5 }}>
                                     View All Submissions
-                                </Button>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                                <Button
-                                    component={Link}
-                                    href={route('payments.index')}
-                                    variant="outlined"
-                                    fullWidth
-                                    startIcon={<AccountBalanceWalletIcon />}
-                                    sx={{
-                                        color: isDark ? '#60a5fa' : '#2563eb',
-                                        borderColor: isDark ? 'rgba(191, 219, 254, 0.2)' : '#bfdbfe',
-                                        borderWidth: 2,
-                                        bgcolor: isDark ? 'rgba(37, 99, 235, 0.08)' : '#eff6ff',
-                                        '&:hover': {
-                                            borderColor: '#2563eb',
-                                            backgroundColor: isDark ? 'rgba(37, 99, 235, 0.15)' : '#dbeafe',
-                                            borderWidth: 2,
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
-                                        },
-                                        py: 1.8,
-                                        textTransform: 'none',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 600,
-                                        borderRadius: '12px',
-                                        transition: 'all 0.25s ease',
-                                    }}
-                                >
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem', fontWeight: 500 }}>
+                                    Monitor status of active papers
+                                </Typography>
+                            </Box>
+                            <ArrowForwardIcon className="action-arrow" sx={{
+                                color: c.textMuted,
+                                fontSize: 20,
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    color: '#1abc9c',
+                                    transform: 'translateX(4px)',
+                                }
+                            }} />
+                        </Card>
+                    </Grid>
+
+                    {/* Manage Payments Tile */}
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                        <Card
+                            component={Link}
+                            href={route('payments.index')}
+                            elevation={0}
+                            sx={{
+                                borderRadius: '20px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: isDark ? 'rgba(26,29,39,0.6)' : '#ffffff',
+                                backdropFilter: 'blur(20px)',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                p: 3,
+                                gap: 2.5,
+                                height: '100%',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    borderColor: '#2563eb',
+                                    boxShadow: isDark 
+                                        ? '0 12px 30px rgba(37,99,235,0.12)' 
+                                        : '0 12px 30px rgba(37,99,235,0.08)',
+                                }
+                            }}
+                        >
+                            <Box sx={{
+                                width: 52, height: 52,
+                                borderRadius: '14px',
+                                bgcolor: isDark ? 'rgba(37, 99, 235, 0.12)' : '#eff6ff',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: isDark ? '#60a5fa' : '#2563eb',
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    bgcolor: '#2563eb',
+                                    color: '#ffffff',
+                                }
+                            }}>
+                                <AccountBalanceWalletIcon sx={{ fontSize: 26 }} />
+                            </Box>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.95rem', mb: 0.5 }}>
                                     Manage Payments
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-                </Card>
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem', fontWeight: 500 }}>
+                                    Complete payment & view invoices
+                                </Typography>
+                            </Box>
+                            <ArrowForwardIcon className="action-arrow" sx={{
+                                color: c.textMuted,
+                                fontSize: 20,
+                                transition: 'all 0.3s ease',
+                                '.MuiCard-root:hover &': {
+                                    color: '#2563eb',
+                                    transform: 'translateX(4px)',
+                                }
+                            }} />
+                        </Card>
+                    </Grid>
+                </Grid>
 
                 {/* Welcome Message for New Users */}
                 {submissions.length === 0 && (
