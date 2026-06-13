@@ -41,8 +41,8 @@
       "_vendor-mui-icons-C--vwcj9.js"
     ]
   },
-  "_pages-admin-DxcG7kqA.js": {
-    "file": "assets/pages-admin-DxcG7kqA.js",
+  "_pages-admin-DSL4IwI-.js": {
+    "file": "assets/pages-admin-DSL4IwI-.js",
     "name": "pages-admin",
     "isDynamicEntry": true,
     "imports": [
@@ -206,7 +206,7 @@
     ]
   },
   "resources/js/Pages/Dashboard.jsx": {
-    "file": "assets/Dashboard-D-pqhpzT.js",
+    "file": "assets/Dashboard-tkvndKKu.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Dashboard.jsx",
     "isDynamicEntry": true,
@@ -216,6 +216,7 @@
       "_layouts-BZJs_W70.js",
       "_vendor-mui-icons-C--vwcj9.js",
       "_CoachMark-BARPp05O.js",
+      "_pages-admin-DSL4IwI-.js",
       "_vendor-mui-charts-xbP9Inpc.js",
       "_vendor-react-zq6P3Ky3.js"
     ]
@@ -378,7 +379,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-ByMeZhvD.js",
+    "file": "assets/app-Cnhpsp9P.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -391,12 +392,12 @@
     ],
     "dynamicImports": [
       "resources/js/Pages/Admin/Certificates.jsx",
-      "_pages-admin-DxcG7kqA.js",
+      "_pages-admin-DSL4IwI-.js",
       "resources/js/Pages/Admin/EmailSettings.jsx",
-      "_pages-admin-DxcG7kqA.js",
+      "_pages-admin-DSL4IwI-.js",
       "resources/js/Pages/Admin/Scores.jsx",
       "resources/js/Pages/Admin/Settings.jsx",
-      "_pages-admin-DxcG7kqA.js",
+      "_pages-admin-DSL4IwI-.js",
       "resources/js/Pages/Admin/Users.jsx",
       "_pages-auth-B3-qWlD8.js",
       "_pages-auth-B3-qWlD8.js",

@@ -42,10 +42,24 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import CloseIcon from '@mui/icons-material/Close';
 import { PieChart } from '@mui/x-charts/PieChart';
 import CoachMark from '@/Components/CoachMark';
+import Draggable from 'react-draggable';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
+
+function PaperComponent(props) {
+    const nodeRef = React.useRef(null);
+    return (
+        <Draggable
+            nodeRef={nodeRef}
+            handle="#draggable-dialog-title"
+            cancel={'[class*="MuiDialogContent-root"]'}
+        >
+            <Paper ref={nodeRef} {...props} />
+        </Draggable>
+    );
+}
 
 export default function Dashboard({ submissions = [], user, announcement }) {
     const theme = useTheme();
@@ -931,6 +945,7 @@ export default function Dashboard({ submissions = [], user, announcement }) {
             <Dialog
                 open={showAnnouncement}
                 TransitionComponent={Transition}
+                PaperComponent={PaperComponent}
                 keepMounted
                 onClose={handleDismissAnnouncement}
                 PaperProps={{
@@ -951,6 +966,7 @@ export default function Dashboard({ submissions = [], user, announcement }) {
             >
                 {/* Header with theme gradient */}
                 <Box
+                    id="draggable-dialog-title"
                     sx={{
                         background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
                         px: 2.5,
@@ -960,6 +976,7 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                         justifyContent: 'space-between',
                         color: '#ffffff',
                         boxShadow: '0 2px 10px rgba(26,188,156,0.15)',
+                        cursor: 'move',
                     }}
                 >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
