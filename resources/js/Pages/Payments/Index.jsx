@@ -364,6 +364,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     orderId: `IAGI-${selectedSubmission.id}`,
                     amount: fmtRp(finalAmt),
                     category: selCat?.label || selectedSubmission.participant_category || '',
+                    isPending: true,
                 });
             },
             onError: (errors) => {
@@ -1076,6 +1077,33 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                                 px: 0.5,
                                                             }}
                                                         />
+                                                    ) : payment && (payment.status === 'pending' || payment.payment_proof_url) ? (
+                                                        <Stack direction="row" spacing={1.5} alignItems="center">
+                                                            <Chip
+                                                                icon={<AccessTimeIcon sx={{ fontSize: 14, color: '#3b82f6 !important' }} />}
+                                                                label="Pending Verification"
+                                                                size="small"
+                                                                sx={{
+                                                                    fontWeight: 800, fontSize: '0.72rem', borderRadius: '10px',
+                                                                    bgcolor: isDark ? 'rgba(59,130,246,0.12)' : '#dbeafe',
+                                                                    color: '#3b82f6',
+                                                                    border: `1px solid ${isDark ? 'rgba(59,130,246,0.2)' : '#bfdbfe'}`,
+                                                                    px: 0.5,
+                                                                }}
+                                                            />
+                                                            <Button
+                                                                size="small"
+                                                                variant="text"
+                                                                onClick={() => handleOpenDialog(sub)}
+                                                                sx={{ 
+                                                                    fontSize: '0.68rem', textTransform: 'none', fontWeight: 700, color: '#1abc9c',
+                                                                    minWidth: 'auto', p: 0.5,
+                                                                    '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+                                                                }}
+                                                            >
+                                                                Re-upload
+                                                            </Button>
+                                                        </Stack>
                                                     ) : (
                                                         <Button
                                                             variant="contained" size="small"
@@ -1670,10 +1698,14 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     ))}
 
                     <Typography sx={{ fontWeight: 900, fontSize: '1.3rem', color: isDark ? '#f9fafb' : '#0f172a', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', mb: 0.5 }}>
-                        Payment Successful!
+                        {successDialog.isPending ? 'Proof Submitted!' : 'Payment Successful!'}
                     </Typography>
                     <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif', mb: 3, lineHeight: 1.6 }}>
-                        Your registration has been confirmed.<br />Thank you for participating!
+                        {successDialog.isPending ? (
+                            <>We will verify your payment shortly.<br />Thank you for your patience!</>
+                        ) : (
+                            <>Your registration has been confirmed.<br />Thank you for participating!</>
+                        )}
                     </Typography>
 
                     {/* Order details card */}
@@ -1685,7 +1717,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                         {[
                             { label: 'Order ID', value: successDialog.orderId },
                             { label: 'Category', value: successDialog.category },
-                            { label: 'Amount Paid', value: successDialog.amount, highlight: true },
+                            { label: successDialog.isPending ? 'Transfer Amount' : 'Amount Paid', value: successDialog.amount, highlight: true },
                         ].filter(r => r.value).map((row, i) => (
                             <Box key={row.label} sx={{
                                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
