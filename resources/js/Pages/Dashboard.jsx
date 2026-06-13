@@ -944,8 +944,8 @@ export default function Dashboard({ submissions = [], user, announcement }) {
             {/* Premium Announcement Dialog */}
             <Dialog
                 open={showAnnouncement}
-                TransitionComponent={Transition}
                 PaperComponent={PaperComponent}
+                aria-labelledby="draggable-dialog-title"
                 keepMounted
                 onClose={handleDismissAnnouncement}
                 PaperProps={{
@@ -965,7 +965,7 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                 }}
             >
                 {/* Header with theme gradient */}
-                <Box
+                <DialogTitle
                     id="draggable-dialog-title"
                     sx={{
                         background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
@@ -977,11 +977,12 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                         color: '#ffffff',
                         boxShadow: '0 2px 10px rgba(26,188,156,0.15)',
                         cursor: 'move',
+                        m: 0,
                     }}
                 >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                         <CampaignIcon sx={{ fontSize: 22 }} />
-                        <Typography sx={{ fontWeight: 700, fontSize: '0.975rem', letterSpacing: '0.2px', lineHeight: 1.2 }}>
+                        <Typography component="span" sx={{ fontWeight: 700, fontSize: '0.975rem', letterSpacing: '0.2px', lineHeight: 1.2 }}>
                             {announcement?.title}
                         </Typography>
                     </Box>
@@ -1000,7 +1001,7 @@ export default function Dashboard({ submissions = [], user, announcement }) {
                     >
                         <CloseIcon sx={{ fontSize: 18 }} />
                     </IconButton>
-                </Box>
+                </DialogTitle>
 
                 {/* Content area */}
                 <DialogContent 
