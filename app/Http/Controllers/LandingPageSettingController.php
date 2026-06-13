@@ -78,13 +78,10 @@ class LandingPageSettingController extends Controller
         return redirect()->back()->with('success', 'Setting updated successfully');
     }
 
-    /**
-     * Store a new setting
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'key' => 'required|string|unique:landing_page_settings,key',
+            'key' => 'required|string',
             'value' => 'nullable',
             'group' => 'nullable|string',
             'type' => 'nullable|string',
@@ -93,14 +90,19 @@ class LandingPageSettingController extends Controller
         // Handle empty value
         $value = $validated['value'] ?? '';
 
-        LandingPageSetting::create([
-            'key' => $validated['key'],
-            'value' => $value,
-            'section' => $validated['group'] ?? 'general',
-            'type' => $validated['type'] ?? 'text',
-        ]);
+        LandingPageSetting::updateOrCreate(
+            ['key' => $validated['key']],
+            [
+                'value' => $value,
+                'section' => $validated['group'] ?? 'payment',
+                'type' => $validated['type'] ?? 'text',
+            ]
+        );
 
-        return redirect()->back()->with('success', 'Setting created successfully');
+        // Clear landing page cache
+        Cache::forget('landing-page-settings');
+
+        return redirect()->back()->with('success', 'Setting saved successfully');
     }
 
     /**

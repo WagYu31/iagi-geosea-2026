@@ -9,6 +9,9 @@ import {
     Fade, Checkbox, FormControlLabel, Link,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PaymentIcon from '@mui/icons-material/Payment';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -122,12 +125,17 @@ function CatIcon({ category, size = 20, color }) {
     return <Icon sx={{ fontSize: size, color: color || '#6b7280' }} />;
 }
 
-export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing: rawPricing = {}, active_gateway = 'xendit' }) {
+export default function Index({ payments = [], submissions = [], midtrans_client_key, pricing: rawPricing = {}, active_gateway = 'xendit', unique_code_prefix = 5000 }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
     const { auth } = usePage().props;
     const user = auth?.user;
+
+    const prefix = parseInt(unique_code_prefix) || 5000;
+    const getUniqueDigit = (subId) => {
+        return prefix + (subId % 999) + 1;
+    };
 
     const pricing = {};
     if (rawPricing && typeof rawPricing === 'object') {
@@ -176,7 +184,195 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         setSelectedPaymentMethod(null);
         setOpenDialog(true);
     };
-    const handleCloseDialog = () => { setOpenDialog(false); setSelectedSubmission(null); setAgreeTerms(false); setSelectedPaymentMethod(null); };
+    const handleCloseDialog = () => { 
+        setOpenDialog(false); 
+        setSelectedSubmission(null); 
+        setAgreeTerms(false); 
+        setSelectedPaymentMethod(null); 
+        setPaymentProofFile(null);
+        setFileError('');
+    };
+
+    const [paymentProofFile, setPaymentProofFile] = useState(null);
+    const [fileError, setFileError] = useState('');
+    const [copySuccess, setCopySuccess] = useState(false);
+
+    const handleCopyAccount = () => {
+        navigator.clipboard.writeText('1230085005314');
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+        setSnackbar({ open: true, message: '📋 Account number copied!', severity: 'success' });
+    };
+
+    const copyToClipboard = (text, message) => {
+        navigator.clipboard.writeText(text);
+        setSnackbar({ open: true, message: message || 'Copied!', severity: 'success' });
+    };
+
+    // Listen to session flash messages
+    const { flash } = usePage().props;
+    useEffect(() => {
+        if (flash?.success) {
+            setSnackbar({ open: true, message: flash.success, severity: 'success' });
+        }
+        if (flash?.error) {
+            setSnackbar({ open: true, message: flash.error, severity: 'error' });
+        }
+    }, [flash]);
+
+    // Client-side image compression function
+    const compressImage = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                const MAX_WIDTH = 1200;
+                const MAX_HEIGHT = 1200;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width = Math.round((width * MAX_HEIGHT) / height);
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        return reject(new Error('Canvas compression failed'));
+                    }
+                    const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+                    resolve(compressedFile);
+                }, 'image/jpeg', 0.7);
+            };
+            img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+    });
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setFileError('');
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            setFileError('Invalid file type. Only JPG, JPEG, PNG, and PDF are allowed.');
+            return;
+        }
+
+        if (file.type === 'application/pdf') {
+            if (file.size > 5 * 1024 * 1024) {
+                setFileError('PDF size exceeds 5MB limit.');
+                return;
+            }
+            setPaymentProofFile(file);
+        } else {
+            try {
+                setPaymentLoading(true);
+                const compressed = await compressImage(file);
+                setPaymentProofFile(compressed);
+            } catch (err) {
+                console.error('Image compression failed:', err);
+                if (file.size > 5 * 1024 * 1024) {
+                    setFileError('Image size exceeds 5MB limit.');
+                } else {
+                    setPaymentProofFile(file);
+                }
+            } finally {
+                setPaymentLoading(false);
+            }
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+
+        setFileError('');
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            setFileError('Invalid file type. Only JPG, JPEG, PNG, and PDF are allowed.');
+            return;
+        }
+
+        if (file.type === 'application/pdf') {
+            if (file.size > 5 * 1024 * 1024) {
+                setFileError('PDF size exceeds 5MB limit.');
+                return;
+            }
+            setPaymentProofFile(file);
+        } else {
+            try {
+                setPaymentLoading(true);
+                const compressed = await compressImage(file);
+                setPaymentProofFile(compressed);
+            } catch (err) {
+                console.error('Image compression failed:', err);
+                if (file.size > 5 * 1024 * 1024) {
+                    setFileError('Image size exceeds 5MB limit.');
+                } else {
+                    setPaymentProofFile(file);
+                }
+            } finally {
+                setPaymentLoading(false);
+            }
+        }
+    };
+
+    const handleManualPaymentSubmit = () => {
+        if (!selectedSubmission || !paymentProofFile || !agreeTerms) return;
+
+        setPaymentLoading(true);
+        const finalAmt = parseFloat(selFee) + getUniqueDigit(selectedSubmission.id);
+        const formData = new FormData();
+        formData.append('submission_id', selectedSubmission.id);
+        formData.append('payment_proof', paymentProofFile);
+        formData.append('amount', finalAmt);
+
+        router.post(route('payments.store'), formData, {
+            forceFormData: true,
+            onSuccess: () => {
+                setPaymentLoading(false);
+                handleCloseDialog();
+                setPaymentProofFile(null);
+                setSuccessDialog({
+                    open: true,
+                    orderId: `IAGI-${selectedSubmission.id}`,
+                    amount: fmtRp(finalAmt),
+                    category: selCat?.label || selectedSubmission.participant_category || '',
+                });
+            },
+            onError: (errors) => {
+                setPaymentLoading(false);
+                const firstErr = Object.values(errors)[0];
+                setSnackbar({ open: true, message: firstErr || 'Failed to upload proof. Please try again.', severity: 'error' });
+            }
+        });
+    };
 
     // Success dialog state
     const [successDialog, setSuccessDialog] = useState({ open: false, orderId: '', amount: '', category: '' });
@@ -405,7 +601,8 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         const isPaid = p.status === 'paid' || p.verified;
         if (isPaid) return <Chip icon={<CheckCircleOutlineIcon sx={{ fontSize: 13, color: '#059669 !important' }} />} label="Paid" size="small" sx={{ fontWeight: 800, fontSize: '0.68rem', borderRadius: '20px', bgcolor: 'rgba(5,150,105,0.08)', color: '#059669', border: '1px solid rgba(5,150,105,0.12)' }} />;
         if (p.status === 'failed' || p.status === 'expired') return <Chip label={p.status === 'failed' ? 'Failed' : 'Expired'} size="small" sx={{ fontWeight: 800, fontSize: '0.68rem', borderRadius: '20px', bgcolor: 'rgba(220,38,38,0.08)', color: '#dc2626', border: '1px solid rgba(220,38,38,0.12)' }} />;
-        return <Chip icon={<AccessTimeIcon sx={{ fontSize: 13, color: '#d97706 !important' }} />} label="Pending" size="small" sx={{ fontWeight: 800, fontSize: '0.68rem', borderRadius: '20px', bgcolor: 'rgba(217,119,6,0.08)', color: '#d97706', border: '1px solid rgba(217,119,6,0.15)' }} />;
+        if (p.payment_proof_url) return <Chip icon={<AccessTimeIcon sx={{ fontSize: 13, color: '#3b82f6 !important' }} />} label="Pending Verification" size="small" sx={{ fontWeight: 800, fontSize: '0.68rem', borderRadius: '20px', bgcolor: 'rgba(59,130,246,0.08)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.15)' }} />;
+        return <Chip icon={<AccessTimeIcon sx={{ fontSize: 13, color: '#d97706 !important' }} />} label="Pending Payment" size="small" sx={{ fontWeight: 800, fontSize: '0.68rem', borderRadius: '20px', bgcolor: 'rgba(217,119,6,0.08)', color: '#d97706', border: '1px solid rgba(217,119,6,0.15)' }} />;
     };
 
     const getMethod = (p) => {
@@ -1072,131 +1269,175 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     {selectedSubmission && (
                         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                             
-                            {/* ════════ LEFT COLUMN: Payment Methods ════════ */}
+                            {/* ════════ LEFT COLUMN: Bank Details & File Upload ════════ */}
                             <Box sx={{ 
-                                flex: { md: '0 0 52%' }, 
-                                px: 2.5, py: 2.5,
-                                borderRight: { md: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'}` },
-                                borderBottom: { xs: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'}`, md: 'none' },
+                                flex: { md: '0 0 54%' }, 
+                                px: 3, py: 3,
+                                borderRight: { md: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}` },
+                                borderBottom: { xs: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}`, md: 'none' },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2.5,
                             }}>
-                                {/* Step indicator */}
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                    <Box sx={{ 
-                                        width: 22, height: 22, borderRadius: '50%',
-                                        background: 'linear-gradient(135deg, #059669, #10b981)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontSize: '0.6rem', fontWeight: 900, color: 'white', fontFamily: 'Inter, sans-serif',
-                                        boxShadow: '0 2px 8px rgba(5,150,105,0.3)',
-                                    }}>1</Box>
-                                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: isDark ? '#e5e7eb' : '#1f2937', fontFamily: 'Inter, sans-serif' }}>
-                                        Select Payment Method
+                                {/* Bank Details Card */}
+                                <Box sx={{
+                                    p: 2.5, borderRadius: '16px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px dashed ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                }}>
+                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 800, color: '#10b981', mb: 1.5, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                                        Transfer Destination
                                     </Typography>
-                                </Box>
-                                <Stack spacing={0.8}>
-                                    {PAYMENT_METHODS.map((method) => {
-                                        const isSelected = selectedPaymentMethod === method.key;
-                                        const MethodIcon = method.icon;
-                                        return (
-                                            <Box
-                                                key={method.key}
-                                                onClick={() => setSelectedPaymentMethod(method.key)}
-                                                sx={{
-                                                    display: 'flex', alignItems: 'center', gap: 1.2,
-                                                    p: 1.2, borderRadius: '12px', cursor: 'pointer',
-                                                    border: `1.5px solid ${isSelected
-                                                        ? (isDark ? `${method.color}55` : `${method.color}40`)
-                                                        : (isDark ? 'rgba(255,255,255,0.05)' : '#eef2f6')}`,
-                                                    bgcolor: isSelected
-                                                        ? (isDark ? `${method.color}08` : `${method.color}04`)
-                                                        : 'transparent',
-                                                    boxShadow: isSelected
-                                                        ? `0 3px 12px ${method.glowColor}`
-                                                        : 'none',
-                                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    '&:hover': {
-                                                        borderColor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.12)' : '#d1d5db'),
-                                                        bgcolor: isSelected ? undefined : (isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb'),
-                                                        transform: 'translateY(-1px)',
-                                                        boxShadow: isSelected ? undefined : '0 2px 8px rgba(0,0,0,0.04)',
-                                                    },
+                                    
+                                    <Stack spacing={1.5}>
+                                        <Box>
+                                            <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#9ca3af' : '#64748b', fontWeight: 600 }}>Bank Name</Typography>
+                                            <Typography sx={{ fontSize: '0.88rem', fontWeight: 800, color: c.textPrimary }}>PT. Bank Mandiri (Persero) Tbk</Typography>
+                                        </Box>
+                                        
+                                        <Box>
+                                            <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#9ca3af' : '#64748b', fontWeight: 600 }}>Account Name</Typography>
+                                            <Typography sx={{ fontSize: '0.88rem', fontWeight: 800, color: c.textPrimary }}>IAGI</Typography>
+                                        </Box>
+                                        
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Box>
+                                                <Typography sx={{ fontSize: '0.65rem', color: isDark ? '#9ca3af' : '#64748b', fontWeight: 600 }}>Account Number</Typography>
+                                                <Typography sx={{ fontSize: '1.05rem', fontWeight: 900, color: '#10b981', fontFamily: 'monospace', letterSpacing: '0.05em' }}>123 00 8500 5314</Typography>
+                                            </Box>
+                                            <IconButton 
+                                                onClick={() => copyToClipboard('1230085005314', '📋 Account number copied!')}
+                                                size="small" 
+                                                sx={{ 
+                                                    color: '#10b981', bgcolor: 'rgba(16,185,129,0.08)',
+                                                    '&:hover': { bgcolor: 'rgba(16,185,129,0.15)' } 
                                                 }}
                                             >
-                                                {isSelected
-                                                    ? <RadioButtonCheckedIcon sx={{ fontSize: 18, color: method.color, flexShrink: 0, filter: `drop-shadow(0 0 3px ${method.glowColor})` }} />
-                                                    : <RadioButtonUncheckedIcon sx={{ fontSize: 18, color: isDark ? '#4b5563' : '#d1d5db', flexShrink: 0 }} />
-                                                }
-                                                <Box sx={{
-                                                    width: 40, height: 40, borderRadius: '11px',
-                                                    background: isSelected ? method.gradient : (isDark ? `${method.color}10` : `${method.color}08`),
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    flexShrink: 0,
-                                                    boxShadow: isSelected ? `0 4px 14px ${method.glowColor}` : 'none',
-                                                    border: isSelected ? 'none' : `1px solid ${method.color}12`,
-                                                    transition: 'all 0.2s ease',
-                                                    position: 'relative', overflow: 'hidden',
-                                                    '&::after': isSelected ? {
-                                                        content: '""', position: 'absolute', inset: 0,
-                                                        background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 50%)',
-                                                        borderRadius: '11px',
-                                                    } : {},
-                                                }}>
-                                                    <MethodIcon sx={{ 
-                                                        fontSize: 20, 
-                                                        color: isSelected ? 'white' : method.color,
-                                                        filter: isSelected ? 'drop-shadow(0 1px 3px rgba(0,0,0,0.2))' : 'none',
-                                                        transition: 'all 0.2s ease', position: 'relative', zIndex: 1,
-                                                    }} />
-                                                </Box>
-                                                <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                    <Typography sx={{ 
-                                                        fontSize: '0.78rem', fontWeight: 700, 
-                                                        color: isSelected ? (isDark ? '#f9fafb' : '#0f172a') : (isDark ? '#d1d5db' : '#374151'),
-                                                        fontFamily: 'Inter, sans-serif', lineHeight: 1.2,
-                                                    }}>
-                                                        {method.label}
-                                                    </Typography>
-                                                    <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6b7280' : '#9ca3af', fontFamily: 'Inter, sans-serif', mt: 0.15 }} noWrap>
-                                                        {method.description}
-                                                    </Typography>
-                                                </Box>
-                                                <Box sx={{ display: 'flex', gap: 0.3, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 100 }}>
-                                                    {method.logos.map(logo => (
-                                                        <Box key={logo} sx={{
-                                                            px: 0.7, py: 0.2, borderRadius: '4px', fontSize: '0.48rem',
-                                                            fontWeight: 800, fontFamily: 'Inter, sans-serif',
-                                                            bgcolor: isSelected ? `${method.color}12` : (isDark ? 'rgba(255,255,255,0.04)' : '#f3f4f6'),
-                                                            color: isSelected ? method.color : (isDark ? '#9ca3af' : '#6b7280'),
-                                                            border: `1px solid ${isSelected ? `${method.color}20` : (isDark ? 'rgba(255,255,255,0.03)' : '#e5e7eb')}`,
-                                                            transition: 'all 0.15s ease',
-                                                        }}>{logo}</Box>
-                                                    ))}
-                                                </Box>
-                                            </Box>
-                                        );
-                                    })}
-                                </Stack>
-
-                                {/* Security badges */}
-                                <Box sx={{ 
-                                    display: 'flex', justifyContent: 'center', gap: 2.5, mt: 2.5, pt: 1.5,
-                                    borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9'}`,
-                                }}>
-                                    {[
-                                        { icon: '🔒', text: '256-bit SSL' },
-                                        { icon: '🛡️', text: 'PCI DSS' },
-                                        { icon: '✓', text: 'Midtrans' },
-                                    ].map(b => (
-                                        <Box key={b.text} sx={{ display: 'flex', alignItems: 'center', gap: 0.4 }}>
-                                            <Typography sx={{ fontSize: '0.5rem', lineHeight: 1 }}>{b.icon}</Typography>
-                                            <Typography sx={{ fontSize: '0.52rem', color: isDark ? '#6b7280' : '#9ca3af', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{b.text}</Typography>
+                                                <ContentCopyIcon sx={{ fontSize: 16 }} />
+                                            </IconButton>
                                         </Box>
-                                    ))}
+
+                                        <Box sx={{ 
+                                            p: 1.5, borderRadius: '10px', 
+                                            bgcolor: isDark ? 'rgba(16,185,129,0.04)' : '#f0fdf4',
+                                            border: '1px solid rgba(16,185,129,0.12)',
+                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                                        }}>
+                                            <Box>
+                                                <Typography sx={{ fontSize: '0.62rem', color: isDark ? '#a7f3d0' : '#047857', fontWeight: 700 }}>EXACT TRANSFER AMOUNT</Typography>
+                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 900, color: isDark ? '#34d399' : '#065f46', letterSpacing: '-0.02em' }}>
+                                                    {fmtRp(parseFloat(selFee) + getUniqueDigit(selectedSubmission.id))}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.55rem', color: isDark ? '#6ee7b7' : '#059669', mt: 0.2 }}>
+                                                    Includes unique digit: +{getUniqueDigit(selectedSubmission.id)}
+                                                </Typography>
+                                            </Box>
+                                            <IconButton 
+                                                onClick={() => copyToClipboard((parseFloat(selFee) + getUniqueDigit(selectedSubmission.id)).toString(), '📋 Exact amount copied!')}
+                                                size="small" 
+                                                sx={{ 
+                                                    color: '#10b981', bgcolor: 'rgba(16,185,129,0.08)',
+                                                    '&:hover': { bgcolor: 'rgba(16,185,129,0.15)' } 
+                                                }}
+                                            >
+                                                <ContentCopyIcon sx={{ fontSize: 16 }} />
+                                            </IconButton>
+                                        </Box>
+                                    </Stack>
+                                </Box>
+
+                                {/* File Upload Area */}
+                                <Box>
+                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: isDark ? '#e5e7eb' : '#1f2937', fontFamily: 'Inter, sans-serif', mb: 1 }}>
+                                        Upload Proof of Transfer
+                                    </Typography>
+                                    
+                                    <input 
+                                        type="file" 
+                                        id="manual-payment-file" 
+                                        accept="image/*,application/pdf"
+                                        style={{ display: 'none' }}
+                                        onChange={handleFileChange}
+                                    />
+                                    
+                                    {!paymentProofFile ? (
+                                        <Box 
+                                            onDragOver={handleDragOver}
+                                            onDrop={handleDrop}
+                                            onClick={() => document.getElementById('manual-payment-file').click()}
+                                            sx={{
+                                                border: `2px dashed ${isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'}`,
+                                                borderRadius: '14px', p: 3, textAlign: 'center', cursor: 'pointer',
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.01)' : '#fafafa',
+                                                transition: 'all 0.2s ease',
+                                                '&:hover': {
+                                                    borderColor: '#10b981',
+                                                    bgcolor: isDark ? 'rgba(16,185,129,0.02)' : '#f0fdf4',
+                                                }
+                                            }}
+                                        >
+                                            <CloudUploadIcon sx={{ fontSize: 36, color: isDark ? 'rgba(255,255,255,0.3)' : '#94a3b8', mb: 1 }} />
+                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: c.textPrimary }}>
+                                                Drag & drop transfer receipt, or <span style={{ color: '#10b981', textDecoration: 'underline' }}>browse</span>
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.6rem', color: c.textMuted, mt: 0.5 }}>
+                                                Supports JPG, JPEG, PNG, or PDF up to 5MB (Images will be optimized)
+                                            </Typography>
+                                        </Box>
+                                    ) : (
+                                        <Box sx={{ 
+                                            p: 2, borderRadius: '14px', 
+                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.015)' : '#ffffff',
+                                            display: 'flex', alignItems: 'center', gap: 2
+                                        }}>
+                                            {paymentProofFile.type === 'application/pdf' ? (
+                                                <Box sx={{ width: 44, height: 44, borderRadius: '8px', bgcolor: 'rgba(239,68,68,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                    <Typography sx={{ fontSize: '1.5rem' }}>📄</Typography>
+                                                </Box>
+                                            ) : (
+                                                <Box sx={{ width: 44, height: 44, borderRadius: '8px', overflow: 'hidden', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'}`, flexShrink: 0 }}>
+                                                    <img 
+                                                        src={URL.createObjectURL(paymentProofFile)} 
+                                                        alt="Receipt Preview" 
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                                    />
+                                                </Box>
+                                            )}
+                                            
+                                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: c.textPrimary }} noWrap>
+                                                    {paymentProofFile.name}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.62rem', color: c.textMuted, mt: 0.2 }}>
+                                                    {(paymentProofFile.size / 1024).toFixed(0)} KB · {paymentProofFile.type.split('/')[1].toUpperCase()}
+                                                </Typography>
+                                            </Box>
+                                            
+                                            <IconButton 
+                                                onClick={() => setPaymentProofFile(null)}
+                                                size="small" 
+                                                sx={{ 
+                                                    color: '#ef4444', bgcolor: 'rgba(239,68,68,0.08)',
+                                                    '&:hover': { bgcolor: 'rgba(239,68,68,0.15)' } 
+                                                }}
+                                            >
+                                                <DeleteIcon sx={{ fontSize: 16 }} />
+                                            </IconButton>
+                                        </Box>
+                                    )}
+                                    
+                                    {fileError && (
+                                        <Alert severity="error" sx={{ mt: 1.5, py: 0, fontSize: '0.7rem', borderRadius: '8px' }}>
+                                            {fileError}
+                                        </Alert>
+                                    )}
                                 </Box>
                             </Box>
 
                             {/* ════════ RIGHT COLUMN: Order Summary ════════ */}
                             <Box sx={{ 
-                                flex: { md: '0 0 48%' }, 
+                                flex: { md: '0 0 46%' }, 
                                 px: 2.5, py: 2.5,
                                 bgcolor: isDark ? 'rgba(255,255,255,0.008)' : '#f9fafb',
                                 display: 'flex', flexDirection: 'column',
@@ -1249,8 +1490,9 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                     mb: 1.5,
                                 }}>
                                     {[
-                                        { label: 'Category', value: selCat?.short || selectedSubmission.participant_category || '—' },
-                                        { label: 'Participant', value: user?.name || '—' },
+                                        { label: 'Base Registration Fee', value: fmtRp(selFee) },
+                                        { label: 'Unique Digit Code', value: `+${getUniqueDigit(selectedSubmission.id)}` },
+                                        { label: 'Participant Name', value: user?.name || '—' },
                                         { label: 'Email', value: user?.email || '—' },
                                     ].map((row, i) => (
                                         <Box key={row.label} sx={{ 
@@ -1259,7 +1501,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                             bgcolor: i % 2 === 0 
                                                 ? (isDark ? 'rgba(255,255,255,0.015)' : 'white') 
                                                 : (isDark ? 'transparent' : '#f9fafb'),
-                                            borderBottom: i < 2 ? `1px solid ${isDark ? 'rgba(255,255,255,0.025)' : '#f3f4f6'}` : 'none',
+                                            borderBottom: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.025)' : '#f3f4f6'}` : 'none',
                                         }}>
                                             <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
                                             <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: isDark ? '#e5e7eb' : '#1e293b', fontFamily: 'Inter, sans-serif', textAlign: 'right', maxWidth: '55%' }} noWrap>{row.value}</Typography>
@@ -1280,15 +1522,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                     <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: 'linear-gradient(180deg, #059669, #34d399)', borderRadius: '0 4px 4px 0' }} />
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pl: 1 }}>
                                         <Box>
-                                            <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6ee7b7' : '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif' }}>Total</Typography>
-                                            <Typography sx={{ fontSize: '0.55rem', color: isDark ? '#6b7280' : '#9ca3af', fontFamily: 'Inter, sans-serif' }}>Including all fees</Typography>
+                                            <Typography sx={{ fontSize: '0.58rem', color: isDark ? '#6ee7b7' : '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'Inter, sans-serif' }}>Total Transfer</Typography>
+                                            <Typography sx={{ fontSize: '0.55rem', color: isDark ? '#6b7280' : '#9ca3af', fontFamily: 'Inter, sans-serif' }}>Including unique digit</Typography>
                                         </Box>
                                         <Typography sx={{ 
                                             fontSize: '1.35rem', fontWeight: 900, 
                                             color: isDark ? '#34d399' : '#047857',
                                             fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums',
                                         }}>
-                                            {selFee ? fmtRp(selFee) : '—'}
+                                            {selFee ? fmtRp(parseFloat(selFee) + getUniqueDigit(selectedSubmission.id)) : '—'}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -1333,15 +1575,15 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 <Box sx={{ mt: 'auto' }}>
                                     <Button 
                                         variant="contained" 
-                                        onClick={handleMidtransPayment} 
-                                        disabled={paymentLoading || !selFee || !agreeTerms || !selectedPaymentMethod}
+                                        onClick={handleManualPaymentSubmit} 
+                                        disabled={paymentLoading || !selFee || !agreeTerms || !paymentProofFile}
                                         fullWidth
                                         endIcon={paymentLoading ? <CircularProgress size={14} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 15, fontWeight: 900 }}>→</Box>}
                                         sx={{
-                                            background: (agreeTerms && selectedPaymentMethod)
+                                            background: (agreeTerms && paymentProofFile)
                                                 ? 'linear-gradient(135deg, #047857 0%, #059669 40%, #10b981 100%)'
                                                 : (isDark ? '#1f2937' : '#e5e7eb'),
-                                            boxShadow: (agreeTerms && selectedPaymentMethod) ? '0 4px 16px rgba(5,150,105,0.3)' : 'none',
+                                            boxShadow: (agreeTerms && paymentProofFile) ? '0 4px 16px rgba(5,150,105,0.3)' : 'none',
                                             '&:hover': { 
                                                 boxShadow: '0 6px 24px rgba(5,150,105,0.4)',
                                                 background: 'linear-gradient(135deg, #065f46 0%, #047857 40%, #059669 100%)',
@@ -1354,7 +1596,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                             transition: 'all 0.3s ease',
                                         }}
                                     >
-                                        {paymentLoading ? 'Processing...' : 'Pay Now'}
+                                        {paymentLoading ? 'Submitting...' : 'Submit Payment Proof'}
                                     </Button>
                                     <Button 
                                         onClick={handleCloseDialog} 

@@ -130,7 +130,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Detect active payment gateway
         $gatewaySetting = App\Models\LandingPageSetting::where('key', 'payment_gateway')->first();
-        $activeGateway = $gatewaySetting ? $gatewaySetting->value : env('PAYMENT_GATEWAY', 'xendit');
+        $activeGateway = $gatewaySetting ? $gatewaySetting->value : env('PAYMENT_GATEWAY', 'manual');
+
+        // Fetch payment unique code prefix
+        $prefixSetting = App\Models\LandingPageSetting::where('key', 'payment_unique_code_prefix')->first();
+        $uniqueCodePrefix = $prefixSetting ? (int)$prefixSetting->value : 5000;
 
         return Inertia::render('Payments/Index', [
             'payments' => $payments,
@@ -138,6 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'midtrans_client_key' => config('midtrans.client_key'),
             'pricing' => $pricing,
             'active_gateway' => $activeGateway,
+            'unique_code_prefix' => $uniqueCodePrefix,
         ]);
     })->name('payments.index');
     Route::post('/payments', [App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');

@@ -247,11 +247,21 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
 // Payment Gateway Tab Component
 function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
     const [gateway, setGateway] = useState(() => {
-        return getSettingValue('payment_gateway', 'xendit');
+        return getSettingValue('payment_gateway', 'manual');
+    });
+    const [uniqueCodePrefix, setUniqueCodePrefix] = useState(() => {
+        return getSettingValue('payment_unique_code_prefix', '5000');
     });
     const [saving, setSaving] = useState(false);
 
     const gateways = [
+        { 
+            key: 'manual', 
+            name: 'Manual Bank Transfer', 
+            description: 'Manual verification — user transfers to bank account and uploads proof',
+            color: '#10b981',
+            features: ['Bank Transfer', 'Manual Upload', 'Admin Verification'],
+        },
         { 
             key: 'xendit', 
             name: 'Xendit', 
@@ -272,9 +282,10 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
         setSaving(true);
         try {
             await axios.post('/admin/settings', { key: 'payment_gateway', value: gateway });
-            alert('Payment gateway updated successfully!');
+            await axios.post('/admin/settings', { key: 'payment_unique_code_prefix', value: uniqueCodePrefix });
+            alert('Payment settings updated successfully!');
         } catch (err) {
-            alert('Failed to save gateway: ' + (err.response?.data?.message || err.message));
+            alert('Failed to save settings: ' + (err.response?.data?.message || err.message));
         } finally {
             setSaving(false);
         }
@@ -362,6 +373,25 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                             ))}
                         </Stack>
 
+                        <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'}` }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.text, mb: 1 }}>
+                                Manual Payment Unique Code Prefix
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, lineHeight: 1.6 }}>
+                                Set the base prefix value for generating unique code nominal transfers. For example, setting <strong>5000</strong> will generate a unique 4-digit code in the range of 5001-5999 based on the submission ID.
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                size="small"
+                                label="Unique Code Prefix"
+                                value={uniqueCodePrefix}
+                                onChange={(e) => setUniqueCodePrefix(e.target.value)}
+                                helperText="Default value is 5000"
+                                sx={inputSx}
+                            />
+                        </Box>
+
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 3 }}>
                             <Button
                                 variant="contained"
@@ -369,7 +399,7 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                 disabled={saving}
                                 sx={tealBtnSx}
                             >
-                                {saving ? 'Saving...' : 'Save Gateway'}
+                                {saving ? 'Saving...' : 'Save Settings'}
                             </Button>
                         </Box>
                     </CardContent>

@@ -347,9 +347,38 @@ export default function AdminPayments({ payments = {} }) {
                             </Box>
                             {proofDialog.payment.payment_proof_url && (
                                 <Box sx={{ textAlign: 'center' }}>
-                                    <img src={`/storage/${proofDialog.payment.payment_proof_url}`} alt="Payment Proof" style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain', borderRadius: '12px', border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}` }}
-                                        onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="padding:40px;text-align:center;color:#666">Unable to load. <a href="/storage/' + proofDialog.payment.payment_proof_url + '" target="_blank">Download</a></p>'; }}
-                                    />
+                                    {proofDialog.payment.payment_proof_url.toLowerCase().endsWith('.pdf') ? (
+                                        <Box sx={{ 
+                                            py: 4, px: 2, border: `2px dashed ${c.cardBorder}`, borderRadius: '12px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', 
+                                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 
+                                        }}>
+                                            <Typography sx={{ fontSize: '3rem', lineHeight: 1 }}>📄</Typography>
+                                            <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: c.textPrimary }}>PDF Payment Proof Document</Typography>
+                                            <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, maxWidth: '80%', mx: 'auto' }}>
+                                                Click the button below to view or download the uploaded PDF transfer proof.
+                                            </Typography>
+                                            <Button 
+                                                variant="contained" 
+                                                component="a" 
+                                                href={`/storage/${proofDialog.payment.payment_proof_url}`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                sx={{ 
+                                                    textTransform: 'none', borderRadius: '10px', fontWeight: 600, 
+                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                    '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' },
+                                                    boxShadow: '0 4px 12px rgba(26,188,156,0.2)', color: 'white'
+                                                }}
+                                            >
+                                                Open PDF Proof
+                                            </Button>
+                                        </Box>
+                                    ) : (
+                                        <img src={`/storage/${proofDialog.payment.payment_proof_url}`} alt="Payment Proof" style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain', borderRadius: '12px', border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}` }}
+                                            onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="padding:40px;text-align:center;color:#666">Unable to load. <a href="/storage/' + proofDialog.payment.payment_proof_url + '" target="_blank">Download</a></p>'; }}
+                                        />
+                                    )}
                                 </Box>
                             )}
                         </Box>

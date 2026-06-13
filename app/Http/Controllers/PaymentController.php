@@ -22,7 +22,7 @@ class PaymentController extends Controller
     private function getActiveGateway(): string
     {
         $setting = \App\Models\LandingPageSetting::where('key', 'payment_gateway')->first();
-        return $setting ? $setting->value : env('PAYMENT_GATEWAY', 'xendit');
+        return $setting ? $setting->value : env('PAYMENT_GATEWAY', 'manual');
     }
     /**
      * Create a Snap token for Midtrans payment.
@@ -244,6 +244,25 @@ class PaymentController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
+        // Calculate amount deterministically with unique code starting with 5 (range 5001-5999)
+        $pricingSetting = \App\Models\LandingPageSetting::where('key', 'registration_pricing')->first();
+        $pricing = $pricingSetting 
+            ? json_decode($pricingSetting->value, true) 
+            : config('midtrans.pricing', []);
+        $baseAmount = $pricing[$submission->participant_category] ?? null;
+
+        if ($baseAmount) {
+            $prefixSetting = \App\Models\LandingPageSetting::where('key', 'payment_unique_code_prefix')->first();
+            $prefix = $prefixSetting ? (int)$prefixSetting->value : 5000;
+            if ($prefix <= 0) {
+                $prefix = 5000;
+            }
+            $uniqueCode = $prefix + ($submission->id % 999) + 1;
+            $finalAmount = $baseAmount + $uniqueCode;
+        } else {
+            $finalAmount = $request->amount;
+        }
+
         // Check if payment already exists for this submission
         $existingPayment = Payment::where('submission_id', $request->submission_id)->first();
 
@@ -258,7 +277,9 @@ class PaymentController extends Controller
                 $proofPath = $request->file('payment_proof')->store('payments/proofs', 'public');
                 $existingPayment->update([
                     'payment_proof_url' => $proofPath,
-                    'amount' => $request->amount,
+                    'amount' => $finalAmount,
+                    'gateway' => 'manual',
+                    'status' => 'pending',
                     'verified' => false, // Reset verification status
                     'verified_at' => null,
                 ]);
@@ -274,7 +295,8 @@ class PaymentController extends Controller
             'user_id' => Auth::id(),
             'submission_id' => $request->submission_id,
             'payment_proof_url' => $proofPath,
-            'amount' => $request->amount,
+            'amount' => $finalAmount,
+            'gateway' => 'manual',
             'verified' => false,
             'status' => 'pending',
         ]);

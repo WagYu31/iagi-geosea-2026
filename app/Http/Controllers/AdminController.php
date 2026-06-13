@@ -10,6 +10,7 @@ use App\Models\PageVisit;
 use App\Models\EmailSetting;
 use App\Models\Certificate;
 use App\Mail\SubmissionStatusChanged;
+use App\Mail\PaymentConfirmation;
 use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -625,7 +626,20 @@ class AdminController extends Controller
         $payment->update([
             'verified' => true,
             'verified_at' => now(),
+            'status' => 'paid',
+            'paid_at' => now(),
         ]);
+
+        // Queue confirmation email
+        try {
+            $payment->load(['user', 'submission']);
+            if ($payment->user && $payment->user->email) {
+                Mail::to($payment->user->email)->queue(new PaymentConfirmation($payment));
+                Log::info("Payment confirmation email queued for payment #{$payment->id} via admin manual verification");
+            }
+        } catch (\Exception $e) {
+            Log::error("Failed to queue email for manual payment verify #{$payment->id}: " . $e->getMessage());
+        }
 
         return back()->with('success', 'Payment verified successfully!');
     }
@@ -636,9 +650,10 @@ class AdminController extends Controller
         $payment->update([
             'verified' => false,
             'verified_at' => null,
+            'status' => 'failed',
         ]);
 
-        return back()->with('success', 'Payment status reset successfully!');
+        return back()->with('success', 'Payment rejected and status reset to failed!');
     }
 
     public function deletePayment($id)
