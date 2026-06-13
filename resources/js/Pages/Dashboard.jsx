@@ -19,6 +19,11 @@ import {
     useTheme,
     Snackbar,
     Alert,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Slide,
 } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -33,21 +38,44 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DescriptionIcon from '@mui/icons-material/Description';
 import RateReviewIcon from '@mui/icons-material/RateReview';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import CloseIcon from '@mui/icons-material/Close';
 import { PieChart } from '@mui/x-charts/PieChart';
 import CoachMark from '@/Components/CoachMark';
 
-export default function Dashboard({ submissions = [], user }) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function Dashboard({ submissions = [], user, announcement }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
     const { flash } = usePage().props;
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
+    const [showAnnouncement, setShowAnnouncement] = useState(false);
 
     useEffect(() => {
         if (flash?.error) {
             setSnackbar({ open: true, message: flash.error, severity: 'error' });
         }
     }, [flash?.error]);
+
+    useEffect(() => {
+        if (announcement && announcement.active && announcement.title && announcement.content) {
+            const dismissedTs = localStorage.getItem('dismissed_announcement_ts');
+            if (dismissedTs !== announcement.updated_at) {
+                setShowAnnouncement(true);
+            }
+        }
+    }, [announcement]);
+
+    const handleDismissAnnouncement = () => {
+        if (announcement && announcement.updated_at) {
+            localStorage.setItem('dismissed_announcement_ts', announcement.updated_at);
+        }
+        setShowAnnouncement(false);
+    };
 
     const totalSubmissions = submissions.length;
     const paidSubmissions = submissions.filter(s => s.payment_status === 'paid').length;
@@ -898,6 +926,135 @@ export default function Dashboard({ submissions = [], user }) {
             <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} role="alert">
                 <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled" sx={{ width: '100%', borderRadius: '10px', fontWeight: 600 }} role="alert">{snackbar.message}</Alert>
             </Snackbar>
+
+            {/* Premium Announcement Dialog */}
+            <Dialog
+                open={showAnnouncement}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleDismissAnnouncement}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '24px',
+                        bgcolor: c.cardBg,
+                        backgroundImage: 'none',
+                        border: `1px solid ${c.cardBorder}`,
+                        boxShadow: isDark 
+                            ? '0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)' 
+                            : '0 20px 50px rgba(26,188,156,0.1)',
+                        overflow: 'hidden',
+                    }
+                }}
+            >
+                {/* Header with theme gradient */}
+                <Box
+                    sx={{
+                        background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                        px: 3,
+                        py: 2.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        color: '#ffffff',
+                        boxShadow: '0 4px 20px rgba(26,188,156,0.25)',
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <CampaignIcon sx={{ fontSize: 28 }} />
+                        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+                            {announcement?.title}
+                        </Typography>
+                    </Box>
+                    <IconButton
+                        onClick={handleDismissAnnouncement}
+                        sx={{
+                            color: 'rgba(255,255,255,0.8)',
+                            '&:hover': {
+                                color: '#ffffff',
+                                bgcolor: 'rgba(255,255,255,0.1)',
+                            },
+                            borderRadius: '10px',
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+
+                {/* Content area */}
+                <DialogContent 
+                    sx={{ 
+                        p: 4, 
+                        color: c.textPrimary,
+                        bgcolor: c.cardBg,
+                        lineHeight: 1.8,
+                        fontSize: '0.975rem',
+                        '& a': {
+                            color: '#1abc9c',
+                            textDecoration: 'none',
+                            fontWeight: 600,
+                            borderBottom: '2px solid transparent',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                                borderBottomColor: '#1abc9c',
+                            }
+                        },
+                        '& p': {
+                            mb: 2,
+                            '&:last-child': { mb: 0 }
+                        },
+                        '& strong': {
+                            color: isDark ? '#ffffff' : '#0d7a6a',
+                            fontWeight: 700
+                        },
+                        '& ul, & ol': {
+                            pl: 3,
+                            mb: 2,
+                            '& li': {
+                                mb: 1,
+                            }
+                        }
+                    }}
+                >
+                    {announcement && announcement.content && (
+                        <div dangerouslySetInnerHTML={{ __html: announcement.content }} />
+                    )}
+                </DialogContent>
+
+                {/* Footer action */}
+                <DialogActions 
+                    sx={{ 
+                        px: 4, 
+                        pb: 3, 
+                        pt: 1, 
+                        bgcolor: c.cardBg, 
+                        justifyContent: 'flex-end',
+                        borderTop: `1px solid ${c.cardBorder}`
+                    }}
+                >
+                    <Button
+                        onClick={handleDismissAnnouncement}
+                        variant="contained"
+                        sx={{
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                            boxShadow: '0 4px 14px rgba(26,188,156,0.35)',
+                            color: '#ffffff',
+                            fontWeight: 700,
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            px: 4,
+                            py: 1.2,
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
+                                boxShadow: '0 6px 20px rgba(26,188,156,0.45)',
+                            }
+                        }}
+                    >
+                        I Understand
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {/* Coach Mark - Guided Tour */}
             <CoachMark

@@ -37,6 +37,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PaymentIcon from '@mui/icons-material/Payment';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import CheckIcon from '@mui/icons-material/Check';
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -577,6 +578,117 @@ function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                 {saving ? 'Saving...' : 'Save Visibility Settings'}
                             </Button>
                         </Box>
+                    </CardContent>
+                </Card>
+            </Stack>
+        </Box>
+    );
+}
+
+function DashboardAnnouncementTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
+    const announcementVal = getSettingValue('dashboard_announcement');
+    
+    // Initialize announcement state
+    const [title, setTitle] = useState(() => {
+        return announcementVal?.title || '';
+    });
+    const [content, setContent] = useState(() => {
+        return announcementVal?.content || '';
+    });
+    const [active, setActive] = useState(() => {
+        return announcementVal?.active || false;
+    });
+    const [saving, setSaving] = useState(false);
+
+    const saveAnnouncement = async () => {
+        setSaving(true);
+        try {
+            await axios.post('/admin/settings', {
+                key: 'dashboard_announcement',
+                value: JSON.stringify({
+                    title,
+                    content,
+                    active,
+                    updated_at: new Date().toISOString()
+                }),
+                group: 'system',
+                type: 'json'
+            });
+            alert('Dashboard announcement updated successfully!');
+            router.reload({ preserveScroll: true });
+        } catch (err) {
+            alert('Failed to save announcement: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Stack spacing={3}>
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            📢 Dashboard Announcement Popup
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 3, lineHeight: 1.6 }}>
+                            Configure a popup announcement that will be displayed to all users (authors) on their dashboard.
+                            The popup supports HTML tags for links, bold text, lists, etc.
+                        </Typography>
+
+                        <Stack spacing={3}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={active}
+                                        onChange={(e) => setActive(e.target.checked)}
+                                        color="primary"
+                                        sx={{
+                                            '& .MuiSwitch-switchBase.Mui-checked': { color: '#1abc9c' },
+                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#1abc9c' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography sx={{ fontWeight: 600, color: c.textPrimary }}>
+                                        Active (Show Popup to Users)
+                                    </Typography>
+                                }
+                            />
+
+                            <TextField
+                                fullWidth
+                                label="Announcement Title"
+                                placeholder="e.g. Extended Submission Deadline!"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                sx={inputSx}
+                                required
+                            />
+
+                            <TextField
+                                fullWidth
+                                label="Announcement Message"
+                                placeholder="Enter announcement content here (HTML allowed)..."
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                multiline
+                                rows={6}
+                                sx={inputSx}
+                                required
+                            />
+
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button
+                                    variant="contained"
+                                    onClick={saveAnnouncement}
+                                    disabled={saving || !title || !content}
+                                    sx={tealBtnSx}
+                                >
+                                    {saving ? 'Saving...' : 'Save Announcement'}
+                                </Button>
+                            </Box>
+                        </Stack>
                     </CardContent>
                 </Card>
             </Stack>
@@ -1853,6 +1965,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                         <Tab label="Pricing Settings" />
                         <Tab label="Payment Gateway" />
                         <Tab label="Menu Visibility" />
+                        <Tab label="Dashboard Announcement" />
                     </Tabs>
 
                     {/* Landing Page Settings Tab */}
@@ -3820,6 +3933,11 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                     {/* Menu Visibility Tab */}
                     <TabPanel value={tabValue} index={4}>
                         <MenuVisibilityTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} getSettingId={getSettingId} />
+                    </TabPanel>
+
+                    {/* Dashboard Announcement Tab */}
+                    <TabPanel value={tabValue} index={5}>
+                        <DashboardAnnouncementTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} />
                     </TabPanel>
                 </Card>
             </Box>

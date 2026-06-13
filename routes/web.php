@@ -88,9 +88,16 @@ Route::get('/dashboard', function () {
             return $submission;
         });
 
+    $announcementSetting = \App\Models\LandingPageSetting::where('key', 'dashboard_announcement')->first();
+    $announcement = null;
+    if ($announcementSetting && $announcementSetting->value) {
+        $announcement = json_decode($announcementSetting->value, true);
+    }
+
     return Inertia::render('Dashboard', [
         'user' => $user,
         'submissions' => $submissions,
+        'announcement' => $announcement,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
