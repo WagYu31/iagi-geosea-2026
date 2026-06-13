@@ -17,6 +17,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PaymentIcon from '@mui/icons-material/Payment';
+import LaunchIcon from '@mui/icons-material/Launch';
 
 export default function AdminPayments({ payments = {} }) {
     const theme = useTheme();
@@ -77,6 +78,9 @@ export default function AdminPayments({ payments = {} }) {
 
     // Payment method helper
     const getMethodLabel = (p) => {
+        if (p.gateway === 'manual') {
+            return 'Manual Bank Transfer';
+        }
         if (p.order_id) {
             const typeMap = {
                 bank_transfer: 'Bank Transfer',
@@ -89,7 +93,7 @@ export default function AdminPayments({ payments = {} }) {
             };
             return typeMap[p.payment_type] || p.payment_type || 'Midtrans';
         }
-        return p.payment_proof_url ? 'Manual Upload' : 'N/A';
+        return p.payment_proof_url ? 'Manual Bank Transfer' : 'N/A';
     };
 
     // Status chip
@@ -326,27 +330,30 @@ export default function AdminPayments({ payments = {} }) {
                 <DialogContent sx={{ p: 3 }}>
                     {proofDialog.payment && (
                         <Box>
-                            <Box sx={{ mb: 2.5, p: 2, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb', borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
-                                <Stack spacing={1.5}>
+                            <Box sx={{ mb: 3, p: 2.5, bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', borderRadius: '12px', border: `1px solid ${c.cardBorder}` }}>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5 }}>
                                     {[
-                                        { l: 'User', v: proofDialog.payment.user?.name },
-                                        { l: 'Submission', v: proofDialog.payment.submission?.title },
-                                        { l: 'Amount', v: `Rp ${parseFloat(proofDialog.payment.amount || 0).toLocaleString('id-ID')}`, hl: true },
-                                        { l: 'Method', v: getMethodLabel(proofDialog.payment) },
+                                        { l: 'User / Participant', v: proofDialog.payment.user?.name },
+                                        { l: 'Submission Title', v: proofDialog.payment.submission?.title },
+                                        { l: 'Total Amount', v: `Rp ${parseFloat(proofDialog.payment.amount || 0).toLocaleString('id-ID')}`, hl: true },
+                                        { l: 'Payment Method', v: getMethodLabel(proofDialog.payment) },
                                         ...(proofDialog.payment.order_id ? [
                                             { l: 'Order ID', v: proofDialog.payment.order_id },
                                             { l: 'Transaction ID', v: proofDialog.payment.transaction_id || 'N/A' },
                                         ] : []),
                                     ].map((i) => (
-                                        <Box key={i.l}>
-                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.65rem' }}>{i.l}</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 600, color: i.hl ? '#1abc9c' : c.textPrimary, fontSize: i.hl ? '1rem' : '0.85rem', fontFamily: i.l === 'Order ID' || i.l === 'Transaction ID' ? 'monospace' : 'inherit' }}>{i.v}</Typography>
+                                        <Box key={i.l} sx={{ gridColumn: i.l === 'Submission Title' ? { sm: 'span 2' } : 'auto' }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.65rem', display: 'block', mb: 0.5 }}>{i.l}</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 700, color: i.hl ? '#1abc9c' : c.textPrimary, fontSize: i.hl ? '1.05rem' : '0.85rem', fontFamily: i.l.includes('ID') ? 'monospace' : 'inherit' }}>{i.v}</Typography>
                                         </Box>
                                     ))}
-                                </Stack>
+                                </Box>
                             </Box>
                             {proofDialog.payment.payment_proof_url && (
-                                <Box sx={{ textAlign: 'center' }}>
+                                <Box sx={{ mt: 3 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, mb: 1, textAlign: 'left' }}>
+                                        Receipt / Proof of Transfer:
+                                    </Typography>
                                     {proofDialog.payment.payment_proof_url.toLowerCase().endsWith('.pdf') ? (
                                         <Box sx={{ 
                                             py: 4, px: 2, border: `2px dashed ${c.cardBorder}`, borderRadius: '12px', 
@@ -375,9 +382,41 @@ export default function AdminPayments({ payments = {} }) {
                                             </Button>
                                         </Box>
                                     ) : (
-                                        <img src={`/storage/${proofDialog.payment.payment_proof_url}`} alt="Payment Proof" style={{ maxWidth: '100%', maxHeight: '500px', objectFit: 'contain', borderRadius: '12px', border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}` }}
-                                            onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="padding:40px;text-align:center;color:#666">Unable to load. <a href="/storage/' + proofDialog.payment.payment_proof_url + '" target="_blank">Download</a></p>'; }}
-                                        />
+                                        <Box sx={{ 
+                                            position: 'relative', 
+                                            borderRadius: '12px', 
+                                            overflow: 'hidden', 
+                                            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+                                            bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
+                                            p: 1.5,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Box sx={{ position: 'relative', width: '100%', maxHeight: '420px', overflow: 'hidden', borderRadius: '8px', display: 'flex', justifyContent: 'center' }}>
+                                                <img src={`/storage/${proofDialog.payment.payment_proof_url}`} alt="Payment Proof" style={{ maxWidth: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px' }}
+                                                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="padding:40px;text-align:center;color:#666">Unable to load. <a href="/storage/' + proofDialog.payment.payment_proof_url + '" target="_blank">Download</a></p>'; }}
+                                                />
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 1.5, mt: 2, justifyContent: 'center', width: '100%' }}>
+                                                <Button 
+                                                    size="small" 
+                                                    variant="outlined" 
+                                                    component="a" 
+                                                    href={`/storage/${proofDialog.payment.payment_proof_url}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    startIcon={<LaunchIcon />}
+                                                    sx={{ 
+                                                        textTransform: 'none', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600,
+                                                        borderColor: '#1abc9c', color: '#1abc9c', 
+                                                        '&:hover': { borderColor: '#16a085', bgcolor: 'rgba(26,188,156,0.04)' } 
+                                                    }}
+                                                >
+                                                    Open Image in New Tab / Zoom
+                                                </Button>
+                                            </Box>
+                                        </Box>
                                     )}
                                 </Box>
                             )}
