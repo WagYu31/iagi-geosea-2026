@@ -26,5 +26,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('logout') || $request->routeIs('logout')) {
+                \Illuminate\Support\Facades\Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect('/');
+            }
+
+            if ($request->is('login') || $request->routeIs('login')) {
+                return redirect()->route('login')->with('error', 'Session expired. Please try again.');
+            }
+
+            return redirect()->back()->with('error', 'Your session expired. Please refresh the page.');
+        });
     })->create();
