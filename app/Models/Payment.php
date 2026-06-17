@@ -13,6 +13,7 @@ class Payment extends Model
         'user_id',
         'submission_id',
         'payment_proof_url',
+        'support_document_url',
         'amount',
         'verified',
         'verified_at',

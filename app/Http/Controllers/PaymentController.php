@@ -233,16 +233,36 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
+        // First retrieve the submission to determine if support document is required
         $request->validate([
             'submission_id' => 'required|exists:submissions,id',
-            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'amount' => 'required|numeric|min:0',
         ]);
 
         // Check if user owns the submission
         $submission = Submission::where('id', $request->submission_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+
+        $category = strtolower($submission->participant_category ?? '');
+        $needsSupportDoc = in_array($category, ['professional', 'student']);
+
+        $rules = [
+            'submission_id' => 'required|exists:submissions,id',
+            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'amount' => 'required|numeric|min:0',
+        ];
+
+        $existingPayment = Payment::where('submission_id', $request->submission_id)->first();
+
+        if ($needsSupportDoc) {
+            if (!$existingPayment || !$existingPayment->support_document_url) {
+                $rules['support_document'] = 'required|file|mimes:jpg,jpeg,png,pdf|max:5120';
+            } else {
+                $rules['support_document'] = 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120';
+            }
+        }
+
+        $request->validate($rules);
 
         // Calculate amount deterministically with unique code starting with 5 (range 5001-5999)
         $pricingSetting = \App\Models\LandingPageSetting::where('key', 'registration_pricing')->first();
@@ -263,45 +283,57 @@ class PaymentController extends Controller
             $finalAmount = $request->amount;
         }
 
-        // Check if payment already exists for this submission
-        $existingPayment = Payment::where('submission_id', $request->submission_id)->first();
-
         if ($existingPayment) {
-            // Update existing payment
+            $updateData = [
+                'amount' => $finalAmount,
+                'gateway' => 'manual',
+                'status' => 'pending',
+                'verified' => false, // Reset verification status
+                'verified_at' => null,
+            ];
+
+            // Update existing payment proof
             if ($request->hasFile('payment_proof')) {
                 // Delete old file if exists
                 if ($existingPayment->payment_proof_url) {
                     Storage::disk('public')->delete($existingPayment->payment_proof_url);
                 }
-
-                $proofPath = $request->file('payment_proof')->store('payments/proofs', 'public');
-                $existingPayment->update([
-                    'payment_proof_url' => $proofPath,
-                    'amount' => $finalAmount,
-                    'gateway' => 'manual',
-                    'status' => 'pending',
-                    'verified' => false, // Reset verification status
-                    'verified_at' => null,
-                ]);
+                $updateData['payment_proof_url'] = $request->file('payment_proof')->store('payments/proofs', 'public');
             }
 
-            return back()->with('success', 'Payment proof updated successfully! Waiting for admin verification.');
+            // Update existing support document
+            if ($request->hasFile('support_document')) {
+                // Delete old file if exists
+                if ($existingPayment->support_document_url) {
+                    Storage::disk('public')->delete($existingPayment->support_document_url);
+                }
+                $updateData['support_document_url'] = $request->file('support_document')->store('payments/support_documents', 'public');
+            }
+
+            $existingPayment->update($updateData);
+
+            return back()->with('success', 'Payment proof and support documents updated successfully! Waiting for admin verification.');
         }
 
         // Create new payment
         $proofPath = $request->file('payment_proof')->store('payments/proofs', 'public');
+        $supportDocPath = null;
+        if ($request->hasFile('support_document')) {
+            $supportDocPath = $request->file('support_document')->store('payments/support_documents', 'public');
+        }
 
         Payment::create([
             'user_id' => Auth::id(),
             'submission_id' => $request->submission_id,
             'payment_proof_url' => $proofPath,
+            'support_document_url' => $supportDocPath,
             'amount' => $finalAmount,
             'gateway' => 'manual',
             'verified' => false,
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Payment proof uploaded successfully! Waiting for admin verification.');
+        return back()->with('success', 'Payment proof and support documents uploaded successfully! Waiting for admin verification.');
     }
 
     public function destroy($id)
@@ -315,9 +347,12 @@ class PaymentController extends Controller
             return back()->withErrors(['error' => 'Cannot delete a completed payment.']);
         }
 
-        // Delete file
+        // Delete files
         if ($payment->payment_proof_url) {
             Storage::disk('public')->delete($payment->payment_proof_url);
+        }
+        if ($payment->support_document_url) {
+            Storage::disk('public')->delete($payment->support_document_url);
         }
 
         $payment->delete();

@@ -539,6 +539,79 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                     )}
                                 </Box>
                             )}
+                            {proofDialog.payment.support_document_url && (
+                                <Box sx={{ mt: 4 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: c.textPrimary, mb: 1, textAlign: 'left' }}>
+                                        {proofDialog.payment.user?.category?.toLowerCase() === 'student' 
+                                            ? 'Student ID Card / Proof:' 
+                                            : 'IAGI Membership Card / Proof:'}
+                                    </Typography>
+                                    {proofDialog.payment.support_document_url.toLowerCase().endsWith('.pdf') ? (
+                                        <Box sx={{ 
+                                            py: 4, px: 2, border: `2px dashed ${c.cardBorder}`, borderRadius: '12px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', 
+                                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 
+                                        }}>
+                                            <Typography sx={{ fontSize: '3rem', lineHeight: 1 }}>📄</Typography>
+                                            <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: c.textPrimary }}>PDF Support Document</Typography>
+                                            <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, maxWidth: '80%', mx: 'auto' }}>
+                                                Click the button below to view or download the uploaded PDF support document.
+                                            </Typography>
+                                            <Button 
+                                                variant="contained" 
+                                                component="a" 
+                                                href={`/storage/${proofDialog.payment.support_document_url}`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                sx={{ 
+                                                    textTransform: 'none', borderRadius: '10px', fontWeight: 600, 
+                                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                                    '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' },
+                                                    boxShadow: '0 4px 12px rgba(26,188,156,0.2)', color: 'white'
+                                                }}
+                                            >
+                                                Open PDF Support Doc
+                                            </Button>
+                                        </Box>
+                                    ) : (
+                                        <Box sx={{ 
+                                            position: 'relative', 
+                                            borderRadius: '12px', 
+                                            overflow: 'hidden', 
+                                            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+                                            bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
+                                            p: 1.5,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Box sx={{ position: 'relative', width: '100%', maxHeight: '420px', overflow: 'hidden', borderRadius: '8px', display: 'flex', justifyContent: 'center' }}>
+                                                <img src={`/storage/${proofDialog.payment.support_document_url}`} alt="Support Document" style={{ maxWidth: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px' }}
+                                                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="padding:40px;text-align:center;color:#666">Unable to load. <a href="/storage/' + proofDialog.payment.support_document_url + '" target="_blank">Download</a></p>'; }}
+                                                />
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 1.5, mt: 2, justifyContent: 'center', width: '100%' }}>
+                                                <Button 
+                                                    size="small" 
+                                                    variant="outlined" 
+                                                    component="a" 
+                                                    href={`/storage/${proofDialog.payment.support_document_url}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    startIcon={<LaunchIcon />}
+                                                    sx={{ 
+                                                        textTransform: 'none', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600,
+                                                        borderColor: '#1abc9c', color: '#1abc9c', 
+                                                        '&:hover': { borderColor: '#16a085', bgcolor: 'rgba(26,188,156,0.04)' } 
+                                                    }}
+                                                >
+                                                    Open Image in New Tab / Zoom
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    )}
+                                </Box>
+                            )}
                         </Box>
                     )}
                 </DialogContent>

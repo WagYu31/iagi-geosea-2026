@@ -698,6 +698,11 @@ class AdminController extends Controller
             Storage::disk('public')->delete($payment->payment_proof_url);
         }
 
+        // Delete support document file if exists
+        if ($payment->support_document_url && Storage::disk('public')->exists($payment->support_document_url)) {
+            Storage::disk('public')->delete($payment->support_document_url);
+        }
+
         $payment->delete();
 
         return back()->with('success', 'Payment deleted. The author can now re-submit payment.');

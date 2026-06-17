@@ -203,10 +203,14 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         setSelectedPaymentMethod(null); 
         setPaymentProofFile(null);
         setFileError('');
+        setSupportDocumentFile(null);
+        setSupportFileError('');
     };
 
     const [paymentProofFile, setPaymentProofFile] = useState(null);
     const [fileError, setFileError] = useState('');
+    const [supportDocumentFile, setSupportDocumentFile] = useState(null);
+    const [supportFileError, setSupportFileError] = useState('');
     const [copySuccess, setCopySuccess] = useState(false);
 
     const handleCopyAccount = () => {
@@ -355,14 +359,95 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         }
     };
 
+    const handleSupportFileChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setSupportFileError('');
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            setSupportFileError('Invalid file type. Only JPG, JPEG, PNG, and PDF are allowed.');
+            return;
+        }
+
+        if (file.type === 'application/pdf') {
+            if (file.size > 5 * 1024 * 1024) {
+                setSupportFileError('PDF size exceeds 5MB limit.');
+                return;
+            }
+            setSupportDocumentFile(file);
+        } else {
+            try {
+                setPaymentLoading(true);
+                const compressed = await compressImage(file);
+                setSupportDocumentFile(compressed);
+            } catch (err) {
+                console.error('Image compression failed:', err);
+                if (file.size > 5 * 1024 * 1024) {
+                    setSupportFileError('Image size exceeds 5MB limit.');
+                } else {
+                    setSupportDocumentFile(file);
+                }
+            } finally {
+                setPaymentLoading(false);
+            }
+        }
+    };
+
+    const handleSupportDrop = async (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+
+        setSupportFileError('');
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            setSupportFileError('Invalid file type. Only JPG, JPEG, PNG, and PDF are allowed.');
+            return;
+        }
+
+        if (file.type === 'application/pdf') {
+            if (file.size > 5 * 1024 * 1024) {
+                setSupportFileError('PDF size exceeds 5MB limit.');
+                return;
+            }
+            setSupportDocumentFile(file);
+        } else {
+            try {
+                setPaymentLoading(true);
+                const compressed = await compressImage(file);
+                setSupportDocumentFile(compressed);
+            } catch (err) {
+                console.error('Image compression failed:', err);
+                if (file.size > 5 * 1024 * 1024) {
+                    setSupportFileError('Image size exceeds 5MB limit.');
+                } else {
+                    setSupportDocumentFile(file);
+                }
+            } finally {
+                setPaymentLoading(false);
+            }
+        }
+    };
+
     const handleManualPaymentSubmit = () => {
+        const category = selectedSubmission?.participant_category?.toLowerCase() || '';
+        const needsSupportDoc = ['professional', 'student'].includes(category);
+
         if (!selectedSubmission || !paymentProofFile || !agreeTerms) return;
+        if (needsSupportDoc && !supportDocumentFile) {
+            setSupportFileError('Please upload the required support document.');
+            return;
+        }
 
         setPaymentLoading(true);
         const finalAmt = parseFloat(selFee) + getUniqueDigit(selectedSubmission.id);
         const formData = new FormData();
         formData.append('submission_id', selectedSubmission.id);
         formData.append('payment_proof', paymentProofFile);
+        if (supportDocumentFile) {
+            formData.append('support_document', supportDocumentFile);
+        }
         formData.append('amount', finalAmt);
 
         router.post(route('payments.store'), formData, {
@@ -371,6 +456,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                 setPaymentLoading(false);
                 handleCloseDialog();
                 setPaymentProofFile(null);
+                setSupportDocumentFile(null);
                 setSuccessDialog({
                     open: true,
                     orderId: `IAGI-${selectedSubmission.id}`,
@@ -1401,6 +1487,98 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                         </Alert>
                                     )}
                                 </Box>
+
+                                {/* Support Document Upload Area */}
+                                {selectedSubmission && ['professional', 'student'].includes(selectedSubmission.participant_category?.toLowerCase()) && (
+                                    <Box sx={{ mt: 3 }}>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: isDark ? '#e5e7eb' : '#1f2937', fontFamily: 'Inter, sans-serif', mb: 1 }}>
+                                            {selectedSubmission.participant_category?.toLowerCase() === 'professional' 
+                                                ? "Upload IAGI Membership Card or other proof of IAGI's membership"
+                                                : "Upload Student ID Card or other proof of student status"}
+                                        </Typography>
+                                        
+                                        <input 
+                                            type="file" 
+                                            id="support-document-file" 
+                                            accept="image/*,application/pdf"
+                                            style={{ display: 'none' }}
+                                            onChange={handleSupportFileChange}
+                                        />
+                                        
+                                        {!supportDocumentFile ? (
+                                            <Box 
+                                                onDragOver={handleDragOver}
+                                                onDrop={handleSupportDrop}
+                                                onClick={() => document.getElementById('support-document-file').click()}
+                                                sx={{
+                                                    border: `2px dashed ${isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'}`,
+                                                    borderRadius: '14px', p: 3, textAlign: 'center', cursor: 'pointer',
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.01)' : '#fafafa',
+                                                    transition: 'all 0.2s ease',
+                                                    '&:hover': {
+                                                        borderColor: '#10b981',
+                                                        bgcolor: isDark ? 'rgba(16,185,129,0.02)' : '#f0fdf4',
+                                                    }
+                                                }}
+                                            >
+                                                <CloudUploadIcon sx={{ fontSize: 36, color: isDark ? 'rgba(255,255,255,0.3)' : '#94a3b8', mb: 1 }} />
+                                                <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, color: c.textPrimary }}>
+                                                    Drag & drop document, or <span style={{ color: '#10b981', textDecoration: 'underline' }}>browse</span>
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.6rem', color: c.textMuted, mt: 0.5 }}>
+                                                    Supports JPG, JPEG, PNG, or PDF up to 5MB (Images will be optimized)
+                                                </Typography>
+                                            </Box>
+                                        ) : (
+                                            <Box sx={{ 
+                                                p: 2, borderRadius: '14px', 
+                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.015)' : '#ffffff',
+                                                display: 'flex', alignItems: 'center', gap: 2
+                                            }}>
+                                                {supportDocumentFile.type === 'application/pdf' ? (
+                                                    <Box sx={{ width: 44, height: 44, borderRadius: '8px', bgcolor: 'rgba(239,68,68,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                        <Typography sx={{ fontSize: '1.5rem' }}>📄</Typography>
+                                                    </Box>
+                                                ) : (
+                                                    <Box sx={{ width: 44, height: 44, borderRadius: '8px', overflow: 'hidden', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'}`, flexShrink: 0 }}>
+                                                        <img 
+                                                            src={URL.createObjectURL(supportDocumentFile)} 
+                                                            alt="Document Preview" 
+                                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                                        />
+                                                    </Box>
+                                                )}
+                                                
+                                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: c.textPrimary }} noWrap>
+                                                        {supportDocumentFile.name}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.62rem', color: c.textMuted, mt: 0.2 }}>
+                                                        {(supportDocumentFile.size / 1024).toFixed(0)} KB · {supportDocumentFile.type.split('/')[1].toUpperCase()}
+                                                    </Typography>
+                                                </Box>
+                                                
+                                                <IconButton 
+                                                    onClick={() => setSupportDocumentFile(null)}
+                                                    size="small" 
+                                                    sx={{ 
+                                                        color: '#ef4444', bgcolor: 'rgba(239,68,68,0.08)',
+                                                        '&:hover': { bgcolor: 'rgba(239,68,68,0.15)' } 
+                                                    }}
+                                                >
+                                                    <DeleteIcon sx={{ fontSize: 16 }} />
+                                                </IconButton>
+                                            </Box>
+                                        )}
+                                        
+                                        {supportFileError && (
+                                            <Alert severity="error" sx={{ mt: 1.5, py: 0, fontSize: '0.7rem', borderRadius: '8px' }}>
+                                                {supportFileError}
+                                            </Alert>
+                                        )}
+                                    </Box>
+                                )}
                             </Box>
 
                             {/* ════════ RIGHT COLUMN: Order Summary ════════ */}
@@ -1472,7 +1650,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                             borderBottom: i < 3 ? `1px solid ${isDark ? 'rgba(255,255,255,0.025)' : '#f3f4f6'}` : 'none',
                                         }}>
                                             <Typography sx={{ fontSize: '0.68rem', color: isDark ? '#9ca3af' : '#6b7280', fontFamily: 'Inter, sans-serif' }}>{row.label}</Typography>
-                                            <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: isDark ? '#e5e7eb' : '#1e293b', fontFamily: 'Inter, sans-serif', textAlign: 'right', maxWidth: '55%' }} noWrap>{row.value}</Typography>
+                                            <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: isDark ? '#e5e7eb' : '#1e2937', fontFamily: 'Inter, sans-serif', textAlign: 'right', maxWidth: '55%' }} noWrap>{row.value}</Typography>
                                         </Box>
                                     ))}
                                 </Box>
@@ -1541,31 +1719,38 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
                                 {/* CTA Buttons */}
                                 <Box sx={{ mt: 'auto' }}>
-                                    <Button 
-                                        variant="contained" 
-                                        onClick={handleManualPaymentSubmit} 
-                                        disabled={paymentLoading || !selFee || !agreeTerms || !paymentProofFile}
-                                        fullWidth
-                                        endIcon={paymentLoading ? <CircularProgress size={14} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 15, fontWeight: 900 }}>→</Box>}
-                                        sx={{
-                                            background: (agreeTerms && paymentProofFile)
-                                                ? 'linear-gradient(135deg, #047857 0%, #059669 40%, #10b981 100%)'
-                                                : (isDark ? '#1f2937' : '#e5e7eb'),
-                                            boxShadow: (agreeTerms && paymentProofFile) ? '0 4px 16px rgba(5,150,105,0.3)' : 'none',
-                                            '&:hover': { 
-                                                boxShadow: '0 6px 24px rgba(5,150,105,0.4)',
-                                                background: 'linear-gradient(135deg, #065f46 0%, #047857 40%, #059669 100%)',
-                                            },
-                                            '&:disabled': { background: isDark ? '#1f2937' : '#e5e7eb', boxShadow: 'none', color: isDark ? '#4b5563' : '#9ca3af' },
-                                            textTransform: 'none', borderRadius: '10px', fontWeight: 800, 
-                                            fontSize: '0.82rem', py: 1.3,
-                                            fontFamily: 'Inter, sans-serif',
-                                            letterSpacing: '-0.01em',
-                                            transition: 'all 0.3s ease',
-                                        }}
-                                    >
-                                        {paymentLoading ? 'Submitting...' : 'Submit Payment Proof'}
-                                    </Button>
+                                    {(() => {
+                                        const category = selectedSubmission?.participant_category?.toLowerCase() || '';
+                                        const needsSupportDoc = ['professional', 'student'].includes(category);
+                                        const canSubmit = agreeTerms && paymentProofFile && (!needsSupportDoc || supportDocumentFile);
+                                        return (
+                                            <Button 
+                                                variant="contained" 
+                                                onClick={handleManualPaymentSubmit} 
+                                                disabled={paymentLoading || !selFee || !canSubmit}
+                                                fullWidth
+                                                endIcon={paymentLoading ? <CircularProgress size={14} sx={{ color: 'white' }} /> : <Box sx={{ fontSize: 15, fontWeight: 900 }}>→</Box>}
+                                                sx={{
+                                                    background: canSubmit
+                                                        ? 'linear-gradient(135deg, #047857 0%, #059669 40%, #10b981 100%)'
+                                                        : (isDark ? '#1f2937' : '#e5e7eb'),
+                                                    boxShadow: canSubmit ? '0 4px 16px rgba(5,150,105,0.3)' : 'none',
+                                                    '&:hover': { 
+                                                        boxShadow: '0 6px 24px rgba(5,150,105,0.4)',
+                                                        background: 'linear-gradient(135deg, #065f46 0%, #047857 40%, #059669 100%)',
+                                                    },
+                                                    '&:disabled': { background: isDark ? '#1f2937' : '#e5e7eb', boxShadow: 'none', color: isDark ? '#4b5563' : '#9ca3af' },
+                                                    textTransform: 'none', borderRadius: '10px', fontWeight: 800, 
+                                                    fontSize: '0.82rem', py: 1.3,
+                                                    fontFamily: 'Inter, sans-serif',
+                                                    letterSpacing: '-0.01em',
+                                                    transition: 'all 0.3s ease',
+                                                }}
+                                            >
+                                                {paymentLoading ? 'Submitting...' : 'Submit Payment Proof'}
+                                            </Button>
+                                        );
+                                    })()}
                                     <Button 
                                         onClick={handleCloseDialog} 
                                         disabled={paymentLoading} 
