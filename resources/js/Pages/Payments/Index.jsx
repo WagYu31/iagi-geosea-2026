@@ -94,8 +94,18 @@ const CATEGORIES = {
         recommended: true,
     },
     'international': { 
-        label: 'International Delegate', 
-        short: 'International', 
+        label: 'Profesional and Non-IAGI member', 
+        short: 'Professional & Non-IAGI', 
+        color: '#ec4899', 
+        lightColor: '#f9a8d4', 
+        badgeBg: 'rgba(236,72,153,0.12)',
+        gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
+        description: 'For international participants (Non-IAGI)',
+        features: ['Full conference access', 'Networking sessions', 'Conference materials', 'International delegate kit'],
+    },
+    'international delegate': { 
+        label: 'Profesional and Non-IAGI member', 
+        short: 'Professional & Non-IAGI', 
         color: '#ec4899', 
         lightColor: '#f9a8d4', 
         badgeBg: 'rgba(236,72,153,0.12)',
@@ -110,7 +120,7 @@ const CATEGORIES = {
         lightColor: '#93c5fd', 
         badgeBg: 'rgba(37,99,235,0.12)',
         gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-        description: 'For undergraduate/postgraduate students',
+        description: 'For undergraduate students',
         features: ['Full conference access', 'Student workshop', 'Conference materials', 'Student certificate'],
     },
 };
@@ -118,6 +128,7 @@ const CATEGORIES = {
 const CAT_ICONS = { 
     'professional': BusinessCenterIcon, 
     'international': PublicIcon, 
+    'international delegate': PublicIcon,
     'student': SchoolIcon 
 };
 

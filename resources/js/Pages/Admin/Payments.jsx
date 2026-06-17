@@ -238,7 +238,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                 <MenuItem value="all">All Categories</MenuItem>
                                 <MenuItem value="Student">Student</MenuItem>
                                 <MenuItem value="Professional">Professional</MenuItem>
-                                <MenuItem value="International Delegate">International Delegate</MenuItem>
+                                <MenuItem value="International Delegate">Profesional and Non-IAGI member</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>

@@ -350,7 +350,7 @@ export default function Register() {
                         </MenuItem>
                         <MenuItem value="Student">Student</MenuItem>
                         <MenuItem value="Professional">Professional</MenuItem>
-                        <MenuItem value="International Delegate">International Delegate</MenuItem>
+                        <MenuItem value="International Delegate">Profesional and Non-IAGI member</MenuItem>
                     </TextField>
                 </Box>
 
