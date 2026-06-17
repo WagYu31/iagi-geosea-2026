@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import SidebarLayout from '../../Layouts/SidebarLayout';
+import axios from 'axios';
 import {
     Box, Typography, Card, CardContent, TextField, Button, Grid,
     Alert, MenuItem, Snackbar, Avatar, Stack, InputAdornment, useTheme,
@@ -57,14 +58,9 @@ export default function EmailSettings() {
     const handleTestEmail = () => {
         if (!testEmail) { setTestResult('Please enter a test email address'); return; }
         setLoading(true);
-        fetch(route('admin.email.test'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
-            body: JSON.stringify({ test_email: testEmail })
-        })
-            .then(res => res.json())
-            .then(data => { setTestResult(data.message); setLoading(false); })
-            .catch(err => { setTestResult('Error: ' + err.message); setLoading(false); });
+        axios.post(route('admin.email.test'), { test_email: testEmail })
+            .then(res => { setTestResult(res.data.message); setLoading(false); })
+            .catch(err => { setTestResult('Error: ' + (err.response?.data?.message || err.message)); setLoading(false); });
     };
 
     const inputSx = { '& .MuiOutlinedInput-root': { borderRadius: '10px', '& fieldset': { borderColor: c.cardBorder }, '&:hover fieldset': { borderColor: '#1abc9c' }, '&.Mui-focused fieldset': { borderColor: '#1abc9c' } }, '& .MuiInputLabel-root.Mui-focused': { color: '#1abc9c' }, '& input': { color: c.textPrimary }, '& .MuiFormHelperText-root': { color: c.textMuted } };

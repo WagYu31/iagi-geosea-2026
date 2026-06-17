@@ -141,7 +141,7 @@
     ]
   },
   "resources/js/Pages/Admin/EmailSettings.jsx": {
-    "file": "assets/EmailSettings-_zMFYr_Y.js",
+    "file": "assets/EmailSettings-IRe_xXu3.js",
     "name": "EmailSettings",
     "src": "resources/js/Pages/Admin/EmailSettings.jsx",
     "isDynamicEntry": true,
@@ -167,7 +167,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-CVnvgThP.js",
+    "file": "assets/Settings-ivkfAJ8w.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -234,7 +234,7 @@
     ]
   },
   "resources/js/Pages/Payments/Index.jsx": {
-    "file": "assets/Index-xUW_e7Gr.js",
+    "file": "assets/Index-Pe_665MX.js",
     "name": "Index",
     "src": "resources/js/Pages/Payments/Index.jsx",
     "isDynamicEntry": true,
@@ -379,7 +379,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BX3aRYel.js",
+    "file": "assets/app-CmVKe5xv.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

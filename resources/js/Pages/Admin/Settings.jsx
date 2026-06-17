@@ -1278,19 +1278,15 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
         setUploading(true);
         try {
-            const response = await fetch(route('admin.settings.uploadSponsorLogo'), {
-                method: 'POST',
-                body: formData,
+            const response = await axios.post(route('admin.settings.uploadSponsorLogo'), formData, {
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.data.success) {
                 const newSponsors = [...sponsors];
-                newSponsors[index].logo = data.logo_url;
+                newSponsors[index].logo = response.data.logo_url;
                 setSponsors(newSponsors);
             }
         } catch (error) {
@@ -1646,19 +1642,15 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
         setUploading(true);
         try {
-            const response = await fetch(route('admin.settings.uploadPartnerPoster'), {
-                method: 'POST',
-                body: formData,
+            const response = await axios.post(route('admin.settings.uploadPartnerPoster'), formData, {
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.data.success) {
                 const updated = [...partners];
-                updated[index].poster = data.poster_url;
+                updated[index].poster = response.data.poster_url;
                 setPartners(updated);
             }
         } catch (error) {

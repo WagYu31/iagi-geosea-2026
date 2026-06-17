@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
@@ -404,26 +405,22 @@ export default function Index({ payments = [], submissions = [], midtrans_client
 
         if (xenditStatus === 'success' && orderId) {
             // Sync payment status with backend
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            fetch(route('payments.checkStatus'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-                body: JSON.stringify({ order_id: orderId }),
-            }).then(() => {
-                setSuccessDialog({
-                    open: true,
-                    orderId: orderId,
-                    amount: '',
-                    category: '',
+            axios.post(route('payments.checkStatus'), { order_id: orderId })
+                .then(() => {
+                    setSuccessDialog({
+                        open: true,
+                        orderId: orderId,
+                        amount: '',
+                        category: '',
+                    });
+                }).catch(() => {
+                    setSuccessDialog({
+                        open: true,
+                        orderId: orderId,
+                        amount: '',
+                        category: '',
+                    });
                 });
-            }).catch(() => {
-                setSuccessDialog({
-                    open: true,
-                    orderId: orderId,
-                    amount: '',
-                    category: '',
-                });
-            });
         } else if (xenditStatus === 'failed') {
             setSnackbar({ open: true, message: 'Payment was not completed. Please try again.', severity: 'warning' });
         }
@@ -445,60 +442,12 @@ export default function Index({ payments = [], submissions = [], midtrans_client
         if (!fee) { setSnackbar({ open: true, message: 'Fee not determined. Check category.', severity: 'warning' }); return; }
         setPaymentLoading(true);
         try {
-            // Helper to get fresh CSRF token
-            const getCsrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const response = await axios.post(route('payments.createSnapToken'), {
+                submission_id: selectedSubmission.id,
+                payment_method: selectedPaymentMethod || null,
+            });
 
-            // Helper to make the snap token request
-            const makeRequest = async (token) => {
-                return await fetch(route('payments.createSnapToken'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-                    body: JSON.stringify({ 
-                        submission_id: selectedSubmission.id,
-                        payment_method: selectedPaymentMethod || null,
-                    }),
-                });
-            };
-
-            let res = await makeRequest(getCsrf());
-
-            // Handle CSRF token mismatch (419) - refresh token and retry once
-            if (res.status === 419) {
-                try {
-                    // Fetch fresh CSRF cookie
-                    await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin' });
-                    // Also try refreshing the page's meta tag via a quick HEAD request
-                    const pageRes = await fetch(window.location.href, { method: 'GET', headers: { 'Accept': 'text/html' } });
-                    const html = await pageRes.text();
-                    const match = html.match(/meta[^>]*name="csrf-token"[^>]*content="([^"]+)"/);
-                    if (match && match[1]) {
-                        document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', match[1]);
-                    }
-                } catch (e) { console.warn('CSRF refresh failed:', e); }
-                // Retry with fresh token
-                res = await makeRequest(getCsrf());
-            }
-            
-            // Handle non-JSON response (e.g., 500 HTML error page)
-            const contentType = res.headers.get('content-type') || '';
-            let data;
-            if (contentType.includes('application/json')) {
-                data = await res.json();
-            } else {
-                const text = await res.text();
-                console.error('Non-JSON response from snap-token:', res.status, text.substring(0, 500));
-                if (res.status === 419) {
-                    throw new Error('Session expired. Please refresh the page and try again.');
-                }
-                throw new Error(`Server error (${res.status}). Please refresh the page.`);
-            }
-            
-            if (!res.ok) {
-                console.error('Payment error:', res.status, data);
-                throw new Error(data.error || data.message || `Payment failed (${res.status})`);
-            }
-
-            // Branch based on gateway
+            const data = response.data;
             const gateway = data.gateway || active_gateway;
 
             if (gateway === 'xendit' && data.invoice_url) {
@@ -519,28 +468,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             // Helper: call backend to check & sync Midtrans status
             const syncPaymentStatus = async () => {
                 try {
-                    const freshCsrf = getCsrf();
-                    const syncRes = await fetch(route('payments.checkStatus'), {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': freshCsrf, 'Accept': 'application/json' },
-                        body: JSON.stringify({ order_id: currentOrderId }),
-                    });
-                    // If CSRF fails, retry with refreshed token
-                    if (syncRes.status === 419) {
-                        try {
-                            const pageRes = await fetch(window.location.href, { method: 'GET', headers: { 'Accept': 'text/html' } });
-                            const html = await pageRes.text();
-                            const match = html.match(/meta[^>]*name="csrf-token"[^>]*content="([^"]+)"/);
-                            if (match && match[1]) {
-                                document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', match[1]);
-                            }
-                        } catch (e) { /* ignore */ }
-                        await fetch(route('payments.checkStatus'), {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCsrf(), 'Accept': 'application/json' },
-                            body: JSON.stringify({ order_id: currentOrderId }),
-                        });
-                    }
+                    await axios.post(route('payments.checkStatus'), { order_id: currentOrderId });
                 } catch (err) { console.warn('Status sync failed:', err); }
             };
 
@@ -585,8 +513,9 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                     setTimeout(() => router.reload(), 800);
                 },
             });
-        } catch (e) { setSnackbar({ open: true, message: e.message, severity: 'error' }); }
-        finally {
+        } catch (e) {
+            setSnackbar({ open: true, message: e.response?.data?.error || e.message || 'Payment initialization failed', severity: 'error' });
+        } finally {
             setPaymentLoading(false);
             // Final safety net — always restore scroll
             document.body.style.overflow = '';
