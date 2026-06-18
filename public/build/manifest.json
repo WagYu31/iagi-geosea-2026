@@ -7,12 +7,12 @@
       "_vendor-mui-icons-C--vwcj9.js"
     ]
   },
-  "_RichTextEditor-CDyQ1Qnp.js": {
-    "file": "assets/RichTextEditor-CDyQ1Qnp.js",
+  "_RichTextEditor-AVCLBY-I.js": {
+    "file": "assets/RichTextEditor-AVCLBY-I.js",
     "name": "RichTextEditor",
     "imports": [
-      "_vendor-mui-core-D_EtrlSL.js",
       "_vendor-react-zq6P3Ky3.js",
+      "_vendor-mui-core-D_EtrlSL.js",
       "_vendor-inertia-CmjPuhDP.js"
     ],
     "css": [
@@ -314,7 +314,7 @@
     ]
   },
   "resources/js/Pages/Submissions/Index.jsx": {
-    "file": "assets/Index-DfYwpRDy.js",
+    "file": "assets/Index-6wzeiGWr.js",
     "name": "Index",
     "src": "resources/js/Pages/Submissions/Index.jsx",
     "isDynamicEntry": true,
@@ -322,14 +322,14 @@
       "_vendor-mui-core-D_EtrlSL.js",
       "_vendor-inertia-CmjPuhDP.js",
       "_layouts-BZJs_W70.js",
+      "_RichTextEditor-AVCLBY-I.js",
       "_vendor-mui-icons-C--vwcj9.js",
-      "_RichTextEditor-CDyQ1Qnp.js",
       "_CoachMark-BARPp05O.js",
       "_vendor-react-zq6P3Ky3.js"
     ]
   },
   "resources/js/Pages/Submissions/View.jsx": {
-    "file": "assets/View-BVsr7vYr.js",
+    "file": "assets/View-BFYfyfXT.js",
     "name": "View",
     "src": "resources/js/Pages/Submissions/View.jsx",
     "isDynamicEntry": true,
@@ -337,8 +337,8 @@
       "_vendor-mui-core-D_EtrlSL.js",
       "_vendor-inertia-CmjPuhDP.js",
       "_layouts-BZJs_W70.js",
+      "_RichTextEditor-AVCLBY-I.js",
       "_vendor-mui-icons-C--vwcj9.js",
-      "_RichTextEditor-CDyQ1Qnp.js",
       "_vendor-react-zq6P3Ky3.js"
     ]
   },
@@ -379,7 +379,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-C0BlGBZ3.js",
+    "file": "assets/app-CyxaHQ-y.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

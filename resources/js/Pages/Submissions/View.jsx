@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
+import { compressDocx } from '@/Utils/docxCompressor';
 import {
     Box, Typography, Paper, Grid, Chip, Button, Divider, TextField, Alert, Card,
     CardContent, Stack, Avatar, useTheme,
@@ -438,6 +439,48 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
         editor_feedback_file: null,
     });
 
+    const [compressionStatus, setCompressionStatus] = useState({
+        full_paper_file: '',
+        layouting_file: '',
+        editor_feedback_file: '',
+    });
+
+    const handleFileChange = async (fieldName, file) => {
+        if (!file) {
+            setData(fieldName, null);
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: '' }));
+            return;
+        }
+
+        if (file.name.toLowerCase().endsWith('.docx')) {
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: 'Compressing...' }));
+            try {
+                const compressedFile = await compressDocx(file, (current, total) => {
+                    setCompressionStatus(prev => ({
+                        ...prev,
+                        [fieldName]: `Compressing images: ${current}/${total}`
+                    }));
+                });
+
+                const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const compressedSizeMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+
+                setData(fieldName, compressedFile);
+                setCompressionStatus(prev => ({
+                    ...prev,
+                    [fieldName]: `Compressed! Saved ${(originalSizeMB - compressedSizeMB).toFixed(2)} MB (${Math.round((1 - compressedFile.size / file.size) * 100)}% smaller)`
+                }));
+            } catch (error) {
+                console.error('Compression error:', error);
+                setData(fieldName, file);
+                setCompressionStatus(prev => ({ ...prev, [fieldName]: 'Compression failed, using original.' }));
+            }
+        } else {
+            setData(fieldName, file);
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: '' }));
+        }
+    };
+
     const handleUpdate = (e) => {
         e.preventDefault();
         post(route('submissions.update', submission.id), {
@@ -637,11 +680,16 @@ export default function ViewSubmission({ submission, reviews = [], isReviewer = 
                                                     }}
                                                 >
                                                     Choose File
-                                                    <VisuallyHiddenInput type="file" accept=".pdf,.doc,.docx" onChange={(e) => setData(item.key, e.target.files[0])} />
+                                                    <VisuallyHiddenInput type="file" accept=".pdf,.doc,.docx" onChange={(e) => handleFileChange(item.key, e.target.files[0])} />
                                                 </Button>
+                                                {compressionStatus[item.key] && (
+                                                    <Typography variant="caption" display="block" sx={{ color: compressionStatus[item.key].includes('Compressed') ? '#0d7a6a' : '#ea580c', fontWeight: 700, mt: 1 }}>
+                                                        {compressionStatus[item.key]}
+                                                    </Typography>
+                                                )}
                                                 {data[item.key] && (
                                                     <Typography variant="caption" display="block" sx={{ mt: 1, color: '#1abc9c', fontWeight: 600 }}>
-                                                        ✓ {data[item.key].name}
+                                                        ✓ {data[item.key].name} ({(data[item.key].size / (1024 * 1024)).toFixed(2)} MB)
                                                     </Typography>
                                                 )}
                                             </Box>

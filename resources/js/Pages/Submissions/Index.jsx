@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
+import { compressDocx } from '@/Utils/docxCompressor';
 import {
     Box,
     Typography,
@@ -184,6 +185,48 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         publication_option: '',
         preferred_publication: '',
     });
+
+    const [compressionStatus, setCompressionStatus] = useState({
+        full_paper_file: '',
+        layouting_file: '',
+        editor_feedback_file: '',
+    });
+
+    const handleFileChange = async (fieldName, file) => {
+        if (!file) {
+            setData(fieldName, null);
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: '' }));
+            return;
+        }
+
+        if (file.name.toLowerCase().endsWith('.docx')) {
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: 'Compressing...' }));
+            try {
+                const compressedFile = await compressDocx(file, (current, total) => {
+                    setCompressionStatus(prev => ({
+                        ...prev,
+                        [fieldName]: `Compressing images: ${current}/${total}`
+                    }));
+                });
+
+                const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const compressedSizeMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+
+                setData(fieldName, compressedFile);
+                setCompressionStatus(prev => ({
+                    ...prev,
+                    [fieldName]: `Compressed! Saved ${(originalSizeMB - compressedSizeMB).toFixed(2)} MB (${Math.round((1 - compressedFile.size / file.size) * 100)}% smaller)`
+                }));
+            } catch (error) {
+                console.error('Compression error:', error);
+                setData(fieldName, file);
+                setCompressionStatus(prev => ({ ...prev, [fieldName]: 'Compression failed, using original.' }));
+            }
+        } else {
+            setData(fieldName, file);
+            setCompressionStatus(prev => ({ ...prev, [fieldName]: '' }));
+        }
+    };
 
     useEffect(() => {
         if (flash?.success) {
@@ -1778,12 +1821,17 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 accept=".pdf,.doc,.docx"
-                                                                onChange={(e) => setData('full_paper_file', e.target.files[0])}
+                                                                onChange={(e) => handleFileChange('full_paper_file', e.target.files[0])}
                                                             />
                                                         </Button>
+                                                        {compressionStatus.full_paper_file && (
+                                                            <Typography variant="caption" display="block" sx={{ color: compressionStatus.full_paper_file.includes('Compressed') ? '#0d7a6a' : '#ea580c', fontWeight: 700, mb: 1 }}>
+                                                                {compressionStatus.full_paper_file}
+                                                            </Typography>
+                                                        )}
                                                         {data.full_paper_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ New: {data.full_paper_file.name}
+                                                                ✓ New: {data.full_paper_file.name} ({(data.full_paper_file.size / (1024 * 1024)).toFixed(2)} MB)
                                                             </Typography>
                                                         ) : existingFiles.full_paper_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -1834,12 +1882,17 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 accept=".pdf,.doc,.docx"
-                                                                onChange={(e) => setData('layouting_file', e.target.files[0])}
+                                                                onChange={(e) => handleFileChange('layouting_file', e.target.files[0])}
                                                             />
                                                         </Button>
+                                                        {compressionStatus.layouting_file && (
+                                                            <Typography variant="caption" display="block" sx={{ color: compressionStatus.layouting_file.includes('Compressed') ? '#0d7a6a' : '#ea580c', fontWeight: 700, mb: 1 }}>
+                                                                {compressionStatus.layouting_file}
+                                                            </Typography>
+                                                        )}
                                                         {data.layouting_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ New: {data.layouting_file.name}
+                                                                ✓ New: {data.layouting_file.name} ({(data.layouting_file.size / (1024 * 1024)).toFixed(2)} MB)
                                                             </Typography>
                                                         ) : existingFiles.layouting_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
@@ -1885,12 +1938,17 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 accept=".pdf,.doc,.docx"
-                                                                onChange={(e) => setData('editor_feedback_file', e.target.files[0])}
+                                                                onChange={(e) => handleFileChange('editor_feedback_file', e.target.files[0])}
                                                             />
                                                         </Button>
+                                                        {compressionStatus.editor_feedback_file && (
+                                                            <Typography variant="caption" display="block" sx={{ color: compressionStatus.editor_feedback_file.includes('Compressed') ? '#0d7a6a' : '#ea580c', fontWeight: 700, mb: 1 }}>
+                                                                {compressionStatus.editor_feedback_file}
+                                                            </Typography>
+                                                        )}
                                                         {data.editor_feedback_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#1abc9c', fontWeight: 600, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                                                                ✓ New: {data.editor_feedback_file.name}
+                                                                ✓ New: {data.editor_feedback_file.name} ({(data.editor_feedback_file.size / (1024 * 1024)).toFixed(2)} MB)
                                                             </Typography>
                                                         ) : existingFiles.editor_feedback_file ? (
                                                             <Typography variant="caption" display="block" sx={{ color: '#666', fontWeight: 500, wordBreak: 'break-word', fontSize: { xs: '0.75rem', md: '0.875rem' } }}>

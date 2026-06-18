@@ -30,6 +30,7 @@
         "@mui/material": "^7.3.6",
         "@mui/x-charts": "^8.23.0",
         "@mui/x-data-grid": "^8.23.0",
+        "jszip": "^3.10.1",
         "mammoth": "^1.12.0",
         "pdfjs-dist": "^3.11.174",
         "react-countdown": "^2.3.6",
