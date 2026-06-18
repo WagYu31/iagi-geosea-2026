@@ -139,7 +139,7 @@ function PricingSettingsTab({ initialPricing, inputSx, tealBtnSx, sectionCardSx,
 
     const categories = [
         { key: 'professional', label: 'Professional & IAGI Member', icon: '🏢', desc: 'For professionals and IAGI organization members' },
-        { key: 'international', label: 'Profesional and Non-IAGI member', icon: '🌍', desc: 'For international participants (Non-IAGI)' },
+        { key: 'international', label: 'Professional and Non-IAGI member', icon: '🌍', desc: 'For Professional and Non-IAGI member' },
         { key: 'student', label: 'Student', icon: '🎓', desc: 'For undergraduate students' },
     ];
 

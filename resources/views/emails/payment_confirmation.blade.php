@@ -54,7 +54,8 @@
                         @php
                             $catMap = [
                                 'professional' => 'Professional & IAGI Member',
-                                'international' => 'Profesional and Non-IAGI member',
+                                'international' => 'Professional and Non-IAGI member',
+                                'international delegate' => 'Professional and Non-IAGI member',
                                 'student' => 'Student',
                             ];
                             $catKey = strtolower($payment->submission->participant_category ?? '');

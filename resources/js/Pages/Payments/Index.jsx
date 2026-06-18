@@ -94,7 +94,7 @@ const CATEGORIES = {
         recommended: true,
     },
     'international': { 
-        label: 'Profesional and Non-IAGI member', 
+        label: 'Professional and Non-IAGI member', 
         short: 'Professional & Non-IAGI', 
         color: '#ec4899', 
         lightColor: '#f9a8d4', 
@@ -104,7 +104,7 @@ const CATEGORIES = {
         features: ['Full conference access', 'Networking sessions', 'Conference materials', 'Certificate of attendance'],
     },
     'international delegate': { 
-        label: 'Profesional and Non-IAGI member', 
+        label: 'Professional and Non-IAGI member', 
         short: 'Professional & Non-IAGI', 
         color: '#ec4899', 
         lightColor: '#f9a8d4', 

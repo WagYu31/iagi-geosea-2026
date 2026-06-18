@@ -118,7 +118,7 @@ export default function UpdateProfileInformation({
                         <option value="">Select Category</option>
                         <option value="Student">Student</option>
                         <option value="Professional">Professional</option>
-                        <option value="International Delegate">Profesional and Non-IAGI member</option>
+                        <option value="International Delegate">Professional and Non-IAGI member</option>
                     </select>
 
                     <InputError className="mt-2" message={errors.category} />

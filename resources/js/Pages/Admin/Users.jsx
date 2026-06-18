@@ -228,7 +228,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                                             </TableCell>
                                             <TableCell sx={cellSx}>
                                                 {user.category ? (
-                                                    <Chip label={user.category === 'International Delegate' ? 'Profesional and Non-IAGI member' : user.category} size="small" sx={{
+                                                    <Chip label={user.category === 'International Delegate' ? 'Professional and Non-IAGI member' : user.category} size="small" sx={{
                                                         bgcolor: user.category === 'Student' ? (isDark ? 'rgba(59,130,246,0.15)' : '#dbeafe') : user.category === 'Professional' ? (isDark ? 'rgba(147,51,234,0.15)' : '#f3e8ff') : (isDark ? 'rgba(234,88,12,0.15)' : '#fff7ed'),
                                                         color: user.category === 'Student' ? '#2563eb' : user.category === 'Professional' ? '#9333ea' : '#ea580c',
                                                         fontWeight: 600, fontSize: '0.7rem', borderRadius: '6px', height: 24,
@@ -381,7 +381,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                             <MenuItem value=""><em>None</em></MenuItem>
                             <MenuItem value="Student">Student</MenuItem>
                             <MenuItem value="Professional">Professional</MenuItem>
-                            <MenuItem value="International Delegate">Profesional and Non-IAGI member</MenuItem>
+                            <MenuItem value="International Delegate">Professional and Non-IAGI member</MenuItem>
                         </Select>
                     </FormControl>
                     <Box sx={{ borderTop: `1px solid ${c.cardBorder}`, pt: 2, mt: 1 }}>

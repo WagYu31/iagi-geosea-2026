@@ -54,7 +54,7 @@ export default function TermsAndConditions() {
                             </Typography>
                             <Box component="ul" sx={{ ...textStyle, pl: 3, mt: 1 }}>
                                 <li><strong>Professional & IAGI Member</strong> — As listed on the registration page</li>
-                                <li><strong>Profesional and Non-IAGI member</strong> — As listed on the registration page</li>
+                                <li><strong>Professional and Non-IAGI member</strong> — As listed on the registration page</li>
                                 <li><strong>Student</strong> — As listed on the registration page (valid student ID required)</li>
                             </Box>
                             <Typography sx={{ ...textStyle, mt: 1 }}>
