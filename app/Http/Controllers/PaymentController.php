@@ -273,11 +273,18 @@ class PaymentController extends Controller
 
         if ($baseAmount) {
             $prefixSetting = \App\Models\LandingPageSetting::where('key', 'payment_unique_code_prefix')->first();
-            $prefix = $prefixSetting ? (int)$prefixSetting->value : 5000;
-            if ($prefix <= 0) {
-                $prefix = 5000;
+            $prefixStr = $prefixSetting ? $prefixSetting->value : '5000';
+            
+            if (str_ends_with($prefixStr, '55')) {
+                $changing = $submission->id % 100;
+                $uniqueCode = ($changing * 100) + 55;
+            } else {
+                $prefix = (int)$prefixStr;
+                if ($prefix <= 0) {
+                    $prefix = 5000;
+                }
+                $uniqueCode = $prefix + ($submission->id % 999) + 1;
             }
-            $uniqueCode = $prefix + ($submission->id % 999) + 1;
             $finalAmount = $baseAmount + $uniqueCode;
         } else {
             $finalAmount = $request->amount;

@@ -144,9 +144,22 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     const { auth } = usePage().props;
     const user = auth?.user;
 
-    const prefix = parseInt(unique_code_prefix) || 5000;
     const getUniqueDigit = (subId) => {
-        return prefix + (subId % 999) + 1;
+        const prefixStr = unique_code_prefix ? unique_code_prefix.toString() : "5000";
+        if (prefixStr.endsWith('55')) {
+            const changing = subId % 100;
+            return (changing * 100) + 55;
+        }
+        const prefixVal = parseInt(prefixStr) || 5000;
+        return prefixVal + (subId % 999) + 1;
+    };
+
+    const formatUniqueCode = (code) => {
+        const prefixStr = unique_code_prefix ? unique_code_prefix.toString() : "5000";
+        if (prefixStr.endsWith('55')) {
+            return code.toString().padStart(4, '0');
+        }
+        return code.toString();
     };
 
     const pricing = {};
@@ -1383,7 +1396,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                                     {fmtRp(parseFloat(selFee) + getUniqueDigit(selectedSubmission.id))}
                                                 </Typography>
                                                 <Typography sx={{ fontSize: '0.55rem', color: isDark ? '#6ee7b7' : '#059669', mt: 0.2 }}>
-                                                    Includes unique digit: +{getUniqueDigit(selectedSubmission.id)}
+                                                    Includes unique digit: +{formatUniqueCode(getUniqueDigit(selectedSubmission.id))}
                                                 </Typography>
                                             </Box>
                                             <IconButton 
@@ -1637,7 +1650,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
                                 }}>
                                     {[
                                         { label: 'Base Registration Fee', value: fmtRp(selFee) },
-                                        { label: 'Unique Digit Code', value: `+${getUniqueDigit(selectedSubmission.id)}` },
+                                        { label: 'Unique Digit Code', value: `+${formatUniqueCode(getUniqueDigit(selectedSubmission.id))}` },
                                         { label: 'Participant Name', value: user?.name || '—' },
                                         { label: 'Email', value: user?.email || '—' },
                                     ].map((row, i) => (

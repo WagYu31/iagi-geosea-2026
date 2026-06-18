@@ -380,16 +380,16 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                 Manual Payment Unique Code Prefix
                             </Typography>
                             <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, lineHeight: 1.6 }}>
-                                Set the base prefix value for generating unique code nominal transfers. For example, setting <strong>5000</strong> will generate a unique 4-digit code in the range of 5001-5999 based on the submission ID.
+                                Set the base prefix value for generating unique code nominal transfers. For example, setting <strong>5000</strong> will generate a unique 4-digit code in the range of 5001-5999 based on the submission ID. Setting to <strong>0055</strong> will generate unique codes ending in 55 (e.g., 0055, 0155, 0255...) based on the submission ID.
                             </Typography>
                             <TextField
                                 fullWidth
-                                type="number"
+                                type="text"
                                 size="small"
                                 label="Unique Code Prefix"
                                 value={uniqueCodePrefix}
                                 onChange={(e) => setUniqueCodePrefix(e.target.value)}
-                                helperText="Default value is 5000"
+                                helperText="Default value is 5000. Set to 0055 to generate unique codes ending in 55."
                                 sx={inputSx}
                             />
                         </Box>

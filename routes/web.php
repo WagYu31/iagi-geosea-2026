@@ -141,7 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Fetch payment unique code prefix
         $prefixSetting = App\Models\LandingPageSetting::where('key', 'payment_unique_code_prefix')->first();
-        $uniqueCodePrefix = $prefixSetting ? (int)$prefixSetting->value : 5000;
+        $uniqueCodePrefix = $prefixSetting ? $prefixSetting->value : '5000';
 
         return Inertia::render('Payments/Index', [
             'payments' => $payments,

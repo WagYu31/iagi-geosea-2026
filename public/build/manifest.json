@@ -167,7 +167,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-DbWwSsaq.js",
+    "file": "assets/Settings-T7G3Dz90.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -234,7 +234,7 @@
     ]
   },
   "resources/js/Pages/Payments/Index.jsx": {
-    "file": "assets/Index-66RmBkoc.js",
+    "file": "assets/Index-DjNQ_PyR.js",
     "name": "Index",
     "src": "resources/js/Pages/Payments/Index.jsx",
     "isDynamicEntry": true,
@@ -379,7 +379,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BpnRkizr.js",
+    "file": "assets/app-DZZnZLn3.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
