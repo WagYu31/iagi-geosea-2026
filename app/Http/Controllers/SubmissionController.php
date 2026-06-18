@@ -142,7 +142,7 @@ class SubmissionController extends Controller
 
                 foreach ($submission->reviews as $review) {
                     if ($review->reviewer && $review->reviewer->email) {
-                        Mail::to($review->reviewer->email)->send(
+                        Mail::to($review->reviewer->email)->queue(
                             new RevisionUploaded($submission, $review->reviewer->name, $authorName, $revisionPhase)
                         );
                     }
