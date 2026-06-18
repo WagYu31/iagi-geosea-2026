@@ -133,22 +133,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const { flash } = usePage().props;
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-    useEffect(() => {
-        if (flash?.success) {
-            setSnackbar({ open: true, message: flash.success, severity: 'success' });
-        }
-        if (flash?.error) {
-            setSnackbar({ open: true, message: flash.error, severity: 'error' });
-        }
-    }, [flash]);
 
-    useEffect(() => {
-        if (errors && Object.keys(errors).length > 0) {
-            const firstErrorKey = Object.keys(errors)[0];
-            const firstErrorMessage = errors[firstErrorKey];
-            setSnackbar({ open: true, message: `Error: ${firstErrorMessage}`, severity: 'error' });
-        }
-    }, [errors]);
 
     const handleRequestDeletion = () => {
         if (!deletingSubmissionId || !deletionReason.trim()) return;
@@ -198,6 +183,23 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         publication_option: '',
         preferred_publication: '',
     });
+
+    useEffect(() => {
+        if (flash?.success) {
+            setSnackbar({ open: true, message: flash.success, severity: 'success' });
+        }
+        if (flash?.error) {
+            setSnackbar({ open: true, message: flash.error, severity: 'error' });
+        }
+    }, [flash]);
+
+    useEffect(() => {
+        if (errors && Object.keys(errors).length > 0) {
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstErrorMessage = errors[firstErrorKey];
+            setSnackbar({ open: true, message: `Error: ${firstErrorMessage}`, severity: 'error' });
+        }
+    }, [errors]);
 
     const handleAbstractChange = (content, wc) => {
         setData('abstract', content);
