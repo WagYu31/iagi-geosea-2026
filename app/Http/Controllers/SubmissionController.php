@@ -94,9 +94,9 @@ class SubmissionController extends Controller
             'abstract' => 'required|string',
             'keywords' => 'required|string|max:500',
             'institute_organization' => 'required|string|max:255',
-            'full_paper_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'layouting_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'editor_feedback_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'full_paper_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
+            'layouting_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
+            'editor_feedback_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
             'publication_option' => 'required|in:no,yes',
             'preferred_publication' => 'required_if:publication_option,yes|nullable|in:scopus_proceedings,iagi_journal',
         ]);
@@ -182,9 +182,9 @@ class SubmissionController extends Controller
             'title' => 'required|string|max:255',
             'abstract' => 'required|string',
             'keywords' => 'required|string|max:500',
-            'layouting_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'editor_feedback_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'full_paper_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'layouting_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
+            'editor_feedback_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
+            'full_paper_file' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
             'institute_organization' => 'required|string|max:255',
             'consent_agreed' => 'required|accepted',
             'participant_category' => 'required|in:student,professional,international',
@@ -312,8 +312,8 @@ class SubmissionController extends Controller
         }
 
         $request->validate([
-            'revised_abstract' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            'revised_paper' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'revised_abstract' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
+            'revised_paper' => 'nullable|file|mimes:pdf,doc,docx|max:51200',
             'comments' => 'required|string|max:1000',
         ]);
 

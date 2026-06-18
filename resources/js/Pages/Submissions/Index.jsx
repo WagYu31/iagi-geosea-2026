@@ -1716,7 +1716,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                                 File Uploads
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.875rem', md: '1rem' } }}>
-                                                Upload your paper files (PDF, DOC, or DOCX format, max 10MB each)
+                                                Upload your paper files (PDF, DOC, or DOCX format, max 50MB each)
                                             </Typography>
 
                                             <Grid container spacing={{ xs: 2, md: 3 }}>
@@ -2139,7 +2139,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                     {
                         target: '#file-uploads-section',
                         title: '📁 Upload Full Paper',
-                        description: 'After your paper is accepted, upload your Full Paper file here (PDF, DOC, or DOCX, max 10MB). This section only appears when your submission status is Accepted or Revision Required.',
+                        description: 'After your paper is accepted, upload your Full Paper file here (PDF, DOC, or DOCX, max 50MB). This section only appears when your submission status is Accepted or Revision Required.',
                         position: 'top',
                     },
                     {
