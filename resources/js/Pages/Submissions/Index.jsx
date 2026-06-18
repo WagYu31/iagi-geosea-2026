@@ -34,6 +34,7 @@ import {
     RadioGroup,
     FormLabel,
     Snackbar,
+    LinearProgress,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -153,7 +154,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
         });
     };
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
         author_full_name: '',
         co_author_1: '',
         co_author_1_institute: '',
@@ -1944,6 +1945,33 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                     </CardContent>
                                 </Card>
 
+                                {/* Upload Progress Indicator */}
+                                {progress && (
+                                    <Box sx={{ width: '100%', mb: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                                            <Typography variant="body2" sx={{ fontWeight: 600, color: '#0d7a6a' }}>
+                                                Uploading File...
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 600, color: '#0d7a6a' }}>
+                                                {progress.percentage}%
+                                            </Typography>
+                                        </Box>
+                                        <LinearProgress 
+                                            variant="determinate" 
+                                            value={progress.percentage} 
+                                            sx={{ 
+                                                height: 8, 
+                                                borderRadius: 4, 
+                                                backgroundColor: '#e0f2f1',
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: '#1abc9c',
+                                                    borderRadius: 4,
+                                                }
+                                            }} 
+                                        />
+                                    </Box>
+                                )}
+
                                 {/* Submit Buttons */}
                                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', flexDirection: { xs: 'column', sm: 'row' } }}>
                                     <Button
@@ -1987,7 +2015,7 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                                             minWidth: { sm: '180px' }
                                         }}
                                     >
-                                        {processing ? 'Submitting...' : '✓ Submit Paper'}
+                                        {processing ? (progress ? `Uploading ${progress.percentage}%...` : 'Submitting...') : '✓ Submit Paper'}
                                     </Button>
                                 </Box>
                             </Stack>
