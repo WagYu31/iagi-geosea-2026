@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box,
@@ -33,6 +33,7 @@ import {
     Radio,
     RadioGroup,
     FormLabel,
+    Snackbar,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -128,6 +129,26 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
     const [deletingSubmissionId, setDeletingSubmissionId] = useState(null);
     const [deletionReason, setDeletionReason] = useState('');
     const [deletionProcessing, setDeletionProcessing] = useState(false);
+
+    const { flash } = usePage().props;
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+    useEffect(() => {
+        if (flash?.success) {
+            setSnackbar({ open: true, message: flash.success, severity: 'success' });
+        }
+        if (flash?.error) {
+            setSnackbar({ open: true, message: flash.error, severity: 'error' });
+        }
+    }, [flash]);
+
+    useEffect(() => {
+        if (errors && Object.keys(errors).length > 0) {
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstErrorMessage = errors[firstErrorKey];
+            setSnackbar({ open: true, message: `Error: ${firstErrorMessage}`, severity: 'error' });
+        }
+    }, [errors]);
 
     const handleRequestDeletion = () => {
         if (!deletingSubmissionId || !deletionReason.trim()) return;
@@ -2156,6 +2177,21 @@ export default function Submissions({ submissions = [], submissionStatus = { ope
                     },
                 ]}
             />
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: '100%', borderRadius: '10px' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </SidebarLayout>
     );
 }
