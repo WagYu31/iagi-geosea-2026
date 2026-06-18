@@ -100,7 +100,7 @@ const CATEGORIES = {
         lightColor: '#f9a8d4', 
         badgeBg: 'rgba(236,72,153,0.12)',
         gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
-        description: 'For international participants (Non-IAGI)',
+        description: 'For Professional and Non-IAGI member',
         features: ['Full conference access', 'Networking sessions', 'Conference materials', 'Certificate of attendance'],
     },
     'international delegate': { 
@@ -110,7 +110,7 @@ const CATEGORIES = {
         lightColor: '#f9a8d4', 
         badgeBg: 'rgba(236,72,153,0.12)',
         gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
-        description: 'For international participants (Non-IAGI)',
+        description: 'For Professional and Non-IAGI member',
         features: ['Full conference access', 'Networking sessions', 'Conference materials', 'Certificate of attendance'],
     },
     'student': { 
