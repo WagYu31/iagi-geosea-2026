@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, Link } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Card, CardContent, Chip, Button, TextField,
@@ -672,24 +672,29 @@ export default function ScoreForm({ submission, presentationScore }) {
                     <Stack spacing={1}>
                         <Button
                             fullWidth variant="contained"
-                            onClick={() => setSuccessDialog({ ...successDialog, open: false })}
+                            component={Link}
+                            href={route('juri.submissions')}
                             sx={{
                                 background: `linear-gradient(135deg, ${ISO.navy}, ${ISO.navyLight})`,
                                 borderRadius: '10px', textTransform: 'none', fontWeight: 700,
                                 fontFamily: fontDoc, py: 1.25,
+                                color: '#fff',
+                                '&:hover': {
+                                    background: `linear-gradient(135deg, ${ISO.navyLight}, ${ISO.navy})`,
+                                }
                             }}
                         >
-                            Continue Editing
+                            Continue to Assignments
                         </Button>
                         <Button
                             fullWidth variant="outlined"
-                            href={route('juri.submissions')}
+                            onClick={() => setSuccessDialog({ ...successDialog, open: false })}
                             sx={{
                                 borderRadius: '10px', textTransform: 'none', fontWeight: 600,
                                 fontFamily: fontDoc, color: ISO.slate, borderColor: bdr,
                             }}
                         >
-                            Back to Assignments
+                            Keep Editing
                         </Button>
                     </Stack>
                 </DialogContent>
