@@ -58,6 +58,11 @@ Route::get('/dashboard', function () {
         return redirect()->route('reviewer.dashboard');
     }
 
+    // Redirect juris to their specific dashboard
+    if (strtolower($user->role) === 'juri') {
+        return redirect()->route('juri.dashboard');
+    }
+
     // Redirect admins to their specific dashboard
     if (strtolower($user->role) === 'admin') {
         return redirect()->route('admin.dashboard');
@@ -212,6 +217,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Scores Management
         Route::get('/scores', [App\Http\Controllers\AdminController::class, 'scores'])->name('scores');
 
+        // Presentation Scores Management (Juri)
+        Route::get('/presentation-scores', [App\Http\Controllers\AdminController::class, 'presentationScores'])->name('presentation-scores');
+        Route::post('/submissions/{id}/assign-juri', [App\Http\Controllers\AdminController::class, 'assignJuri'])->name('submissions.assignJuri');
+        Route::delete('/submissions/{submissionId}/juri/{juriId}', [App\Http\Controllers\AdminController::class, 'removeJuri'])->name('submissions.removeJuri');
+
         // Certificates Management
         Route::get('/certificates', [App\Http\Controllers\AdminController::class, 'certificates'])->name('certificates');
         Route::post('/certificates/{submissionId}', [App\Http\Controllers\AdminController::class, 'uploadCertificate'])->name('certificates.upload');
@@ -293,5 +303,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/submissions/{id}/annotations', [App\Http\Controllers\ReviewerController::class, 'storeAnnotation'])->name('annotations.store');
         Route::put('/annotations/{id}', [App\Http\Controllers\ReviewerController::class, 'updateAnnotation'])->name('annotations.update');
         Route::delete('/annotations/{id}', [App\Http\Controllers\ReviewerController::class, 'deleteAnnotation'])->name('annotations.destroy');
+    });
+
+    // Juri routes
+    Route::middleware(['role:juri'])->prefix('juri')->name('juri.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [App\Http\Controllers\JuriController::class, 'dashboard'])->name('dashboard');
+
+        // Assigned Submissions
+        Route::get('/submissions', [App\Http\Controllers\JuriController::class, 'submissions'])->name('submissions');
+        Route::get('/submissions/{id}', [App\Http\Controllers\JuriController::class, 'viewSubmission'])->name('submissions.view');
+        Route::post('/submissions/{id}/score', [App\Http\Controllers\JuriController::class, 'submitScoring'])->name('submissions.score');
     });
 });

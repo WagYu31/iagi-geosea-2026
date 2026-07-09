@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PageVisit;
 use App\Models\EmailSetting;
 use App\Models\Certificate;
+use App\Models\PresentationScore;
 use App\Mail\SubmissionStatusChanged;
 use App\Mail\PaymentConfirmation;
 use App\Services\WhatsAppNotificationService;
@@ -246,6 +247,8 @@ class AdminController extends Controller
             'reviews:id,submission_id,reviewer_id',
             'reviews.reviewer:id,name,email',
             'payment:id,submission_id,verified,amount',
+            'presentationScores:id,submission_id,juri_id,weighted_final_score',
+            'presentationScores.juri:id,name,email',
         ]);
 
         // Server-side search
@@ -288,10 +291,12 @@ class AdminController extends Controller
         ];
 
         $reviewers = User::whereRaw('LOWER(role) = ?', ['reviewer'])->get(['id', 'name', 'email', 'affiliation']);
+        $juris = User::whereRaw('LOWER(role) = ?', ['juri'])->get(['id', 'name', 'email', 'affiliation']);
 
         return Inertia::render('Admin/Submissions', [
             'submissions' => $submissions,
             'reviewers' => $reviewers,
+            'juris' => $juris,
             'statusCounts' => $statusCounts,
             'filters' => [
                 'search' => $request->get('search', ''),
@@ -783,7 +788,7 @@ class AdminController extends Controller
     public function updateUserRole(Request $request, $id)
     {
         $request->validate([
-            'role' => 'required|in:Author,Admin,Reviewer',
+            'role' => 'required|in:Author,Admin,Reviewer,Juri',
         ]);
 
         $user = User::findOrFail($id);
@@ -863,7 +868,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:Author,Admin,Reviewer',
+            'role' => 'required|in:Author,Admin,Reviewer,Juri',
             'affiliation' => $request->role === 'Reviewer' ? 'required|string|max:255' : 'nullable|string|max:255',
         ]);
 
@@ -1053,5 +1058,90 @@ class AdminController extends Controller
             'best_paper' => 'Best Paper Award',
             default => 'Certificate',
         };
+    }
+
+    // ── Juri Management ──
+
+    public function assignJuri(Request $request, $id)
+    {
+        $request->validate([
+            'juri_ids' => 'required|array|max:5',
+            'juri_ids.*' => 'required|exists:users,id',
+        ]);
+
+        $submission = Submission::findOrFail($id);
+
+        // Determine rubric type from category_submission
+        $categorySubmission = strtolower($submission->category_submission ?? '');
+        $rubricType = str_contains($categorySubmission, 'oral') ? 'oral' : 'poster';
+
+        // Check current juri count
+        $currentCount = PresentationScore::where('submission_id', $submission->id)->count();
+        $newCount = count($request->juri_ids);
+
+        if ($currentCount + $newCount > 5) {
+            return back()->withErrors(['error' => 'Maximum 5 juris per submission. Currently assigned: ' . $currentCount]);
+        }
+
+        // Get already assigned juri IDs
+        $alreadyAssigned = PresentationScore::where('submission_id', $submission->id)
+            ->pluck('juri_id')
+            ->toArray();
+
+        $newAssignments = 0;
+        foreach ($request->juri_ids as $juriId) {
+            if (in_array($juriId, $alreadyAssigned)) {
+                continue;
+            }
+
+            PresentationScore::create([
+                'submission_id' => $submission->id,
+                'juri_id'       => $juriId,
+                'rubric_type'   => $rubricType,
+            ]);
+
+            $newAssignments++;
+        }
+
+        if ($newAssignments > 0) {
+            return back()->with('success', $newAssignments . ' juri(s) assigned successfully!');
+        } else {
+            return back()->with('info', 'No new juris assigned (already assigned or limit reached).');
+        }
+    }
+
+    public function removeJuri(Request $request, $submissionId, $juriId)
+    {
+        $score = PresentationScore::where('submission_id', $submissionId)
+            ->where('juri_id', $juriId)
+            ->first();
+
+        if (!$score) {
+            return back()->withErrors(['error' => 'Juri assignment not found.']);
+        }
+
+        // Check if juri has already submitted scores
+        if ($score->weighted_final_score !== null) {
+            return back()->withErrors(['error' => 'Cannot remove juri who has already submitted scores.']);
+        }
+
+        $score->delete();
+
+        return back()->with('success', 'Juri removed successfully!');
+    }
+
+    public function presentationScores()
+    {
+        $submissions = Submission::with([
+            'user:id,name,email',
+            'presentationScores.juri:id,name',
+        ])
+            ->whereHas('presentationScores')
+            ->latest()
+            ->paginate(25);
+
+        return Inertia::render('Admin/PresentationScores', [
+            'submissions' => $submissions,
+        ]);
     }
 }

@@ -71,4 +71,9 @@ class Submission extends Model
     {
         return $this->hasMany(Certificate::class);
     }
+
+    public function presentationScores()
+    {
+        return $this->hasMany(PresentationScore::class);
+    }
 }

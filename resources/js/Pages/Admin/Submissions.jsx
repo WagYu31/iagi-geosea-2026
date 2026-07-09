@@ -50,6 +50,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DescriptionIcon from '@mui/icons-material/Description';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 const themeSubThemes = {
     'Fundamental & Digital Geoscience': [
@@ -109,7 +110,7 @@ const getThemeFromSubTheme = (subTheme) => {
     return subTheme;
 };
 
-export default function AdminSubmissions({ submissions = {}, reviewers = [], statusCounts = {}, filters = {} }) {
+export default function AdminSubmissions({ submissions = {}, reviewers = [], juris = [], statusCounts = {}, filters = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -131,6 +132,8 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], sta
     const [changeAllStatus, setChangeAllStatus] = useState('');
     const [changeAllDialog, setChangeAllDialog] = useState(false);
     const [localSubmissions, setLocalSubmissions] = useState(paginatedData);
+    const [assignJuriDialog, setAssignJuriDialog] = useState({ open: false, submission: null });
+    const [selectedJuris, setSelectedJuris] = useState([]);
 
     // Sync with server props when they update
     React.useEffect(() => {
@@ -303,6 +306,47 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], sta
     const handleRemoveReviewer = (submissionId, reviewerId) => {
         if (confirm('Are you sure you want to remove this reviewer?')) {
             router.delete(route('admin.submissions.removeReviewer', { submissionId, reviewerId }), {
+                preserveScroll: true,
+            });
+        }
+    };
+
+    // ── Juri Assignment Handlers ──
+    const handleAssignJuri = (submission) => {
+        setAssignJuriDialog({ open: true, submission });
+        setSelectedJuris([]);
+    };
+
+    const handleAddJuri = (juriId) => {
+        if (!selectedJuris.includes(juriId)) {
+            const currentCount = assignJuriDialog.submission?.presentation_scores?.length || 0;
+            if (currentCount + selectedJuris.length < 5) {
+                setSelectedJuris([...selectedJuris, juriId]);
+            }
+        }
+    };
+
+    const handleRemoveSelectedJuri = (juriId) => {
+        setSelectedJuris(selectedJuris.filter(id => id !== juriId));
+    };
+
+    const handleAssignJuriSubmit = () => {
+        if (selectedJuris.length > 0 && assignJuriDialog.submission) {
+            router.post(route('admin.submissions.assignJuri', assignJuriDialog.submission.id), {
+                juri_ids: selectedJuris,
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setAssignJuriDialog({ open: false, submission: null });
+                    setSelectedJuris([]);
+                },
+            });
+        }
+    };
+
+    const handleRemoveJuri = (submissionId, juriId) => {
+        if (confirm('Are you sure you want to remove this juri?')) {
+            router.delete(route('admin.submissions.removeJuri', { submissionId, juriId }), {
                 preserveScroll: true,
             });
         }
@@ -668,6 +712,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], sta
                                     <TableCell sx={headCellSx}>Status</TableCell>
                                     <TableCell sx={headCellSx}>Payment</TableCell>
                                     <TableCell sx={headCellSx}>Reviewers</TableCell>
+                                    <TableCell sx={headCellSx}>Juri</TableCell>
                                     <TableCell sx={headCellSx}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -1034,6 +1079,97 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], sta
                                                             Assign
                                                         </Button>
                                                     )}
+                                                </TableCell>
+                                                {/* Juri Column */}
+                                                <TableCell sx={cellSx}>
+                                                    {(() => {
+                                                        const assignedJuris = submission.presentation_scores || [];
+                                                        const juriCount = assignedJuris.length;
+                                                        return juriCount > 0 ? (
+                                                            <Box>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+                                                                    <GavelIcon sx={{ fontSize: 14, color: '#d97706' }} />
+                                                                    <Chip
+                                                                        label={`${juriCount}/5`}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 20, fontSize: '0.65rem', fontWeight: 700,
+                                                                            bgcolor: isDark ? 'rgba(217,119,6,0.12)' : '#fffbeb',
+                                                                            color: '#d97706',
+                                                                        }}
+                                                                    />
+                                                                </Box>
+                                                                {assignedJuris.map((ps) => (
+                                                                    <Box key={ps.id} sx={{
+                                                                        display: 'flex', alignItems: 'center', gap: 0.5,
+                                                                        mb: 0.25, fontSize: '0.7rem',
+                                                                    }}>
+                                                                        <Typography variant="caption" sx={{
+                                                                            color: c.textPrimary, fontWeight: 500,
+                                                                            overflow: 'hidden', textOverflow: 'ellipsis',
+                                                                            whiteSpace: 'nowrap', maxWidth: 100,
+                                                                        }}>
+                                                                            {ps.juri?.name || 'Unknown'}
+                                                                        </Typography>
+                                                                        {ps.weighted_final_score && (
+                                                                            <Chip
+                                                                                label={ps.weighted_final_score}
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    height: 16, fontSize: '0.6rem', fontWeight: 700,
+                                                                                    bgcolor: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7',
+                                                                                    color: '#16a34a',
+                                                                                }}
+                                                                            />
+                                                                        )}
+                                                                        <IconButton
+                                                                            size="small"
+                                                                            onClick={() => handleRemoveJuri(submission.id, ps.juri_id)}
+                                                                            sx={{ p: '2px', '&:hover': { color: '#dc2626' } }}
+                                                                        >
+                                                                            <DeleteIcon sx={{ fontSize: 12 }} />
+                                                                        </IconButton>
+                                                                    </Box>
+                                                                ))}
+                                                                {juriCount < 5 && (
+                                                                    <Button
+                                                                        size="small"
+                                                                        startIcon={<GavelIcon sx={{ fontSize: 14 }} />}
+                                                                        onClick={() => handleAssignJuri(submission)}
+                                                                        sx={{
+                                                                            color: '#d97706',
+                                                                            fontSize: '0.65rem',
+                                                                            textTransform: 'none',
+                                                                            fontWeight: 600,
+                                                                            px: 1, py: 0.25,
+                                                                            minWidth: 0,
+                                                                            borderRadius: '6px',
+                                                                            '&:hover': { bgcolor: isDark ? 'rgba(217,119,6,0.1)' : '#fffbeb' },
+                                                                        }}
+                                                                    >
+                                                                        Add
+                                                                    </Button>
+                                                                )}
+                                                            </Box>
+                                                        ) : (
+                                                            <Button
+                                                                size="small"
+                                                                startIcon={<GavelIcon sx={{ fontSize: 16 }} />}
+                                                                onClick={() => handleAssignJuri(submission)}
+                                                                sx={{
+                                                                    color: '#d97706',
+                                                                    fontSize: '0.75rem',
+                                                                    textTransform: 'none',
+                                                                    fontWeight: 600,
+                                                                    borderRadius: '8px',
+                                                                    px: 1.5,
+                                                                    '&:hover': { bgcolor: isDark ? 'rgba(217,119,6,0.1)' : '#fffbeb' },
+                                                                }}
+                                                            >
+                                                                Assign
+                                                            </Button>
+                                                        );
+                                                    })()}
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
                                                     <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -1545,6 +1681,214 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], sta
                         }}
                     >
                         Yes, Change All ({totalItems})
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Assign Juri Dialog */}
+            <Dialog
+                open={assignJuriDialog.open}
+                onClose={() => setAssignJuriDialog({ open: false, submission: null })}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: { xs: 0, sm: '16px' },
+                        bgcolor: c.cardBg,
+                        border: { xs: 'none', sm: `1px solid ${c.cardBorder}` },
+                        m: { xs: 0, sm: 3 },
+                        maxHeight: { xs: '100vh', sm: '85vh' },
+                        height: { xs: '100vh', sm: 'auto' },
+                        width: { xs: '100vw', sm: undefined },
+                    }
+                }}
+            >
+                <DialogTitle sx={{
+                    pb: 1, fontWeight: 700, color: c.textPrimary,
+                    borderBottom: `1px solid ${c.cardBorder}`,
+                    position: 'sticky', top: 0, bgcolor: c.cardBg, zIndex: 1,
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar
+                            variant="rounded"
+                            sx={{
+                                bgcolor: isDark ? 'rgba(217, 119, 6, 0.12)' : '#fffbeb',
+                                width: 40, height: 40, borderRadius: '10px',
+                            }}
+                        >
+                            <GavelIcon sx={{ color: '#d97706', fontSize: 22 }} />
+                        </Avatar>
+                        <Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
+                                Assign Juri
+                            </Typography>
+                            {assignJuriDialog.submission && (
+                                <Typography variant="caption" sx={{ color: c.textMuted }}>
+                                    {assignJuriDialog.submission.presentation_scores?.length || 0}/5 assigned • Adding {selectedJuris.length}
+                                </Typography>
+                            )}
+                        </Box>
+                    </Box>
+                </DialogTitle>
+                <DialogContent sx={{ pt: 2.5, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                    {assignJuriDialog.submission && (
+                        <>
+                            <Box sx={{
+                                mb: 2.5, mt: 1, p: 2,
+                                bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                borderRadius: '10px', border: `1px solid ${c.cardBorder}`,
+                            }}>
+                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    Submission
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, mt: 0.5 }}>
+                                    {assignJuriDialog.submission.title}
+                                </Typography>
+                            </Box>
+
+                            {/* Currently Assigned Juris */}
+                            {assignJuriDialog.submission.presentation_scores && assignJuriDialog.submission.presentation_scores.length > 0 && (
+                                <Box sx={{ mb: 2.5 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
+                                        Currently Assigned Juris
+                                    </Typography>
+                                    <Stack spacing={0.75}>
+                                        {assignJuriDialog.submission.presentation_scores.map((ps) => (
+                                            <Box key={ps.id} sx={{
+                                                display: 'flex', alignItems: 'center', gap: 1.5,
+                                                p: 1.5, bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#f9fafb',
+                                                borderRadius: '10px', border: `1px solid ${c.cardBorder}`,
+                                            }}>
+                                                <Avatar sx={{ width: 32, height: 32, bgcolor: '#d97706', fontSize: '0.8rem', fontWeight: 700 }}>
+                                                    {(ps.juri?.name || 'J').charAt(0)}
+                                                </Avatar>
+                                                <Box sx={{ flex: 1 }}>
+                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                        {ps.juri?.name || 'Unknown'}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                                        {ps.juri?.email}
+                                                    </Typography>
+                                                </Box>
+                                                {ps.weighted_final_score && (
+                                                    <Chip label={`Score: ${ps.weighted_final_score}`} size="small"
+                                                        sx={{ fontWeight: 700, bgcolor: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7', color: '#16a34a' }} />
+                                                )}
+                                            </Box>
+                                        ))}
+                                    </Stack>
+                                </Box>
+                            )}
+
+                            {/* Selected to Add */}
+                            {selectedJuris.length > 0 && (
+                                <Box sx={{ mb: 2.5 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
+                                        Selected to Add
+                                    </Typography>
+                                    <Stack spacing={0.75}>
+                                        {selectedJuris.map((id) => {
+                                            const juri = juris.find(j => j.id === id);
+                                            return (
+                                                <Box key={id} sx={{
+                                                    display: 'flex', alignItems: 'center', gap: 1.5,
+                                                    p: 1.5, bgcolor: isDark ? 'rgba(217,119,6,0.08)' : '#fffbeb',
+                                                    borderRadius: '10px', border: `1px solid ${isDark ? 'rgba(217,119,6,0.2)' : '#fde68a'}`,
+                                                }}>
+                                                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#f59e0b', fontSize: '0.8rem', fontWeight: 700 }}>
+                                                        {(juri?.name || 'J').charAt(0)}
+                                                    </Avatar>
+                                                    <Box sx={{ flex: 1 }}>
+                                                        <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                            {juri?.name || 'Unknown'}
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                                            {juri?.email}
+                                                        </Typography>
+                                                    </Box>
+                                                    <IconButton size="small" onClick={() => handleRemoveSelectedJuri(id)} sx={{ color: '#dc2626' }}>
+                                                        <DeleteIcon sx={{ fontSize: 16 }} />
+                                                    </IconButton>
+                                                </Box>
+                                            );
+                                        })}
+                                    </Stack>
+                                </Box>
+                            )}
+
+                            {/* Available Juris */}
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
+                                Available Juris
+                            </Typography>
+                            {(() => {
+                                const assignedIds = (assignJuriDialog.submission.presentation_scores || []).map(ps => ps.juri_id);
+                                const available = juris.filter(j => !assignedIds.includes(j.id) && !selectedJuris.includes(j.id));
+                                return available.length === 0 ? (
+                                    <Typography variant="body2" sx={{ color: c.textSecondary, textAlign: 'center', py: 2 }}>
+                                        No available juris
+                                    </Typography>
+                                ) : (
+                                    <Stack spacing={0.75}>
+                                        {available.map((juri) => (
+                                            <Box
+                                                key={juri.id}
+                                                onClick={() => handleAddJuri(juri.id)}
+                                                sx={{
+                                                    display: 'flex', alignItems: 'center', gap: 1.5,
+                                                    p: 1.5, borderRadius: '10px',
+                                                    border: `1px solid ${c.cardBorder}`,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s ease',
+                                                    '&:hover': {
+                                                        bgcolor: isDark ? 'rgba(217,119,6,0.06)' : '#fffbeb',
+                                                        borderColor: '#d97706',
+                                                    },
+                                                }}
+                                            >
+                                                <Avatar sx={{ width: 32, height: 32, bgcolor: isDark ? 'rgba(217,119,6,0.15)' : '#fef3c7', color: '#d97706', fontSize: '0.8rem', fontWeight: 700 }}>
+                                                    {(juri.name || 'J').charAt(0)}
+                                                </Avatar>
+                                                <Box sx={{ flex: 1 }}>
+                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                        {juri.name}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
+                                                        {juri.email}
+                                                    </Typography>
+                                                    {juri.affiliation && (
+                                                        <Typography variant="caption" sx={{ color: '#d97706', fontSize: '0.7rem', display: 'block' }}>
+                                                            {juri.affiliation}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                                <PersonAddIcon sx={{ color: '#d97706', fontSize: 20 }} />
+                                            </Box>
+                                        ))}
+                                    </Stack>
+                                );
+                            })()}
+                        </>
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}`, gap: 1 }}>
+                    <Button
+                        onClick={() => setAssignJuriDialog({ open: false, submission: null })}
+                        sx={{ color: c.textSecondary, textTransform: 'none', fontWeight: 600, borderRadius: '10px' }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleAssignJuriSubmit}
+                        variant="contained"
+                        disabled={selectedJuris.length === 0}
+                        sx={{
+                            background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+                            textTransform: 'none', fontWeight: 700, borderRadius: '10px', px: 3,
+                            '&:hover': { background: 'linear-gradient(135deg, #b45309 0%, #d97706 100%)' },
+                            '&:disabled': { background: '#94a3b8' },
+                        }}
+                    >
+                        Assign {selectedJuris.length > 0 ? `(${selectedJuris.length})` : ''}
                     </Button>
                 </DialogActions>
             </Dialog>

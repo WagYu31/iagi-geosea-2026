@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Submission::class);
     }
+
+    public function judgedPresentations()
+    {
+        return $this->hasMany(PresentationScore::class, 'juri_id');
+    }
 }

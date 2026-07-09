@@ -22,6 +22,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import GradeIcon from '@mui/icons-material/Grade';
+import GavelIcon from '@mui/icons-material/Gavel';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EmailIcon from '@mui/icons-material/Email';
@@ -58,6 +59,7 @@ function SidebarLayout({ children }) {
 
   const isAdmin = auth.user?.role?.toLowerCase() === 'admin';
   const isReviewer = auth.user?.role?.toLowerCase() === 'reviewer';
+  const isJuri = auth.user?.role?.toLowerCase() === 'juri';
 
   // Menu visibility map: menu text → visibility key
   const menuVisibilityMap = {
@@ -71,6 +73,7 @@ function SidebarLayout({ children }) {
     { text: 'Manage Payments', icon: <PaymentIcon />, href: route('admin.payments'), color: '#ea580c' },
     { text: 'Manage Users', icon: <PeopleIcon />, href: route('admin.users'), color: '#9333ea' },
     { text: 'Scores', icon: <GradeIcon />, href: route('admin.scores'), color: '#ca8a04' },
+    { text: 'Presentation Scores', icon: <GavelIcon />, href: route('admin.presentation-scores'), color: '#d97706' },
     { text: 'Certificates', icon: <GradeIcon />, href: route('admin.certificates'), color: '#7c3aed' },
     { text: 'Settings', icon: <SettingsIcon />, href: route('admin.settings'), color: '#0891b2' },
     { text: 'Email Settings', icon: <EmailIcon />, href: route('admin.email.settings.page'), color: '#db2777' },
@@ -78,6 +81,10 @@ function SidebarLayout({ children }) {
   ] : isReviewer ? [
     { text: 'Dashboard', icon: <DashboardIcon />, href: route('reviewer.dashboard'), color: '#059669' },
     { text: 'Assigned Submissions', icon: <ArticleIcon />, href: route('reviewer.submissions'), color: '#2563eb' },
+    { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
+  ] : isJuri ? [
+    { text: 'Dashboard', icon: <DashboardIcon />, href: route('juri.dashboard'), color: '#d97706' },
+    { text: 'Assigned Presentations', icon: <GavelIcon />, href: route('juri.submissions'), color: '#2563eb' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
   ] : [
     { text: 'Dashboard', icon: <DashboardIcon />, href: route('dashboard'), color: '#059669' },
