@@ -2,91 +2,110 @@ import React, { useMemo } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
-    Box, Typography, Card, CardContent, Chip, Button, Slider, TextField,
-    Stack, Divider, useTheme, Alert, LinearProgress, Tooltip,
-    Table, TableBody, TableCell, TableRow, TableContainer, TableHead,
+    Box, Typography, Card, CardContent, Chip, Button, TextField,
+    Stack, useTheme, Alert, LinearProgress, Tooltip,
 } from '@mui/material';
-import GavelIcon from '@mui/icons-material/Gavel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-// ── Rubric Definitions ──
+/* ────────────────────────────────────────────
+   ISO Color System — Professional Muted Palette
+   ──────────────────────────────────────────── */
+const ISO = {
+    navy: '#1b2a4a',
+    navyLight: '#2d4373',
+    slate: '#475569',
+    slateLight: '#64748b',
+    accent: '#0f766e',        // teal — primary action
+    accentLight: '#14b8a6',
+    sectionA: '#1e3a5f',      // deep blue
+    sectionB: '#1a4731',      // deep green
+    sectionC: '#5c3d1f',      // deep brown
+    exceptional: '#047857',
+    good: '#1d4ed8',
+    acceptable: '#b45309',
+    belowStd: '#c2410c',
+    unsatisfactory: '#b91c1c',
+    border: '#d1d5db',
+    borderDark: 'rgba(255,255,255,0.1)',
+    headerBg: '#f8f9fa',
+    headerBgDark: 'rgba(255,255,255,0.03)',
+};
+
+/* ──────── Rubric Data ──────── */
 const ORAL_RUBRIC = [
     {
-        category: 'A. Presentation Delivery',
-        weight: '30%',
-        color: '#1e40af',
+        id: 'A', category: 'Presentation Delivery', weight: '30%',
+        sectionColor: ISO.sectionA,
         items: [
-            { field: 'time_management', label: 'A1. Time Management', weight: 0.05, desc: 'Adherence to allotted time; effective pacing and transitions' },
-            { field: 'posture_professionalism', label: 'A2. Posture & Professionalism', weight: 0.10, desc: 'Professional demeanor, appropriate attire, confident body language' },
-            { field: 'communication_skills', label: 'A3. Communication Skills', weight: 0.15, desc: 'Clarity, audience engagement, eye contact, verbal/non-verbal cues' },
+            { field: 'time_management', code: 'A1', label: 'Time Management', weight: 5, desc: 'Adherence to allotted time, effective pacing and transitions between segments' },
+            { field: 'posture_professionalism', code: 'A2', label: 'Posture & Professionalism', weight: 10, desc: 'Professional demeanor, appropriate attire, confident body language and stage presence' },
+            { field: 'communication_skills', code: 'A3', label: 'Communication Skills', weight: 15, desc: 'Clarity of articulation, audience engagement, eye contact, verbal and non-verbal cues' },
         ],
     },
     {
-        category: 'B. Presentation Content',
-        weight: '50%',
-        color: '#065f46',
+        id: 'B', category: 'Presentation Content', weight: '50%',
+        sectionColor: ISO.sectionB,
         items: [
-            { field: 'scientific_substantiation', label: 'B1. Scientific Substantiation', weight: 0.15, desc: 'Strength of scientific foundation; data, evidence, methodology' },
-            { field: 'technical_contribution', label: 'B2. Technical/Scientific Contribution', weight: 0.10, desc: 'Novel findings, technical advancement to geoscience' },
-            { field: 'logical_organization', label: 'B3. Logical & Systematic Organization', weight: 0.10, desc: 'Well-structured with clear introduction, methods, results, conclusion' },
-            { field: 'visual_quality', label: 'B4. Visual Quality', weight: 0.05, desc: 'Slide design, charts, figures quality and readability' },
-            { field: 'originality_innovation', label: 'B5. Originality & Innovation', weight: 0.10, desc: 'Novel approach, innovative methodologies, creative problem-solving' },
+            { field: 'scientific_substantiation', code: 'B1', label: 'Scientific Substantiation', weight: 15, desc: 'Scientific foundation strength, proper use of data, evidence, references, and methodology' },
+            { field: 'technical_contribution', code: 'B2', label: 'Technical / Scientific Contribution', weight: 10, desc: 'Significance of novel findings, technical advancement, contribution to geoscience' },
+            { field: 'logical_organization', code: 'B3', label: 'Logical & Systematic Organization', weight: 10, desc: 'Clear structure: introduction, methodology, results, discussion, and conclusion' },
+            { field: 'visual_quality', code: 'B4', label: 'Visual Quality', weight: 5, desc: 'Slide design, charts, figures quality, readability, and professional design standards' },
+            { field: 'originality_innovation', code: 'B5', label: 'Originality & Innovation', weight: 10, desc: 'Original approach, innovative methodology, novel interpretation, creative problem-solving' },
         ],
     },
     {
-        category: 'C. Manuscript Quality',
-        weight: '20%',
-        color: '#92400e',
+        id: 'C', category: 'Manuscript Quality', weight: '20%',
+        sectionColor: ISO.sectionC,
         items: [
-            { field: 'manuscript_substantiation', label: 'C1. Scientific Substantiation', weight: 0.10, desc: 'Manuscript scientific rigor, evidence, methodology documentation' },
-            { field: 'manuscript_writing', label: 'C2. Logical & Systematic Writing', weight: 0.10, desc: 'Writing clarity, grammar, structure following IMRaD standards' },
+            { field: 'manuscript_substantiation', code: 'C1', label: 'Scientific Substantiation', weight: 10, desc: 'Manuscript scientific rigor, evidence strength, methodology documentation, data integrity' },
+            { field: 'manuscript_writing', code: 'C2', label: 'Logical & Systematic Writing', weight: 10, desc: 'Writing clarity, grammatical accuracy, proper structure following IMRaD standards' },
         ],
     },
 ];
 
 const POSTER_RUBRIC = [
     {
-        category: 'A. Poster Quality',
-        weight: '55%',
-        color: '#6b21a8',
+        id: 'A', category: 'Poster Quality', weight: '55%',
+        sectionColor: ISO.sectionA,
         items: [
-            { field: 'poster_scientific_substantiation', label: 'A1. Scientific Substantiation', weight: 0.15, desc: 'Strength of scientific foundation; data, evidence, methodology' },
-            { field: 'practical_usefulness', label: 'A2. Practical Usefulness & Significance', weight: 0.10, desc: 'Real-world applicability, industry relevance, research impact' },
-            { field: 'poster_technical_contribution', label: 'A3. Technical/Scientific Contribution', weight: 0.10, desc: 'Novel findings, advancement to geoscience field' },
-            { field: 'poster_organization_design', label: 'A4. Poster Organization & Visual Design', weight: 0.10, desc: 'Layout, typography, color scheme, readability, information hierarchy' },
-            { field: 'poster_originality', label: 'A5. Originality & Authenticity', weight: 0.10, desc: 'Original approach, authentic data, proper attribution' },
+            { field: 'poster_scientific_substantiation', code: 'A1', label: 'Scientific Substantiation', weight: 15, desc: 'Scientific foundation, data, evidence, references, and methodology' },
+            { field: 'practical_usefulness', code: 'A2', label: 'Practical Usefulness & Significance', weight: 10, desc: 'Real-world applicability, industry relevance, and research impact' },
+            { field: 'poster_technical_contribution', code: 'A3', label: 'Technical / Scientific Contribution', weight: 10, desc: 'Novel findings, advancement to the geoscience field' },
+            { field: 'poster_organization_design', code: 'A4', label: 'Poster Organization & Visual Design', weight: 10, desc: 'Layout, typography, color scheme, readability, information hierarchy' },
+            { field: 'poster_originality', code: 'A5', label: 'Originality & Authenticity', weight: 10, desc: 'Original approach, authentic data, proper attribution, ethical practices' },
         ],
     },
     {
-        category: 'B. Presenter Quality',
-        weight: '25%',
-        color: '#1e40af',
+        id: 'B', category: 'Presenter Quality', weight: '25%',
+        sectionColor: ISO.sectionB,
         items: [
-            { field: 'presentation_explanation', label: 'B1. Presentation & Explanation', weight: 0.10, desc: 'Clarity of verbal explanation, visitor engagement, key findings communication' },
-            { field: 'subject_knowledge', label: 'B2. Subject Knowledge & Q&A', weight: 0.15, desc: 'Understanding depth, confidence in Q&A, ability to discuss beyond material' },
+            { field: 'presentation_explanation', code: 'B1', label: 'Presentation & Explanation', weight: 10, desc: 'Clarity of verbal explanation, visitor engagement, key findings communication' },
+            { field: 'subject_knowledge', code: 'B2', label: 'Subject Knowledge & Question Handling', weight: 15, desc: 'Depth of understanding, confidence in Q&A, discussion beyond material' },
         ],
     },
     {
-        category: 'C. Manuscript Quality',
-        weight: '20%',
-        color: '#92400e',
+        id: 'C', category: 'Manuscript Quality', weight: '20%',
+        sectionColor: ISO.sectionC,
         items: [
-            { field: 'manuscript_substantiation', label: 'C1. Scientific Substantiation', weight: 0.10, desc: 'Scientific rigor, evidence, methodology documentation' },
-            { field: 'manuscript_writing', label: 'C2. Logical & Systematic Writing', weight: 0.10, desc: 'Writing clarity, grammar, IMRaD structure compliance' },
+            { field: 'manuscript_substantiation', code: 'C1', label: 'Scientific Substantiation', weight: 10, desc: 'Scientific rigor, evidence, methodology documentation' },
+            { field: 'manuscript_writing', code: 'C2', label: 'Logical & Systematic Writing', weight: 10, desc: 'Writing clarity, grammar, IMRaD structure compliance' },
         ],
     },
 ];
 
-function getInterpretation(score) {
-    if (score >= 9.0) return { label: 'Exceptional', color: '#16a34a' };
-    if (score >= 7.0) return { label: 'Good', color: '#1e40af' };
-    if (score >= 5.0) return { label: 'Acceptable', color: '#d97706' };
-    if (score >= 3.0) return { label: 'Below Standard', color: '#ea580c' };
-    return { label: 'Unsatisfactory', color: '#dc2626' };
+function getGrade(score) {
+    if (score >= 9) return { label: 'Exceptional', color: ISO.exceptional };
+    if (score >= 7) return { label: 'Good', color: ISO.good };
+    if (score >= 5) return { label: 'Acceptable', color: ISO.acceptable };
+    if (score >= 3) return { label: 'Below Standard', color: ISO.belowStd };
+    return { label: 'Unsatisfactory', color: ISO.unsatisfactory };
 }
 
+/* ────────────────────────────────
+   MAIN COMPONENT
+   ──────────────────────────────── */
 export default function ScoreForm({ submission, presentationScore }) {
     const theme = useTheme();
     const c = theme.palette.custom;
@@ -101,517 +120,486 @@ export default function ScoreForm({ submission, presentationScore }) {
 
     const liveScore = useMemo(() => {
         let total = 0, allFilled = true, filledCount = 0, totalCount = 0;
-        const categoryScores = {};
+        const catScores = {};
         rubric.forEach(cat => {
-            let catWeightedSum = 0, catFilled = true;
+            let ws = 0, filled = true;
             cat.items.forEach(item => {
                 totalCount++;
-                const val = parseInt(data[item.field]);
-                if (!val || isNaN(val)) { allFilled = false; catFilled = false; return; }
+                const v = parseInt(data[item.field]);
+                if (!v || isNaN(v)) { allFilled = false; filled = false; return; }
                 filledCount++;
-                total += val * item.weight;
-                catWeightedSum += val * item.weight;
+                const weighted = v * (item.weight / 100);
+                total += weighted;
+                ws += weighted;
             });
-            const catMaxWeighted = cat.items.reduce((s, i) => s + i.weight * 10, 0);
-            categoryScores[cat.category] = {
-                weightedSum: catWeightedSum,
-                maxWeighted: catMaxWeighted,
-                filled: catFilled,
-                percent: catMaxWeighted > 0 ? (catWeightedSum / catMaxWeighted) * 100 : 0,
-            };
+            const maxW = cat.items.reduce((s, i) => s + (10 * i.weight / 100), 0);
+            catScores[cat.id] = { ws, maxW, filled, pct: maxW ? (ws / maxW) * 100 : 0 };
         });
-        return { total: Math.round(total * 100) / 100, allFilled, categoryScores, filledCount, totalCount };
+        return { total: Math.round(total * 100) / 100, allFilled, catScores, filledCount, totalCount };
     }, [data, rubric]);
 
     const handleSubmit = (e) => { e.preventDefault(); post(route('juri.submissions.score', submission.id), { preserveScroll: true }); };
-    const interp = getInterpretation(liveScore.total);
-    const isAlreadyScored = !!presentationScore.weighted_final_score;
+    const isEditing = !!presentationScore.weighted_final_score;
+    const grade = getGrade(liveScore.total);
 
-    // ── Border styling helper ──
-    const formBorder = isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0';
-    const sectionBg = isDark ? 'rgba(255,255,255,0.02)' : '#fafbfc';
+    // ── styling tokens ──
+    const bdr = isDark ? ISO.borderDark : ISO.border;
+    const hBg = isDark ? ISO.headerBgDark : ISO.headerBg;
+
+    const fontDoc = '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif';
 
     return (
         <SidebarLayout>
             <Head title={`Evaluation — ${submission.title}`} />
-            <Box sx={{ p: { xs: 1.5, sm: 3 }, minHeight: '100vh', bgcolor: c.surfaceBg }}>
-                <Box sx={{ maxWidth: 820, mx: 'auto' }}>
+            <Box sx={{ p: { xs: 1, sm: 2.5 }, minHeight: '100vh', bgcolor: isDark ? c.surfaceBg : '#f1f5f9' }}>
+                <Box sx={{ maxWidth: 780, mx: 'auto', fontFamily: fontDoc }}>
 
-                    {/* ═══ DOCUMENT HEADER ═══ */}
+                    {/* ═══════════════════════════════════
+                        DOCUMENT CONTAINER
+                       ═══════════════════════════════════ */}
                     <Box sx={{
-                        border: formBorder,
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        mb: 2.5,
                         bgcolor: c.cardBg,
+                        borderRadius: '8px',
+                        border: `1px solid ${bdr}`,
+                        boxShadow: isDark ? 'none' : '0 1px 4px rgba(0,0,0,0.06)',
+                        overflow: 'hidden',
                     }}>
-                        {/* Title bar */}
+
+                        {/* ──── Document Title Banner ──── */}
                         <Box sx={{
                             background: isDark
-                                ? 'linear-gradient(135deg, #0f3329 0%, #1a4a3a 100%)'
-                                : 'linear-gradient(135deg, #0c4a3a 0%, #1a7a5a 50%, #0c4a3a 100%)',
-                            px: { xs: 2.5, sm: 3.5 },
-                            py: { xs: 2, sm: 2.5 },
+                                ? `linear-gradient(135deg, ${ISO.navy}, #0f1b33)`
+                                : `linear-gradient(135deg, ${ISO.navy} 0%, ${ISO.navyLight} 100%)`,
+                            px: { xs: 3, sm: 4 },
+                            py: { xs: 2.5, sm: 3 },
                         }}>
                             <Typography sx={{
-                                color: 'rgba(255,255,255,0.6)', fontWeight: 500,
-                                fontSize: '0.68rem', letterSpacing: '0.15em',
-                                textTransform: 'uppercase', mb: 0.5,
+                                color: 'rgba(255,255,255,0.5)', fontWeight: 500,
+                                fontSize: '0.6rem', letterSpacing: '0.2em',
+                                textTransform: 'uppercase', fontFamily: fontDoc,
                             }}>
                                 55th PIT IAGI & GEOSEA XIX 2026
                             </Typography>
                             <Typography sx={{
-                                color: '#fff', fontWeight: 800,
-                                fontSize: { xs: '1.05rem', sm: '1.25rem' },
-                                letterSpacing: '-0.01em',
+                                color: '#fff', fontWeight: 700,
+                                fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                                mt: 0.5, fontFamily: fontDoc,
+                                letterSpacing: '-0.015em',
                             }}>
                                 {isOral ? 'Oral Presentation' : 'Poster Presentation'} — Evaluation Form
                             </Typography>
                         </Box>
 
-                        {/* Metadata grid */}
-                        <Box sx={{
-                            display: 'grid',
-                            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                            borderTop: formBorder,
-                        }}>
-                            {[
-                                { label: 'Paper Title', value: submission.title, span: true },
-                                { label: 'Author(s)', value: submission.user?.name || '—' },
-                                { label: 'Category', value: isOral ? 'Oral Presentation' : 'Poster Presentation' },
-                                { label: 'Submission ID', value: `#${submission.id}` },
-                                { label: 'Status', value: isAlreadyScored ? '✓ Scored' : '○ Pending', color: isAlreadyScored ? '#16a34a' : '#d97706' },
-                            ].map((field, i) => (
-                                <Box key={i} sx={{
-                                    px: { xs: 2.5, sm: 3 }, py: 1.5,
-                                    borderBottom: formBorder,
-                                    borderRight: { xs: 'none', sm: (i % 2 === 0 && !field.span) ? formBorder : 'none' },
-                                    gridColumn: field.span ? { sm: '1 / -1' } : undefined,
-                                }}>
-                                    <Typography sx={{
-                                        fontSize: '0.6rem', fontWeight: 600, color: c.textSecondary,
-                                        textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.25,
-                                    }}>
-                                        {field.label}
-                                    </Typography>
-                                    <Typography sx={{
-                                        fontSize: '0.82rem', fontWeight: 600,
-                                        color: field.color || c.textPrimary,
-                                        lineHeight: 1.4,
-                                    }}>
-                                        {field.value}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </Box>
-                    </Box>
-
-                    {/* ═══ SCORING SCALE REFERENCE ═══ */}
-                    <Box sx={{
-                        border: formBorder, borderRadius: '12px',
-                        overflow: 'hidden', mb: 2.5, bgcolor: c.cardBg,
-                    }}>
-                        <Box sx={{
-                            px: { xs: 2.5, sm: 3 }, py: 1.25,
-                            bgcolor: sectionBg, borderBottom: formBorder,
-                        }}>
-                            <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: c.textPrimary, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                Scoring Scale Reference
-                            </Typography>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            justifyContent: 'space-between',
-                        }}>
-                            {[
-                                { range: '9–10', label: 'Exceptional', color: '#16a34a' },
-                                { range: '7–8', label: 'Good', color: '#1e40af' },
-                                { range: '5–6', label: 'Acceptable', color: '#d97706' },
-                                { range: '3–4', label: 'Below Std.', color: '#ea580c' },
-                                { range: '1–2', label: 'Unsatisfactory', color: '#dc2626' },
-                            ].map((s, i) => (
-                                <Box key={i} sx={{
-                                    flex: 1,
-                                    textAlign: 'center',
-                                    py: 1.25,
-                                    px: 1,
-                                    borderRight: { xs: 'none', sm: i < 4 ? formBorder : 'none' },
-                                    borderBottom: { xs: i < 4 ? formBorder : 'none', sm: 'none' },
-                                }}>
-                                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 800, color: s.color, lineHeight: 1 }}>
-                                        {s.range}
-                                    </Typography>
-                                    <Typography sx={{ fontSize: '0.62rem', fontWeight: 600, color: s.color, mt: 0.25, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                                        {s.label}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </Box>
-                    </Box>
-
-                    {/* ═══ LIVE SCORE — sticky on mobile ═══ */}
-                    <Box sx={{
-                        border: `2px solid ${liveScore.allFilled ? interp.color : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0')}`,
-                        borderRadius: '12px',
-                        bgcolor: c.cardBg,
-                        mb: 2.5,
-                        position: { xs: 'sticky', sm: 'relative' },
-                        top: { xs: 0 }, zIndex: { xs: 10 },
-                        transition: 'border-color 0.4s ease',
-                    }}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            alignItems: { xs: 'stretch', sm: 'center' },
-                        }}>
-                            {/* Score display */}
-                            <Box sx={{
-                                px: { xs: 2.5, sm: 3 }, py: { xs: 1.5, sm: 2 },
-                                borderRight: { xs: 'none', sm: formBorder },
-                                borderBottom: { xs: formBorder, sm: 'none' },
-                                textAlign: { xs: 'center', sm: 'left' },
-                                minWidth: { sm: 200 },
-                            }}>
-                                <Typography sx={{ fontSize: '0.58rem', fontWeight: 600, color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                                    Weighted Final Score
+                        {/* ──── Metadata Section ──── */}
+                        <Box sx={{ borderBottom: `1px solid ${bdr}` }}>
+                            {/* Row 1: Title */}
+                            <Box sx={{ px: { xs: 3, sm: 4 }, py: 1.75, borderBottom: `1px solid ${bdr}` }}>
+                                <Typography sx={{ fontSize: '0.58rem', fontWeight: 600, color: ISO.slateLight, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: fontDoc }}>
+                                    Paper Title
                                 </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, justifyContent: { xs: 'center', sm: 'flex-start' }, mt: 0.25 }}>
-                                    <Typography sx={{
-                                        fontWeight: 900, fontSize: { xs: '2rem', sm: '2.4rem' }, lineHeight: 1,
-                                        color: liveScore.allFilled ? interp.color : c.textSecondary,
-                                        fontVariantNumeric: 'tabular-nums',
-                                    }}>
-                                        {liveScore.allFilled ? liveScore.total.toFixed(2) : '—'}
-                                    </Typography>
-                                    <Typography sx={{ fontSize: '0.8rem', color: c.textSecondary }}>/10</Typography>
-                                </Box>
-                                {liveScore.allFilled && (
-                                    <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: interp.color, mt: 0.25 }}>
-                                        {interp.label}
-                                    </Typography>
-                                )}
+                                <Typography sx={{ fontSize: '0.88rem', fontWeight: 600, color: c.textPrimary, mt: 0.3, lineHeight: 1.45, fontFamily: fontDoc }}>
+                                    {submission.title}
+                                </Typography>
                             </Box>
+                            {/* Row 2: 2-col */}
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
+                                {[
+                                    { label: 'Author(s)', value: submission.user?.name || '—' },
+                                    { label: 'Presentation Type', value: isOral ? 'Oral Presentation' : 'Poster Presentation' },
+                                ].map((f, i) => (
+                                    <Box key={i} sx={{
+                                        px: { xs: 3, sm: 4 }, py: 1.5,
+                                        borderRight: { xs: 'none', sm: i === 0 ? `1px solid ${bdr}` : 'none' },
+                                        borderBottom: { xs: `1px solid ${bdr}`, sm: 'none' },
+                                    }}>
+                                        <Typography sx={{ fontSize: '0.55rem', fontWeight: 600, color: ISO.slateLight, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: fontDoc }}>{f.label}</Typography>
+                                        <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: c.textPrimary, mt: 0.2, fontFamily: fontDoc }}>{f.value}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
 
-                            {/* Category breakdown */}
-                            <Box sx={{ flex: 1, px: { xs: 2.5, sm: 2.5 }, py: { xs: 1.5, sm: 1.5 } }}>
-                                <Stack spacing={0.75}>
-                                    {rubric.map(cat => {
-                                        const cs = liveScore.categoryScores[cat.category];
-                                        return (
-                                            <Box key={cat.category} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 600, color: c.textSecondary, minWidth: { xs: 80, sm: 130 }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                    {cat.category.split('. ')[1]} ({cat.weight})
+                        {/* ──── Scoring Scale Legend ──── */}
+                        <Box sx={{ px: { xs: 3, sm: 4 }, py: 1.5, bgcolor: hBg, borderBottom: `1px solid ${bdr}` }}>
+                            <Typography sx={{ fontSize: '0.58rem', fontWeight: 700, color: ISO.slate, textTransform: 'uppercase', letterSpacing: '0.15em', mb: 1, fontFamily: fontDoc }}>
+                                Scoring Scale
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: { xs: 0, sm: 0.5 }, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+                                {[
+                                    { r: '9–10', l: 'Exceptional', c: ISO.exceptional, bg: '#ecfdf5' },
+                                    { r: '7–8', l: 'Good', c: ISO.good, bg: '#eff6ff' },
+                                    { r: '5–6', l: 'Acceptable', c: ISO.acceptable, bg: '#fffbeb' },
+                                    { r: '3–4', l: 'Below Std.', c: ISO.belowStd, bg: '#fff7ed' },
+                                    { r: '1–2', l: 'Unsatisfactory', c: ISO.unsatisfactory, bg: '#fef2f2' },
+                                ].map((s, i) => (
+                                    <Box key={i} sx={{
+                                        flex: { xs: '0 0 calc(50% - 4px)', sm: 1 },
+                                        textAlign: 'center',
+                                        py: 0.75, px: 0.5,
+                                        borderRadius: '6px',
+                                        bgcolor: isDark ? `${s.c}10` : s.bg,
+                                        mr: { xs: i % 2 === 0 ? 1 : 0, sm: 0 },
+                                        mb: { xs: 0.75, sm: 0 },
+                                    }}>
+                                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 800, color: s.c, lineHeight: 1, fontFamily: fontDoc }}>{s.r}</Typography>
+                                        <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: s.c, mt: 0.2, textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: fontDoc }}>{s.l}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+
+                        {/* ──── LIVE SCORE PANEL ──── */}
+                        <Box sx={{
+                            px: { xs: 3, sm: 4 }, py: 2,
+                            borderBottom: `2px solid ${liveScore.allFilled ? grade.color : bdr}`,
+                            position: { xs: 'sticky', sm: 'relative' },
+                            top: { xs: 0 }, zIndex: { xs: 10 },
+                            bgcolor: c.cardBg,
+                            transition: 'border-color 0.3s ease',
+                        }}>
+                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1.5, sm: 3 }, alignItems: { sm: 'center' } }}>
+                                {/* Score number */}
+                                <Box sx={{ textAlign: { xs: 'center', sm: 'left' }, minWidth: { sm: 160 } }}>
+                                    <Typography sx={{ fontSize: '0.55rem', fontWeight: 600, color: ISO.slateLight, textTransform: 'uppercase', letterSpacing: '0.2em', fontFamily: fontDoc }}>
+                                        Weighted Final Score
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, justifyContent: { xs: 'center', sm: 'flex-start' }, mt: 0.25 }}>
+                                        <Typography sx={{
+                                            fontWeight: 800, fontSize: { xs: '2.2rem', sm: '2.6rem' }, lineHeight: 1,
+                                            color: liveScore.allFilled ? grade.color : ISO.slateLight,
+                                            fontFamily: fontDoc, fontVariantNumeric: 'tabular-nums',
+                                        }}>
+                                            {liveScore.allFilled ? liveScore.total.toFixed(2) : '—'}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.75rem', color: ISO.slateLight, fontFamily: fontDoc, fontWeight: 500 }}>/10</Typography>
+                                    </Box>
+                                    {liveScore.allFilled && (
+                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: grade.color, mt: 0.2, fontFamily: fontDoc }}>{grade.label}</Typography>
+                                    )}
+                                </Box>
+                                {/* Category bars */}
+                                <Box sx={{ flex: 1 }}>
+                                    <Stack spacing={0.6}>
+                                        {rubric.map(cat => {
+                                            const cs = liveScore.catScores[cat.id];
+                                            return (
+                                                <Box key={cat.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '0.62rem', fontWeight: 600, color: ISO.slateLight, width: { xs: 90, sm: 140 }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: fontDoc }}>
+                                                        {cat.id}. {cat.category} ({cat.weight})
+                                                    </Typography>
+                                                    <LinearProgress variant="determinate" value={cs?.pct || 0} sx={{
+                                                        flex: 1, height: 5, borderRadius: 3,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#e2e8f0',
+                                                        '& .MuiLinearProgress-bar': { borderRadius: 3, bgcolor: cat.sectionColor, transition: 'transform 0.3s ease' },
+                                                    }} />
+                                                    <Typography sx={{ fontSize: '0.62rem', fontWeight: 700, color: cs?.filled ? cat.sectionColor : ISO.slateLight, width: 32, textAlign: 'right', fontFamily: fontDoc }}>
+                                                        {cs?.filled ? `${cs.pct.toFixed(0)}%` : '—'}
+                                                    </Typography>
+                                                </Box>
+                                            );
+                                        })}
+                                    </Stack>
+                                    {/* Completion bar */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.75 }}>
+                                        <LinearProgress variant="determinate" value={(liveScore.filledCount / liveScore.totalCount) * 100}
+                                            sx={{ flex: 1, height: 3, borderRadius: 2, bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#e2e8f0',
+                                                '& .MuiLinearProgress-bar': { borderRadius: 2, bgcolor: liveScore.allFilled ? ISO.exceptional : ISO.slateLight } }} />
+                                        <Typography sx={{ fontSize: '0.55rem', color: ISO.slateLight, fontWeight: 600, fontFamily: fontDoc }}>
+                                            {liveScore.filledCount}/{liveScore.totalCount}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Box>
+
+                        {/* ═══════════════════════════════════
+                            EVALUATION CRITERIA
+                           ═══════════════════════════════════ */}
+                        <form onSubmit={handleSubmit}>
+                            {rubric.map((cat) => (
+                                <Box key={cat.id}>
+                                    {/* Section Header */}
+                                    <Box sx={{
+                                        px: { xs: 3, sm: 4 }, py: 1.25,
+                                        bgcolor: isDark ? `${cat.sectionColor}15` : `${cat.sectionColor}08`,
+                                        borderBottom: `1px solid ${bdr}`,
+                                        borderTop: `1px solid ${bdr}`,
+                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                    }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                                            <Box sx={{
+                                                width: 28, height: 28, borderRadius: '6px',
+                                                bgcolor: cat.sectionColor,
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            }}>
+                                                <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '0.75rem', fontFamily: fontDoc }}>{cat.id}</Typography>
+                                            </Box>
+                                            <Box>
+                                                <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: c.textPrimary, fontFamily: fontDoc }}>
+                                                    {cat.category}
                                                 </Typography>
-                                                <LinearProgress
-                                                    variant="determinate"
-                                                    value={cs?.percent || 0}
-                                                    sx={{
-                                                        flex: 1, height: 6, borderRadius: 3,
-                                                        bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9',
-                                                        '& .MuiLinearProgress-bar': { borderRadius: 3, bgcolor: cat.color, transition: 'transform 0.4s ease' },
-                                                    }}
-                                                />
-                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: cs?.filled ? cat.color : c.textSecondary, minWidth: 30, textAlign: 'right' }}>
-                                                    {cs?.filled ? `${cs.percent.toFixed(0)}%` : '—'}
+                                                <Typography sx={{ fontSize: '0.58rem', color: ISO.slateLight, fontFamily: fontDoc }}>
+                                                    {cat.items.length} criteria
                                                 </Typography>
                                             </Box>
-                                        );
-                                    })}
-                                </Stack>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={(liveScore.filledCount / liveScore.totalCount) * 100}
-                                        sx={{
-                                            flex: 1, height: 3, borderRadius: 2,
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9',
-                                            '& .MuiLinearProgress-bar': { borderRadius: 2, bgcolor: liveScore.allFilled ? '#16a34a' : '#94a3b8' },
-                                        }}
-                                    />
-                                    <Typography sx={{ fontSize: '0.6rem', color: c.textSecondary, fontWeight: 600 }}>
-                                        {liveScore.filledCount}/{liveScore.totalCount} scored
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Box>
-
-                    {/* ═══ EVALUATION RUBRIC ═══ */}
-                    <form onSubmit={handleSubmit}>
-                        {rubric.map((cat) => (
-                            <Box key={cat.category} sx={{
-                                border: formBorder, borderRadius: '12px',
-                                overflow: 'hidden', mb: 2.5, bgcolor: c.cardBg,
-                            }}>
-                                {/* Category header */}
-                                <Box sx={{
-                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                    px: { xs: 2.5, sm: 3 }, py: 1.25,
-                                    bgcolor: isDark ? `${cat.color}12` : `${cat.color}08`,
-                                    borderBottom: formBorder,
-                                }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Box sx={{ width: 3, height: 28, borderRadius: 2, bgcolor: cat.color }} />
-                                        <Box>
-                                            <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: c.textPrimary }}>
-                                                {cat.category}
-                                            </Typography>
-                                            <Typography sx={{ fontSize: '0.62rem', color: c.textSecondary }}>
-                                                {cat.items.length} criteria
+                                        </Box>
+                                        <Box sx={{
+                                            px: 1.5, py: 0.5, borderRadius: '6px',
+                                            bgcolor: isDark ? `${cat.sectionColor}20` : `${cat.sectionColor}10`,
+                                        }}>
+                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: cat.sectionColor, fontFamily: fontDoc }}>
+                                                {cat.weight}
                                             </Typography>
                                         </Box>
                                     </Box>
-                                    <Chip
-                                        label={cat.weight}
-                                        size="small"
-                                        sx={{ fontWeight: 800, fontSize: '0.72rem', bgcolor: `${cat.color}15`, color: cat.color, height: 26 }}
-                                    />
-                                </Box>
 
-                                {/* Criteria — TABLE LAYOUT for desktop, STACKED for mobile */}
-                                <TableContainer>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.6rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.08em', py: 0.75, borderBottom: formBorder, display: { xs: 'none', sm: 'table-cell' } }}>
-                                                    Criterion
-                                                </TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.6rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.08em', py: 0.75, width: 60, textAlign: 'center', borderBottom: formBorder, display: { xs: 'none', sm: 'table-cell' } }}>
-                                                    Weight
-                                                </TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.6rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.08em', py: 0.75, width: 80, textAlign: 'center', borderBottom: formBorder, display: { xs: 'none', sm: 'table-cell' } }}>
-                                                    Score (1-10)
-                                                </TableCell>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.6rem', color: c.textSecondary, textTransform: 'uppercase', letterSpacing: '0.08em', py: 0.75, width: 90, textAlign: 'center', borderBottom: formBorder, display: { xs: 'none', sm: 'table-cell' } }}>
-                                                    Weighted
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {cat.items.map((item, idx) => {
-                                                const val = parseInt(data[item.field]) || 0;
-                                                const weighted = (val * item.weight).toFixed(2);
-                                                const itemInterp = val > 0 ? getInterpretation(val) : null;
+                                    {/* ── DESKTOP: Table header ── */}
+                                    <Box sx={{
+                                        display: { xs: 'none', sm: 'grid' },
+                                        gridTemplateColumns: '1fr 70px 80px 80px',
+                                        gap: 0,
+                                        px: 4, py: 0.75,
+                                        bgcolor: hBg,
+                                        borderBottom: `1px solid ${bdr}`,
+                                    }}>
+                                        {['Criterion', 'Weight', 'Score', 'Weighted'].map(h => (
+                                            <Typography key={h} sx={{
+                                                fontSize: '0.52rem', fontWeight: 700, color: ISO.slateLight,
+                                                textTransform: 'uppercase', letterSpacing: '0.15em',
+                                                textAlign: h !== 'Criterion' ? 'center' : 'left',
+                                                fontFamily: fontDoc,
+                                            }}>
+                                                {h}
+                                            </Typography>
+                                        ))}
+                                    </Box>
 
-                                                return (
-                                                    <TableRow key={item.field} sx={{
-                                                        '&:last-child td': { borderBottom: 0 },
-                                                        bgcolor: val > 0 ? (isDark ? `${cat.color}04` : `${cat.color}02`) : 'transparent',
-                                                        transition: 'background 0.3s ease',
-                                                    }}>
-                                                        {/* ── DESKTOP ROW ── */}
-                                                        <TableCell sx={{
-                                                            py: 1.5, borderBottom: idx < cat.items.length - 1 ? formBorder : 0,
-                                                            display: { xs: 'none', sm: 'table-cell' },
-                                                        }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                                <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: c.textPrimary }}>
+                                    {/* ── Criteria Rows ── */}
+                                    {cat.items.map((item, idx) => {
+                                        const val = parseInt(data[item.field]) || 0;
+                                        const weighted = val ? (val * item.weight / 100).toFixed(2) : null;
+                                        const g = val ? getGrade(val) : null;
+                                        const isLast = idx === cat.items.length - 1;
+
+                                        return (
+                                            <Box key={item.field} sx={{ borderBottom: isLast ? 'none' : `1px solid ${bdr}` }}>
+                                                {/* ── DESKTOP ROW ── */}
+                                                <Box sx={{
+                                                    display: { xs: 'none', sm: 'grid' },
+                                                    gridTemplateColumns: '1fr 70px 80px 80px',
+                                                    alignItems: 'center',
+                                                    px: 4, py: 1.75,
+                                                    bgcolor: val ? (isDark ? `${cat.sectionColor}05` : `${cat.sectionColor}02`) : 'transparent',
+                                                    transition: 'background 0.2s ease',
+                                                    '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc' },
+                                                }}>
+                                                    <Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                            <Typography sx={{
+                                                                fontSize: '0.58rem', fontWeight: 800, color: cat.sectionColor,
+                                                                bgcolor: isDark ? `${cat.sectionColor}15` : `${cat.sectionColor}08`,
+                                                                px: 0.75, py: 0.15, borderRadius: '4px',
+                                                                fontFamily: fontDoc,
+                                                            }}>
+                                                                {item.code}
+                                                            </Typography>
+                                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 600, color: c.textPrimary, fontFamily: fontDoc }}>
+                                                                {item.label}
+                                                            </Typography>
+                                                            <Tooltip title={item.desc} arrow enterTouchDelay={0}>
+                                                                <InfoOutlinedIcon sx={{ fontSize: 14, color: ISO.slateLight, cursor: 'help', '&:hover': { color: ISO.accent } }} />
+                                                            </Tooltip>
+                                                        </Box>
+                                                        <Typography sx={{ fontSize: '0.68rem', color: ISO.slateLight, mt: 0.3, pl: 4, fontFamily: fontDoc, lineHeight: 1.4 }}>
+                                                            {item.desc}
+                                                        </Typography>
+                                                    </Box>
+                                                    {/* Weight */}
+                                                    <Typography sx={{ textAlign: 'center', fontSize: '0.78rem', fontWeight: 700, color: cat.sectionColor, fontFamily: fontDoc }}>
+                                                        {item.weight}%
+                                                    </Typography>
+                                                    {/* Score Input */}
+                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                        <TextField
+                                                            value={val || ''}
+                                                            onChange={(e) => {
+                                                                const v = parseInt(e.target.value);
+                                                                if (!e.target.value) setData(item.field, 0);
+                                                                else if (v >= 1 && v <= 10) setData(item.field, v);
+                                                            }}
+                                                            type="number"
+                                                            placeholder="—"
+                                                            inputProps={{ min: 1, max: 10, style: { textAlign: 'center', fontWeight: 800, fontSize: '1.05rem', fontFamily: fontDoc } }}
+                                                            size="small"
+                                                            sx={{
+                                                                width: 58,
+                                                                '& .MuiOutlinedInput-root': {
+                                                                    borderRadius: '8px', height: 42,
+                                                                    bgcolor: val ? (isDark ? `${g.color}12` : `${g.color}06`) : 'transparent',
+                                                                    '& fieldset': { borderColor: val ? g.color : bdr, borderWidth: val ? 2 : 1 },
+                                                                    '&:hover fieldset': { borderColor: cat.sectionColor },
+                                                                    '&.Mui-focused fieldset': { borderColor: cat.sectionColor, borderWidth: 2 },
+                                                                },
+                                                                '& input': { color: val ? g.color : c.textPrimary },
+                                                                '& input::placeholder': { color: ISO.slateLight, opacity: 1 },
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                    {/* Weighted Score */}
+                                                    <Box sx={{ textAlign: 'center' }}>
+                                                        {weighted ? (
+                                                            <>
+                                                                <Typography sx={{ fontSize: '0.88rem', fontWeight: 800, color: g.color, fontFamily: fontDoc }}>{weighted}</Typography>
+                                                                <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color: g.color, textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: fontDoc }}>{g.label}</Typography>
+                                                            </>
+                                                        ) : (
+                                                            <Typography sx={{ fontSize: '0.82rem', color: ISO.slateLight, fontFamily: fontDoc }}>—</Typography>
+                                                        )}
+                                                    </Box>
+                                                </Box>
+
+                                                {/* ── MOBILE ROW ── */}
+                                                <Box sx={{
+                                                    display: { xs: 'block', sm: 'none' },
+                                                    px: 3, py: 2,
+                                                    bgcolor: val ? (isDark ? `${cat.sectionColor}05` : `${cat.sectionColor}02`) : 'transparent',
+                                                }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                                                        <Box sx={{ flex: 1, pr: 1 }}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
+                                                                <Typography sx={{
+                                                                    fontSize: '0.55rem', fontWeight: 800, color: cat.sectionColor,
+                                                                    bgcolor: `${cat.sectionColor}10`, px: 0.5, py: 0.1, borderRadius: '3px', fontFamily: fontDoc,
+                                                                }}>{item.code}</Typography>
+                                                                <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: c.textPrimary, fontFamily: fontDoc }}>
                                                                     {item.label}
                                                                 </Typography>
-                                                                <Tooltip title={item.desc} arrow enterTouchDelay={0}>
-                                                                    <InfoOutlinedIcon sx={{ fontSize: 14, color: c.textSecondary, cursor: 'help' }} />
-                                                                </Tooltip>
                                                             </Box>
-                                                            <Typography sx={{ fontSize: '0.68rem', color: c.textSecondary, mt: 0.25 }}>
-                                                                {item.desc}
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell sx={{
-                                                            textAlign: 'center', py: 1.5,
-                                                            borderBottom: idx < cat.items.length - 1 ? formBorder : 0,
-                                                            display: { xs: 'none', sm: 'table-cell' },
+                                                            <Typography sx={{ fontSize: '0.68rem', color: ISO.slateLight, lineHeight: 1.4, fontFamily: fontDoc }}>{item.desc}</Typography>
+                                                        </Box>
+                                                        <Box sx={{
+                                                            px: 1, py: 0.3, borderRadius: '5px',
+                                                            bgcolor: `${cat.sectionColor}10`, flexShrink: 0,
                                                         }}>
-                                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: cat.color }}>
-                                                                {(item.weight * 100).toFixed(0)}%
-                                                            </Typography>
-                                                        </TableCell>
-                                                        <TableCell sx={{
-                                                            textAlign: 'center', py: 1.5,
-                                                            borderBottom: idx < cat.items.length - 1 ? formBorder : 0,
-                                                            display: { xs: 'none', sm: 'table-cell' },
-                                                        }}>
-                                                            <TextField
-                                                                value={val || ''}
-                                                                onChange={(e) => {
-                                                                    const v = parseInt(e.target.value);
-                                                                    if (!e.target.value) setData(item.field, 0);
-                                                                    else if (v >= 1 && v <= 10) setData(item.field, v);
-                                                                }}
-                                                                type="number"
-                                                                inputProps={{ min: 1, max: 10, style: { textAlign: 'center', fontWeight: 800, fontSize: '1rem' } }}
-                                                                size="small"
-                                                                sx={{
-                                                                    width: 64,
-                                                                    '& .MuiOutlinedInput-root': {
-                                                                        borderRadius: '8px', height: 40,
-                                                                        bgcolor: val ? (isDark ? `${cat.color}15` : `${cat.color}08`) : 'transparent',
-                                                                        '& fieldset': { borderColor: val ? cat.color : c.cardBorder, borderWidth: val ? 2 : 1 },
-                                                                        '&:hover fieldset': { borderColor: cat.color },
-                                                                        '&.Mui-focused fieldset': { borderColor: cat.color },
-                                                                    },
-                                                                    '& input': { color: val ? cat.color : c.textPrimary },
-                                                                }}
-                                                            />
-                                                        </TableCell>
-                                                        <TableCell sx={{
-                                                            textAlign: 'center', py: 1.5,
-                                                            borderBottom: idx < cat.items.length - 1 ? formBorder : 0,
-                                                            display: { xs: 'none', sm: 'table-cell' },
-                                                        }}>
-                                                            {val > 0 ? (
-                                                                <Box>
-                                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: cat.color }}>
-                                                                        {weighted}
-                                                                    </Typography>
-                                                                    <Typography sx={{ fontSize: '0.58rem', fontWeight: 600, color: itemInterp.color }}>
-                                                                        {itemInterp.label}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ) : (
-                                                                <Typography sx={{ fontSize: '0.75rem', color: c.textSecondary }}>—</Typography>
-                                                            )}
-                                                        </TableCell>
+                                                            <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, color: cat.sectionColor, fontFamily: fontDoc }}>{item.weight}%</Typography>
+                                                        </Box>
+                                                    </Box>
 
-                                                        {/* ── MOBILE ROW (stacked) ── */}
-                                                        <TableCell sx={{
-                                                            display: { xs: 'table-cell', sm: 'none' },
-                                                            py: 2, px: 2,
-                                                            borderBottom: idx < cat.items.length - 1 ? formBorder : 0,
-                                                        }} colSpan={4}>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                                                                <Box sx={{ flex: 1, pr: 1 }}>
-                                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: c.textPrimary }}>
-                                                                        {item.label}
-                                                                    </Typography>
-                                                                    <Typography sx={{ fontSize: '0.68rem', color: c.textSecondary, mt: 0.25 }}>
-                                                                        {item.desc}
-                                                                    </Typography>
-                                                                </Box>
-                                                                <Chip
-                                                                    label={`${(item.weight * 100).toFixed(0)}%`}
-                                                                    size="small"
-                                                                    sx={{ fontWeight: 700, fontSize: '0.65rem', bgcolor: `${cat.color}10`, color: cat.color, height: 22, flexShrink: 0 }}
-                                                                />
-                                                            </Box>
-
-                                                            {/* Slider + number input for mobile */}
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                                <Box sx={{ flex: 1 }}>
-                                                                    <Slider
-                                                                        value={val}
-                                                                        onChange={(e, v) => setData(item.field, v)}
-                                                                        min={0} max={10} step={1}
-                                                                        marks={[{ value: 1, label: '1' }, { value: 5, label: '5' }, { value: 10, label: '10' }]}
-                                                                        valueLabelDisplay="auto"
-                                                                        valueLabelFormat={(v) => v === 0 ? '—' : v}
-                                                                        sx={{
-                                                                            color: cat.color, height: 5,
-                                                                            '& .MuiSlider-thumb': { width: 20, height: 20, bgcolor: '#fff', border: `2.5px solid ${cat.color}` },
-                                                                            '& .MuiSlider-markLabel': { fontSize: '0.6rem', color: c.textSecondary },
-                                                                        }}
-                                                                    />
-                                                                </Box>
-                                                                <TextField
-                                                                    value={val || ''}
-                                                                    onChange={(e) => {
-                                                                        const v = parseInt(e.target.value);
-                                                                        if (!e.target.value) setData(item.field, 0);
-                                                                        else if (v >= 1 && v <= 10) setData(item.field, v);
-                                                                    }}
-                                                                    type="number"
-                                                                    inputProps={{ min: 1, max: 10, style: { textAlign: 'center', fontWeight: 800, fontSize: '1rem' } }}
-                                                                    size="small"
+                                                    {/* Mobile score input */}
+                                                    <Box sx={{
+                                                        display: 'flex', alignItems: 'center', gap: 1.5,
+                                                        p: 1.5, borderRadius: '8px',
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                                        border: `1px solid ${val ? g?.color || bdr : bdr}`,
+                                                        transition: 'border-color 0.2s ease',
+                                                    }}>
+                                                        <Typography sx={{ fontSize: '0.6rem', fontWeight: 600, color: ISO.slateLight, textTransform: 'uppercase', fontFamily: fontDoc, minWidth: 42 }}>
+                                                            Score
+                                                        </Typography>
+                                                        <Box sx={{ display: 'flex', gap: 0.5, flex: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+                                                            {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                                                                <Box
+                                                                    key={n}
+                                                                    onClick={() => setData(item.field, n)}
                                                                     sx={{
-                                                                        width: 56, flexShrink: 0,
-                                                                        '& .MuiOutlinedInput-root': {
-                                                                            borderRadius: '8px', height: 38,
-                                                                            '& fieldset': { borderColor: val ? cat.color : c.cardBorder, borderWidth: val ? 2 : 1 },
-                                                                        },
-                                                                        '& input': { color: val ? cat.color : c.textPrimary },
+                                                                        width: 30, height: 30,
+                                                                        borderRadius: '6px',
+                                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                        cursor: 'pointer',
+                                                                        fontWeight: 800, fontSize: '0.78rem',
+                                                                        fontFamily: fontDoc,
+                                                                        border: `1.5px solid ${val === n ? getGrade(n).color : (isDark ? 'rgba(255,255,255,0.08)' : '#d1d5db')}`,
+                                                                        bgcolor: val === n ? (isDark ? `${getGrade(n).color}20` : `${getGrade(n).color}10`) : 'transparent',
+                                                                        color: val === n ? getGrade(n).color : ISO.slateLight,
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:active': { transform: 'scale(0.92)' },
                                                                     }}
-                                                                />
-                                                            </Box>
-
-                                                            {val > 0 && (
-                                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.75 }}>
-                                                                    <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: itemInterp.color }}>
-                                                                        {itemInterp.label}
-                                                                    </Typography>
-                                                                    <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: cat.color }}>
-                                                                        Weighted: {weighted}
-                                                                    </Typography>
+                                                                >
+                                                                    {n}
                                                                 </Box>
-                                                            )}
-                                                            {errors[item.field] && (
-                                                                <Typography sx={{ fontSize: '0.7rem', color: '#dc2626', mt: 0.5 }}>{errors[item.field]}</Typography>
-                                                            )}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Box>
-                        ))}
+                                                            ))}
+                                                        </Box>
+                                                    </Box>
 
-                        {/* ═══ EVALUATOR NOTES ═══ */}
-                        <Box sx={{
-                            border: formBorder, borderRadius: '12px',
-                            overflow: 'hidden', mb: 2.5, bgcolor: c.cardBg,
-                        }}>
-                            <Box sx={{ px: { xs: 2.5, sm: 3 }, py: 1.25, bgcolor: sectionBg, borderBottom: formBorder }}>
-                                <Typography sx={{ fontSize: '0.72rem', fontWeight: 700, color: c.textPrimary, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                    Evaluator Notes
-                                </Typography>
-                                <Typography sx={{ fontSize: '0.62rem', color: c.textSecondary, mt: 0.15 }}>
-                                    Optional — Provide constructive feedback or recommendations
-                                </Typography>
-                            </Box>
-                            <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
-                                <TextField
-                                    multiline rows={3} fullWidth
-                                    placeholder="Enter evaluation notes here..."
-                                    value={data.juri_notes}
-                                    onChange={(e) => setData('juri_notes', e.target.value)}
-                                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: '0.85rem' } }}
-                                />
-                            </Box>
-                        </Box>
+                                                    {val > 0 && (
+                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: g.color, fontFamily: fontDoc }}>{g.label}</Typography>
+                                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: cat.sectionColor, fontFamily: fontDoc }}>Weighted: {weighted}</Typography>
+                                                        </Box>
+                                                    )}
+                                                    {errors[item.field] && <Typography sx={{ fontSize: '0.65rem', color: ISO.unsatisfactory, mt: 0.5 }}>{errors[item.field]}</Typography>}
+                                                </Box>
+                                            </Box>
+                                        );
+                                    })}
+                                </Box>
+                            ))}
 
-                        {/* ═══ SUBMIT ═══ */}
-                        <Box sx={{
-                            position: { xs: 'sticky', sm: 'relative' },
-                            bottom: { xs: 0 }, bgcolor: c.surfaceBg,
-                            py: { xs: 1.5, sm: 0 }, zIndex: { xs: 10 },
-                        }}>
-                            {!liveScore.allFilled && (
-                                <Alert severity="warning" sx={{ mb: 1.5, borderRadius: '10px', fontSize: '0.75rem', py: 0.5 }}>
-                                    <strong>{liveScore.totalCount - liveScore.filledCount} criteria remaining.</strong> All criteria must be scored before submission.
-                                </Alert>
-                            )}
-                            <Button
-                                type="submit" variant="contained" fullWidth
-                                disabled={processing || !liveScore.allFilled}
-                                startIcon={processing ? null : (isAlreadyScored ? <SaveIcon /> : <CheckCircleIcon />)}
-                                sx={{
-                                    background: liveScore.allFilled ? 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)' : '#94a3b8',
-                                    py: 1.5, borderRadius: '12px', textTransform: 'none',
-                                    fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.01em',
-                                    boxShadow: liveScore.allFilled ? '0 4px 16px rgba(26,188,156,0.3)' : 'none',
-                                    '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)', transform: 'translateY(-1px)' },
-                                    '&:disabled': { background: '#94a3b8', boxShadow: 'none', transform: 'none' },
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                {processing ? 'Submitting...' : isAlreadyScored ? 'Update Evaluation' : 'Submit Evaluation'}
-                            </Button>
-                            <Typography sx={{ fontSize: '0.6rem', color: c.textSecondary, textAlign: 'center', mt: 1, lineHeight: 1.4 }}>
-                                By submitting, you confirm this evaluation was conducted independently and objectively in accordance with the conference evaluation guidelines.
-                            </Typography>
-                        </Box>
-                    </form>
+                            {/* ──── Evaluator Notes ──── */}
+                            <Box sx={{ borderTop: `1px solid ${bdr}` }}>
+                                <Box sx={{ px: { xs: 3, sm: 4 }, py: 1, bgcolor: hBg, borderBottom: `1px solid ${bdr}` }}>
+                                    <Typography sx={{ fontSize: '0.58rem', fontWeight: 700, color: ISO.slate, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: fontDoc }}>
+                                        Evaluator Notes
+                                    </Typography>
+                                    <Typography sx={{ fontSize: '0.52rem', color: ISO.slateLight, fontFamily: fontDoc }}>
+                                        Optional — Provide constructive feedback or recommendations for the presenter
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ px: { xs: 3, sm: 4 }, py: 2 }}>
+                                    <TextField
+                                        multiline rows={3} fullWidth
+                                        placeholder="Enter evaluation notes..."
+                                        value={data.juri_notes}
+                                        onChange={(e) => setData('juri_notes', e.target.value)}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: '6px', fontSize: '0.82rem', fontFamily: fontDoc,
+                                                '& fieldset': { borderColor: bdr },
+                                            },
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+
+                            {/* ──── Submit Section ──── */}
+                            <Box sx={{
+                                borderTop: `1px solid ${bdr}`,
+                                px: { xs: 3, sm: 4 }, py: 2.5,
+                                bgcolor: hBg,
+                                position: { xs: 'sticky', sm: 'relative' },
+                                bottom: { xs: 0 }, zIndex: { xs: 10 },
+                            }}>
+                                {!liveScore.allFilled && (
+                                    <Alert severity="warning" sx={{ mb: 2, borderRadius: '6px', fontSize: '0.75rem', py: 0.5,
+                                        '& .MuiAlert-message': { fontFamily: fontDoc } }}>
+                                        <strong>{liveScore.totalCount - liveScore.filledCount} criteria remaining.</strong> All criteria must be scored.
+                                    </Alert>
+                                )}
+                                <Button
+                                    type="submit" variant="contained" fullWidth
+                                    disabled={processing || !liveScore.allFilled}
+                                    startIcon={processing ? null : (isEditing ? <SaveIcon /> : <CheckCircleIcon />)}
+                                    sx={{
+                                        background: liveScore.allFilled
+                                            ? `linear-gradient(135deg, ${ISO.navy} 0%, ${ISO.navyLight} 100%)`
+                                            : '#94a3b8',
+                                        py: 1.5, borderRadius: '8px', textTransform: 'none',
+                                        fontWeight: 700, fontSize: '0.88rem',
+                                        fontFamily: fontDoc, letterSpacing: '0.01em',
+                                        boxShadow: liveScore.allFilled ? '0 2px 8px rgba(27,42,74,0.3)' : 'none',
+                                        '&:hover': { background: `linear-gradient(135deg, ${ISO.navyLight} 0%, ${ISO.navy} 100%)` },
+                                        '&:disabled': { background: '#94a3b8', boxShadow: 'none' },
+                                    }}
+                                >
+                                    {processing ? 'Submitting...' : isEditing ? 'Update Evaluation' : 'Submit Evaluation'}
+                                </Button>
+                                <Typography sx={{ fontSize: '0.55rem', color: ISO.slateLight, textAlign: 'center', mt: 1.5, lineHeight: 1.5, fontFamily: fontDoc }}>
+                                    By submitting, you confirm this evaluation was conducted independently and objectively
+                                    in accordance with the 55th PIT IAGI & GEOSEA XIX 2026 evaluation guidelines.
+                                </Typography>
+                            </Box>
+                        </form>
+                    </Box>
                 </Box>
             </Box>
         </SidebarLayout>
