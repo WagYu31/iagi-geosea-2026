@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
     Box, Typography, Card, CardContent, Chip, Button, TextField,
     Stack, useTheme, Alert, LinearProgress, Tooltip,
+    Snackbar, Dialog, DialogContent,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 /* ────────────────────────────────────────────
    ISO Color System — Professional Muted Palette
@@ -113,6 +115,10 @@ export default function ScoreForm({ submission, presentationScore }) {
     const isOral = presentationScore.rubric_type === 'oral';
     const rubric = isOral ? ORAL_RUBRIC : POSTER_RUBRIC;
 
+    const { flash } = usePage().props;
+    const [successDialog, setSuccessDialog] = useState({ open: false, score: null });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
     const initialData = {};
     rubric.forEach(cat => cat.items.forEach(item => { initialData[item.field] = presentationScore[item.field] || ''; }));
     initialData.juri_notes = presentationScore.juri_notes || '';
@@ -138,7 +144,23 @@ export default function ScoreForm({ submission, presentationScore }) {
         return { total: Math.round(total * 100) / 100, allFilled, catScores, filledCount, totalCount };
     }, [data, rubric]);
 
-    const handleSubmit = (e) => { e.preventDefault(); post(route('juri.submissions.score', submission.id), { preserveScroll: true }); };
+    // ── Flash message handler (after liveScore is defined) ──
+    useEffect(() => {
+        if (flash?.success) {
+            setSuccessDialog({ open: true, score: liveScore.total });
+        }
+        if (flash?.error) {
+            setSnackbar({ open: true, message: flash.error, severity: 'error' });
+        }
+    }, [flash]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('juri.submissions.score', submission.id), {
+            preserveScroll: true,
+            onError: () => setSnackbar({ open: true, message: 'Failed to submit evaluation. Please check your scores.', severity: 'error' }),
+        });
+    };
     const isEditing = !!presentationScore.weighted_final_score;
     const grade = getGrade(liveScore.total);
 
@@ -602,6 +624,93 @@ export default function ScoreForm({ submission, presentationScore }) {
                     </Box>
                 </Box>
             </Box>
+
+            {/* ═══ SUCCESS DIALOG ═══ */}
+            <Dialog
+                open={successDialog.open}
+                onClose={() => setSuccessDialog({ ...successDialog, open: false })}
+                PaperProps={{
+                    sx: {
+                        borderRadius: '16px', maxWidth: 400, width: '90%',
+                        bgcolor: c.cardBg, border: `1px solid ${bdr}`,
+                        textAlign: 'center', overflow: 'hidden',
+                    },
+                }}
+            >
+                <Box sx={{
+                    background: `linear-gradient(135deg, ${ISO.exceptional} 0%, #059669 100%)`,
+                    py: 3, px: 3,
+                }}>
+                    <TaskAltIcon sx={{ fontSize: 56, color: '#fff', mb: 1 }} />
+                    <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: '1.2rem', fontFamily: fontDoc }}>
+                        Evaluation Submitted!
+                    </Typography>
+                </Box>
+                <DialogContent sx={{ py: 3, px: 3 }}>
+                    <Typography sx={{ color: c.textSecondary, fontSize: '0.82rem', mb: 2, fontFamily: fontDoc }}>
+                        Your evaluation has been recorded successfully.
+                    </Typography>
+                    {successDialog.score && (
+                        <Box sx={{
+                            p: 2, borderRadius: '12px',
+                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                            border: `1px solid ${bdr}`, mb: 2.5,
+                        }}>
+                            <Typography sx={{ fontSize: '0.55rem', fontWeight: 600, color: ISO.slateLight, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: fontDoc }}>
+                                Weighted Final Score
+                            </Typography>
+                            <Typography sx={{ fontSize: '2rem', fontWeight: 900, color: grade.color, fontFamily: fontDoc, mt: 0.25 }}>
+                                {successDialog.score.toFixed(2)}/10
+                            </Typography>
+                            <Chip
+                                label={grade.label}
+                                size="small"
+                                sx={{ fontWeight: 700, bgcolor: `${grade.color}12`, color: grade.color, mt: 0.5, fontFamily: fontDoc }}
+                            />
+                        </Box>
+                    )}
+                    <Stack spacing={1}>
+                        <Button
+                            fullWidth variant="contained"
+                            onClick={() => setSuccessDialog({ ...successDialog, open: false })}
+                            sx={{
+                                background: `linear-gradient(135deg, ${ISO.navy}, ${ISO.navyLight})`,
+                                borderRadius: '10px', textTransform: 'none', fontWeight: 700,
+                                fontFamily: fontDoc, py: 1.25,
+                            }}
+                        >
+                            Continue Editing
+                        </Button>
+                        <Button
+                            fullWidth variant="outlined"
+                            href={route('juri.submissions')}
+                            sx={{
+                                borderRadius: '10px', textTransform: 'none', fontWeight: 600,
+                                fontFamily: fontDoc, color: ISO.slate, borderColor: bdr,
+                            }}
+                        >
+                            Back to Assignments
+                        </Button>
+                    </Stack>
+                </DialogContent>
+            </Dialog>
+
+            {/* ═══ ERROR SNACKBAR ═══ */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={5000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: '100%', borderRadius: '10px', fontWeight: 600, fontFamily: fontDoc }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </SidebarLayout>
     );
 }
