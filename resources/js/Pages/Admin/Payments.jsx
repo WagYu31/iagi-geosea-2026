@@ -20,6 +20,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PaymentIcon from '@mui/icons-material/Payment';
 import LaunchIcon from '@mui/icons-material/Launch';
 import SearchIcon from '@mui/icons-material/Search';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function AdminPayments({ payments = {}, filters = {} }) {
     const theme = useTheme();
@@ -241,6 +242,26 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                 <MenuItem value="International Delegate">Professional and Non-IAGI member</MenuItem>
                             </Select>
                         </FormControl>
+                        <Button
+                            component="a"
+                            href={route('admin.payments.export')}
+                            startIcon={<DownloadIcon />}
+                            sx={{
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.825rem',
+                                color: 'white',
+                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' },
+                                boxShadow: '0 4px 12px rgba(26,188,156,0.2)',
+                                px: 2.5,
+                                py: 1,
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            Download CSV
+                        </Button>
                     </Box>
                 </Box>
 

@@ -614,6 +614,86 @@ class AdminController extends Controller
         return back()->with('success', 'Deletion request rejected. Submission status reset to pending.');
     }
 
+    public function exportPayments()
+    {
+        $payments = Payment::with(['user:id,name,email,category,whatsapp', 'submission:id,title,submission_code'])
+            ->latest()
+            ->get()
+            ->map(function ($payment) {
+                $methodMap = [
+                    'bank_transfer' => 'Bank Transfer',
+                    'gopay' => 'GoPay',
+                    'shopeepay' => 'ShopeePay',
+                    'qris' => 'QRIS',
+                    'credit_card' => 'Credit Card',
+                    'cstore' => 'Convenience Store',
+                    'echannel' => 'Mandiri Bill',
+                ];
+
+                $method = 'N/A';
+                if ($payment->gateway === 'manual') {
+                    $method = 'Manual Bank Transfer';
+                } elseif ($payment->order_id) {
+                    $method = $methodMap[$payment->payment_type] ?? $payment->payment_type ?? 'Midtrans';
+                } elseif ($payment->payment_proof_url) {
+                    $method = 'Manual Bank Transfer';
+                }
+
+                $status = 'Pending';
+                if ($payment->status === 'paid' || $payment->verified) {
+                    $status = 'Paid';
+                } elseif ($payment->status === 'failed') {
+                    $status = 'Failed';
+                } elseif ($payment->status === 'expired') {
+                    $status = 'Expired';
+                } elseif ($payment->status === 'refunded') {
+                    $status = 'Refunded';
+                }
+
+                return [
+                    'Payment ID'        => $payment->id,
+                    'User Name'         => $payment->user->name ?? 'N/A',
+                    'Email'             => $payment->user->email ?? 'N/A',
+                    'WhatsApp'          => $payment->user->whatsapp ?? 'N/A',
+                    'Category'          => $payment->user->category ?? 'N/A',
+                    'Submission Code'   => $payment->submission->submission_code ?? 'N/A',
+                    'Submission Title'  => $payment->submission->title ?? 'N/A',
+                    'Amount (IDR)'      => $payment->amount ?? 0,
+                    'Payment Method'    => $method,
+                    'Order ID'          => $payment->order_id ?? '',
+                    'Transaction ID'    => $payment->transaction_id ?? '',
+                    'Status'            => $status,
+                    'Paid At'           => $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i:s') : '',
+                    'Created At'        => $payment->created_at ? $payment->created_at->format('Y-m-d H:i:s') : '',
+                ];
+            });
+
+        $filename = 'payments_' . date('Y-m-d_His') . '.csv';
+        $handle = fopen('php://temp', 'r+');
+
+        // Add BOM for UTF-8
+        fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        if ($payments->isNotEmpty()) {
+            // Add header
+            fputcsv($handle, array_keys($payments->first()));
+
+            // Add data
+            foreach ($payments as $payment) {
+                fputcsv($handle, $payment);
+            }
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function payments(Request $request)
     {
         $search = $request->input('search');
