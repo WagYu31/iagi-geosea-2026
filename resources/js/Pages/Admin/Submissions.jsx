@@ -458,29 +458,55 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                             {totalItems} total submissions
                         </Typography>
                     </Box>
-                    <Button
-                        variant="contained"
-                        startIcon={<DownloadIcon />}
-                        onClick={handleExport}
-                        sx={{
-                            background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
-                            px: 3,
-                            py: 1.2,
-                            borderRadius: '12px',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                            boxShadow: '0 4px 14px rgba(26, 188, 156, 0.35)',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
-                                boxShadow: '0 6px 20px rgba(26, 188, 156, 0.45)',
-                                transform: 'translateY(-1px)',
-                            },
-                            transition: 'all 0.25s ease',
-                        }}
-                    >
-                        Export CSV
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                        <Button
+                            variant="contained"
+                            startIcon={<FolderZipIcon />}
+                            component="a"
+                            href={route('admin.submissions.exportFiles')}
+                            sx={{
+                                background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+                                px: 2.5,
+                                py: 1.2,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                                boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%)',
+                                    boxShadow: '0 6px 20px rgba(139, 92, 246, 0.45)',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.25s ease',
+                            }}
+                        >
+                            Download All Files
+                        </Button>
+                        <Button
+                            variant="contained"
+                            startIcon={<DownloadIcon />}
+                            onClick={handleExport}
+                            sx={{
+                                background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)',
+                                px: 3,
+                                py: 1.2,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                                boxShadow: '0 4px 14px rgba(26, 188, 156, 0.35)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)',
+                                    boxShadow: '0 6px 20px rgba(26, 188, 156, 0.45)',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.25s ease',
+                            }}
+                        >
+                            Export CSV
+                        </Button>
+                    </Box>
                 </Box>
 
                 {/* Search & Filter Bar */}

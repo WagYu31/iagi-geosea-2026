@@ -613,6 +613,61 @@ class AdminController extends Controller
 
         return back()->with('success', 'Deletion request rejected. Submission status reset to pending.');
     }
+    public function exportAllFiles()
+    {
+        $submissions = Submission::with('user:id,name')
+            ->whereNotNull('full_paper_file')
+            ->orWhereNotNull('layouting_file')
+            ->orWhereNotNull('editor_feedback_file')
+            ->get();
+
+        if ($submissions->isEmpty()) {
+            return back()->with('error', 'No files found to download.');
+        }
+
+        $zipFileName = 'all_submission_files_' . date('Y-m-d_His') . '.zip';
+        $zipPath = storage_path('app/' . $zipFileName);
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            return back()->with('error', 'Could not create ZIP file.');
+        }
+
+        $fileCount = 0;
+
+        foreach ($submissions as $submission) {
+            // Create a clean folder name per submission
+            $authorName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $submission->author_full_name ?? $submission->user->name ?? 'Unknown');
+            $code = $submission->submission_code ?? 'ID-' . $submission->id;
+            $folderName = "{$code}_{$authorName}";
+
+            $fileFields = [
+                'full_paper_file' => 'Full_Paper',
+                'layouting_file' => 'Layouting',
+                'editor_feedback_file' => 'Editor_Feedback',
+            ];
+
+            foreach ($fileFields as $field => $label) {
+                if (!empty($submission->{$field})) {
+                    $filePath = storage_path('app/public/' . $submission->{$field});
+                    if (file_exists($filePath)) {
+                        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                        $zip->addFile($filePath, "{$folderName}/{$label}.{$extension}");
+                        $fileCount++;
+                    }
+                }
+            }
+        }
+
+        $zip->close();
+
+        if ($fileCount === 0) {
+            @unlink($zipPath);
+            return back()->with('error', 'No physical files found on server.');
+        }
+
+        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+    }
 
     public function exportPayments()
     {

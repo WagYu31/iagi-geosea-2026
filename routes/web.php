@@ -196,6 +196,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/submissions/{id}/approve-deletion', [App\Http\Controllers\AdminController::class, 'approveDeletion'])->name('submissions.approveDeletion');
         Route::post('/submissions/{id}/reject-deletion', [App\Http\Controllers\AdminController::class, 'rejectDeletion'])->name('submissions.rejectDeletion');
         Route::get('/submissions/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('submissions.export');
+        Route::get('/submissions/export-files', [App\Http\Controllers\AdminController::class, 'exportAllFiles'])->name('submissions.exportFiles');
         Route::get('/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('export');
 
         // Payments Management
