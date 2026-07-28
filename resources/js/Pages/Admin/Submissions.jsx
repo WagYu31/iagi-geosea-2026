@@ -51,6 +51,8 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DescriptionIcon from '@mui/icons-material/Description';
 import GavelIcon from '@mui/icons-material/Gavel';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import FolderZipIcon from '@mui/icons-material/FolderZip';
 
 const themeSubThemes = {
     'Fundamental & Digital Geoscience': [
@@ -711,6 +713,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                                     <TableCell sx={headCellSx}>Submitted</TableCell>
                                     <TableCell sx={headCellSx}>Status</TableCell>
                                     <TableCell sx={headCellSx}>Payment</TableCell>
+                                    <TableCell sx={headCellSx}>Files</TableCell>
                                     <TableCell sx={headCellSx}>Reviewers</TableCell>
                                     <TableCell sx={headCellSx}>Juri</TableCell>
                                     <TableCell sx={headCellSx}>Actions</TableCell>
@@ -719,7 +722,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                             <TableBody>
                                 {filteredSubmissions.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={16} align="center" sx={cellSx}>
+                                        <TableCell colSpan={19} align="center" sx={cellSx}>
                                             <Box sx={{ py: 5 }}>
                                                 <DescriptionIcon sx={{ fontSize: 48, color: isDark ? '#374151' : '#d1d5db', mb: 1 }} />
                                                 <Typography variant="body2" sx={{ color: c.textMuted }}>
@@ -990,6 +993,74 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                                                             height: 24,
                                                         }}
                                                     />
+                                                </TableCell>
+                                                {/* Files Column */}
+                                                <TableCell sx={cellSx}>
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                        {submission.full_paper_file && (
+                                                            <Tooltip title="Download Full Paper" arrow>
+                                                                <Button
+                                                                    component="a"
+                                                                    href={`/storage/${submission.full_paper_file}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    size="small"
+                                                                    startIcon={<InsertDriveFileIcon sx={{ fontSize: 13 }} />}
+                                                                    sx={{
+                                                                        textTransform: 'none', fontWeight: 600, fontSize: '0.65rem',
+                                                                        color: '#2563eb', bgcolor: isDark ? 'rgba(37,99,235,0.1)' : '#dbeafe',
+                                                                        borderRadius: '6px', px: 1, py: 0.2, minWidth: 0, lineHeight: 1.5,
+                                                                        '&:hover': { bgcolor: isDark ? 'rgba(37,99,235,0.2)' : '#bfdbfe' },
+                                                                    }}
+                                                                >
+                                                                    Paper
+                                                                </Button>
+                                                            </Tooltip>
+                                                        )}
+                                                        {submission.layouting_file && (
+                                                            <Tooltip title="Download Layouting File" arrow>
+                                                                <Button
+                                                                    component="a"
+                                                                    href={`/storage/${submission.layouting_file}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    size="small"
+                                                                    startIcon={<InsertDriveFileIcon sx={{ fontSize: 13 }} />}
+                                                                    sx={{
+                                                                        textTransform: 'none', fontWeight: 600, fontSize: '0.65rem',
+                                                                        color: '#9333ea', bgcolor: isDark ? 'rgba(147,51,234,0.1)' : '#f3e8ff',
+                                                                        borderRadius: '6px', px: 1, py: 0.2, minWidth: 0, lineHeight: 1.5,
+                                                                        '&:hover': { bgcolor: isDark ? 'rgba(147,51,234,0.2)' : '#e9d5ff' },
+                                                                    }}
+                                                                >
+                                                                    Layout
+                                                                </Button>
+                                                            </Tooltip>
+                                                        )}
+                                                        {submission.editor_feedback_file && (
+                                                            <Tooltip title="Download Editor Feedback File" arrow>
+                                                                <Button
+                                                                    component="a"
+                                                                    href={`/storage/${submission.editor_feedback_file}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    size="small"
+                                                                    startIcon={<InsertDriveFileIcon sx={{ fontSize: 13 }} />}
+                                                                    sx={{
+                                                                        textTransform: 'none', fontWeight: 600, fontSize: '0.65rem',
+                                                                        color: '#ea580c', bgcolor: isDark ? 'rgba(234,88,12,0.1)' : '#fff7ed',
+                                                                        borderRadius: '6px', px: 1, py: 0.2, minWidth: 0, lineHeight: 1.5,
+                                                                        '&:hover': { bgcolor: isDark ? 'rgba(234,88,12,0.2)' : '#ffedd5' },
+                                                                    }}
+                                                                >
+                                                                    Editor
+                                                                </Button>
+                                                            </Tooltip>
+                                                        )}
+                                                        {!submission.full_paper_file && !submission.layouting_file && !submission.editor_feedback_file && (
+                                                            <Typography variant="body2" sx={{ fontSize: '0.7rem', color: c.textMuted, fontStyle: 'italic' }}>—</Typography>
+                                                        )}
+                                                    </Box>
                                                 </TableCell>
                                                 <TableCell sx={cellSx}>
                                                     {reviewerCount > 0 ? (
