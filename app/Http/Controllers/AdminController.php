@@ -276,6 +276,37 @@ class AdminController extends Controller
             }
         }
 
+        // Server-side payment filter
+        if ($payment = $request->get('payment')) {
+            if ($payment === 'paid') {
+                $query->whereHas('payment', function ($q) {
+                    $q->where('verified', true);
+                });
+            } elseif ($payment === 'unpaid') {
+                $query->where(function ($q) {
+                    $q->whereDoesntHave('payment')
+                      ->orWhereHas('payment', function ($pq) {
+                          $pq->where('verified', false)->orWhereNull('verified');
+                      });
+                });
+            }
+        }
+
+        // Server-side files filter
+        if ($files = $request->get('files')) {
+            if ($files === 'has_files') {
+                $query->where(function ($q) {
+                    $q->whereNotNull('full_paper_file')
+                      ->orWhereNotNull('layouting_file')
+                      ->orWhereNotNull('editor_feedback_file');
+                });
+            } elseif ($files === 'no_files') {
+                $query->whereNull('full_paper_file')
+                      ->whereNull('layouting_file')
+                      ->whereNull('editor_feedback_file');
+            }
+        }
+
         $submissions = $query->latest()->paginate(25)->withQueryString();
 
         // Status counts for filter badges (fast COUNT queries)
@@ -302,6 +333,8 @@ class AdminController extends Controller
                 'search' => $request->get('search', ''),
                 'status' => $request->get('status', 'all'),
                 'presentation' => $request->get('presentation', 'all'),
+                'payment' => $request->get('payment', 'all'),
+                'files' => $request->get('files', 'all'),
             ],
         ]);
     }

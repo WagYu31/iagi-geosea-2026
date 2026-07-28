@@ -130,6 +130,8 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [presentationFilter, setPresentationFilter] = useState(filters.presentation || 'all');
+    const [paymentFilter, setPaymentFilter] = useState(filters.payment || 'all');
+    const [filesFilter, setFilesFilter] = useState(filters.files || 'all');
     const [coAuthorPopover, setCoAuthorPopover] = useState(null);
     const [changeAllStatus, setChangeAllStatus] = useState('');
     const [changeAllDialog, setChangeAllDialog] = useState(false);
@@ -149,12 +151,16 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
             search: overrides.search !== undefined ? overrides.search : searchTerm,
             status: overrides.status !== undefined ? overrides.status : statusFilter,
             presentation: overrides.presentation !== undefined ? overrides.presentation : presentationFilter,
+            payment: overrides.payment !== undefined ? overrides.payment : paymentFilter,
+            files: overrides.files !== undefined ? overrides.files : filesFilter,
             page: overrides.page || 1,
         };
         // Remove defaults to keep URL clean
         if (params.search === '') delete params.search;
         if (params.status === 'all') delete params.status;
         if (params.presentation === 'all') delete params.presentation;
+        if (params.payment === 'all') delete params.payment;
+        if (params.files === 'all') delete params.files;
         if (params.page === 1) delete params.page;
 
         router.get(route('admin.submissions'), params, {
@@ -182,6 +188,18 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
         setPresentationFilter(value);
         setSelected([]);
         navigateWithFilters({ presentation: value, page: 1 });
+    };
+
+    const handlePaymentFilterChange = (value) => {
+        setPaymentFilter(value);
+        setSelected([]);
+        navigateWithFilters({ payment: value, page: 1 });
+    };
+
+    const handleFilesFilterChange = (value) => {
+        setFilesFilter(value);
+        setSelected([]);
+        navigateWithFilters({ files: value, page: 1 });
     };
 
     const handlePageChange = (page) => {
@@ -582,6 +600,42 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                                     <MenuItem value="all">All ({statusCounts.all || 0})</MenuItem>
                                     <MenuItem value="Oral Presentation">Oral</MenuItem>
                                     <MenuItem value="Poster Presentation">Poster</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl size="small" sx={{ minWidth: 130 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Payment</InputLabel>
+                                <Select
+                                    value={paymentFilter}
+                                    label="Payment"
+                                    onChange={(e) => handlePaymentFilterChange(e.target.value)}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        fontSize: '0.85rem',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                    }}
+                                >
+                                    <MenuItem value="all">All</MenuItem>
+                                    <MenuItem value="paid">Paid</MenuItem>
+                                    <MenuItem value="unpaid">Unpaid</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl size="small" sx={{ minWidth: 130 }}>
+                                <InputLabel sx={{ fontSize: '0.85rem' }}>Files</InputLabel>
+                                <Select
+                                    value={filesFilter}
+                                    label="Files"
+                                    onChange={(e) => handleFilesFilterChange(e.target.value)}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
+                                        fontSize: '0.85rem',
+                                        '& fieldset': { borderColor: c.cardBorder },
+                                    }}
+                                >
+                                    <MenuItem value="all">All</MenuItem>
+                                    <MenuItem value="has_files">Has Files</MenuItem>
+                                    <MenuItem value="no_files">No Files</MenuItem>
                                 </Select>
                             </FormControl>
                             <Chip
