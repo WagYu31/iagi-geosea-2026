@@ -817,8 +817,26 @@ class AdminController extends Controller
 
         $payments = $query->latest()->paginate(25);
 
+        // Global stats across ALL payments (not just current page)
+        $stats = [
+            'totalRevenue' => Payment::where(function ($q) {
+                $q->where('status', 'paid')->orWhere('verified', true);
+            })->sum('amount'),
+            'paidCount' => Payment::where(function ($q) {
+                $q->where('status', 'paid')->orWhere('verified', true);
+            })->count(),
+            'pendingCount' => Payment::where('status', 'pending')->where(function ($q) {
+                $q->where('verified', false)->orWhereNull('verified');
+            })->count(),
+            'midtransCount' => Payment::whereNotNull('order_id')->where('order_id', '!=', '')->count(),
+            'manualCount' => Payment::where(function ($q) {
+                $q->whereNull('order_id')->orWhere('order_id', '');
+            })->whereNotNull('payment_proof_url')->count(),
+        ];
+
         return Inertia::render('Admin/Payments', [
             'payments' => $payments,
+            'stats' => $stats,
             'filters' => [
                 'search' => $search ?? '',
                 'category' => $category ?? 'all',

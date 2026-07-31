@@ -22,7 +22,7 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
 
-export default function AdminPayments({ payments = {}, filters = {} }) {
+export default function AdminPayments({ payments = {}, stats = {}, filters = {} }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -108,12 +108,11 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
     const currentPage = payments.current_page || 1;
     const lastPage = payments.last_page || 1;
 
-    // Stats (from current page only - for accurate counts, server-side would be ideal)
+    // Stats (from current page only - used for tab filtering)
     const paidPayments = paymentsData.filter(p => p.status === 'paid' || p.verified);
     const pendingPaymentsArr = paymentsData.filter(p => p.status === 'pending' && !p.verified);
     const midtransPayments = paymentsData.filter(p => !!p.order_id);
     const manualPayments = paymentsData.filter(p => !p.order_id && !!p.payment_proof_url);
-    const totalAmount = paidPayments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
 
     // Filter payments by tab (from current page data)
     const filteredPayments = (() => {
@@ -129,11 +128,12 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
     const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.5, fontSize: '0.825rem', color: c.textPrimary };
     const headCellSx = { ...cellSx, fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb' };
 
-    const stats = [
-        { label: 'Total Revenue', value: `Rp ${totalAmount.toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
-        { label: 'Paid', value: paidPayments.length, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
-        { label: 'Pending', value: pendingPaymentsArr.length, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
-        { label: 'Via Midtrans', value: midtransPayments.length, icon: <CreditCardIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
+    // Use server-side stats for accurate global counts
+    const globalStats = [
+        { label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#1abc9c', bg: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5' },
+        { label: 'Paid', value: stats.paidCount || 0, icon: <CheckCircleIcon />, color: '#16a34a', bg: isDark ? 'rgba(22,163,74,0.12)' : '#dcfce7' },
+        { label: 'Pending', value: stats.pendingCount || 0, icon: <PendingActionsIcon />, color: '#d97706', bg: isDark ? 'rgba(245,158,11,0.12)' : '#fef3c7' },
+        { label: 'Via Midtrans', value: stats.midtransCount || 0, icon: <CreditCardIcon />, color: '#2563eb', bg: isDark ? 'rgba(37,99,235,0.12)' : '#dbeafe' },
     ];
 
     // Payment method helper
@@ -267,7 +267,7 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
 
                 {/* Stats */}
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 3 }}>
-                    {stats.map((s) => (
+                    {globalStats.map((s) => (
                         <Card key={s.label} elevation={0} sx={{ borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, transition: 'all 0.25s', '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 8px 25px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.08)'}` } }}>
                             <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -304,11 +304,11 @@ export default function AdminPayments({ payments = {}, filters = {} }) {
                                 '& .MuiTabs-indicator': { backgroundColor: '#1abc9c', height: 3, borderRadius: '3px 3px 0 0' },
                             }}
                         >
-                            <Tab value="all" label={`All (${paymentsData.length})`} />
-                            <Tab value="paid" label={`Paid (${paidPayments.length})`} />
-                            <Tab value="pending" label={`Pending (${pendingPaymentsArr.length})`} />
-                            <Tab value="midtrans" label={`Midtrans (${midtransPayments.length})`} />
-                            <Tab value="manual" label={`Manual (${manualPayments.length})`} />
+                            <Tab value="all" label={`All (${totalPayments})`} />
+                            <Tab value="paid" label={`Paid (${stats.paidCount || 0})`} />
+                            <Tab value="pending" label={`Pending (${stats.pendingCount || 0})`} />
+                            <Tab value="midtrans" label={`Midtrans (${stats.midtransCount || 0})`} />
+                            <Tab value="manual" label={`Manual (${stats.manualCount || 0})`} />
                         </Tabs>
                     </Box>
 
