@@ -155,6 +155,27 @@ export default function AppAppBar({ auth }) {
                             <>
                                 <Button
                                     component={Link}
+                                    href="/tickets"
+                                    variant="outlined"
+                                    size="small"
+                                    sx={{
+                                        borderColor: '#10b981',
+                                        color: '#094d42',
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        borderRadius: '8px',
+                                        px: 1.5,
+                                        bgcolor: 'rgba(16, 185, 129, 0.08)',
+                                        '&:hover': {
+                                            borderColor: '#059669',
+                                            bgcolor: 'rgba(16, 185, 129, 0.16)',
+                                        },
+                                    }}
+                                >
+                                    🎟️ Visitor Pass
+                                </Button>
+                                <Button
+                                    component={Link}
                                     href="/login"
                                     variant="text"
                                     size="small"
@@ -235,6 +256,22 @@ export default function AppAppBar({ auth }) {
                                     </MenuItem>
                                 ) : (
                                     <>
+                                        <MenuItem>
+                                            <Button
+                                                component={Link}
+                                                href="/tickets"
+                                                variant="contained"
+                                                fullWidth
+                                                sx={{
+                                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                    textTransform: 'none',
+                                                    fontWeight: 700,
+                                                    color: '#fff',
+                                                }}
+                                            >
+                                                🎟️ Beli Tiket Penonton / Visitor Pass
+                                            </Button>
+                                        </MenuItem>
                                         <MenuItem>
                                             <Button
                                                 component={Link}

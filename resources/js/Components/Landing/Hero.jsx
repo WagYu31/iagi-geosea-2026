@@ -386,6 +386,31 @@ export default function Hero({ settings, auth }) {
                         <>
                             <Button
                                 component={Link}
+                                href="/tickets"
+                                variant="contained"
+                                size="large"
+                                sx={{
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: '#ffffff',
+                                    fontWeight: 800,
+                                    textTransform: 'none',
+                                    borderRadius: '12px',
+                                    px: 3.5,
+                                    py: 1.5,
+                                    fontSize: '1rem',
+                                    boxShadow: '0 4px 20px rgba(16, 185, 129, 0.45)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 25px rgba(16, 185, 129, 0.55)',
+                                    },
+                                    transition: 'all 0.3s ease',
+                                }}
+                            >
+                                🎟️ Tiket Penonton / Visitor Pass
+                            </Button>
+                            <Button
+                                component={Link}
                                 href="/register"
                                 variant="contained"
                                 size="large"
@@ -395,7 +420,7 @@ export default function Hero({ settings, auth }) {
                                     fontWeight: 700,
                                     textTransform: 'none',
                                     borderRadius: '12px',
-                                    px: 4,
+                                    px: 3.5,
                                     py: 1.5,
                                     fontSize: '1rem',
                                     boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
@@ -407,7 +432,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Register Now
+                                Register Author
                             </Button>
                             <Button
                                 component={Link}
@@ -420,7 +445,7 @@ export default function Hero({ settings, auth }) {
                                     fontWeight: 600,
                                     textTransform: 'none',
                                     borderRadius: '12px',
-                                    px: 4,
+                                    px: 3.5,
                                     py: 1.5,
                                     fontSize: '1rem',
                                     '&:hover': {
