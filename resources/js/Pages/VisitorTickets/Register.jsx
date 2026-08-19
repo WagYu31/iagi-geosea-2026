@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -109,7 +109,7 @@ export default function Register({
         const rect = e.currentTarget.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
-        setMousePos({ x: x * 18, y: y * -18 });
+        setMousePos({ x: x * 15, y: y * -15 });
     };
 
     const handleCardMouseLeave = () => {
@@ -228,61 +228,30 @@ export default function Register({
         <Box
             sx={{
                 minHeight: '100vh',
-                background: 'radial-gradient(1200px circle at 50% -10%, #0c382e 0%, #061715 35%, #02090b 100%)',
-                color: '#f8fafc',
+                bgcolor: '#f6f5f3', // Clean stone background like tasteskill.dev
+                color: '#0f172a',
                 position: 'relative',
-                overflow: 'hidden',
                 py: { xs: 3, md: 6 },
             }}
         >
             <Head title="Registrasi Tiket Penonton - 55th PIT IAGI & GEOSEA 2026" />
 
-            {/* Background 3D Grid & Ambient Lighting */}
+            {/* Subtle background gradient pattern */}
             <Box
                 sx={{
                     position: 'absolute',
                     inset: 0,
                     backgroundImage: `
-                        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+                        radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.05) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.04) 0px, transparent 50%),
+                        radial-gradient(at 50% 100%, rgba(13, 148, 136, 0.03) 0px, transparent 50%)
                     `,
-                    backgroundSize: '40px 40px',
-                    maskImage: 'radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%)',
-                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%)',
                     pointerEvents: 'none',
                     zIndex: 0,
                 }}
             />
 
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '5%',
-                    left: '15%',
-                    width: '600px',
-                    height: '450px',
-                    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
-                    filter: 'blur(80px)',
-                    pointerEvents: 'none',
-                    zIndex: 0,
-                }}
-            />
-
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '25%',
-                    right: '10%',
-                    width: '550px',
-                    height: '450px',
-                    background: 'radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%)',
-                    filter: 'blur(90px)',
-                    pointerEvents: 'none',
-                    zIndex: 0,
-                }}
-            />
-
-            <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+            <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 4, md: 6 } }}>
                 {/* Header Navigation Bar */}
                 <Box
                     sx={{
@@ -290,13 +259,12 @@ export default function Register({
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         p: 1.5,
-                        px: 2.5,
-                        borderRadius: '20px',
-                        bgcolor: 'rgba(15, 23, 42, 0.6)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                        mb: 5,
+                        px: 3,
+                        borderRadius: '16px',
+                        bgcolor: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+                        mb: 4,
                     }}
                 >
                     <Button
@@ -304,55 +272,50 @@ export default function Register({
                         href="/"
                         startIcon={<ArrowBackIcon />}
                         sx={{
-                            color: '#e2e8f0',
+                            color: '#334155',
                             textTransform: 'none',
                             fontWeight: 700,
                             fontSize: '0.88rem',
-                            borderRadius: '12px',
+                            borderRadius: '10px',
                             px: 2,
                             py: 0.8,
-                            bgcolor: 'rgba(255, 255, 255, 0.04)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
-                            boxShadow: '0 2px 5px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08)',
+                            bgcolor: '#f8fafc',
+                            border: '1px solid #e2e8f0',
                             '&:hover': {
-                                color: '#10b981',
-                                bgcolor: 'rgba(16, 185, 129, 0.1)',
-                                borderColor: 'rgba(16, 185, 129, 0.4)',
-                                transform: 'translateY(-1px)',
+                                color: '#094d42',
+                                bgcolor: '#f1f5f9',
+                                borderColor: '#cbd5e1',
                             },
-                            transition: 'all 0.2s',
                         }}
                     >
                         Kembali ke Beranda
                     </Button>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981' }} />
-                        <Typography variant="caption" sx={{ color: '#cbd5e1', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                            Official Admission Portal &bull; PIT IAGI 2026
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981' }} />
+                        <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                            Official Conference Portal &bull; PIT IAGI 2026
                         </Typography>
                     </Box>
                 </Box>
 
                 {/* Hero Title & Information */}
-                <Box sx={{ textAlign: 'center', mb: 6 }}>
+                <Box sx={{ textAlign: 'center', mb: 5 }}>
                     <Box
                         sx={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 1.2,
-                            px: 2.2,
-                            py: 0.8,
+                            gap: 1,
+                            px: 2,
+                            py: 0.7,
                             borderRadius: '50px',
-                            bgcolor: 'rgba(16, 185, 129, 0.12)',
-                            border: '1px solid rgba(16, 185, 129, 0.35)',
-                            backdropFilter: 'blur(16px)',
-                            boxShadow: '0 4px 20px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                            mb: 2.5,
+                            bgcolor: 'rgba(9, 77, 66, 0.08)',
+                            border: '1px solid rgba(9, 77, 66, 0.15)',
+                            mb: 2,
                         }}
                     >
-                        <SparklesIcon sx={{ fontSize: 16, color: '#34d399' }} />
-                        <Typography variant="caption" sx={{ color: '#34d399', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: '0.78rem' }}>
+                        <SparklesIcon sx={{ fontSize: 16, color: '#094d42' }} />
+                        <Typography variant="caption" sx={{ color: '#094d42', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: '0.78rem' }}>
                             55th PIT IAGI & GEOSEA XIX 2026
                         </Typography>
                     </Box>
@@ -361,14 +324,11 @@ export default function Register({
                         variant="h2"
                         sx={{
                             fontWeight: 900,
-                            fontSize: { xs: '2.2rem', sm: '3rem', md: '3.6rem' },
+                            fontSize: { xs: '2.2rem', sm: '2.8rem', md: '3.4rem' },
                             letterSpacing: '-0.035em',
-                            lineHeight: 1.1,
-                            background: 'linear-gradient(180deg, #ffffff 0%, #cbd5e1 60%, #94a3b8 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            textShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                            mb: 1.8,
+                            lineHeight: 1.15,
+                            color: '#0f172a',
+                            mb: 1.5,
                         }}
                     >
                         Registrasi Tiket Penonton
@@ -377,14 +337,14 @@ export default function Register({
                     <Typography
                         variant="body1"
                         sx={{
-                            color: '#94a3b8',
+                            color: '#64748b',
                             maxWidth: 680,
                             mx: 'auto',
-                            fontSize: { xs: '0.98rem', md: '1.1rem' },
+                            fontSize: { xs: '0.98rem', md: '1.08rem' },
                             lineHeight: 1.6,
                         }}
                     >
-                        Dapatkan tiket resmi & QR Code digital untuk akses arena pameran, sesi poster ilmiah, serta zona pameran industri energi & mineral se-Asia Tenggara.
+                        Dapatkan tiket resmi & QR Code digital untuk akses arena pameran geologi, sesi poster ilmiah, serta zona industri energi & mineral.
                     </Typography>
 
                     {/* Venue & Date Frosted Bar */}
@@ -394,30 +354,25 @@ export default function Register({
                             gap: { xs: 2, sm: 3.5 },
                             flexWrap: 'wrap',
                             justifyContent: 'center',
-                            bgcolor: 'rgba(15, 23, 42, 0.7)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            backdropFilter: 'blur(20px)',
-                            borderRadius: '18px',
+                            bgcolor: '#ffffff',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '16px',
                             px: { xs: 2.5, sm: 3.5 },
-                            py: 1.4,
-                            mt: 3.5,
-                            boxShadow: '0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                            py: 1.2,
+                            mt: 3,
+                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.04)',
                         }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                            <Box sx={{ p: 0.7, borderRadius: '10px', bgcolor: 'rgba(56, 189, 248, 0.18)', display: 'flex' }}>
-                                <EventIcon sx={{ fontSize: 18, color: '#38bdf8' }} />
-                            </Box>
-                            <Typography variant="body2" sx={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.88rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <EventIcon sx={{ fontSize: 18, color: '#0284c7' }} />
+                            <Typography variant="body2" sx={{ color: '#334155', fontWeight: 700, fontSize: '0.88rem' }}>
                                 {eventDate}
                             </Typography>
                         </Box>
-                        <Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.12)', display: { xs: 'none', sm: 'block' } }} />
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                            <Box sx={{ p: 0.7, borderRadius: '10px', bgcolor: 'rgba(244, 63, 94, 0.18)', display: 'flex' }}>
-                                <LocationOnIcon sx={{ fontSize: 18, color: '#f43f5e' }} />
-                            </Box>
-                            <Typography variant="body2" sx={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.88rem' }}>
+                        <Divider orientation="vertical" flexItem sx={{ borderColor: '#e2e8f0', display: { xs: 'none', sm: 'block' } }} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <LocationOnIcon sx={{ fontSize: 18, color: '#e11d48' }} />
+                            <Typography variant="body2" sx={{ color: '#334155', fontWeight: 700, fontSize: '0.88rem' }}>
                                 {eventVenue}
                             </Typography>
                         </Box>
@@ -428,10 +383,10 @@ export default function Register({
                     <Alert
                         severity="warning"
                         sx={{
-                            borderRadius: '20px',
-                            bgcolor: 'rgba(234, 179, 8, 0.15)',
-                            color: '#fbbf24',
-                            border: '1px solid rgba(234, 179, 8, 0.3)',
+                            borderRadius: '16px',
+                            bgcolor: '#fffbeb',
+                            color: '#b45309',
+                            border: '1px solid #fde68a',
                             p: 3,
                             fontSize: '1rem',
                         }}
@@ -440,205 +395,205 @@ export default function Register({
                     </Alert>
                 ) : (
                     <form onSubmit={handleSubmit}>
-                        {/* 2-COLUMN 3D LAYOUT */}
+                        {/* 2-COLUMN BALANCED 3D DASHBOARD LAYOUT */}
                         <Grid container spacing={4} alignItems="flex-start">
-                            {/* LEFT COLUMN: 3D INTERACTIVE TICKET PASS PREVIEW (STICKY) */}
-                            <Grid item xs={12} lg={5} sx={{ position: { lg: 'sticky' }, top: { lg: 24 } }}>
-                                <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                        <VisibilityIcon sx={{ fontSize: 16, color: isExclusive ? '#fbbf24' : '#34d399' }} /> Live 3D Badge Preview
-                                    </Typography>
-                                    <Chip
-                                        label={isExclusive ? 'VIP PASS' : 'FREE PASS'}
-                                        size="small"
-                                        sx={{
-                                            bgcolor: isExclusive ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                                            color: isExclusive ? '#fbbf24' : '#34d399',
-                                            fontWeight: 800,
-                                            fontSize: '0.7rem',
-                                            border: `1px solid ${isExclusive ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.4)'}`,
-                                        }}
-                                    />
-                                </Box>
-
-                                {/* 3D Perspective Card Container */}
+                            {/* LEFT COLUMN: 3D INTERACTIVE PHYSICAL LANYARD BADGE */}
+                            <Grid item xs={12} md={5} lg={4.5}>
                                 <Box
-                                    onMouseMove={handleCardMouseMove}
-                                    onMouseLeave={handleCardMouseLeave}
                                     sx={{
-                                        perspective: '1000px',
-                                        cursor: 'pointer',
+                                        position: { md: 'sticky' },
+                                        top: { md: 24 },
+                                        bgcolor: '#ffffff',
+                                        borderRadius: '24px',
+                                        p: 3.5,
+                                        border: '1px solid #e2e8f0',
+                                        boxShadow: '0 12px 35px -8px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03)',
                                     }}
                                 >
-                                    {/* Lanyard Top Strap & Clip */}
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1.5, position: 'relative', zIndex: 3 }}>
-                                        <Box
+                                    <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                            <VisibilityIcon sx={{ fontSize: 16, color: isExclusive ? '#d97706' : '#059669' }} /> Live 3D Badge Preview
+                                        </Typography>
+                                        <Chip
+                                            label={isExclusive ? 'VIP PASS' : 'FREE PASS'}
+                                            size="small"
                                             sx={{
-                                                width: 38,
-                                                height: 24,
-                                                bgcolor: isExclusive ? '#b45309' : '#047857',
-                                                borderRadius: '4px 4px 0 0',
-                                                border: '2px solid rgba(255,255,255,0.2)',
-                                                boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-                                            }}
-                                        />
-                                        <Box
-                                            sx={{
-                                                width: 20,
-                                                height: 14,
-                                                bgcolor: '#94a3b8',
-                                                borderRadius: '3px',
-                                                border: '1px solid #475569',
-                                                boxShadow: '0 2px 6px rgba(0,0,0,0.6)',
+                                                bgcolor: isExclusive ? '#fef3c7' : '#ecfdf5',
+                                                color: isExclusive ? '#b45309' : '#047857',
+                                                fontWeight: 800,
+                                                fontSize: '0.7rem',
+                                                border: `1px solid ${isExclusive ? '#fde68a' : '#a7f3d0'}`,
                                             }}
                                         />
                                     </Box>
 
-                                    {/* Physical Lanyard Card 3D Body */}
+                                    {/* 3D Perspective Card Container */}
                                     <Box
+                                        onMouseMove={handleCardMouseMove}
+                                        onMouseLeave={handleCardMouseLeave}
                                         sx={{
-                                            transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
-                                            transition: 'transform 0.15s ease-out, box-shadow 0.3s ease',
-                                            borderRadius: '24px',
-                                            background: isExclusive
-                                                ? 'linear-gradient(165deg, #1e1b12 0%, #171206 50%, #0a0802 100%)'
-                                                : 'linear-gradient(165deg, #071f1a 0%, #061618 50%, #020b0c 100%)',
-                                            border: `2.5px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
-                                            boxShadow: isExclusive
-                                                ? '0 25px 50px -12px rgba(245, 158, 11, 0.35), 0 0 35px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255,255,255,0.3)'
-                                                : '0 25px 50px -12px rgba(16, 185, 129, 0.35), 0 0 35px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255,255,255,0.3)',
-                                            overflow: 'hidden',
-                                            position: 'relative',
-                                            p: 3,
-                                            textAlign: 'center',
+                                            perspective: '1000px',
+                                            cursor: 'pointer',
+                                            my: 1,
                                         }}
                                     >
-                                        {/* Holographic Sheen Layer */}
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                background: `radial-gradient(circle at ${mousePos.x * 2 + 50}% ${mousePos.y * -2 + 50}%, rgba(255,255,255,0.12) 0%, transparent 60%)`,
-                                                pointerEvents: 'none',
-                                            }}
-                                        />
-
-                                        {/* Hole Punch */}
-                                        <Box
-                                            sx={{
-                                                width: 32,
-                                                height: 7,
-                                                borderRadius: '4px',
-                                                bgcolor: 'rgba(0,0,0,0.8)',
-                                                border: '1px solid rgba(255,255,255,0.15)',
-                                                mx: 'auto',
-                                                mb: 2,
-                                            }}
-                                        />
-
-                                        {/* Event Branding */}
-                                        <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#cbd5e1', fontSize: '0.72rem', display: 'block' }}>
-                                            55TH PIT IAGI & GEOSEA 2026
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem', display: 'block', mb: 2.5 }}>
-                                            ANNUAL SCIENTIFIC CONVENTION
-                                        </Typography>
-
-                                        {/* QR Code Center */}
-                                        <Box
-                                            sx={{
-                                                p: 1.8,
-                                                bgcolor: '#ffffff',
-                                                borderRadius: '16px',
-                                                width: 'fit-content',
-                                                mx: 'auto',
-                                                mb: 2.5,
-                                                boxShadow: '0 8px 25px rgba(0,0,0,0.5)',
-                                            }}
-                                        >
-                                            <QRCodeSVG
-                                                value="TKT-SAMPLE-PREVIEW"
-                                                size={130}
-                                                level="H"
-                                                includeMargin={false}
+                                        {/* Lanyard Top Strap & Clip */}
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1.5, position: 'relative', zIndex: 3 }}>
+                                            <Box
+                                                sx={{
+                                                    width: 36,
+                                                    height: 22,
+                                                    bgcolor: isExclusive ? '#d97706' : '#094d42',
+                                                    borderRadius: '4px 4px 0 0',
+                                                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                                                }}
+                                            />
+                                            <Box
+                                                sx={{
+                                                    width: 18,
+                                                    height: 12,
+                                                    bgcolor: '#cbd5e1',
+                                                    borderRadius: '2px',
+                                                    border: '1px solid #94a3b8',
+                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                                }}
                                             />
                                         </Box>
 
-                                        {/* Live Name & Institution */}
-                                        <Typography
-                                            variant="h5"
-                                            sx={{
-                                                fontWeight: 900,
-                                                color: '#ffffff',
-                                                lineHeight: 1.2,
-                                                mb: 0.5,
-                                                fontSize: '1.25rem',
-                                                minHeight: '1.5em',
-                                            }}
-                                        >
-                                            {primaryMember.name || 'Nama Peserta'}
-                                        </Typography>
-
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                fontWeight: 700,
-                                                color: isExclusive ? '#fbbf24' : '#38bdf8',
-                                                fontSize: '0.85rem',
-                                                minHeight: '1.2em',
-                                                mb: 2,
-                                            }}
-                                        >
-                                            {primaryMember.institution || 'Instansi / Universitas'}
-                                        </Typography>
-
-                                        {/* Bottom Pass Category Banner */}
+                                        {/* Physical Lanyard Card 3D Body (TasteSkill White PVC Style) */}
                                         <Box
                                             sx={{
-                                                bgcolor: isExclusive ? '#f59e0b' : '#10b981',
-                                                color: isExclusive ? '#000' : '#fff',
-                                                py: 1,
-                                                borderRadius: '12px',
-                                                fontWeight: 900,
-                                                letterSpacing: '0.08em',
-                                                textTransform: 'uppercase',
-                                                fontSize: '0.85rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 0.8,
-                                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                                transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
+                                                transition: 'transform 0.15s ease-out, box-shadow 0.3s ease',
+                                                borderRadius: '20px',
+                                                bgcolor: '#ffffff',
+                                                border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
+                                                boxShadow: isExclusive
+                                                    ? '0 20px 40px -10px rgba(245, 158, 11, 0.25), 0 8px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)'
+                                                    : '0 20px 40px -10px rgba(16, 185, 129, 0.25), 0 8px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)',
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                p: 3,
+                                                textAlign: 'center',
                                             }}
                                         >
-                                            {isExclusive && <StarIcon sx={{ fontSize: 16 }} />}
-                                            {isExclusive ? 'VISITOR EXCLUSIVE (VIP)' : 'VISITOR NON-EXCLUSIVE'}
-                                            {isExclusive && <StarIcon sx={{ fontSize: 16 }} />}
+                                            {/* Hole Punch */}
+                                            <Box
+                                                sx={{
+                                                    width: 28,
+                                                    height: 6,
+                                                    borderRadius: '4px',
+                                                    bgcolor: '#e2e8f0',
+                                                    border: '1px solid #cbd5e1',
+                                                    mx: 'auto',
+                                                    mb: 2,
+                                                }}
+                                            />
+
+                                            {/* Event Header */}
+                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.72rem', display: 'block' }}>
+                                                55TH PIT IAGI & GEOSEA 2026
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem', display: 'block', mb: 2 }}>
+                                                ANNUAL SCIENTIFIC CONVENTION
+                                            </Typography>
+
+                                            {/* QR Code Center */}
+                                            <Box
+                                                sx={{
+                                                    p: 1.5,
+                                                    bgcolor: '#ffffff',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid #e2e8f0',
+                                                    width: 'fit-content',
+                                                    mx: 'auto',
+                                                    mb: 2,
+                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                                                }}
+                                            >
+                                                <QRCodeSVG
+                                                    value="TKT-SAMPLE-PREVIEW"
+                                                    size={120}
+                                                    level="H"
+                                                    includeMargin={false}
+                                                />
+                                            </Box>
+
+                                            {/* Live Name & Institution */}
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 900,
+                                                    color: '#0f172a',
+                                                    lineHeight: 1.2,
+                                                    mb: 0.3,
+                                                    fontSize: '1.15rem',
+                                                    minHeight: '1.4em',
+                                                }}
+                                            >
+                                                {primaryMember.name || 'Nama Peserta'}
+                                            </Typography>
+
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: isExclusive ? '#d97706' : '#0284c7',
+                                                    fontSize: '0.82rem',
+                                                    minHeight: '1.2em',
+                                                    mb: 2,
+                                                }}
+                                            >
+                                                {primaryMember.institution || 'Instansi / Universitas'}
+                                            </Typography>
+
+                                            {/* Bottom Pass Category Banner */}
+                                            <Box
+                                                sx={{
+                                                    bgcolor: isExclusive ? '#f59e0b' : '#094d42',
+                                                    color: '#ffffff',
+                                                    py: 1,
+                                                    borderRadius: '10px',
+                                                    fontWeight: 900,
+                                                    letterSpacing: '0.08em',
+                                                    textTransform: 'uppercase',
+                                                    fontSize: '0.82rem',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: 0.8,
+                                                }}
+                                            >
+                                                {isExclusive && <StarIcon sx={{ fontSize: 16 }} />}
+                                                {isExclusive ? 'VISITOR EXCLUSIVE (VIP)' : 'VISITOR NON-EXCLUSIVE'}
+                                                {isExclusive && <StarIcon sx={{ fontSize: 16 }} />}
+                                            </Box>
                                         </Box>
                                     </Box>
-                                </Box>
 
-                                {/* Security Info Card */}
-                                <Box
-                                    sx={{
-                                        mt: 3,
-                                        p: 2,
-                                        borderRadius: '14px',
-                                        bgcolor: 'rgba(15, 23, 42, 0.5)',
-                                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1.5,
-                                    }}
-                                >
-                                    <VerifiedIcon sx={{ color: '#10b981', fontSize: 24 }} />
-                                    <Typography variant="caption" sx={{ color: '#94a3b8', lineHeight: 1.4 }}>
-                                        Kartu fisik & QR Code digital dapat ditukarkan langsung di loket pendaftaran gate saat hari acara.
-                                    </Typography>
+                                    {/* Security & Verification Card */}
+                                    <Box
+                                        sx={{
+                                            mt: 3,
+                                            p: 2,
+                                            borderRadius: '14px',
+                                            bgcolor: '#f8fafc',
+                                            border: '1px solid #e2e8f0',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 1.5,
+                                        }}
+                                    >
+                                        <VerifiedIcon sx={{ color: '#059669', fontSize: 24 }} />
+                                        <Typography variant="caption" sx={{ color: '#475569', lineHeight: 1.4, fontWeight: 500 }}>
+                                            Kartu fisik & QR Code digital dapat ditukarkan langsung di loket pendaftaran gate saat hari acara.
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </Grid>
 
                             {/* RIGHT COLUMN: STEP-BY-STEP FORM */}
-                            <Grid item xs={12} lg={7}>
+                            <Grid item xs={12} md={7} lg={7.5}>
                                 {/* STEP 1: CATEGORY SELECTION */}
                                 <Box sx={{ mb: 4.5 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5 }}>
@@ -647,178 +602,183 @@ export default function Register({
                                                 width: 32,
                                                 height: 32,
                                                 borderRadius: '10px',
-                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                bgcolor: '#094d42',
                                                 color: '#fff',
                                                 fontSize: '0.9rem',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 fontWeight: 900,
-                                                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
+                                                boxShadow: '0 4px 10px rgba(9, 77, 66, 0.25)',
                                             }}
                                         >
                                             1
                                         </Box>
-                                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', letterSpacing: '-0.02em' }}>
+                                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                                             Pilih Kategori Tiket
                                         </Typography>
                                     </Box>
 
-                                    <Stack spacing={2.5}>
+                                    <Grid container spacing={2.5}>
                                         {/* Non-Exclusive Free Card */}
-                                        <Box
-                                            onClick={() => handleTypeChange('non_exclusive')}
-                                            sx={{
-                                                cursor: 'pointer',
-                                                borderRadius: '20px',
-                                                bgcolor: visitorType === 'non_exclusive' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(15, 23, 42, 0.6)',
-                                                border: `2.5px solid ${visitorType === 'non_exclusive' ? '#10b981' : 'rgba(255, 255, 255, 0.08)'}`,
-                                                backdropFilter: 'blur(16px)',
-                                                boxShadow: visitorType === 'non_exclusive'
-                                                    ? '0 15px 35px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255,255,255,0.2)'
-                                                    : '0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
-                                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                p: 3,
-                                                position: 'relative',
-                                                '&:hover': {
-                                                    borderColor: '#10b981',
-                                                    transform: 'translateY(-2px)',
-                                                    boxShadow: '0 15px 35px rgba(16, 185, 129, 0.2)',
-                                                },
-                                            }}
-                                        >
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                                <Chip
-                                                    label="FREE ENTRY PASS"
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: 'rgba(16, 185, 129, 0.2)',
-                                                        color: '#34d399',
-                                                        fontWeight: 900,
-                                                        fontSize: '0.72rem',
-                                                        border: '1px solid rgba(16, 185, 129, 0.4)',
-                                                    }}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        width: 24,
-                                                        height: 24,
-                                                        borderRadius: '50%',
-                                                        border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#64748b'}`,
-                                                        bgcolor: visitorType === 'non_exclusive' ? '#10b981' : 'transparent',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        boxShadow: visitorType === 'non_exclusive' ? '0 0 10px #10b981' : 'none',
-                                                    }}
-                                                >
-                                                    {visitorType === 'non_exclusive' && <CheckCircleIcon sx={{ fontSize: 16, color: '#fff' }} />}
+                                        <Grid item xs={12} sm={6}>
+                                            <Box
+                                                onClick={() => handleTypeChange('non_exclusive')}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    borderRadius: '20px',
+                                                    bgcolor: '#ffffff',
+                                                    border: `2.5px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#e2e8f0'}`,
+                                                    boxShadow: visitorType === 'non_exclusive'
+                                                        ? '0 12px 30px -5px rgba(16, 185, 129, 0.25), 0 4px 10px rgba(0,0,0,0.03)'
+                                                        : '0 4px 15px rgba(0,0,0,0.04)',
+                                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    p: 3,
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'space-between',
+                                                    '&:hover': {
+                                                        borderColor: '#10b981',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 12px 30px -5px rgba(16, 185, 129, 0.2)',
+                                                    },
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                                        <Chip
+                                                            label="FREE PASS"
+                                                            size="small"
+                                                            sx={{
+                                                                bgcolor: '#ecfdf5',
+                                                                color: '#047857',
+                                                                fontWeight: 900,
+                                                                fontSize: '0.72rem',
+                                                                border: '1px solid #a7f3d0',
+                                                            }}
+                                                        />
+                                                        <Box
+                                                            sx={{
+                                                                width: 22,
+                                                                height: 22,
+                                                                borderRadius: '50%',
+                                                                border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#cbd5e1'}`,
+                                                                bgcolor: visitorType === 'non_exclusive' ? '#10b981' : 'transparent',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            {visitorType === 'non_exclusive' && <CheckCircleIcon sx={{ fontSize: 15, color: '#fff' }} />}
+                                                        </Box>
+                                                    </Box>
+
+                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', mb: 0.5 }}>
+                                                        Visitor Non-Exclusive
+                                                    </Typography>
+                                                    <Typography variant="h5" sx={{ fontWeight: 900, color: '#059669', mb: 1.5 }}>
+                                                        GRATIS <Typography component="span" variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>(Rp 0)</Typography>
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.5, mb: 2 }}>
+                                                        Akses area pameran umum & poster presentation tanpa biaya registrasi.
+                                                    </Typography>
+                                                </Box>
+
+                                                <Box>
+                                                    <Divider sx={{ borderColor: '#f1f5f9', my: 1.5 }} />
+                                                    <Stack spacing={0.8}>
+                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.8, fontWeight: 600 }}>
+                                                            <CheckCircleIcon sx={{ fontSize: 15, color: '#10b981' }} /> E-Tiket instan ber-QR Code
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.8, fontWeight: 600 }}>
+                                                            <CheckCircleIcon sx={{ fontSize: 15, color: '#10b981' }} /> Cetak Kartu Lanyard di Gate
+                                                        </Typography>
+                                                    </Stack>
                                                 </Box>
                                             </Box>
-
-                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', mb: 0.5 }}>
-                                                Visitor Non-Exclusive
-                                            </Typography>
-                                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#34d399', mb: 1.5 }}>
-                                                GRATIS <Typography component="span" variant="caption" sx={{ color: '#94a3b8', fontWeight: 600 }}>(Free Pass)</Typography>
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.88rem', lineHeight: 1.5, mb: 2 }}>
-                                                Akses area pameran umum, poster presentation, dan booth exhibition tanpa dipungut biaya registrasi.
-                                            </Typography>
-
-                                            <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)', my: 1.5 }} />
-
-                                            <Grid container spacing={1}>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Typography variant="caption" sx={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                        <CheckCircleIcon sx={{ fontSize: 15, color: '#10b981' }} /> E-Tiket instan ber-QR Code
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Typography variant="caption" sx={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                        <CheckCircleIcon sx={{ fontSize: 15, color: '#10b981' }} /> Cetak Kartu Lanyard di Gate
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Box>
+                                        </Grid>
 
                                         {/* Exclusive VIP Card */}
-                                        <Box
-                                            onClick={() => handleTypeChange('exclusive')}
-                                            sx={{
-                                                cursor: 'pointer',
-                                                borderRadius: '20px',
-                                                bgcolor: visitorType === 'exclusive' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(15, 23, 42, 0.6)',
-                                                border: `2.5px solid ${visitorType === 'exclusive' ? '#f59e0b' : 'rgba(255, 255, 255, 0.08)'}`,
-                                                backdropFilter: 'blur(16px)',
-                                                boxShadow: visitorType === 'exclusive'
-                                                    ? '0 15px 35px rgba(245, 158, 11, 0.28), inset 0 1px 0 rgba(255,255,255,0.2)'
-                                                    : '0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
-                                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                p: 3,
-                                                position: 'relative',
-                                                '&:hover': {
-                                                    borderColor: '#f59e0b',
-                                                    transform: 'translateY(-2px)',
-                                                    boxShadow: '0 15px 35px rgba(245, 158, 11, 0.2)',
-                                                },
-                                            }}
-                                        >
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                                <Chip
-                                                    icon={<StarIcon sx={{ fontSize: 13, color: '#000 !important' }} />}
-                                                    label="EXCLUSIVE VIP PASS"
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: '#f59e0b',
-                                                        color: '#000',
-                                                        fontWeight: 900,
-                                                        fontSize: '0.72rem',
-                                                    }}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        width: 24,
-                                                        height: 24,
-                                                        borderRadius: '50%',
-                                                        border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#64748b'}`,
-                                                        bgcolor: visitorType === 'exclusive' ? '#f59e0b' : 'transparent',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        boxShadow: visitorType === 'exclusive' ? '0 0 10px #f59e0b' : 'none',
-                                                    }}
-                                                >
-                                                    {visitorType === 'exclusive' && <CheckCircleIcon sx={{ fontSize: 16, color: '#000' }} />}
+                                        <Grid item xs={12} sm={6}>
+                                            <Box
+                                                onClick={() => handleTypeChange('exclusive')}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    borderRadius: '20px',
+                                                    bgcolor: '#ffffff',
+                                                    border: `2.5px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#e2e8f0'}`,
+                                                    boxShadow: visitorType === 'exclusive'
+                                                        ? '0 12px 30px -5px rgba(245, 158, 11, 0.25), 0 4px 10px rgba(0,0,0,0.03)'
+                                                        : '0 4px 15px rgba(0,0,0,0.04)',
+                                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    p: 3,
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'space-between',
+                                                    '&:hover': {
+                                                        borderColor: '#f59e0b',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 12px 30px -5px rgba(245, 158, 11, 0.2)',
+                                                    },
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                                        <Chip
+                                                            icon={<StarIcon sx={{ fontSize: 13, color: '#000 !important' }} />}
+                                                            label="EXCLUSIVE VIP"
+                                                            size="small"
+                                                            sx={{
+                                                                bgcolor: '#fef3c7',
+                                                                color: '#92400e',
+                                                                fontWeight: 900,
+                                                                fontSize: '0.72rem',
+                                                                border: '1px solid #fde68a',
+                                                            }}
+                                                        />
+                                                        <Box
+                                                            sx={{
+                                                                width: 22,
+                                                                height: 22,
+                                                                borderRadius: '50%',
+                                                                border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#cbd5e1'}`,
+                                                                bgcolor: visitorType === 'exclusive' ? '#f59e0b' : 'transparent',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            {visitorType === 'exclusive' && <CheckCircleIcon sx={{ fontSize: 15, color: '#fff' }} />}
+                                                        </Box>
+                                                    </Box>
+
+                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', mb: 0.5 }}>
+                                                        Visitor Exclusive
+                                                    </Typography>
+                                                    <Typography variant="h5" sx={{ fontWeight: 900, color: '#b45309', mb: 1.5 }}>
+                                                        Rp {priceExclusive.toLocaleString('id-ID')} <Typography component="span" variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>/ org</Typography>
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.5, mb: 2 }}>
+                                                        Akses VIP Plenary Session, VIP Lounge, Kartu Lanyard Gold, & Seminar Kit resmi.
+                                                    </Typography>
+                                                </Box>
+
+                                                <Box>
+                                                    <Divider sx={{ borderColor: '#f1f5f9', my: 1.5 }} />
+                                                    <Stack spacing={0.8}>
+                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.8, fontWeight: 600 }}>
+                                                            <WorkspacePremiumIcon sx={{ fontSize: 15, color: '#d97706' }} /> Lanyard Desain Gold VIP
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.8, fontWeight: 600 }}>
+                                                            <WorkspacePremiumIcon sx={{ fontSize: 15, color: '#d97706' }} /> Akses Plenary & VIP Lounge
+                                                        </Typography>
+                                                    </Stack>
                                                 </Box>
                                             </Box>
-
-                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', mb: 0.5 }}>
-                                                Visitor Exclusive
-                                            </Typography>
-                                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#fbbf24', mb: 1.5 }}>
-                                                Rp {priceExclusive.toLocaleString('id-ID')} <Typography component="span" variant="caption" sx={{ color: '#94a3b8', fontWeight: 600 }}>/ orang</Typography>
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.88rem', lineHeight: 1.5, mb: 2 }}>
-                                                Akses menyeluruh Plenary Session, VIP Lounge, Exhibition, Kartu Lanyard Gold, serta Seminar Kit resmi.
-                                            </Typography>
-
-                                            <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)', my: 1.5 }} />
-
-                                            <Grid container spacing={1}>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Typography variant="caption" sx={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                        <WorkspacePremiumIcon sx={{ fontSize: 15, color: '#fbbf24' }} /> Kartu Lanyard Desain Gold VIP
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Typography variant="caption" sx={{ color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                        <WorkspacePremiumIcon sx={{ fontSize: 15, color: '#fbbf24' }} /> Akses Plenary & VIP Lounge
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Box>
-                                    </Stack>
+                                        </Grid>
+                                    </Grid>
                                 </Box>
 
                                 {/* STEP 2: VISITOR DATA (MULTI-MEMBER FORM) */}
@@ -830,19 +790,19 @@ export default function Register({
                                                     width: 32,
                                                     height: 32,
                                                     borderRadius: '10px',
-                                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                    bgcolor: '#094d42',
                                                     color: '#fff',
                                                     fontSize: '0.9rem',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     fontWeight: 900,
-                                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
+                                                    boxShadow: '0 4px 10px rgba(9, 77, 66, 0.25)',
                                                 }}
                                             >
                                                 2
                                             </Box>
-                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', letterSpacing: '-0.02em' }}>
+                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                                                 Data Pengunjung {members.length > 1 && `(${members.length} Orang)`}
                                             </Typography>
                                         </Box>
@@ -851,21 +811,19 @@ export default function Register({
                                             startIcon={<PersonAddIcon />}
                                             onClick={addMember}
                                             sx={{
-                                                color: '#34d399',
-                                                bgcolor: 'rgba(16, 185, 129, 0.12)',
-                                                border: '1px dashed rgba(16, 185, 129, 0.4)',
-                                                borderRadius: '12px',
+                                                color: '#094d42',
+                                                bgcolor: '#f0fdf4',
+                                                border: '1px dashed #86efac',
+                                                borderRadius: '10px',
                                                 textTransform: 'none',
                                                 fontWeight: 800,
                                                 fontSize: '0.82rem',
                                                 px: 2,
                                                 py: 0.8,
                                                 '&:hover': {
-                                                    bgcolor: 'rgba(16, 185, 129, 0.22)',
-                                                    borderColor: '#10b981',
-                                                    transform: 'translateY(-1px)',
+                                                    bgcolor: '#dcfce7',
+                                                    borderColor: '#22c55e',
                                                 },
-                                                transition: 'all 0.2s',
                                             }}
                                         >
                                             + Tambah Peserta
@@ -878,22 +836,21 @@ export default function Register({
                                                 key={idx}
                                                 sx={{
                                                     borderRadius: '20px',
-                                                    bgcolor: 'rgba(15, 23, 42, 0.65)',
-                                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                                    backdropFilter: 'blur(16px)',
+                                                    bgcolor: '#ffffff',
+                                                    border: '1px solid #e2e8f0',
                                                     p: 3,
-                                                    boxShadow: '0 8px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+                                                    boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
                                                 }}
                                             >
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                                         <Box
                                                             sx={{
-                                                                width: 26,
-                                                                height: 26,
-                                                                borderRadius: '8px',
-                                                                bgcolor: idx === 0 ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                                                                color: idx === 0 ? '#38bdf8' : '#cbd5e1',
+                                                                width: 24,
+                                                                height: 24,
+                                                                borderRadius: '6px',
+                                                                bgcolor: idx === 0 ? '#e0f2fe' : '#f1f5f9',
+                                                                color: idx === 0 ? '#0284c7' : '#475569',
                                                                 fontSize: '0.75rem',
                                                                 fontWeight: 900,
                                                                 display: 'flex',
@@ -903,7 +860,7 @@ export default function Register({
                                                         >
                                                             {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                                                         </Box>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: idx === 0 ? '#38bdf8' : '#e2e8f0' }}>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: idx === 0 ? '#0284c7' : '#334155' }}>
                                                             {idx === 0 ? 'Data Pemesan Utama / Ketua' : `Peserta #${idx + 1}`}
                                                         </Typography>
                                                     </Box>
@@ -913,10 +870,10 @@ export default function Register({
                                                             onClick={() => removeMember(idx)}
                                                             size="small"
                                                             sx={{
-                                                                color: '#f87171',
-                                                                bgcolor: 'rgba(239, 68, 68, 0.12)',
+                                                                color: '#ef4444',
+                                                                bgcolor: '#fef2f2',
                                                                 borderRadius: '8px',
-                                                                '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.25)' },
+                                                                '&:hover': { bgcolor: '#fee2e2' },
                                                             }}
                                                         >
                                                             <DeleteOutlineIcon fontSize="small" />
@@ -935,14 +892,11 @@ export default function Register({
                                                             required
                                                             sx={{
                                                                 '& .MuiOutlinedInput-root': {
-                                                                    bgcolor: 'rgba(30, 41, 59, 0.7)',
-                                                                    color: '#fff',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                                                    '&:hover': { borderColor: 'rgba(16, 185, 129, 0.4)' },
-                                                                    '&.Mui-focused': { borderColor: '#10b981', boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)' },
+                                                                    bgcolor: '#f8fafc',
+                                                                    borderRadius: '10px',
+                                                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                                    '&.Mui-focused fieldset': { borderColor: '#10b981' },
                                                                 },
-                                                                '& .MuiInputLabel-root': { color: '#94a3b8' },
                                                             }}
                                                         />
                                                     </Grid>
@@ -959,14 +913,11 @@ export default function Register({
                                                             FormHelperTextProps={{ sx: { color: '#64748b', fontSize: '0.72rem' } }}
                                                             sx={{
                                                                 '& .MuiOutlinedInput-root': {
-                                                                    bgcolor: 'rgba(30, 41, 59, 0.7)',
-                                                                    color: '#fff',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                                                    '&:hover': { borderColor: 'rgba(16, 185, 129, 0.4)' },
-                                                                    '&.Mui-focused': { borderColor: '#10b981', boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)' },
+                                                                    bgcolor: '#f8fafc',
+                                                                    borderRadius: '10px',
+                                                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                                    '&.Mui-focused fieldset': { borderColor: '#10b981' },
                                                                 },
-                                                                '& .MuiInputLabel-root': { color: '#94a3b8' },
                                                             }}
                                                         />
                                                     </Grid>
@@ -979,14 +930,11 @@ export default function Register({
                                                             fullWidth
                                                             sx={{
                                                                 '& .MuiOutlinedInput-root': {
-                                                                    bgcolor: 'rgba(30, 41, 59, 0.7)',
-                                                                    color: '#fff',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                                                    '&:hover': { borderColor: 'rgba(16, 185, 129, 0.4)' },
-                                                                    '&.Mui-focused': { borderColor: '#10b981', boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)' },
+                                                                    bgcolor: '#f8fafc',
+                                                                    borderRadius: '10px',
+                                                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                                    '&.Mui-focused fieldset': { borderColor: '#10b981' },
                                                                 },
-                                                                '& .MuiInputLabel-root': { color: '#94a3b8' },
                                                             }}
                                                         />
                                                     </Grid>
@@ -999,14 +947,11 @@ export default function Register({
                                                             fullWidth
                                                             sx={{
                                                                 '& .MuiOutlinedInput-root': {
-                                                                    bgcolor: 'rgba(30, 41, 59, 0.7)',
-                                                                    color: '#fff',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                                                    '&:hover': { borderColor: 'rgba(16, 185, 129, 0.4)' },
-                                                                    '&.Mui-focused': { borderColor: '#10b981', boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)' },
+                                                                    bgcolor: '#f8fafc',
+                                                                    borderRadius: '10px',
+                                                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                                                    '&.Mui-focused fieldset': { borderColor: '#10b981' },
                                                                 },
-                                                                '& .MuiInputLabel-root': { color: '#94a3b8' },
                                                             }}
                                                         />
                                                     </Grid>
@@ -1025,19 +970,19 @@ export default function Register({
                                                     width: 32,
                                                     height: 32,
                                                     borderRadius: '10px',
-                                                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                                                    color: '#000',
+                                                    bgcolor: '#d97706',
+                                                    color: '#fff',
                                                     fontSize: '0.9rem',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     fontWeight: 900,
-                                                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
+                                                    boxShadow: '0 4px 10px rgba(217, 119, 6, 0.25)',
                                                 }}
                                             >
                                                 3
                                             </Box>
-                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#fff', letterSpacing: '-0.02em' }}>
+                                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                                                 Pembayaran Tiket Exclusive
                                             </Typography>
                                         </Box>
@@ -1045,11 +990,10 @@ export default function Register({
                                         <Box
                                             sx={{
                                                 borderRadius: '20px',
-                                                bgcolor: 'rgba(15, 23, 42, 0.75)',
-                                                border: '1.5px solid rgba(245, 158, 11, 0.3)',
-                                                backdropFilter: 'blur(16px)',
+                                                bgcolor: '#ffffff',
+                                                border: '1.5px solid #fde68a',
                                                 p: 3.5,
-                                                boxShadow: '0 15px 35px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)',
+                                                boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
                                             }}
                                         >
                                             {/* Total Summary Banner */}
@@ -1059,29 +1003,29 @@ export default function Register({
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
                                                     mb: 3,
-                                                    bgcolor: 'rgba(245, 158, 11, 0.1)',
-                                                    border: '1px solid rgba(245, 158, 11, 0.25)',
+                                                    bgcolor: '#fffbeb',
+                                                    border: '1px solid #fde68a',
                                                     p: 2.5,
-                                                    borderRadius: '16px',
+                                                    borderRadius: '14px',
                                                 }}
                                             >
                                                 <Box>
-                                                    <Typography variant="caption" sx={{ color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800, display: 'block' }}>
-                                                        Total Pembayaran ({members.length} Tiket VIP)
+                                                    <Typography variant="caption" sx={{ color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800, display: 'block' }}>
+                                                        Total Tagihan ({members.length} Tiket VIP)
                                                     </Typography>
-                                                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#fbbf24', letterSpacing: '-0.02em', mt: 0.3 }}>
+                                                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#b45309', letterSpacing: '-0.02em', mt: 0.3 }}>
                                                         Rp {totalEstimate.toLocaleString('id-ID')}
                                                     </Typography>
                                                 </Box>
                                                 <Chip
                                                     label="Wajib Bayar"
                                                     size="small"
-                                                    sx={{ bgcolor: '#fbbf24', color: '#000', fontWeight: 900, fontSize: '0.75rem' }}
+                                                    sx={{ bgcolor: '#d97706', color: '#fff', fontWeight: 900, fontSize: '0.75rem' }}
                                                 />
                                             </Box>
 
                                             {/* Payment Method Selector */}
-                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#e2e8f0', mb: 1.5 }}>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#334155', mb: 1.5 }}>
                                                 Pilih Metode Pembayaran:
                                             </Typography>
 
@@ -1094,9 +1038,9 @@ export default function Register({
                                                         }}
                                                         sx={{
                                                             p: 2,
-                                                            borderRadius: '14px',
-                                                            bgcolor: paymentMethod === 'qris_indo' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-                                                            border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : 'rgba(255, 255, 255, 0.08)'}`,
+                                                            borderRadius: '12px',
+                                                            bgcolor: paymentMethod === 'qris_indo' ? '#f0fdf4' : '#f8fafc',
+                                                            border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : '#e2e8f0'}`,
                                                             cursor: 'pointer',
                                                             display: 'flex',
                                                             alignItems: 'center',
@@ -1104,12 +1048,12 @@ export default function Register({
                                                             transition: 'all 0.2s',
                                                         }}
                                                     >
-                                                        <Box sx={{ p: 1, borderRadius: '10px', bgcolor: 'rgba(16, 185, 129, 0.2)', display: 'flex' }}>
-                                                            <QrCodeIcon sx={{ color: '#34d399', fontSize: 24 }} />
+                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#dcfce7', display: 'flex' }}>
+                                                            <QrCodeIcon sx={{ color: '#059669', fontSize: 24 }} />
                                                         </Box>
                                                         <Box sx={{ flex: 1 }}>
-                                                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>QRIS Indonesia</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>BCA, Mandiri, GoPay, OVO, Dana</Typography>
+                                                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>QRIS Indonesia</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>BCA, Mandiri, GoPay, OVO, Dana</Typography>
                                                         </Box>
                                                     </Paper>
                                                 </Grid>
@@ -1121,9 +1065,9 @@ export default function Register({
                                                         }}
                                                         sx={{
                                                             p: 2,
-                                                            borderRadius: '14px',
-                                                            bgcolor: paymentMethod === 'foreign_bank_transfer' ? 'rgba(56, 189, 248, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-                                                            border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'}`,
+                                                            borderRadius: '12px',
+                                                            bgcolor: paymentMethod === 'foreign_bank_transfer' ? '#f0f9ff' : '#f8fafc',
+                                                            border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#e2e8f0'}`,
                                                             cursor: 'pointer',
                                                             display: 'flex',
                                                             alignItems: 'center',
@@ -1131,27 +1075,27 @@ export default function Register({
                                                             transition: 'all 0.2s',
                                                         }}
                                                     >
-                                                        <Box sx={{ p: 1, borderRadius: '10px', bgcolor: 'rgba(56, 189, 248, 0.2)', display: 'flex' }}>
-                                                            <AccountBalanceIcon sx={{ color: '#38bdf8', fontSize: 24 }} />
+                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#e0f2fe', display: 'flex' }}>
+                                                            <AccountBalanceIcon sx={{ color: '#0284c7', fontSize: 24 }} />
                                                         </Box>
                                                         <Box sx={{ flex: 1 }}>
-                                                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>Bank Transfer / SWIFT</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>Manual Transfer Bank IAGI</Typography>
+                                                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>Bank Transfer</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>Manual Transfer Bank IAGI</Typography>
                                                         </Box>
                                                     </Paper>
                                                 </Grid>
                                             </Grid>
 
-                                            {/* QRIS Display or Bank Info */}
+                                            {/* QRIS Display */}
                                             {paymentMethod === 'qris_indo' && (
                                                 <Box
                                                     sx={{
                                                         textAlign: 'center',
                                                         p: 3,
-                                                        bgcolor: 'rgba(30, 41, 59, 0.5)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        bgcolor: '#f8fafc',
+                                                        border: '1px solid #e2e8f0',
                                                         borderRadius: '16px',
-                                                        mb: 3.5,
+                                                        mb: 3,
                                                     }}
                                                 >
                                                     {qrisImage ? (
@@ -1160,39 +1104,41 @@ export default function Register({
                                                             src={qrisImage.startsWith('http') || qrisImage.startsWith('/') ? qrisImage : `/storage/${qrisImage}`}
                                                             alt="QRIS IAGI"
                                                             sx={{
-                                                                maxWidth: 240,
+                                                                maxWidth: 220,
                                                                 borderRadius: '12px',
                                                                 mx: 'auto',
                                                                 mb: 2,
                                                                 p: 1.5,
                                                                 bgcolor: '#fff',
-                                                                boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
+                                                                border: '1px solid #e2e8f0',
+                                                                boxShadow: '0 4px 15px rgba(0,0,0,0.06)',
                                                             }}
                                                         />
                                                     ) : (
-                                                        <Box sx={{ p: 4, border: '2px dashed #475569', borderRadius: '12px', maxWidth: 240, mx: 'auto', mb: 2, bgcolor: 'rgba(0,0,0,0.2)' }}>
-                                                            <QrCodeIcon sx={{ fontSize: 70, color: '#64748b' }} />
-                                                            <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', mt: 1 }}>QRIS Resmi PIT IAGI 2026</Typography>
+                                                        <Box sx={{ p: 3, border: '2px dashed #cbd5e1', borderRadius: '12px', maxWidth: 220, mx: 'auto', mb: 2, bgcolor: '#fff' }}>
+                                                            <QrCodeIcon sx={{ fontSize: 60, color: '#94a3b8' }} />
+                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b', mt: 1 }}>QRIS Resmi PIT IAGI 2026</Typography>
                                                         </Box>
                                                     )}
-                                                    <Typography variant="body2" sx={{ color: '#e2e8f0', fontWeight: 600 }}>
+                                                    <Typography variant="body2" sx={{ color: '#334155', fontWeight: 600 }}>
                                                         Scan kode QRIS di atas menggunakan aplikasi m-Banking atau E-Wallet pilihan Anda.
                                                     </Typography>
                                                 </Box>
                                             )}
 
+                                            {/* Bank Transfer Info */}
                                             {paymentMethod === 'foreign_bank_transfer' && (
                                                 <Box
                                                     sx={{
                                                         p: 3,
-                                                        bgcolor: 'rgba(30, 41, 59, 0.5)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        bgcolor: '#f8fafc',
+                                                        border: '1px solid #e2e8f0',
                                                         borderRadius: '16px',
-                                                        mb: 3.5,
+                                                        mb: 3,
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#38bdf8' }}>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0284c7' }}>
                                                             Rekening Transfer Bank IAGI:
                                                         </Typography>
                                                         <Button
@@ -1200,12 +1146,12 @@ export default function Register({
                                                             startIcon={<ContentCopyIcon sx={{ fontSize: 14 }} />}
                                                             onClick={handleCopyBankInfo}
                                                             sx={{
-                                                                color: '#38bdf8',
-                                                                bgcolor: 'rgba(56, 189, 248, 0.1)',
+                                                                color: '#0284c7',
+                                                                bgcolor: '#e0f2fe',
                                                                 textTransform: 'none',
                                                                 fontSize: '0.75rem',
                                                                 borderRadius: '8px',
-                                                                '&:hover': { bgcolor: 'rgba(56, 189, 248, 0.2)' },
+                                                                '&:hover': { bgcolor: '#bae6fd' },
                                                             }}
                                                         >
                                                             {copySuccess ? 'Tersalin!' : 'Salin Rekening'}
@@ -1214,13 +1160,13 @@ export default function Register({
                                                     <Typography
                                                         variant="body2"
                                                         sx={{
-                                                            color: '#f8fafc',
+                                                            color: '#0f172a',
                                                             whiteSpace: 'pre-line',
                                                             fontFamily: 'monospace',
-                                                            bgcolor: 'rgba(15, 23, 42, 0.8)',
+                                                            bgcolor: '#ffffff',
                                                             p: 2,
                                                             borderRadius: '10px',
-                                                            border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                            border: '1px solid #e2e8f0',
                                                             lineHeight: 1.7,
                                                         }}
                                                     >
@@ -1229,11 +1175,11 @@ export default function Register({
                                                 </Box>
                                             )}
 
-                                            {/* Upload Proof of Payment */}
-                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#e2e8f0', mb: 0.5 }}>
+                                            {/* Upload Proof */}
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#334155', mb: 0.5 }}>
                                                 Unggah Bukti Pembayaran *
                                             </Typography>
-                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', mb: 2 }}>
+                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 2 }}>
                                                 Foto kamera HP berukuran besar akan otomatis dikompresi &lt; 500KB agar cepat terunggah.
                                             </Typography>
 
@@ -1260,15 +1206,15 @@ export default function Register({
                                                     onClick={() => cameraInputRef.current?.click()}
                                                     disabled={compressing}
                                                     sx={{
-                                                        borderRadius: '12px',
-                                                        borderColor: 'rgba(56, 189, 248, 0.4)',
-                                                        color: '#38bdf8',
-                                                        bgcolor: 'rgba(56, 189, 248, 0.08)',
+                                                        borderRadius: '10px',
+                                                        borderColor: '#0284c7',
+                                                        color: '#0284c7',
+                                                        bgcolor: '#f0f9ff',
                                                         textTransform: 'none',
                                                         fontWeight: 800,
                                                         px: 2.5,
-                                                        py: 1.2,
-                                                        '&:hover': { borderColor: '#38bdf8', bgcolor: 'rgba(56, 189, 248, 0.16)' },
+                                                        py: 1,
+                                                        '&:hover': { borderColor: '#0369a1', bgcolor: '#e0f2fe' },
                                                     }}
                                                 >
                                                     📷 Buka Kamera HP
@@ -1279,15 +1225,15 @@ export default function Register({
                                                     onClick={() => fileInputRef.current?.click()}
                                                     disabled={compressing}
                                                     sx={{
-                                                        borderRadius: '12px',
-                                                        borderColor: 'rgba(255, 255, 255, 0.15)',
-                                                        color: '#cbd5e1',
-                                                        bgcolor: 'rgba(255, 255, 255, 0.04)',
+                                                        borderRadius: '10px',
+                                                        borderColor: '#cbd5e1',
+                                                        color: '#475569',
+                                                        bgcolor: '#ffffff',
                                                         textTransform: 'none',
                                                         fontWeight: 700,
                                                         px: 2.5,
-                                                        py: 1.2,
-                                                        '&:hover': { borderColor: '#10b981', color: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.08)' },
+                                                        py: 1,
+                                                        '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' },
                                                     }}
                                                 >
                                                     📁 Pilih dari Galeri
@@ -1297,7 +1243,7 @@ export default function Register({
                                             {compressing && (
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, my: 2 }}>
                                                     <CircularProgress size={20} sx={{ color: '#10b981' }} />
-                                                    <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700 }}>
+                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700 }}>
                                                         Mengompresi foto otomatis di browser...
                                                     </Typography>
                                                 </Box>
@@ -1308,9 +1254,9 @@ export default function Register({
                                                     sx={{
                                                         mt: 2,
                                                         p: 2,
-                                                        bgcolor: 'rgba(16, 185, 129, 0.1)',
-                                                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                                                        borderRadius: '14px',
+                                                        bgcolor: '#f0fdf4',
+                                                        border: '1px solid #86efac',
+                                                        borderRadius: '12px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         gap: 2,
@@ -1320,14 +1266,14 @@ export default function Register({
                                                         component="img"
                                                         src={proofPreview}
                                                         alt="Bukti Transfer"
-                                                        sx={{ width: 68, height: 68, objectFit: 'cover', borderRadius: '10px', border: '1px solid #10b981' }}
+                                                        sx={{ width: 64, height: 64, objectFit: 'cover', borderRadius: '8px', border: '1px solid #86efac' }}
                                                     />
                                                     <Box sx={{ flex: 1 }}>
-                                                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#34d399', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                                             <CheckCircleIcon sx={{ fontSize: 16 }} /> Foto siap diunggah!
                                                         </Typography>
                                                         {compressionStats && (
-                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', mt: 0.3 }}>
+                                                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', mt: 0.3 }}>
                                                                 Ukuran asli: {compressionStats.original} KB &rarr; <strong>Tersimpan: {compressionStats.compressed} KB</strong> (Hemat {Math.round((1 - compressionStats.compressed / compressionStats.original) * 100)}%)
                                                             </Typography>
                                                         )}
@@ -1339,7 +1285,7 @@ export default function Register({
                                 )}
 
                                 {/* SUBMIT 3D PUSH BUTTON */}
-                                <Box sx={{ mt: 5, mb: 4 }}>
+                                <Box sx={{ mt: 4, mb: 3 }}>
                                     <Button
                                         type="submit"
                                         variant="contained"
@@ -1349,35 +1295,34 @@ export default function Register({
                                         startIcon={processing ? <CircularProgress size={22} color="inherit" /> : <ConfirmationNumberIcon />}
                                         sx={{
                                             background: isExclusive 
-                                                ? 'linear-gradient(180deg, #fbbf24 0%, #d97706 100%)' 
-                                                : 'linear-gradient(180deg, #10b981 0%, #047857 100%)',
-                                            color: isExclusive ? '#000' : '#fff',
+                                                ? 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)' 
+                                                : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                            color: '#ffffff',
                                             fontWeight: 900,
                                             fontSize: { xs: '1.05rem', md: '1.18rem' },
                                             py: 2,
                                             borderRadius: '16px',
                                             textTransform: 'none',
                                             letterSpacing: '0.01em',
-                                            border: `1px solid ${isExclusive ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.3)'}`,
                                             boxShadow: isExclusive
-                                                ? '0 6px 0 #92400e, 0 15px 30px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255,255,255,0.5)'
-                                                : '0 6px 0 #064e3b, 0 15px 30px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255,255,255,0.5)',
+                                                ? '0 5px 0 #92400e, 0 12px 25px rgba(245, 158, 11, 0.35)'
+                                                : '0 5px 0 #047857, 0 12px 25px rgba(16, 185, 129, 0.35)',
                                             '&:hover': {
                                                 background: isExclusive
-                                                    ? 'linear-gradient(180deg, #fcd34d 0%, #b45309 100%)'
-                                                    : 'linear-gradient(180deg, #34d399 0%, #065f46 100%)',
+                                                    ? 'linear-gradient(180deg, #fbbf24 0%, #b45309 100%)'
+                                                    : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
                                                 transform: 'translateY(-2px)',
                                                 boxShadow: isExclusive
-                                                    ? '0 8px 0 #92400e, 0 18px 35px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255,255,255,0.6)'
-                                                    : '0 8px 0 #064e3b, 0 18px 35px rgba(16, 185, 129, 0.5), inset 0 1px 0 rgba(255,255,255,0.6)',
+                                                    ? '0 7px 0 #92400e, 0 15px 30px rgba(245, 158, 11, 0.45)'
+                                                    : '0 7px 0 #047857, 0 15px 30px rgba(16, 185, 129, 0.45)',
                                             },
                                             '&:active': {
                                                 transform: 'translateY(4px)',
                                                 boxShadow: isExclusive
-                                                    ? '0 2px 0 #92400e, 0 6px 15px rgba(245, 158, 11, 0.4)'
-                                                    : '0 2px 0 #064e3b, 0 6px 15px rgba(16, 185, 129, 0.4)',
+                                                    ? '0 1px 0 #92400e, 0 4px 10px rgba(245, 158, 11, 0.3)'
+                                                    : '0 1px 0 #047857, 0 4px 10px rgba(16, 185, 129, 0.3)',
                                             },
-                                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            transition: 'all 0.12s cubic-bezier(0.4, 0, 0.2, 1)',
                                         }}
                                     >
                                         {processing 
