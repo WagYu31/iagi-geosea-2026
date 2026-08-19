@@ -257,23 +257,23 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [saving, setSaving] = useState(false);
 
     const gateways = [
-        { 
-            key: 'manual', 
-            name: 'Manual Bank Transfer', 
+        {
+            key: 'manual',
+            name: 'Manual Bank Transfer',
             description: 'Manual verification — user transfers to bank account and uploads proof',
             color: '#10b981',
             features: ['Bank Transfer', 'Manual Upload', 'Admin Verification'],
         },
-        { 
-            key: 'xendit', 
-            name: 'Xendit', 
+        {
+            key: 'xendit',
+            name: 'Xendit',
             description: 'Redirect-based checkout — user pays on Xendit hosted page',
             color: '#0064D2',
             features: ['QRIS', 'Virtual Account', 'E-Wallet', 'Credit Card', 'Retail Outlet'],
         },
-        { 
-            key: 'midtrans', 
-            name: 'Midtrans', 
+        {
+            key: 'midtrans',
+            name: 'Midtrans',
             description: 'Popup-based checkout — user pays without leaving the page',
             color: '#0070BA',
             features: ['QRIS', 'Bank Transfer (VA)', 'GoPay/ShopeePay', 'Credit Card', 'Indomaret/Alfamart'],
@@ -376,7 +376,7 @@ function PaymentGatewayTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                         </Stack>
 
                         <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e5e7eb'}` }}>
-                             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, mb: 1 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: c.textPrimary, mb: 1 }}>
                                 Manual Payment Unique Code Prefix
                             </Typography>
                             <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, lineHeight: 1.6 }}>
@@ -587,7 +587,7 @@ function MenuVisibilityTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
 
 function DashboardAnnouncementTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
     const announcementVal = getSettingValue('dashboard_announcement');
-    
+
     // Initialize announcement state
     const [title, setTitle] = useState(() => {
         return announcementVal?.title || '';
@@ -689,6 +689,262 @@ function DashboardAnnouncementTab({ inputSx, tealBtnSx, sectionCardSx, sectionTi
                                 </Button>
                             </Box>
                         </Stack>
+                    </CardContent>
+                </Card>
+            </Stack>
+        </Box>
+    );
+}
+
+// Visitor Tickets Configuration Tab Component
+function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
+    const [enabled, setEnabled] = useState(getSettingValue('visitor_registration_enabled', '1') === '1');
+    const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 150000));
+    const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
+    const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', 'October 2026'));
+    const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Grand Ballroom Hotel Indonesia, Jakarta'));
+    const [bankInfo, setBankInfo] = useState(getSettingValue('visitor_bank_transfer_info', "Bank Mandiri\nNo. Rek: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)"));
+    
+    const [exclusiveTemplate, setExclusiveTemplate] = useState(getSettingValue('visitor_exclusive_lanyard_template', ''));
+    const [nonExclusiveTemplate, setNonExclusiveTemplate] = useState(getSettingValue('visitor_non_exclusive_lanyard_template', ''));
+    const [qrisImage, setQrisImage] = useState(getSettingValue('visitor_qris_image', ''));
+    
+    const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState({ exclusive: false, non_exclusive: false, qris: false });
+
+    const handleSaveSettings = async () => {
+        setSaving(true);
+        try {
+            const response = await axios.post(route('admin.settings.saveVisitorTickets'), {
+                visitor_registration_enabled: enabled ? '1' : '0',
+                visitor_ticket_price_exclusive: priceExclusive,
+                visitor_ticket_price_non_exclusive: priceNonExclusive,
+                visitor_event_date: eventDate,
+                visitor_event_venue: eventVenue,
+                visitor_bank_transfer_info: bankInfo,
+            });
+            alert(response.data.message || 'Pengaturan tiket penonton berhasil disimpan!');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Gagal menyimpan pengaturan.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleUploadTemplate = async (type, file) => {
+        if (!file) return;
+        setUploading(prev => ({ ...prev, [type]: true }));
+        
+        const formData = new FormData();
+        formData.append('type', type);
+        formData.append('file', file);
+
+        try {
+            const response = await axios.post(route('admin.settings.uploadVisitorLanyardTemplate'), formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            if (type === 'exclusive') setExclusiveTemplate(response.data.path);
+            if (type === 'non_exclusive') setNonExclusiveTemplate(response.data.path);
+            if (type === 'qris') setQrisImage(response.data.path);
+            alert(response.data.message || 'Berhasil diunggah!');
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Gagal mengunggah template.');
+        } finally {
+            setUploading(prev => ({ ...prev, [type]: false }));
+        }
+    };
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Stack spacing={4}>
+                {/* 1. General & Pricing Settings */}
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            🎫 Konfigurasi Pendaftaran & Harga Tiket Penonton
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 3 }}>
+                            Atur status buka/tutup pendaftaran, harga tiket kategori Exclusive dan Non-Exclusive, serta informasi venue.
+                        </Typography>
+
+                        <Stack spacing={3}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={enabled}
+                                        onChange={(e) => setEnabled(e.target.checked)}
+                                        sx={{
+                                            '& .MuiSwitch-switchBase.Mui-checked': { color: '#10b981' },
+                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#10b981' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography sx={{ fontWeight: 600, color: c.textPrimary }}>
+                                        Pendaftaran Tiket Penonton Aktif (Buka Registrasi Online)
+                                    </Typography>
+                                }
+                            />
+
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Harga Tiket Visitor Exclusive (IDR)"
+                                        value={priceExclusive}
+                                        onChange={(e) => setPriceExclusive(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceExclusive || 0).toLocaleString('id-ID')} / orang`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Harga Tiket Visitor Non-Exclusive (IDR)"
+                                        value={priceNonExclusive}
+                                        onChange={(e) => setPriceNonExclusive(e.target.value)}
+                                        sx={inputSx}
+                                        helperText="Default 0 (Gratis / Free Pass)"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Tanggal Acara"
+                                        value={eventDate}
+                                        onChange={(e) => setEventDate(e.target.value)}
+                                        sx={inputSx}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Lokasi / Venue Acara"
+                                        value={eventVenue}
+                                        onChange={(e) => setEventVenue(e.target.value)}
+                                        sx={inputSx}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        label="Informasi Rekening Bank Transfer (Manual / SWIFT)"
+                                        value={bankInfo}
+                                        onChange={(e) => setBankInfo(e.target.value)}
+                                        multiline
+                                        rows={3}
+                                        sx={inputSx}
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleSaveSettings}
+                                    disabled={saving}
+                                    sx={tealBtnSx}
+                                >
+                                    {saving ? 'Menyimpan...' : 'Simpan Pengaturan Tiket'}
+                                </Button>
+                            </Box>
+                        </Stack>
+                    </CardContent>
+                </Card>
+
+                {/* 2. Upload Template Desain Lanyard / ID Card Fisik */}
+                <Card elevation={0} sx={sectionCardSx}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={sectionTitleSx}>
+                            🪪 Upload Template Desain Kartu Lanyard / ID Card
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 3 }}>
+                            Unggah file gambar background template untuk kartu fisik Exclusive dan Non-Exclusive (Format PNG/JPG, Rasio Tegak A6).
+                        </Typography>
+
+                        <Grid container spacing={3}>
+                            {/* Exclusive Lanyard Template */}
+                            <Grid item xs={12} md={4}>
+                                <Paper sx={{ p: 2.5, borderRadius: '12px', border: `1px solid ${c.cardBorder}`, bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', textAlign: 'center' }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#eab308', mb: 1 }}>
+                                        ⭐ Template Lanyard Exclusive
+                                    </Typography>
+                                    {exclusiveTemplate ? (
+                                        <Box component="img" src={exclusiveTemplate.startsWith('http') || exclusiveTemplate.startsWith('/') ? exclusiveTemplate : `/storage/${exclusiveTemplate}`} alt="Exclusive Template" sx={{ width: '100%', height: 160, objectFit: 'contain', borderRadius: '8px', mb: 2, bgcolor: '#fff' }} />
+                                    ) : (
+                                        <Box sx={{ height: 160, border: '2px dashed #64748b', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted }}>Belum ada template</Typography>
+                                        </Box>
+                                    )}
+                                    <Button
+                                        variant="outlined"
+                                        component="label"
+                                        size="small"
+                                        disabled={uploading.exclusive}
+                                        sx={{ textTransform: 'none', borderRadius: '8px' }}
+                                    >
+                                        {uploading.exclusive ? 'Mengunggah...' : 'Pilih Gambar Template'}
+                                        <input type="file" accept="image/*" hidden onChange={(e) => handleUploadTemplate('exclusive', e.target.files?.[0])} />
+                                    </Button>
+                                </Paper>
+                            </Grid>
+
+                            {/* Non-Exclusive Lanyard Template */}
+                            <Grid item xs={12} md={4}>
+                                <Paper sx={{ p: 2.5, borderRadius: '12px', border: `1px solid ${c.cardBorder}`, bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', textAlign: 'center' }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#3b82f6', mb: 1 }}>
+                                        🎫 Template Lanyard Non-Exclusive
+                                    </Typography>
+                                    {nonExclusiveTemplate ? (
+                                        <Box component="img" src={nonExclusiveTemplate.startsWith('http') || nonExclusiveTemplate.startsWith('/') ? nonExclusiveTemplate : `/storage/${nonExclusiveTemplate}`} alt="Non-Exclusive Template" sx={{ width: '100%', height: 160, objectFit: 'contain', borderRadius: '8px', mb: 2, bgcolor: '#fff' }} />
+                                    ) : (
+                                        <Box sx={{ height: 160, border: '2px dashed #64748b', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted }}>Belum ada template</Typography>
+                                        </Box>
+                                    )}
+                                    <Button
+                                        variant="outlined"
+                                        component="label"
+                                        size="small"
+                                        disabled={uploading.non_exclusive}
+                                        sx={{ textTransform: 'none', borderRadius: '8px' }}
+                                    >
+                                        {uploading.non_exclusive ? 'Mengunggah...' : 'Pilih Gambar Template'}
+                                        <input type="file" accept="image/*" hidden onChange={(e) => handleUploadTemplate('non_exclusive', e.target.files?.[0])} />
+                                    </Button>
+                                </Paper>
+                            </Grid>
+
+                            {/* QRIS Image Upload */}
+                            <Grid item xs={12} md={4}>
+                                <Paper sx={{ p: 2.5, borderRadius: '12px', border: `1px solid ${c.cardBorder}`, bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', textAlign: 'center' }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#10b981', mb: 1 }}>
+                                        📱 Gambar QRIS IAGI
+                                    </Typography>
+                                    {qrisImage ? (
+                                        <Box component="img" src={qrisImage.startsWith('http') || qrisImage.startsWith('/') ? qrisImage : `/storage/${qrisImage}`} alt="QRIS IAGI" sx={{ width: '100%', height: 160, objectFit: 'contain', borderRadius: '8px', mb: 2, bgcolor: '#fff' }} />
+                                    ) : (
+                                        <Box sx={{ height: 160, border: '2px dashed #64748b', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted }}>Belum ada QRIS</Typography>
+                                        </Box>
+                                    )}
+                                    <Button
+                                        variant="outlined"
+                                        component="label"
+                                        size="small"
+                                        disabled={uploading.qris}
+                                        sx={{ textTransform: 'none', borderRadius: '8px' }}
+                                    >
+                                        {uploading.qris ? 'Mengunggah...' : 'Pilih Gambar QRIS'}
+                                        <input type="file" accept="image/*" hidden onChange={(e) => handleUploadTemplate('qris', e.target.files?.[0])} />
+                                    </Button>
+                                </Paper>
+                            </Grid>
+                        </Grid>
                     </CardContent>
                 </Card>
             </Stack>
@@ -1958,6 +2214,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                         <Tab label="Payment Gateway" />
                         <Tab label="Menu Visibility" />
                         <Tab label="Dashboard Announcement" />
+                        <Tab label="Visitor Tickets" />
                     </Tabs>
 
                     {/* Landing Page Settings Tab */}
@@ -3930,6 +4187,11 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                     {/* Dashboard Announcement Tab */}
                     <TabPanel value={tabValue} index={5}>
                         <DashboardAnnouncementTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} />
+                    </TabPanel>
+
+                    {/* Visitor Tickets Tab */}
+                    <TabPanel value={tabValue} index={6}>
+                        <VisitorTicketsTab inputSx={inputSx} tealBtnSx={tealBtnSx} sectionCardSx={sectionCardSx} sectionTitleSx={sectionTitleSx} isDark={isDark} c={c} settings={settings} getSettingValue={getSettingValue} />
                     </TabPanel>
                 </Card>
             </Box>

@@ -1396,6 +1396,79 @@ class LandingPageSettingController extends Controller
 
 
     /**
+     * Save visitor ticket settings (pricing, status, bank info, venue)
+     */
+    public function saveVisitorTicketSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'visitor_ticket_price_exclusive' => 'nullable|numeric|min:0',
+            'visitor_ticket_price_non_exclusive' => 'nullable|numeric|min:0',
+            'visitor_registration_enabled' => 'nullable|string|in:0,1',
+            'visitor_bank_transfer_info' => 'nullable|string',
+            'visitor_event_date' => 'nullable|string|max:255',
+            'visitor_event_venue' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            LandingPageSetting::updateOrCreate(
+                ['key' => $key],
+                [
+                    'value' => (string) ($value ?? ''),
+                    'section' => 'visitor_tickets',
+                    'type' => 'text',
+                ]
+            );
+        }
+
+        Cache::forget('landing-page-settings');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengaturan tiket penonton berhasil disimpan!',
+        ]);
+    }
+
+    /**
+     * Upload Lanyard Card Template (Exclusive / Non-Exclusive) or QRIS Image
+     */
+    public function uploadVisitorLanyardTemplate(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:exclusive,non_exclusive,qris',
+            'file' => 'required|file|image|max:5120', // max 5MB
+        ]);
+
+        $type = $request->type;
+        $file = $request->file('file');
+        
+        $keyMap = [
+            'exclusive' => 'visitor_exclusive_lanyard_template',
+            'non_exclusive' => 'visitor_non_exclusive_lanyard_template',
+            'qris' => 'visitor_qris_image',
+        ];
+
+        $settingKey = $keyMap[$type];
+        $path = $file->store('lanyard_templates', 'public');
+
+        LandingPageSetting::updateOrCreate(
+            ['key' => $settingKey],
+            [
+                'value' => $path,
+                'section' => 'visitor_tickets',
+                'type' => 'image',
+            ]
+        );
+
+        Cache::forget('landing-page-settings');
+
+        return response()->json([
+            'success' => true,
+            'path' => '/storage/' . $path,
+            'message' => 'Template berhasil diunggah!',
+        ]);
+    }
+
+    /**
      * Helper function to format file size
      */
     private function formatBytes($bytes, $precision = 2)

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Proposal & PRD — Sistem Tiketing Penonton PIT IAGI 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 18mm 20mm;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-size: 10pt;
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 2px double #0d9488;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .header-title h1 {
+            font-size: 18pt;
+            font-weight: 800;
+            color: #0f766e;
+            margin: 0 0 4px 0;
+            letter-spacing: -0.025em;
+        }
+
+        .header-title p {
+            font-size: 8.5pt;
+            color: #64748b;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .meta-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 15px;
+        }
+
+        .meta-item {
+            font-size: 8.5pt;
+        }
+
+        .meta-item strong {
+            color: #0f766e;
+            display: block;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            font-size: 7pt;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-item span {
+            color: #334155;
+            font-weight: 500;
+        }
+
+        /* Section Headings */
+        h2 {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: #0f766e;
+            border-left: 4px solid #0d9488;
+            padding-left: 8px;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #0f766e;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+
+        p, ul, ol {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        th {
+            background-color: #0f766e;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+            padding: 6px 8px;
+            font-size: 8.5pt;
+            border: 1px solid #0f766e;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 6px 8px;
+            font-size: 8.5pt;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .price-col {
+            font-weight: 700;
+            color: #0f766e;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* Highlight box */
+        .callout-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #bbf7d0;
+            border-left: 5px solid #16a34a;
+            border-radius: 6px;
+            padding: 10px 16px;
+            margin: 14px 0;
+            page-break-inside: avoid;
+        }
+
+        .callout-box h4 {
+            margin: 0 0 3px 0;
+            color: #14532d;
+            font-size: 9.5pt;
+            font-weight: 700;
+        }
+
+        .callout-box p {
+            margin: 0;
+            color: #166534;
+            font-size: 8.5pt;
+        }
+
+        /* Code/Pre Block */
+        pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 8pt;
+            overflow-x: auto;
+            margin: 10px 0;
+            page-break-inside: avoid;
+        }
+
+        /* Signatures block */
+        .signature-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+
+        .signature-col {
+            width: 45%;
+            text-align: center;
+        }
+
+        .signature-line {
+            margin-top: 45px;
+            border-top: 1px solid #94a3b8;
+            padding-top: 4px;
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 9pt;
+        }
+
+        .signature-title {
+            font-size: 8pt;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <div class="header">
+        <div class="header-title">
+            <h1>PROPOSAL & PRODUCT REQUIREMENT DOCUMENT (PRD)</h1>
+            <p>Sistem Registrasi Tiket Penonton & Gate Check-In Barcode</p>
+        </div>
+    </div>
+
+    <!-- ═══ METADATA ═══ -->
+    <div class="meta-box">
+        <div class="meta-item">
+            <strong>Nama Kegiatan</strong>
+            <span>55th PIT IAGI & GEOSEA XIX 2026</span>
+        </div>
+        <div class="meta-item">
+            <strong>Ditujukan Kepada</strong>
+            <span>Panitia Pelaksana PIT IAGI & GEOSEA 2026</span>
+        </div>
+        <div class="meta-item">
+            <strong>Estimasi Waktu Kerja</strong>
+            <span>Paling lambat 7 hari, paling cepat 1 hari</span>
+        </div>
+        <div class="meta-item">
+            <strong>Tanggal Pengajuan</strong>
+            <span>19 Juli 2026</span>
+        </div>
+    </div>
+
+    <!-- ═══ DESKRIPSI ═══ -->
+    <h2>1. Deskripsi Fitur</h2>
+    <p>
+        Proposal ini diajukan untuk menambahkan modul <strong>Sistem Tiketing & Gate Check-In Penonton</strong> pada platform 55th PIT IAGI & GEOSEA XIX 2026. Alur pendaftaran disederhanakan menggunakan metode <strong>Upload Bukti Transfer Mandiri</strong> (manual verification oleh admin). Dilengkapi opsi fleksibel **Pengaturan Nomor Kursi (Seat Assignment)** yang bisa diaktifkan atau dinonaktifkan oleh Admin melalui panel pengaturan.
+    </p>
+
+    <!-- ═══ RUANG LINGKUP ═══ -->
+    <h2>2. Ruang Lingkup Pekerjaan & Detail Modul</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%">Modul Sistem</th>
+                <th>Deskripsi Kebutuhan Teknis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Halaman Registrasi Penonton</strong></td>
+                <td>Penyediaan form registrasi penonton (diakses langsung via Landing Page) untuk mengisi identitas dasar tanpa mewajibkan proses submit makalah ilmiah.</td>
+            </tr>
+            <tr>
+                <td><strong>Modul Upload Bukti Transfer</strong></td>
+                <td>Peserta penonton dapat melihat instruksi nomor rekening bank panitia dan mengunggah (upload) bukti transfer pembayaran tiket langsung di dashboard.</td>
+            </tr>
+            <tr>
+                <td><strong>Panel Verifikasi Admin</strong></td>
+                <td>Penyediaan halaman khusus bagi panitia untuk melakukan persetujuan (Approve) atau penolakan (Reject) bukti pembayaran yang diunggah penonton.</td>
+            </tr>
+            <tr>
+                <td><strong>Konfigurasi & Nomor Kursi</strong></td>
+                <td>Fitur pilihan bagi Admin untuk menentukan apakah tiket penonton menggunakan nomor bangku (seat number sequential/ditentukan otomatis) atau free seating (tanpa nomor kursi).</td>
+            </tr>
+            <tr>
+                <td><strong>E-Tiket & Generator QR Code</strong></td>
+                <td>Pembuatan kode tiket acak terenkripsi dan QR Code unik setelah disetujui. Informasi nomor kursi otomatis dicantumkan di E-Tiket (jika opsi nomor bangku diaktifkan).</td>
+            </tr>
+            <tr>
+                <td><strong>Mobile Web Scanner Gate</strong></td>
+                <td>Pengembangan halaman scanner berbasis web khusus panitia (check-in gate) dengan validasi instan, status kehadiran, alert audio, dan perlindungan tiket duplikat.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ═══ RENCANA ANGGARAN BIAYA ═══ -->
+    <h2>3. Rencana Anggaran Biaya (RAB)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Pengerjaan</th>
+                <th style="text-align: right; width: 25%">Biaya (IDR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Modul Form Registrasi Penonton & Logika Tarif Dinamis</td>
+                <td class="price-col">Rp 1.000.000</td>
+            </tr>
+            <tr>
+                <td>Modul Upload Bukti Bayar & Panel Verifikasi Admin (Approve/Reject)</td>
+                <td class="price-col">Rp 1.000.000</td>
+            </tr>
+            <tr>
+                <td>Sistem Enkripsi QR Code, E-Tiket PDF Generator, Konfigurasi Nomor Kursi & Email Notifikasi</td>
+                <td class="price-col">Rp 1.000.000</td>
+            </tr>
+            <tr>
+                <td>Halaman Mobile Web Scanner Panitia, Fitur Anti-Duplikasi & Feedback Audio</td>
+                <td class="price-col">Rp 1.000.000</td>
+            </tr>
+            <tr style="background-color: #f1f5f9; font-weight: 700;">
+                <td>Total Nilai Pengajuan Proyek</td>
+                <td class="price-col" style="font-size: 11.5pt; border-top: 2px solid #0f766e;">Rp 4.000.000</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- ═══ SPECIAL DISCOUNT BOX ═══ -->
+    <div class="callout-box">
+        <h4>Penawaran Khusus (Loyal Client Discount)</h4>
+        <p>
+            Sebagai wujud apresiasi atas kerjasama berkelanjutan, kami menawarkan harga khusus (Nett) sebesar <strong>Rp 2.500.000,- (Dua Juta Lima Ratus Ribu Rupiah)</strong> untuk implementasi seluruh modul di atas secara lengkap.
+        </p>
+    </div>
+
+    <!-- ═══ PRD DETAILS START ═══ -->
+    <h2>4. Spesifikasi Teknis (Product Requirement Document)</h2>
+    
+    <h3>4.1 Alur Pengguna (User Flow)</h3>
+    <ul>
+        <li><strong>Pendaftaran:</strong> Penonton mengakses halaman pendaftaran khusus melalui tombol CTA di Landing Page, melengkapi form identitas, dan diarahkan ke instruksi pembayaran bank transfer panitia.</li>
+        <li><strong>Pemberian Kursi otomatis:</strong> Saat Admin menekan tombol "Approve" bukti pembayaran, sistem akan mengecek status konfigurasi nomor kursi. Jika aktif (ON), sistem mengalokasikan nomor bangku unik berurutan (misal: S-001, S-002, dst.). Jika nonaktif (OFF), status akan diatur menjadi "Free Seating".</li>
+        <li><strong>Check-in Lokasi:</strong> Saat barcode e-tiket dipindai oleh kamera HP panitia di gerbang masuk, layar scanner akan memvalidasi status lunas, mencatat waktu masuk, dan memunculkan nomor kursi peserta di layar HP panitia untuk memandu penonton.</li>
+    </ul>
+
+    <h3>4.2 Kebutuhan Fungsional (Functional Requirements)</h3>
+    <ul>
+        <li><strong>FR-01 (Registrasi):</strong> Pembuatan endpoint `/tiket` mandiri yang aman dan ramah seluler (mobile-friendly).</li>
+        <li><strong>FR-02 (Verifikasi Admin):</strong> Dashboard admin untuk menyetujui (Approve) atau menolak (Reject) bukti bayar dengan kolom input alasan penolakan.</li>
+        <li><strong>FR-03 (Toggle Kursi):</strong> Opsi di halaman pengaturan admin untuk menyalakan/mematikan penomoran kursi penonton.</li>
+        <li><strong>FR-04 (Web Scanner):</strong> Kamera web asinkron dengan feedback audio (beep berhasil, buzz eror) dan visual (layar hijau untuk sukses, merah untuk eror).</li>
+    </ul>
+
+    <h3>4.3 Rancangan Skema Database</h3>
+    <p>Rancangan tabel database `tickets` yang akan diimplementasikan:</p>
+    <pre>
+CREATE TABLE tickets (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,         -- Relasi ke users (pembeli)
+    payment_id BIGINT UNSIGNED NULL,          -- Relasi ke tabel bukti bayar
+    ticket_code VARCHAR(100) UNIQUE NOT NULL, -- Kode tiket (e.g. PIT-2026-V001)
+    ticket_category VARCHAR(50) NOT NULL,     -- Mahasiswa, Anggota IAGI, Umum
+    seat_number VARCHAR(20) NULL,             -- Nomor kursi (null jika Free Seating)
+    price DECIMAL(12, 2) NOT NULL,            -- Nominal harga tiket
+    status VARCHAR(20) DEFAULT 'pending',     -- pending, active, rejected
+    checked_in BOOLEAN DEFAULT FALSE,         -- Status absensi masuk gate
+    checked_in_at TIMESTAMP NULL,             -- Waktu scan check-in
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE SET NULL
+);</pre>
+
+    <h3>4.4 Kebutuhan Non-Fungsional (Non-Functional Requirements)</h3>
+    <ul>
+        <li><strong>Performa Kecepatan Validasi:</strong> Latensi verifikasi scan barcode di gerbang masuk ditekan di bawah **1 detik** per peserta.</li>
+        <li><strong>Kompatibilitas HP:</strong> Web scanner dirancang responsif dan kompatibel dengan browser seluler (Chrome di Android, Safari di iOS).</li>
+        <li><strong>Anti-Duplikasi:</strong> Perlindungan sistem agar barcode yang sama tidak bisa di-scan lebih dari satu kali (menghindari sharing e-ticket).</li>
+    </ul>
+    <!-- ═══ PRD DETAILS END ═══ -->
+
+    <h2>5. Ketentuan Lainnya</h2>
+    <ul>
+        <li>Pengerjaan dimulai segera setelah proposal disetujui secara tertulis.</li>
+        <li>Estimasi penyelesaian berkisar **paling lambat 7 hari kerja** dan **paling cepat 1 hari kerja** setelah persetujuan.</li>
+        <li>Garansi pemeliharaan sistem gratis selama 1 (satu) bulan pasca-rilis untuk memastikan kelancaran check-in di hari pelaksanaan acara.</li>
+    </ul>
+
+    <!-- ═══ TANDA TANGAN ═══ -->
+    <div class="signature-section">
+        <div class="signature-col">
+            <p>Diajukan Oleh,</p>
+            <div class="signature-line">Wahyu Utomo</div>
+            <div class="signature-title">IT Development Partner</div>
+        </div>
+        <div class="signature-col">
+            <p>Disetujui Oleh,</p>
+            <div class="signature-line">Panitia PIT IAGI & GEOSEA 2026</div>
+            <div class="signature-title">Penanggung Jawab Acara / IT Section</div>
+        </div>
+    </div>
+
+</body>
+</html>

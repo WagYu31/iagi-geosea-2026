@@ -34,6 +34,12 @@ Route::get('/privacy-policy', function () { return Inertia::render('PrivacyPolic
 Route::get('/terms-and-conditions', function () { return Inertia::render('TermsAndConditions'); })->name('terms.conditions');
 Route::get('/refund-policy', function () { return Inertia::render('RefundPolicy'); })->name('refund.policy');
 
+// Public Visitor Tickets Registration & E-Ticket Routes
+Route::get('/tickets', [App\Http\Controllers\VisitorTicketController::class, 'index'])->name('visitor.tickets');
+Route::post('/tickets', [App\Http\Controllers\VisitorTicketController::class, 'store'])->name('visitor.tickets.store');
+Route::get('/tickets/payment/{payment_code}', [App\Http\Controllers\VisitorTicketController::class, 'paymentStatus'])->name('visitor.payment.status');
+Route::get('/tickets/{ticket_code}', [App\Http\Controllers\VisitorTicketController::class, 'showTicket'])->name('visitor.ticket.show');
+
 // Midtrans webhook (public, no auth, no CSRF — called by Midtrans servers)
 Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentController::class, 'handleNotification'])
     ->name('midtrans.notification')
@@ -228,6 +234,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/certificates', [App\Http\Controllers\AdminController::class, 'certificates'])->name('certificates');
         Route::post('/certificates/{submissionId}', [App\Http\Controllers\AdminController::class, 'uploadCertificate'])->name('certificates.upload');
         Route::delete('/certificates/{id}', [App\Http\Controllers\AdminController::class, 'deleteCertificate'])->name('certificates.delete');
+
+        // Visitor Tickets & Gate Scanner Management
+        Route::get('/visitor-tickets', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'index'])->name('visitorTickets');
+        Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
+        Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
+        Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
+        Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
+        Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
+        Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');
+        Route::post('/gate-scanner/checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'processCheckIn'])->name('gateScanner.checkin');
+        Route::post('/settings/save-visitor-ticket-settings', [App\Http\Controllers\LandingPageSettingController::class, 'saveVisitorTicketSettings'])->name('settings.saveVisitorTickets');
+        Route::post('/settings/upload-visitor-lanyard-template', [App\Http\Controllers\LandingPageSettingController::class, 'uploadVisitorLanyardTemplate'])->name('settings.uploadVisitorLanyardTemplate');
 
         // Landing Page Settings
         Route::get('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'index'])->name('settings');

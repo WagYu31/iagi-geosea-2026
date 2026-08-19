@@ -26,6 +26,8 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EmailIcon from '@mui/icons-material/Email';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
@@ -71,6 +73,8 @@ function SidebarLayout({ children }) {
     { text: 'Admin Dashboard', icon: <DashboardIcon />, href: route('admin.dashboard'), color: '#059669' },
     { text: 'Manage Submissions', icon: <ArticleIcon />, href: route('admin.submissions'), color: '#2563eb' },
     { text: 'Manage Payments', icon: <PaymentIcon />, href: route('admin.payments'), color: '#ea580c' },
+    { text: 'Visitor Tickets', icon: <ConfirmationNumberIcon />, href: route('admin.visitorTickets'), color: '#10b981' },
+    { text: 'Gate Scanner', icon: <QrCodeScannerIcon />, href: route('admin.gateScanner'), color: '#06b6d4' },
     { text: 'Manage Users', icon: <PeopleIcon />, href: route('admin.users'), color: '#9333ea' },
     { text: 'Scores', icon: <GradeIcon />, href: route('admin.scores'), color: '#ca8a04' },
     { text: 'Presentation Scores', icon: <GavelIcon />, href: route('admin.presentation-scores'), color: '#d97706' },
