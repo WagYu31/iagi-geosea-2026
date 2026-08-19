@@ -24,6 +24,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 export default function ShowTicket({
     ticket = {},
@@ -39,52 +40,84 @@ export default function ShowTicket({
     };
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#0b1329', color: '#f8fafc', py: { xs: 3, md: 6 } }}>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                background: 'radial-gradient(ellipse at top, #092c25 0%, #05141b 50%, #03080c 100%)',
+                color: '#f8fafc',
+                py: { xs: 3, md: 6 },
+                position: 'relative',
+                '@media print': {
+                    bgcolor: '#fff',
+                    p: 0,
+                    minHeight: 'auto',
+                },
+            }}
+        >
             <Head title={`E-Tiket: ${ticket.visitor_name} - 55th PIT IAGI & GEOSEA 2026`} />
 
             <Container maxWidth="sm">
                 {/* Top Action Bar (hidden when printing) */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, '@media print': { display: 'none' } }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5, '@media print': { display: 'none' } }}>
                     <Button
                         component={Link}
                         href={route('visitor.tickets')}
                         startIcon={<ArrowBackIcon />}
-                        sx={{ color: '#94a3b8', textTransform: 'none', fontSize: '0.85rem' }}
+                        sx={{
+                            color: '#94a3b8',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            borderRadius: '10px',
+                            bgcolor: 'rgba(255, 255, 255, 0.04)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            px: 2,
+                            py: 0.8,
+                            '&:hover': { color: '#fff', bgcolor: 'rgba(255, 255, 255, 0.08)' },
+                        }}
                     >
-                        Halaman Registrasi
+                        Pendaftaran Baru
                     </Button>
                     <Button
                         variant="contained"
                         startIcon={<PrintIcon />}
                         onClick={handlePrint}
                         sx={{
-                            bgcolor: '#10b981',
-                            color: '#fff',
-                            fontWeight: 700,
-                            borderRadius: '10px',
+                            background: isExclusive
+                                ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                                : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: isExclusive ? '#000' : '#fff',
+                            fontWeight: 800,
+                            borderRadius: '12px',
                             textTransform: 'none',
-                            fontSize: '0.85rem',
-                            '&:hover': { bgcolor: '#059669' },
+                            fontSize: '0.9rem',
+                            px: 3,
+                            py: 1,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
                         }}
                     >
                         Cetak / Simpan PDF
                     </Button>
                 </Box>
 
-                {/* E-Ticket Card */}
+                {/* Digital E-Ticket Card */}
                 <Card
                     sx={{
-                        borderRadius: '20px',
-                        bgcolor: 'rgba(15, 23, 42, 0.95)',
-                        border: `2px solid ${isExclusive ? '#eab308' : '#3b82f6'}`,
-                        boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                        borderRadius: '24px',
+                        bgcolor: 'rgba(15, 23, 42, 0.85)',
+                        border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: isExclusive
+                            ? '0 20px 50px rgba(245, 158, 11, 0.25)'
+                            : '0 20px 50px rgba(16, 185, 129, 0.25)',
                         overflow: 'hidden',
                         position: 'relative',
+                        mb: 4,
                         '@media print': {
                             boxShadow: 'none',
                             border: '2px solid #000',
                             bgcolor: '#fff',
                             color: '#000',
+                            borderRadius: 0,
                         },
                     }}
                 >
@@ -92,65 +125,63 @@ export default function ShowTicket({
                     <Box
                         sx={{
                             background: isExclusive
-                                ? 'linear-gradient(135deg, #eab308 0%, #b45309 100%)'
-                                : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                            p: 3,
+                                ? 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)'
+                                : 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+                            p: 3.5,
                             textAlign: 'center',
                             color: '#fff',
                         }}
                     >
                         <Chip
-                            icon={isExclusive ? <StarIcon sx={{ fontSize: 14, color: '#000 !important' }} /> : undefined}
-                            label={isExclusive ? 'EXCLUSIVE VIP PASS' : 'NON-EXCLUSIVE VISITOR'}
+                            icon={isExclusive ? <StarIcon sx={{ fontSize: 13, color: '#000 !important' }} /> : undefined}
+                            label={isExclusive ? 'OFFICIAL VIP PASS' : 'OFFICIAL VISITOR PASS'}
                             size="small"
                             sx={{
-                                bgcolor: isExclusive ? '#000' : 'rgba(255,255,255,0.2)',
-                                color: isExclusive ? '#fbbf24' : '#fff',
-                                fontWeight: 800,
-                                fontSize: '0.75rem',
-                                mb: 1,
+                                bgcolor: isExclusive ? '#fff' : 'rgba(255,255,255,0.2)',
+                                color: isExclusive ? '#000' : '#fff',
+                                fontWeight: 900,
+                                fontSize: '0.72rem',
+                                letterSpacing: '0.06em',
+                                mb: 1.5,
                             }}
                         />
-                        <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.01em' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em', mb: 0.5 }}>
                             55th PIT IAGI & GEOSEA XIX 2026
                         </Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.9, display: 'block', fontSize: '0.8rem' }}>
-                            Official Visitor E-Ticket & Gate Entry Pass
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>
+                            E-Ticket Pass &bull; Gate Admission
                         </Typography>
                     </Box>
 
-                    <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
-                        {/* Status Chip */}
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Box>
-                                <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>Kode Tiket:</Typography>
-                                <Typography variant="h6" sx={{ fontWeight: 800, color: isExclusive ? '#fbbf24' : '#38bdf8', fontFamily: 'monospace' }}>
-                                    {ticket.ticket_code}
-                                </Typography>
-                            </Box>
-                            <Chip
-                                label={isCheckedIn ? 'SUDAH CHECK-IN' : (ticket.status === 'active' ? 'TIKET AKTIF' : 'MENUNGGU VERIFIKASI')}
-                                size="small"
-                                sx={{
-                                    bgcolor: isCheckedIn ? '#10b981' : (ticket.status === 'active' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(234, 179, 8, 0.15)'),
-                                    color: isCheckedIn ? '#fff' : (ticket.status === 'active' ? '#10b981' : '#fbbf24'),
-                                    fontWeight: 800,
-                                    fontSize: '0.75rem',
-                                }}
-                            />
+                    <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+                        {/* Check-In Status Pill */}
+                        <Box sx={{ textAlign: 'center', mb: 3 }}>
+                            {isCheckedIn ? (
+                                <Chip
+                                    icon={<CheckCircleIcon sx={{ fontSize: 16, color: '#10b981 !important' }} />}
+                                    label={`SUDAH CHECK-IN: ${new Date(ticket.checked_in_at).toLocaleTimeString('id-ID')}`}
+                                    sx={{ bgcolor: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontWeight: 800, border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                />
+                            ) : (
+                                <Chip
+                                    label="BELUM CHECK-IN (TUNJUKKAN DI PINTU MASUK)"
+                                    sx={{ bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#cbd5e1', fontWeight: 700, fontSize: '0.72rem' }}
+                                />
+                            )}
                         </Box>
 
-                        {/* QR Code Section */}
+                        {/* Center QR Code Container */}
                         <Box
                             sx={{
-                                textAlign: 'center',
-                                p: 3,
+                                p: 2.5,
                                 bgcolor: '#ffffff',
-                                borderRadius: '16px',
+                                borderRadius: '18px',
+                                border: '1px solid #e2e8f0',
                                 width: 'fit-content',
                                 mx: 'auto',
                                 mb: 3,
-                                boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+                                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                                textAlign: 'center',
                             }}
                         >
                             <QRCodeSVG
@@ -159,126 +190,120 @@ export default function ShowTicket({
                                 level="H"
                                 includeMargin={false}
                             />
-                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b', mt: 1, fontWeight: 700, fontFamily: 'monospace' }}>
-                                SCAN DI PINTU MASUK
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    fontFamily: 'monospace',
+                                    fontWeight: 900,
+                                    color: '#0f172a',
+                                    mt: 1.5,
+                                    fontSize: '1rem',
+                                    letterSpacing: '0.08em',
+                                }}
+                            >
+                                {ticket.ticket_code}
                             </Typography>
                         </Box>
 
                         {/* Visitor Details */}
                         <Paper
-                            elevation={0}
                             sx={{
                                 p: 2.5,
-                                borderRadius: '12px',
-                                bgcolor: 'rgba(30, 41, 59, 0.7)',
-                                border: '1px solid rgba(51, 65, 85, 0.6)',
+                                borderRadius: '16px',
+                                bgcolor: 'rgba(30, 41, 59, 0.6)',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
                                 mb: 3,
-                                '@media print': { bgcolor: '#f8fafc', border: '1px solid #cbd5e1', color: '#000' },
                             }}
                         >
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                        <PersonIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
-                                        <Typography variant="caption" sx={{ color: '#94a3b8' }}>Nama Pengunjung</Typography>
+                            <Stack spacing={1.8}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <PersonIcon sx={{ color: isExclusive ? '#fbbf24' : '#34d399', fontSize: 20 }} />
+                                    <Box>
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>NAMA PENGUNJUNG</Typography>
+                                        <Typography variant="body1" sx={{ fontWeight: 800, color: '#fff' }}>{ticket.visitor_name}</Typography>
                                     </Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#f8fafc', '@media print': { color: '#000' } }}>
-                                        {ticket.visitor_name}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                        <EmailIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
-                                        <Typography variant="caption" sx={{ color: '#94a3b8' }}>Email</Typography>
-                                    </Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#cbd5e1', '@media print': { color: '#000' } }}>
-                                        {ticket.visitor_email}
-                                    </Typography>
-                                </Grid>
+                                </Box>
+
                                 {ticket.visitor_institution && (
-                                    <Grid item xs={12}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                            <BusinessIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
-                                            <Typography variant="caption" sx={{ color: '#94a3b8' }}>Instansi / Perusahaan</Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <BusinessIcon sx={{ color: '#38bdf8', fontSize: 20 }} />
+                                        <Box>
+                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>INSTANSI / UNIVERSITAS</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#e2e8f0' }}>{ticket.visitor_institution}</Typography>
                                         </Box>
-                                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#cbd5e1', '@media print': { color: '#000' } }}>
-                                            {ticket.visitor_institution}
-                                        </Typography>
-                                    </Grid>
+                                    </Box>
                                 )}
-                            </Grid>
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <EmailIcon sx={{ color: '#94a3b8', fontSize: 20 }} />
+                                    <Box>
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.7rem' }}>EMAIL TERDAFTAR</Typography>
+                                        <Typography variant="body2" sx={{ color: '#cbd5e1' }}>{ticket.visitor_email}</Typography>
+                                    </Box>
+                                </Box>
+                            </Stack>
                         </Paper>
 
-                        {/* Venue & Schedule */}
-                        <Box sx={{ borderTop: '1px dashed rgba(51, 65, 85, 0.8)', pt: 2.5, mb: 2 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                                <EventIcon sx={{ fontSize: 18, color: '#10b981' }} />
-                                <Typography variant="body2" sx={{ color: '#cbd5e1', '@media print': { color: '#000' } }}>
-                                    <strong>Waktu:</strong> {eventDate}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <LocationOnIcon sx={{ fontSize: 18, color: '#f43f5e' }} />
-                                <Typography variant="body2" sx={{ color: '#cbd5e1', '@media print': { color: '#000' } }}>
-                                    <strong>Lokasi:</strong> {eventVenue}
-                                </Typography>
-                            </Box>
+                        {/* Event Schedule & Location */}
+                        <Box sx={{ p: 2, bgcolor: 'rgba(15, 23, 42, 0.5)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)', textAlign: 'center' }}>
+                            <Typography variant="caption" sx={{ color: '#34d399', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                                📍 {eventVenue}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>
+                                📅 {eventDate} &bull; Tunjukkan QR Code ini kepada petugas gate scanner saat memasuki venue.
+                            </Typography>
                         </Box>
-
-                        {/* Instructions */}
-                        <Alert
-                            severity="info"
-                            sx={{
-                                borderRadius: '10px',
-                                bgcolor: 'rgba(37, 99, 235, 0.1)',
-                                color: '#93c5fd',
-                                border: '1px solid rgba(59, 130, 246, 0.25)',
-                                fontSize: '0.8rem',
-                                '& .MuiAlert-icon': { color: '#60a5fa' },
-                                '@media print': { display: 'none' },
-                            }}
-                        >
-                            Tunjukkan QR Code ini kepada petugas di pintu masuk (gate). Setelah di-scan, Anda akan langsung mendapatkan <strong>Kartu Lanyard ({isExclusive ? 'Exclusive VIP' : 'Non-Exclusive'})</strong> sebagai tanda pengenal resmi.
-                        </Alert>
-
-                        {/* Companion tickets in group */}
-                        {groupTickets.length > 0 && (
-                            <Box sx={{ mt: 3, '@media print': { display: 'none' } }}>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#cbd5e1', mb: 1.5 }}>
-                                    Tiket Anggota Rombongan Lainnya:
-                                </Typography>
-                                <Stack spacing={1}>
-                                    {groupTickets.map((t) => (
-                                        <Box
-                                            key={t.id}
-                                            component={Link}
-                                            href={route('visitor.ticket.show', t.ticket_code)}
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                p: 1.5,
-                                                bgcolor: 'rgba(30, 41, 59, 0.6)',
-                                                borderRadius: '8px',
-                                                textDecoration: 'none',
-                                                border: '1px solid rgba(51, 65, 85, 0.6)',
-                                                '&:hover': { bgcolor: 'rgba(51, 65, 85, 0.8)' },
-                                            }}
-                                        >
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#fff' }}>{t.visitor_name}</Typography>
-                                                <Typography variant="caption" sx={{ color: '#94a3b8' }}>{t.ticket_code}</Typography>
-                                            </Box>
-                                            <Button size="small" sx={{ color: '#38bdf8', textTransform: 'none' }}>
-                                                Buka Tiket &rarr;
-                                            </Button>
-                                        </Box>
-                                    ))}
-                                </Stack>
-                            </Box>
-                        )}
                     </CardContent>
                 </Card>
+
+                {/* Group Members Section (if multi-member) */}
+                {groupTickets.length > 1 && (
+                    <Box sx={{ '@media print': { display: 'none' } }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fff', mb: 2 }}>
+                            Tiket Anggota Rombongan Lainnya ({groupTickets.length} Orang):
+                        </Typography>
+                        <Stack spacing={1.5}>
+                            {groupTickets.map((t) => (
+                                <Paper
+                                    key={t.id}
+                                    component={Link}
+                                    href={route('visitor.tickets.show', t.ticket_code)}
+                                    sx={{
+                                        p: 2,
+                                        borderRadius: '14px',
+                                        bgcolor: t.ticket_code === ticket.ticket_code ? 'rgba(16, 185, 129, 0.15)' : 'rgba(30, 41, 59, 0.6)',
+                                        border: `1px solid ${t.ticket_code === ticket.ticket_code ? '#10b981' : 'rgba(255,255,255,0.08)'}`,
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        textDecoration: 'none',
+                                        transition: 'all 0.2s',
+                                        '&:hover': { bgcolor: 'rgba(30, 41, 59, 0.9)', borderColor: '#34d399' },
+                                    }}
+                                >
+                                    <Box>
+                                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#fff' }}>
+                                            {t.visitor_name}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', fontFamily: 'monospace' }}>
+                                            {t.ticket_code}
+                                        </Typography>
+                                    </Box>
+                                    <Chip
+                                        label={t.checked_in ? 'Checked In' : 'Belum Scan'}
+                                        size="small"
+                                        sx={{
+                                            bgcolor: t.checked_in ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.08)',
+                                            color: t.checked_in ? '#34d399' : '#94a3b8',
+                                            fontWeight: 700,
+                                            fontSize: '0.68rem',
+                                        }}
+                                    />
+                                </Paper>
+                            ))}
+                        </Stack>
+                    </Box>
+                )}
             </Container>
         </Box>
     );
