@@ -5,8 +5,6 @@ import {
     Box,
     Container,
     Typography,
-    Card,
-    CardContent,
     TextField,
     Button,
     Grid,
@@ -31,10 +29,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventIcon from '@mui/icons-material/Event';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import SparklesIcon from '@mui/icons-material/AutoAwesome';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import PaymentIcon from '@mui/icons-material/Payment';
 
 export default function Register({
     priceExclusive = 150000,
@@ -107,7 +102,7 @@ export default function Register({
         const rect = e.currentTarget.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
-        setMousePos({ x: x * 12, y: y * -12 });
+        setMousePos({ x: x * 14, y: y * -14 });
     };
 
     const handleCardMouseLeave = () => {
@@ -228,13 +223,13 @@ export default function Register({
                 minHeight: '100vh',
                 bgcolor: '#f8fafc',
                 color: '#0f172a',
-                py: { xs: 2, md: 3.5 },
+                py: { xs: 2, md: 3 },
             }}
         >
             <Head title="Registrasi Tiket Penonton - 55th PIT IAGI & GEOSEA 2026" />
 
-            <Container maxWidth="lg" sx={{ px: { xs: 1.5, sm: 3 } }}>
-                {/* Header Navigation Bar (Compact) */}
+            <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
+                {/* Header Navigation Bar */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -245,7 +240,7 @@ export default function Register({
                         borderRadius: '14px',
                         bgcolor: '#ffffff',
                         border: '1px solid #e2e8f0',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                         mb: 2.5,
                     }}
                 >
@@ -269,7 +264,7 @@ export default function Register({
                             },
                         }}
                     >
-                        Kembali
+                        Kembali ke Beranda
                     </Button>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -280,17 +275,17 @@ export default function Register({
                     </Box>
                 </Box>
 
-                {/* Hero Header Section (Tight & Dense) */}
+                {/* Hero Header Section */}
                 <Box sx={{ textAlign: 'center', mb: 3 }}>
                     <Typography
                         variant="h4"
                         sx={{
                             fontWeight: 900,
-                            fontSize: { xs: '1.6rem', sm: '2rem', md: '2.3rem' },
+                            fontSize: { xs: '1.6rem', sm: '2rem', md: '2.2rem' },
                             letterSpacing: '-0.03em',
                             color: '#0f172a',
                             lineHeight: 1.2,
-                            mb: 0.8,
+                            mb: 0.6,
                         }}
                     >
                         Registrasi Tiket Penonton
@@ -300,17 +295,17 @@ export default function Register({
                         variant="body2"
                         sx={{
                             color: '#64748b',
-                            maxWidth: 620,
+                            maxWidth: 650,
                             mx: 'auto',
                             fontSize: { xs: '0.85rem', md: '0.92rem' },
                             lineHeight: 1.5,
                             mb: 1.5,
                         }}
                     >
-                        Akses resmi area pameran geologi, sesi poster ilmiah, dan booth industri energi & mineral.
+                        Dapatkan tiket resmi & QR Code digital untuk akses arena pameran geologi, sesi poster ilmiah, serta zona industri energi & mineral.
                     </Typography>
 
-                    {/* Venue & Date (Compact Badge) */}
+                    {/* Venue & Date */}
                     <Box
                         sx={{
                             display: 'inline-flex',
@@ -357,272 +352,24 @@ export default function Register({
                     </Alert>
                 ) : (
                     <form onSubmit={handleSubmit}>
-                        {/* 2-COLUMN DENSE & COMPACT GRID */}
-                        <Grid container spacing={2.5} alignItems="stretch">
-                            {/* LEFT COLUMN: 3D BADGE PREVIEW + ORDER SUMMARY + SUBMIT CTA */}
-                            <Grid item xs={12} md={4.5} lg={4}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 2.5,
-                                        borderRadius: '18px',
-                                        bgcolor: '#ffffff',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                                        height: '100%',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                <VisibilityIcon sx={{ fontSize: 14, color: isExclusive ? '#d97706' : '#059669' }} /> Live 3D Badge
-                                            </Typography>
-                                            <Chip
-                                                label={isExclusive ? 'VIP PASS' : 'FREE PASS'}
-                                                size="small"
-                                                sx={{
-                                                    bgcolor: isExclusive ? '#fef3c7' : '#ecfdf5',
-                                                    color: isExclusive ? '#b45309' : '#047857',
-                                                    fontWeight: 900,
-                                                    fontSize: '0.68rem',
-                                                    height: 22,
-                                                }}
-                                            />
-                                        </Box>
-
-                                        {/* 3D Perspective Card Container */}
-                                        <Box
-                                            onMouseMove={handleCardMouseMove}
-                                            onMouseLeave={handleCardMouseLeave}
-                                            sx={{
-                                                perspective: '800px',
-                                                cursor: 'pointer',
-                                                my: 1,
-                                            }}
-                                        >
-                                            {/* Lanyard Top Strap & Clip */}
-                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1, position: 'relative', zIndex: 3 }}>
-                                                <Box
-                                                    sx={{
-                                                        width: 30,
-                                                        height: 18,
-                                                        bgcolor: isExclusive ? '#d97706' : '#094d42',
-                                                        borderRadius: '3px 3px 0 0',
-                                                    }}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        width: 14,
-                                                        height: 10,
-                                                        bgcolor: '#cbd5e1',
-                                                        borderRadius: '2px',
-                                                        border: '1px solid #94a3b8',
-                                                    }}
-                                                />
-                                            </Box>
-
-                                            {/* Physical Lanyard Card 3D Body */}
-                                            <Box
-                                                sx={{
-                                                    transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
-                                                    transition: 'transform 0.15s ease-out',
-                                                    borderRadius: '16px',
-                                                    bgcolor: '#ffffff',
-                                                    border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
-                                                    boxShadow: isExclusive
-                                                        ? '0 12px 25px -5px rgba(245, 158, 11, 0.25), 0 4px 10px rgba(0,0,0,0.04)'
-                                                        : '0 12px 25px -5px rgba(16, 185, 129, 0.25), 0 4px 10px rgba(0,0,0,0.04)',
-                                                    p: 2,
-                                                    textAlign: 'center',
-                                                    position: 'relative',
-                                                }}
-                                            >
-                                                {/* Hole Punch */}
-                                                <Box
-                                                    sx={{
-                                                        width: 24,
-                                                        height: 5,
-                                                        borderRadius: '3px',
-                                                        bgcolor: '#e2e8f0',
-                                                        mx: 'auto',
-                                                        mb: 1.5,
-                                                    }}
-                                                />
-
-                                                <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.68rem', display: 'block' }}>
-                                                    55TH PIT IAGI & GEOSEA 2026
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.6rem', display: 'block', mb: 1.5 }}>
-                                                    ANNUAL SCIENTIFIC CONVENTION
-                                                </Typography>
-
-                                                {/* QR Code */}
-                                                <Box
-                                                    sx={{
-                                                        p: 1.2,
-                                                        bgcolor: '#ffffff',
-                                                        borderRadius: '10px',
-                                                        border: '1px solid #e2e8f0',
-                                                        width: 'fit-content',
-                                                        mx: 'auto',
-                                                        mb: 1.5,
-                                                    }}
-                                                >
-                                                    <QRCodeSVG
-                                                        value="TKT-SAMPLE-PREVIEW"
-                                                        size={95}
-                                                        level="H"
-                                                        includeMargin={false}
-                                                    />
-                                                </Box>
-
-                                                {/* Live Name & Institution */}
-                                                <Typography
-                                                    variant="subtitle1"
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        color: '#0f172a',
-                                                        lineHeight: 1.2,
-                                                        fontSize: '1rem',
-                                                        minHeight: '1.2em',
-                                                        mb: 0.2,
-                                                    }}
-                                                >
-                                                    {primaryMember.name || 'Nama Peserta'}
-                                                </Typography>
-
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        fontWeight: 700,
-                                                        color: isExclusive ? '#d97706' : '#0284c7',
-                                                        fontSize: '0.75rem',
-                                                        display: 'block',
-                                                        minHeight: '1.2em',
-                                                        mb: 1.5,
-                                                    }}
-                                                >
-                                                    {primaryMember.institution || 'Instansi / Universitas'}
-                                                </Typography>
-
-                                                {/* Bottom Banner */}
-                                                <Box
-                                                    sx={{
-                                                        bgcolor: isExclusive ? '#f59e0b' : '#094d42',
-                                                        color: '#ffffff',
-                                                        py: 0.7,
-                                                        borderRadius: '8px',
-                                                        fontWeight: 900,
-                                                        letterSpacing: '0.06em',
-                                                        textTransform: 'uppercase',
-                                                        fontSize: '0.72rem',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        gap: 0.5,
-                                                    }}
-                                                >
-                                                    {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
-                                                    {isExclusive ? 'VISITOR VIP' : 'VISITOR PASS'}
-                                                    {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
-                                                </Box>
-                                            </Box>
-                                        </Box>
-
-                                        {/* Order Summary Box */}
-                                        <Box sx={{ mt: 2, p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
-                                                Ringkasan Pesanan:
-                                            </Typography>
-                                            <Stack spacing={0.6}>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                    <Typography variant="caption" sx={{ color: '#64748b' }}>Kategori:</Typography>
-                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: isExclusive ? '#b45309' : '#059669' }}>
-                                                        {isExclusive ? 'Exclusive VIP' : 'Non-Exclusive'}
-                                                    </Typography>
-                                                </Box>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                    <Typography variant="caption" sx={{ color: '#64748b' }}>Jumlah Tiket:</Typography>
-                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                                        {members.length} Orang
-                                                    </Typography>
-                                                </Box>
-                                                <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Tagihan:</Typography>
-                                                    <Typography variant="body2" sx={{ fontWeight: 900, color: isExclusive ? '#b45309' : '#059669' }}>
-                                                        {isExclusive ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'GRATIS'}
-                                                    </Typography>
-                                                </Box>
-                                            </Stack>
-                                        </Box>
-                                    </Box>
-
-                                    {/* Submit CTA Button on Left Column */}
-                                    <Box sx={{ mt: 2 }}>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            fullWidth
-                                            disabled={processing || compressing}
-                                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <ConfirmationNumberIcon />}
-                                            sx={{
-                                                background: isExclusive 
-                                                    ? 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)' 
-                                                    : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
-                                                color: '#ffffff',
-                                                fontWeight: 900,
-                                                fontSize: '0.92rem',
-                                                py: 1.4,
-                                                borderRadius: '12px',
-                                                textTransform: 'none',
-                                                boxShadow: isExclusive
-                                                    ? '0 4px 0 #92400e, 0 8px 18px rgba(245, 158, 11, 0.35)'
-                                                    : '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.35)',
-                                                '&:hover': {
-                                                    background: isExclusive
-                                                        ? 'linear-gradient(180deg, #fbbf24 0%, #b45309 100%)'
-                                                        : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
-                                                    transform: 'translateY(-1px)',
-                                                    boxShadow: isExclusive
-                                                        ? '0 5px 0 #92400e, 0 10px 20px rgba(245, 158, 11, 0.45)'
-                                                        : '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.45)',
-                                                },
-                                                '&:active': {
-                                                    transform: 'translateY(3px)',
-                                                    boxShadow: isExclusive
-                                                        ? '0 1px 0 #92400e, 0 3px 6px rgba(245, 158, 11, 0.3)'
-                                                        : '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
-                                                },
-                                                transition: 'all 0.12s ease',
-                                            }}
-                                        >
-                                            {processing 
-                                                ? 'Memproses...' 
-                                                : isExclusive 
-                                                    ? `Terbitkan VIP (Rp ${totalEstimate.toLocaleString('id-ID')})` 
-                                                    : 'Terbitkan E-Tiket Gratis'
-                                            }
-                                        </Button>
-                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', textAlign: 'center', mt: 1, fontSize: '0.68rem', fontWeight: 600 }}>
-                                            🔒 Data terenkripsi & dikelola Panitia IAGI
-                                        </Typography>
-                                    </Box>
-                                </Paper>
-                            </Grid>
-
-                            {/* RIGHT COLUMN: STEP 1 (CATEGORY), STEP 2 (MEMBERS), STEP 3 (PAYMENT) */}
-                            <Grid item xs={12} md={7.5} lg={8}>
+                        {/* BULLETPROOF FLEXBOX 2-COLUMN LAYOUT: FORM ON LEFT, BADGE ON RIGHT */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: { xs: 'column', lg: 'row' },
+                                gap: 3,
+                                alignItems: 'flex-start',
+                            }}
+                        >
+                            {/* LEFT COLUMN: STEPS 1, 2, 3 (FORM) */}
+                            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 65%' }, width: '100%' }}>
                                 <Stack spacing={2.5}>
                                     {/* SECTION 1: PILIH KATEGORI TIKET */}
                                     <Paper
                                         elevation={0}
                                         sx={{
                                             p: 2.5,
-                                            borderRadius: '18px',
+                                            borderRadius: '16px',
                                             bgcolor: '#ffffff',
                                             border: '1px solid #e2e8f0',
                                             boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
@@ -650,124 +397,120 @@ export default function Register({
                                             </Typography>
                                         </Box>
 
-                                        <Grid container spacing={2}>
+                                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
                                             {/* Free Card */}
-                                            <Grid item xs={12} sm={6}>
-                                                <Box
-                                                    onClick={() => handleTypeChange('non_exclusive')}
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        borderRadius: '14px',
-                                                        bgcolor: visitorType === 'non_exclusive' ? '#f0fdf4' : '#ffffff',
-                                                        border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#e2e8f0'}`,
-                                                        p: 2,
-                                                        height: '100%',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        justifyContent: 'space-between',
-                                                        transition: 'all 0.2s',
-                                                        '&:hover': { borderColor: '#10b981', bgcolor: '#f0fdf4' },
-                                                    }}
-                                                >
-                                                    <Box>
-                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                            <Chip
-                                                                label="FREE PASS"
-                                                                size="small"
-                                                                sx={{ bgcolor: '#dcfce7', color: '#047857', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
-                                                            />
-                                                            <Box
-                                                                sx={{
-                                                                    width: 18,
-                                                                    height: 18,
-                                                                    borderRadius: '50%',
-                                                                    border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#cbd5e1'}`,
-                                                                    bgcolor: visitorType === 'non_exclusive' ? '#10b981' : 'transparent',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
-                                                                }}
-                                                            >
-                                                                {visitorType === 'non_exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
-                                                            </Box>
+                                            <Box
+                                                onClick={() => handleTypeChange('non_exclusive')}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    borderRadius: '14px',
+                                                    bgcolor: visitorType === 'non_exclusive' ? '#f0fdf4' : '#ffffff',
+                                                    border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#e2e8f0'}`,
+                                                    p: 2,
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'space-between',
+                                                    transition: 'all 0.2s',
+                                                    '&:hover': { borderColor: '#10b981', bgcolor: '#f0fdf4' },
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                                        <Chip
+                                                            label="FREE PASS"
+                                                            size="small"
+                                                            sx={{ bgcolor: '#dcfce7', color: '#047857', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
+                                                        />
+                                                        <Box
+                                                            sx={{
+                                                                width: 18,
+                                                                height: 18,
+                                                                borderRadius: '50%',
+                                                                border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#cbd5e1'}`,
+                                                                bgcolor: visitorType === 'non_exclusive' ? '#10b981' : 'transparent',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            {visitorType === 'non_exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
                                                         </Box>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                            Visitor Non-Exclusive
-                                                        </Typography>
-                                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#059669', mb: 0.8, fontSize: '1.1rem' }}>
-                                                            GRATIS
-                                                        </Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                            Akses pameran umum & poster presentation.
-                                                        </Typography>
                                                     </Box>
-                                                    <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 13, color: '#10b981' }} /> E-Tiket instan & Cetak Lanyard
-                                                        </Typography>
-                                                    </Box>
+                                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
+                                                        Visitor Non-Exclusive
+                                                    </Typography>
+                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#059669', mb: 0.8, fontSize: '1.1rem' }}>
+                                                        GRATIS
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
+                                                        Akses pameran umum & poster presentation.
+                                                    </Typography>
                                                 </Box>
-                                            </Grid>
+                                                <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                                                    <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
+                                                        <CheckCircleIcon sx={{ fontSize: 13, color: '#10b981' }} /> E-Tiket instan & Cetak Lanyard
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
 
                                             {/* VIP Card */}
-                                            <Grid item xs={12} sm={6}>
-                                                <Box
-                                                    onClick={() => handleTypeChange('exclusive')}
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        borderRadius: '14px',
-                                                        bgcolor: visitorType === 'exclusive' ? '#fffbeb' : '#ffffff',
-                                                        border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#e2e8f0'}`,
-                                                        p: 2,
-                                                        height: '100%',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        justifyContent: 'space-between',
-                                                        transition: 'all 0.2s',
-                                                        '&:hover': { borderColor: '#f59e0b', bgcolor: '#fffbeb' },
-                                                    }}
-                                                >
-                                                    <Box>
-                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                            <Chip
-                                                                icon={<StarIcon sx={{ fontSize: 11, color: '#92400e !important' }} />}
-                                                                label="VIP PASS"
-                                                                size="small"
-                                                                sx={{ bgcolor: '#fef3c7', color: '#92400e', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
-                                                            />
-                                                            <Box
-                                                                sx={{
-                                                                    width: 18,
-                                                                    height: 18,
-                                                                    borderRadius: '50%',
-                                                                    border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#cbd5e1'}`,
-                                                                    bgcolor: visitorType === 'exclusive' ? '#f59e0b' : 'transparent',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
-                                                                }}
-                                                            >
-                                                                {visitorType === 'exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
-                                                            </Box>
+                                            <Box
+                                                onClick={() => handleTypeChange('exclusive')}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    borderRadius: '14px',
+                                                    bgcolor: visitorType === 'exclusive' ? '#fffbeb' : '#ffffff',
+                                                    border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#e2e8f0'}`,
+                                                    p: 2,
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'space-between',
+                                                    transition: 'all 0.2s',
+                                                    '&:hover': { borderColor: '#f59e0b', bgcolor: '#fffbeb' },
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                                        <Chip
+                                                            icon={<StarIcon sx={{ fontSize: 11, color: '#92400e !important' }} />}
+                                                            label="VIP PASS"
+                                                            size="small"
+                                                            sx={{ bgcolor: '#fef3c7', color: '#92400e', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
+                                                        />
+                                                        <Box
+                                                            sx={{
+                                                                width: 18,
+                                                                height: 18,
+                                                                borderRadius: '50%',
+                                                                border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#cbd5e1'}`,
+                                                                bgcolor: visitorType === 'exclusive' ? '#f59e0b' : 'transparent',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            {visitorType === 'exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
                                                         </Box>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                            Visitor Exclusive
-                                                        </Typography>
-                                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#b45309', mb: 0.8, fontSize: '1.1rem' }}>
-                                                            Rp {priceExclusive.toLocaleString('id-ID')}
-                                                        </Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                            Plenary Session, VIP Lounge, Lanyard Gold & Seminar Kit.
-                                                        </Typography>
                                                     </Box>
-                                                    <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                        <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                            <StarIcon sx={{ fontSize: 13, color: '#d97706' }} /> Akses Full VIP & Seminar Kit
-                                                        </Typography>
-                                                    </Box>
+                                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
+                                                        Visitor Exclusive
+                                                    </Typography>
+                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#b45309', mb: 0.8, fontSize: '1.1rem' }}>
+                                                        Rp {priceExclusive.toLocaleString('id-ID')}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
+                                                        Plenary Session, VIP Lounge, Lanyard Gold & Seminar Kit.
+                                                    </Typography>
                                                 </Box>
-                                            </Grid>
-                                        </Grid>
+                                                <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                                                    <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
+                                                        <StarIcon sx={{ fontSize: 13, color: '#d97706' }} /> Akses Full VIP & Seminar Kit
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
                                     </Paper>
 
                                     {/* SECTION 2: DATA PENGUNJUNG */}
@@ -775,7 +518,7 @@ export default function Register({
                                         elevation={0}
                                         sx={{
                                             p: 2.5,
-                                            borderRadius: '18px',
+                                            borderRadius: '16px',
                                             bgcolor: '#ffffff',
                                             border: '1px solid #e2e8f0',
                                             boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
@@ -930,7 +673,7 @@ export default function Register({
                                             elevation={0}
                                             sx={{
                                                 p: 2.5,
-                                                borderRadius: '18px',
+                                                borderRadius: '16px',
                                                 bgcolor: '#ffffff',
                                                 border: '1.5px solid #fde68a',
                                                 boxShadow: '0 4px 15px rgba(245, 158, 11, 0.08)',
@@ -959,56 +702,52 @@ export default function Register({
                                             </Box>
 
                                             {/* Payment Method Selector */}
-                                            <Grid container spacing={1.5} sx={{ mb: 2 }}>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Paper
-                                                        onClick={() => {
-                                                            setPaymentMethod('qris_indo');
-                                                            setData('payment_method', 'qris_indo');
-                                                        }}
-                                                        sx={{
-                                                            p: 1.5,
-                                                            borderRadius: '10px',
-                                                            bgcolor: paymentMethod === 'qris_indo' ? '#f0fdf4' : '#f8fafc',
-                                                            border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : '#e2e8f0'}`,
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: 1.2,
-                                                        }}
-                                                    >
-                                                        <QrCodeIcon sx={{ color: '#059669', fontSize: 20 }} />
-                                                        <Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>QRIS Indonesia</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>BCA, GoPay, OVO, Dana</Typography>
-                                                        </Box>
-                                                    </Paper>
-                                                </Grid>
-                                                <Grid item xs={12} sm={6}>
-                                                    <Paper
-                                                        onClick={() => {
-                                                            setPaymentMethod('foreign_bank_transfer');
-                                                            setData('payment_method', 'foreign_bank_transfer');
-                                                        }}
-                                                        sx={{
-                                                            p: 1.5,
-                                                            borderRadius: '10px',
-                                                            bgcolor: paymentMethod === 'foreign_bank_transfer' ? '#f0f9ff' : '#f8fafc',
-                                                            border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#e2e8f0'}`,
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: 1.2,
-                                                        }}
-                                                    >
-                                                        <AccountBalanceIcon sx={{ color: '#0284c7', fontSize: 20 }} />
-                                                        <Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>Bank Transfer</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>Manual Transfer Bank</Typography>
-                                                        </Box>
-                                                    </Paper>
-                                                </Grid>
-                                            </Grid>
+                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 2 }}>
+                                                <Paper
+                                                    onClick={() => {
+                                                        setPaymentMethod('qris_indo');
+                                                        setData('payment_method', 'qris_indo');
+                                                    }}
+                                                    sx={{
+                                                        p: 1.5,
+                                                        borderRadius: '10px',
+                                                        bgcolor: paymentMethod === 'qris_indo' ? '#f0fdf4' : '#f8fafc',
+                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : '#e2e8f0'}`,
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1.2,
+                                                    }}
+                                                >
+                                                    <QrCodeIcon sx={{ color: '#059669', fontSize: 20 }} />
+                                                    <Box>
+                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>QRIS Indonesia</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>BCA, GoPay, OVO, Dana</Typography>
+                                                    </Box>
+                                                </Paper>
+                                                <Paper
+                                                    onClick={() => {
+                                                        setPaymentMethod('foreign_bank_transfer');
+                                                        setData('payment_method', 'foreign_bank_transfer');
+                                                    }}
+                                                    sx={{
+                                                        p: 1.5,
+                                                        borderRadius: '10px',
+                                                        bgcolor: paymentMethod === 'foreign_bank_transfer' ? '#f0f9ff' : '#f8fafc',
+                                                        border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#e2e8f0'}`,
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1.2,
+                                                    }}
+                                                >
+                                                    <AccountBalanceIcon sx={{ color: '#0284c7', fontSize: 20 }} />
+                                                    <Box>
+                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>Bank Transfer</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>Manual Transfer Bank</Typography>
+                                                    </Box>
+                                                </Paper>
+                                            </Box>
 
                                             {/* QRIS / Bank Detail */}
                                             {paymentMethod === 'qris_indo' && (
@@ -1018,10 +757,10 @@ export default function Register({
                                                             component="img"
                                                             src={qrisImage.startsWith('http') || qrisImage.startsWith('/') ? qrisImage : `/storage/${qrisImage}`}
                                                             alt="QRIS IAGI"
-                                                            sx={{ maxWidth: 170, borderRadius: '10px', mx: 'auto', mb: 1, p: 1, bgcolor: '#fff', border: '1px solid #e2e8f0' }}
+                                                            sx={{ maxWidth: 160, borderRadius: '10px', mx: 'auto', mb: 1, p: 1, bgcolor: '#fff', border: '1px solid #e2e8f0' }}
                                                         />
                                                     ) : (
-                                                        <Box sx={{ p: 2, border: '2px dashed #cbd5e1', borderRadius: '10px', maxWidth: 170, mx: 'auto', mb: 1, bgcolor: '#fff' }}>
+                                                        <Box sx={{ p: 2, border: '2px dashed #cbd5e1', borderRadius: '10px', maxWidth: 160, mx: 'auto', mb: 1, bgcolor: '#fff' }}>
                                                             <QrCodeIcon sx={{ fontSize: 45, color: '#94a3b8' }} />
                                                             <Typography variant="caption" sx={{ display: 'block', color: '#64748b' }}>QRIS Resmi PIT IAGI</Typography>
                                                         </Box>
@@ -1053,7 +792,7 @@ export default function Register({
                                                 </Box>
                                             )}
 
-                                            {/* Upload Proof of Payment */}
+                                            {/* Upload Proof */}
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
                                                 Unggah Bukti Transfer *
                                             </Typography>
@@ -1110,8 +849,257 @@ export default function Register({
                                         </Paper>
                                     )}
                                 </Stack>
-                            </Grid>
-                        </Grid>
+                            </Box>
+
+                            {/* RIGHT COLUMN: 3D BADGE PREVIEW + ORDER SUMMARY + CTA BUTTON */}
+                            <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 360px' }, width: '100%', position: { lg: 'sticky' }, top: { lg: 20 } }}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 2.5,
+                                        borderRadius: '16px',
+                                        bgcolor: '#ffffff',
+                                        border: '1px solid #e2e8f0',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                            <VisibilityIcon sx={{ fontSize: 14, color: isExclusive ? '#d97706' : '#059669' }} /> Live 3D Badge
+                                        </Typography>
+                                        <Chip
+                                            label={isExclusive ? 'VIP PASS' : 'FREE PASS'}
+                                            size="small"
+                                            sx={{
+                                                bgcolor: isExclusive ? '#fef3c7' : '#ecfdf5',
+                                                color: isExclusive ? '#b45309' : '#047857',
+                                                fontWeight: 900,
+                                                fontSize: '0.68rem',
+                                                height: 20,
+                                            }}
+                                        />
+                                    </Box>
+
+                                    {/* 3D Perspective Card Container */}
+                                    <Box
+                                        onMouseMove={handleCardMouseMove}
+                                        onMouseLeave={handleCardMouseLeave}
+                                        sx={{
+                                            perspective: '800px',
+                                            cursor: 'pointer',
+                                            my: 1,
+                                        }}
+                                    >
+                                        {/* Lanyard Top Strap & Clip */}
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1, position: 'relative', zIndex: 3 }}>
+                                            <Box
+                                                sx={{
+                                                    width: 30,
+                                                    height: 18,
+                                                    bgcolor: isExclusive ? '#d97706' : '#094d42',
+                                                    borderRadius: '3px 3px 0 0',
+                                                }}
+                                            />
+                                            <Box
+                                                sx={{
+                                                    width: 14,
+                                                    height: 10,
+                                                    bgcolor: '#cbd5e1',
+                                                    borderRadius: '2px',
+                                                    border: '1px solid #94a3b8',
+                                                }}
+                                            />
+                                        </Box>
+
+                                        {/* Physical Lanyard Card 3D Body */}
+                                        <Box
+                                            sx={{
+                                                transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
+                                                transition: 'transform 0.15s ease-out',
+                                                borderRadius: '16px',
+                                                bgcolor: '#ffffff',
+                                                border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
+                                                boxShadow: isExclusive
+                                                    ? '0 12px 25px -5px rgba(245, 158, 11, 0.25), 0 4px 10px rgba(0,0,0,0.04)'
+                                                    : '0 12px 25px -5px rgba(16, 185, 129, 0.25), 0 4px 10px rgba(0,0,0,0.04)',
+                                                p: 2,
+                                                textAlign: 'center',
+                                                position: 'relative',
+                                            }}
+                                        >
+                                            {/* Hole Punch */}
+                                            <Box
+                                                sx={{
+                                                    width: 24,
+                                                    height: 5,
+                                                    borderRadius: '3px',
+                                                    bgcolor: '#e2e8f0',
+                                                    mx: 'auto',
+                                                    mb: 1.5,
+                                                }}
+                                            />
+
+                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.68rem', display: 'block' }}>
+                                                55TH PIT IAGI & GEOSEA 2026
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.6rem', display: 'block', mb: 1.5 }}>
+                                                ANNUAL SCIENTIFIC CONVENTION
+                                            </Typography>
+
+                                            {/* QR Code */}
+                                            <Box
+                                                sx={{
+                                                    p: 1.2,
+                                                    bgcolor: '#ffffff',
+                                                    borderRadius: '10px',
+                                                    border: '1px solid #e2e8f0',
+                                                    width: 'fit-content',
+                                                    mx: 'auto',
+                                                    mb: 1.5,
+                                                }}
+                                            >
+                                                <QRCodeSVG
+                                                    value="TKT-SAMPLE-PREVIEW"
+                                                    size={95}
+                                                    level="H"
+                                                    includeMargin={false}
+                                                />
+                                            </Box>
+
+                                            {/* Live Name & Institution */}
+                                            <Typography
+                                                variant="subtitle1"
+                                                sx={{
+                                                    fontWeight: 900,
+                                                    color: '#0f172a',
+                                                    lineHeight: 1.2,
+                                                    fontSize: '1rem',
+                                                    minHeight: '1.2em',
+                                                    mb: 0.2,
+                                                }}
+                                            >
+                                                {primaryMember.name || 'Nama Peserta'}
+                                            </Typography>
+
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: isExclusive ? '#d97706' : '#0284c7',
+                                                    fontSize: '0.75rem',
+                                                    display: 'block',
+                                                    minHeight: '1.2em',
+                                                    mb: 1.5,
+                                                }}
+                                            >
+                                                {primaryMember.institution || 'Instansi / Universitas'}
+                                            </Typography>
+
+                                            {/* Bottom Banner */}
+                                            <Box
+                                                sx={{
+                                                    bgcolor: isExclusive ? '#f59e0b' : '#094d42',
+                                                    color: '#ffffff',
+                                                    py: 0.7,
+                                                    borderRadius: '8px',
+                                                    fontWeight: 900,
+                                                    letterSpacing: '0.06em',
+                                                    textTransform: 'uppercase',
+                                                    fontSize: '0.72rem',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: 0.5,
+                                                }}
+                                            >
+                                                {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
+                                                {isExclusive ? 'VISITOR VIP' : 'VISITOR PASS'}
+                                                {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
+                                            </Box>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Order Summary Box */}
+                                    <Box sx={{ mt: 2, p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
+                                            Ringkasan Pesanan:
+                                        </Typography>
+                                        <Stack spacing={0.6}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Kategori:</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: isExclusive ? '#b45309' : '#059669' }}>
+                                                    {isExclusive ? 'Exclusive VIP' : 'Non-Exclusive'}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Jumlah Tiket:</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                    {members.length} Orang
+                                                </Typography>
+                                            </Box>
+                                            <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Tagihan:</Typography>
+                                                <Typography variant="body2" sx={{ fontWeight: 900, color: isExclusive ? '#b45309' : '#059669' }}>
+                                                    {isExclusive ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'GRATIS'}
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                    </Box>
+
+                                    {/* Submit CTA Button */}
+                                    <Box sx={{ mt: 2 }}>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            fullWidth
+                                            disabled={processing || compressing}
+                                            startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <ConfirmationNumberIcon />}
+                                            sx={{
+                                                background: isExclusive 
+                                                    ? 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)' 
+                                                    : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                                color: '#ffffff',
+                                                fontWeight: 900,
+                                                fontSize: '0.92rem',
+                                                py: 1.4,
+                                                borderRadius: '12px',
+                                                textTransform: 'none',
+                                                boxShadow: isExclusive
+                                                    ? '0 4px 0 #92400e, 0 8px 18px rgba(245, 158, 11, 0.35)'
+                                                    : '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.35)',
+                                                '&:hover': {
+                                                    background: isExclusive
+                                                        ? 'linear-gradient(180deg, #fbbf24 0%, #b45309 100%)'
+                                                        : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
+                                                    transform: 'translateY(-1px)',
+                                                    boxShadow: isExclusive
+                                                        ? '0 5px 0 #92400e, 0 10px 20px rgba(245, 158, 11, 0.45)'
+                                                        : '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.45)',
+                                                },
+                                                '&:active': {
+                                                    transform: 'translateY(3px)',
+                                                    boxShadow: isExclusive
+                                                        ? '0 1px 0 #92400e, 0 3px 6px rgba(245, 158, 11, 0.3)'
+                                                        : '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
+                                                },
+                                                transition: 'all 0.12s ease',
+                                            }}
+                                        >
+                                            {processing 
+                                                ? 'Memproses...' 
+                                                : isExclusive 
+                                                    ? `Terbitkan VIP (Rp ${totalEstimate.toLocaleString('id-ID')})` 
+                                                    : 'Terbitkan E-Tiket Gratis'
+                                            }
+                                        </Button>
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', textAlign: 'center', mt: 1, fontSize: '0.68rem', fontWeight: 600 }}>
+                                            🔒 Data terenkripsi & dikelola Panitia IAGI
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            </Box>
+                        </Box>
                     </form>
                 )}
             </Container>
