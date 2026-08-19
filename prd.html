@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD & Proposal - Sistem Tiket PIT IAGI & GEOSEA 2026</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --text: #1e293b;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: var(--text);
+            background-color: #cbd5e1;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .no-print-bar {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            background-color: #1d4ed8;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 20pt;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 11pt;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 13pt;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 4px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 10.5pt;
+            color: #334155;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        p,
+        li {
+            font-size: 9.5pt;
+            text-align: justify;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            font-size: 9pt;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--bg-light);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        ul,
+        ol {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+
+        pre {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 12px;
+            font-size: 8.5pt;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .discount-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 9.5pt;
+        }
+
+        .signature-table {
+            margin-top: 40px;
+            border: none;
+        }
+
+        .signature-table td {
+            border: none;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        /* PRINT STYLESHEET */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .no-print-bar {
+                display: none !important;
+            }
+
+            .page-container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            @page {
+                size: A4;
+                margin: 20mm 15mm 20mm 15mm;
+            }
+
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print-bar">
+        <div>
+            <strong>Preview PRD Web Document</strong>
+            <div style="font-size: 12px; color: #64748b;">Klik tombol di kanan untuk mengunduh langsung dalam format
+                PDF.</div>
+        </div>
+        <button class="btn-download" onclick="window.print()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Unduh PDF
+        </button>
+    </div>
+
+    <div class="page-container">
+        <h1>PROPOSAL & PRODUCT REQUIREMENT DOCUMENT (PRD)</h1>
+        <div class="subtitle">SISTEM REGISTRASI TIKET PENONTON (EXCLUSIVE & NON-EXCLUSIVE), TASTE-SKILL DESIGN SYSTEM, OPTIMIZED IMAGE COMPRESSION, ONSITE REGISTRATION, MULTI-PAYMENT, GATE CHECK-IN QR & DUAL LANYARD CARD PRINTING<br>55th PIT IAGI & GEOSEA XIX 2026</div>
+
+        <table>
+            <tr>
+                <td width="30%"><strong>NAMA KEGIATAN</strong></td>
+                <td width="70%">55th PIT IAGI & GEOSEA XIX 2026</td>
+            </tr>
+            <tr>
+                <td><strong>ESTIMASI WAKTU KERJA</strong></td>
+                <td>Paling lambat 7 hari, paling cepat 1 hari kerja</td>
+            </tr>
+            <tr>
+                <td><strong>DITUJUKAN KEPADA</strong></td>
+                <td>Panitia Pelaksana PIT IAGI & GEOSEA 2026</td>
+            </tr>
+            <tr>
+                <td><strong>TANGGAL PENGAJUAN</strong></td>
+                <td>19 Juli 2026 (Revisi Terakhir: 19 Agustus 2026)</td>
+            </tr>
+        </table>
+
+        <h2>1. DESKRIPSI FITUR & STANDAR DESAIN (TASTE-SKILL)</h2>
+        <p>Proposal ini diajukan untuk melengkapi modul <strong>Sistem Tiketing Penonton (Kategori Visitor Exclusive & Non-Exclusive), Standar Desain Premium Taste-Skill (Monokromatik Aksen & Aset 3D Profesional), Auto-Compress Bukti Transfer Client-Side & Camera Access, Registrasi Onsite oleh Admin, Multi-Payment, Gate Check-In QR Code Scanner, serta Modul Cetak Fisik Kartu Lanyard/ID Card Terpisah</strong> pada platform 55th PIT IAGI & GEOSEA XIX 2026.</p>
+
+        <ul>
+            <li><strong>Dua Skema Kategori Pengunjung (Visitor Exclusive vs Non-Exclusive):</strong>
+                <ul>
+                    <li><strong>Visitor Exclusive (Berbayar / Paid):</strong> Pengunjung yang memilih paket Exclusive wajib menyelesaikan pembayaran tiket (via QRIS, Transfer Luar Negeri, atau Tunai Onsite). Setelah diverifikasi, sistem menerbitkan E-Tiket berisikan <strong>QR Code Unik</strong>. Saat check-in di pintu masuk (gate), pemindaian QR Code memicu pencetakan <strong>Kartu Lanyard Khusus Exclusive</strong> (sebagai penanda akses area VIP/Exclusive).</li>
+                    <li><strong>Visitor Non-Exclusive (Gratis / Non-Berbayar / Free Pass):</strong> Pengunjung umum dapat mendaftar tanpa biaya (Rp 0) dan langsung mendapatkan E-Tiket berisikan <strong>QR Code Unik</strong>. Saat tiba di lokasi acara dan melakukan scan di pintu masuk (gate), sistem memvalidasi kehadiran dan langsung mencetak <strong>Kartu Lanyard Khusus Non-Exclusive</strong> sebagai identitas tanda masuk resmi.</li>
+                </ul>
+            </li>
+            <li><strong>Sistem Cetak Kartu Fisik Lanyard/Badge Terintegrasi:</strong>
+                Sistem berfokus pada otomatisasi pencetakan kartu/badge lanyard saat QR Code di-scan di pintu masuk. Kartu yang tercetak membedakan secara visual status pengunjung (Exclusive vs Non-Exclusive) melalui template desain yang dapat diunggah secara fleksibel oleh Admin.
+            </li>
+            <li><strong>Desain Premium Standar Taste-Skill & Tema Warna Tunggal (Monochromatic Palette):</strong>
+                Tampilan antarmuka menggunakan satu tema warna utama yang konsisten (tidak ramai/warna-warni) dengan paduan aksen warna kontras menyala (vibrant high-contrast accents) serta elemen 3D profesional agar berkesan bersih, futuristik, berwibawa, dan responsif di semua perangkat.
+            </li>
+            <li><strong>Performa Kecepatan Tinggi & Kompresi Gambar Otomatis (Auto-Image Compress):</strong>
+                <ul>
+                    <li>Pengunjung (kategori Exclusive) dapat memilih foto dari galeri atau <strong>langsung membuka kamera HP</strong> untuk mengambil foto bukti transfer.</li>
+                    <li>Setiap gambar berukuran besar (seperti foto 10MB+) secara otomatis dikompresi di sisi browser pengguna menjadi &lt; 500KB sebelum diunggah ke server untuk menjaga kecepatan web dan efisiensi ruang database.</li>
+                </ul>
+            </li>
+            <li><strong>Registrasi Onsite / Assistive Admin Registration:</strong> Form khusus di Dashboard Admin untuk membantu mendaftarkan pengunjung secara manual di lokasi acara (lansia / kendala perangkat) dengan opsi bayar tunai (Exclusive) atau registrasi instan (Non-Exclusive) dan pencetakan ID Card langsung di tempat.</li>
+            <li><strong>Dynamic Pricing & Multi-Payment:</strong> Admin dapat merubah harga tiket Exclusive secara dinamis. Metode pembayaran mendukung QRIS (Domestik) dan Bank Transfer Luar Negeri IAGI (Internasional) yang dilengkapi kode unik 3 digit.</li>
+            <li><strong>Flexibility Upload Design ID Card/Lanyard:</strong> Admin dapat mengunggah template desain ID Card/Lanyard fisik (Format PNG/JPG) secara terpisah untuk kategori Exclusive dan Non-Exclusive melalui Web Admin.</li>
+        </ul>
+
+        <h2>2. RUANG LINGKUP PEKERJAAN & DETAIL MODUL</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th width="35%">MODUL SISTEM</th>
+                    <th width="65%">DESKRIPSI KEBUTUHAN TEKNIS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Taste-Skill UI Framework & Dual Visitor Flow</strong></td>
+                    <td>Implementasi antarmuka registrasi modern dengan opsi pemilihan kategori <strong>Exclusive (Paid)</strong> dan <strong>Non-Exclusive (Free)</strong>, tema monokromatik modern, pemanfaatan aset 3D, serta optimasi pemuatan web di bawah 1.5 detik.</td>
+                </tr>
+                <tr>
+                    <td><strong>Modul Upload Bukti Bayar & Client-Side Auto-Compressor</strong></td>
+                    <td>Fitur tangkap foto kamera langsung (native camera API) & galeri khusus pendaftar Exclusive. Dilengkapi algoritma kompresi gambar otomatis (mengonversi foto 10MB+ menjadi &lt; 500KB tanpa buram) sebelum diunggah ke server.</td>
+                </tr>
+                <tr>
+                    <td><strong>Modul Registrasi Onsite / Admin Manual Input</strong></td>
+                    <td>Form pendaftaran khusus di Dashboard Admin untuk membantu input visitor onsite (Exclusive / Non-Exclusive), konfirmasi pembayaran tunai instan, dan pemicu cetak kartu lanyard di tempat.</td>
+                </tr>
+                <tr>
+                    <td><strong>Panel Konfigurasi Admin (Harga & Desain Lanyard)</strong></td>
+                    <td>Input nominal harga tiket dinamis serta menu manajemen unggah gambar template Lanyard/ID Card fisik terpisah untuk kategori Exclusive dan Non-Exclusive.</td>
+                </tr>
+                <tr>
+                    <td><strong>Form Registrasi Online Mandiri & Kelompok</strong></td>
+                    <td>Form pendaftaran mobile-friendly yang mendukung pendaftaran individu maupun rombongan (input nama & email anggota) dengan penentuan kategori Exclusive / Non-Exclusive per kelompok.</td>
+                </tr>
+                <tr>
+                    <td><strong>Panel Verifikasi Admin & Batch E-Tiket Dispatcher</strong></td>
+                    <td>Verification dashboard bagi Admin untuk approval pembayaran Exclusive dan penerbitan otomatis E-Tiket ber-QR Code untuk pendaftar Non-Exclusive ke masing-masing alamat email.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mobile Web Scanner Gate & Dual Lanyard Auto-Print</strong></td>
+                    <td>Web scanner di pintu masuk untuk validasi QR Code penonton secara real-time, pencegahan tiket ganda (anti double-entry), serta memicu perintah cetak otomatis kartu Lanyard fisik sesuai kategori (Exclusive / Non-Exclusive).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. SPESIFIKASI TEKNIS (PRODUCT REQUIREMENT DOCUMENT)</h2>
+        <h3>3.1 Alur Pengguna (User Flow) & Mekanisme Kategori Tiket</h3>
+        <ol>
+            <li><strong>Registrasi Visitor Non-Exclusive (Gratis):</strong>
+                <ul>
+                    <li>Pengunjung memilih kategori <strong>Non-Exclusive</strong> &rarr; Mengisi data diri (Nama, Email, No. HP/WhatsApp, Instansi).</li>
+                    <li>Sistem tidak menagih pembayaran (Rp 0) &rarr; Langsung menerbitkan <strong>E-Tiket dengan QR Code Unik</strong> ke email dan halaman konfirmasi.</li>
+                </ul>
+            </li>
+            <li><strong>Registrasi Visitor Exclusive (Berbayar):</strong>
+                <ul>
+                    <li>Pengunjung memilih kategori <strong>Exclusive</strong> &rarr; Mengisi data diri & jumlah tiket/anggota.</li>
+                    <li>Sistem mengkalkulasi nominal tiket + 3 digit kode unik &rarr; Pengunjung membayar via QRIS atau Transfer Bank Luar Negeri.</li>
+                    <li>Pengunjung mengambil/memilih foto bukti transfer &rarr; Kompresi otomatis (&lt; 500KB) &rarr; Unggah ke server.</li>
+                    <li>Admin memverifikasi bukti bayar di Dashboard Admin &rarr; Sistem otomatis mengirimkan <strong>E-Tiket dengan QR Code Unik</strong> ke masing-masing email pengunjung.</li>
+                </ul>
+            </li>
+            <li><strong>Alur Check-in di Pintu Masuk (Gate In) & Cetak Kartu Lanyard:</strong>
+                <ul>
+                    <li>Pengunjung tiba di lokasi acara dan menunjukkan QR Code pada E-Tiket (baik Exclusive maupun Non-Exclusive).</li>
+                    <li>Petugas pintu masuk melakukan pemindaian (scan) menggunakan <strong>Mobile Web Scanner Gate</strong>.</li>
+                    <li>Sistem memvalidasi status tiket (Active / Already Checked-in / Invalid).</li>
+                    <li>Jika valid, sistem mencatat status kehadiran (checked-in) dan <strong>memicu printer untuk mencetak Kartu Lanyard</strong>:
+                        <ul>
+                            <li>Jika kategori <strong>Exclusive</strong>: Mencetak ID Card dengan template desain <strong>Exclusive Badge</strong>.</li>
+                            <li>Jika kategori <strong>Non-Exclusive</strong>: Mencetak ID Card dengan template desain <strong>Non-Exclusive Badge</strong>.</li>
+                        </ul>
+                    </li>
+                    <li>Petugas menyerahkan tali lanyard + kartu yang telah tercetak sebagai tanda pengenal resmi selama acara.</li>
+                </ul>
+            </li>
+            <li><strong>Registrasi Onsite / Bantuan Admin di Lokasi:</strong>
+                <ul>
+                    <li>Admin membuka menu Onsite Registration di Dashboard Admin &rarr; Mengisi data pengunjung.</li>
+                    <li>Memilih kategori (Exclusive dengan bayar tunai / Non-Exclusive gratis) &rarr; Konfirmasi & langsung cetak kartu lanyard di meja registrasi onsite.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>3.2 Matriks Perbandingan Kategori Visitor</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th width="25%">FITUR / PARAMETER</th>
+                    <th width="37%">VISITOR EXCLUSIVE</th>
+                    <th width="38%">VISITOR NON-EXCLUSIVE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Biaya Pendaftaran</strong></td>
+                    <td>Wajib Bayar (Sesuai tarif dinamis Admin)</td>
+                    <td><strong>Gratis (Rp 0 / Free Pass)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Bukti Transfer</strong></td>
+                    <td>Wajib Unggah (Auto-compress &lt; 500KB)</td>
+                    <td>Tidak Perlu Unggah</td>
+                </tr>
+                <tr>
+                    <td><strong>Penerbitan E-Tiket</strong></td>
+                    <td>Setelah diverifikasi Admin / Bayar Onsite</td>
+                    <td>Instan setelah submit data pendaftaran</td>
+                </tr>
+                <tr>
+                    <td><strong>Penerbitan QR Code</strong></td>
+                    <td>Ya, QR Code unik per peserta</td>
+                    <td>Ya, QR Code unik per peserta</td>
+                </tr>
+                <tr>
+                    <td><strong>Scan di Pintu Masuk</strong></td>
+                    <td>Wajib Scan QR Code di Gate</td>
+                    <td>Wajib Scan QR Code di Gate</td>
+                </tr>
+                <tr>
+                    <td><strong>Pencetakan Kartu Lanyard</strong></td>
+                    <td>Cetak ID Card Desain <strong>Exclusive</strong></td>
+                    <td>Cetak ID Card Desain <strong>Non-Exclusive</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Fungsi Kartu Lanyard</strong></td>
+                    <td>Penanda Hak Akses Ruang Utama & Area VIP</td>
+                    <td>Penanda Tanda Masuk Pengunjung Umum</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.3 Rancangan Skema Database</h3>
+        <pre><code>CREATE TABLE settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_price_exclusive DECIMAL(12,2) DEFAULT 0.00,
+    ticket_price_non_exclusive DECIMAL(12,2) DEFAULT 0.00, -- Default 0.00 (Gratis)
+    exclusive_card_design_path VARCHAR(255) NULL,       -- Template Lanyard Exclusive
+    non_exclusive_card_design_path VARCHAR(255) NULL,   -- Template Lanyard Non-Exclusive
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL
+);
+
+CREATE TABLE payments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    payment_code VARCHAR(50) UNIQUE NOT NULL,
+    payment_method ENUM('qris_indo', 'foreign_bank_transfer', 'cash_onsite') NOT NULL DEFAULT 'qris_indo',
+    total_members INT NOT NULL DEFAULT 1,
+    price_per_ticket DECIMAL(12, 2) NOT NULL,
+    unique_code INT NOT NULL DEFAULT 0,
+    total_amount DECIMAL(12, 2) NOT NULL,
+    proof_of_payment VARCHAR(255) NULL,       -- Path file gambar dikompresi (< 500KB)
+    original_file_size_kb INT NULL,           -- Ukuran sebelum kompresi
+    compressed_file_size_kb INT NULL,         -- Ukuran setelah kompresi
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL
+);
+
+CREATE TABLE tickets (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    payment_id BIGINT UNSIGNED NULL,          -- NULL jika Non-Exclusive (Gratis)
+    registered_by_admin_id BIGINT UNSIGNED NULL, -- ID Admin jika registrasi Onsite
+    registration_source ENUM('online_self', 'admin_onsite') DEFAULT 'online_self',
+    visitor_name VARCHAR(150) NOT NULL,
+    visitor_email VARCHAR(150) NOT NULL,
+    visitor_phone VARCHAR(50) NULL,
+    visitor_institution VARCHAR(150) NULL,
+    ticket_code VARCHAR(100) UNIQUE NOT NULL,
+    visitor_type ENUM('exclusive', 'non_exclusive') NOT NULL DEFAULT 'non_exclusive',
+    is_group_leader BOOLEAN DEFAULT FALSE,
+    status ENUM('pending', 'active', 'cancelled') DEFAULT 'active',
+    checked_in BOOLEAN DEFAULT FALSE,
+    checked_in_at TIMESTAMP NULL,
+    card_printed BOOLEAN DEFAULT FALSE,       -- Flag pencetakan fisik kartu lanyard
+    card_printed_at TIMESTAMP NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE SET NULL
+);</code></pre>
+
+        <h2>4. RENCANA ANGGARAN BIAYA (RAB) REVISI</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th width="70%">ITEM PENGERJAAN & MODUL SISTEM</th>
+                    <th width="30%">BIAYA (IDR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Taste-Skill UI/UX System & Dual Visitor Registration Flow</strong><br>Implementasi antarmuka elegan monokromatik modern, form pendaftaran Visitor Exclusive & Non-Exclusive, pemanfaatan aset 3D, serta optimasi pemuatan web &lt; 1.5 detik.</td>
+                    <td>Rp 1.500.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Client-Side Auto-Compressor & Direct Camera Access API</strong><br>Integrasi akses kamera langsung/galeri & algoritma konversi gambar otomatis (10MB+ menjadi &lt; 500KB) sebelum diunggah ke server untuk pembayaran Exclusive.</td>
+                    <td>Rp 1.500.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Modul Registrasi Multi-User (Online Group) & Admin Onsite Assistive Input</strong><br>Form pendaftaran kelompok serta form khusus Admin Onsite untuk bantuan registrasi lansia/bypass pembayaran tunai & pendaftaran Non-Exclusive instan.</td>
+                    <td>Rp 2.000.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Dynamic Pricing Admin & Dual Payment Gateway (QRIS & Transfer Luar Negeri)</strong><br>Pengaturan harga dinamis oleh admin, integrasi QRIS Indonesia & Transfer Bank Luar Negeri IAGI, generator kode unik 3 digit & panel verifikasi bukti bayar.</td>
+                    <td>Rp 2.000.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Batch Email Dispatcher, Gate Web Scanner & Dual Lanyard Card Auto-Print</strong><br>Generator QR Code unik untuk Exclusive & Non-Exclusive, pengiriman E-Tiket otomatis, Web Scanner Gate (anti-duplikasi) & pemicu cetak kartu Lanyard pembeda kategori.</td>
+                    <td>Rp 2.000.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Nilai Pengajuan Proyek (Normal Rate)</strong></td>
+                    <td><strong>Rp 9.000.000</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="discount-box">
+            <strong>Penawaran Khusus (Loyal Client Discount / Nett Rate):</strong><br>
+            Sebagai wujud apresiasi atas kerja sama berkelanjutan, kami menawarkan harga khusus (Nett) sebesar
+            <strong>Rp 6.000.000,- (Enam Juta Rupiah)</strong> untuk implementasi seluruh modul secara lengkap.
+        </div>
+
+        <h2>5. KETENTUAN LAINNYA</h2>
+        <ul>
+            <li>Pengerjaan dimulai segera setelah proposal disetujui secara tertulis.</li>
+            <li>Estimasi penyelesaian berkisar <strong>paling lambat 7 hari kerja</strong> dan <strong>paling cepat 1 hari kerja</strong> setelah persetujuan.</li>
+            <li>Garansi pemeliharaan sistem gratis selama 1 (satu) bulan pasca-rilis untuk memastikan kelancaran check-in di hari pelaksanaan acara.</li>
+        </ul>
+
+        <table class="signature-table">
+            <tr>
+                <td width="50%">
+                    Diajukan Oleh,<br><br><br><br>
+                    <strong>Wahyu Utomo</strong><br>
+                    <em>IT Development Partner</em>
+                </td>
+                <td width="50%">
+                    Disetujui Oleh,<br><br><br><br>
+                    <strong>Panitia PIT IAGI & GEOSEA 2026</strong><br>
+                    <em>Penanggung Jawab Acara / IT Section</em>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+
+</html>
