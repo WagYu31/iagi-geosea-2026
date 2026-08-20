@@ -48,15 +48,31 @@ class VisitorTicketController extends Controller
             'visitor_event_venue',
         ])->pluck('value', 'key');
 
+        $priceExclusive = floatval($settings['visitor_ticket_price_exclusive'] ?? 150000);
+        $priceNonExclusive = floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0);
+        $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
+        $qrisImage = !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null;
+        $bankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
+        $eventDate = $settings['visitor_event_date'] ?? 'October 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta';
+
         return Inertia::render('VisitorTickets/Register', [
+            'priceExclusive' => $priceExclusive,
+            'priceNonExclusive' => $priceNonExclusive,
+            'enabled' => $enabled,
+            'qrisImage' => $qrisImage,
+            'bankTransferInfo' => $bankTransferInfo,
+            'eventDate' => $eventDate,
+            'eventVenue' => $eventVenue,
             'settings' => [
-                'priceExclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 150000),
-                'priceNonExclusive' => floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0),
-                'enabled' => ($settings['visitor_registration_enabled'] ?? '1') === '1',
-                'qrisImage' => !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null,
-                'bankInfo' => $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026",
-                'eventDate' => $settings['visitor_event_date'] ?? 'October 2026',
-                'eventVenue' => $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta',
+                'priceExclusive' => $priceExclusive,
+                'priceNonExclusive' => $priceNonExclusive,
+                'enabled' => $enabled,
+                'qrisImage' => $qrisImage,
+                'bankTransferInfo' => $bankTransferInfo,
+                'bankInfo' => $bankTransferInfo,
+                'eventDate' => $eventDate,
+                'eventVenue' => $eventVenue,
             ]
         ]);
     }

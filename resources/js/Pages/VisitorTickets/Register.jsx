@@ -38,14 +38,22 @@ import CloseIcon from '@mui/icons-material/Close';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 
 export default function Register({
-    priceExclusive = 150000,
-    priceNonExclusive = 0,
-    enabled = true,
-    qrisImage = null,
-    bankTransferInfo = '',
-    eventDate = 'October 2026',
-    eventVenue = 'Grand Ballroom Hotel Indonesia, Jakarta',
+    priceExclusive: propPriceExclusive,
+    priceNonExclusive: propPriceNonExclusive,
+    enabled: propEnabled,
+    qrisImage: propQrisImage,
+    bankTransferInfo: propBankTransferInfo,
+    eventDate: propEventDate,
+    eventVenue: propEventVenue,
+    settings = {},
 }) {
+    const priceExclusive = Number(propPriceExclusive ?? settings.priceExclusive ?? 150000);
+    const priceNonExclusive = Number(propPriceNonExclusive ?? settings.priceNonExclusive ?? 0);
+    const enabled = propEnabled ?? settings.enabled ?? true;
+    const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
+    const bankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
+    const eventDate = propEventDate ?? settings.eventDate ?? 'October 2026';
+    const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Grand Ballroom Hotel Indonesia, Jakarta';
     const [visitorType, setVisitorType] = useState('non_exclusive');
     const [paymentMethod, setPaymentMethod] = useState('qris_indo');
     const [members, setMembers] = useState([
