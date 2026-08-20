@@ -243,6 +243,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/visitor-tickets/{id}/toggle-checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleCheckIn'])->name('visitorTickets.toggleCheckIn');
         Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
         Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');
+        Route::post('/visitor-tickets/{id}/resend-email', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmail'])->name('visitorTickets.resendEmail');
         Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
         Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
         Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');

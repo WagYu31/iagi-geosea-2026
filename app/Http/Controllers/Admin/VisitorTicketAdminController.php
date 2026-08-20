@@ -10,7 +10,11 @@ use App\Models\VisitorPayment;
 use App\Models\LandingPageSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Mail\VisitorTicketIssued;
+use App\Mail\VisitorPaymentRejected;
 
 class VisitorTicketAdminController extends Controller
 {
@@ -144,6 +148,15 @@ class VisitorTicketAdminController extends Controller
                 'card_printed' => false,
             ]);
 
+            // Send E-Ticket email if active
+            if ($ticket->status === 'active' && !empty($ticket->visitor_email)) {
+                try {
+                    Mail::to($ticket->visitor_email)->queue(new VisitorTicketIssued($ticket));
+                } catch (\Exception $e) {
+                    Log::warning("Failed to send onsite visitor ticket email: " . $e->getMessage());
+                }
+            }
+
             return back()->with('success', "Registrasi onsite berhasil! Kode Tiket: {$ticket->ticket_code}");
         });
     }
@@ -166,7 +179,19 @@ class VisitorTicketAdminController extends Controller
             'status' => 'active',
         ]);
 
-        return back()->with('success', 'Pembayaran visitor berhasil diverifikasi dan tiket telah diaktifkan.');
+        // Send E-Ticket email to all verified tickets
+        $tickets = VisitorTicket::where('payment_id', $payment->id)->get();
+        foreach ($tickets as $t) {
+            if (!empty($t->visitor_email)) {
+                try {
+                    Mail::to($t->visitor_email)->queue(new VisitorTicketIssued($t));
+                } catch (\Exception $e) {
+                    Log::warning("Failed to send visitor ticket email to {$t->visitor_email}: " . $e->getMessage());
+                }
+            }
+        }
+
+        return back()->with('success', 'Pembayaran visitor berhasil diverifikasi, tiket telah diaktifkan, dan email E-Tiket telah dikirimkan ke pengunjung.');
     }
 
     /**
@@ -175,17 +200,52 @@ class VisitorTicketAdminController extends Controller
     public function rejectPayment(Request $request, $id)
     {
         $payment = VisitorPayment::findOrFail($id);
+        $notes = $request->input('notes', 'Pembayaran ditolak oleh admin.');
         
         $payment->update([
             'status' => 'rejected',
-            'notes' => $request->input('notes', 'Pembayaran ditolak oleh admin.'),
+            'notes' => $notes,
         ]);
 
         VisitorTicket::where('payment_id', $payment->id)->update([
             'status' => 'cancelled',
         ]);
 
-        return back()->with('success', 'Pembayaran visitor telah ditolak.');
+        // Send Rejection email to primary booker
+        $firstTicket = VisitorTicket::where('payment_id', $payment->id)->first();
+        if ($firstTicket && !empty($firstTicket->visitor_email)) {
+            try {
+                Mail::to($firstTicket->visitor_email)->queue(new VisitorPaymentRejected($payment, $notes));
+            } catch (\Exception $e) {
+                Log::warning("Failed to send payment rejection email: " . $e->getMessage());
+            }
+        }
+
+        return back()->with('success', 'Pembayaran visitor telah ditolak dan email pemberitahuan telah dikirimkan.');
+    }
+
+    /**
+     * Resend E-Ticket email to visitor
+     */
+    public function resendEmail($id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        if ($ticket->status !== 'active') {
+            return back()->with('error', 'Hanya tiket berstatus AKTIF yang dapat dikirimkan E-Tiket.');
+        }
+
+        if (empty($ticket->visitor_email)) {
+            return back()->with('error', 'Pengunjung ini tidak memiliki alamat email terdaftar.');
+        }
+
+        try {
+            Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+            return back()->with('success', "E-Tiket berhasil dikirim ulang ke email: {$ticket->visitor_email}");
+        } catch (\Exception $e) {
+            Log::error("Manual resend email failed for {$ticket->visitor_email}: " . $e->getMessage());
+            return back()->with('error', "Gagal mengirim email: " . $e->getMessage());
+        }
     }
 
     /**

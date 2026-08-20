@@ -61,6 +61,8 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import EmailIcon from '@mui/icons-material/Email';
+import SendIcon from '@mui/icons-material/Send';
 
 export default function VisitorTicketsIndex({
     tickets = {},
@@ -241,6 +243,14 @@ export default function VisitorTicketsIndex({
                         setDetailModal({ open: false, ticket: null });
                     }
                 }
+            });
+        }
+    };
+
+    const handleResendEmail = (ticketId, email) => {
+        if (confirm(`Kirim ulang E-Tiket ke email "${email}"?`)) {
+            router.post(route('admin.visitorTickets.resendEmail', ticketId), {}, {
+                preserveScroll: true,
             });
         }
     };
@@ -1102,6 +1112,19 @@ export default function VisitorTicketsIndex({
                                                             </Tooltip>
                                                         )}
 
+                                                        {/* Email Resend Direct */}
+                                                        {t.visitor_email && (
+                                                            <Tooltip title="Kirim / Kirim Ulang E-Tiket ke Email">
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => handleResendEmail(t.id, t.visitor_email)}
+                                                                    sx={{ color: '#0284c7', bgcolor: '#f0f9ff', border: '1px solid #bae6fd', p: 0.5, borderRadius: '8px' }}
+                                                                >
+                                                                    <EmailIcon sx={{ fontSize: 15 }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+
                                                         {/* Print Badge */}
                                                         <Tooltip title="Cetak Kartu Lanyard">
                                                             <IconButton
@@ -1297,6 +1320,17 @@ export default function VisitorTicketsIndex({
                                         sx={{ bgcolor: '#16a34a', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#15803d' } }}
                                     >
                                         WhatsApp
+                                    </Button>
+                                )}
+                                {detailModal.ticket.visitor_email && (
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        startIcon={<EmailIcon />}
+                                        onClick={() => handleResendEmail(detailModal.ticket.id, detailModal.ticket.visitor_email)}
+                                        sx={{ bgcolor: '#0284c7', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#0369a1' } }}
+                                    >
+                                        Kirim Email
                                     </Button>
                                 )}
                             </Box>
