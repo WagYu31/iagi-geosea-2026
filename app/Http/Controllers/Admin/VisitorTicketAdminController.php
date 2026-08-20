@@ -351,4 +351,125 @@ class VisitorTicketAdminController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
+
+    /**
+     * Toggle Check-In status manually by Admin
+     */
+    public function toggleCheckIn($id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        if ($ticket->status !== 'active') {
+            return back()->with('error', 'Hanya tiket berstatus AKTIF yang dapat di-check in.');
+        }
+
+        $newStatus = !$ticket->checked_in;
+
+        $ticket->update([
+            'checked_in' => $newStatus,
+            'checked_in_at' => $newStatus ? now() : null,
+            'checked_in_by_admin_id' => $newStatus ? Auth::id() : null,
+        ]);
+
+        $msg = $newStatus 
+            ? "Tiket {$ticket->ticket_code} ({$ticket->visitor_name}) berhasil di-Check In!" 
+            : "Check-In untuk tiket {$ticket->ticket_code} dibatalkan.";
+
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Update Visitor details
+     */
+    public function updateVisitor(Request $request, $id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        $request->validate([
+            'visitor_name' => 'required|string|max:150',
+            'visitor_email' => 'required|email|max:150',
+            'visitor_phone' => 'nullable|string|max:50',
+            'visitor_institution' => 'nullable|string|max:150',
+            'status' => 'required|in:active,pending,cancelled',
+        ]);
+
+        $ticket->update([
+            'visitor_name' => $request->visitor_name,
+            'visitor_email' => $request->visitor_email,
+            'visitor_phone' => $request->visitor_phone,
+            'visitor_institution' => $request->visitor_institution,
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', "Data pengunjung {$ticket->visitor_name} berhasil diperbarui.");
+    }
+
+    /**
+     * Delete/Destroy single visitor ticket
+     */
+    public function destroyVisitor($id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+        $name = $ticket->visitor_name;
+        $code = $ticket->ticket_code;
+
+        $ticket->delete();
+
+        return back()->with('success', "Tiket {$code} ({$name}) berhasil dihapus.");
+    }
+
+    /**
+     * Process Bulk Actions on Selected Tickets
+     */
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'action' => 'required|in:verify_payment,check_in,undo_check_in,cancel_ticket,delete',
+            'ticket_ids' => 'required|array',
+            'ticket_ids.*' => 'integer|exists:visitor_tickets,id',
+        ]);
+
+        $action = $request->action;
+        $ticketIds = $request->ticket_ids;
+        $tickets = VisitorTicket::whereIn('id', $ticketIds)->get();
+
+        switch ($action) {
+            case 'verify_payment':
+                $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
+                VisitorPayment::whereIn('id', $paymentIds)->update([
+                    'status' => 'approved',
+                    'verified_at' => now(),
+                    'verified_by_admin_id' => Auth::id(),
+                ]);
+                VisitorTicket::whereIn('payment_id', $paymentIds)->update(['status' => 'active']);
+                return back()->with('success', count($paymentIds) . ' pembayaran berhasil diverifikasi secara massal!');
+
+            case 'check_in':
+                VisitorTicket::whereIn('id', $ticketIds)->where('status', 'active')->update([
+                    'checked_in' => true,
+                    'checked_in_at' => now(),
+                    'checked_in_by_admin_id' => Auth::id(),
+                ]);
+                return back()->with('success', count($ticketIds) . ' tiket berhasil di-Check In secara massal!');
+
+            case 'undo_check_in':
+                VisitorTicket::whereIn('id', $ticketIds)->update([
+                    'checked_in' => false,
+                    'checked_in_at' => null,
+                    'checked_in_by_admin_id' => null,
+                ]);
+                return back()->with('success', 'Status check-in untuk ' . count($ticketIds) . ' tiket berhasil dibatalkan.');
+
+            case 'cancel_ticket':
+                VisitorTicket::whereIn('id', $ticketIds)->update(['status' => 'cancelled']);
+                return back()->with('success', count($ticketIds) . ' tiket berhasil dibatalkan.');
+
+            case 'delete':
+                VisitorTicket::whereIn('id', $ticketIds)->delete();
+                return back()->with('success', count($ticketIds) . ' tiket berhasil dihapus dari sistem.');
+        }
+
+        return back();
+    }
 }
+

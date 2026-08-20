@@ -240,6 +240,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
         Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
         Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
+        Route::patch('/visitor-tickets/{id}/toggle-checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleCheckIn'])->name('visitorTickets.toggleCheckIn');
+        Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
+        Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');
+        Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
         Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
         Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
         Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');
