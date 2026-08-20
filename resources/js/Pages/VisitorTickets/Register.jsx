@@ -212,46 +212,74 @@ export default function Register({
     // ==========================================
     // DIRECT CAMERA STREAM (WebRTC Live Viewfinder)
     // ==========================================
-    const startCamera = async (facingMode = 'environment') => {
-        setCameraError(null);
-        setCameraLoading(true);
+    useEffect(() => {
+        let stream = null;
+        let isCancelled = false;
 
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
-        }
+        if (cameraModalOpen) {
+            setCameraLoading(true);
+            setCameraError(null);
 
-        try {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                throw new Error('WebRTC getUserMedia tidak didukung.');
-            }
+            const initCamera = async () => {
+                try {
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        throw new Error('Kamera WebRTC tidak didukung di browser ini.');
+                    }
 
-            const constraints = {
-                video: {
-                    facingMode: { ideal: facingMode },
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 },
-                },
-                audio: false,
+                    let constraints = {
+                        video: {
+                            facingMode: cameraFacingMode === 'environment' ? { ideal: 'environment' } : 'user',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                        },
+                        audio: false,
+                    };
+
+                    let mediaStream;
+                    try {
+                        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    } catch (fallbackErr) {
+                        console.warn('Ideal constraints failed, trying default video:', fallbackErr);
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    }
+
+                    if (isCancelled) {
+                        mediaStream.getTracks().forEach(track => track.stop());
+                        return;
+                    }
+
+                    stream = mediaStream;
+                    streamRef.current = mediaStream;
+
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = mediaStream;
+                        videoRef.current.onloadedmetadata = () => {
+                            videoRef.current?.play().catch(e => console.log('Video play interrupted:', e));
+                            setCameraLoading(false);
+                        };
+                    }
+                } catch (err) {
+                    console.error('Camera stream error:', err);
+                    setCameraLoading(false);
+                    setCameraError('Tidak dapat mengakses kamera. Pastikan izin kamera telah diberikan atau gunakan kamera bawaan.');
+                }
             };
 
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            streamRef.current = stream;
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.play();
-            }
-            setCameraLoading(false);
-        } catch (err) {
-            console.warn('Direct camera stream failed, falling back to native capture input:', err);
-            setCameraLoading(false);
-            setCameraModalOpen(false);
-            // Fallback directly to native camera input
-            if (cameraInputRef.current) {
-                cameraInputRef.current.click();
+            initCamera();
+        } else {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+                streamRef.current = null;
             }
         }
-    };
+
+        return () => {
+            isCancelled = true;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [cameraModalOpen, cameraFacingMode]);
 
     const stopCamera = () => {
         if (streamRef.current) {
@@ -262,25 +290,11 @@ export default function Register({
     };
 
     const handleOpenDirectCamera = () => {
-        // Check if browser has getUserMedia support and secure context (HTTPS / localhost)
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            setCameraModalOpen(true);
-            setCameraFacingMode('environment');
-            setTimeout(() => {
-                startCamera('environment');
-            }, 100);
-        } else {
-            // Direct native camera trigger
-            if (cameraInputRef.current) {
-                cameraInputRef.current.click();
-            }
-        }
+        setCameraModalOpen(true);
     };
 
     const handleSwitchCamera = () => {
-        const nextMode = cameraFacingMode === 'environment' ? 'user' : 'environment';
-        setCameraFacingMode(nextMode);
-        startCamera(nextMode);
+        setCameraFacingMode(prev => prev === 'environment' ? 'user' : 'environment');
     };
 
     const handleCapturePhoto = () => {
@@ -308,14 +322,6 @@ export default function Register({
             processFileAndSet(capturedFile);
         }, 'image/jpeg', 0.85);
     };
-
-    useEffect(() => {
-        return () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
-            }
-        };
-    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -1289,34 +1295,56 @@ export default function Register({
                 </DialogTitle>
 
                 <DialogContent sx={{ p: 0, bgcolor: '#000', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
-                    {cameraLoading ? (
-                        <Box sx={{ textAlign: 'center', p: 4 }}>
-                            <CircularProgress sx={{ color: '#38bdf8', mb: 2 }} />
-                            <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
-                                Menghubungkan ke kamera HP...
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Box sx={{ position: 'relative', width: '100%', overflow: 'hidden', bgcolor: '#000' }}>
-                            <video
-                                ref={videoRef}
-                                autoPlay
-                                playsInline
-                                muted
-                                style={{
-                                    width: '100%',
-                                    height: 'auto',
-                                    maxHeight: '65vh',
-                                    objectFit: 'contain',
-                                    display: 'block',
-                                }}
-                            />
-                            {/* Viewfinder Target Border Overlay */}
+                    <Box sx={{ position: 'relative', width: '100%', minHeight: 320, bgcolor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/* Video Element Always in DOM so ref and srcObject attach immediately */}
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            style={{
+                                width: '100%',
+                                height: 'auto',
+                                maxHeight: '65vh',
+                                objectFit: 'contain',
+                                display: 'block',
+                            }}
+                        />
+
+                        {cameraLoading && (
+                            <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(0,0,0,0.85)', zIndex: 2 }}>
+                                <CircularProgress sx={{ color: '#38bdf8', mb: 2 }} />
+                                <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
+                                    Menghubungkan ke kamera...
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {cameraError && (
+                            <Box sx={{ position: 'absolute', inset: 0, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(15,23,42,0.95)', zIndex: 2, textAlign: 'center' }}>
+                                <Typography variant="body2" sx={{ color: '#f87171', mb: 2, fontWeight: 600 }}>
+                                    {cameraError}
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    onClick={() => {
+                                        stopCamera();
+                                        cameraInputRef.current?.click();
+                                    }}
+                                    sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 700 }}
+                                >
+                                    Gunakan Kamera Bawaan HP
+                                </Button>
+                            </Box>
+                        )}
+
+                        {!cameraLoading && !cameraError && (
                             <Box
                                 sx={{
                                     position: 'absolute',
                                     inset: '10%',
-                                    border: '2px dashed rgba(255, 255, 255, 0.6)',
+                                    border: '2px dashed rgba(255, 255, 255, 0.7)',
                                     borderRadius: '12px',
                                     pointerEvents: 'none',
                                     display: 'flex',
@@ -1329,8 +1357,8 @@ export default function Register({
                                     Arahkan ke struk / bukti transfer
                                 </Typography>
                             </Box>
-                        </Box>
-                    )}
+                        )}
+                    </Box>
                 </DialogContent>
 
                 <DialogActions
@@ -1348,6 +1376,7 @@ export default function Register({
                         startIcon={<CameraswitchIcon />}
                         onClick={handleSwitchCamera}
                         size="small"
+                        disabled={cameraLoading}
                         sx={{
                             color: '#94a3b8',
                             textTransform: 'none',
@@ -1362,6 +1391,7 @@ export default function Register({
                     <Button
                         variant="contained"
                         onClick={handleCapturePhoto}
+                        disabled={cameraLoading || !!cameraError}
                         startIcon={<PhotoCameraIcon />}
                         sx={{
                             bgcolor: '#10b981',
