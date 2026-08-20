@@ -18,6 +18,8 @@ import {
     Grid,
     Paper,
     CircularProgress,
+    Tooltip,
+    Badge,
 } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -30,6 +32,12 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import StopIcon from '@mui/icons-material/Stop';
+import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+import BusinessIcon from '@mui/icons-material/Business';
+import EmailIcon from '@mui/icons-material/Email';
 
 export default function GateScanner({
     exclusiveTemplate = null,
@@ -40,14 +48,15 @@ export default function GateScanner({
     const [manualCode, setManualCode] = useState('');
     const [processing, setProcessing] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
-    const [scanResult, setScanResult] = useState(null); // { success, status, message, ticket, templatePath }
+    const [facingMode, setFacingMode] = useState('environment'); // 'environment' or 'user'
+    const [scanResult, setScanResult] = useState(null);
     const [recentScans, setRecentScans] = useState([]);
     const [cameraError, setCameraError] = useState(null);
 
     const html5QrCodeRef = useRef(null);
     const isProcessingRef = useRef(false);
 
-    // Web Audio API Synthesis for Sound Feedback
+    // Audio Feedback Synthesis
     const playSound = (type) => {
         if (!soundEnabled) return;
         try {
@@ -58,31 +67,28 @@ export default function GateScanner({
             gain.connect(ctx.destination);
 
             if (type === 'success') {
-                // High double beep for success
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
-                osc.frequency.setValueAtTime(1174.66, ctx.currentTime + 0.1); // D6
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(1174.66, ctx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.3, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
                 osc.start(ctx.currentTime);
                 osc.stop(ctx.currentTime + 0.3);
             } else if (type === 'warning') {
-                // Low double buzzer for already checked-in
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(300, ctx.currentTime);
-                osc.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.4);
-            } else {
-                // Error buzz
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(150, ctx.currentTime);
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                osc.frequency.setValueAtTime(320, ctx.currentTime);
+                osc.frequency.setValueAtTime(220, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.35, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
                 osc.start(ctx.currentTime);
                 osc.stop(ctx.currentTime + 0.35);
+            } else {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(160, ctx.currentTime);
+                gain.gain.setValueAtTime(0.35, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.3);
             }
         } catch (e) {
             console.error('Audio playback error:', e);
@@ -104,14 +110,13 @@ export default function GateScanner({
             setScanResult(data);
             playSound('success');
 
-            // Add to recent scans list
             setRecentScans((prev) => [
                 {
                     ticket: data.ticket,
-                    timestamp: new Date().toLocaleTimeString('id-ID'),
+                    timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     status: 'success',
                 },
-                ...prev.slice(0, 9),
+                ...prev.slice(0, 14),
             ]);
         } catch (err) {
             const errorData = err.response?.data || {
@@ -132,47 +137,48 @@ export default function GateScanner({
                 setRecentScans((prev) => [
                     {
                         ticket: errorData.ticket,
-                        timestamp: new Date().toLocaleTimeString('id-ID'),
+                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                         status: errorData.status,
                     },
-                    ...prev.slice(0, 9),
+                    ...prev.slice(0, 14),
                 ]);
             }
         } finally {
             setProcessing(false);
             setManualCode('');
-            // Cooldown 1.5s before next scan
             setTimeout(() => {
                 isProcessingRef.current = false;
             }, 1500);
         }
     };
 
-    const startCamera = async () => {
+    const startCamera = async (mode = facingMode) => {
         setCameraError(null);
         try {
+            if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+                await html5QrCodeRef.current.stop();
+            }
+
             if (!html5QrCodeRef.current) {
                 html5QrCodeRef.current = new Html5Qrcode('qr-reader');
             }
 
             await html5QrCodeRef.current.start(
-                { facingMode: 'environment' }, // Rear camera
+                { facingMode: mode },
                 {
-                    fps: 10,
+                    fps: 15,
                     qrbox: { width: 250, height: 250 },
                 },
                 (decodedText) => {
                     processTicketCheckIn(decodedText);
                 },
-                (errorMessage) => {
-                    // Ignore frame scanning errors
-                }
+                () => {}
             );
 
             setScanning(true);
         } catch (err) {
             console.error('Camera start error:', err);
-            setCameraError('Gagal mengakses kamera. Pastikan izin kamera aktif di browser Anda atau gunakan input manual.');
+            setCameraError('Gagal mengakses kamera. Pastikan izin kamera telah disetujui di browser atau gunakan input manual.');
             setScanning(false);
         }
     };
@@ -188,8 +194,15 @@ export default function GateScanner({
         }
     };
 
+    const toggleCameraFacing = async () => {
+        const nextMode = facingMode === 'environment' ? 'user' : 'environment';
+        setFacingMode(nextMode);
+        if (scanning) {
+            await startCamera(nextMode);
+        }
+    };
+
     useEffect(() => {
-        // Cleanup camera on unmount
         return () => {
             if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
                 html5QrCodeRef.current.stop().catch(console.error);
@@ -204,155 +217,406 @@ export default function GateScanner({
         }
     };
 
+    const totalSuccess = recentScans.filter(s => s.status === 'success').length;
+    const totalVip = recentScans.filter(s => s.ticket?.visitor_type === 'exclusive' && s.status === 'success').length;
+    const totalWarn = recentScans.filter(s => s.status !== 'success').length;
+
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#090e1a', color: '#f8fafc', py: { xs: 2, md: 4 } }}>
+        <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
             <Head title="Gate Web Scanner - 55th PIT IAGI & GEOSEA 2026" />
 
-            <Container maxWidth="md">
-                {/* Header */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Button
-                        component={Link}
-                        href={route('admin.visitorTickets')}
-                        startIcon={<ArrowBackIcon />}
-                        sx={{ color: '#94a3b8', textTransform: 'none', fontSize: '0.85rem' }}
-                    >
-                        Kembali ke Dashboard
-                    </Button>
-                    <IconButton
-                        onClick={() => setSoundEnabled(!soundEnabled)}
-                        sx={{ color: soundEnabled ? '#10b981' : '#64748b', bgcolor: 'rgba(255,255,255,0.05)' }}
-                    >
-                        {soundEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
-                    </IconButton>
-                </Box>
+            <Container maxWidth="lg">
+                {/* 3D HEADER BAR */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2,
+                        px: 3,
+                        borderRadius: '18px',
+                        bgcolor: '#ffffff',
+                        border: '1.5px solid #e2e8f0',
+                        boxShadow: '0 4px 0 #e2e8f0, 0 10px 25px rgba(0,0,0,0.03)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        mb: 3,
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Button
+                            component={Link}
+                            href={route('admin.visitorTickets')}
+                            startIcon={<ArrowBackIcon />}
+                            sx={{
+                                bgcolor: '#f8fafc',
+                                border: '1px solid #cbd5e1',
+                                color: '#334155',
+                                textTransform: 'none',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                borderRadius: '10px',
+                                px: 1.8,
+                                py: 0.8,
+                                boxShadow: '0 2px 0 #cbd5e1',
+                                '&:hover': { bgcolor: '#f1f5f9', transform: 'translateY(-1px)' },
+                                '&:active': { transform: 'translateY(1px)' },
+                            }}
+                        >
+                            Dashboard Tiket
+                        </Button>
 
-                <Box sx={{ textAlign: 'center', mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', mb: 0.5 }}>
-                        Gate Scanner Pintu Masuk 📱
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                        Scan QR Code pengunjung untuk validasi tiket dan pemicu cetak kartu Lanyard fisik.
-                    </Typography>
-                </Box>
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem', lineHeight: 1.2 }}>
+                                Gate Scanner Pintu Masuk 📱
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
+                                55th PIT IAGI & GEOSEA XIX 2026 &bull; {eventVenue}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                        <Chip
+                            label="GATE SCANNER AKTIF"
+                            size="small"
+                            sx={{
+                                bgcolor: '#dcfce7',
+                                color: '#15803d',
+                                fontWeight: 900,
+                                fontSize: '0.68rem',
+                                border: '1px solid #86efac',
+                                height: 26,
+                            }}
+                        />
+
+                        <Tooltip title={soundEnabled ? 'Matikan Suara Beep' : 'Aktifkan Suara Beep'}>
+                            <IconButton
+                                onClick={() => setSoundEnabled(!soundEnabled)}
+                                sx={{
+                                    bgcolor: soundEnabled ? '#ecfdf5' : '#f1f5f9',
+                                    border: `1.5px solid ${soundEnabled ? '#a7f3d0' : '#cbd5e1'}`,
+                                    color: soundEnabled ? '#059669' : '#64748b',
+                                    boxShadow: soundEnabled ? '0 2px 0 #a7f3d0' : '0 2px 0 #cbd5e1',
+                                    borderRadius: '10px',
+                                    p: 0.8,
+                                }}
+                            >
+                                {soundEnabled ? <VolumeUpIcon sx={{ fontSize: 19 }} /> : <VolumeOffIcon sx={{ fontSize: 19 }} />}
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
+                </Paper>
+
+                {/* 3D QUICK SESSION STATS */}
+                <Grid container spacing={2} sx={{ mb: 3 }}>
+                    <Grid item xs={6} sm={3}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.8,
+                                borderRadius: '14px',
+                                background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+                                border: '1.5px solid #a7f3d0',
+                                boxShadow: '0 4px 0 #a7f3d0, 0 6px 16px rgba(16,185,129,0.06)',
+                            }}
+                        >
+                            <Typography variant="caption" sx={{ color: '#065f46', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                                Total Sukses Masuk
+                            </Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#047857', mt: 0.2 }}>
+                                {totalSuccess} <Typography component="span" variant="caption" sx={{ color: '#065f46', fontWeight: 700 }}>Orang</Typography>
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.8,
+                                borderRadius: '14px',
+                                background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+                                border: '1.5px solid #fde68a',
+                                boxShadow: '0 4px 0 #fde68a, 0 6px 16px rgba(245,158,11,0.06)',
+                            }}
+                        >
+                            <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                                Pengunjung VIP
+                            </Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#b45309', mt: 0.2 }}>
+                                {totalVip} <Typography component="span" variant="caption" sx={{ color: '#92400e', fontWeight: 700 }}>VIP</Typography>
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.8,
+                                borderRadius: '14px',
+                                background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                                border: '1.5px solid #fecaca',
+                                boxShadow: '0 4px 0 #fecaca, 0 6px 16px rgba(239,68,68,0.06)',
+                            }}
+                        >
+                            <Typography variant="caption" sx={{ color: '#991b1b', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                                Duplikat / Ditolak
+                            </Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#dc2626', mt: 0.2 }}>
+                                {totalWarn} <Typography component="span" variant="caption" sx={{ color: '#991b1b', fontWeight: 700 }}>Tiket</Typography>
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.8,
+                                borderRadius: '14px',
+                                background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+                                border: '1.5px solid #bae6fd',
+                                boxShadow: '0 4px 0 #bae6fd, 0 6px 16px rgba(2,132,199,0.06)',
+                            }}
+                        >
+                            <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                                Total Scan Sesi Ini
+                            </Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#0284c7', mt: 0.2 }}>
+                                {recentScans.length} <Typography component="span" variant="caption" sx={{ color: '#0369a1', fontWeight: 700 }}>Kali</Typography>
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                </Grid>
 
                 <Grid container spacing={3}>
-                    {/* Left Column: Camera / Scanner */}
+                    {/* LEFT COLUMN: 3D CAMERA SCANNER & MANUAL INPUT */}
                     <Grid item xs={12} md={6}>
-                        <Card sx={{ borderRadius: '18px', bgcolor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(51, 65, 85, 0.8)', overflow: 'hidden' }}>
-                            <CardContent sx={{ p: 2.5 }}>
-                                {/* Camera Box */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 2.5,
+                                borderRadius: '20px',
+                                bgcolor: '#ffffff',
+                                border: '1.5px solid #e2e8f0',
+                                boxShadow: '0 4px 0 #e2e8f0, 0 12px 28px rgba(0,0,0,0.03)',
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <CameraAltIcon sx={{ color: '#094d42', fontSize: 20 }} />
+                                    Kamera Pemindai QR Code
+                                </Typography>
+
+                                {scanning && (
+                                    <Tooltip title="Ganti Kamera Depan / Belakang">
+                                        <Button
+                                            size="small"
+                                            onClick={toggleCameraFacing}
+                                            startIcon={<FlipCameraIosIcon />}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 800,
+                                                color: '#0284c7',
+                                                bgcolor: '#f0f9ff',
+                                                border: '1px solid #bae6fd',
+                                                borderRadius: '8px',
+                                                py: 0.4,
+                                                px: 1.2,
+                                            }}
+                                        >
+                                            {facingMode === 'environment' ? 'Kamera Belakang' : 'Kamera Depan'}
+                                        </Button>
+                                    </Tooltip>
+                                )}
+                            </Box>
+
+                            {/* Camera Viewfinder Box */}
+                            <Box
+                                sx={{
+                                    position: 'relative',
+                                    borderRadius: '16px',
+                                    overflow: 'hidden',
+                                    bgcolor: '#0f172a',
+                                    border: '2px solid #334155',
+                                    boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)',
+                                    mb: 2.5,
+                                    minHeight: 280,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
                                 <Box
                                     id="qr-reader"
                                     sx={{
                                         width: '100%',
-                                        minHeight: 280,
-                                        bgcolor: '#000',
-                                        borderRadius: '12px',
-                                        overflow: 'hidden',
-                                        mb: 2,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
+                                        '& video': {
+                                            borderRadius: '14px',
+                                            maxHeight: '340px',
+                                            objectFit: 'cover',
+                                        },
+                                        '& #qr-reader__scan_region': {
+                                            borderRadius: '14px',
+                                        },
                                     }}
                                 />
 
-                                {cameraError && (
-                                    <Alert severity="error" sx={{ mb: 2, borderRadius: '10px', fontSize: '0.8rem' }}>
-                                        {cameraError}
-                                    </Alert>
+                                {!scanning && (
+                                    <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8' }}>
+                                        <QrCodeScannerIcon sx={{ fontSize: 56, color: '#475569', mb: 1 }} />
+                                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#cbd5e1' }}>
+                                            Kamera Sedang Tidak Aktif
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Klik tombol hijau di bawah untuk memulai scanner.
+                                        </Typography>
+                                    </Box>
                                 )}
+                            </Box>
 
-                                <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5 }}>
-                                    {!scanning ? (
-                                        <Button
-                                            variant="contained"
-                                            fullWidth
-                                            startIcon={<CameraAltIcon />}
-                                            onClick={startCamera}
-                                            sx={{
-                                                bgcolor: '#10b981',
-                                                color: '#fff',
-                                                fontWeight: 700,
-                                                borderRadius: '10px',
-                                                textTransform: 'none',
-                                                py: 1.2,
-                                                '&:hover': { bgcolor: '#059669' },
-                                            }}
-                                        >
-                                            Nyalakan Kamera Scanner
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="contained"
-                                            fullWidth
-                                            color="error"
-                                            startIcon={<StopIcon />}
-                                            onClick={stopCamera}
-                                            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, py: 1.2 }}
-                                        >
-                                            Matikan Kamera
-                                        </Button>
-                                    )}
-                                </Box>
+                            {cameraError && (
+                                <Alert severity="error" sx={{ mb: 2, borderRadius: '12px', fontSize: '0.8rem', fontWeight: 600 }}>
+                                    {cameraError}
+                                </Alert>
+                            )}
 
-                                <Divider sx={{ borderColor: 'rgba(51, 65, 85, 0.7)', my: 2 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b' }}>ATAU INPUT MANUAL</Typography>
-                                </Divider>
+                            {/* 3D Pushable Camera Control Button */}
+                            <Box sx={{ mb: 3 }}>
+                                {!scanning ? (
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        startIcon={<CameraAltIcon />}
+                                        onClick={() => startCamera(facingMode)}
+                                        sx={{
+                                            background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                            color: '#ffffff',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            py: 1.3,
+                                            boxShadow: '0 4px 0 #047857, 0 8px 20px rgba(16, 185, 129, 0.3)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
+                                                transform: 'translateY(-1px)',
+                                                boxShadow: '0 5px 0 #047857, 0 10px 22px rgba(16, 185, 129, 0.4)',
+                                            },
+                                            '&:active': {
+                                                transform: 'translateY(3px)',
+                                                boxShadow: '0 1px 0 #047857',
+                                            },
+                                            transition: 'all 0.12s ease',
+                                        }}
+                                    >
+                                        Nyalakan Kamera Scanner
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        color="error"
+                                        startIcon={<StopIcon />}
+                                        onClick={stopCamera}
+                                        sx={{
+                                            background: 'linear-gradient(180deg, #ef4444 0%, #dc2626 100%)',
+                                            color: '#ffffff',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            py: 1.3,
+                                            boxShadow: '0 4px 0 #991b1b, 0 8px 20px rgba(239, 68, 68, 0.3)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(180deg, #f87171 0%, #991b1b 100%)',
+                                                transform: 'translateY(-1px)',
+                                            },
+                                            '&:active': {
+                                                transform: 'translateY(3px)',
+                                                boxShadow: '0 1px 0 #991b1b',
+                                            },
+                                            transition: 'all 0.12s ease',
+                                        }}
+                                    >
+                                        Matikan Kamera
+                                    </Button>
+                                )}
+                            </Box>
 
-                                {/* Manual Input Form */}
-                                <form onSubmit={handleManualSubmit}>
-                                    <Stack direction="row" spacing={1}>
-                                        <TextField
-                                            placeholder="Ketik Kode Tiket (mis: TKT-EXC-...)"
-                                            value={manualCode}
-                                            onChange={(e) => setManualCode(e.target.value)}
-                                            size="small"
-                                            fullWidth
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    bgcolor: 'rgba(30, 41, 59, 0.8)',
-                                                    color: '#fff',
-                                                    borderRadius: '10px',
-                                                    fontSize: '0.85rem',
-                                                    fontFamily: 'monospace',
-                                                },
-                                            }}
-                                        />
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            disabled={processing || !manualCode.trim()}
-                                            sx={{
-                                                bgcolor: '#3b82f6',
-                                                color: '#fff',
-                                                fontWeight: 700,
-                                                borderRadius: '10px',
-                                                textTransform: 'none',
-                                                px: 2.5,
-                                                '&:hover': { bgcolor: '#2563eb' },
-                                            }}
-                                        >
-                                            {processing ? <CircularProgress size={18} color="inherit" /> : 'Check'}
-                                        </Button>
-                                    </Stack>
-                                </form>
-                            </CardContent>
-                        </Card>
+                            <Divider sx={{ my: 2 }}>
+                                <Chip label="ATAU KETIK KODE TIKET" size="small" sx={{ fontSize: '0.68rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#64748b' }} />
+                            </Divider>
+
+                            {/* 3D Manual Input Form */}
+                            <form onSubmit={handleManualSubmit}>
+                                <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                                    <TextField
+                                        placeholder="Ketik Kode Tiket (mis: TKT-EXC-26-XXXX)"
+                                        value={manualCode}
+                                        onChange={(e) => setManualCode(e.target.value)}
+                                        size="small"
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                bgcolor: '#f8fafc',
+                                                borderRadius: '12px',
+                                                fontSize: '0.85rem',
+                                                fontFamily: 'monospace',
+                                                fontWeight: 800,
+                                            },
+                                        }}
+                                    />
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        disabled={processing || !manualCode.trim()}
+                                        sx={{
+                                            background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
+                                            color: '#ffffff',
+                                            fontWeight: 900,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            px: 3,
+                                            boxShadow: '0 3px 0 #075985',
+                                            '&:hover': { bgcolor: '#0369a1', transform: 'translateY(-1px)' },
+                                            '&:active': { transform: 'translateY(2px)', boxShadow: '0 1px 0 #075985' },
+                                        }}
+                                    >
+                                        {processing ? <CircularProgress size={18} color="inherit" /> : 'Check'}
+                                    </Button>
+                                </Stack>
+                            </form>
+                        </Paper>
                     </Grid>
 
-                    {/* Right Column: Scan Result Popup & Lanyard Badge Print */}
+                    {/* RIGHT COLUMN: 3D REALTIME SCAN RESULT & LANYARD BADGE PRINT */}
                     <Grid item xs={12} md={6}>
                         {scanResult ? (
-                            <Card
+                            <Paper
+                                elevation={0}
                                 sx={{
-                                    borderRadius: '18px',
+                                    borderRadius: '20px',
                                     bgcolor: scanResult.success
-                                        ? 'rgba(16, 185, 129, 0.15)'
+                                        ? '#f0fdf4'
                                         : scanResult.status === 'already_checked_in'
-                                            ? 'rgba(234, 179, 8, 0.15)'
-                                            : 'rgba(239, 68, 68, 0.15)',
-                                    border: `2px solid ${scanResult.success ? '#10b981' : scanResult.status === 'already_checked_in' ? '#eab308' : '#ef4444'}`,
+                                            ? '#fffbeb'
+                                            : '#fef2f2',
+                                    border: `2px solid ${
+                                        scanResult.success
+                                            ? '#86efac'
+                                            : scanResult.status === 'already_checked_in'
+                                                ? '#fde68a'
+                                                : '#fecaca'
+                                    }`,
+                                    boxShadow: `0 4px 0 ${
+                                        scanResult.success
+                                            ? '#86efac'
+                                            : scanResult.status === 'already_checked_in'
+                                                ? '#fde68a'
+                                                : '#fecaca'
+                                    }, 0 12px 28px rgba(0,0,0,0.04)`,
                                     p: 3,
                                     textAlign: 'center',
                                     mb: 3,
@@ -360,48 +624,71 @@ export default function GateScanner({
                             >
                                 <Box sx={{ mb: 1.5 }}>
                                     {scanResult.success ? (
-                                        <CheckCircleIcon sx={{ fontSize: 56, color: '#10b981' }} />
+                                        <CheckCircleIcon sx={{ fontSize: 60, color: '#16a34a' }} />
                                     ) : scanResult.status === 'already_checked_in' ? (
-                                        <WarningAmberIcon sx={{ fontSize: 56, color: '#eab308' }} />
+                                        <WarningAmberIcon sx={{ fontSize: 60, color: '#d97706' }} />
                                     ) : (
-                                        <ErrorOutlineIcon sx={{ fontSize: 56, color: '#ef4444' }} />
+                                        <ErrorOutlineIcon sx={{ fontSize: 60, color: '#dc2626' }} />
                                     )}
                                 </Box>
 
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: '#fff', mb: 0.5 }}>
-                                    {scanResult.success ? 'CHECK-IN BERHASIL!' : 'CHECK-IN GAGAL'}
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 900,
+                                        color: scanResult.success ? '#166534' : scanResult.status === 'already_checked_in' ? '#92400e' : '#991b1b',
+                                        mb: 0.5,
+                                        letterSpacing: '-0.02em',
+                                    }}
+                                >
+                                    {scanResult.success ? 'CHECK-IN BERHASIL! 🎟️' : scanResult.status === 'already_checked_in' ? 'SUDAH PERNAH CHECK-IN' : 'CHECK-IN GAGAL'}
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#cbd5e1', mb: 2 }}>
+                                <Typography variant="body2" sx={{ color: '#475569', fontWeight: 600, mb: 2.5 }}>
                                     {scanResult.message}
                                 </Typography>
 
                                 {scanResult.ticket && (
-                                    <Paper sx={{ p: 2, bgcolor: 'rgba(15, 23, 42, 0.8)', borderRadius: '12px', textAlign: 'left', mb: 2.5 }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            p: 2.5,
+                                            bgcolor: '#ffffff',
+                                            borderRadius: '16px',
+                                            border: '1.5px solid #e2e8f0',
+                                            textAlign: 'left',
+                                            mb: 2.5,
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                                             <Chip
-                                                icon={scanResult.ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#000 !important' }} /> : undefined}
+                                                icon={scanResult.ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#92400e !important' }} /> : undefined}
                                                 label={scanResult.ticket.visitor_type === 'exclusive' ? 'EXCLUSIVE VIP' : 'NON-EXCLUSIVE'}
                                                 size="small"
                                                 sx={{
-                                                    bgcolor: scanResult.ticket.visitor_type === 'exclusive' ? '#eab308' : '#3b82f6',
-                                                    color: scanResult.ticket.visitor_type === 'exclusive' ? '#000' : '#fff',
-                                                    fontWeight: 800,
-                                                    fontSize: '0.7rem',
+                                                    bgcolor: scanResult.ticket.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
+                                                    color: scanResult.ticket.visitor_type === 'exclusive' ? '#92400e' : '#047857',
+                                                    border: `1px solid ${scanResult.ticket.visitor_type === 'exclusive' ? '#fde68a' : '#a7f3d0'}`,
+                                                    fontWeight: 900,
+                                                    fontSize: '0.72rem',
+                                                    height: 24,
                                                 }}
                                             />
-                                            <Typography variant="caption" sx={{ color: '#94a3b8', fontFamily: 'monospace' }}>
+                                            <Typography variant="body2" sx={{ color: '#094d42', fontFamily: 'monospace', fontWeight: 900 }}>
                                                 {scanResult.ticket.ticket_code}
                                             </Typography>
                                         </Box>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, color: '#fff' }}>
+
+                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem' }}>
                                             {scanResult.ticket.visitor_name}
                                         </Typography>
-                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>
-                                            {scanResult.ticket.visitor_email}
+                                        <Typography variant="body2" sx={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
+                                            <EmailIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_email}
                                         </Typography>
+
                                         {scanResult.ticket.visitor_institution && (
-                                            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 600, display: 'block', mt: 0.5 }}>
-                                                🏢 {scanResult.ticket.visitor_institution}
+                                            <Typography variant="body2" sx={{ color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
+                                                <BusinessIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_institution}
                                             </Typography>
                                         )}
                                     </Paper>
@@ -417,36 +704,80 @@ export default function GateScanner({
                                         fullWidth
                                         startIcon={<PrintIcon />}
                                         sx={{
-                                            bgcolor: scanResult.ticket.visitor_type === 'exclusive' ? '#eab308' : '#8b5cf6',
-                                            color: scanResult.ticket.visitor_type === 'exclusive' ? '#000' : '#fff',
-                                            fontWeight: 800,
-                                            borderRadius: '10px',
+                                            background: scanResult.ticket.visitor_type === 'exclusive'
+                                                ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)'
+                                                : 'linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%)',
+                                            color: '#ffffff',
+                                            fontWeight: 900,
+                                            fontSize: '0.88rem',
+                                            borderRadius: '12px',
                                             textTransform: 'none',
-                                            py: 1.2,
+                                            py: 1.3,
+                                            boxShadow: scanResult.ticket.visitor_type === 'exclusive' ? '0 4px 0 #92400e' : '0 4px 0 #5b21b6',
+                                            '&:hover': { transform: 'translateY(-1px)' },
+                                            '&:active': { transform: 'translateY(2px)' },
                                         }}
                                     >
-                                        Cetak Kartu Lanyard ({scanResult.ticket.visitor_type === 'exclusive' ? 'Exclusive VIP' : 'Non-Exclusive'})
+                                        🖨️ Cetak Kartu Lanyard ({scanResult.ticket.visitor_type === 'exclusive' ? 'Exclusive VIP' : 'Non-Exclusive'})
                                     </Button>
                                 )}
-                            </Card>
+                            </Paper>
                         ) : (
-                            <Card sx={{ borderRadius: '18px', bgcolor: 'rgba(15, 23, 42, 0.6)', border: '1px dashed rgba(51, 65, 85, 0.7)', p: 4, textAlign: 'center', mb: 3 }}>
-                                <QrCodeScannerIcon sx={{ fontSize: 50, color: '#475569', mb: 1 }} />
-                                <Typography variant="body2" sx={{ color: '#64748b' }}>
-                                    Arahkan kamera ke QR Code tiket penonton atau ketik kode tiket untuk memvalidasi.
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    borderRadius: '20px',
+                                    bgcolor: '#ffffff',
+                                    border: '2px dashed #cbd5e1',
+                                    p: 5,
+                                    textAlign: 'center',
+                                    mb: 3,
+                                }}
+                            >
+                                <QrCodeScannerIcon sx={{ fontSize: 64, color: '#94a3b8', mb: 1 }} />
+                                <Typography variant="h6" sx={{ fontWeight: 800, color: '#475569', mb: 0.5 }}>
+                                    Menunggu Pemindaian QR Code...
                                 </Typography>
-                            </Card>
+                                <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+                                    Arahkan kamera ke QR Code pada ponsel pengunjung atau ketik kode tiket untuk memvalidasi.
+                                </Typography>
+                            </Paper>
                         )}
 
-                        {/* Recent Scans Session List */}
-                        <Card sx={{ borderRadius: '18px', bgcolor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(51, 65, 85, 0.8)', p: 2 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#94a3b8', mb: 1.5 }}>
-                                Riwayat Scan Sesi Ini ({recentScans.length})
-                            </Typography>
+                        {/* RECENT SCANS SESSION LIST */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                borderRadius: '20px',
+                                bgcolor: '#ffffff',
+                                border: '1.5px solid #e2e8f0',
+                                boxShadow: '0 4px 0 #e2e8f0, 0 12px 28px rgba(0,0,0,0.03)',
+                                p: 2.5,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <HowToRegIcon sx={{ color: '#0284c7', fontSize: 20 }} />
+                                    Riwayat Scan Sesi Ini ({recentScans.length})
+                                </Typography>
+                                {recentScans.length > 0 && (
+                                    <Button
+                                        size="small"
+                                        onClick={() => setRecentScans([])}
+                                        startIcon={<DeleteSweepIcon />}
+                                        sx={{ color: '#94a3b8', fontSize: '0.72rem', textTransform: 'none', fontWeight: 700 }}
+                                    >
+                                        Bersihkan
+                                    </Button>
+                                )}
+                            </Box>
+
                             {recentScans.length === 0 ? (
-                                <Typography variant="caption" sx={{ color: '#475569' }}>Belum ada scan.</Typography>
+                                <Box sx={{ py: 3, textAlign: 'center', color: '#94a3b8' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 600 }}>Belum ada riwayat scan pada sesi ini.</Typography>
+                                </Box>
                             ) : (
-                                <Stack spacing={1}>
+                                <Stack spacing={1.2}>
                                     {recentScans.map((r, i) => (
                                         <Box
                                             key={i}
@@ -454,16 +785,17 @@ export default function GateScanner({
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 alignItems: 'center',
-                                                p: 1.2,
-                                                bgcolor: 'rgba(30, 41, 59, 0.5)',
-                                                borderRadius: '8px',
+                                                p: 1.4,
+                                                bgcolor: r.status === 'success' ? '#f0fdf4' : '#fef2f2',
+                                                border: `1px solid ${r.status === 'success' ? '#bbf7d0' : '#fecaca'}`,
+                                                borderRadius: '12px',
                                             }}
                                         >
                                             <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>
-                                                    {r.ticket?.visitor_name}
+                                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.88rem' }}>
+                                                    {r.ticket?.visitor_name || 'Pengunjung Tidak Dikenal'}
                                                 </Typography>
-                                                <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.7rem' }}>
+                                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block' }}>
                                                     {r.ticket?.ticket_code} &bull; {r.timestamp}
                                                 </Typography>
                                             </Box>
@@ -471,18 +803,19 @@ export default function GateScanner({
                                                 label={r.ticket?.visitor_type === 'exclusive' ? 'EXCLUSIVE' : 'NON-EXC'}
                                                 size="small"
                                                 sx={{
-                                                    bgcolor: r.ticket?.visitor_type === 'exclusive' ? 'rgba(234, 179, 8, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                                                    color: r.ticket?.visitor_type === 'exclusive' ? '#fbbf24' : '#60a5fa',
-                                                    fontWeight: 700,
+                                                    bgcolor: r.ticket?.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
+                                                    color: r.ticket?.visitor_type === 'exclusive' ? '#92400e' : '#047857',
+                                                    border: `1px solid ${r.ticket?.visitor_type === 'exclusive' ? '#fde68a' : '#a7f3d0'}`,
+                                                    fontWeight: 900,
                                                     fontSize: '0.65rem',
-                                                    height: 20,
+                                                    height: 22,
                                                 }}
                                             />
                                         </Box>
                                     ))}
                                 </Stack>
                             )}
-                        </Card>
+                        </Paper>
                     </Grid>
                 </Grid>
             </Container>
