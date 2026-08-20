@@ -59,9 +59,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import QrCodeIcon from '@mui/icons-material/QrCode';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 export default function VisitorTicketsIndex({
     tickets = {},
@@ -161,6 +160,14 @@ export default function VisitorTicketsIndex({
         navigateFilters({ status: val, page: 1 });
     };
 
+    const handleResetFilters = () => {
+        setSearchTerm('');
+        setTypeFilter('all');
+        setCheckedInFilter('all');
+        setStatusFilter('all');
+        navigateFilters({ search: '', type: 'all', checked_in: 'all', status: 'all', page: 1 });
+    };
+
     const handlePageChange = (_, page) => {
         navigateFilters({ page });
     };
@@ -168,10 +175,7 @@ export default function VisitorTicketsIndex({
     // Quick Clickable Stat Card Filter
     const handleStatCardClick = (statKey) => {
         if (statKey === 'all') {
-            setTypeFilter('all');
-            setCheckedInFilter('all');
-            setStatusFilter('all');
-            navigateFilters({ type: 'all', checked_in: 'all', status: 'all', page: 1 });
+            handleResetFilters();
         } else if (statKey === 'exclusive') {
             setTypeFilter('exclusive');
             navigateFilters({ type: 'exclusive', page: 1 });
@@ -331,86 +335,158 @@ export default function VisitorTicketsIndex({
         }
     };
 
-    const cellSx = { borderBottom: `1px solid ${c.cardBorder}`, py: 1.2, px: 1.5, fontSize: '0.825rem', color: c.textPrimary };
-    const headCellSx = { ...cellSx, fontWeight: 800, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', color: c.textMuted, bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f8fafc' };
-
     const statCards = [
-        { key: 'all', label: 'Total Pengunjung', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#10b981', bg: isDark ? 'rgba(16, 185, 129, 0.12)' : '#ecfdf5' },
-        { key: 'exclusive', label: 'Exclusive (Paid)', value: stats.exclusivePaidCount || 0, icon: <StarIcon />, color: '#eab308', bg: isDark ? 'rgba(234, 179, 8, 0.12)' : '#fefce8' },
-        { key: 'non_exclusive', label: 'Non-Exclusive (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#3b82f6', bg: isDark ? 'rgba(59, 130, 246, 0.12)' : '#eff6ff' },
-        { key: 'checked_in', label: 'Checked In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#06b6d4', bg: isDark ? 'rgba(6, 182, 212, 0.12)' : '#ecfeff' },
-        { key: 'pending', label: 'Pending Verif', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#f97316', bg: isDark ? 'rgba(249, 115, 22, 0.12)' : '#fff7ed' },
-        { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#8b5cf6', bg: isDark ? 'rgba(139, 92, 246, 0.12)' : '#f5f3ff' },
+        { key: 'all', label: 'Total Pengunjung', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'exclusive', label: 'Exclusive (VIP)', value: stats.exclusivePaidCount || 0, icon: <StarIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
+        { key: 'non_exclusive', label: 'Non-Exclusive (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
+        { key: 'checked_in', label: 'Checked In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
+        { key: 'pending', label: 'Pending Verif', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
+        { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
+
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all';
 
     return (
         <SidebarLayout>
             <Head title="Manajemen Tiket Penonton - Admin" />
 
-            <Box sx={{ py: 3, px: { xs: 2, sm: 3 } }}>
-                {/* Header Title & Quick Actions */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ py: 3, px: { xs: 2, sm: 3 }, maxWidth: '1440px', mx: 'auto' }}>
+                {/* 3D HEADER & QUICK ACTION BAR */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mb: 3,
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        p: 2.2,
+                        px: 3,
+                        borderRadius: '18px',
+                        bgcolor: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 4px 0 #e2e8f0, 0 10px 25px rgba(0,0,0,0.03)',
+                    }}
+                >
                     <Box>
-                        <Typography variant="h4" sx={{ fontWeight: 800, color: c.textPrimary, letterSpacing: '-0.02em', fontSize: { xs: '1.5rem', sm: '1.85rem' } }}>
-                            Tiket Penonton 🎫
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: c.textMuted, mt: 0.5 }}>
-                            Kelola pendaftaran pengunjung Exclusive & Non-Exclusive, verifikasi pembayaran, check-in gate, dan cetak ID Card.
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.4 }}>
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    fontWeight: 900,
+                                    color: '#0f172a',
+                                    letterSpacing: '-0.03em',
+                                    fontSize: { xs: '1.4rem', sm: '1.75rem' },
+                                }}
+                            >
+                                Tiket Penonton
+                            </Typography>
+                            <Chip
+                                label="LIVE SYSTEM"
+                                size="small"
+                                sx={{
+                                    bgcolor: '#dcfce7',
+                                    color: '#15803d',
+                                    fontWeight: 900,
+                                    fontSize: '0.65rem',
+                                    height: 20,
+                                    border: '1px solid #86efac',
+                                }}
+                            />
+                        </Box>
+                        <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.84rem' }}>
+                            Pusat kendali pendaftaran pengunjung, verifikasi pembayaran, cetak lanyard ID Card, & gate check-in.
                         </Typography>
                     </Box>
 
+                    {/* 3D Tactile Action Buttons */}
                     <Stack direction="row" spacing={1.5} flexWrap="wrap">
                         <Button
                             variant="contained"
                             startIcon={<PersonAddIcon />}
                             onClick={() => setOnsiteModalOpen(true)}
                             sx={{
-                                bgcolor: '#10b981',
-                                color: '#fff',
-                                fontWeight: 800,
-                                borderRadius: '10px',
+                                background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                color: '#ffffff',
+                                fontWeight: 900,
+                                fontSize: '0.82rem',
+                                borderRadius: '12px',
                                 textTransform: 'none',
                                 px: 2.2,
-                                py: 0.9,
-                                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-                                '&:hover': { bgcolor: '#059669' },
+                                py: 1,
+                                boxShadow: '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.3)',
+                                '&:hover': {
+                                    background: 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.4)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(3px)',
+                                    boxShadow: '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
+                                },
+                                transition: 'all 0.12s ease',
                             }}
                         >
                             + Registrasi Onsite
                         </Button>
+
                         <Button
                             component={Link}
                             href={route('admin.gateScanner')}
                             variant="contained"
                             startIcon={<QrCodeScannerIcon />}
                             sx={{
-                                bgcolor: '#0284c7',
-                                color: '#fff',
-                                fontWeight: 800,
-                                borderRadius: '10px',
+                                background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
+                                color: '#ffffff',
+                                fontWeight: 900,
+                                fontSize: '0.82rem',
+                                borderRadius: '12px',
                                 textTransform: 'none',
                                 px: 2.2,
-                                py: 0.9,
-                                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)',
-                                '&:hover': { bgcolor: '#0369a1' },
+                                py: 1,
+                                boxShadow: '0 4px 0 #075985, 0 8px 18px rgba(2, 132, 199, 0.3)',
+                                '&:hover': {
+                                    background: 'linear-gradient(180deg, #38bdf8 0%, #075985 100%)',
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 5px 0 #075985, 0 10px 20px rgba(2, 132, 199, 0.4)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(3px)',
+                                    boxShadow: '0 1px 0 #075985, 0 3px 6px rgba(2, 132, 199, 0.3)',
+                                },
+                                transition: 'all 0.12s ease',
                             }}
                         >
                             Gate Scanner
                         </Button>
+
                         <Button
                             component="a"
                             href={route('admin.visitorTickets.export')}
                             variant="outlined"
                             startIcon={<DownloadIcon />}
                             sx={{
-                                borderColor: c.cardBorder,
-                                color: c.textPrimary,
-                                fontWeight: 700,
-                                borderRadius: '10px',
+                                bgcolor: '#ffffff',
+                                borderColor: '#cbd5e1',
+                                color: '#334155',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                borderRadius: '12px',
                                 textTransform: 'none',
                                 px: 2,
-                                py: 0.9,
-                                '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.05)' },
+                                py: 1,
+                                boxShadow: '0 3px 0 #e2e8f0',
+                                '&:hover': {
+                                    borderColor: '#0f172a',
+                                    bgcolor: '#f8fafc',
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 4px 0 #cbd5e1',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(2px)',
+                                    boxShadow: '0 1px 0 #cbd5e1',
+                                },
+                                transition: 'all 0.12s ease',
                             }}
                         >
                             Export CSV
@@ -418,144 +494,215 @@ export default function VisitorTicketsIndex({
                     </Stack>
                 </Box>
 
-                {/* Clickable Stat Cards */}
+                {/* 3D TACTILE STAT CARDS */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                    {statCards.map((s) => (
-                        <Grid item xs={6} sm={4} md={2} key={s.label}>
-                            <Card
-                                elevation={0}
-                                onClick={() => handleStatCardClick(s.key)}
-                                sx={{
-                                    borderRadius: '14px',
-                                    border: `1px solid ${c.cardBorder}`,
-                                    bgcolor: c.cardBg,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    '&:hover': {
-                                        transform: 'translateY(-2px)',
-                                        borderColor: s.color,
-                                        boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-                                    },
-                                }}
-                            >
-                                <CardContent sx={{ p: 1.8, '&:last-child': { pb: 1.8 } }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
-                                        <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: s.bg, color: s.color, display: 'flex' }}>
-                                            {React.cloneElement(s.icon, { sx: { fontSize: 18 } })}
-                                        </Box>
-                                        <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, fontSize: '0.68rem', lineHeight: 1.2 }}>
-                                            {s.label}
-                                        </Typography>
-                                    </Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 900, color: c.textPrimary, fontSize: '1.05rem', letterSpacing: '-0.02em' }}>
-                                        {s.value}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
+                    {statCards.map((s) => {
+                        const isCardActive = 
+                            (s.key === 'exclusive' && typeFilter === 'exclusive') ||
+                            (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
+                            (s.key === 'checked_in' && checkedInFilter === 'yes') ||
+                            (s.key === 'pending' && statusFilter === 'pending');
 
-                {/* Filter Bar */}
-                <Card elevation={0} sx={{ borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, mb: 3 }}>
-                    <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    placeholder="Cari nama, email, kode tiket, instansi..."
-                                    value={searchTerm}
-                                    onChange={(e) => handleSearchChange(e.target.value)}
-                                    size="small"
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchIcon sx={{ color: c.textMuted, fontSize: 18 }} />
-                                            </InputAdornment>
-                                        ),
-                                    }}
+                        return (
+                            <Grid item xs={6} sm={4} md={2} key={s.label}>
+                                <Paper
+                                    elevation={0}
+                                    onClick={() => handleStatCardClick(s.key)}
                                     sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            borderRadius: '10px',
-                                            bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f8fafc',
+                                        p: 2,
+                                        borderRadius: '16px',
+                                        background: s.bg,
+                                        border: `1.5px solid ${isCardActive ? s.color : '#e2e8f0'}`,
+                                        boxShadow: isCardActive
+                                            ? `0 4px 0 ${s.shadow}, 0 8px 20px rgba(0,0,0,0.08)`
+                                            : `0 4px 0 #e2e8f0, 0 6px 15px rgba(0,0,0,0.02)`,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.15s ease',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: `0 6px 0 ${s.shadow}, 0 10px 22px rgba(0,0,0,0.08)`,
+                                            borderColor: s.color,
+                                        },
+                                        '&:active': {
+                                            transform: 'translateY(2px)',
+                                            boxShadow: `0 2px 0 ${s.shadow}`,
                                         },
                                     }}
-                                />
-                            </Grid>
-                            <Grid item xs={6} sm={2.5}>
-                                <FormControl size="small" fullWidth>
-                                    <InputLabel sx={{ fontSize: '0.82rem' }}>Kategori</InputLabel>
-                                    <Select
-                                        value={typeFilter}
-                                        label="Kategori"
-                                        onChange={(e) => handleTypeFilterChange(e.target.value)}
-                                        sx={{ borderRadius: '10px', fontSize: '0.82rem' }}
-                                    >
-                                        <MenuItem value="all">Semua Kategori</MenuItem>
-                                        <MenuItem value="exclusive">Exclusive (VIP)</MenuItem>
-                                        <MenuItem value="non_exclusive">Non-Exclusive (Free)</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={6} sm={2.5}>
-                                <FormControl size="small" fullWidth>
-                                    <InputLabel sx={{ fontSize: '0.82rem' }}>Status Check-In</InputLabel>
-                                    <Select
-                                        value={checkedInFilter}
-                                        label="Status Check-In"
-                                        onChange={(e) => handleCheckedInFilterChange(e.target.value)}
-                                        sx={{ borderRadius: '10px', fontSize: '0.82rem' }}
-                                    >
-                                        <MenuItem value="all">Semua Status</MenuItem>
-                                        <MenuItem value="yes">Sudah Check-In</MenuItem>
-                                        <MenuItem value="no">Belum Check-In</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={3}>
-                                <FormControl size="small" fullWidth>
-                                    <InputLabel sx={{ fontSize: '0.82rem' }}>Status Tiket</InputLabel>
-                                    <Select
-                                        value={statusFilter}
-                                        label="Status Tiket"
-                                        onChange={(e) => handleStatusFilterChange(e.target.value)}
-                                        sx={{ borderRadius: '10px', fontSize: '0.82rem' }}
-                                    >
-                                        <MenuItem value="all">Semua Status Tiket</MenuItem>
-                                        <MenuItem value="active">Active (Aktif)</MenuItem>
-                                        <MenuItem value="pending">Pending (Menunggu Bayar)</MenuItem>
-                                        <MenuItem value="cancelled">Cancelled (Batal)</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-                </Card>
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                                        <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                            {s.label}
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                width: 28,
+                                                height: 28,
+                                                borderRadius: '8px',
+                                                bgcolor: s.color,
+                                                color: '#ffffff',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: `0 2px 6px ${s.shadow}`,
+                                            }}
+                                        >
+                                            {React.cloneElement(s.icon, { sx: { fontSize: 16 } })}
+                                        </Box>
+                                    </Box>
 
-                {/* FLOATING BULK ACTION TOOLBAR */}
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: 900,
+                                            color: '#0f172a',
+                                            fontSize: { xs: '1rem', sm: '1.15rem' },
+                                            letterSpacing: '-0.02em',
+                                            lineHeight: 1.2,
+                                        }}
+                                    >
+                                        {s.value}
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+
+                {/* 3D TACTILE SEARCH & FILTER CONTROL BAR */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2,
+                        borderRadius: '16px',
+                        bgcolor: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 4px 0 #e2e8f0, 0 8px 20px rgba(0,0,0,0.02)',
+                        mb: 3,
+                    }}
+                >
+                    <Grid container spacing={1.5} alignItems="center">
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                placeholder="Cari nama, email, kode tiket, instansi..."
+                                value={searchTerm}
+                                onChange={(e) => handleSearchChange(e.target.value)}
+                                size="small"
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: '#094d42', fontSize: 19 }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '10px',
+                                        bgcolor: '#f8fafc',
+                                        fontSize: '0.84rem',
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={6} sm={3} md={2.2}>
+                            <FormControl size="small" fullWidth>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Kategori</InputLabel>
+                                <Select
+                                    value={typeFilter}
+                                    label="Kategori"
+                                    onChange={(e) => handleTypeFilterChange(e.target.value)}
+                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                                >
+                                    <MenuItem value="all">Semua Kategori</MenuItem>
+                                    <MenuItem value="exclusive">⭐ Exclusive (VIP)</MenuItem>
+                                    <MenuItem value="non_exclusive">🎟️ Non-Exclusive (Free)</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6} sm={3} md={2.2}>
+                            <FormControl size="small" fullWidth>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Gate</InputLabel>
+                                <Select
+                                    value={checkedInFilter}
+                                    label="Status Gate"
+                                    onChange={(e) => handleCheckedInFilterChange(e.target.value)}
+                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                                >
+                                    <MenuItem value="all">Semua Status</MenuItem>
+                                    <MenuItem value="yes">✅ Sudah Check-In</MenuItem>
+                                    <MenuItem value="no">⏳ Belum Check-In</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6} sm={3} md={2.2}>
+                            <FormControl size="small" fullWidth>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Tiket</InputLabel>
+                                <Select
+                                    value={statusFilter}
+                                    label="Status Tiket"
+                                    onChange={(e) => handleStatusFilterChange(e.target.value)}
+                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                                >
+                                    <MenuItem value="all">Semua Status</MenuItem>
+                                    <MenuItem value="active">Active (Aktif)</MenuItem>
+                                    <MenuItem value="pending">Pending (Menunggu Bayar)</MenuItem>
+                                    <MenuItem value="cancelled">Cancelled (Batal)</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6} sm={3} md={1.4}>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                onClick={handleResetFilters}
+                                disabled={!hasActiveFilters}
+                                startIcon={<RestartAltIcon />}
+                                size="small"
+                                sx={{
+                                    borderRadius: '10px',
+                                    borderColor: '#cbd5e1',
+                                    color: '#475569',
+                                    textTransform: 'none',
+                                    fontWeight: 700,
+                                    fontSize: '0.78rem',
+                                    py: 0.9,
+                                    bgcolor: '#f8fafc',
+                                    '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' },
+                                }}
+                            >
+                                Reset
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Paper>
+
+                {/* FLOATING 3D BULK ACTION TOOLBAR */}
                 {selectedIds.length > 0 && (
                     <Paper
-                        elevation={4}
+                        elevation={0}
                         sx={{
-                            p: 1.5,
+                            p: 1.6,
                             px: 2.5,
-                            borderRadius: '12px',
-                            bgcolor: isDark ? '#1e293b' : '#0f172a',
+                            borderRadius: '14px',
+                            bgcolor: '#0f172a',
                             color: '#ffffff',
-                            mb: 2,
+                            mb: 2.5,
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             flexWrap: 'wrap',
                             gap: 1.5,
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            border: '1.5px solid #334155',
+                            boxShadow: '0 4px 0 #020617, 0 12px 24px rgba(0,0,0,0.2)',
                         }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <Chip
-                                label={`${selectedIds.length} Dipilih`}
+                                label={`${selectedIds.length} Tiket Dipilih`}
                                 size="small"
-                                sx={{ bgcolor: '#38bdf8', color: '#0f172a', fontWeight: 900 }}
+                                sx={{ bgcolor: '#38bdf8', color: '#0f172a', fontWeight: 900, fontSize: '0.75rem' }}
                             />
                             <Typography variant="body2" sx={{ fontWeight: 600, color: '#cbd5e1', display: { xs: 'none', sm: 'block' } }}>
                                 Aksi massal untuk tiket yang dicentang:
@@ -569,7 +716,15 @@ export default function VisitorTicketsIndex({
                                 startIcon={<CheckIcon />}
                                 onClick={() => handleBulkAction('verify_payment')}
                                 disabled={bulkActionProcessing}
-                                sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 800, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
+                                sx={{
+                                    bgcolor: '#10b981',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    boxShadow: '0 3px 0 #047857',
+                                    '&:hover': { bgcolor: '#059669' },
+                                }}
                             >
                                 Verifikasi Bayar
                             </Button>
@@ -579,7 +734,15 @@ export default function VisitorTicketsIndex({
                                 startIcon={<HowToRegIcon />}
                                 onClick={() => handleBulkAction('check_in')}
                                 disabled={bulkActionProcessing}
-                                sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 800, borderRadius: '8px', '&:hover': { bgcolor: '#0369a1' } }}
+                                sx={{
+                                    bgcolor: '#0284c7',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    boxShadow: '0 3px 0 #0369a1',
+                                    '&:hover': { bgcolor: '#0369a1' },
+                                }}
                             >
                                 Check-In Massal
                             </Button>
@@ -588,7 +751,7 @@ export default function VisitorTicketsIndex({
                                 variant="outlined"
                                 onClick={() => handleBulkAction('undo_check_in')}
                                 disabled={bulkActionProcessing}
-                                sx={{ borderColor: '#64748b', color: '#cbd5e1', textTransform: 'none', fontWeight: 700, borderRadius: '8px' }}
+                                sx={{ borderColor: '#64748b', color: '#cbd5e1', textTransform: 'none', fontWeight: 800, borderRadius: '10px' }}
                             >
                                 Batal Check-In
                             </Button>
@@ -599,7 +762,7 @@ export default function VisitorTicketsIndex({
                                 startIcon={<DeleteOutlineIcon />}
                                 onClick={() => handleBulkAction('delete')}
                                 disabled={bulkActionProcessing}
-                                sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px' }}
+                                sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '10px', boxShadow: '0 3px 0 #991b1b' }}
                             >
                                 Hapus
                             </Button>
@@ -607,37 +770,51 @@ export default function VisitorTicketsIndex({
                     </Paper>
                 )}
 
-                {/* Tickets Table */}
-                <Card elevation={0} sx={{ borderRadius: '14px', border: `1px solid ${c.cardBorder}`, bgcolor: c.cardBg, overflow: 'hidden' }}>
+                {/* 3D TACTILE TICKETS TABLE CONTAINER */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        borderRadius: '18px',
+                        bgcolor: '#ffffff',
+                        border: '1.5px solid #e2e8f0',
+                        boxShadow: '0 4px 0 #e2e8f0, 0 12px 28px rgba(0,0,0,0.03)',
+                        overflow: 'hidden',
+                    }}
+                >
                     <TableContainer>
                         <Table size="small">
                             <TableHead>
-                                <TableRow>
-                                    <TableCell padding="checkbox" sx={headCellSx}>
+                                <TableRow sx={{ bgcolor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                                    <TableCell padding="checkbox" sx={{ py: 1.5, px: 1.5 }}>
                                         <Checkbox
                                             size="small"
                                             indeterminate={selectedIds.length > 0 && selectedIds.length < ticketsData.length}
                                             checked={ticketsData.length > 0 && selectedIds.length === ticketsData.length}
                                             onChange={handleSelectAll}
-                                            sx={{ p: 0.5 }}
+                                            sx={{ p: 0.5, color: '#94a3b8', '&.Mui-checked': { color: '#094d42' } }}
                                         />
                                     </TableCell>
-                                    <TableCell sx={headCellSx}>KODE TIKET</TableCell>
-                                    <TableCell sx={headCellSx}>PENGUNJUNG</TableCell>
-                                    <TableCell sx={headCellSx}>KATEGORI</TableCell>
-                                    <TableCell sx={headCellSx}>SUMBER</TableCell>
-                                    <TableCell sx={headCellSx}>STATUS TIKET</TableCell>
-                                    <TableCell sx={headCellSx}>PEMBAYARAN</TableCell>
-                                    <TableCell sx={headCellSx}>CHECK-IN GATE</TableCell>
-                                    <TableCell sx={{ ...headCellSx, textAlign: 'center' }}>AKSI</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>KODE TIKET</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PENGUNJUNG</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>KATEGORI</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>SUMBER</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>STATUS TIKET</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PEMBAYARAN</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CHECK-IN GATE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center' }}>AKSI</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {ticketsData.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={9} align="center" sx={{ ...cellSx, py: 6, color: c.textMuted }}>
-                                            <ConfirmationNumberIcon sx={{ fontSize: 44, opacity: 0.25, mb: 1, display: 'block', mx: 'auto' }} />
-                                            Belum ada data tiket penonton yang sesuai dengan filter.
+                                        <TableCell colSpan={9} align="center" sx={{ py: 8, color: '#94a3b8' }}>
+                                            <ConfirmationNumberIcon sx={{ fontSize: 50, opacity: 0.25, mb: 1, display: 'block', mx: 'auto' }} />
+                                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#64748b' }}>
+                                                Belum ada data tiket pengunjung yang sesuai dengan filter.
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                                                Gunakan tombol "Registrasi Onsite" untuk menambahkan tiket baru.
+                                            </Typography>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -650,63 +827,118 @@ export default function VisitorTicketsIndex({
                                                 hover
                                                 selected={isSelected}
                                                 sx={{
-                                                    '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb' },
+                                                    borderBottom: '1px solid #f1f5f9',
+                                                    '&:hover': { bgcolor: '#f8fafc' },
+                                                    '&.Mui-selected': { bgcolor: '#f0fdf4 !important' },
                                                 }}
                                             >
-                                                <TableCell padding="checkbox" sx={cellSx}>
+                                                <TableCell padding="checkbox" sx={{ py: 1.2, px: 1.5 }}>
                                                     <Checkbox
                                                         size="small"
                                                         checked={isSelected}
                                                         onChange={() => handleSelectRow(t.id)}
-                                                        sx={{ p: 0.5 }}
+                                                        sx={{ p: 0.5, color: '#cbd5e1', '&.Mui-checked': { color: '#094d42' } }}
                                                     />
                                                 </TableCell>
 
-                                                <TableCell sx={cellSx}>
-                                                    <Typography variant="body2" sx={{ fontWeight: 900, fontFamily: 'monospace', color: isExc ? '#d97706' : '#0284c7', fontSize: '0.84rem' }}>
+                                                {/* KODE TIKET */}
+                                                <TableCell sx={{ py: 1.2 }}>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'inline-block',
+                                                            bgcolor: isExc ? '#fef3c7' : '#f0f9ff',
+                                                            border: `1px solid ${isExc ? '#fde68a' : '#bae6fd'}`,
+                                                            color: isExc ? '#92400e' : '#0369a1',
+                                                            px: 1,
+                                                            py: 0.3,
+                                                            borderRadius: '6px',
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: 900,
+                                                            fontSize: '0.8rem',
+                                                        }}
+                                                    >
                                                         {t.ticket_code}
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.7rem' }}>
+                                                    </Box>
+                                                    <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.68rem', mt: 0.3 }}>
                                                         {new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </Typography>
                                                 </TableCell>
 
-                                                <TableCell sx={cellSx}>
+                                                {/* PENGUNJUNG */}
+                                                <TableCell sx={{ py: 1.2 }}>
                                                     <Typography
                                                         variant="body2"
                                                         onClick={() => setDetailModal({ open: true, ticket: t })}
                                                         sx={{
-                                                            fontWeight: 800,
-                                                            color: c.textPrimary,
+                                                            fontWeight: 900,
+                                                            color: '#0f172a',
                                                             cursor: 'pointer',
-                                                            '&:hover': { color: '#10b981', textDecoration: 'underline' }
+                                                            fontSize: '0.88rem',
+                                                            '&:hover': { color: '#094d42', textDecoration: 'underline' }
                                                         }}
                                                     >
                                                         {t.visitor_name}
                                                     </Typography>
-                                                    <Typography variant="caption" sx={{ color: c.textMuted, display: 'block', fontSize: '0.72rem' }}>
+                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
                                                         {t.visitor_email}
                                                     </Typography>
-                                                    {t.visitor_phone && (
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.7rem', display: 'block' }}>
-                                                            📞 {t.visitor_phone}
-                                                        </Typography>
-                                                    )}
-                                                    {t.visitor_institution && (
-                                                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 600, display: 'block', fontSize: '0.7rem' }}>
-                                                            🏢 {t.visitor_institution}
-                                                        </Typography>
-                                                    )}
+                                                    <Box sx={{ display: 'flex', gap: 1, mt: 0.3, flexWrap: 'wrap' }}>
+                                                        {t.visitor_phone && (
+                                                            <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.68rem', fontWeight: 700 }}>
+                                                                📞 {t.visitor_phone}
+                                                            </Typography>
+                                                        )}
+                                                        {t.visitor_institution && (
+                                                            <Typography variant="caption" sx={{ color: '#15803d', fontWeight: 700, fontSize: '0.68rem' }}>
+                                                                🏢 {t.visitor_institution}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
                                                 </TableCell>
 
-                                                <TableCell sx={cellSx}>
+                                                {/* KATEGORI */}
+                                                <TableCell sx={{ py: 1.2 }}>
                                                     <Chip
                                                         icon={isExc ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
                                                         label={isExc ? 'EXCLUSIVE' : 'NON-EXCLUSIVE'}
                                                         size="small"
                                                         sx={{
                                                             bgcolor: isExc ? '#fef3c7' : '#ecfdf5',
+                                                            border: `1px solid ${isExc ? '#fde68a' : '#a7f3d0'}`,
                                                             color: isExc ? '#92400e' : '#047857',
+                                                            fontWeight: 900,
+                                                            fontSize: '0.65rem',
+                                                            height: 22,
+                                                            boxShadow: isExc ? '0 2px 0 #fde68a' : '0 2px 0 #a7f3d0',
+                                                        }}
+                                                    />
+                                                </TableCell>
+
+                                                {/* SUMBER */}
+                                                <TableCell sx={{ py: 1.2 }}>
+                                                    <Chip
+                                                        label={t.registration_source === 'admin_onsite' ? 'Onsite' : 'Online'}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: t.registration_source === 'admin_onsite' ? '#f5f3ff' : '#f8fafc',
+                                                            border: `1px solid ${t.registration_source === 'admin_onsite' ? '#ddd6fe' : '#e2e8f0'}`,
+                                                            color: t.registration_source === 'admin_onsite' ? '#7c3aed' : '#475569',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.65rem',
+                                                            height: 20,
+                                                        }}
+                                                    />
+                                                </TableCell>
+
+                                                {/* STATUS TIKET */}
+                                                <TableCell sx={{ py: 1.2 }}>
+                                                    <Chip
+                                                        label={t.status.toUpperCase()}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: t.status === 'active' ? '#dcfce7' : t.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                                            border: `1px solid ${t.status === 'active' ? '#86efac' : t.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                                            color: t.status === 'active' ? '#15803d' : t.status === 'pending' ? '#b45309' : '#b91c1c',
                                                             fontWeight: 900,
                                                             fontSize: '0.64rem',
                                                             height: 20,
@@ -714,38 +946,11 @@ export default function VisitorTicketsIndex({
                                                     />
                                                 </TableCell>
 
-                                                <TableCell sx={cellSx}>
-                                                    <Chip
-                                                        label={t.registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Web'}
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor: t.registration_source === 'admin_onsite' ? '#f5f3ff' : '#f1f5f9',
-                                                            color: t.registration_source === 'admin_onsite' ? '#7c3aed' : '#475569',
-                                                            fontWeight: 700,
-                                                            fontSize: '0.64rem',
-                                                            height: 20,
-                                                        }}
-                                                    />
-                                                </TableCell>
-
-                                                <TableCell sx={cellSx}>
-                                                    <Chip
-                                                        label={t.status.toUpperCase()}
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor: t.status === 'active' ? '#dcfce7' : t.status === 'pending' ? '#fef3c7' : '#fee2e2',
-                                                            color: t.status === 'active' ? '#15803d' : t.status === 'pending' ? '#b45309' : '#b91c1c',
-                                                            fontWeight: 800,
-                                                            fontSize: '0.64rem',
-                                                            height: 20,
-                                                        }}
-                                                    />
-                                                </TableCell>
-
-                                                <TableCell sx={cellSx}>
+                                                {/* PEMBAYARAN */}
+                                                <TableCell sx={{ py: 1.2 }}>
                                                     {t.payment ? (
                                                         <Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, display: 'block', color: c.textPrimary, fontSize: '0.78rem' }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem' }}>
                                                                 Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
                                                             </Typography>
                                                             <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2 }}>
@@ -757,7 +962,8 @@ export default function VisitorTicketsIndex({
                                                                         fontSize: '0.58rem',
                                                                         bgcolor: t.payment.status === 'approved' ? '#dcfce7' : t.payment.status === 'pending' ? '#fef3c7' : '#fee2e2',
                                                                         color: t.payment.status === 'approved' ? '#166534' : t.payment.status === 'pending' ? '#92400e' : '#991b1b',
-                                                                        fontWeight: 800,
+                                                                        fontWeight: 900,
+                                                                        border: `1px solid ${t.payment.status === 'approved' ? '#86efac' : t.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
                                                                     }}
                                                                 />
                                                                 {t.payment.proof_of_payment && (
@@ -767,21 +973,21 @@ export default function VisitorTicketsIndex({
                                                                             onClick={() => setProofModal({ open: true, payment: t.payment })}
                                                                             sx={{ p: 0.2, color: '#0284c7' }}
                                                                         >
-                                                                            <VisibilityIcon sx={{ fontSize: 14 }} />
+                                                                            <VisibilityIcon sx={{ fontSize: 15 }} />
                                                                         </IconButton>
                                                                     </Tooltip>
                                                                 )}
                                                             </Stack>
                                                         </Box>
                                                     ) : (
-                                                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700, fontSize: '0.75rem' }}>
+                                                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem' }}>
                                                             GRATIS
                                                         </Typography>
                                                     )}
                                                 </TableCell>
 
                                                 {/* CHECK-IN GATE 1-CLICK TOGGLE */}
-                                                <TableCell sx={cellSx}>
+                                                <TableCell sx={{ py: 1.2 }}>
                                                     {t.checked_in ? (
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                                             <Chip
@@ -791,10 +997,12 @@ export default function VisitorTicketsIndex({
                                                                 onClick={() => handleToggleCheckIn(t.id)}
                                                                 sx={{
                                                                     bgcolor: '#dcfce7',
+                                                                    border: '1px solid #86efac',
                                                                     color: '#15803d',
                                                                     fontWeight: 900,
-                                                                    fontSize: '0.62rem',
-                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    height: 22,
+                                                                    boxShadow: '0 2px 0 #86efac',
                                                                     cursor: 'pointer',
                                                                     '&:hover': { bgcolor: '#bbf7d0' },
                                                                 }}
@@ -808,28 +1016,40 @@ export default function VisitorTicketsIndex({
                                                             onClick={() => handleToggleCheckIn(t.id)}
                                                             sx={{
                                                                 borderColor: '#cbd5e1',
-                                                                color: '#475569',
-                                                                fontSize: '0.68rem',
-                                                                py: 0.2,
-                                                                px: 1,
-                                                                borderRadius: '6px',
+                                                                color: '#334155',
+                                                                fontSize: '0.7rem',
+                                                                py: 0.3,
+                                                                px: 1.2,
+                                                                borderRadius: '8px',
                                                                 textTransform: 'none',
-                                                                fontWeight: 700,
-                                                                '&:hover': { borderColor: '#10b981', color: '#10b981', bgcolor: 'rgba(16,185,129,0.05)' }
+                                                                fontWeight: 800,
+                                                                bgcolor: '#f8fafc',
+                                                                boxShadow: '0 2px 0 #e2e8f0',
+                                                                '&:hover': {
+                                                                    borderColor: '#10b981',
+                                                                    color: '#10b981',
+                                                                    bgcolor: '#f0fdf4',
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: '0 3px 0 #86efac',
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(1px)',
+                                                                    boxShadow: '0 1px 0 #86efac',
+                                                                }
                                                             }}
                                                         >
                                                             Check In
                                                         </Button>
                                                     )}
                                                     {t.checked_in_at && (
-                                                        <Typography variant="caption" sx={{ color: c.textMuted, display: 'block', fontSize: '0.65rem', mt: 0.2 }}>
+                                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.65rem', mt: 0.3 }}>
                                                             {new Date(t.checked_in_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                                                         </Typography>
                                                     )}
                                                 </TableCell>
 
-                                                {/* ACTION BUTTONS */}
-                                                <TableCell sx={{ ...cellSx, textAlign: 'center' }}>
+                                                {/* 3D ACTION BUTTONS */}
+                                                <TableCell sx={{ py: 1.2, textAlign: 'center' }}>
                                                     <Stack direction="row" spacing={0.4} justifyContent="center">
                                                         {/* Verify/Reject for Pending Payments */}
                                                         {t.payment && t.payment.status === 'pending' && (
@@ -838,7 +1058,7 @@ export default function VisitorTicketsIndex({
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleVerifyPayment(t.payment.id)}
-                                                                        sx={{ color: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.1)', p: 0.5 }}
+                                                                        sx={{ color: '#10b981', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', p: 0.5, borderRadius: '8px' }}
                                                                     >
                                                                         <CheckIcon sx={{ fontSize: 15 }} />
                                                                     </IconButton>
@@ -847,7 +1067,7 @@ export default function VisitorTicketsIndex({
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => setRejectModal({ open: true, paymentId: t.payment.id, notes: '' })}
-                                                                        sx={{ color: '#ef4444', bgcolor: 'rgba(239, 68, 68, 0.1)', p: 0.5 }}
+                                                                        sx={{ color: '#ef4444', bgcolor: '#fef2f2', border: '1px solid #fecaca', p: 0.5, borderRadius: '8px' }}
                                                                     >
                                                                         <CloseIcon sx={{ fontSize: 15 }} />
                                                                     </IconButton>
@@ -860,7 +1080,7 @@ export default function VisitorTicketsIndex({
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => setDetailModal({ open: true, ticket: t })}
-                                                                sx={{ color: '#0284c7', bgcolor: 'rgba(2, 132, 199, 0.1)', p: 0.5 }}
+                                                                sx={{ color: '#0284c7', bgcolor: '#f0f9ff', border: '1px solid #bae6fd', p: 0.5, borderRadius: '8px' }}
                                                             >
                                                                 <VisibilityIcon sx={{ fontSize: 15 }} />
                                                             </IconButton>
@@ -875,7 +1095,7 @@ export default function VisitorTicketsIndex({
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     size="small"
-                                                                    sx={{ color: '#16a34a', bgcolor: 'rgba(22, 163, 74, 0.1)', p: 0.5 }}
+                                                                    sx={{ color: '#16a34a', bgcolor: '#f0fdf4', border: '1px solid #bbf7d0', p: 0.5, borderRadius: '8px' }}
                                                                 >
                                                                     <WhatsAppIcon sx={{ fontSize: 15 }} />
                                                                 </IconButton>
@@ -889,7 +1109,7 @@ export default function VisitorTicketsIndex({
                                                                 href={route('admin.visitorTickets.printBadge', t.id)}
                                                                 target="_blank"
                                                                 size="small"
-                                                                sx={{ color: '#8b5cf6', bgcolor: 'rgba(139, 92, 246, 0.1)', p: 0.5 }}
+                                                                sx={{ color: '#7c3aed', bgcolor: '#f5f3ff', border: '1px solid #ddd6fe', p: 0.5, borderRadius: '8px' }}
                                                             >
                                                                 <PrintIcon sx={{ fontSize: 15 }} />
                                                             </IconButton>
@@ -900,7 +1120,7 @@ export default function VisitorTicketsIndex({
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleOpenEdit(t)}
-                                                                sx={{ color: '#f59e0b', bgcolor: 'rgba(245, 158, 11, 0.1)', p: 0.5 }}
+                                                                sx={{ color: '#d97706', bgcolor: '#fffbeb', border: '1px solid #fde68a', p: 0.5, borderRadius: '8px' }}
                                                             >
                                                                 <EditIcon sx={{ fontSize: 15 }} />
                                                             </IconButton>
@@ -911,7 +1131,7 @@ export default function VisitorTicketsIndex({
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleDeleteVisitor(t.id, t.visitor_name)}
-                                                                sx={{ color: '#ef4444', bgcolor: 'rgba(239, 68, 68, 0.1)', p: 0.5 }}
+                                                                sx={{ color: '#ef4444', bgcolor: '#fef2f2', border: '1px solid #fecaca', p: 0.5, borderRadius: '8px' }}
                                                             >
                                                                 <DeleteOutlineIcon sx={{ fontSize: 15 }} />
                                                             </IconButton>
@@ -928,9 +1148,9 @@ export default function VisitorTicketsIndex({
 
                     {/* Pagination */}
                     {totalItems > 0 && (
-                        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${c.cardBorder}`, flexWrap: 'wrap', gap: 1 }}>
-                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600 }}>
-                                Menampilkan halaman {currentPage} dari {lastPage} (Total {totalItems} pengunjung)
+                        <Box sx={{ p: 2, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1 }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>
+                                Menampilkan halaman {currentPage} dari {lastPage} &bull; Total {totalItems} pengunjung terdaftar
                             </Typography>
                             <Pagination
                                 count={lastPage}
@@ -938,10 +1158,20 @@ export default function VisitorTicketsIndex({
                                 onChange={handlePageChange}
                                 color="primary"
                                 size="small"
+                                sx={{
+                                    '& .MuiPaginationItem-root': {
+                                        borderRadius: '8px',
+                                        fontWeight: 800,
+                                    },
+                                    '& .Mui-selected': {
+                                        bgcolor: '#094d42 !important',
+                                        color: '#ffffff',
+                                    }
+                                }}
                             />
                         </Box>
                     )}
-                </Card>
+                </Paper>
             </Box>
 
             {/* MODAL 1: COMPREHENSIVE VISITOR TICKET DETAIL */}
@@ -950,14 +1180,20 @@ export default function VisitorTicketsIndex({
                 onClose={() => setDetailModal({ open: false, ticket: null })}
                 maxWidth="sm"
                 fullWidth
-                PaperProps={{ sx: { borderRadius: '18px' } }}
+                PaperProps={{
+                    sx: {
+                        borderRadius: '20px',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                    }
+                }}
             >
                 {detailModal.ticket && (
                     <>
-                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2.5, borderBottom: `1px solid ${c.cardBorder}` }}>
+                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2.5, borderBottom: '1px solid #e2e8f0' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <ConfirmationNumberIcon sx={{ color: '#094d42' }} />
-                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: c.textPrimary }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
                                     Detail Tiket Penonton
                                 </Typography>
                             </Box>
@@ -968,8 +1204,8 @@ export default function VisitorTicketsIndex({
 
                         <DialogContent sx={{ p: 3 }}>
                             {/* Top QR Code + Badge Box */}
-                            <Box sx={{ textAlign: 'center', p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 3 }}>
-                                <Box sx={{ p: 1.5, bgcolor: '#fff', borderRadius: '10px', width: 'fit-content', mx: 'auto', border: '1px solid #e2e8f0', mb: 1.5 }}>
+                            <Box sx={{ textAlign: 'center', p: 2.5, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', mb: 3 }}>
+                                <Box sx={{ p: 1.5, bgcolor: '#fff', borderRadius: '12px', width: 'fit-content', mx: 'auto', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)', mb: 1.5 }}>
                                     <QRCodeSVG value={detailModal.ticket.ticket_code} size={130} level="H" />
                                 </Box>
                                 <Typography variant="h6" sx={{ fontWeight: 900, fontFamily: 'monospace', color: '#094d42', letterSpacing: '0.05em' }}>
@@ -1000,38 +1236,38 @@ export default function VisitorTicketsIndex({
                             {/* Data Information Grid */}
                             <Stack spacing={1.8}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700 }}>Nama Lengkap:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary }}>{detailModal.ticket.visitor_name}</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Nama Lengkap:</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>{detailModal.ticket.visitor_name}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700 }}>Email:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary }}>{detailModal.ticket.visitor_email}</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Email:</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_email}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700 }}>No. WhatsApp / HP:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary }}>{detailModal.ticket.visitor_phone || '-'}</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>No. WhatsApp / HP:</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_phone || '-'}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700 }}>Instansi / Perusahaan:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary }}>{detailModal.ticket.visitor_institution || '-'}</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Instansi / Perusahaan:</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_institution || '-'}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700 }}>Waktu Registrasi:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary }}>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Waktu Registrasi:</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>
                                         {new Date(detailModal.ticket.created_at).toLocaleString('id-ID')}
                                     </Typography>
                                 </Box>
 
                                 {detailModal.ticket.payment && (
-                                    <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
+                                    <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', display: 'block', mb: 0.5 }}>
                                             Informasi Pembayaran:
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: '#166534', fontWeight: 600 }}>
+                                        <Typography variant="body2" sx={{ color: '#166534', fontWeight: 700 }}>
                                             Kode: {detailModal.ticket.payment.payment_code} &bull; Total: Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')} ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
                                     </Box>
@@ -1039,16 +1275,16 @@ export default function VisitorTicketsIndex({
                             </Stack>
                         </DialogContent>
 
-                        <DialogActions sx={{ p: 2, px: 2.5, borderTop: `1px solid ${c.cardBorder}`, justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                        <DialogActions sx={{ p: 2, px: 2.5, borderTop: '1px solid #e2e8f0', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button
                                     size="small"
                                     variant="outlined"
                                     startIcon={<ContentCopyIcon />}
                                     onClick={() => copyTicketLink(detailModal.ticket.ticket_code)}
-                                    sx={{ textTransform: 'none', borderRadius: '8px' }}
+                                    sx={{ textTransform: 'none', borderRadius: '8px', fontWeight: 700 }}
                                 >
-                                    {copySuccess ? 'Link Tersalin!' : 'Salin Link E-Tiket'}
+                                    {copySuccess ? 'Link Tersalin!' : 'Salin Link'}
                                 </Button>
                                 {detailModal.ticket.visitor_phone && (
                                     <Button
@@ -1058,7 +1294,7 @@ export default function VisitorTicketsIndex({
                                         component="a"
                                         href={generateWhatsAppUrl(detailModal.ticket)}
                                         target="_blank"
-                                        sx={{ bgcolor: '#16a34a', textTransform: 'none', borderRadius: '8px', '&:hover': { bgcolor: '#15803d' } }}
+                                        sx={{ bgcolor: '#16a34a', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#15803d' } }}
                                     >
                                         WhatsApp
                                     </Button>
@@ -1073,7 +1309,7 @@ export default function VisitorTicketsIndex({
                                     component="a"
                                     href={route('admin.visitorTickets.printBadge', detailModal.ticket.id)}
                                     target="_blank"
-                                    sx={{ bgcolor: '#8b5cf6', textTransform: 'none', borderRadius: '8px', '&:hover': { bgcolor: '#7c3aed' } }}
+                                    sx={{ bgcolor: '#8b5cf6', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#7c3aed' } }}
                                 >
                                     Cetak Lanyard
                                 </Button>
@@ -1085,7 +1321,7 @@ export default function VisitorTicketsIndex({
                                         bgcolor: detailModal.ticket.checked_in ? '#ef4444' : '#10b981',
                                         textTransform: 'none',
                                         borderRadius: '8px',
-                                        fontWeight: 800,
+                                        fontWeight: 900,
                                         '&:hover': { bgcolor: detailModal.ticket.checked_in ? '#dc2626' : '#059669' }
                                     }}
                                 >
@@ -1098,9 +1334,9 @@ export default function VisitorTicketsIndex({
             </Dialog>
 
             {/* MODAL 2: EDIT VISITOR DATA */}
-            <Dialog open={editModal.open} onClose={() => setEditModal({ open: false, ticket: null })} maxWidth="sm" fullWidth>
+            <Dialog open={editModal.open} onClose={() => setEditModal({ open: false, ticket: null })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <form onSubmit={handleEditSubmit}>
-                    <DialogTitle sx={{ fontWeight: 800, color: c.textPrimary, borderBottom: `1px solid ${c.cardBorder}` }}>
+                    <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
                         ✏️ Edit Data Pengunjung
                     </DialogTitle>
                     <DialogContent sx={{ pt: 2.5 }}>
@@ -1150,11 +1386,11 @@ export default function VisitorTicketsIndex({
                             </FormControl>
                         </Stack>
                     </DialogContent>
-                    <DialogActions sx={{ p: 2, borderTop: `1px solid ${c.cardBorder}` }}>
+                    <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
                         <Button onClick={() => setEditModal({ open: false, ticket: null })} sx={{ textTransform: 'none' }}>
                             Batal
                         </Button>
-                        <Button type="submit" variant="contained" disabled={editProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 800 }}>
+                        <Button type="submit" variant="contained" disabled={editProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
                             {editProcessing ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
                     </DialogActions>
@@ -1162,13 +1398,13 @@ export default function VisitorTicketsIndex({
             </Dialog>
 
             {/* MODAL 3: QUICK ONSITE REGISTRATION */}
-            <Dialog open={onsiteModalOpen} onClose={() => setOnsiteModalOpen(false)} maxWidth="sm" fullWidth>
+            <Dialog open={onsiteModalOpen} onClose={() => setOnsiteModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <form onSubmit={handleOnsiteSubmit}>
-                    <DialogTitle sx={{ fontWeight: 800, color: c.textPrimary, borderBottom: `1px solid ${c.cardBorder}` }}>
+                    <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
                         👤 Registrasi Pengunjung Onsite
                     </DialogTitle>
                     <DialogContent sx={{ pt: 2.5 }}>
-                        <Typography variant="body2" sx={{ color: c.textMuted, mb: 2, mt: 1 }}>
+                        <Typography variant="body2" sx={{ color: '#64748b', mb: 2, mt: 1 }}>
                             Form bantuan pendaftaran langsung di lokasi acara (meja registrasi/lansia).
                         </Typography>
 
@@ -1221,8 +1457,8 @@ export default function VisitorTicketsIndex({
                             />
 
                             {onsiteData.visitor_type === 'exclusive' && (
-                                <Box sx={{ p: 2, bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', borderRadius: '10px', border: `1px solid ${c.cardBorder}` }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 700, color: c.textPrimary, display: 'block', mb: 1 }}>
+                                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
                                         Status Pembayaran Onsite Exclusive:
                                     </Typography>
                                     <RadioGroup
@@ -1237,11 +1473,11 @@ export default function VisitorTicketsIndex({
                             )}
                         </Stack>
                     </DialogContent>
-                    <DialogActions sx={{ p: 2, borderTop: `1px solid ${c.cardBorder}` }}>
+                    <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
                         <Button onClick={() => setOnsiteModalOpen(false)} sx={{ textTransform: 'none' }}>
                             Batal
                         </Button>
-                        <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 800 }}>
+                        <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
                             {onsiteProcessing ? 'Mendaftarkan...' : 'Terbitkan Tiket Onsite'}
                         </Button>
                     </DialogActions>
@@ -1249,29 +1485,29 @@ export default function VisitorTicketsIndex({
             </Dialog>
 
             {/* MODAL 4: PROOF OF PAYMENT LIGHTBOX */}
-            <Dialog open={proofModal.open} onClose={() => setProofModal({ open: false, payment: null })} maxWidth="md" fullWidth>
+            <Dialog open={proofModal.open} onClose={() => setProofModal({ open: false, payment: null })} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 {proofModal.payment && (
                     <>
-                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: `1px solid ${c.cardBorder}` }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid #e2e8f0' }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 900 }}>
                                 📄 Bukti Transfer: {proofModal.payment.payment_code}
                             </Typography>
                             <IconButton onClick={() => setProofModal({ open: false, payment: null })} size="small">
                                 <CloseIcon />
                             </IconButton>
                         </DialogTitle>
-                        <DialogContent sx={{ p: 2.5, textAlign: 'center', bgcolor: '#000' }}>
+                        <DialogContent sx={{ p: 2.5, textAlign: 'center', bgcolor: '#0f172a' }}>
                             <Box
                                 component="img"
                                 src={proofModal.payment.proof_of_payment?.startsWith('http') || proofModal.payment.proof_of_payment?.startsWith('/') 
                                     ? proofModal.payment.proof_of_payment 
                                     : `/storage/${proofModal.payment.proof_of_payment}`}
                                 alt="Bukti Transfer"
-                                sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '8px' }}
+                                sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
                             />
                         </DialogContent>
-                        <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: `1px solid ${c.cardBorder}` }}>
-                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#d97706' }}>
+                        <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0' }}>
+                            <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706' }}>
                                 Total Tagihan: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
                             </Typography>
                             {proofModal.payment.status === 'pending' && (
@@ -1282,14 +1518,14 @@ export default function VisitorTicketsIndex({
                                         onClick={() => {
                                             setRejectModal({ open: true, paymentId: proofModal.payment.id, notes: '' });
                                         }}
-                                        sx={{ textTransform: 'none', fontWeight: 800 }}
+                                        sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}
                                     >
                                         Tolak
                                     </Button>
                                     <Button
                                         variant="contained"
                                         onClick={() => handleVerifyPayment(proofModal.payment.id)}
-                                        sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 800, '&:hover': { bgcolor: '#059669' } }}
+                                        sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
                                     >
                                         Setujui & Aktifkan Tiket
                                     </Button>
@@ -1301,8 +1537,8 @@ export default function VisitorTicketsIndex({
             </Dialog>
 
             {/* MODAL 5: REJECT PAYMENT NOTES */}
-            <Dialog open={rejectModal.open} onClose={() => setRejectModal({ open: false, paymentId: null, notes: '' })} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{ fontWeight: 800, color: '#ef4444' }}>
+            <Dialog open={rejectModal.open} onClose={() => setRejectModal({ open: false, paymentId: null, notes: '' })} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: '#ef4444' }}>
                     Alasan Penolakan Pembayaran
                 </DialogTitle>
                 <DialogContent sx={{ pt: 2 }}>
@@ -1322,7 +1558,7 @@ export default function VisitorTicketsIndex({
                     <Button onClick={() => setRejectModal({ open: false, paymentId: null, notes: '' })} sx={{ textTransform: 'none' }}>
                         Batal
                     </Button>
-                    <Button onClick={handleRejectPaymentSubmit} variant="contained" color="error" sx={{ textTransform: 'none', fontWeight: 800 }}>
+                    <Button onClick={handleRejectPaymentSubmit} variant="contained" color="error" sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
                         Tolak Pembayaran
                     </Button>
                 </DialogActions>
