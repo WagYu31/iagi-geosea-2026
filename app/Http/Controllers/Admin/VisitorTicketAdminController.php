@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\VisitorTicket;
 use App\Models\VisitorPayment;
 use App\Models\LandingPageSetting;
+use App\Models\EmailSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +19,21 @@ use App\Mail\VisitorPaymentRejected;
 
 class VisitorTicketAdminController extends Controller
 {
+    /**
+     * Helper to apply SMTP configuration before sending
+     */
+    private function applySmtpSettings()
+    {
+        try {
+            $emailSetting = EmailSetting::getActive();
+            if ($emailSetting) {
+                $emailSetting->applyToConfig();
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed applying SMTP settings: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Display visitor tickets management dashboard
      */
@@ -151,9 +167,10 @@ class VisitorTicketAdminController extends Controller
             // Send E-Ticket email if active
             if ($ticket->status === 'active' && !empty($ticket->visitor_email)) {
                 try {
-                    Mail::to($ticket->visitor_email)->queue(new VisitorTicketIssued($ticket));
+                    $this->applySmtpSettings();
+                    Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
                 } catch (\Exception $e) {
-                    Log::warning("Failed to send onsite visitor ticket email: " . $e->getMessage());
+                    Log::error("Failed to send onsite visitor ticket email: " . $e->getMessage());
                 }
             }
 
@@ -179,14 +196,15 @@ class VisitorTicketAdminController extends Controller
             'status' => 'active',
         ]);
 
-        // Send E-Ticket email to all verified tickets
+        // Send E-Ticket email to all verified tickets immediately
         $tickets = VisitorTicket::where('payment_id', $payment->id)->get();
+        $this->applySmtpSettings();
         foreach ($tickets as $t) {
             if (!empty($t->visitor_email)) {
                 try {
-                    Mail::to($t->visitor_email)->queue(new VisitorTicketIssued($t));
+                    Mail::to($t->visitor_email)->send(new VisitorTicketIssued($t));
                 } catch (\Exception $e) {
-                    Log::warning("Failed to send visitor ticket email to {$t->visitor_email}: " . $e->getMessage());
+                    Log::error("Failed to send visitor ticket email to {$t->visitor_email}: " . $e->getMessage());
                 }
             }
         }
@@ -211,13 +229,14 @@ class VisitorTicketAdminController extends Controller
             'status' => 'cancelled',
         ]);
 
-        // Send Rejection email to primary booker
+        // Send Rejection email to primary booker immediately
         $firstTicket = VisitorTicket::where('payment_id', $payment->id)->first();
         if ($firstTicket && !empty($firstTicket->visitor_email)) {
             try {
-                Mail::to($firstTicket->visitor_email)->queue(new VisitorPaymentRejected($payment, $notes));
+                $this->applySmtpSettings();
+                Mail::to($firstTicket->visitor_email)->send(new VisitorPaymentRejected($payment, $notes));
             } catch (\Exception $e) {
-                Log::warning("Failed to send payment rejection email: " . $e->getMessage());
+                Log::error("Failed to send payment rejection email: " . $e->getMessage());
             }
         }
 
@@ -240,11 +259,12 @@ class VisitorTicketAdminController extends Controller
         }
 
         try {
+            $this->applySmtpSettings();
             Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
-            return back()->with('success', "E-Tiket berhasil dikirim ulang ke email: {$ticket->visitor_email}");
+            return back()->with('success', "E-Tiket berhasil dikirim ke email: {$ticket->visitor_email}");
         } catch (\Exception $e) {
             Log::error("Manual resend email failed for {$ticket->visitor_email}: " . $e->getMessage());
-            return back()->with('error', "Gagal mengirim email: " . $e->getMessage());
+            return back()->with('error', "Gagal mengirim email: " . $e->getMessage() . ". Pastikan pengaturan SMTP di menu Email Settings sudah benar.");
         }
     }
 

@@ -4,16 +4,12 @@ namespace App\Mail;
 
 use App\Models\VisitorPayment;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class VisitorPaymentRejected extends Mailable implements ShouldQueue
+class VisitorPaymentRejected extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $tries = 3;
-    public $timeout = 30;
 
     public $payment;
     public $notes;

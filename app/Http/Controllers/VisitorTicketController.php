@@ -12,11 +12,27 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\EmailSetting;
 use App\Mail\VisitorTicketIssued;
 use App\Mail\VisitorPaymentPending;
 
 class VisitorTicketController extends Controller
 {
+    /**
+     * Helper to apply SMTP configuration before sending
+     */
+    private function applySmtpSettings()
+    {
+        try {
+            $emailSetting = EmailSetting::getActive();
+            if ($emailSetting) {
+                $emailSetting->applyToConfig();
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed applying SMTP settings: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Display public visitor ticket registration page
      */
@@ -116,12 +132,13 @@ class VisitorTicketController extends Controller
                     }
                 }
 
-                // Send Pending Payment Email to the primary registrant
+                // Send Pending Payment Email to the primary registrant immediately
                 if (!empty($members[0]['email'])) {
                     try {
-                        Mail::to($members[0]['email'])->queue(new VisitorPaymentPending($payment));
+                        $this->applySmtpSettings();
+                        Mail::to($members[0]['email'])->send(new VisitorPaymentPending($payment));
                     } catch (\Exception $e) {
-                        Log::warning('Failed to send visitor payment pending email: ' . $e->getMessage());
+                        Log::error('Failed to send visitor payment pending email: ' . $e->getMessage());
                     }
                 }
 
@@ -154,11 +171,12 @@ class VisitorTicketController extends Controller
                         $firstTicket = $ticket;
                     }
 
-                    // Send E-Ticket email to each registered member
+                    // Send E-Ticket email to each registered member immediately
                     try {
-                        Mail::to($ticket->visitor_email)->queue(new VisitorTicketIssued($ticket));
+                        $this->applySmtpSettings();
+                        Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
                     } catch (\Exception $e) {
-                        Log::warning("Failed to send visitor ticket email to {$ticket->visitor_email}: " . $e->getMessage());
+                        Log::error("Failed to send visitor ticket email to {$ticket->visitor_email}: " . $e->getMessage());
                     }
                 }
 
