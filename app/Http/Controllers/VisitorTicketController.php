@@ -53,7 +53,7 @@ class VisitorTicketController extends Controller
                 'priceExclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 150000),
                 'priceNonExclusive' => floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0),
                 'enabled' => ($settings['visitor_registration_enabled'] ?? '1') === '1',
-                'qrisImage' => $settings['visitor_qris_image'] ? Storage::url($settings['visitor_qris_image']) : null,
+                'qrisImage' => !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null,
                 'bankInfo' => $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026",
                 'eventDate' => $settings['visitor_event_date'] ?? 'October 2026',
                 'eventVenue' => $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta',
