@@ -6,8 +6,6 @@ import {
     Box,
     Container,
     Typography,
-    Card,
-    CardContent,
     Button,
     TextField,
     Chip,
@@ -19,7 +17,6 @@ import {
     Paper,
     CircularProgress,
     Tooltip,
-    Badge,
 } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -33,7 +30,6 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import StopIcon from '@mui/icons-material/Stop';
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -167,7 +163,14 @@ export default function GateScanner({
                 { facingMode: mode },
                 {
                     fps: 15,
-                    qrbox: { width: 250, height: 250 },
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                        const qrboxSize = Math.floor(minEdge * 0.75);
+                        return {
+                            width: Math.min(qrboxSize, 250),
+                            height: Math.min(qrboxSize, 250),
+                        };
+                    },
                 },
                 (decodedText) => {
                     processTicketCheckIn(decodedText);
@@ -225,7 +228,7 @@ export default function GateScanner({
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
             <Head title="Gate Web Scanner - 55th PIT IAGI & GEOSEA 2026" />
 
-            <Container maxWidth="lg">
+            <Container maxWidth="lg" sx={{ px: { xs: 1.5, sm: 3 } }}>
                 {/* 3D HEADER BAR */}
                 <Paper
                     elevation={0}
@@ -389,9 +392,10 @@ export default function GateScanner({
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={3}>
-                    {/* LEFT COLUMN: 3D CAMERA SCANNER & MANUAL INPUT */}
-                    <Grid item xs={12} md={6}>
+                {/* 2-COLUMN SIDE-BY-SIDE CONTROL DECK */}
+                <Grid container spacing={3} alignItems="flex-start">
+                    {/* LEFT COLUMN: CAMERA SCANNER & MANUAL INPUT */}
+                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
                         <Paper
                             elevation={0}
                             sx={{
@@ -400,6 +404,7 @@ export default function GateScanner({
                                 bgcolor: '#ffffff',
                                 border: '1.5px solid #e2e8f0',
                                 boxShadow: '0 4px 0 #e2e8f0, 0 12px 28px rgba(0,0,0,0.03)',
+                                overflow: 'hidden',
                             }}
                         >
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -432,7 +437,7 @@ export default function GateScanner({
                                 )}
                             </Box>
 
-                            {/* Camera Viewfinder Box */}
+                            {/* Camera Viewfinder Box with strict container constraints */}
                             <Box
                                 sx={{
                                     position: 'relative',
@@ -442,7 +447,9 @@ export default function GateScanner({
                                     border: '2px solid #334155',
                                     boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)',
                                     mb: 2.5,
-                                    minHeight: 280,
+                                    height: 290,
+                                    width: '100%',
+                                    maxWidth: '100%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -451,20 +458,50 @@ export default function GateScanner({
                                 <Box
                                     id="qr-reader"
                                     sx={{
-                                        width: '100%',
+                                        width: '100% !important',
+                                        maxWidth: '100% !important',
+                                        height: '100% !important',
+                                        border: 'none !important',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        overflow: 'hidden',
                                         '& video': {
+                                            width: '100% !important',
+                                            maxWidth: '100% !important',
+                                            height: '290px !important',
+                                            objectFit: 'cover !important',
                                             borderRadius: '14px',
-                                            maxHeight: '340px',
-                                            objectFit: 'cover',
+                                        },
+                                        '& canvas': {
+                                            display: 'none !important',
                                         },
                                         '& #qr-reader__scan_region': {
-                                            borderRadius: '14px',
+                                            width: '100% !important',
+                                            height: '100% !important',
+                                            display: 'flex !important',
+                                            alignItems: 'center !important',
+                                            justifyContent: 'center !important',
+                                        },
+                                        '& #qr-reader__scan_region video': {
+                                            width: '100% !important',
+                                            height: '290px !important',
+                                            objectFit: 'cover !important',
+                                        },
+                                        '& #qr-reader__dashboard_section_csr': {
+                                            display: 'none !important',
+                                        },
+                                        '& #qr-reader__header_message': {
+                                            display: 'none !important',
+                                        },
+                                        '& img': {
+                                            display: 'none !important',
                                         },
                                     }}
                                 />
 
                                 {!scanning && (
-                                    <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8' }}>
+                                    <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8', zIndex: 2 }}>
                                         <QrCodeScannerIcon sx={{ fontSize: 56, color: '#475569', mb: 1 }} />
                                         <Typography variant="body2" sx={{ fontWeight: 700, color: '#cbd5e1' }}>
                                             Kamera Sedang Tidak Aktif
@@ -483,7 +520,7 @@ export default function GateScanner({
                             )}
 
                             {/* 3D Pushable Camera Control Button */}
-                            <Box sx={{ mb: 3 }}>
+                            <Box sx={{ mb: 2.5 }}>
                                 {!scanning ? (
                                     <Button
                                         variant="contained"
@@ -591,8 +628,8 @@ export default function GateScanner({
                         </Paper>
                     </Grid>
 
-                    {/* RIGHT COLUMN: 3D REALTIME SCAN RESULT & LANYARD BADGE PRINT */}
-                    <Grid item xs={12} md={6}>
+                    {/* RIGHT COLUMN: REALTIME SCAN RESULT & LANYARD BADGE PRINT */}
+                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
                         {scanResult ? (
                             <Paper
                                 elevation={0}

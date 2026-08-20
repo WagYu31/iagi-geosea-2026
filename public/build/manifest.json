@@ -213,7 +213,7 @@
     ]
   },
   "resources/js/Pages/Admin/VisitorTickets/GateScanner.jsx": {
-    "file": "assets/GateScanner-DUs2mtuv.js",
+    "file": "assets/GateScanner-CLlFwd3L.js",
     "name": "GateScanner",
     "src": "resources/js/Pages/Admin/VisitorTickets/GateScanner.jsx",
     "isDynamicEntry": true,
@@ -515,7 +515,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BG2D5IVg.js",
+    "file": "assets/app-DnoefiYh.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
