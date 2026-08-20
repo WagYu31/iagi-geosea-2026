@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -15,6 +15,10 @@ import {
     Alert,
     CircularProgress,
     Paper,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from '@mui/material';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import StarIcon from '@mui/icons-material/Star';
@@ -30,6 +34,8 @@ import EventIcon from '@mui/icons-material/Event';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloseIcon from '@mui/icons-material/Close';
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 
 export default function Register({
     priceExclusive = 150000,
@@ -52,6 +58,14 @@ export default function Register({
     const [copySuccess, setCopySuccess] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+    // Live Camera Viewfinder Modal State
+    const [cameraModalOpen, setCameraModalOpen] = useState(false);
+    const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // 'environment' (back) or 'user' (front)
+    const [cameraLoading, setCameraLoading] = useState(false);
+    const [cameraError, setCameraError] = useState(null);
+
+    const videoRef = useRef(null);
+    const streamRef = useRef(null);
     const fileInputRef = useRef(null);
     const cameraInputRef = useRef(null);
 
@@ -165,10 +179,7 @@ export default function Register({
         });
     };
 
-    const handleFileSelect = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
+    const processFileAndSet = async (file) => {
         try {
             setCompressing(true);
             const result = await compressImage(file);
@@ -191,6 +202,120 @@ export default function Register({
             setCompressing(false);
         }
     };
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        processFileAndSet(file);
+    };
+
+    // ==========================================
+    // DIRECT CAMERA STREAM (WebRTC Live Viewfinder)
+    // ==========================================
+    const startCamera = async (facingMode = 'environment') => {
+        setCameraError(null);
+        setCameraLoading(true);
+
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+        }
+
+        try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                throw new Error('WebRTC getUserMedia tidak didukung.');
+            }
+
+            const constraints = {
+                video: {
+                    facingMode: { ideal: facingMode },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                },
+                audio: false,
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            streamRef.current = stream;
+
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.play();
+            }
+            setCameraLoading(false);
+        } catch (err) {
+            console.warn('Direct camera stream failed, falling back to native capture input:', err);
+            setCameraLoading(false);
+            setCameraModalOpen(false);
+            // Fallback directly to native camera input
+            if (cameraInputRef.current) {
+                cameraInputRef.current.click();
+            }
+        }
+    };
+
+    const stopCamera = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null;
+        }
+        setCameraModalOpen(false);
+    };
+
+    const handleOpenDirectCamera = () => {
+        // Check if browser has getUserMedia support and secure context (HTTPS / localhost)
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            setCameraModalOpen(true);
+            setCameraFacingMode('environment');
+            setTimeout(() => {
+                startCamera('environment');
+            }, 100);
+        } else {
+            // Direct native camera trigger
+            if (cameraInputRef.current) {
+                cameraInputRef.current.click();
+            }
+        }
+    };
+
+    const handleSwitchCamera = () => {
+        const nextMode = cameraFacingMode === 'environment' ? 'user' : 'environment';
+        setCameraFacingMode(nextMode);
+        startCamera(nextMode);
+    };
+
+    const handleCapturePhoto = () => {
+        if (!videoRef.current) return;
+
+        const video = videoRef.current;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 720;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                alert('Gagal mengambil foto dari kamera.');
+                return;
+            }
+
+            const capturedFile = new File([blob], `bukti_transfer_${Date.now()}.jpg`, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+            });
+
+            stopCamera();
+            processFileAndSet(capturedFile);
+        }, 'image/jpeg', 0.85);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -792,11 +917,12 @@ export default function Register({
                                                 </Box>
                                             )}
 
-                                            {/* Upload Proof */}
+                                            {/* Upload Proof with Direct Camera Trigger */}
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
                                                 Unggah Bukti Transfer *
                                             </Typography>
 
+                                            {/* Hidden Standard File Input */}
                                             <input
                                                 ref={fileInputRef}
                                                 type="file"
@@ -804,6 +930,7 @@ export default function Register({
                                                 onChange={handleFileSelect}
                                                 style={{ display: 'none' }}
                                             />
+                                            {/* Hidden Native Direct Camera Input */}
                                             <input
                                                 ref={cameraInputRef}
                                                 type="file"
@@ -815,14 +942,23 @@ export default function Register({
 
                                             <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
                                                 <Button
-                                                    variant="outlined"
+                                                    variant="contained"
                                                     size="small"
                                                     startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
-                                                    onClick={() => cameraInputRef.current?.click()}
+                                                    onClick={handleOpenDirectCamera}
                                                     disabled={compressing}
-                                                    sx={{ borderRadius: '8px', borderColor: '#0284c7', color: '#0284c7', textTransform: 'none', fontWeight: 800, fontSize: '0.78rem' }}
+                                                    sx={{
+                                                        borderRadius: '8px',
+                                                        bgcolor: '#0284c7',
+                                                        color: '#ffffff',
+                                                        textTransform: 'none',
+                                                        fontWeight: 800,
+                                                        fontSize: '0.78rem',
+                                                        boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
+                                                        '&:hover': { bgcolor: '#0369a1' },
+                                                    }}
                                                 >
-                                                    📷 Kamera HP
+                                                    📷 Buka Kamera Langsung
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
@@ -832,16 +968,28 @@ export default function Register({
                                                     disabled={compressing}
                                                     sx={{ borderRadius: '8px', borderColor: '#cbd5e1', color: '#475569', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem' }}
                                                 >
-                                                    📁 Pilih Galeri
+                                                    📁 Pilih dari Galeri
                                                 </Button>
                                             </Box>
 
+                                            {compressing && (
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.5 }}>
+                                                    <CircularProgress size={16} sx={{ color: '#059669' }} />
+                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700 }}>
+                                                        Mengompresi foto otomatis...
+                                                    </Typography>
+                                                </Box>
+                                            )}
+
                                             {proofPreview && (
                                                 <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                    <Box component="img" src={proofPreview} alt="Bukti" sx={{ width: 45, height: 45, objectFit: 'cover', borderRadius: '6px' }} />
+                                                    <Box component="img" src={proofPreview} alt="Bukti" sx={{ width: 48, height: 48, objectFit: 'cover', borderRadius: '6px', border: '1px solid #86efac' }} />
                                                     <Box sx={{ flex: 1 }}>
                                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.4 }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 14 }} /> Foto siap diunggah ({compressionStats?.compressed} KB)
+                                                            <CheckCircleIcon sx={{ fontSize: 14 }} /> Foto berhasil diambil ({compressionStats?.compressed} KB)
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', display: 'block' }}>
+                                                            Siap dikirim bersama formulir pendaftaran.
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -1103,6 +1251,134 @@ export default function Register({
                     </form>
                 )}
             </Container>
+
+            {/* LIVE CAMERA VIEWFINDER MODAL */}
+            <Dialog
+                open={cameraModalOpen}
+                onClose={stopCamera}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '20px',
+                        bgcolor: '#0f172a',
+                        color: '#fff',
+                        overflow: 'hidden',
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        p: 2,
+                        px: 2.5,
+                        borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <PhotoCameraIcon sx={{ color: '#38bdf8' }} />
+                        <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fff' }}>
+                            Ambil Foto Bukti Transfer
+                        </Typography>
+                    </Box>
+                    <IconButton onClick={stopCamera} size="small" sx={{ color: '#94a3b8', '&:hover': { color: '#fff' } }}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent sx={{ p: 0, bgcolor: '#000', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
+                    {cameraLoading ? (
+                        <Box sx={{ textAlign: 'center', p: 4 }}>
+                            <CircularProgress sx={{ color: '#38bdf8', mb: 2 }} />
+                            <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
+                                Menghubungkan ke kamera HP...
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Box sx={{ position: 'relative', width: '100%', overflow: 'hidden', bgcolor: '#000' }}>
+                            <video
+                                ref={videoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    maxHeight: '65vh',
+                                    objectFit: 'contain',
+                                    display: 'block',
+                                }}
+                            />
+                            {/* Viewfinder Target Border Overlay */}
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    inset: '10%',
+                                    border: '2px dashed rgba(255, 255, 255, 0.6)',
+                                    borderRadius: '12px',
+                                    pointerEvents: 'none',
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'center',
+                                    pt: 1,
+                                }}
+                            >
+                                <Typography variant="caption" sx={{ bgcolor: 'rgba(0,0,0,0.6)', px: 1, py: 0.3, borderRadius: '4px', color: '#fff', fontSize: '0.7rem' }}>
+                                    Arahkan ke struk / bukti transfer
+                                </Typography>
+                            </Box>
+                        </Box>
+                    )}
+                </DialogContent>
+
+                <DialogActions
+                    sx={{
+                        p: 2,
+                        px: 2.5,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        bgcolor: '#0f172a',
+                        borderTop: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                >
+                    <Button
+                        startIcon={<CameraswitchIcon />}
+                        onClick={handleSwitchCamera}
+                        size="small"
+                        sx={{
+                            color: '#94a3b8',
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            borderRadius: '8px',
+                            '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
+                        }}
+                    >
+                        Ganti Kamera
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={handleCapturePhoto}
+                        startIcon={<PhotoCameraIcon />}
+                        sx={{
+                            bgcolor: '#10b981',
+                            color: '#fff',
+                            fontWeight: 900,
+                            borderRadius: '12px',
+                            px: 3,
+                            py: 1,
+                            textTransform: 'none',
+                            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
+                            '&:hover': { bgcolor: '#059669' },
+                        }}
+                    >
+                        📸 Jepret Foto
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
