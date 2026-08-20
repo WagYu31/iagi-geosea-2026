@@ -13,7 +13,6 @@ import {
     Divider,
     Alert,
     IconButton,
-    Grid,
     Paper,
     CircularProgress,
     Tooltip,
@@ -228,7 +227,7 @@ export default function GateScanner({
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
             <Head title="Gate Web Scanner - 55th PIT IAGI & GEOSEA 2026" />
 
-            <Container maxWidth="lg" sx={{ px: { xs: 1.5, sm: 3 } }}>
+            <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3 } }}>
                 {/* 3D HEADER BAR */}
                 <Paper
                     elevation={0}
@@ -313,89 +312,99 @@ export default function GateScanner({
                 </Paper>
 
                 {/* 3D QUICK SESSION STATS */}
-                <Grid container spacing={2} sx={{ mb: 3 }}>
-                    <Grid item xs={6} sm={3}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 1.8,
-                                borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-                                border: '1.5px solid #a7f3d0',
-                                boxShadow: '0 4px 0 #a7f3d0, 0 6px 16px rgba(16,185,129,0.06)',
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ color: '#065f46', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                                Total Sukses Masuk
-                            </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#047857', mt: 0.2 }}>
-                                {totalSuccess} <Typography component="span" variant="caption" sx={{ color: '#065f46', fontWeight: 700 }}>Orang</Typography>
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 1.8,
-                                borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
-                                border: '1.5px solid #fde68a',
-                                boxShadow: '0 4px 0 #fde68a, 0 6px 16px rgba(245,158,11,0.06)',
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                                Pengunjung VIP
-                            </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#b45309', mt: 0.2 }}>
-                                {totalVip} <Typography component="span" variant="caption" sx={{ color: '#92400e', fontWeight: 700 }}>VIP</Typography>
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 1.8,
-                                borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-                                border: '1.5px solid #fecaca',
-                                boxShadow: '0 4px 0 #fecaca, 0 6px 16px rgba(239,68,68,0.06)',
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ color: '#991b1b', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                                Duplikat / Ditolak
-                            </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#dc2626', mt: 0.2 }}>
-                                {totalWarn} <Typography component="span" variant="caption" sx={{ color: '#991b1b', fontWeight: 700 }}>Tiket</Typography>
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 1.8,
-                                borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
-                                border: '1.5px solid #bae6fd',
-                                boxShadow: '0 4px 0 #bae6fd, 0 6px 16px rgba(2,132,199,0.06)',
-                            }}
-                        >
-                            <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                                Total Scan Sesi Ini
-                            </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#0284c7', mt: 0.2 }}>
-                                {recentScans.length} <Typography component="span" variant="caption" sx={{ color: '#0369a1', fontWeight: 700 }}>Kali</Typography>
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                </Grid>
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+                        gap: 2,
+                        mb: 3,
+                    }}
+                >
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 1.8,
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+                            border: '1.5px solid #a7f3d0',
+                            boxShadow: '0 4px 0 #a7f3d0, 0 6px 16px rgba(16,185,129,0.06)',
+                        }}
+                    >
+                        <Typography variant="caption" sx={{ color: '#065f46', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                            Total Sukses Masuk
+                        </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#047857', mt: 0.2 }}>
+                            {totalSuccess} <Typography component="span" variant="caption" sx={{ color: '#065f46', fontWeight: 700 }}>Orang</Typography>
+                        </Typography>
+                    </Paper>
 
-                {/* 2-COLUMN SIDE-BY-SIDE CONTROL DECK */}
-                <Grid container spacing={3} alignItems="flex-start">
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 1.8,
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+                            border: '1.5px solid #fde68a',
+                            boxShadow: '0 4px 0 #fde68a, 0 6px 16px rgba(245,158,11,0.06)',
+                        }}
+                    >
+                        <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                            Pengunjung VIP
+                        </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#b45309', mt: 0.2 }}>
+                            {totalVip} <Typography component="span" variant="caption" sx={{ color: '#92400e', fontWeight: 700 }}>VIP</Typography>
+                        </Typography>
+                    </Paper>
+
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 1.8,
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                            border: '1.5px solid #fecaca',
+                            boxShadow: '0 4px 0 #fecaca, 0 6px 16px rgba(239,68,68,0.06)',
+                        }}
+                    >
+                        <Typography variant="caption" sx={{ color: '#991b1b', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                            Duplikat / Ditolak
+                        </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#dc2626', mt: 0.2 }}>
+                            {totalWarn} <Typography component="span" variant="caption" sx={{ color: '#991b1b', fontWeight: 700 }}>Tiket</Typography>
+                        </Typography>
+                    </Paper>
+
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 1.8,
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+                            border: '1.5px solid #bae6fd',
+                            boxShadow: '0 4px 0 #bae6fd, 0 6px 16px rgba(2,132,199,0.06)',
+                        }}
+                    >
+                        <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
+                            Total Scan Sesi Ini
+                        </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: '#0284c7', mt: 0.2 }}>
+                            {recentScans.length} <Typography component="span" variant="caption" sx={{ color: '#0369a1', fontWeight: 700 }}>Kali</Typography>
+                        </Typography>
+                    </Paper>
+                </Box>
+
+                {/* 2-COLUMN STRICT SIDE-BY-SIDE GRID LAYOUT */}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                        gap: 3,
+                        alignItems: 'start',
+                        width: '100%',
+                    }}
+                >
                     {/* LEFT COLUMN: CAMERA SCANNER & MANUAL INPUT */}
-                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                    <Box sx={{ width: '100%', minWidth: 0 }}>
                         <Paper
                             elevation={0}
                             sx={{
@@ -437,7 +446,7 @@ export default function GateScanner({
                                 )}
                             </Box>
 
-                            {/* Camera Viewfinder Box with strict container constraints */}
+                            {/* Camera Viewfinder Box */}
                             <Box
                                 sx={{
                                     position: 'relative',
@@ -626,10 +635,10 @@ export default function GateScanner({
                                 </Stack>
                             </form>
                         </Paper>
-                    </Grid>
+                    </Box>
 
                     {/* RIGHT COLUMN: REALTIME SCAN RESULT & LANYARD BADGE PRINT */}
-                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                    <Box sx={{ width: '100%', minWidth: 0 }}>
                         {scanResult ? (
                             <Paper
                                 elevation={0}
@@ -766,12 +775,12 @@ export default function GateScanner({
                                     borderRadius: '20px',
                                     bgcolor: '#ffffff',
                                     border: '2px dashed #cbd5e1',
-                                    p: 5,
+                                    p: 4.5,
                                     textAlign: 'center',
                                     mb: 3,
                                 }}
                             >
-                                <QrCodeScannerIcon sx={{ fontSize: 64, color: '#94a3b8', mb: 1 }} />
+                                <QrCodeScannerIcon sx={{ fontSize: 60, color: '#94a3b8', mb: 1 }} />
                                 <Typography variant="h6" sx={{ fontWeight: 800, color: '#475569', mb: 0.5 }}>
                                     Menunggu Pemindaian QR Code...
                                 </Typography>
@@ -853,8 +862,8 @@ export default function GateScanner({
                                 </Stack>
                             )}
                         </Paper>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );
