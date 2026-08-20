@@ -505,7 +505,14 @@ export default function VisitorTicketsIndex({
                 </Box>
 
                 {/* 3D TACTILE STAT CARDS */}
-                <Grid container spacing={2} sx={{ mb: 3 }}>
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', lg: 'repeat(6, 1fr)' },
+                        gap: 2,
+                        mb: 3,
+                    }}
+                >
                     {statCards.map((s) => {
                         const isCardActive = 
                             (s.key === 'exclusive' && typeFilter === 'exclusive') ||
@@ -514,71 +521,90 @@ export default function VisitorTicketsIndex({
                             (s.key === 'pending' && statusFilter === 'pending');
 
                         return (
-                            <Grid item xs={6} sm={4} md={2} key={s.label}>
-                                <Paper
-                                    elevation={0}
-                                    onClick={() => handleStatCardClick(s.key)}
-                                    sx={{
-                                        p: 2,
-                                        borderRadius: '16px',
-                                        background: s.bg,
-                                        border: `1.5px solid ${isCardActive ? s.color : '#e2e8f0'}`,
-                                        boxShadow: isCardActive
-                                            ? `0 4px 0 ${s.shadow}, 0 8px 20px rgba(0,0,0,0.08)`
-                                            : `0 4px 0 #e2e8f0, 0 6px 15px rgba(0,0,0,0.02)`,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s ease',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: `0 6px 0 ${s.shadow}, 0 10px 22px rgba(0,0,0,0.08)`,
-                                            borderColor: s.color,
-                                        },
-                                        '&:active': {
-                                            transform: 'translateY(2px)',
-                                            boxShadow: `0 2px 0 ${s.shadow}`,
-                                        },
-                                    }}
-                                >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                                        <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                            {s.label}
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                width: 28,
-                                                height: 28,
-                                                borderRadius: '8px',
-                                                bgcolor: s.color,
-                                                color: '#ffffff',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                boxShadow: `0 2px 6px ${s.shadow}`,
-                                            }}
-                                        >
-                                            {React.cloneElement(s.icon, { sx: { fontSize: 16 } })}
-                                        </Box>
-                                    </Box>
-
+                            <Paper
+                                key={s.label}
+                                elevation={0}
+                                onClick={() => handleStatCardClick(s.key)}
+                                sx={{
+                                    p: 2,
+                                    borderRadius: '16px',
+                                    background: s.bg,
+                                    border: `1.5px solid ${isCardActive ? s.color : '#e2e8f0'}`,
+                                    boxShadow: isCardActive
+                                        ? `0 4px 0 ${s.shadow}, 0 8px 20px rgba(0,0,0,0.08)`
+                                        : `0 4px 0 #e2e8f0, 0 6px 15px rgba(0,0,0,0.02)`,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                    position: 'relative',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    minHeight: 90,
+                                    '&:hover': {
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: `0 6px 0 ${s.shadow}, 0 10px 22px rgba(0,0,0,0.08)`,
+                                        borderColor: s.color,
+                                    },
+                                    '&:active': {
+                                        transform: 'translateY(2px)',
+                                        boxShadow: `0 2px 0 ${s.shadow}`,
+                                    },
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1.5 }}>
                                     <Typography
-                                        variant="h6"
+                                        variant="caption"
                                         sx={{
-                                            fontWeight: 900,
-                                            color: '#0f172a',
-                                            fontSize: { xs: '1rem', sm: '1.15rem' },
-                                            letterSpacing: '-0.02em',
+                                            color: '#475569',
+                                            fontWeight: 800,
+                                            fontSize: '0.68rem',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.02em',
                                             lineHeight: 1.2,
+                                            flex: 1,
+                                            wordBreak: 'break-word',
                                         }}
                                     >
-                                        {s.value}
+                                        {s.label}
                                     </Typography>
-                                </Paper>
-                            </Grid>
+                                    <Box
+                                        sx={{
+                                            width: 28,
+                                            height: 28,
+                                            minWidth: 28,
+                                            flexShrink: 0,
+                                            borderRadius: '8px',
+                                            bgcolor: s.color,
+                                            color: '#ffffff',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            boxShadow: `0 2px 6px ${s.shadow}60`,
+                                        }}
+                                    >
+                                        {React.cloneElement(s.icon, { sx: { fontSize: 16 } })}
+                                    </Box>
+                                </Box>
+
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        fontWeight: 900,
+                                        color: '#0f172a',
+                                        fontSize: s.key === 'revenue' ? { xs: '0.95rem', sm: '1.05rem', xl: '1.15rem' } : { xs: '1.25rem', sm: '1.45rem' },
+                                        letterSpacing: '-0.02em',
+                                        lineHeight: 1.1,
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                >
+                                    {s.value}
+                                </Typography>
+                            </Paper>
                         );
                     })}
-                </Grid>
+                </Box>
 
                 {/* 3D TACTILE SEARCH & FILTER CONTROL BAR */}
                 <Paper
