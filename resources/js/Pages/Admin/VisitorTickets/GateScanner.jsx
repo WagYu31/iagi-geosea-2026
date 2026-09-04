@@ -121,6 +121,20 @@ const CATEGORY_MAP = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
+    student_postgraduate: {
+        label: 'STUDENT POSTGRADUATE',
+        shortLabel: 'POSTGRAD',
+        bg: '#e0e7ff',
+        color: '#4f46e5',
+        border: '#a5b4fc',
+    },
+    general_ticket: {
+        label: 'GENERAL TICKET',
+        shortLabel: 'GENERAL',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
     exclusive: {
         label: 'EXCLUSIVE VIP',
         shortLabel: 'EXCLUSIVE VIP',
@@ -152,9 +166,12 @@ export default function GateScanner({
     const [scanResult, setScanResult] = useState(null);
     const [recentScans, setRecentScans] = useState([]);
     const [cameraError, setCameraError] = useState(null);
+    const [scanPulse, setScanPulse] = useState(false);
 
     const html5QrCodeRef = useRef(null);
     const isProcessingRef = useRef(false);
+    const lastScannedCodeRef = useRef('');
+    const lastScannedAtRef = useRef(0);
 
     // Audio Feedback Synthesis
     const playSound = (type) => {
@@ -195,29 +212,68 @@ export default function GateScanner({
         }
     };
 
-    const processTicketCheckIn = async (code) => {
-        if (!code || isProcessingRef.current) return;
+    // Update session history with unique attendee deduping (no repeat rows for the same ticket)
+    const updateRecentScans = (ticketData, status) => {
+        if (!ticketData) return;
+        const nowTime = new Date().toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+
+        setRecentScans((prev) => {
+            const filtered = prev.filter(
+                (item) => item.ticket?.ticket_code !== ticketData.ticket_code
+            );
+
+            return [
+                {
+                    ticket: ticketData,
+                    timestamp: nowTime,
+                    status: status, // 'success' | 'already_checked_in' | 'error'
+                },
+                ...filtered.slice(0, 24), // Keep up to 25 unique attendees
+            ];
+        });
+    };
+
+    const processTicketCheckIn = async (code, isManual = false) => {
+        if (!code) return;
+        const cleanCode = code.trim();
+        const now = Date.now();
+
+        // Prevent camera loop from repeatedly scanning the exact same QR code (8-second cooldown per code)
+        if (!isManual) {
+            if (isProcessingRef.current) return;
+            if (
+                lastScannedCodeRef.current === cleanCode &&
+                now - lastScannedAtRef.current < 8000
+            ) {
+                return; // Silently skip duplicate camera triggers for same code
+            }
+        }
+
         isProcessingRef.current = true;
+        lastScannedCodeRef.current = cleanCode;
+        lastScannedAtRef.current = now;
+
         setProcessing(true);
         setCameraError(null);
+        setScanPulse(true);
+        setTimeout(() => setScanPulse(false), 1200);
 
         try {
             const response = await axios.post(route('admin.gateScanner.checkin'), {
-                ticket_code: code.trim(),
+                ticket_code: cleanCode,
             });
 
             const data = response.data;
             setScanResult(data);
             playSound('success');
 
-            setRecentScans((prev) => [
-                {
-                    ticket: data.ticket,
-                    timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                    status: 'success',
-                },
-                ...prev.slice(0, 14),
-            ]);
+            if (data.ticket) {
+                updateRecentScans(data.ticket, 'success');
+            }
         } catch (err) {
             const errorData = err.response?.data || {
                 success: false,
@@ -234,21 +290,15 @@ export default function GateScanner({
             }
 
             if (errorData.ticket) {
-                setRecentScans((prev) => [
-                    {
-                        ticket: errorData.ticket,
-                        timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                        status: errorData.status,
-                    },
-                    ...prev.slice(0, 14),
-                ]);
+                updateRecentScans(errorData.ticket, errorData.status);
             }
         } finally {
             setProcessing(false);
             setManualCode('');
+            // 2 seconds minimum delay before another ticket can be processed
             setTimeout(() => {
                 isProcessingRef.current = false;
-            }, 1500);
+            }, 2000);
         }
     };
 
@@ -266,7 +316,7 @@ export default function GateScanner({
             await html5QrCodeRef.current.start(
                 { facingMode: mode },
                 {
-                    fps: 15,
+                    fps: 10,
                     qrbox: (viewfinderWidth, viewfinderHeight) => {
                         const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
                         const qrboxSize = Math.floor(minEdge * 0.75);
@@ -277,7 +327,7 @@ export default function GateScanner({
                     },
                 },
                 (decodedText) => {
-                    processTicketCheckIn(decodedText);
+                    processTicketCheckIn(decodedText, false);
                 },
                 () => {}
             );
@@ -320,12 +370,12 @@ export default function GateScanner({
     const handleManualSubmit = (e) => {
         e.preventDefault();
         if (manualCode.trim()) {
-            processTicketCheckIn(manualCode.trim());
+            processTicketCheckIn(manualCode.trim(), true);
         }
     };
 
     const totalSuccess = recentScans.filter(s => s.status === 'success').length;
-    const totalVip = recentScans.filter(s => s.ticket?.visitor_type === 'exclusive' && s.status === 'success').length;
+    const totalVip = recentScans.filter(s => (s.ticket?.visitor_type === 'exclusive' || s.ticket?.visitor_type === 'vip') && s.status === 'success').length;
     const totalWarn = recentScans.filter(s => s.status !== 'success').length;
 
     return (
@@ -558,8 +608,8 @@ export default function GateScanner({
                                     borderRadius: '16px',
                                     overflow: 'hidden',
                                     bgcolor: '#0f172a',
-                                    border: '2px solid #334155',
-                                    boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)',
+                                    border: scanPulse ? '3px solid #10b981' : '2px solid #334155',
+                                    boxShadow: scanPulse ? '0 0 25px rgba(16, 185, 129, 0.6), inset 0 2px 10px rgba(0,0,0,0.5)' : 'inset 0 2px 10px rgba(0,0,0,0.5)',
                                     mb: 2.5,
                                     height: 290,
                                     width: '100%',
@@ -567,35 +617,23 @@ export default function GateScanner({
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
+                                    transition: 'all 0.25s ease',
                                 }}
                             >
                                 <Box
                                     id="qr-reader"
                                     sx={{
                                         width: '100% !important',
-                                        maxWidth: '100% !important',
-                                        height: '100% !important',
-                                        border: 'none !important',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        overflow: 'hidden',
+                                        height: '290px !important',
                                         '& video': {
                                             width: '100% !important',
-                                            maxWidth: '100% !important',
                                             height: '290px !important',
                                             objectFit: 'cover !important',
-                                            borderRadius: '14px',
-                                        },
-                                        '& canvas': {
-                                            display: 'none !important',
                                         },
                                         '& #qr-reader__scan_region': {
                                             width: '100% !important',
-                                            height: '100% !important',
-                                            display: 'flex !important',
-                                            alignItems: 'center !important',
-                                            justifyContent: 'center !important',
+                                            height: '290px !important',
+                                            minHeight: '290px !important',
                                         },
                                         '& #qr-reader__scan_region video': {
                                             width: '100% !important',
@@ -704,7 +742,7 @@ export default function GateScanner({
                             <form onSubmit={handleManualSubmit}>
                                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                                     <TextField
-                                        placeholder="Enter Ticket Code (e.g. TKT-EXC-26-XXXX)"
+                                        placeholder="Enter Ticket Code (e.g. TKT-IPRO-26-XXXX)"
                                         value={manualCode}
                                         onChange={(e) => setManualCode(e.target.value)}
                                         size="small"
@@ -893,7 +931,7 @@ export default function GateScanner({
                             </Paper>
                         )}
 
-                        {/* RECENT SCANS SESSION LIST */}
+                        {/* RECENT SCANS SESSION LIST (PROFESSIONAL UNIQUE ATTENDEES LOG) */}
                         <Paper
                             elevation={0}
                             sx={{
@@ -901,67 +939,172 @@ export default function GateScanner({
                                 bgcolor: '#ffffff',
                                 border: '1.5px solid #e2e8f0',
                                 boxShadow: '0 4px 0 #e2e8f0, 0 12px 28px rgba(0,0,0,0.03)',
-                                p: 2.5,
+                                p: { xs: 2, sm: 2.5 },
                             }}
                         >
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <HowToRegIcon sx={{ color: '#0284c7', fontSize: 20 }} />
-                                    Recent Scans in this Session ({recentScans.length})
-                                </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                                <Box>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <HowToRegIcon sx={{ color: '#0284c7', fontSize: 20 }} />
+                                        Recent Scans in this Session ({recentScans.length})
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
+                                        Unique attendees verified during current active session
+                                    </Typography>
+                                </Box>
                                 {recentScans.length > 0 && (
                                     <Button
                                         size="small"
                                         onClick={() => setRecentScans([])}
                                         startIcon={<DeleteSweepIcon />}
-                                        sx={{ color: '#94a3b8', fontSize: '0.72rem', textTransform: 'none', fontWeight: 700 }}
+                                        sx={{
+                                            color: '#64748b',
+                                            fontSize: '0.75rem',
+                                            textTransform: 'none',
+                                            fontWeight: 800,
+                                            bgcolor: '#f1f5f9',
+                                            borderRadius: '8px',
+                                            px: 1.5,
+                                            '&:hover': { bgcolor: '#e2e8f0', color: '#dc2626' },
+                                        }}
                                     >
-                                        Clear
+                                        Clear History
                                     </Button>
                                 )}
                             </Box>
 
                             {recentScans.length === 0 ? (
-                                <Box sx={{ py: 3, textAlign: 'center', color: '#94a3b8' }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 600 }}>No scan history in this session yet.</Typography>
+                                <Box sx={{ py: 4, textAlign: 'center', color: '#94a3b8', bgcolor: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
+                                    <HowToRegIcon sx={{ fontSize: 36, color: '#cbd5e1', mb: 0.5 }} />
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#64748b', display: 'block' }}>No Attendees Scanned Yet</Typography>
+                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>Point camera at attendee QR codes to see instant scan history here.</Typography>
                                 </Box>
                             ) : (
                                 <Stack spacing={1.2}>
-                                    {recentScans.map((r, i) => (
-                                        <Box
-                                            key={i}
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                p: 1.4,
-                                                bgcolor: r.status === 'success' ? '#f0fdf4' : '#fef2f2',
-                                                border: `1px solid ${r.status === 'success' ? '#bbf7d0' : '#fecaca'}`,
-                                                borderRadius: '12px',
-                                            }}
-                                        >
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.88rem' }}>
-                                                    {r.ticket?.visitor_name || 'Unknown Visitor'}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block' }}>
-                                                    {r.ticket?.ticket_code} &bull; {r.timestamp}
-                                                </Typography>
-                                            </Box>
-                                            <Chip
-                                                label={getCategoryMeta(r.ticket?.visitor_type).shortLabel}
-                                                size="small"
+                                    {recentScans.map((r, i) => {
+                                        const meta = getCategoryMeta(r.ticket?.visitor_type);
+                                        const isSuccess = r.status === 'success';
+                                        const isAlready = r.status === 'already_checked_in';
+
+                                        return (
+                                            <Paper
+                                                key={r.ticket?.ticket_code || i}
+                                                elevation={0}
                                                 sx={{
-                                                    bgcolor: getCategoryMeta(r.ticket?.visitor_type).bg,
-                                                    color: getCategoryMeta(r.ticket?.visitor_type).color,
-                                                    border: `1px solid ${getCategoryMeta(r.ticket?.visitor_type).border}`,
-                                                    fontWeight: 900,
-                                                    fontSize: '0.65rem',
-                                                    height: 22,
+                                                    p: 1.6,
+                                                    bgcolor: isSuccess ? '#f0fdf4' : isAlready ? '#fffbeb' : '#fef2f2',
+                                                    border: `1.5px solid ${isSuccess ? '#86efac' : isAlready ? '#fde68a' : '#fecaca'}`,
+                                                    borderRadius: '14px',
+                                                    display: 'flex',
+                                                    flexDirection: { xs: 'column', sm: 'row' },
+                                                    justifyContent: 'space-between',
+                                                    alignItems: { xs: 'flex-start', sm: 'center' },
+                                                    gap: 1.5,
+                                                    transition: 'all 0.15s ease',
+                                                    '&:hover': {
+                                                        transform: 'translateY(-1px)',
+                                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                                    },
                                                 }}
-                                            />
-                                        </Box>
-                                    ))}
+                                            >
+                                                {/* Attendee Info */}
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+                                                    <Box
+                                                        sx={{
+                                                            width: 38,
+                                                            height: 38,
+                                                            borderRadius: '10px',
+                                                            bgcolor: isSuccess ? '#dcfce7' : isAlready ? '#fef3c7' : '#fee2e2',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            flexShrink: 0,
+                                                        }}
+                                                    >
+                                                        {isSuccess ? (
+                                                            <CheckCircleIcon sx={{ fontSize: 22, color: '#16a34a' }} />
+                                                        ) : isAlready ? (
+                                                            <WarningAmberIcon sx={{ fontSize: 22, color: '#d97706' }} />
+                                                        ) : (
+                                                            <ErrorOutlineIcon sx={{ fontSize: 22, color: '#dc2626' }} />
+                                                        )}
+                                                    </Box>
+                                                    <Box sx={{ minWidth: 0 }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                            <Typography variant="body1" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.92rem' }}>
+                                                                {r.ticket?.visitor_name || 'Unknown Attendee'}
+                                                            </Typography>
+                                                            <Chip
+                                                                label={meta.shortLabel}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: meta.bg,
+                                                                    color: meta.color,
+                                                                    border: `1px solid ${meta.border}`,
+                                                                    fontWeight: 900,
+                                                                    fontSize: '0.65rem',
+                                                                    height: 20,
+                                                                }}
+                                                            />
+                                                            {isAlready && (
+                                                                <Chip
+                                                                    label="ALREADY IN"
+                                                                    size="small"
+                                                                    sx={{
+                                                                        bgcolor: '#fef3c7',
+                                                                        color: '#b45309',
+                                                                        border: '1px solid #fde68a',
+                                                                        fontWeight: 800,
+                                                                        fontSize: '0.62rem',
+                                                                        height: 20,
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </Box>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap', mt: 0.3 }}>
+                                                            <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{r.ticket?.ticket_code}</span>
+                                                            {r.ticket?.visitor_institution && (
+                                                                <span>&bull; {r.ticket?.visitor_institution}</span>
+                                                            )}
+                                                            <span>&bull; Scanned at {r.timestamp}</span>
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+
+                                                {/* Action button */}
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, alignSelf: { xs: 'flex-end', sm: 'center' } }}>
+                                                    {r.ticket?.id && (
+                                                        <Button
+                                                            component="a"
+                                                            href={route('admin.visitorTickets.printBadge', r.ticket.id)}
+                                                            target="_blank"
+                                                            size="small"
+                                                            variant="outlined"
+                                                            startIcon={<PrintIcon sx={{ fontSize: 15 }} />}
+                                                            sx={{
+                                                                color: '#094d42',
+                                                                borderColor: '#a7f3d0',
+                                                                bgcolor: '#ffffff',
+                                                                fontWeight: 800,
+                                                                fontSize: '0.72rem',
+                                                                textTransform: 'none',
+                                                                borderRadius: '8px',
+                                                                px: 1.5,
+                                                                py: 0.4,
+                                                                '&:hover': {
+                                                                    bgcolor: '#094d42',
+                                                                    color: '#ffffff',
+                                                                    borderColor: '#094d42',
+                                                                },
+                                                            }}
+                                                        >
+                                                            Print Badge
+                                                        </Button>
+                                                    )}
+                                                </Box>
+                                            </Paper>
+                                        );
+                                    })}
                                 </Stack>
                             )}
                         </Paper>
