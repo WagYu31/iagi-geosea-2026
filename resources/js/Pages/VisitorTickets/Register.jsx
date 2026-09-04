@@ -1153,7 +1153,7 @@ export default function Register({
                                                         </Box>
                                                     </Box>
                                                     <Chip
-                                                        label="AKTIF"
+                                                        label="ACTIVE"
                                                         size="small"
                                                         sx={{
                                                             height: 20,
@@ -1223,7 +1223,7 @@ export default function Register({
                                                         QRIS Indonesia (Under Maintenance / Coming Soon)
                                                     </Typography>
                                                     <Typography variant="body2" sx={{ color: '#b45309', maxWidth: 480, mx: 'auto', mb: 2, fontSize: '0.82rem', lineHeight: 1.5 }}>
-                                                        Gerbang pembayaran instan QRIS sedang dalam tahap pemeliharaan sistem & aktivasi gateway. Silakan gunakan metode <strong>Bank Transfer</strong> untuk proses verifikasi tiket yang langsung aktif.
+                                                        Instant QRIS payment gateway is currently under scheduled maintenance & gateway configuration. Please proceed with <strong>Bank Transfer</strong> for immediate registration processing.
                                                     </Typography>
                                                     <Button
                                                         variant="contained"
@@ -1245,7 +1245,7 @@ export default function Register({
                                                             '&:hover': { bgcolor: '#0369a1' },
                                                         }}
                                                     >
-                                                        Gunakan Bank Transfer Sekarang
+                                                        Switch to Bank Transfer
                                                     </Button>
                                                 </Box>
                                             )}
