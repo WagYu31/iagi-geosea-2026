@@ -64,7 +64,7 @@ export default function Register({
         {
             id: 'iagi_member_professional',
             group: 'conference',
-            name: 'IAGI Member Professional',
+            name: 'IAGI Member - Professional',
             badge: 'IAGI MEMBER',
             normalPrice: 3000000,
             price: 3000000,
@@ -81,7 +81,7 @@ export default function Register({
         {
             id: 'non_iagi_member_professional',
             group: 'conference',
-            name: 'Non IAGI Member Professional',
+            name: 'Non IAGI Member - Professional',
             badge: 'NON-MEMBER PRO',
             normalPrice: 4000000,
             price: 4000000,
@@ -98,7 +98,7 @@ export default function Register({
         {
             id: 'iagi_member_expatriate',
             group: 'conference',
-            name: 'IAGI Member Expatriate',
+            name: 'IAGI Member - Expatriate',
             badge: 'IAGI EXPATRIATE',
             normalPrice: 6000000,
             price: 6000000,
@@ -115,7 +115,7 @@ export default function Register({
         {
             id: 'non_iagi_member_expatriate',
             group: 'conference',
-            name: 'Non IAGI Member Expatriate',
+            name: 'Non IAGI Member - Expatriate',
             badge: 'INTERNATIONAL DELEGATE',
             normalPrice: 7000000,
             price: 7000000,

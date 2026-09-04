@@ -92,10 +92,10 @@ class VisitorTicket extends Model
     public function getCategoryLabelAttribute(): string
     {
         $map = [
-            'iagi_member_professional' => 'IAGI Member Professional',
-            'non_iagi_member_professional' => 'Non IAGI Member Professional',
-            'iagi_member_expatriate' => 'IAGI Member Expatriate',
-            'non_iagi_member_expatriate' => 'Non IAGI Member Expatriate',
+            'iagi_member_professional' => 'IAGI Member - Professional',
+            'non_iagi_member_professional' => 'Non IAGI Member - Professional',
+            'iagi_member_expatriate' => 'IAGI Member - Expatriate',
+            'non_iagi_member_expatriate' => 'Non IAGI Member - Expatriate',
             'student_undergraduate' => 'Student Undergraduate',
             'exclusive' => 'Visitor Exclusive (VIP)',
             'non_exclusive' => 'Visitor Non-Exclusive (Free)',

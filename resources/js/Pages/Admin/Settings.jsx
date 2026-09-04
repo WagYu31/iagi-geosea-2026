@@ -803,7 +803,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="IAGI Member Professional (IDR)"
+                                        label="IAGI Member - Professional (IDR)"
                                         value={priceIagiPro}
                                         onChange={(e) => setPriceIagiPro(e.target.value)}
                                         sx={inputSx}
@@ -814,7 +814,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Non IAGI Member Professional (IDR)"
+                                        label="Non IAGI Member - Professional (IDR)"
                                         value={priceNonIagiPro}
                                         onChange={(e) => setPriceNonIagiPro(e.target.value)}
                                         sx={inputSx}
@@ -825,7 +825,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="IAGI Member Expatriate (IDR)"
+                                        label="IAGI Member - Expatriate (IDR)"
                                         value={priceIagiExpat}
                                         onChange={(e) => setPriceIagiExpat(e.target.value)}
                                         sx={inputSx}
@@ -836,7 +836,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Non IAGI Member Expatriate (IDR)"
+                                        label="Non IAGI Member - Expatriate (IDR)"
                                         value={priceNonIagiExpat}
                                         onChange={(e) => setPriceNonIagiExpat(e.target.value)}
                                         sx={inputSx}

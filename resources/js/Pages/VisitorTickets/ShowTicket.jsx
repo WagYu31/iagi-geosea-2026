@@ -26,7 +26,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CATEGORY_MAP = {
     iagi_member_professional: {
-        label: 'IAGI Member Professional',
+        label: 'IAGI Member - Professional',
         badge: 'PROFESSIONAL PASS',
         gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
         border: '#094d42',
@@ -36,7 +36,7 @@ const CATEGORY_MAP = {
         tagColor: '#15803d',
     },
     non_iagi_member_professional: {
-        label: 'Non IAGI Member Professional',
+        label: 'Non IAGI Member - Professional',
         badge: 'PROFESSIONAL PASS',
         gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
         border: '#0284c7',
@@ -46,7 +46,7 @@ const CATEGORY_MAP = {
         tagColor: '#0369a1',
     },
     iagi_member_expatriate: {
-        label: 'IAGI Member Expatriate',
+        label: 'IAGI Member - Expatriate',
         badge: 'INTERNATIONAL DELEGATE',
         gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
         border: '#7c3aed',
@@ -56,7 +56,7 @@ const CATEGORY_MAP = {
         tagColor: '#6d28d9',
     },
     non_iagi_member_expatriate: {
-        label: 'Non IAGI Member Expatriate',
+        label: 'Non IAGI Member - Expatriate',
         badge: 'INTERNATIONAL DELEGATE',
         gradient: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
         border: '#7c3aed',

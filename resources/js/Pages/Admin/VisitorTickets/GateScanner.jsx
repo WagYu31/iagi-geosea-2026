@@ -36,28 +36,28 @@ import EmailIcon from '@mui/icons-material/Email';
 
 const CATEGORY_MAP = {
     iagi_member_professional: {
-        label: 'IAGI MEMBER PROFESSIONAL',
+        label: 'IAGI MEMBER - PROFESSIONAL',
         shortLabel: 'IAGI PRO',
         bg: '#dcfce7',
         color: '#15803d',
         border: '#86efac',
     },
     non_iagi_member_professional: {
-        label: 'NON IAGI MEMBER PROFESSIONAL',
+        label: 'NON IAGI MEMBER - PROFESSIONAL',
         shortLabel: 'NON-IAGI PRO',
         bg: '#e0f2fe',
         color: '#0369a1',
         border: '#7dd3fc',
     },
     iagi_member_expatriate: {
-        label: 'IAGI MEMBER EXPATRIATE',
+        label: 'IAGI MEMBER - EXPATRIATE',
         shortLabel: 'IAGI EXPAT',
         bg: '#ede9fe',
         color: '#6d28d9',
         border: '#c4b5fd',
     },
     non_iagi_member_expatriate: {
-        label: 'NON IAGI MEMBER EXPATRIATE',
+        label: 'NON IAGI MEMBER - EXPATRIATE',
         shortLabel: 'NON-IAGI EXPAT',
         bg: '#ede9fe',
         color: '#5b21b6',

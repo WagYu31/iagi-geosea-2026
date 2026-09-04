@@ -12,25 +12,25 @@ import StarIcon from '@mui/icons-material/Star';
 
 const CATEGORY_MAP = {
     iagi_member_professional: {
-        label: 'IAGI MEMBER PROFESSIONAL',
+        label: 'IAGI MEMBER - PROFESSIONAL',
         banner: '#094d42',
         border: '#094d42',
         textColor: '#fff',
     },
     non_iagi_member_professional: {
-        label: 'NON IAGI MEMBER PROFESSIONAL',
+        label: 'NON IAGI MEMBER - PROFESSIONAL',
         banner: '#0284c7',
         border: '#0284c7',
         textColor: '#fff',
     },
     iagi_member_expatriate: {
-        label: 'IAGI MEMBER EXPATRIATE',
+        label: 'IAGI MEMBER - EXPATRIATE',
         banner: '#7c3aed',
         border: '#7c3aed',
         textColor: '#fff',
     },
     non_iagi_member_expatriate: {
-        label: 'NON IAGI MEMBER EXPATRIATE',
+        label: 'NON IAGI MEMBER - EXPATRIATE',
         banner: '#6d28d9',
         border: '#6d28d9',
         textColor: '#fff',

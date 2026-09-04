@@ -72,7 +72,7 @@ class VisitorTicketController extends Controller
         $categories = [
             [
                 'id' => 'iagi_member_professional',
-                'name' => 'IAGI Member Professional',
+                'name' => 'IAGI Member - Professional',
                 'badge' => 'IAGI MEMBER',
                 'normalPrice' => $priceIagiPro,
                 'price' => $priceIagiPro,
@@ -84,7 +84,7 @@ class VisitorTicketController extends Controller
             ],
             [
                 'id' => 'non_iagi_member_professional',
-                'name' => 'Non IAGI Member Professional',
+                'name' => 'Non IAGI Member - Professional',
                 'badge' => 'PROFESSIONAL',
                 'normalPrice' => $priceNonIagiPro,
                 'price' => $priceNonIagiPro,
@@ -96,7 +96,7 @@ class VisitorTicketController extends Controller
             ],
             [
                 'id' => 'iagi_member_expatriate',
-                'name' => 'IAGI Member Expatriate',
+                'name' => 'IAGI Member - Expatriate',
                 'badge' => 'IAGI EXPATRIATE',
                 'normalPrice' => $priceIagiExpat,
                 'price' => $priceIagiExpat,
@@ -108,7 +108,7 @@ class VisitorTicketController extends Controller
             ],
             [
                 'id' => 'non_iagi_member_expatriate',
-                'name' => 'Non IAGI Member Expatriate',
+                'name' => 'Non IAGI Member - Expatriate',
                 'badge' => 'INTERNATIONAL DELEGATE',
                 'normalPrice' => $priceNonIagiExpat,
                 'price' => $priceNonIagiExpat,

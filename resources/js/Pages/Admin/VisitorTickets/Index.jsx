@@ -66,28 +66,28 @@ import SendIcon from '@mui/icons-material/Send';
 
 const CATEGORY_META = {
     iagi_member_professional: {
-        label: 'IAGI Member Professional',
+        label: 'IAGI Member - Professional',
         shortLabel: 'IAGI PRO',
         bg: '#dcfce7',
         color: '#15803d',
         border: '#86efac',
     },
     non_iagi_member_professional: {
-        label: 'Non IAGI Member Professional',
+        label: 'Non IAGI Member - Professional',
         shortLabel: 'NON-IAGI PRO',
         bg: '#e0f2fe',
         color: '#0369a1',
         border: '#7dd3fc',
     },
     iagi_member_expatriate: {
-        label: 'IAGI Member Expatriate',
+        label: 'IAGI Member - Expatriate',
         shortLabel: 'IAGI EXPAT',
         bg: '#ede9fe',
         color: '#6d28d9',
         border: '#c4b5fd',
     },
     non_iagi_member_expatriate: {
-        label: 'Non IAGI Member Expatriate',
+        label: 'Non IAGI Member - Expatriate',
         shortLabel: 'NON-IAGI EXPAT',
         bg: '#ede9fe',
         color: '#5b21b6',
@@ -707,10 +707,10 @@ export default function VisitorTicketsIndex({
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
                                     <MenuItem value="all">Semua Kategori</MenuItem>
-                                    <MenuItem value="iagi_member_professional">IAGI Member Professional</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member Professional</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate">IAGI Member Expatriate</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member Expatriate</MenuItem>
+                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate</MenuItem>
                                     <MenuItem value="student_undergraduate">Student Undergraduate</MenuItem>
                                     <MenuItem value="exclusive">⭐ Visitor Exclusive (VIP)</MenuItem>
                                     <MenuItem value="non_exclusive">🎟️ Visitor Non-Exclusive (Free)</MenuItem>
@@ -1536,11 +1536,11 @@ export default function VisitorTicketsIndex({
                                     label="Kategori Pengunjung"
                                     onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
                                 >
-                                    <MenuItem value="iagi_member_professional">IAGI Member Professional (Rp 2.500.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member Professional (Rp 3.000.000)</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate">IAGI Member Expatriate (Rp 5.000.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member Expatriate (Rp 6.000.000)</MenuItem>
-                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 750.000)</MenuItem>
+                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional (Rp 4.000.000)</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate (Rp 6.000.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate (Rp 7.000.000)</MenuItem>
+                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 1.000.000)</MenuItem>
                                     <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
                                     <MenuItem value="non_exclusive">Visitor Non-Exclusive (Gratis / Rp 0)</MenuItem>
                                 </Select>
