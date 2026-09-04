@@ -407,7 +407,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                🎟️ Tiket Penonton / Visitor Pass
+                                🎟️ Conference & Visitor Passes
                             </Button>
                             <Button
                                 component={Link}

@@ -269,7 +269,7 @@ export default function AppAppBar({ auth }) {
                                                     color: '#fff',
                                                 }}
                                             >
-                                                🎟️ Beli Tiket Penonton / Visitor Pass
+                                                🎟️ Conference & Visitor Passes
                                             </Button>
                                         </MenuItem>
                                         <MenuItem>
