@@ -19,6 +19,8 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    InputAdornment,
+    Tooltip,
 } from '@mui/material';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import StarIcon from '@mui/icons-material/Star';
@@ -36,6 +38,15 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import GroupsIcon from '@mui/icons-material/Groups';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 export default function Register({
     categories: propCategories = [],
@@ -51,41 +62,47 @@ export default function Register({
     const defaultCategories = [
         {
             id: 'iagi_member_professional',
+            group: 'conference',
             name: 'IAGI Member Professional',
             badge: 'IAGI MEMBER',
             normalPrice: 3000000,
             price: 2500000,
             tag: 'SPECIAL EARLY BIRD',
+            discountAmount: 500000,
             tagColor: '#047857',
             tagBg: '#dcfce7',
             borderSelected: '#10b981',
             bgSelected: '#f0fdf4',
             lanyardTheme: { border: '#059669', banner: '#094d42', badge: 'IAGI MEMBER PRO' },
-            description: 'Access to full technical sessions, exhibition, seminar kit, official lanyard & lunches.',
-            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+            description: 'Full conference sessions, exhibition arena, scientific poster sessions, lanyard ID badge & lunches.',
+            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition Arena & Lunches'],
         },
         {
             id: 'non_iagi_member_professional',
+            group: 'conference',
             name: 'Non IAGI Member Professional',
-            badge: 'PROFESSIONAL',
+            badge: 'NON-MEMBER PRO',
             normalPrice: 4000000,
             price: 3000000,
             tag: 'SPECIAL EARLY BIRD',
+            discountAmount: 1000000,
             tagColor: '#0284c7',
             tagBg: '#e0f2fe',
             borderSelected: '#0284c7',
             bgSelected: '#f0f9ff',
             lanyardTheme: { border: '#0284c7', banner: '#0369a1', badge: 'NON-MEMBER PRO' },
-            description: 'Access to full technical sessions, exhibition, seminar kit, official lanyard & lunches.',
-            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+            description: 'Full conference sessions, exhibition arena, scientific poster sessions, lanyard ID badge & lunches.',
+            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition Arena & Lunches'],
         },
         {
             id: 'iagi_member_expatriate',
+            group: 'conference',
             name: 'IAGI Member Expatriate',
             badge: 'IAGI EXPATRIATE',
             normalPrice: 6000000,
             price: 5000000,
             tag: 'SPECIAL EARLY BIRD',
+            discountAmount: 1000000,
             tagColor: '#b45309',
             tagBg: '#fef3c7',
             borderSelected: '#f59e0b',
@@ -96,11 +113,13 @@ export default function Register({
         },
         {
             id: 'non_iagi_member_expatriate',
+            group: 'conference',
             name: 'Non IAGI Member Expatriate',
             badge: 'INTERNATIONAL DELEGATE',
             normalPrice: 7000000,
             price: 6000000,
             tag: 'SPECIAL EARLY BIRD',
+            discountAmount: 1000000,
             tagColor: '#7c3aed',
             tagBg: '#ede9fe',
             borderSelected: '#8b5cf6',
@@ -111,11 +130,13 @@ export default function Register({
         },
         {
             id: 'student_undergraduate',
+            group: 'conference',
             name: 'Student Undergraduate',
             badge: 'STUDENT PASS',
             normalPrice: 1000000,
             price: 750000,
             tag: 'SPECIAL EARLY BIRD',
+            discountAmount: 250000,
             tagColor: '#4338ca',
             tagBg: '#e0e7ff',
             borderSelected: '#6366f1',
@@ -125,27 +146,14 @@ export default function Register({
             perks: ['Student ID Required', 'Technical Sessions', 'Exhibition & E-Certificate'],
         },
         {
-            id: 'non_exclusive',
-            name: 'Visitor Non-Exclusive',
-            badge: 'FREE PASS',
-            normalPrice: 0,
-            price: 0,
-            tag: 'FREE PASS',
-            tagColor: '#059669',
-            tagBg: '#d1fae5',
-            borderSelected: '#10b981',
-            bgSelected: '#f0fdf4',
-            lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS' },
-            description: 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
-            perks: ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
-        },
-        {
             id: 'exclusive',
+            group: 'visitor',
             name: 'Visitor Exclusive',
             badge: 'VIP PASS',
             normalPrice: 500000,
             price: 500000,
             tag: 'VIP PASS',
+            discountAmount: 0,
             tagColor: '#d97706',
             tagBg: '#fef3c7',
             borderSelected: '#f59e0b',
@@ -153,6 +161,23 @@ export default function Register({
             lanyardTheme: { border: '#f59e0b', banner: '#d97706', badge: 'VISITOR VIP' },
             description: 'Plenary Session access, VIP Lounge entry, Gold Lanyard badge & official Seminar Kit.',
             perks: ['Plenary Session Access', 'VIP Lounge & Gold Lanyard', 'Official Seminar Kit'],
+        },
+        {
+            id: 'non_exclusive',
+            group: 'visitor',
+            name: 'Visitor Non-Exclusive',
+            badge: 'FREE PASS',
+            normalPrice: 0,
+            price: 0,
+            tag: 'FREE PASS',
+            discountAmount: 0,
+            tagColor: '#059669',
+            tagBg: '#d1fae5',
+            borderSelected: '#10b981',
+            bgSelected: '#f0fdf4',
+            lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS' },
+            description: 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
+            perks: ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
         },
     ];
 
@@ -168,6 +193,8 @@ export default function Register({
     const bankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
     const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
     const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
+    
+    const [selectedTab, setSelectedTab] = useState('all'); // 'all', 'conference', 'visitor'
     const [visitorType, setVisitorType] = useState('iagi_member_professional');
     const [paymentMethod, setPaymentMethod] = useState('qris_indo');
     const [members, setMembers] = useState([
@@ -331,9 +358,7 @@ export default function Register({
         processFileAndSet(file);
     };
 
-    // ==========================================
     // DIRECT CAMERA STREAM (WebRTC Live Viewfinder)
-    // ==========================================
     useEffect(() => {
         let stream = null;
         let isCancelled = false;
@@ -448,8 +473,13 @@ export default function Register({
     const selectedCategory = categoriesList.find(c => c.id === visitorType) || categoriesList[0];
     const isPaid = (selectedCategory?.price ?? 0) > 0;
     const totalEstimate = (selectedCategory?.price ?? 0) * members.length;
-    const isExclusive = isPaid;
+    const totalNormalEstimate = (selectedCategory?.normalPrice ? selectedCategory.normalPrice * members.length : totalEstimate);
+    const totalSavings = totalNormalEstimate - totalEstimate;
     const primaryMember = members[0] || { name: '', institution: '' };
+
+    const filteredCategories = selectedTab === 'all'
+        ? categoriesList
+        : categoriesList.filter(c => c.group === selectedTab);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -478,13 +508,14 @@ export default function Register({
                 minHeight: '100vh',
                 bgcolor: '#f8fafc',
                 color: '#0f172a',
-                py: { xs: 2, md: 3 },
+                py: { xs: 2.5, md: 4 },
+                backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
             }}
         >
-            <Head title="Visitor Ticket Registration - 55th PIT IAGI & GEOSEA 2026" />
+            <Head title="Registration & Ticket Portal - 55th PIT IAGI & GEOSEA 2026" />
 
-            <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
-                {/* Header Navigation Bar */}
+            <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+                {/* Top Nav Bar */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -492,11 +523,11 @@ export default function Register({
                         alignItems: 'center',
                         p: 1.2,
                         px: 2.5,
-                        borderRadius: '14px',
+                        borderRadius: '16px',
                         bgcolor: '#ffffff',
                         border: '1px solid #e2e8f0',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                        mb: 2.5,
+                        mb: 3,
                     }}
                 >
                     <Button
@@ -508,10 +539,10 @@ export default function Register({
                             color: '#334155',
                             textTransform: 'none',
                             fontWeight: 700,
-                            fontSize: '0.82rem',
-                            borderRadius: '8px',
-                            px: 1.5,
-                            py: 0.5,
+                            fontSize: '0.84rem',
+                            borderRadius: '10px',
+                            px: 1.8,
+                            py: 0.6,
                             bgcolor: '#f1f5f9',
                             '&:hover': {
                                 color: '#094d42',
@@ -523,44 +554,62 @@ export default function Register({
                     </Button>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981' }} />
                         <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-                            Official Conference Portal &bull; PIT IAGI & GEOSEA 2026
+                            Official Registration Portal &bull; PIT IAGI & GEOSEA 2026
                         </Typography>
                     </Box>
                 </Box>
 
                 {/* Hero Header Section */}
-                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                <Box sx={{ textAlign: 'center', mb: 3.5 }}>
+                    <Chip
+                        icon={<FlashOnIcon sx={{ fontSize: '15px !important', color: '#047857 !important' }} />}
+                        label="SPECIAL EARLY BIRD PASSES NOW OPEN &bull; 1 - 31 AUGUST 2026"
+                        size="small"
+                        sx={{
+                            bgcolor: '#ecfdf5',
+                            color: '#047857',
+                            border: '1px solid #a7f3d0',
+                            fontWeight: 900,
+                            fontSize: '0.72rem',
+                            letterSpacing: '0.06em',
+                            px: 1,
+                            py: 0.4,
+                            mb: 1.5,
+                            borderRadius: '20px',
+                        }}
+                    />
+
                     <Typography
                         variant="h4"
                         sx={{
                             fontWeight: 900,
-                            fontSize: { xs: '1.6rem', sm: '2rem', md: '2.2rem' },
+                            fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
                             letterSpacing: '-0.03em',
                             color: '#0f172a',
                             lineHeight: 1.2,
-                            mb: 0.6,
+                            mb: 0.8,
                         }}
                     >
-                        Visitor Ticket Registration
+                        Conference & Visitor Registration
                     </Typography>
 
                     <Typography
                         variant="body2"
                         sx={{
                             color: '#64748b',
-                            maxWidth: 650,
+                            maxWidth: 680,
                             mx: 'auto',
-                            fontSize: { xs: '0.85rem', md: '0.92rem' },
-                            lineHeight: 1.5,
-                            mb: 1.5,
+                            fontSize: { xs: '0.88rem', md: '0.95rem' },
+                            lineHeight: 1.6,
+                            mb: 2,
                         }}
                     >
-                        Get your official ticket & digital QR Code for access to the geological exhibition arena, scientific poster sessions, and energy & mineral industry zones.
+                        Select your registration category below to receive your official conference badge, digital QR ticket pass, and seminar credentials for PIT IAGI & GEOSEA 2026.
                     </Typography>
 
-                    {/* Venue & Date */}
+                    {/* Venue & Date Pills */}
                     <Box
                         sx={{
                             display: 'inline-flex',
@@ -570,22 +619,22 @@ export default function Register({
                             alignItems: 'center',
                             bgcolor: '#ffffff',
                             border: '1px solid #e2e8f0',
-                            borderRadius: '10px',
-                            px: 2,
-                            py: 0.6,
-                            boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                            borderRadius: '12px',
+                            px: 2.5,
+                            py: 0.8,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                         }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <EventIcon sx={{ fontSize: 16, color: '#0284c7' }} />
-                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700 }}>
+                            <EventIcon sx={{ fontSize: 18, color: '#0284c7' }} />
+                            <Typography variant="caption" sx={{ color: '#1e293b', fontWeight: 800, fontSize: '0.8rem' }}>
                                 {eventDate}
                             </Typography>
                         </Box>
-                        <Divider orientation="vertical" flexItem sx={{ height: 14, my: 'auto', borderColor: '#cbd5e1' }} />
+                        <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', borderColor: '#cbd5e1' }} />
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <LocationOnIcon sx={{ fontSize: 16, color: '#e11d48' }} />
-                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700 }}>
+                            <LocationOnIcon sx={{ fontSize: 18, color: '#e11d48' }} />
+                            <Typography variant="caption" sx={{ color: '#1e293b', fontWeight: 800, fontSize: '0.8rem' }}>
                                 {eventVenue}
                             </Typography>
                         </Box>
@@ -596,128 +645,194 @@ export default function Register({
                     <Alert
                         severity="warning"
                         sx={{
-                            borderRadius: '14px',
+                            borderRadius: '16px',
                             bgcolor: '#fffbeb',
                             color: '#b45309',
                             border: '1px solid #fde68a',
-                            p: 2.5,
+                            p: 3,
+                            fontSize: '0.95rem',
+                            fontWeight: 700,
                         }}
                     >
-                        Visitor ticket registration is currently closed by the committee.
+                        Conference ticket registration is currently closed by the committee.
                     </Alert>
                 ) : (
                     <form onSubmit={handleSubmit}>
-                        {/* BULLETPROOF FLEXBOX 2-COLUMN LAYOUT: FORM ON LEFT, BADGE ON RIGHT */}
+                        {/* 2-COLUMN LAYOUT: FORM ON LEFT, BADGE ON RIGHT */}
                         <Box
                             sx={{
                                 display: 'flex',
                                 flexDirection: { xs: 'column', lg: 'row' },
-                                gap: 3,
+                                gap: 3.5,
                                 alignItems: 'flex-start',
                             }}
                         >
-                            {/* LEFT COLUMN: STEPS 1, 2, 3 (FORM) */}
+                            {/* LEFT COLUMN: STEPS 1, 2, 3 */}
                             <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 65%' }, width: '100%' }}>
-                                <Stack spacing={2.5}>
-                                    {/* SECTION 1: SELECT TICKET CATEGORY */}
+                                <Stack spacing={3}>
+                                    
+                                    {/* STEP 1: SELECT TICKET CATEGORY */}
                                     <Paper
                                         elevation={0}
                                         sx={{
-                                            p: 2.5,
-                                            borderRadius: '16px',
+                                            p: { xs: 2.5, sm: 3 },
+                                            borderRadius: '20px',
                                             bgcolor: '#ffffff',
                                             border: '1px solid #e2e8f0',
-                                            boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                                            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
                                         }}
                                     >
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
-                                            <Box
-                                                sx={{
-                                                    width: 26,
-                                                    height: 26,
-                                                    borderRadius: '8px',
-                                                    bgcolor: '#094d42',
-                                                    color: '#fff',
-                                                    fontSize: '0.8rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontWeight: 900,
-                                                }}
-                                            >
-                                                1
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1.5 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                                <Box
+                                                    sx={{
+                                                        width: 28,
+                                                        height: 28,
+                                                        borderRadius: '10px',
+                                                        bgcolor: '#094d42',
+                                                        color: '#fff',
+                                                        fontSize: '0.85rem',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontWeight: 900,
+                                                    }}
+                                                >
+                                                    1
+                                                </Box>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
+                                                    Select Ticket Category
+                                                </Typography>
                                             </Box>
-                                            <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                Select Ticket Category
-                                            </Typography>
+
+                                            {/* Category Segmented Tabs */}
+                                            <Box sx={{ display: 'flex', bgcolor: '#f1f5f9', p: 0.5, borderRadius: '10px', gap: 0.5 }}>
+                                                {[
+                                                    { key: 'all', label: `All Passes (${categoriesList.length})` },
+                                                    { key: 'conference', label: 'Conference (5)' },
+                                                    { key: 'visitor', label: 'Visitor & Expo (2)' },
+                                                ].map((tab) => (
+                                                    <Button
+                                                        key={tab.key}
+                                                        size="small"
+                                                        onClick={() => setSelectedTab(tab.key)}
+                                                        sx={{
+                                                            px: 1.5,
+                                                            py: 0.4,
+                                                            borderRadius: '8px',
+                                                            fontSize: '0.74rem',
+                                                            fontWeight: 800,
+                                                            textTransform: 'none',
+                                                            bgcolor: selectedTab === tab.key ? '#ffffff' : 'transparent',
+                                                            color: selectedTab === tab.key ? '#094d42' : '#64748b',
+                                                            boxShadow: selectedTab === tab.key ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                                                            '&:hover': {
+                                                                bgcolor: selectedTab === tab.key ? '#ffffff' : '#e2e8f0',
+                                                            },
+                                                        }}
+                                                    >
+                                                        {tab.label}
+                                                    </Button>
+                                                ))}
+                                            </Box>
                                         </Box>
 
+                                        {/* Categories Grid */}
                                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-                                            {categoriesList.map((cat) => {
+                                            {filteredCategories.map((cat) => {
                                                 const isSelected = visitorType === cat.id;
                                                 const isEarlyBird = cat.normalPrice && cat.normalPrice > cat.price;
+                                                const discount = cat.normalPrice ? (cat.normalPrice - cat.price) : 0;
+
                                                 return (
                                                     <Box
                                                         key={cat.id}
                                                         onClick={() => handleTypeChange(cat.id)}
                                                         sx={{
                                                             cursor: 'pointer',
-                                                            borderRadius: '14px',
+                                                            borderRadius: '16px',
                                                             bgcolor: isSelected ? (cat.bgSelected || '#f0fdf4') : '#ffffff',
                                                             border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
-                                                            p: 2,
+                                                            p: 2.2,
                                                             height: '100%',
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             justifyContent: 'space-between',
-                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                            boxShadow: isSelected ? `0 6px 18px ${cat.borderSelected || '#10b981'}25` : 'none',
-                                                            transform: isSelected ? 'scale(1.01)' : 'scale(1)',
+                                                            transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            boxShadow: isSelected 
+                                                                ? `0 8px 24px ${cat.borderSelected || '#10b981'}25, 0 2px 6px rgba(0,0,0,0.02)` 
+                                                                : '0 2px 6px rgba(0,0,0,0.02)',
+                                                            transform: isSelected ? 'translateY(-2px)' : 'none',
                                                             '&:hover': {
                                                                 borderColor: cat.borderSelected || '#10b981',
-                                                                bgcolor: cat.bgSelected || '#f0fdf4',
+                                                                bgcolor: cat.bgSelected || '#f8fafc',
+                                                                transform: 'translateY(-2px)',
                                                             },
                                                         }}
                                                     >
                                                         <Box>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, gap: 1 }}>
-                                                                <Chip
-                                                                    label={cat.tag || cat.badge}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        bgcolor: cat.tagBg || '#dcfce7',
-                                                                        color: cat.tagColor || '#047857',
-                                                                        fontWeight: 900,
-                                                                        fontSize: '0.65rem',
-                                                                        height: 22,
-                                                                        letterSpacing: '0.03em',
-                                                                    }}
-                                                                />
+                                                            {/* Top Badges Bar */}
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1 }}>
+                                                                <Stack direction="row" spacing={0.8} alignItems="center" flexWrap="wrap">
+                                                                    <Chip
+                                                                        label={cat.tag || cat.badge}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            bgcolor: cat.tagBg || '#dcfce7',
+                                                                            color: cat.tagColor || '#047857',
+                                                                            fontWeight: 900,
+                                                                            fontSize: '0.66rem',
+                                                                            height: 22,
+                                                                            letterSpacing: '0.04em',
+                                                                            border: `1px solid ${cat.borderSelected || '#86efac'}40`,
+                                                                        }}
+                                                                    />
+                                                                    {discount > 0 && (
+                                                                        <Chip
+                                                                            icon={<LocalOfferIcon sx={{ fontSize: '11px !important', color: `${cat.tagColor || '#047857'} !important` }} />}
+                                                                            label={`SAVE IDR ${discount.toLocaleString('id-ID')}`}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                bgcolor: '#ffffff',
+                                                                                color: cat.tagColor || '#047857',
+                                                                                fontWeight: 900,
+                                                                                fontSize: '0.64rem',
+                                                                                height: 22,
+                                                                                border: `1px solid ${cat.borderSelected || '#86efac'}`,
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </Stack>
+
+                                                                {/* Radio Circle Indicator */}
                                                                 <Box
                                                                     sx={{
-                                                                        width: 20,
-                                                                        height: 20,
+                                                                        width: 22,
+                                                                        height: 22,
                                                                         borderRadius: '50%',
                                                                         border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#cbd5e1'}`,
-                                                                        bgcolor: isSelected ? (cat.borderSelected || '#10b981') : 'transparent',
+                                                                        bgcolor: isSelected ? (cat.borderSelected || '#10b981') : '#ffffff',
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
-                                                                        transition: 'all 0.2s',
+                                                                        transition: 'all 0.15s ease',
                                                                         flexShrink: 0,
+                                                                        boxShadow: isSelected ? `0 0 10px ${cat.borderSelected || '#10b981'}80` : 'none',
                                                                     }}
                                                                 >
-                                                                    {isSelected && <CheckCircleIcon sx={{ fontSize: 14, color: '#fff' }} />}
+                                                                    {isSelected && <CheckCircleIcon sx={{ fontSize: 16, color: '#ffffff' }} />}
                                                                 </Box>
                                                             </Box>
 
-                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem', mb: 0.5, lineHeight: 1.3 }}>
+                                                            {/* Category Title */}
+                                                            <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1rem', mb: 0.6, lineHeight: 1.3 }}>
                                                                 {cat.name}
                                                             </Typography>
 
-                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.8, flexWrap: 'wrap' }}>
+                                                            {/* Price Display */}
+                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                                                                 {isEarlyBird && (
-                                                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 700, fontSize: '0.8rem' }}>
+                                                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 700, fontSize: '0.82rem' }}>
                                                                         IDR {cat.normalPrice.toLocaleString('id-ID')}
                                                                     </Typography>
                                                                 )}
@@ -726,24 +841,34 @@ export default function Register({
                                                                     sx={{
                                                                         fontWeight: 900,
                                                                         color: cat.price === 0 ? '#059669' : (cat.tagColor || '#0f172a'),
-                                                                        fontSize: '1.15rem',
+                                                                        fontSize: '1.25rem',
                                                                         lineHeight: 1,
+                                                                        letterSpacing: '-0.02em',
                                                                     }}
                                                                 >
                                                                     {cat.price === 0 ? 'FREE' : `IDR ${cat.price.toLocaleString('id-ID')}`}
                                                                 </Typography>
                                                             </Box>
 
-                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4, mb: 1 }}>
+                                                            {/* Description */}
+                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.5, mb: 1.5, fontSize: '0.75rem' }}>
                                                                 {cat.description}
                                                             </Typography>
                                                         </Box>
 
+                                                        {/* Perks Bullet List */}
                                                         {cat.perks && cat.perks.length > 0 && (
-                                                            <Box sx={{ mt: 1.2, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                                <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700, fontSize: '0.72rem' }}>
-                                                                    <CheckCircleIcon sx={{ fontSize: 13, color: cat.borderSelected || '#10b981' }} /> {cat.perks.join(' • ')}
-                                                                </Typography>
+                                                            <Box sx={{ mt: 1, pt: 1.2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                                                                <Stack spacing={0.5}>
+                                                                    {cat.perks.map((perk, perkIdx) => (
+                                                                        <Box key={perkIdx} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                                            <CheckCircleIcon sx={{ fontSize: 13, color: cat.borderSelected || '#10b981', flexShrink: 0 }} />
+                                                                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, fontSize: '0.72rem' }}>
+                                                                                {perk}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    ))}
+                                                                </Stack>
                                                             </Box>
                                                         )}
                                                     </Box>
@@ -752,27 +877,27 @@ export default function Register({
                                         </Box>
                                     </Paper>
 
-                                    {/* SECTION 2: VISITOR INFORMATION */}
+                                    {/* STEP 2: VISITOR / PARTICIPANT INFORMATION */}
                                     <Paper
                                         elevation={0}
                                         sx={{
-                                            p: 2.5,
-                                            borderRadius: '16px',
+                                            p: { xs: 2.5, sm: 3 },
+                                            borderRadius: '20px',
                                             bgcolor: '#ffffff',
                                             border: '1px solid #e2e8f0',
-                                            boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                                            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
                                         }}
                                     >
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1.5 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                                 <Box
                                                     sx={{
-                                                        width: 26,
-                                                        height: 26,
-                                                        borderRadius: '8px',
+                                                        width: 28,
+                                                        height: 28,
+                                                        borderRadius: '10px',
                                                         bgcolor: '#094d42',
                                                         color: '#fff',
-                                                        fontSize: '0.8rem',
+                                                        fontSize: '0.85rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -781,8 +906,8 @@ export default function Register({
                                                 >
                                                     2
                                                 </Box>
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                    Visitor Information {members.length > 1 && `(${members.length} Participants)`}
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
+                                                    Participant Details {members.length > 1 && `(${members.length} People)`}
                                                 </Typography>
                                             </Box>
 
@@ -793,111 +918,165 @@ export default function Register({
                                                 sx={{
                                                     color: '#094d42',
                                                     bgcolor: '#f0fdf4',
-                                                    border: '1px dashed #86efac',
-                                                    borderRadius: '8px',
+                                                    border: '1.5px dashed #86efac',
+                                                    borderRadius: '10px',
                                                     textTransform: 'none',
                                                     fontWeight: 800,
-                                                    fontSize: '0.78rem',
-                                                    px: 1.5,
-                                                    py: 0.4,
-                                                    '&:hover': { bgcolor: '#dcfce7' },
+                                                    fontSize: '0.8rem',
+                                                    px: 1.8,
+                                                    py: 0.6,
+                                                    '&:hover': { bgcolor: '#dcfce7', borderColor: '#4ade80' },
                                                 }}
                                             >
-                                                + Add Participant
+                                                + Add Another Participant
                                             </Button>
                                         </Box>
 
-                                        <Stack spacing={2}>
+                                        <Stack spacing={2.5}>
                                             {members.map((member, idx) => (
                                                 <Box
                                                     key={idx}
                                                     sx={{
-                                                        p: 2,
-                                                        borderRadius: '12px',
+                                                        p: 2.5,
+                                                        borderRadius: '16px',
                                                         bgcolor: '#f8fafc',
                                                         border: '1px solid #e2e8f0',
+                                                        position: 'relative',
                                                     }}
                                                 >
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box
+                                                            <Chip
+                                                                label={idx === 0 ? 'Primary Registrant / Group Leader' : `Participant #${idx + 1}`}
+                                                                size="small"
                                                                 sx={{
-                                                                    width: 20,
-                                                                    height: 20,
-                                                                    borderRadius: '4px',
                                                                     bgcolor: idx === 0 ? '#e0f2fe' : '#e2e8f0',
-                                                                    color: idx === 0 ? '#0284c7' : '#475569',
-                                                                    fontSize: '0.7rem',
+                                                                    color: idx === 0 ? '#0369a1' : '#475569',
                                                                     fontWeight: 900,
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'center',
+                                                                    fontSize: '0.72rem',
+                                                                    height: 24,
+                                                                    borderRadius: '8px',
                                                                 }}
-                                                            >
-                                                                {idx + 1}
-                                                            </Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: idx === 0 ? '#0284c7' : '#334155' }}>
-                                                                {idx === 0 ? 'Primary Registrant / Group Leader' : `Participant #${idx + 1}`}
-                                                            </Typography>
+                                                            />
                                                         </Box>
 
                                                         {members.length > 1 && (
-                                                            <IconButton
+                                                            <Button
                                                                 onClick={() => removeMember(idx)}
                                                                 size="small"
-                                                                sx={{ color: '#ef4444', p: 0.3 }}
+                                                                startIcon={<DeleteOutlineIcon sx={{ fontSize: 15 }} />}
+                                                                sx={{
+                                                                    color: '#ef4444',
+                                                                    fontSize: '0.72rem',
+                                                                    fontWeight: 800,
+                                                                    textTransform: 'none',
+                                                                    '&:hover': { bgcolor: '#fee2e2' },
+                                                                }}
                                                             >
-                                                                <DeleteOutlineIcon sx={{ fontSize: 16 }} />
-                                                            </IconButton>
+                                                                Remove
+                                                            </Button>
                                                         )}
                                                     </Box>
 
-                                                    <Grid container spacing={1.5}>
+                                                    {/* 2x2 Airy Grid Input Layout */}
+                                                    <Grid container spacing={2}>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
                                                                 label="Full Name *"
-                                                                placeholder="As shown on ID / Passport"
+                                                                placeholder="e.g. Dr. John Doe, S.T., M.T."
                                                                 value={member.name}
                                                                 onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
                                                                 fullWidth
                                                                 required
                                                                 size="small"
-                                                                sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#ffffff', borderRadius: '8px' } }}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <PersonOutlineIcon sx={{ color: '#094d42', fontSize: 18 }} />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                                sx={{
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        bgcolor: '#ffffff',
+                                                                        borderRadius: '10px',
+                                                                        fontSize: '0.86rem',
+                                                                    },
+                                                                }}
                                                             />
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
                                                                 label="Email Address *"
                                                                 type="email"
-                                                                placeholder="name@example.com"
+                                                                placeholder="e.g. john.doe@organization.com"
                                                                 value={member.email}
                                                                 onChange={(e) => handleMemberChange(idx, 'email', e.target.value)}
                                                                 fullWidth
                                                                 required
                                                                 size="small"
-                                                                sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#ffffff', borderRadius: '8px' } }}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <EmailOutlinedIcon sx={{ color: '#0284c7', fontSize: 18 }} />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                                sx={{
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        bgcolor: '#ffffff',
+                                                                        borderRadius: '10px',
+                                                                        fontSize: '0.86rem',
+                                                                    },
+                                                                }}
                                                             />
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
                                                                 label="WhatsApp / Phone Number"
-                                                                placeholder="+62 812xxxxxxx"
+                                                                placeholder="e.g. +62 812 3456 7890"
                                                                 value={member.phone}
                                                                 onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
                                                                 fullWidth
                                                                 size="small"
-                                                                sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#ffffff', borderRadius: '8px' } }}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <PhoneIphoneIcon sx={{ color: '#059669', fontSize: 18 }} />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                                sx={{
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        bgcolor: '#ffffff',
+                                                                        borderRadius: '10px',
+                                                                        fontSize: '0.86rem',
+                                                                    },
+                                                                }}
                                                             />
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
-                                                                label="Institution / University"
-                                                                placeholder="e.g. University / Company / Organization"
+                                                                label="Institution / Company / University"
+                                                                placeholder="e.g. Pertamina / ITB / UGM / ESDM"
                                                                 value={member.institution}
                                                                 onChange={(e) => handleMemberChange(idx, 'institution', e.target.value)}
                                                                 fullWidth
                                                                 size="small"
-                                                                sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#ffffff', borderRadius: '8px' } }}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <BusinessOutlinedIcon sx={{ color: '#7c3aed', fontSize: 18 }} />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                                sx={{
+                                                                    '& .MuiOutlinedInput-root': {
+                                                                        bgcolor: '#ffffff',
+                                                                        borderRadius: '10px',
+                                                                        fontSize: '0.86rem',
+                                                                    },
+                                                                }}
                                                             />
                                                         </Grid>
                                                     </Grid>
@@ -906,27 +1085,27 @@ export default function Register({
                                         </Stack>
                                     </Paper>
 
-                                    {/* SECTION 3: PAYMENT INSTRUCTIONS (PAID CATEGORIES) */}
+                                    {/* STEP 3: PAYMENT INSTRUCTIONS (IF PAID) */}
                                     {isPaid && (
                                         <Paper
                                             elevation={0}
                                             sx={{
-                                                p: 2.5,
-                                                borderRadius: '16px',
+                                                p: { xs: 2.5, sm: 3 },
+                                                borderRadius: '20px',
                                                 bgcolor: '#ffffff',
-                                                border: `1.5px solid ${selectedCategory?.borderSelected || '#fde68a'}`,
-                                                boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                                                border: `2px solid ${selectedCategory?.borderSelected || '#86efac'}`,
+                                                boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
                                             }}
                                         >
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
                                                 <Box
                                                     sx={{
-                                                        width: 26,
-                                                        height: 26,
-                                                        borderRadius: '8px',
+                                                        width: 28,
+                                                        height: 28,
+                                                        borderRadius: '10px',
                                                         bgcolor: selectedCategory?.tagColor || '#094d42',
                                                         color: '#fff',
-                                                        fontSize: '0.8rem',
+                                                        fontSize: '0.85rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -935,108 +1114,129 @@ export default function Register({
                                                 >
                                                     3
                                                 </Box>
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
                                                     Payment Instructions & Proof Upload ({selectedCategory?.name})
                                                 </Typography>
                                             </Box>
 
-                                            {/* Payment Method Selector */}
-                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 2 }}>
+                                            {/* Payment Method Selector Pills */}
+                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 2.5 }}>
                                                 <Paper
                                                     onClick={() => {
                                                         setPaymentMethod('qris_indo');
                                                         setData('payment_method', 'qris_indo');
                                                     }}
                                                     sx={{
-                                                        p: 1.5,
-                                                        borderRadius: '10px',
+                                                        p: 2,
+                                                        borderRadius: '12px',
                                                         bgcolor: paymentMethod === 'qris_indo' ? '#f0fdf4' : '#f8fafc',
                                                         border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : '#e2e8f0'}`,
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        gap: 1.2,
+                                                        gap: 1.5,
+                                                        transition: 'all 0.15s ease',
+                                                        '&:hover': { bgcolor: '#f0fdf4' },
                                                     }}
                                                 >
-                                                    <QrCodeIcon sx={{ color: '#059669', fontSize: 20 }} />
+                                                    <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#dcfce7', color: '#059669' }}>
+                                                        <QrCodeIcon sx={{ fontSize: 22 }} />
+                                                    </Box>
                                                     <Box>
-                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>QRIS Indonesia</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>BCA, GoPay, OVO, Dana</Typography>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>QRIS Indonesia</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>BCA, Mandiri, GoPay, OVO, Dana</Typography>
                                                     </Box>
                                                 </Paper>
+
                                                 <Paper
                                                     onClick={() => {
                                                         setPaymentMethod('foreign_bank_transfer');
                                                         setData('payment_method', 'foreign_bank_transfer');
                                                     }}
                                                     sx={{
-                                                        p: 1.5,
-                                                        borderRadius: '10px',
+                                                        p: 2,
+                                                        borderRadius: '12px',
                                                         bgcolor: paymentMethod === 'foreign_bank_transfer' ? '#f0f9ff' : '#f8fafc',
                                                         border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#e2e8f0'}`,
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        gap: 1.2,
+                                                        gap: 1.5,
+                                                        transition: 'all 0.15s ease',
+                                                        '&:hover': { bgcolor: '#f0f9ff' },
                                                     }}
                                                 >
-                                                    <AccountBalanceIcon sx={{ color: '#0284c7', fontSize: 20 }} />
+                                                    <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#e0f2fe', color: '#0284c7' }}>
+                                                        <AccountBalanceIcon sx={{ fontSize: 22 }} />
+                                                    </Box>
                                                     <Box>
-                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>Bank Transfer</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>Manual Bank Transfer</Typography>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>Direct Bank Transfer / SWIFT</Typography>
                                                     </Box>
                                                 </Paper>
                                             </Box>
 
-                                            {/* QRIS / Bank Detail */}
+                                            {/* QRIS Container */}
                                             {paymentMethod === 'qris_indo' && (
-                                                <Box sx={{ textAlign: 'center', p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', mb: 2 }}>
+                                                <Box sx={{ textAlign: 'center', p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
+                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#059669', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', mb: 1 }}>
+                                                        Official PIT IAGI QRIS Code
+                                                    </Typography>
                                                     {qrisImage ? (
                                                         <Box
                                                             component="img"
                                                             src={qrisImage.startsWith('http') || qrisImage.startsWith('/') ? qrisImage : `/storage/${qrisImage}`}
                                                             alt="QRIS IAGI"
-                                                            sx={{ maxWidth: 160, borderRadius: '10px', mx: 'auto', mb: 1, p: 1, bgcolor: '#fff', border: '1px solid #e2e8f0' }}
+                                                            sx={{ maxWidth: 190, borderRadius: '12px', mx: 'auto', mb: 1.5, p: 1, bgcolor: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}
                                                         />
                                                     ) : (
-                                                        <Box sx={{ p: 2, border: '2px dashed #cbd5e1', borderRadius: '10px', maxWidth: 160, mx: 'auto', mb: 1, bgcolor: '#fff' }}>
-                                                            <QrCodeIcon sx={{ fontSize: 45, color: '#94a3b8' }} />
-                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b' }}>Official PIT IAGI QRIS</Typography>
+                                                        <Box sx={{ p: 3, border: '2px dashed #cbd5e1', borderRadius: '12px', maxWidth: 190, mx: 'auto', mb: 1.5, bgcolor: '#fff' }}>
+                                                            <QrCodeIcon sx={{ fontSize: 60, color: '#94a3b8' }} />
+                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b', fontWeight: 700 }}>PIT IAGI QRIS</Typography>
                                                         </Box>
                                                     )}
                                                     <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, display: 'block' }}>
-                                                        Scan the QRIS using your mobile banking or e-wallet application.
+                                                        Scan with your Mobile Banking (BCA, Mandiri, BNI, BRI, Permata) or E-Wallet (GoPay, OVO, Dana, ShopeePay).
                                                     </Typography>
                                                 </Box>
                                             )}
 
+                                            {/* Bank Transfer Container */}
                                             {paymentMethod === 'foreign_bank_transfer' && (
-                                                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', mb: 2 }}>
+                                                <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
                                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#0284c7' }}>
-                                                            Bank Transfer Account Details:
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0284c7' }}>
+                                                            Official Bank Account Details:
                                                         </Typography>
                                                         <Button
                                                             size="small"
-                                                            startIcon={<ContentCopyIcon sx={{ fontSize: 12 }} />}
+                                                            startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
                                                             onClick={handleCopyBankInfo}
-                                                            sx={{ color: '#0284c7', fontSize: '0.7rem', p: 0.2 }}
+                                                            sx={{
+                                                                color: '#0284c7',
+                                                                bgcolor: '#e0f2fe',
+                                                                fontSize: '0.74rem',
+                                                                fontWeight: 800,
+                                                                borderRadius: '6px',
+                                                                px: 1.2,
+                                                                textTransform: 'none',
+                                                                '&:hover': { bgcolor: '#bae6fd' },
+                                                            }}
                                                         >
-                                                            {copySuccess ? 'Copied!' : 'Copy'}
+                                                            {copySuccess ? 'Copied to Clipboard!' : 'Copy Info'}
                                                         </Button>
                                                     </Box>
-                                                    <Typography variant="caption" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 1.5, borderRadius: '8px', border: '1px solid #e2e8f0', display: 'block' }}>
+                                                    <Typography variant="body2" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 2, borderRadius: '10px', border: '1px solid #e2e8f0', display: 'block', fontSize: '0.85rem', lineHeight: 1.6 }}>
                                                         {bankTransferInfo}
                                                     </Typography>
                                                 </Box>
                                             )}
 
-                                            {/* Upload Proof with Direct Camera Trigger */}
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
-                                                Upload Payment Proof *
+                                            {/* Proof Upload Action Zone */}
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 1 }}>
+                                                Upload Payment Receipt / Proof of Transfer *
                                             </Typography>
 
-                                            {/* Hidden Standard File Input */}
                                             <input
                                                 ref={fileInputRef}
                                                 type="file"
@@ -1044,7 +1244,6 @@ export default function Register({
                                                 onChange={handleFileSelect}
                                                 style={{ display: 'none' }}
                                             />
-                                            {/* Hidden Native Direct Camera Input */}
                                             <input
                                                 ref={cameraInputRef}
                                                 type="file"
@@ -1062,13 +1261,15 @@ export default function Register({
                                                     onClick={handleOpenDirectCamera}
                                                     disabled={compressing}
                                                     sx={{
-                                                        borderRadius: '8px',
+                                                        borderRadius: '10px',
                                                         bgcolor: '#0284c7',
                                                         color: '#ffffff',
                                                         textTransform: 'none',
                                                         fontWeight: 800,
-                                                        fontSize: '0.78rem',
-                                                        boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
+                                                        fontSize: '0.82rem',
+                                                        px: 2,
+                                                        py: 1,
+                                                        boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
                                                         '&:hover': { bgcolor: '#0369a1' },
                                                     }}
                                                 >
@@ -1080,9 +1281,20 @@ export default function Register({
                                                     startIcon={<CloudUploadIcon sx={{ fontSize: 16 }} />}
                                                     onClick={() => fileInputRef.current?.click()}
                                                     disabled={compressing}
-                                                    sx={{ borderRadius: '8px', borderColor: '#cbd5e1', color: '#475569', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem' }}
+                                                    sx={{
+                                                        borderRadius: '10px',
+                                                        borderColor: '#cbd5e1',
+                                                        color: '#334155',
+                                                        textTransform: 'none',
+                                                        fontWeight: 800,
+                                                        fontSize: '0.82rem',
+                                                        px: 2,
+                                                        py: 1,
+                                                        bgcolor: '#ffffff',
+                                                        '&:hover': { bgcolor: '#f8fafc', borderColor: '#94a3b8' },
+                                                    }}
                                                 >
-                                                    📁 Choose from Files / Gallery
+                                                    📁 Browse Gallery / File
                                                 </Button>
                                             </Box>
 
@@ -1090,20 +1302,20 @@ export default function Register({
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.5 }}>
                                                     <CircularProgress size={16} sx={{ color: '#059669' }} />
                                                     <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700 }}>
-                                                        Compressing image automatically...
+                                                        Auto-compressing image preview...
                                                     </Typography>
                                                 </Box>
                                             )}
 
                                             {proofPreview && (
-                                                <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 48, height: 48, objectFit: 'cover', borderRadius: '6px', border: '1px solid #86efac' }} />
+                                                <Box sx={{ mt: 2, p: 2, bgcolor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 56, height: 56, objectFit: 'cover', borderRadius: '8px', border: '1.5px solid #86efac', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }} />
                                                     <Box sx={{ flex: 1 }}>
-                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.4 }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 14 }} /> Photo uploaded successfully ({compressionStats?.compressed} KB)
+                                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.78rem' }}>
+                                                            <CheckCircleIcon sx={{ fontSize: 16 }} /> Payment proof attached ({compressionStats?.compressed} KB)
                                                         </Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', display: 'block' }}>
-                                                            Ready to submit with registration form.
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', display: 'block' }}>
+                                                            Original: {compressionStats?.original} KB &bull; Compressed for fast server verification.
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -1114,20 +1326,20 @@ export default function Register({
                             </Box>
 
                             {/* RIGHT COLUMN: 3D BADGE PREVIEW + ORDER SUMMARY + CTA BUTTON */}
-                            <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 360px' }, width: '100%', position: { lg: 'sticky' }, top: { lg: 20 } }}>
+                            <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 380px' }, width: '100%', position: { lg: 'sticky' }, top: { lg: 24 } }}>
                                 <Paper
                                     elevation={0}
                                     sx={{
-                                        p: 2.5,
-                                        borderRadius: '16px',
+                                        p: { xs: 2.5, sm: 3 },
+                                        borderRadius: '20px',
                                         bgcolor: '#ffffff',
                                         border: '1px solid #e2e8f0',
-                                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                                        boxShadow: '0 4px 25px rgba(0,0,0,0.06)',
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                            <VisibilityIcon sx={{ fontSize: 14, color: selectedCategory.lanyardTheme?.banner || '#059669' }} /> Live 3D Badge
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                                            <VisibilityIcon sx={{ fontSize: 15, color: selectedCategory.lanyardTheme?.banner || '#059669' }} /> Live 3D Lanyard Badge
                                         </Typography>
                                         <Chip
                                             label={selectedCategory.badge || 'PASS'}
@@ -1137,7 +1349,8 @@ export default function Register({
                                                 color: selectedCategory.tagColor || '#047857',
                                                 fontWeight: 900,
                                                 fontSize: '0.68rem',
-                                                height: 20,
+                                                height: 22,
+                                                borderRadius: '6px',
                                             }}
                                         />
                                     </Box>
@@ -1147,28 +1360,30 @@ export default function Register({
                                         onMouseMove={handleCardMouseMove}
                                         onMouseLeave={handleCardMouseLeave}
                                         sx={{
-                                            perspective: '800px',
+                                            perspective: '900px',
                                             cursor: 'pointer',
-                                            my: 1,
+                                            my: 1.5,
                                         }}
                                     >
-                                        {/* Lanyard Top Strap & Clip */}
+                                        {/* Lanyard Top Strap & Metallic Clip */}
                                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1, position: 'relative', zIndex: 3 }}>
                                             <Box
                                                 sx={{
-                                                    width: 30,
-                                                    height: 18,
+                                                    width: 36,
+                                                    height: 20,
                                                     bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
-                                                    borderRadius: '3px 3px 0 0',
+                                                    borderRadius: '4px 4px 0 0',
+                                                    boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.2)',
                                                 }}
                                             />
                                             <Box
                                                 sx={{
-                                                    width: 14,
-                                                    height: 10,
-                                                    bgcolor: '#cbd5e1',
-                                                    borderRadius: '2px',
-                                                    border: '1px solid #94a3b8',
+                                                    width: 16,
+                                                    height: 12,
+                                                    bgcolor: '#e2e8f0',
+                                                    borderRadius: '3px',
+                                                    border: '1.5px solid #94a3b8',
+                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                                                 }}
                                             />
                                         </Box>
@@ -1178,11 +1393,11 @@ export default function Register({
                                             sx={{
                                                 transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
                                                 transition: 'transform 0.15s ease-out',
-                                                borderRadius: '16px',
+                                                borderRadius: '18px',
                                                 bgcolor: '#ffffff',
                                                 border: `2px solid ${selectedCategory.lanyardTheme?.border || '#10b981'}`,
-                                                boxShadow: `0 12px 25px -5px ${selectedCategory.lanyardTheme?.border || '#10b981'}40, 0 4px 10px rgba(0,0,0,0.04)`,
-                                                p: 2,
+                                                boxShadow: `0 14px 30px -5px ${selectedCategory.lanyardTheme?.border || '#10b981'}35, 0 4px 12px rgba(0,0,0,0.04)`,
+                                                p: 2.5,
                                                 textAlign: 'center',
                                                 position: 'relative',
                                             }}
@@ -1190,8 +1405,8 @@ export default function Register({
                                             {/* Hole Punch */}
                                             <Box
                                                 sx={{
-                                                    width: 24,
-                                                    height: 5,
+                                                    width: 26,
+                                                    height: 6,
                                                     borderRadius: '3px',
                                                     bgcolor: '#e2e8f0',
                                                     mx: 'auto',
@@ -1199,10 +1414,10 @@ export default function Register({
                                                 }}
                                             />
 
-                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.68rem', display: 'block' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.7rem', display: 'block' }}>
                                                 55TH PIT IAGI & GEOSEA 2026
                                             </Typography>
-                                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.6rem', display: 'block', mb: 1.5 }}>
+                                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.62rem', display: 'block', mb: 1.5, fontWeight: 700 }}>
                                                 ANNUAL SCIENTIFIC CONVENTION
                                             </Typography>
 
@@ -1211,16 +1426,17 @@ export default function Register({
                                                 sx={{
                                                     p: 1.2,
                                                     bgcolor: '#ffffff',
-                                                    borderRadius: '10px',
+                                                    borderRadius: '12px',
                                                     border: '1px solid #e2e8f0',
                                                     width: 'fit-content',
                                                     mx: 'auto',
                                                     mb: 1.5,
+                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
                                                 }}
                                             >
                                                 <QRCodeSVG
                                                     value="TKT-SAMPLE-PREVIEW"
-                                                    size={95}
+                                                    size={100}
                                                     level="H"
                                                     includeMargin={false}
                                                 />
@@ -1233,9 +1449,9 @@ export default function Register({
                                                     fontWeight: 900,
                                                     color: '#0f172a',
                                                     lineHeight: 1.2,
-                                                    fontSize: '1rem',
+                                                    fontSize: '1.05rem',
                                                     minHeight: '1.2em',
-                                                    mb: 0.2,
+                                                    mb: 0.3,
                                                 }}
                                             >
                                                 {primaryMember.name || 'Participant Name'}
@@ -1246,13 +1462,13 @@ export default function Register({
                                                 sx={{
                                                     fontWeight: 700,
                                                     color: selectedCategory.lanyardTheme?.banner || '#0284c7',
-                                                    fontSize: '0.75rem',
+                                                    fontSize: '0.78rem',
                                                     display: 'block',
                                                     minHeight: '1.2em',
-                                                    mb: 1.5,
+                                                    mb: 1.8,
                                                 }}
                                             >
-                                                {primaryMember.institution || 'Institution / University'}
+                                                {primaryMember.institution || 'Institution / Organization'}
                                             </Typography>
 
                                             {/* Bottom Banner */}
@@ -1260,12 +1476,12 @@ export default function Register({
                                                 sx={{
                                                     bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
                                                     color: '#ffffff',
-                                                    py: 0.7,
-                                                    borderRadius: '8px',
+                                                    py: 0.8,
+                                                    borderRadius: '10px',
                                                     fontWeight: 900,
                                                     letterSpacing: '0.06em',
                                                     textTransform: 'uppercase',
-                                                    fontSize: '0.72rem',
+                                                    fontSize: '0.74rem',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -1280,41 +1496,49 @@ export default function Register({
                                     </Box>
 
                                     {/* Order Summary Box */}
-                                    <Box sx={{ mt: 2, p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
+                                    <Box sx={{ mt: 2.5, p: 2, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 1.2 }}>
                                             Order Summary:
                                         </Typography>
-                                        <Stack spacing={0.6}>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Stack spacing={0.8}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="caption" sx={{ color: '#64748b' }}>Category:</Typography>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: selectedCategory.tagColor || '#059669' }}>
                                                     {selectedCategory.name}
                                                 </Typography>
                                             </Box>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="caption" sx={{ color: '#64748b' }}>Price / Ticket:</Typography>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                                    {selectedCategory.price > 0 ? `Rp ${selectedCategory.price.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
+                                                    {selectedCategory.price > 0 ? `IDR ${selectedCategory.price.toLocaleString('id-ID')}` : 'FREE'}
                                                 </Typography>
                                             </Box>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Total Tickets:</Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Total Participants:</Typography>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                                    {members.length} Ticket(s)
+                                                    {members.length} Person(s)
                                                 </Typography>
                                             </Box>
+                                            {totalSavings > 0 && (
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800 }}>Early Bird Savings:</Typography>
+                                                    <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669' }}>
+                                                        - IDR {totalSavings.toLocaleString('id-ID')}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Amount:</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 900, color: isPaid ? '#094d42' : '#059669' }}>
-                                                    {isPaid ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'FREE'}
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Total Amount:</Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: isPaid ? '#094d42' : '#059669', fontSize: '1.25rem' }}>
+                                                    {isPaid ? `IDR ${totalEstimate.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
                                                 </Typography>
                                             </Box>
                                         </Stack>
                                     </Box>
 
                                     {/* Submit CTA Button */}
-                                    <Box sx={{ mt: 2 }}>
+                                    <Box sx={{ mt: 2.5 }}>
                                         <Button
                                             type="submit"
                                             variant="contained"
@@ -1327,40 +1551,40 @@ export default function Register({
                                                     : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
                                                 color: '#ffffff',
                                                 fontWeight: 900,
-                                                fontSize: '0.92rem',
-                                                py: 1.4,
-                                                borderRadius: '12px',
+                                                fontSize: '0.95rem',
+                                                py: 1.5,
+                                                borderRadius: '14px',
                                                 textTransform: 'none',
                                                 boxShadow: isPaid
-                                                    ? '0 4px 0 #04221d, 0 8px 18px rgba(9, 77, 66, 0.35)'
-                                                    : '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.35)',
+                                                    ? '0 4px 0 #04221d, 0 10px 22px rgba(9, 77, 66, 0.35)'
+                                                    : '0 4px 0 #047857, 0 10px 22px rgba(16, 185, 129, 0.35)',
                                                 '&:hover': {
                                                     background: isPaid
                                                         ? 'linear-gradient(180deg, #0c6153 0%, #094d42 100%)'
                                                         : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
-                                                    transform: 'translateY(-1px)',
+                                                    transform: 'translateY(-2px)',
                                                     boxShadow: isPaid
-                                                        ? '0 5px 0 #04221d, 0 10px 20px rgba(9, 77, 66, 0.45)'
-                                                        : '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.45)',
+                                                        ? '0 6px 0 #04221d, 0 14px 25px rgba(9, 77, 66, 0.45)'
+                                                        : '0 6px 0 #047857, 0 14px 25px rgba(16, 185, 129, 0.45)',
                                                 },
                                                 '&:active': {
-                                                    transform: 'translateY(3px)',
+                                                    transform: 'translateY(2px)',
                                                     boxShadow: isPaid
-                                                        ? '0 1px 0 #04221d, 0 3px 6px rgba(9, 77, 66, 0.3)'
-                                                        : '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
+                                                        ? '0 2px 0 #04221d, 0 4px 8px rgba(9, 77, 66, 0.3)'
+                                                        : '0 2px 0 #047857, 0 4px 8px rgba(16, 185, 129, 0.3)',
                                                 },
                                                 transition: 'all 0.12s ease',
                                             }}
                                         >
                                             {processing 
-                                                ? 'Processing...' 
+                                                ? 'Processing Registration...' 
                                                 : isPaid 
-                                                    ? `Register & Upload Proof (Rp ${totalEstimate.toLocaleString('id-ID')})` 
-                                                    : 'Get Free E-Ticket'
+                                                    ? `Register & Upload Proof (IDR ${totalEstimate.toLocaleString('id-ID')})` 
+                                                    : 'Claim Free E-Ticket'
                                             }
                                         </Button>
-                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', textAlign: 'center', mt: 1, fontSize: '0.68rem', fontWeight: 600 }}>
-                                            🔒 Encrypted & securely managed by IAGI Committee
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1.2, fontSize: '0.72rem', fontWeight: 600 }}>
+                                            <ShieldOutlinedIcon sx={{ fontSize: 14, color: '#059669' }} /> Encrypted & verified by IAGI Secretariat Committee
                                         </Typography>
                                     </Box>
                                 </Paper>
@@ -1406,96 +1630,73 @@ export default function Register({
                     </IconButton>
                 </DialogTitle>
 
-                <DialogContent sx={{ p: 0, bgcolor: '#000', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 320 }}>
-                    <Box sx={{ position: 'relative', width: '100%', minHeight: 320, bgcolor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {/* Video Element Always in DOM so ref and srcObject attach immediately */}
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            muted
-                            style={{
-                                width: '100%',
-                                height: 'auto',
-                                maxHeight: '65vh',
-                                objectFit: 'contain',
-                                display: 'block',
-                            }}
-                        />
+                <DialogContent sx={{ p: 0, position: 'relative', bgcolor: '#000', minHeight: 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {cameraLoading && (
+                        <Box sx={{ textAlign: 'center', p: 3 }}>
+                            <CircularProgress sx={{ color: '#38bdf8', mb: 1.5 }} />
+                            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+                                Initializing camera...
+                            </Typography>
+                        </Box>
+                    )}
 
-                        {cameraLoading && (
-                            <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(0,0,0,0.85)', zIndex: 2 }}>
-                                <CircularProgress sx={{ color: '#38bdf8', mb: 2 }} />
-                                <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
-                                    Connecting to camera...
-                                </Typography>
-                            </Box>
-                        )}
-
-                        {cameraError && (
-                            <Box sx={{ position: 'absolute', inset: 0, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(15,23,42,0.95)', zIndex: 2, textAlign: 'center' }}>
-                                <Typography variant="body2" sx={{ color: '#f87171', mb: 2, fontWeight: 600 }}>
-                                    {cameraError}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    size="small"
-                                    onClick={() => {
-                                        stopCamera();
-                                        cameraInputRef.current?.click();
-                                    }}
-                                    sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 700 }}
-                                >
-                                    Use Native Device Camera
-                                </Button>
-                            </Box>
-                        )}
-
-                        {!cameraLoading && !cameraError && (
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    inset: '10%',
-                                    border: '2px dashed rgba(255, 255, 255, 0.7)',
-                                    borderRadius: '12px',
-                                    pointerEvents: 'none',
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    justifyContent: 'center',
-                                    pt: 1,
+                    {cameraError ? (
+                        <Box sx={{ p: 3, textAlign: 'center' }}>
+                            <Typography variant="body2" sx={{ color: '#f87171', mb: 2 }}>
+                                {cameraError}
+                            </Typography>
+                            <Button
+                                variant="outlined"
+                                onClick={() => {
+                                    stopCamera();
+                                    cameraInputRef.current?.click();
                                 }}
+                                sx={{ color: '#38bdf8', borderColor: '#38bdf8', textTransform: 'none', borderRadius: '8px' }}
                             >
-                                <Typography variant="caption" sx={{ bgcolor: 'rgba(0,0,0,0.6)', px: 1, py: 0.3, borderRadius: '4px', color: '#fff', fontSize: '0.7rem' }}>
-                                    Align receipt / payment proof within frame
-                                </Typography>
-                            </Box>
-                        )}
-                    </Box>
+                                Use Native Camera App
+                            </Button>
+                        </Box>
+                    ) : (
+                        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+                            <video
+                                ref={videoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    maxHeight: '480px',
+                                    objectFit: 'contain',
+                                    display: cameraLoading ? 'none' : 'block',
+                                }}
+                            />
+                            {/* Scanning Guide Box Overlay */}
+                            {!cameraLoading && (
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        width: '75%',
+                                        height: '65%',
+                                        border: '2px dashed rgba(56, 189, 248, 0.6)',
+                                        borderRadius: '12px',
+                                        pointerEvents: 'none',
+                                    }}
+                                />
+                            )}
+                        </Box>
+                    )}
                 </DialogContent>
 
-                <DialogActions
-                    sx={{
-                        p: 2,
-                        px: 2.5,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        bgcolor: '#0f172a',
-                        borderTop: '1px solid rgba(255,255,255,0.1)',
-                    }}
-                >
+                <DialogActions sx={{ p: 2, px: 2.5, bgcolor: '#0f172a', borderTop: '1px solid rgba(255,255,255,0.1)', justifyContent: 'space-between' }}>
                     <Button
                         startIcon={<CameraswitchIcon />}
                         onClick={handleSwitchCamera}
                         size="small"
-                        disabled={cameraLoading}
-                        sx={{
-                            color: '#94a3b8',
-                            textTransform: 'none',
-                            fontWeight: 700,
-                            borderRadius: '8px',
-                            '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
-                        }}
+                        sx={{ color: '#94a3b8', textTransform: 'none', '&:hover': { color: '#fff' } }}
                     >
                         Switch Camera
                     </Button>
@@ -1506,18 +1707,17 @@ export default function Register({
                         disabled={cameraLoading || !!cameraError}
                         startIcon={<PhotoCameraIcon />}
                         sx={{
-                            bgcolor: '#10b981',
+                            bgcolor: '#0284c7',
                             color: '#fff',
-                            fontWeight: 900,
-                            borderRadius: '12px',
+                            fontWeight: 800,
+                            borderRadius: '10px',
+                            textTransform: 'none',
                             px: 3,
                             py: 1,
-                            textTransform: 'none',
-                            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-                            '&:hover': { bgcolor: '#059669' },
+                            '&:hover': { bgcolor: '#0369a1' },
                         }}
                     >
-                        📸 Capture Photo
+                        Capture Photo
                     </Button>
                 </DialogActions>
             </Dialog>
