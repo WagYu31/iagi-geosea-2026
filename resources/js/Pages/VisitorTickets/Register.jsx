@@ -47,6 +47,7 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import GroupsIcon from '@mui/icons-material/Groups';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import ConstructionIcon from '@mui/icons-material/Construction';
 
 export default function Register({
     categories: propCategories = [],
@@ -196,7 +197,7 @@ export default function Register({
     
     const [selectedTab, setSelectedTab] = useState('all'); // 'all', 'conference', 'visitor'
     const [visitorType, setVisitorType] = useState('iagi_member_professional');
-    const [paymentMethod, setPaymentMethod] = useState('qris_indo');
+    const [paymentMethod, setPaymentMethod] = useState('foreign_bank_transfer');
     const [members, setMembers] = useState([
         { name: '', email: '', phone: '', institution: '' }
     ]);
@@ -221,7 +222,7 @@ export default function Register({
     const { data, setData, post, processing, errors } = useForm({
         visitor_type: 'iagi_member_professional',
         members: members,
-        payment_method: 'qris_indo',
+        payment_method: 'foreign_bank_transfer',
         proof_of_payment: null,
         original_file_size_kb: null,
         compressed_file_size_kb: null,
@@ -1121,33 +1122,7 @@ export default function Register({
 
                                             {/* Payment Method Selector Pills */}
                                             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 2.5 }}>
-                                                <Paper
-                                                    onClick={() => {
-                                                        setPaymentMethod('qris_indo');
-                                                        setData('payment_method', 'qris_indo');
-                                                    }}
-                                                    sx={{
-                                                        p: 2,
-                                                        borderRadius: '12px',
-                                                        bgcolor: paymentMethod === 'qris_indo' ? '#f0fdf4' : '#f8fafc',
-                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#10b981' : '#e2e8f0'}`,
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: 1.5,
-                                                        transition: 'all 0.15s ease',
-                                                        '&:hover': { bgcolor: '#f0fdf4' },
-                                                    }}
-                                                >
-                                                    <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#dcfce7', color: '#059669' }}>
-                                                        <QrCodeIcon sx={{ fontSize: 22 }} />
-                                                    </Box>
-                                                    <Box>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>QRIS Indonesia</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>BCA, Mandiri, GoPay, OVO, Dana</Typography>
-                                                    </Box>
-                                                </Paper>
-
+                                                {/* Bank Transfer (Active & Recommended) */}
                                                 <Paper
                                                     onClick={() => {
                                                         setPaymentMethod('foreign_bank_transfer');
@@ -1161,43 +1136,117 @@ export default function Register({
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
+                                                        justifyContent: 'space-between',
                                                         gap: 1.5,
                                                         transition: 'all 0.15s ease',
+                                                        boxShadow: paymentMethod === 'foreign_bank_transfer' ? '0 4px 12px rgba(2, 132, 199, 0.12)' : 'none',
                                                         '&:hover': { bgcolor: '#f0f9ff' },
                                                     }}
                                                 >
-                                                    <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#e0f2fe', color: '#0284c7' }}>
-                                                        <AccountBalanceIcon sx={{ fontSize: 22 }} />
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#e0f2fe', color: '#0284c7' }}>
+                                                            <AccountBalanceIcon sx={{ fontSize: 22 }} />
+                                                        </Box>
+                                                        <Box>
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>Direct Bank Transfer / SWIFT</Typography>
+                                                        </Box>
                                                     </Box>
-                                                    <Box>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>Direct Bank Transfer / SWIFT</Typography>
+                                                    <Chip
+                                                        label="AKTIF"
+                                                        size="small"
+                                                        sx={{
+                                                            height: 20,
+                                                            fontSize: '0.62rem',
+                                                            fontWeight: 900,
+                                                            bgcolor: '#dcfce7',
+                                                            color: '#15803d',
+                                                            border: '1px solid #bbf7d0',
+                                                            letterSpacing: '0.04em',
+                                                        }}
+                                                    />
+                                                </Paper>
+
+                                                {/* QRIS Indonesia (Under Maintenance / Coming Soon) */}
+                                                <Paper
+                                                    onClick={() => {
+                                                        setPaymentMethod('qris_indo');
+                                                        setData('payment_method', 'qris_indo');
+                                                    }}
+                                                    sx={{
+                                                        p: 2,
+                                                        borderRadius: '12px',
+                                                        bgcolor: paymentMethod === 'qris_indo' ? '#fffbeb' : '#f8fafc',
+                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#f59e0b' : '#e2e8f0'}`,
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'space-between',
+                                                        gap: 1.5,
+                                                        transition: 'all 0.15s ease',
+                                                        boxShadow: paymentMethod === 'qris_indo' ? '0 4px 12px rgba(245, 158, 11, 0.15)' : 'none',
+                                                        '&:hover': { bgcolor: '#fffbeb' },
+                                                    }}
+                                                >
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#fef3c7', color: '#d97706' }}>
+                                                            <QrCodeIcon sx={{ fontSize: 22 }} />
+                                                        </Box>
+                                                        <Box>
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>QRIS Indonesia</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>BCA, GoPay, OVO, Dana</Typography>
+                                                        </Box>
                                                     </Box>
+                                                    <Chip
+                                                        label="COMING SOON"
+                                                        size="small"
+                                                        sx={{
+                                                            height: 20,
+                                                            fontSize: '0.62rem',
+                                                            fontWeight: 900,
+                                                            bgcolor: '#fef3c7',
+                                                            color: '#b45309',
+                                                            border: '1px solid #fde68a',
+                                                            letterSpacing: '0.03em',
+                                                        }}
+                                                    />
                                                 </Paper>
                                             </Box>
 
-                                            {/* QRIS Container */}
+                                            {/* QRIS Container (Maintenance / Coming Soon Display) */}
                                             {paymentMethod === 'qris_indo' && (
-                                                <Box sx={{ textAlign: 'center', p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
-                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#059669', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block', mb: 1 }}>
-                                                        Official PIT IAGI QRIS Code
+                                                <Box sx={{ textAlign: 'center', p: 3, bgcolor: '#fffbeb', borderRadius: '14px', border: '1.5px dashed #fcd34d', mb: 2.5 }}>
+                                                    <Box sx={{ display: 'inline-flex', p: 1.5, borderRadius: '50%', bgcolor: '#fef3c7', color: '#d97706', mb: 1.2 }}>
+                                                        <ConstructionIcon sx={{ fontSize: 32 }} />
+                                                    </Box>
+                                                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#92400e', mb: 0.5 }}>
+                                                        QRIS Indonesia (Under Maintenance / Coming Soon)
                                                     </Typography>
-                                                    {qrisImage ? (
-                                                        <Box
-                                                            component="img"
-                                                            src={qrisImage.startsWith('http') || qrisImage.startsWith('/') ? qrisImage : `/storage/${qrisImage}`}
-                                                            alt="QRIS IAGI"
-                                                            sx={{ maxWidth: 190, borderRadius: '12px', mx: 'auto', mb: 1.5, p: 1, bgcolor: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}
-                                                        />
-                                                    ) : (
-                                                        <Box sx={{ p: 3, border: '2px dashed #cbd5e1', borderRadius: '12px', maxWidth: 190, mx: 'auto', mb: 1.5, bgcolor: '#fff' }}>
-                                                            <QrCodeIcon sx={{ fontSize: 60, color: '#94a3b8' }} />
-                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b', fontWeight: 700 }}>PIT IAGI QRIS</Typography>
-                                                        </Box>
-                                                    )}
-                                                    <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, display: 'block' }}>
-                                                        Scan with your Mobile Banking (BCA, Mandiri, BNI, BRI, Permata) or E-Wallet (GoPay, OVO, Dana, ShopeePay).
+                                                    <Typography variant="body2" sx={{ color: '#b45309', maxWidth: 480, mx: 'auto', mb: 2, fontSize: '0.82rem', lineHeight: 1.5 }}>
+                                                        Gerbang pembayaran instan QRIS sedang dalam tahap pemeliharaan sistem & aktivasi gateway. Silakan gunakan metode <strong>Bank Transfer</strong> untuk proses verifikasi tiket yang langsung aktif.
                                                     </Typography>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        startIcon={<AccountBalanceIcon sx={{ fontSize: 16 }} />}
+                                                        onClick={() => {
+                                                            setPaymentMethod('foreign_bank_transfer');
+                                                            setData('payment_method', 'foreign_bank_transfer');
+                                                        }}
+                                                        sx={{
+                                                            bgcolor: '#0284c7',
+                                                            color: '#fff',
+                                                            fontWeight: 800,
+                                                            borderRadius: '8px',
+                                                            textTransform: 'none',
+                                                            px: 2.5,
+                                                            py: 0.8,
+                                                            boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
+                                                            '&:hover': { bgcolor: '#0369a1' },
+                                                        }}
+                                                    >
+                                                        Gunakan Bank Transfer Sekarang
+                                                    </Button>
                                                 </Box>
                                             )}
 
