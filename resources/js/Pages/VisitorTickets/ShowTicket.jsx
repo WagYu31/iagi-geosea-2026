@@ -158,7 +158,7 @@ const CATEGORY_MAP = {
         tagColor: '#b45309',
     },
     non_exclusive: {
-        label: 'Visitor Non-Exclusive',
+        label: 'Visitor',
         badge: 'FREE PASS',
         gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
         border: '#10b981',

@@ -132,7 +132,7 @@ class VisitorTicketController extends Controller
             ],
             [
                 'id' => 'non_exclusive',
-                'name' => 'Visitor Non-Exclusive',
+                'name' => 'Visitor',
                 'badge' => 'FREE PASS',
                 'normalPrice' => 0,
                 'price' => 0,

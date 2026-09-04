@@ -112,7 +112,7 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'Non IAGI Member - Expatriate',
             'student_undergraduate' => 'Student Undergraduate',
             'exclusive' => 'Visitor Exclusive (VIP)',
-            'non_exclusive' => 'Visitor Pass',
+            'non_exclusive' => 'Visitor',
         ];
 
         return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));

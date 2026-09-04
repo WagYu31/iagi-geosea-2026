@@ -149,7 +149,7 @@ export default function Register({
         {
             id: 'non_exclusive',
             group: 'visitor',
-            name: 'Visitor Non-Exclusive',
+            name: 'Visitor',
             badge: 'FREE PASS',
             normalPrice: 0,
             price: 0,

@@ -46,7 +46,7 @@
 
             <div style="margin-top: 12px;">
                 <span style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; {{ $ticket->visitor_type === 'exclusive' ? 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' }}">
-                    {{ $ticket->visitor_type === 'exclusive' ? '⭐ EXCLUSIVE VIP VISITOR' : '🎟️ NON-EXCLUSIVE VISITOR' }}
+                    {{ $ticket->visitor_type === 'exclusive' ? '⭐ EXCLUSIVE VIP VISITOR' : '🎟️ ' . strtoupper($ticket->category_label ?? 'VISITOR') }}
                 </span>
             </div>
         </div>
