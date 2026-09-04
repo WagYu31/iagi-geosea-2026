@@ -309,59 +309,66 @@ class VisitorTicketAdminController extends Controller
         ]);
 
         $ticketCode = trim($request->ticket_code);
-        $ticket = VisitorTicket::with('payment')->where('ticket_code', $ticketCode)->first();
 
-        if (!$ticket) {
-            return response()->json([
-                'success' => false,
-                'status' => 'not_found',
-                'message' => 'Tiket tidak ditemukan dalam sistem.',
-            ], 404);
-        }
+        return DB::transaction(function () use ($ticketCode) {
+            $ticket = VisitorTicket::with('payment')
+                ->where('ticket_code', $ticketCode)
+                ->lockForUpdate()
+                ->first();
 
-        // Check if ticket is pending/cancelled
-        if ($ticket->status !== 'active') {
+            if (!$ticket) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'not_found',
+                    'message' => 'Tiket tidak ditemukan dalam sistem.',
+                ], 404);
+            }
+
+            // Check if ticket is pending/cancelled
+            if ($ticket->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'inactive',
+                    'message' => $ticket->status === 'pending' 
+                        ? 'Tiket masih dalam status PENDING (Pembayaran belum diverifikasi).' 
+                        : 'Tiket telah DIBATALKAN.',
+                    'ticket' => $ticket,
+                ], 422);
+            }
+
+            // Check if already checked in (Anti double-entry)
+            if ($ticket->checked_in) {
+                $checkedTime = $ticket->checked_in_at ? $ticket->checked_in_at->format('d/m/Y H:i:s') : '-';
+                return response()->json([
+                    'success' => false,
+                    'status' => 'already_checked_in',
+                    'message' => 'PERINGATAN: Tiket ini SUDAH PERNAH CHECK-IN pada ' . $checkedTime . '.',
+                    'ticket' => $ticket,
+                ], 409);
+            }
+
+            // Valid Check-In
+            $ticket->update([
+                'checked_in' => true,
+                'checked_in_at' => now(),
+                'checked_in_by_admin_id' => Auth::id(),
+            ]);
+
+            // Get template path for printing
+            $templateKey = $ticket->visitor_type === 'exclusive' 
+                ? 'visitor_exclusive_lanyard_template' 
+                : 'visitor_non_exclusive_lanyard_template';
+                
+            $templatePath = LandingPageSetting::where('key', $templateKey)->value('value');
+
             return response()->json([
-                'success' => false,
-                'status' => 'inactive',
-                'message' => $ticket->status === 'pending' 
-                    ? 'Tiket masih dalam status PENDING (Pembayaran belum diverifikasi).' 
-                    : 'Tiket telah DIBATALKAN.',
+                'success' => true,
+                'status' => 'checked_in',
+                'message' => 'Check-in BERHASIL! Selamat datang.',
                 'ticket' => $ticket,
-            ], 422);
-        }
-
-        // Check if already checked in (Anti double-entry)
-        if ($ticket->checked_in) {
-            return response()->json([
-                'success' => false,
-                'status' => 'already_checked_in',
-                'message' => 'PERINGATAN: Tiket ini SUDAH PERNAH CHECK-IN pada ' . $ticket->checked_in_at->format('d/m/Y H:i:s') . '.',
-                'ticket' => $ticket,
-            ], 409);
-        }
-
-        // Valid Check-In
-        $ticket->update([
-            'checked_in' => true,
-            'checked_in_at' => now(),
-            'checked_in_by_admin_id' => Auth::id(),
-        ]);
-
-        // Get template path for printing
-        $templateKey = $ticket->visitor_type === 'exclusive' 
-            ? 'visitor_exclusive_lanyard_template' 
-            : 'visitor_non_exclusive_lanyard_template';
-            
-        $templatePath = LandingPageSetting::where('key', $templateKey)->value('value');
-
-        return response()->json([
-            'success' => true,
-            'status' => 'checked_in',
-            'message' => 'Check-in BERHASIL! Selamat datang.',
-            'ticket' => $ticket,
-            'templatePath' => $templatePath ? '/storage/' . $templatePath : null,
-        ]);
+                'templatePath' => $templatePath ? '/storage/' . $templatePath : null,
+            ]);
+        });
     }
 
     /**

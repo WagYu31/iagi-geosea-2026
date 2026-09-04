@@ -16,6 +16,11 @@ import {
     Paper,
     CircularProgress,
     Tooltip,
+    FormControl,
+    Select,
+    MenuItem,
+    Switch,
+    FormControlLabel,
 } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -33,6 +38,9 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
+import BoltIcon from '@mui/icons-material/Bolt';
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import DeskIcon from '@mui/icons-material/DesktopWindows';
 
 const CATEGORY_MAP = {
     // Invited Categories
@@ -168,10 +176,77 @@ export default function GateScanner({
     const [cameraError, setCameraError] = useState(null);
     const [scanPulse, setScanPulse] = useState(false);
 
+    // High Speed Multi-Station Features (10 Stations / Printers)
+    const [stationNumber, setStationNumber] = useState(() => {
+        return localStorage.getItem('gate_scanner_station_no') || '1';
+    });
+
+    const [autoPrint, setAutoPrint] = useState(() => {
+        const saved = localStorage.getItem('gate_scanner_auto_print');
+        return saved !== null ? saved === 'true' : true;
+    });
+
     const html5QrCodeRef = useRef(null);
     const isProcessingRef = useRef(false);
     const lastScannedCodeRef = useRef('');
     const lastScannedAtRef = useRef(0);
+    const inputRef = useRef(null);
+    const barcodeBufferRef = useRef('');
+    const lastKeyTimeRef = useRef(0);
+
+    // Save Station & Auto-Print preferences
+    const handleStationChange = (val) => {
+        setStationNumber(val);
+        localStorage.setItem('gate_scanner_station_no', val);
+    };
+
+    const handleToggleAutoPrint = (val) => {
+        setAutoPrint(val);
+        localStorage.setItem('gate_scanner_auto_print', String(val));
+    };
+
+    // Preload Badge Background for 0ms print latency
+    useEffect(() => {
+        const img = new Image();
+        img.src = '/images/lanyard-badge-template.png';
+
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, []);
+
+    // Global barcode scanner hardware gun listener (Keyboard wedge support for USB/Bluetooth 2D Guns)
+    useEffect(() => {
+        const handleGlobalKeyDown = (e) => {
+            const target = e.target;
+            const isInsideInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+            const now = Date.now();
+            const timeDiff = now - lastKeyTimeRef.current;
+            lastKeyTimeRef.current = now;
+
+            if (e.key === 'Enter') {
+                if (barcodeBufferRef.current.length >= 5) {
+                    const scanned = barcodeBufferRef.current.trim();
+                    barcodeBufferRef.current = '';
+                    processTicketCheckIn(scanned, true);
+                    e.preventDefault();
+                } else {
+                    barcodeBufferRef.current = '';
+                }
+            } else if (e.key.length === 1) {
+                // Barcode scanner guns send keystrokes extremely rapidly (<50ms per key)
+                if (timeDiff < 60 || barcodeBufferRef.current.length > 0) {
+                    barcodeBufferRef.current += e.key;
+                } else if (!isInsideInput) {
+                    barcodeBufferRef.current = e.key;
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, [autoPrint]);
 
     // Audio Feedback Synthesis
     const playSound = (type) => {
@@ -212,7 +287,7 @@ export default function GateScanner({
         }
     };
 
-    // Update session history with unique attendee deduping (no repeat rows for the same ticket)
+    // Update session history with unique attendee deduping
     const updateRecentScans = (ticketData, status) => {
         if (!ticketData) return;
         const nowTime = new Date().toLocaleTimeString('en-GB', {
@@ -232,7 +307,7 @@ export default function GateScanner({
                     timestamp: nowTime,
                     status: status, // 'success' | 'already_checked_in' | 'error'
                 },
-                ...filtered.slice(0, 24), // Keep up to 25 unique attendees
+                ...filtered.slice(0, 39), // Keep up to 40 unique attendees in view
             ];
         });
     };
@@ -242,12 +317,12 @@ export default function GateScanner({
         const cleanCode = code.trim();
         const now = Date.now();
 
-        // Prevent camera loop from repeatedly scanning the exact same QR code (8-second cooldown per code)
+        // Prevent camera loop from repeatedly scanning the exact same QR code (4-second cooldown per same code)
         if (!isManual) {
             if (isProcessingRef.current) return;
             if (
                 lastScannedCodeRef.current === cleanCode &&
-                now - lastScannedAtRef.current < 8000
+                now - lastScannedAtRef.current < 4000
             ) {
                 return; // Silently skip duplicate camera triggers for same code
             }
@@ -260,7 +335,7 @@ export default function GateScanner({
         setProcessing(true);
         setCameraError(null);
         setScanPulse(true);
-        setTimeout(() => setScanPulse(false), 1200);
+        setTimeout(() => setScanPulse(false), 800);
 
         try {
             const response = await axios.post(route('admin.gateScanner.checkin'), {
@@ -273,6 +348,12 @@ export default function GateScanner({
 
             if (data.ticket) {
                 updateRecentScans(data.ticket, 'success');
+
+                // ⚡ AUTO-OPEN PRINT BADGE IF ENABLED (For 10 Printer Stations High Speed Printing)
+                if (autoPrint) {
+                    const printUrl = route('admin.visitorTickets.printBadge', data.ticket.id);
+                    window.open(printUrl, '_blank', 'width=750,height=900,menubar=no,toolbar=no,location=no');
+                }
             }
         } catch (err) {
             const errorData = err.response?.data || {
@@ -295,10 +376,14 @@ export default function GateScanner({
         } finally {
             setProcessing(false);
             setManualCode('');
-            // 2 seconds minimum delay before another ticket can be processed
+            // Focus back to manual code input for hardware guns
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
+            // Rapid release: 1 second delay before next scan can process
             setTimeout(() => {
                 isProcessingRef.current = false;
-            }, 2000);
+            }, 1000);
         }
     };
 
@@ -316,13 +401,13 @@ export default function GateScanner({
             await html5QrCodeRef.current.start(
                 { facingMode: mode },
                 {
-                    fps: 10,
+                    fps: 15,
                     qrbox: (viewfinderWidth, viewfinderHeight) => {
                         const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
                         const qrboxSize = Math.floor(minEdge * 0.75);
                         return {
-                            width: Math.min(qrboxSize, 250),
-                            height: Math.min(qrboxSize, 250),
+                            width: Math.min(qrboxSize, 260),
+                            height: Math.min(qrboxSize, 260),
                         };
                     },
                 },
@@ -335,7 +420,7 @@ export default function GateScanner({
             setScanning(true);
         } catch (err) {
             console.error('Camera start error:', err);
-            setCameraError('Failed to access camera. Please make sure camera permission is granted or use manual code entry.');
+            setCameraError('Failed to access camera. Please make sure camera permission is granted or use USB Barcode Scanner.');
             setScanning(false);
         }
     };
@@ -380,10 +465,10 @@ export default function GateScanner({
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
-            <Head title="Gate Web Scanner - 55th PIT IAGI & GEOSEA 2026" />
+            <Head title={`Gate Scanner (Station ${stationNumber}) - 55th PIT IAGI & GEOSEA 2026`} />
 
             <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3 } }}>
-                {/* 3D HEADER BAR */}
+                {/* 3D HEADER BAR WITH HIGH-SPEED CONFIG & STATION SELECTOR */}
                 <Paper
                     elevation={0}
                     sx={{
@@ -401,7 +486,7 @@ export default function GateScanner({
                         mb: 3,
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                         <Button
                             component={Link}
                             href={route('admin.visitorTickets')}
@@ -425,7 +510,7 @@ export default function GateScanner({
                         </Button>
 
                         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem', lineHeight: 1.2 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: 1 }}>
                                 Entrance Gate Scanner 📱
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
@@ -434,21 +519,63 @@ export default function GateScanner({
                         </Box>
                     </Box>
 
-                    <Stack direction="row" spacing={1.5} alignItems="center">
-                        <Chip
-                            label="GATE SCANNER ACTIVE"
-                            size="small"
-                            sx={{
-                                bgcolor: '#dcfce7',
-                                color: '#15803d',
-                                fontWeight: 900,
-                                fontSize: '0.68rem',
-                                border: '1px solid #86efac',
-                                height: 26,
-                            }}
-                        />
+                    {/* CONTROL BAR: STATION SELECTOR, AUTO-PRINT TOGGLE, SOUND TOGGLE */}
+                    <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+                        {/* Desk / Printer Station Selector */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f5f9', p: '2px 8px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+                            <DeskIcon sx={{ fontSize: 16, color: '#475569', mr: 0.8 }} />
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', mr: 0.8 }}>
+                                Station:
+                            </Typography>
+                            <FormControl size="small" variant="standard">
+                                <Select
+                                    value={stationNumber}
+                                    onChange={(e) => handleStationChange(e.target.value)}
+                                    disableUnderline
+                                    sx={{
+                                        fontSize: '0.82rem',
+                                        fontWeight: 900,
+                                        color: '#094d42',
+                                        '& .MuiSelect-select': { py: 0.3, pr: '20px !important' },
+                                    }}
+                                >
+                                    {[...Array(10)].map((_, idx) => (
+                                        <MenuItem key={idx + 1} value={String(idx + 1)}>
+                                            Gate {idx + 1} (Printer {idx + 1})
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
 
-                        <Tooltip title={soundEnabled ? 'Mute Beep Sound' : 'Enable Beep Sound'}>
+                        {/* ⚡ Instant Auto-Print Badge Toggle */}
+                        <Tooltip title={autoPrint ? "Auto-Print ON: Scan langsung membuka & mencetak Lanyard Badge" : "Auto-Print OFF: Hanya cek tiket tanpa membuka print"}>
+                            <Button
+                                size="small"
+                                onClick={() => handleToggleAutoPrint(!autoPrint)}
+                                startIcon={autoPrint ? <BoltIcon sx={{ color: '#ffffff' }} /> : <LocalPrintshopIcon sx={{ color: '#64748b' }} />}
+                                sx={{
+                                    bgcolor: autoPrint ? '#094d42' : '#f1f5f9',
+                                    color: autoPrint ? '#ffffff' : '#64748b',
+                                    border: `1px solid ${autoPrint ? '#094d42' : '#cbd5e1'}`,
+                                    boxShadow: autoPrint ? '0 2px 0 #04221d, 0 4px 12px rgba(9,77,66,0.25)' : '0 2px 0 #cbd5e1',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '10px',
+                                    px: 1.5,
+                                    py: 0.6,
+                                    '&:hover': {
+                                        bgcolor: autoPrint ? '#06352e' : '#e2e8f0',
+                                    },
+                                }}
+                            >
+                                {autoPrint ? '⚡ Auto-Print: ON' : 'Auto-Print: OFF'}
+                            </Button>
+                        </Tooltip>
+
+                        {/* Sound Toggle */}
+                        <Tooltip title={soundEnabled ? 'Mute Audio Beep' : 'Enable Audio Beep'}>
                             <IconButton
                                 onClick={() => setSoundEnabled(!soundEnabled)}
                                 sx={{
@@ -558,7 +685,7 @@ export default function GateScanner({
                         width: '100%',
                     }}
                 >
-                    {/* LEFT COLUMN: CAMERA SCANNER & MANUAL INPUT */}
+                    {/* LEFT COLUMN: CAMERA SCANNER & HARDWARE GUN INPUT */}
                     <Box sx={{ width: '100%', minWidth: 0 }}>
                         <Paper
                             elevation={0}
@@ -611,7 +738,7 @@ export default function GateScanner({
                                     border: scanPulse ? '3px solid #10b981' : '2px solid #334155',
                                     boxShadow: scanPulse ? '0 0 25px rgba(16, 185, 129, 0.6), inset 0 2px 10px rgba(0,0,0,0.5)' : 'inset 0 2px 10px rgba(0,0,0,0.5)',
                                     mb: 2.5,
-                                    height: 290,
+                                    height: 280,
                                     width: '100%',
                                     maxWidth: '100%',
                                     display: 'flex',
@@ -624,20 +751,20 @@ export default function GateScanner({
                                     id="qr-reader"
                                     sx={{
                                         width: '100% !important',
-                                        height: '290px !important',
+                                        height: '280px !important',
                                         '& video': {
                                             width: '100% !important',
-                                            height: '290px !important',
+                                            height: '280px !important',
                                             objectFit: 'cover !important',
                                         },
                                         '& #qr-reader__scan_region': {
                                             width: '100% !important',
-                                            height: '290px !important',
-                                            minHeight: '290px !important',
+                                            height: '280px !important',
+                                            minHeight: '280px !important',
                                         },
                                         '& #qr-reader__scan_region video': {
                                             width: '100% !important',
-                                            height: '290px !important',
+                                            height: '280px !important',
                                             objectFit: 'cover !important',
                                         },
                                         '& #qr-reader__dashboard_section_csr': {
@@ -654,12 +781,12 @@ export default function GateScanner({
 
                                 {!scanning && (
                                     <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8', zIndex: 2 }}>
-                                        <QrCodeScannerIcon sx={{ fontSize: 56, color: '#475569', mb: 1 }} />
+                                        <QrCodeScannerIcon sx={{ fontSize: 52, color: '#475569', mb: 1 }} />
                                         <Typography variant="body2" sx={{ fontWeight: 700, color: '#cbd5e1' }}>
                                             Camera Is Inactive
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: '#64748b' }}>
-                                            Click the green button below to start the camera scanner.
+                                            Click the green button or use USB Barcode Scanner Gun.
                                         </Typography>
                                     </Box>
                                 )}
@@ -735,18 +862,20 @@ export default function GateScanner({
                             </Box>
 
                             <Divider sx={{ my: 2 }}>
-                                <Chip label="OR ENTER TICKET CODE" size="small" sx={{ fontSize: '0.68rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#64748b' }} />
+                                <Chip label="USB SCANNER GUN / MANUAL CODE" size="small" sx={{ fontSize: '0.68rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#64748b' }} />
                             </Divider>
 
-                            {/* 3D Manual Input Form */}
+                            {/* 3D Manual & Hardware Gun Input Form */}
                             <form onSubmit={handleManualSubmit}>
                                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                                     <TextField
-                                        placeholder="Enter Ticket Code (e.g. TKT-IPRO-26-XXXX)"
+                                        inputRef={inputRef}
+                                        placeholder="Scan with Gun or Type (e.g. TKT-IPRO-26-XXXX)"
                                         value={manualCode}
                                         onChange={(e) => setManualCode(e.target.value)}
                                         size="small"
                                         fullWidth
+                                        autoFocus
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 bgcolor: '#f8fafc',
@@ -926,7 +1055,7 @@ export default function GateScanner({
                                     Waiting for QR Code Scan...
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                                    Point the camera at the attendee's QR code or enter the ticket code to validate.
+                                    Point the camera or use USB Barcode Gun to instantly check in and print badge.
                                 </Typography>
                             </Paper>
                         )}
@@ -949,7 +1078,7 @@ export default function GateScanner({
                                         Recent Scans in this Session ({recentScans.length})
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
-                                        Unique attendees verified during current active session
+                                        Unique attendees verified at Gate {stationNumber}
                                     </Typography>
                                 </Box>
                                 {recentScans.length > 0 && (
@@ -977,7 +1106,7 @@ export default function GateScanner({
                                 <Box sx={{ py: 4, textAlign: 'center', color: '#94a3b8', bgcolor: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
                                     <HowToRegIcon sx={{ fontSize: 36, color: '#cbd5e1', mb: 0.5 }} />
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: '#64748b', display: 'block' }}>No Attendees Scanned Yet</Typography>
-                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>Point camera at attendee QR codes to see instant scan history here.</Typography>
+                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>Point camera or use barcode gun to see instant scan history here.</Typography>
                                 </Box>
                             ) : (
                                 <Stack spacing={1.2}>

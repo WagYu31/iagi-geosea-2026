@@ -158,12 +158,25 @@ export default function PrintBadge({
     const bgImage = templatePath || defaultTemplate;
 
     useEffect(() => {
-        // Auto trigger print dialog after initial render
-        const timer = setTimeout(() => {
+        // Preload image and wait for document ready
+        let printed = false;
+        const triggerPrint = () => {
+            if (printed) return;
+            printed = true;
             window.print();
-        }, 700);
+        };
+
+        const img = new Image();
+        img.src = bgImage;
+        img.onload = () => {
+            setTimeout(triggerPrint, 250);
+        };
+
+        // Fallback timer
+        const timer = setTimeout(triggerPrint, 600);
+
         return () => clearTimeout(timer);
-    }, []);
+    }, [bgImage]);
 
     const nameLength = (ticket.visitor_name || '').length;
     const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.2rem' : '1.38rem';
