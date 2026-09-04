@@ -701,8 +701,8 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [enabled, setEnabled] = useState(getSettingValue('visitor_registration_enabled', '1') === '1');
     const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 150000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
-    const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', 'October 2026'));
-    const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Grand Ballroom Hotel Indonesia, Jakarta'));
+    const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
+    const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Royal Ambarrukmo Yogyakarta'));
     const [bankInfo, setBankInfo] = useState(getSettingValue('visitor_bank_transfer_info', "Bank Mandiri\nNo. Rek: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)"));
     
     const [exclusiveTemplate, setExclusiveTemplate] = useState(getSettingValue('visitor_exclusive_lanyard_template', ''));

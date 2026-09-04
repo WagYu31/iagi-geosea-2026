@@ -133,7 +133,7 @@ export default function PrintBadge({
                             fontWeight: 600,
                         }}
                     >
-                        Bandung / Jakarta &bull; October 2026
+                        Royal Ambarrukmo Yogyakarta &bull; 3-5 November 2026
                     </Typography>
                 </Box>
 

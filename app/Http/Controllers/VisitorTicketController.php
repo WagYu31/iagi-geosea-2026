@@ -53,8 +53,8 @@ class VisitorTicketController extends Controller
         $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
         $qrisImage = !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null;
         $bankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
-        $eventDate = $settings['visitor_event_date'] ?? 'October 2026';
-        $eventVenue = $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta';
+        $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
         return Inertia::render('VisitorTickets/Register', [
             'priceExclusive' => $priceExclusive,
@@ -214,8 +214,8 @@ class VisitorTicketController extends Controller
             'visitor_event_venue',
         ])->pluck('value', 'key');
 
-        $eventDate = $settings['visitor_event_date'] ?? 'October 2026';
-        $eventVenue = $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta';
+        $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
         // Fetch companion group tickets if any
         $groupTickets = [];

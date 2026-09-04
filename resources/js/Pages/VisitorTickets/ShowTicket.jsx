@@ -27,8 +27,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export default function ShowTicket({
     ticket = {},
     groupTickets = [],
-    eventDate = 'October 2026',
-    eventVenue = 'Grand Ballroom Hotel Indonesia, Jakarta',
+    eventDate = '3-5 November 2026',
+    eventVenue = 'Royal Ambarrukmo Yogyakarta',
 }) {
     const isExclusive = ticket.visitor_type === 'exclusive';
     const isCheckedIn = ticket.checked_in;

@@ -52,8 +52,8 @@ export default function Register({
     const enabled = propEnabled ?? settings.enabled ?? true;
     const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
     const bankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
-    const eventDate = propEventDate ?? settings.eventDate ?? 'October 2026';
-    const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Grand Ballroom Hotel Indonesia, Jakarta';
+    const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
+    const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
     const [visitorType, setVisitorType] = useState('non_exclusive');
     const [paymentMethod, setPaymentMethod] = useState('qris_indo');
     const [members, setMembers] = useState([

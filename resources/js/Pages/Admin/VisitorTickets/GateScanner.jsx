@@ -37,7 +37,7 @@ import EmailIcon from '@mui/icons-material/Email';
 export default function GateScanner({
     exclusiveTemplate = null,
     nonExclusiveTemplate = null,
-    eventVenue = 'Grand Ballroom Hotel Indonesia, Jakarta',
+    eventVenue = 'Royal Ambarrukmo Yogyakarta',
 }) {
     const [scanning, setScanning] = useState(false);
     const [manualCode, setManualCode] = useState('');

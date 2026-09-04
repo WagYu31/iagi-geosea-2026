@@ -282,7 +282,7 @@ class VisitorTicketAdminController extends Controller
         return Inertia::render('Admin/VisitorTickets/GateScanner', [
             'exclusiveTemplate' => $settings['visitor_exclusive_lanyard_template'] ?? null,
             'nonExclusiveTemplate' => $settings['visitor_non_exclusive_lanyard_template'] ?? null,
-            'eventVenue' => $settings['visitor_event_venue'] ?? 'Grand Ballroom Hotel Indonesia, Jakarta',
+            'eventVenue' => $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta',
         ]);
     }
 
