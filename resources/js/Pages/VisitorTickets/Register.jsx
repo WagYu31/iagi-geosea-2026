@@ -762,17 +762,17 @@ export default function Register({
                                                         onClick={() => handleTypeChange(cat.id)}
                                                         sx={{
                                                             cursor: 'pointer',
-                                                            borderRadius: '16px',
+                                                            borderRadius: '18px',
                                                             bgcolor: isSelected ? (cat.bgSelected || '#f0fdf4') : '#ffffff',
                                                             border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
-                                                            p: 2.2,
+                                                            p: 2.4,
                                                             height: '100%',
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             justifyContent: 'space-between',
-                                                            transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             boxShadow: isSelected 
-                                                                ? `0 8px 24px ${cat.borderSelected || '#10b981'}25, 0 2px 6px rgba(0,0,0,0.02)` 
+                                                                ? `0 10px 28px ${cat.borderSelected || '#10b981'}25, 0 2px 6px rgba(0,0,0,0.02)` 
                                                                 : '0 2px 6px rgba(0,0,0,0.02)',
                                                             transform: isSelected ? 'translateY(-2px)' : 'none',
                                                             '&:hover': {
@@ -792,11 +792,14 @@ export default function Register({
                                                                         sx={{
                                                                             bgcolor: cat.tagBg || '#dcfce7',
                                                                             color: cat.tagColor || '#047857',
-                                                                            fontWeight: 900,
-                                                                            fontSize: '0.66rem',
-                                                                            height: 22,
-                                                                            letterSpacing: '0.04em',
-                                                                            border: `1px solid ${cat.borderSelected || '#86efac'}40`,
+                                                                            fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                            fontWeight: 800,
+                                                                            fontSize: '0.64rem',
+                                                                            height: 23,
+                                                                            px: 0.6,
+                                                                            letterSpacing: '0.07em',
+                                                                            borderRadius: '7px',
+                                                                            border: `1px solid ${cat.borderSelected || '#86efac'}45`,
                                                                         }}
                                                                     />
                                                                 </Stack>
@@ -822,28 +825,81 @@ export default function Register({
                                                             </Box>
 
                                                             {/* Category Title */}
-                                                            <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1rem', mb: 0.6, lineHeight: 1.3 }}>
+                                                            <Typography
+                                                                variant="subtitle1"
+                                                                sx={{
+                                                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                    fontWeight: 800,
+                                                                    color: '#0f172a',
+                                                                    fontSize: '1.05rem',
+                                                                    mb: 0.8,
+                                                                    lineHeight: 1.3,
+                                                                    letterSpacing: '-0.02em',
+                                                                }}
+                                                            >
                                                                 {cat.name}
                                                             </Typography>
 
-                                                            {/* Price Display */}
-                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-                                                                <Typography
-                                                                    variant="h6"
-                                                                    sx={{
-                                                                        fontWeight: 900,
-                                                                        color: cat.price === 0 ? '#059669' : (cat.tagColor || '#0f172a'),
-                                                                        fontSize: '1.25rem',
-                                                                        lineHeight: 1,
-                                                                        letterSpacing: '-0.02em',
-                                                                    }}
-                                                                >
-                                                                    {cat.price === 0 ? 'FREE' : `IDR ${cat.price.toLocaleString('id-ID')}`}
-                                                                </Typography>
+                                                            {/* Price Display with Outfit font & separated IDR prefix */}
+                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1.2, flexWrap: 'wrap' }}>
+                                                                {cat.price === 0 ? (
+                                                                    <Typography
+                                                                        sx={{
+                                                                            fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
+                                                                            fontWeight: 900,
+                                                                            color: '#059669',
+                                                                            fontSize: '1.35rem',
+                                                                            letterSpacing: '0.02em',
+                                                                            lineHeight: 1,
+                                                                        }}
+                                                                    >
+                                                                        FREE
+                                                                    </Typography>
+                                                                ) : (
+                                                                    <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+                                                                        <Typography
+                                                                            component="span"
+                                                                            sx={{
+                                                                                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                                fontWeight: 800,
+                                                                                fontSize: '0.78rem',
+                                                                                letterSpacing: '0.07em',
+                                                                                color: isSelected ? (cat.tagColor || '#047857') : '#64748b',
+                                                                                mr: 0.6,
+                                                                                textTransform: 'uppercase',
+                                                                            }}
+                                                                        >
+                                                                            IDR
+                                                                        </Typography>
+                                                                        <Typography
+                                                                            component="span"
+                                                                            sx={{
+                                                                                fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
+                                                                                fontWeight: 900,
+                                                                                color: isSelected ? (cat.tagColor || '#0f172a') : '#0f172a',
+                                                                                fontSize: '1.42rem',
+                                                                                lineHeight: 1,
+                                                                                letterSpacing: '-0.03em',
+                                                                            }}
+                                                                        >
+                                                                            {cat.price.toLocaleString('id-ID')}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
                                                             </Box>
 
                                                             {/* Description */}
-                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.5, mb: 1.5, fontSize: '0.75rem' }}>
+                                                            <Typography
+                                                                variant="caption"
+                                                                sx={{
+                                                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                    color: '#64748b',
+                                                                    display: 'block',
+                                                                    lineHeight: 1.55,
+                                                                    mb: 1.5,
+                                                                    fontSize: '0.78rem',
+                                                                }}
+                                                            >
                                                                 {cat.description}
                                                             </Typography>
                                                         </Box>
@@ -851,11 +907,19 @@ export default function Register({
                                                         {/* Perks Bullet List */}
                                                         {cat.perks && cat.perks.length > 0 && (
                                                             <Box sx={{ mt: 1, pt: 1.2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                                <Stack spacing={0.5}>
+                                                                <Stack spacing={0.6}>
                                                                     {cat.perks.map((perk, perkIdx) => (
                                                                         <Box key={perkIdx} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                                            <CheckCircleIcon sx={{ fontSize: 13, color: cat.borderSelected || '#10b981', flexShrink: 0 }} />
-                                                                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 700, fontSize: '0.72rem' }}>
+                                                                            <CheckCircleIcon sx={{ fontSize: 14, color: cat.borderSelected || '#10b981', flexShrink: 0 }} />
+                                                                            <Typography
+                                                                                variant="caption"
+                                                                                sx={{
+                                                                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                                    color: '#334155',
+                                                                                    fontWeight: 700,
+                                                                                    fontSize: '0.74rem',
+                                                                                }}
+                                                                            >
                                                                                 {perk}
                                                                             </Typography>
                                                                         </Box>
@@ -1536,33 +1600,62 @@ export default function Register({
                                     </Box>
 
                                     {/* Order Summary Box */}
-                                    <Box sx={{ mt: 2.5, p: 2, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 1.2 }}>
+                                    <Box sx={{ mt: 2.5, p: 2.2, bgcolor: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                fontWeight: 800,
+                                                color: '#475569',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.08em',
+                                                display: 'block',
+                                                mb: 1.5,
+                                                fontSize: '0.72rem',
+                                            }}
+                                        >
                                             Order Summary:
                                         </Typography>
-                                        <Stack spacing={0.8}>
+                                        <Stack spacing={1}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Category:</Typography>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: selectedCategory.tagColor || '#059669' }}>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#64748b', fontWeight: 600 }}>
+                                                    Category:
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: selectedCategory.tagColor || '#059669' }}>
                                                     {selectedCategory.name}
                                                 </Typography>
                                             </Box>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Price / Ticket:</Typography>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#64748b', fontWeight: 600 }}>
+                                                    Price / Ticket:
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a' }}>
                                                     {selectedCategory.price > 0 ? `IDR ${selectedCategory.price.toLocaleString('id-ID')}` : 'FREE'}
                                                 </Typography>
                                             </Box>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Total Participants:</Typography>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#64748b', fontWeight: 600 }}>
+                                                    Total Participants:
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a' }}>
                                                     {members.length} Person(s)
                                                 </Typography>
                                             </Box>
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Total Amount:</Typography>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: isPaid ? '#094d42' : '#059669', fontSize: '1.25rem' }}>
+                                                <Typography variant="subtitle2" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '0.9rem' }}>
+                                                    Total Amount:
+                                                </Typography>
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{
+                                                        fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
+                                                        fontWeight: 900,
+                                                        color: isPaid ? '#094d42' : '#059669',
+                                                        fontSize: '1.3rem',
+                                                        letterSpacing: '-0.02em',
+                                                    }}
+                                                >
                                                     {isPaid ? `IDR ${totalEstimate.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
                                                 </Typography>
                                             </Box>
