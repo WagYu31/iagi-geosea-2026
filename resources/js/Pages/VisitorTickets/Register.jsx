@@ -182,12 +182,27 @@ export default function Register({
         },
     ];
 
-    const categoriesList = (propCategories && propCategories.length > 0)
-        ? propCategories.map(cat => {
-            const match = defaultCategories.find(d => d.id === cat.id);
-            return { ...match, ...cat };
-        })
-        : defaultCategories;
+    const regularPrices = {
+        iagi_member_professional: 3000000,
+        non_iagi_member_professional: 4000000,
+        iagi_member_expatriate: 6000000,
+        non_iagi_member_expatriate: 7000000,
+        student_undergraduate: 1000000,
+        exclusive: 500000,
+        non_exclusive: 0,
+    };
+
+    const categoriesList = defaultCategories.map(d => {
+        const propCat = propCategories?.find(c => c.id === d.id);
+        const regularPrice = regularPrices[d.id] ?? d.price;
+        return {
+            ...d,
+            ...(propCat || {}),
+            price: regularPrice,
+            normalPrice: regularPrice,
+            discountAmount: 0,
+        };
+    });
 
     const enabled = propEnabled ?? settings.enabled ?? true;
     const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
@@ -474,8 +489,6 @@ export default function Register({
     const selectedCategory = categoriesList.find(c => c.id === visitorType) || categoriesList[0];
     const isPaid = (selectedCategory?.price ?? 0) > 0;
     const totalEstimate = (selectedCategory?.price ?? 0) * members.length;
-    const totalNormalEstimate = (selectedCategory?.normalPrice ? selectedCategory.normalPrice * members.length : totalEstimate);
-    const totalSavings = totalNormalEstimate - totalEstimate;
     const primaryMember = members[0] || { name: '', institution: '' };
 
     const filteredCategories = selectedTab === 'all'
@@ -742,8 +755,6 @@ export default function Register({
                                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
                                             {filteredCategories.map((cat) => {
                                                 const isSelected = visitorType === cat.id;
-                                                const isEarlyBird = cat.normalPrice && cat.normalPrice > cat.price;
-                                                const discount = cat.normalPrice ? (cat.normalPrice - cat.price) : 0;
 
                                                 return (
                                                     <Box
@@ -788,21 +799,6 @@ export default function Register({
                                                                             border: `1px solid ${cat.borderSelected || '#86efac'}40`,
                                                                         }}
                                                                     />
-                                                                    {discount > 0 && (
-                                                                        <Chip
-                                                                            icon={<LocalOfferIcon sx={{ fontSize: '11px !important', color: `${cat.tagColor || '#047857'} !important` }} />}
-                                                                            label={`SAVE IDR ${discount.toLocaleString('id-ID')}`}
-                                                                            size="small"
-                                                                            sx={{
-                                                                                bgcolor: '#ffffff',
-                                                                                color: cat.tagColor || '#047857',
-                                                                                fontWeight: 900,
-                                                                                fontSize: '0.64rem',
-                                                                                height: 22,
-                                                                                border: `1px solid ${cat.borderSelected || '#86efac'}`,
-                                                                            }}
-                                                                        />
-                                                                    )}
                                                                 </Stack>
 
                                                                 {/* Radio Circle Indicator */}
@@ -832,11 +828,6 @@ export default function Register({
 
                                                             {/* Price Display */}
                                                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-                                                                {isEarlyBird && (
-                                                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 700, fontSize: '0.82rem' }}>
-                                                                        IDR {cat.normalPrice.toLocaleString('id-ID')}
-                                                                    </Typography>
-                                                                )}
                                                                 <Typography
                                                                     variant="h6"
                                                                     sx={{
@@ -1568,14 +1559,6 @@ export default function Register({
                                                     {members.length} Person(s)
                                                 </Typography>
                                             </Box>
-                                            {totalSavings > 0 && (
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800 }}>Discount Savings:</Typography>
-                                                    <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669' }}>
-                                                        - IDR {totalSavings.toLocaleString('id-ID')}
-                                                    </Typography>
-                                                </Box>
-                                            )}
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Total Amount:</Typography>

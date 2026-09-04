@@ -61,14 +61,21 @@ class VisitorTicketController extends Controller
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
+        // Standard regular price mapping
+        $priceIagiPro = floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000)));
+        $priceNonIagiPro = floatval($settings['visitor_ticket_price_non_iagi_member_professional'] ?? ($settings['visitor_price_non_iagi_member_pro'] == '3000000' && !isset($settings['visitor_ticket_price_non_iagi_member_professional']) ? 4000000 : ($settings['visitor_price_non_iagi_member_pro'] ?? 4000000)));
+        $priceIagiExpat = floatval($settings['visitor_ticket_price_iagi_member_expatriate'] ?? ($settings['visitor_price_iagi_member_expat'] == '5000000' ? 6000000 : ($settings['visitor_price_iagi_member_expat'] ?? 6000000)));
+        $priceNonIagiExpat = floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000)));
+        $priceStudent = floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000)));
+
         // Full category configuration list matching official conference pricing (regular prices)
         $categories = [
             [
                 'id' => 'iagi_member_professional',
                 'name' => 'IAGI Member Professional',
                 'badge' => 'IAGI MEMBER',
-                'normalPrice' => 3000000,
-                'price' => floatval($settings['visitor_price_iagi_member_pro'] ?? $settings['visitor_ticket_price_iagi_member_professional'] ?? 3000000),
+                'normalPrice' => $priceIagiPro,
+                'price' => $priceIagiPro,
                 'tag' => 'IAGI MEMBER',
                 'tagColor' => '#047857',
                 'tagBg' => '#dcfce7',
@@ -79,8 +86,8 @@ class VisitorTicketController extends Controller
                 'id' => 'non_iagi_member_professional',
                 'name' => 'Non IAGI Member Professional',
                 'badge' => 'PROFESSIONAL',
-                'normalPrice' => 4000000,
-                'price' => floatval($settings['visitor_price_non_iagi_member_pro'] ?? $settings['visitor_ticket_price_non_iagi_member_professional'] ?? 4000000),
+                'normalPrice' => $priceNonIagiPro,
+                'price' => $priceNonIagiPro,
                 'tag' => 'PROFESSIONAL',
                 'tagColor' => '#0284c7',
                 'tagBg' => '#e0f2fe',
@@ -91,8 +98,8 @@ class VisitorTicketController extends Controller
                 'id' => 'iagi_member_expatriate',
                 'name' => 'IAGI Member Expatriate',
                 'badge' => 'IAGI EXPATRIATE',
-                'normalPrice' => 6000000,
-                'price' => floatval($settings['visitor_price_iagi_member_expat'] ?? $settings['visitor_ticket_price_iagi_member_expatriate'] ?? 6000000),
+                'normalPrice' => $priceIagiExpat,
+                'price' => $priceIagiExpat,
                 'tag' => 'IAGI EXPATRIATE',
                 'tagColor' => '#b45309',
                 'tagBg' => '#fef3c7',
@@ -103,8 +110,8 @@ class VisitorTicketController extends Controller
                 'id' => 'non_iagi_member_expatriate',
                 'name' => 'Non IAGI Member Expatriate',
                 'badge' => 'INTERNATIONAL DELEGATE',
-                'normalPrice' => 7000000,
-                'price' => floatval($settings['visitor_price_non_iagi_member_expat'] ?? $settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? 7000000),
+                'normalPrice' => $priceNonIagiExpat,
+                'price' => $priceNonIagiExpat,
                 'tag' => 'INTERNATIONAL DELEGATE',
                 'tagColor' => '#7c3aed',
                 'tagBg' => '#ede9fe',
@@ -115,8 +122,8 @@ class VisitorTicketController extends Controller
                 'id' => 'student_undergraduate',
                 'name' => 'Student Undergraduate',
                 'badge' => 'STUDENT PASS',
-                'normalPrice' => 1000000,
-                'price' => floatval($settings['visitor_price_student'] ?? $settings['visitor_ticket_price_student_undergraduate'] ?? 1000000),
+                'normalPrice' => $priceStudent,
+                'price' => $priceStudent,
                 'tag' => 'STUDENT PASS',
                 'tagColor' => '#4338ca',
                 'tagBg' => '#e0e7ff',
@@ -216,11 +223,11 @@ class VisitorTicketController extends Controller
         $pricingMap = [
             'non_exclusive' => 0,
             'exclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 500000),
-            'iagi_member_professional' => floatval($settings['visitor_price_iagi_member_pro'] ?? $settings['visitor_ticket_price_iagi_member_professional'] ?? 3000000),
-            'non_iagi_member_professional' => floatval($settings['visitor_price_non_iagi_member_pro'] ?? $settings['visitor_ticket_price_non_iagi_member_professional'] ?? 4000000),
-            'iagi_member_expatriate' => floatval($settings['visitor_price_iagi_member_expat'] ?? $settings['visitor_ticket_price_iagi_member_expatriate'] ?? 6000000),
-            'non_iagi_member_expatriate' => floatval($settings['visitor_price_non_iagi_member_expat'] ?? $settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? 7000000),
-            'student_undergraduate' => floatval($settings['visitor_price_student'] ?? $settings['visitor_ticket_price_student_undergraduate'] ?? 1000000),
+            'iagi_member_professional' => floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000))),
+            'non_iagi_member_professional' => floatval($settings['visitor_ticket_price_non_iagi_member_professional'] ?? ($settings['visitor_price_non_iagi_member_pro'] == '3000000' && !isset($settings['visitor_ticket_price_non_iagi_member_professional']) ? 4000000 : ($settings['visitor_price_non_iagi_member_pro'] ?? 4000000))),
+            'iagi_member_expatriate' => floatval($settings['visitor_ticket_price_iagi_member_expatriate'] ?? ($settings['visitor_price_iagi_member_expat'] == '5000000' ? 6000000 : ($settings['visitor_price_iagi_member_expat'] ?? 6000000))),
+            'non_iagi_member_expatriate' => floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000))),
+            'student_undergraduate' => floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000))),
         ];
 
         $pricePerTicket = $pricingMap[$visitorType] ?? 0;
