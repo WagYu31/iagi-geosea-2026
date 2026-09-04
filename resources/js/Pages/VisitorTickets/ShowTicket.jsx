@@ -23,6 +23,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 const CATEGORY_MAP = {
     // Invited Categories
@@ -147,6 +148,26 @@ const CATEGORY_MAP = {
         tagBg: '#e0e7ff',
         tagColor: '#3730a3',
     },
+    student_postgraduate: {
+        label: 'Student Postgraduate',
+        badge: 'POSTGRADUATE PASS',
+        gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+        border: '#6366f1',
+        shadow: 'rgba(99, 102, 241, 0.25)',
+        textColor: '#4f46e5',
+        tagBg: '#e0e7ff',
+        tagColor: '#3730a3',
+    },
+    general_ticket: {
+        label: 'General Ticket',
+        badge: 'ADMISSION PASS',
+        gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+        border: '#094d42',
+        shadow: 'rgba(9, 77, 66, 0.25)',
+        textColor: '#094d42',
+        tagBg: '#dcfce7',
+        tagColor: '#15803d',
+    },
     exclusive: {
         label: 'Visitor Exclusive (VIP)',
         badge: 'VIP PASS',
@@ -177,6 +198,7 @@ export default function ShowTicket({
 }) {
     const categoryInfo = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
     const isCheckedIn = ticket.checked_in;
+    const isExclusive = ticket.visitor_type === 'exclusive' || ticket.visitor_type === 'vip';
 
     const handlePrint = () => {
         window.print();
@@ -201,7 +223,7 @@ export default function ShowTicket({
 
             <Container maxWidth="sm">
                 {/* Top Action Bar (hidden when printing) */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5, '@media print': { display: 'none' } }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5, flexWrap: 'wrap', gap: 1.5, '@media print': { display: 'none' } }}>
                     <Button
                         component={Link}
                         href={route('visitor.tickets')}
@@ -221,24 +243,48 @@ export default function ShowTicket({
                     >
                         New Registration
                     </Button>
-                    <Button
-                        variant="contained"
-                        startIcon={<PrintIcon />}
-                        onClick={handlePrint}
-                        sx={{
-                            background: categoryInfo.gradient,
-                            color: '#fff',
-                            fontWeight: 800,
-                            borderRadius: '12px',
-                            textTransform: 'none',
-                            fontSize: '0.9rem',
-                            px: 3,
-                            py: 1,
-                            boxShadow: `0 4px 0 #04221d, 0 10px 20px ${categoryInfo.shadow}`,
-                        }}
-                    >
-                        Print / Save PDF
-                    </Button>
+
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                        {ticket.payment?.payment_code && (
+                            <Button
+                                component={Link}
+                                href={route('visitor.receipt.show', ticket.payment.payment_code)}
+                                startIcon={<ReceiptLongIcon />}
+                                sx={{
+                                    color: '#094d42',
+                                    textTransform: 'none',
+                                    fontWeight: 800,
+                                    borderRadius: '10px',
+                                    bgcolor: '#ffffff',
+                                    border: '1.5px solid #094d42',
+                                    px: 2,
+                                    py: 0.8,
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+                                    '&:hover': { color: '#ffffff', bgcolor: '#094d42' },
+                                }}
+                            >
+                                Kwitansi
+                            </Button>
+                        )}
+                        <Button
+                            variant="contained"
+                            startIcon={<PrintIcon />}
+                            onClick={handlePrint}
+                            sx={{
+                                background: categoryInfo.gradient,
+                                color: '#fff',
+                                fontWeight: 800,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontSize: '0.9rem',
+                                px: 3,
+                                py: 1,
+                                boxShadow: `0 4px 0 #04221d, 0 10px 20px ${categoryInfo.shadow}`,
+                            }}
+                        >
+                            Print / Save PDF
+                        </Button>
+                    </Stack>
                 </Box>
 
                 {/* Digital E-Ticket Card */}
@@ -402,7 +448,7 @@ export default function ShowTicket({
                                 <Paper
                                     key={t.id}
                                     component={Link}
-                                    href={route('visitor.tickets.show', t.ticket_code)}
+                                    href={route('visitor.ticket.show', t.ticket_code)}
                                     sx={{
                                         p: 2,
                                         borderRadius: '14px',

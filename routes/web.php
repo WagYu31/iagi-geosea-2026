@@ -40,6 +40,7 @@ Route::post('/tickets', [App\Http\Controllers\VisitorTicketController::class, 's
 Route::get('/tickets/payment/{payment_code}', [App\Http\Controllers\VisitorTicketController::class, 'paymentStatus'])->name('visitor.payment.status');
 Route::get('/tickets/receipt/{payment_code}', [App\Http\Controllers\VisitorTicketController::class, 'showReceipt'])->name('visitor.receipt.show');
 Route::get('/tickets/{ticket_code}', [App\Http\Controllers\VisitorTicketController::class, 'showTicket'])->name('visitor.ticket.show');
+Route::get('/ticket/{ticket_code}', [App\Http\Controllers\VisitorTicketController::class, 'showTicket'])->name('visitor.tickets.show');
 
 // Midtrans webhook (public, no auth, no CSRF — called by Midtrans servers)
 Route::post('/api/midtrans/notification', [App\Http\Controllers\PaymentController::class, 'handleNotification'])
