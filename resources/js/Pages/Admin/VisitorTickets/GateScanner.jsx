@@ -78,8 +78,8 @@ const CATEGORY_MAP = {
         border: '#fde68a',
     },
     non_exclusive: {
-        label: 'VISITOR NON-EXCLUSIVE',
-        shortLabel: 'NON-EXC',
+        label: 'VISITOR PASS',
+        shortLabel: 'VISITOR PASS',
         bg: '#ecfdf5',
         color: '#047857',
         border: '#a7f3d0',
@@ -162,7 +162,7 @@ export default function GateScanner({
             setRecentScans((prev) => [
                 {
                     ticket: data.ticket,
-                    timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                    timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     status: 'success',
                 },
                 ...prev.slice(0, 14),
@@ -171,7 +171,7 @@ export default function GateScanner({
             const errorData = err.response?.data || {
                 success: false,
                 status: 'error',
-                message: 'Gagal memverifikasi tiket. Silakan periksa koneksi server.',
+                message: 'Failed to verify ticket. Please check your network connection.',
             };
 
             setScanResult(errorData);
@@ -186,7 +186,7 @@ export default function GateScanner({
                 setRecentScans((prev) => [
                     {
                         ticket: errorData.ticket,
-                        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                        timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                         status: errorData.status,
                     },
                     ...prev.slice(0, 14),
@@ -234,7 +234,7 @@ export default function GateScanner({
             setScanning(true);
         } catch (err) {
             console.error('Camera start error:', err);
-            setCameraError('Gagal mengakses kamera. Pastikan izin kamera telah disetujui di browser atau gunakan input manual.');
+            setCameraError('Failed to access camera. Please make sure camera permission is granted or use manual code entry.');
             setScanning(false);
         }
     };
@@ -320,12 +320,12 @@ export default function GateScanner({
                                 '&:active': { transform: 'translateY(1px)' },
                             }}
                         >
-                            Dashboard Tiket
+                            Ticket Dashboard
                         </Button>
 
                         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                             <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem', lineHeight: 1.2 }}>
-                                Gate Scanner Pintu Masuk 📱
+                                Entrance Gate Scanner 📱
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                                 55th PIT IAGI & GEOSEA XIX 2026 &bull; {eventVenue}
@@ -335,7 +335,7 @@ export default function GateScanner({
 
                     <Stack direction="row" spacing={1.5} alignItems="center">
                         <Chip
-                            label="GATE SCANNER AKTIF"
+                            label="GATE SCANNER ACTIVE"
                             size="small"
                             sx={{
                                 bgcolor: '#dcfce7',
@@ -347,7 +347,7 @@ export default function GateScanner({
                             }}
                         />
 
-                        <Tooltip title={soundEnabled ? 'Matikan Suara Beep' : 'Aktifkan Suara Beep'}>
+                        <Tooltip title={soundEnabled ? 'Mute Beep Sound' : 'Enable Beep Sound'}>
                             <IconButton
                                 onClick={() => setSoundEnabled(!soundEnabled)}
                                 sx={{
@@ -385,10 +385,10 @@ export default function GateScanner({
                         }}
                     >
                         <Typography variant="caption" sx={{ color: '#065f46', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                            Total Sukses Masuk
+                            Successful Check-Ins
                         </Typography>
                         <Typography variant="h5" sx={{ fontWeight: 900, color: '#047857', mt: 0.2 }}>
-                            {totalSuccess} <Typography component="span" variant="caption" sx={{ color: '#065f46', fontWeight: 700 }}>Orang</Typography>
+                            {totalSuccess} <Typography component="span" variant="caption" sx={{ color: '#065f46', fontWeight: 700 }}>Visitors</Typography>
                         </Typography>
                     </Paper>
 
@@ -403,7 +403,7 @@ export default function GateScanner({
                         }}
                     >
                         <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                            Pengunjung VIP
+                            VIP Visitors
                         </Typography>
                         <Typography variant="h5" sx={{ fontWeight: 900, color: '#b45309', mt: 0.2 }}>
                             {totalVip} <Typography component="span" variant="caption" sx={{ color: '#92400e', fontWeight: 700 }}>VIP</Typography>
@@ -421,10 +421,10 @@ export default function GateScanner({
                         }}
                     >
                         <Typography variant="caption" sx={{ color: '#991b1b', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                            Duplikat / Ditolak
+                            Duplicate / Denied
                         </Typography>
                         <Typography variant="h5" sx={{ fontWeight: 900, color: '#dc2626', mt: 0.2 }}>
-                            {totalWarn} <Typography component="span" variant="caption" sx={{ color: '#991b1b', fontWeight: 700 }}>Tiket</Typography>
+                            {totalWarn} <Typography component="span" variant="caption" sx={{ color: '#991b1b', fontWeight: 700 }}>Tickets</Typography>
                         </Typography>
                     </Paper>
 
@@ -439,10 +439,10 @@ export default function GateScanner({
                         }}
                     >
                         <Typography variant="caption" sx={{ color: '#0369a1', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.68rem' }}>
-                            Total Scan Sesi Ini
+                            Total Scans (Session)
                         </Typography>
                         <Typography variant="h5" sx={{ fontWeight: 900, color: '#0284c7', mt: 0.2 }}>
-                            {recentScans.length} <Typography component="span" variant="caption" sx={{ color: '#0369a1', fontWeight: 700 }}>Kali</Typography>
+                            {recentScans.length} <Typography component="span" variant="caption" sx={{ color: '#0369a1', fontWeight: 700 }}>Times</Typography>
                         </Typography>
                     </Paper>
                 </Box>
@@ -473,11 +473,11 @@ export default function GateScanner({
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <CameraAltIcon sx={{ color: '#094d42', fontSize: 20 }} />
-                                    Kamera Pemindai QR Code
+                                    QR Code Camera Scanner
                                 </Typography>
 
                                 {scanning && (
-                                    <Tooltip title="Ganti Kamera Depan / Belakang">
+                                    <Tooltip title="Switch Front / Rear Camera">
                                         <Button
                                             size="small"
                                             onClick={toggleCameraFacing}
@@ -494,7 +494,7 @@ export default function GateScanner({
                                                 px: 1.2,
                                             }}
                                         >
-                                            {facingMode === 'environment' ? 'Kamera Belakang' : 'Kamera Depan'}
+                                            {facingMode === 'environment' ? 'Rear Camera' : 'Front Camera'}
                                         </Button>
                                     </Tooltip>
                                 )}
@@ -567,10 +567,10 @@ export default function GateScanner({
                                     <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8', zIndex: 2 }}>
                                         <QrCodeScannerIcon sx={{ fontSize: 56, color: '#475569', mb: 1 }} />
                                         <Typography variant="body2" sx={{ fontWeight: 700, color: '#cbd5e1' }}>
-                                            Kamera Sedang Tidak Aktif
+                                            Camera Is Inactive
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: '#64748b' }}>
-                                            Klik tombol hijau di bawah untuk memulai scanner.
+                                            Click the green button below to start the camera scanner.
                                         </Typography>
                                     </Box>
                                 )}
@@ -611,7 +611,7 @@ export default function GateScanner({
                                             transition: 'all 0.12s ease',
                                         }}
                                     >
-                                        Nyalakan Kamera Scanner
+                                        Start Scanner Camera
                                     </Button>
                                 ) : (
                                     <Button
@@ -640,20 +640,20 @@ export default function GateScanner({
                                             transition: 'all 0.12s ease',
                                         }}
                                     >
-                                        Matikan Kamera
+                                        Stop Camera
                                     </Button>
                                 )}
                             </Box>
 
                             <Divider sx={{ my: 2 }}>
-                                <Chip label="ATAU KETIK KODE TIKET" size="small" sx={{ fontSize: '0.68rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#64748b' }} />
+                                <Chip label="OR ENTER TICKET CODE" size="small" sx={{ fontSize: '0.68rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#64748b' }} />
                             </Divider>
 
                             {/* 3D Manual Input Form */}
                             <form onSubmit={handleManualSubmit}>
                                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                                     <TextField
-                                        placeholder="Ketik Kode Tiket (mis: TKT-EXC-26-XXXX)"
+                                        placeholder="Enter Ticket Code (e.g. TKT-EXC-26-XXXX)"
                                         value={manualCode}
                                         onChange={(e) => setManualCode(e.target.value)}
                                         size="small"
@@ -741,7 +741,7 @@ export default function GateScanner({
                                         letterSpacing: '-0.02em',
                                     }}
                                 >
-                                    {scanResult.success ? 'CHECK-IN BERHASIL! 🎟️' : scanResult.status === 'already_checked_in' ? 'SUDAH PERNAH CHECK-IN' : 'CHECK-IN GAGAL'}
+                                    {scanResult.success ? 'CHECK-IN SUCCESSFUL! 🎟️' : scanResult.status === 'already_checked_in' ? 'ALREADY CHECKED IN' : 'CHECK-IN FAILED'}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#475569', fontWeight: 600, mb: 2.5 }}>
                                     {scanResult.message}
@@ -816,7 +816,7 @@ export default function GateScanner({
                                             '&:active': { transform: 'translateY(2px)' },
                                         }}
                                     >
-                                        🖨️ Cetak Kartu Lanyard ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
+                                        🖨️ Print Lanyard Badge ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
                                     </Button>
                                 )}
                             </Paper>
@@ -834,10 +834,10 @@ export default function GateScanner({
                             >
                                 <QrCodeScannerIcon sx={{ fontSize: 60, color: '#94a3b8', mb: 1 }} />
                                 <Typography variant="h6" sx={{ fontWeight: 800, color: '#475569', mb: 0.5 }}>
-                                    Menunggu Pemindaian QR Code...
+                                    Waiting for QR Code Scan...
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                                    Arahkan kamera ke QR Code pada ponsel pengunjung atau ketik kode tiket untuk memvalidasi.
+                                    Point the camera at the attendee's QR code or enter the ticket code to validate.
                                 </Typography>
                             </Paper>
                         )}
@@ -856,7 +856,7 @@ export default function GateScanner({
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <HowToRegIcon sx={{ color: '#0284c7', fontSize: 20 }} />
-                                    Riwayat Scan Sesi Ini ({recentScans.length})
+                                    Recent Scans in this Session ({recentScans.length})
                                 </Typography>
                                 {recentScans.length > 0 && (
                                     <Button
@@ -865,14 +865,14 @@ export default function GateScanner({
                                         startIcon={<DeleteSweepIcon />}
                                         sx={{ color: '#94a3b8', fontSize: '0.72rem', textTransform: 'none', fontWeight: 700 }}
                                     >
-                                        Bersihkan
+                                        Clear
                                     </Button>
                                 )}
                             </Box>
 
                             {recentScans.length === 0 ? (
                                 <Box sx={{ py: 3, textAlign: 'center', color: '#94a3b8' }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 600 }}>Belum ada riwayat scan pada sesi ini.</Typography>
+                                    <Typography variant="caption" sx={{ fontWeight: 600 }}>No scan history in this session yet.</Typography>
                                 </Box>
                             ) : (
                                 <Stack spacing={1.2}>
@@ -891,7 +891,7 @@ export default function GateScanner({
                                         >
                                             <Box>
                                                 <Typography variant="body2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.88rem' }}>
-                                                    {r.ticket?.visitor_name || 'Pengunjung Tidak Dikenal'}
+                                                    {r.ticket?.visitor_name || 'Unknown Visitor'}
                                                 </Typography>
                                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block' }}>
                                                     {r.ticket?.ticket_code} &bull; {r.timestamp}

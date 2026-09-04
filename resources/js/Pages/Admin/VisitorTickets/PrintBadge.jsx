@@ -86,7 +86,7 @@ export default function PrintBadge({
                 },
             }}
         >
-            <Head title={`Cetak ID Card: ${ticket.visitor_name} (${cat.label})`} />
+            <Head title={`Print Badge: ${ticket.visitor_name} (${cat.label})`} />
 
             {/* Action Bar (hidden when printing) */}
             <Box sx={{ mb: 2, display: 'flex', gap: 2, '@media print': { display: 'none' } }}>
@@ -102,14 +102,14 @@ export default function PrintBadge({
                         textTransform: 'none',
                     }}
                 >
-                    Cetak Kartu Lanyard
+                    Print Lanyard Badge
                 </Button>
                 <Button
                     variant="outlined"
                     onClick={() => window.close()}
                     sx={{ color: '#94a3b8', borderColor: '#475569', textTransform: 'none', borderRadius: '10px' }}
                 >
-                    Tutup Jendela
+                    Close Window
                 </Button>
             </Box>
 

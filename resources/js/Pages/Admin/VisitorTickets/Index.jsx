@@ -108,8 +108,8 @@ const CATEGORY_META = {
         border: '#fde68a',
     },
     non_exclusive: {
-        label: 'Visitor Non-Exclusive',
-        shortLabel: 'NON-EXCLUSIVE',
+        label: 'Visitor Pass',
+        shortLabel: 'VISITOR PASS',
         bg: '#ecfdf5',
         color: '#047857',
         border: '#a7f3d0',
@@ -267,7 +267,7 @@ export default function VisitorTicketsIndex({
     };
 
     const handleVerifyPayment = (paymentId) => {
-        if (confirm('Verifikasi dan aktifkan tiket untuk pembayaran ini?')) {
+        if (confirm('Verify and activate ticket for this payment?')) {
             router.patch(route('admin.visitorTickets.verifyPayment', paymentId), {}, {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -289,7 +289,7 @@ export default function VisitorTicketsIndex({
     };
 
     const handleDeleteVisitor = (ticketId, name) => {
-        if (confirm(`Yakin ingin menghapus tiket pengunjung "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
+        if (confirm(`Are you sure you want to delete visitor ticket "${name}"? This action cannot be undone.`)) {
             router.delete(route('admin.visitorTickets.destroy', ticketId), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -302,7 +302,7 @@ export default function VisitorTicketsIndex({
     };
 
     const handleResendEmail = (ticketId, email) => {
-        if (confirm(`Kirim ulang E-Tiket ke email "${email}"?`)) {
+        if (confirm(`Resend E-Ticket email to "${email}"?`)) {
             router.post(route('admin.visitorTickets.resendEmail', ticketId), {}, {
                 preserveScroll: true,
             });
@@ -361,10 +361,11 @@ export default function VisitorTicketsIndex({
     const handleBulkAction = (actionName) => {
         if (selectedIds.length === 0) return;
 
-        let confirmMsg = `Jalankan aksi massal untuk ${selectedIds.length} tiket terpilih?`;
-        if (actionName === 'delete') confirmMsg = `PERINGATAN: Yakin ingin MENGHAPUS ${selectedIds.length} tiket terpilih secara permanen?`;
-        if (actionName === 'verify_payment') confirmMsg = `Verifikasi pembayaran untuk ${selectedIds.length} tiket terpilih?`;
-        if (actionName === 'check_in') confirmMsg = `Lakukan Check-In massal untuk ${selectedIds.length} tiket terpilih?`;
+        let confirmMsg = `Execute bulk action for ${selectedIds.length} selected tickets?`;
+        if (actionName === 'delete') confirmMsg = `WARNING: Are you sure you want to PERMANENTLY DELETE ${selectedIds.length} selected tickets?`;
+        if (actionName === 'verify_payment') confirmMsg = `Verify payment for ${selectedIds.length} selected tickets?`;
+        if (actionName === 'check_in') confirmMsg = `Perform bulk check-in for ${selectedIds.length} selected tickets?`;
+        if (actionName === 'undo_check_in') confirmMsg = `Undo check-in for ${selectedIds.length} selected tickets?`;
 
         if (confirm(confirmMsg)) {
             setBulkActionProcessing(true);
@@ -387,7 +388,7 @@ export default function VisitorTicketsIndex({
         const ticketUrl = route('visitor.ticket.show', ticket.ticket_code);
         const catLabel = getCategoryMeta(ticket.visitor_type).label;
         const msg = encodeURIComponent(
-            `Halo Bapak/Ibu ${ticket.visitor_name},\n\nTerima kasih telah mendaftar sebagai *${catLabel}* pada Konferensi *55th PIT IAGI & GEOSEA XIX 2026*.\n\nBerikut adalah link E-Tiket Digital & Kartu Lanyard resmi Anda:\n👉 ${ticketUrl}\n\n*Kode Tiket:* ${ticket.ticket_code}\n\nHarap tunjukkan QR Code pada link di atas kepada petugas di pintu masuk / gate scanner saat hari acara. Sampai jumpa di lokasi!\n\n_Sekretariat Panitia IAGI-GEOSEA 2026_`
+            `Hello ${ticket.visitor_name},\n\nThank you for registering as *${catLabel}* for the *55th PIT IAGI & GEOSEA XIX 2026* Conference.\n\nHere is your official Digital E-Ticket & Lanyard Badge link:\n👉 ${ticketUrl}\n\n*Ticket Code:* ${ticket.ticket_code}\n\nPlease present the QR Code from the link above to the gate scanner staff upon arrival at the venue. See you there!\n\n_IAGI-GEOSEA 2026 Organizing Committee_`
         );
         return `https://wa.me/${formattedPhone}?text=${msg}`;
     };
@@ -401,11 +402,11 @@ export default function VisitorTicketsIndex({
     };
 
     const statCards = [
-        { key: 'all', label: 'Total Pengunjung', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
         { key: 'exclusive', label: 'Exclusive (VIP)', value: stats.exclusivePaidCount || 0, icon: <StarIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
-        { key: 'non_exclusive', label: 'Non-Exclusive (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
-        { key: 'checked_in', label: 'Checked In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
-        { key: 'pending', label: 'Pending Verif', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
+        { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
+        { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
+        { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
@@ -413,7 +414,7 @@ export default function VisitorTicketsIndex({
 
     return (
         <SidebarLayout>
-            <Head title="Manajemen Tiket Penonton - Admin" />
+            <Head title="Visitor & Conference Tickets - Admin" />
 
             <Box sx={{ py: 3, px: { xs: 2, sm: 3 }, maxWidth: '1440px', mx: 'auto' }}>
                 {/* 3D HEADER & QUICK ACTION BAR */}
@@ -444,7 +445,7 @@ export default function VisitorTicketsIndex({
                                     fontSize: { xs: '1.4rem', sm: '1.75rem' },
                                 }}
                             >
-                                Tiket Penonton
+                                Visitor Tickets
                             </Typography>
                             <Chip
                                 label="LIVE SYSTEM"
@@ -460,7 +461,7 @@ export default function VisitorTicketsIndex({
                             />
                         </Box>
                         <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.84rem' }}>
-                            Pusat kendali pendaftaran pengunjung, verifikasi pembayaran, cetak lanyard ID Card, & gate check-in.
+                            Central command for visitor registrations, payment verification, lanyard ID badge printing, & gate check-in.
                         </Typography>
                     </Box>
 
@@ -492,7 +493,7 @@ export default function VisitorTicketsIndex({
                                 transition: 'all 0.12s ease',
                             }}
                         >
-                            + Registrasi Onsite
+                            + Onsite Registration
                         </Button>
 
                         <Button
@@ -676,7 +677,7 @@ export default function VisitorTicketsIndex({
                     <Grid container spacing={1.5} alignItems="center">
                         <Grid item xs={12} md={4}>
                             <TextField
-                                placeholder="Cari nama, email, kode tiket, instansi..."
+                                placeholder="Search name, email, ticket code, institution..."
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 size="small"
@@ -699,52 +700,52 @@ export default function VisitorTicketsIndex({
                         </Grid>
                         <Grid item xs={6} sm={3} md={2.2}>
                             <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Kategori</InputLabel>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Category</InputLabel>
                                 <Select
                                     value={typeFilter}
-                                    label="Kategori"
+                                    label="Category"
                                     onChange={(e) => handleTypeFilterChange(e.target.value)}
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
-                                    <MenuItem value="all">Semua Kategori</MenuItem>
+                                    <MenuItem value="all">All Categories</MenuItem>
                                     <MenuItem value="iagi_member_professional">IAGI Member - Professional</MenuItem>
                                     <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional</MenuItem>
                                     <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate</MenuItem>
                                     <MenuItem value="student_undergraduate">Student Undergraduate</MenuItem>
                                     <MenuItem value="exclusive">⭐ Visitor Exclusive (VIP)</MenuItem>
-                                    <MenuItem value="non_exclusive">🎟️ Visitor Non-Exclusive (Free)</MenuItem>
+                                    <MenuItem value="non_exclusive">🎟️ Visitor Pass (Free)</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6} sm={3} md={2.2}>
                             <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Gate</InputLabel>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Gate Status</InputLabel>
                                 <Select
                                     value={checkedInFilter}
-                                    label="Status Gate"
+                                    label="Gate Status"
                                     onChange={(e) => handleCheckedInFilterChange(e.target.value)}
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
-                                    <MenuItem value="all">Semua Status</MenuItem>
-                                    <MenuItem value="yes">✅ Sudah Check-In</MenuItem>
-                                    <MenuItem value="no">⏳ Belum Check-In</MenuItem>
+                                    <MenuItem value="all">All Statuses</MenuItem>
+                                    <MenuItem value="yes">✅ Checked In</MenuItem>
+                                    <MenuItem value="no">⏳ Not Checked In</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6} sm={3} md={2.2}>
                             <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Tiket</InputLabel>
+                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Ticket Status</InputLabel>
                                 <Select
                                     value={statusFilter}
-                                    label="Status Tiket"
+                                    label="Ticket Status"
                                     onChange={(e) => handleStatusFilterChange(e.target.value)}
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
-                                    <MenuItem value="all">Semua Status</MenuItem>
-                                    <MenuItem value="active">Active (Aktif)</MenuItem>
-                                    <MenuItem value="pending">Pending (Menunggu Bayar)</MenuItem>
-                                    <MenuItem value="cancelled">Cancelled (Batal)</MenuItem>
+                                    <MenuItem value="all">All Statuses</MenuItem>
+                                    <MenuItem value="active">Active</MenuItem>
+                                    <MenuItem value="pending">Pending Payment</MenuItem>
+                                    <MenuItem value="cancelled">Cancelled</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -796,12 +797,12 @@ export default function VisitorTicketsIndex({
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <Chip
-                                label={`${selectedIds.length} Tiket Dipilih`}
+                                label={`${selectedIds.length} Tickets Selected`}
                                 size="small"
                                 sx={{ bgcolor: '#38bdf8', color: '#0f172a', fontWeight: 900, fontSize: '0.75rem' }}
                             />
                             <Typography variant="body2" sx={{ fontWeight: 600, color: '#cbd5e1', display: { xs: 'none', sm: 'block' } }}>
-                                Aksi massal untuk tiket yang dicentang:
+                                Bulk actions for selected tickets:
                             </Typography>
                         </Box>
 
@@ -822,7 +823,7 @@ export default function VisitorTicketsIndex({
                                     '&:hover': { bgcolor: '#059669' },
                                 }}
                             >
-                                Verifikasi Bayar
+                                Verify Payment
                             </Button>
                             <Button
                                 size="small"
@@ -840,7 +841,7 @@ export default function VisitorTicketsIndex({
                                     '&:hover': { bgcolor: '#0369a1' },
                                 }}
                             >
-                                Check-In Massal
+                                Bulk Check-In
                             </Button>
                             <Button
                                 size="small"
@@ -849,7 +850,7 @@ export default function VisitorTicketsIndex({
                                 disabled={bulkActionProcessing}
                                 sx={{ borderColor: '#64748b', color: '#cbd5e1', textTransform: 'none', fontWeight: 800, borderRadius: '10px' }}
                             >
-                                Batal Check-In
+                                Undo Check-In
                             </Button>
                             <Button
                                 size="small"
@@ -860,7 +861,7 @@ export default function VisitorTicketsIndex({
                                 disabled={bulkActionProcessing}
                                 sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '10px', boxShadow: '0 3px 0 #991b1b' }}
                             >
-                                Hapus
+                                Delete
                             </Button>
                         </Stack>
                     </Paper>
@@ -890,14 +891,14 @@ export default function VisitorTicketsIndex({
                                             sx={{ p: 0.5, color: '#94a3b8', '&.Mui-checked': { color: '#094d42' } }}
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>KODE TIKET</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PENGUNJUNG</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>KATEGORI</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>SUMBER</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>STATUS TIKET</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PEMBAYARAN</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>TICKET CODE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PARTICIPANT / VISITOR</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CATEGORY</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>SOURCE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>TICKET STATUS</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PAYMENT</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CHECK-IN GATE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center' }}>AKSI</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center' }}>ACTIONS</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -906,10 +907,10 @@ export default function VisitorTicketsIndex({
                                         <TableCell colSpan={9} align="center" sx={{ py: 8, color: '#94a3b8' }}>
                                             <ConfirmationNumberIcon sx={{ fontSize: 50, opacity: 0.25, mb: 1, display: 'block', mx: 'auto' }} />
                                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#64748b' }}>
-                                                Belum ada data tiket pengunjung yang sesuai dengan filter.
+                                                No visitor tickets match the selected filters.
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                                                Gunakan tombol "Registrasi Onsite" untuk menambahkan tiket baru.
+                                                Use the "+ Onsite Registration" button to add a new ticket.
                                             </Typography>
                                         </TableCell>
                                     </TableRow>
@@ -937,7 +938,7 @@ export default function VisitorTicketsIndex({
                                                     />
                                                 </TableCell>
 
-                                                {/* KODE TIKET */}
+                                                {/* TICKET CODE */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Box
                                                         sx={{
@@ -956,11 +957,11 @@ export default function VisitorTicketsIndex({
                                                         {t.ticket_code}
                                                     </Box>
                                                     <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.68rem', mt: 0.3 }}>
-                                                        {new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                        {new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </Typography>
                                                 </TableCell>
 
-                                                {/* PENGUNJUNG */}
+                                                {/* PARTICIPANT / VISITOR */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Typography
                                                         variant="body2"
@@ -992,7 +993,7 @@ export default function VisitorTicketsIndex({
                                                     </Box>
                                                 </TableCell>
 
-                                                {/* KATEGORI */}
+                                                {/* CATEGORY */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Chip
                                                         icon={t.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
@@ -1009,7 +1010,7 @@ export default function VisitorTicketsIndex({
                                                     />
                                                 </TableCell>
 
-                                                {/* SUMBER */}
+                                                {/* SOURCE */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Chip
                                                         label={t.registration_source === 'admin_onsite' ? 'Onsite' : 'Online'}
@@ -1025,7 +1026,7 @@ export default function VisitorTicketsIndex({
                                                     />
                                                 </TableCell>
 
-                                                {/* STATUS TIKET */}
+                                                {/* TICKET STATUS */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Chip
                                                         label={t.status.toUpperCase()}
@@ -1041,7 +1042,7 @@ export default function VisitorTicketsIndex({
                                                     />
                                                 </TableCell>
 
-                                                {/* PEMBAYARAN */}
+                                                {/* PAYMENT */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     {t.payment ? (
                                                         <Box>
@@ -1062,7 +1063,7 @@ export default function VisitorTicketsIndex({
                                                                     }}
                                                                 />
                                                                 {t.payment.proof_of_payment && (
-                                                                    <Tooltip title="Lihat Bukti Transfer">
+                                                                    <Tooltip title="View Transfer Proof">
                                                                         <IconButton
                                                                             size="small"
                                                                             onClick={() => setProofModal({ open: true, payment: t.payment })}
@@ -1076,7 +1077,7 @@ export default function VisitorTicketsIndex({
                                                         </Box>
                                                     ) : (
                                                         <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem' }}>
-                                                            GRATIS
+                                                            FREE
                                                         </Typography>
                                                     )}
                                                 </TableCell>
@@ -1121,15 +1122,15 @@ export default function VisitorTicketsIndex({
                                                                 bgcolor: '#f8fafc',
                                                                 boxShadow: '0 2px 0 #e2e8f0',
                                                                 '&:hover': {
-                                                                    borderColor: '#10b981',
-                                                                    color: '#10b981',
-                                                                    bgcolor: '#f0fdf4',
-                                                                    transform: 'translateY(-1px)',
-                                                                    boxShadow: '0 3px 0 #86efac',
+                                                                  borderColor: '#10b981',
+                                                                  color: '#10b981',
+                                                                  bgcolor: '#f0fdf4',
+                                                                  transform: 'translateY(-1px)',
+                                                                  boxShadow: '0 3px 0 #86efac',
                                                                 },
                                                                 '&:active': {
-                                                                    transform: 'translateY(1px)',
-                                                                    boxShadow: '0 1px 0 #86efac',
+                                                                  transform: 'translateY(1px)',
+                                                                  boxShadow: '0 1px 0 #86efac',
                                                                 }
                                                             }}
                                                         >
@@ -1138,7 +1139,7 @@ export default function VisitorTicketsIndex({
                                                     )}
                                                     {t.checked_in_at && (
                                                         <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.65rem', mt: 0.3 }}>
-                                                            {new Date(t.checked_in_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                            {new Date(t.checked_in_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                                                         </Typography>
                                                     )}
                                                 </TableCell>
@@ -1149,7 +1150,7 @@ export default function VisitorTicketsIndex({
                                                         {/* Verify/Reject for Pending Payments */}
                                                         {t.payment && t.payment.status === 'pending' && (
                                                             <>
-                                                                <Tooltip title="Setujui Pembayaran">
+                                                                <Tooltip title="Approve Payment">
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleVerifyPayment(t.payment.id)}
@@ -1158,7 +1159,7 @@ export default function VisitorTicketsIndex({
                                                                         <CheckIcon sx={{ fontSize: 15 }} />
                                                                     </IconButton>
                                                                 </Tooltip>
-                                                                <Tooltip title="Tolak Pembayaran">
+                                                                <Tooltip title="Reject Payment">
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => setRejectModal({ open: true, paymentId: t.payment.id, notes: '' })}
@@ -1171,7 +1172,7 @@ export default function VisitorTicketsIndex({
                                                         )}
 
                                                         {/* Detail Modal */}
-                                                        <Tooltip title="Detail Lengkap & QR Code">
+                                                        <Tooltip title="Full Details & QR Code">
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => setDetailModal({ open: true, ticket: t })}
@@ -1183,7 +1184,7 @@ export default function VisitorTicketsIndex({
 
                                                         {/* WhatsApp Direct */}
                                                         {t.visitor_phone && (
-                                                            <Tooltip title="Kirim E-Tiket via WhatsApp">
+                                                            <Tooltip title="Send E-Ticket via WhatsApp">
                                                                 <IconButton
                                                                     component="a"
                                                                     href={generateWhatsAppUrl(t)}
@@ -1199,7 +1200,7 @@ export default function VisitorTicketsIndex({
 
                                                         {/* Email Resend Direct */}
                                                         {t.visitor_email && (
-                                                            <Tooltip title="Kirim / Kirim Ulang E-Tiket ke Email">
+                                                            <Tooltip title="Send / Resend E-Ticket Email">
                                                                 <IconButton
                                                                     size="small"
                                                                     onClick={() => handleResendEmail(t.id, t.visitor_email)}
@@ -1211,7 +1212,7 @@ export default function VisitorTicketsIndex({
                                                         )}
 
                                                         {/* Print Badge */}
-                                                        <Tooltip title="Cetak Kartu Lanyard">
+                                                        <Tooltip title="Print Lanyard Badge">
                                                             <IconButton
                                                                 component="a"
                                                                 href={route('admin.visitorTickets.printBadge', t.id)}
@@ -1224,7 +1225,7 @@ export default function VisitorTicketsIndex({
                                                         </Tooltip>
 
                                                         {/* Edit Visitor */}
-                                                        <Tooltip title="Edit Data Pengunjung">
+                                                        <Tooltip title="Edit Visitor Details">
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleOpenEdit(t)}
@@ -1235,7 +1236,7 @@ export default function VisitorTicketsIndex({
                                                         </Tooltip>
 
                                                         {/* Delete Visitor */}
-                                                        <Tooltip title="Hapus Tiket">
+                                                        <Tooltip title="Delete Ticket">
                                                             <IconButton
                                                                 size="small"
                                                                 onClick={() => handleDeleteVisitor(t.id, t.visitor_name)}
@@ -1258,7 +1259,7 @@ export default function VisitorTicketsIndex({
                     {totalItems > 0 && (
                         <Box sx={{ p: 2, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1 }}>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>
-                                Menampilkan halaman {currentPage} dari {lastPage} &bull; Total {totalItems} pengunjung terdaftar
+                                Showing page {currentPage} of {lastPage} &bull; Total {totalItems} registered visitors
                             </Typography>
                             <Pagination
                                 count={lastPage}
@@ -1302,7 +1303,7 @@ export default function VisitorTicketsIndex({
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <ConfirmationNumberIcon sx={{ color: '#094d42' }} />
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                    Detail Tiket Penonton
+                                    Visitor Ticket Details
                                 </Typography>
                             </Box>
                             <IconButton onClick={() => setDetailModal({ open: false, ticket: null })} size="small">
@@ -1331,7 +1332,7 @@ export default function VisitorTicketsIndex({
                                         }}
                                     />
                                     <Chip
-                                        label={detailModal.ticket.checked_in ? 'CHECKED IN' : 'BELUM CHECK IN'}
+                                        label={detailModal.ticket.checked_in ? 'CHECKED IN' : 'NOT CHECKED IN'}
                                         size="small"
                                         sx={{
                                             bgcolor: detailModal.ticket.checked_in ? '#dcfce7' : '#f1f5f9',
@@ -1345,39 +1346,39 @@ export default function VisitorTicketsIndex({
                             {/* Data Information Grid */}
                             <Stack spacing={1.8}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Nama Lengkap:</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Full Name:</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>{detailModal.ticket.visitor_name}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Email:</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Email Address:</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_email}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>No. WhatsApp / HP:</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>WhatsApp / Phone Number:</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_phone || '-'}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Instansi / Perusahaan:</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Institution / Organization:</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>{detailModal.ticket.visitor_institution || '-'}</Typography>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed #e2e8f0', pb: 1 }}>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Waktu Registrasi:</Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Registration Date & Time:</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#0f172a' }}>
-                                        {new Date(detailModal.ticket.created_at).toLocaleString('id-ID')}
+                                        {new Date(detailModal.ticket.created_at).toLocaleString('en-GB')}
                                     </Typography>
                                 </Box>
 
                                 {detailModal.ticket.payment && (
                                     <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', display: 'block', mb: 0.5 }}>
-                                            Informasi Pembayaran:
+                                            Payment Information:
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: '#166534', fontWeight: 700 }}>
-                                            Kode: {detailModal.ticket.payment.payment_code} &bull; Total: Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')} ({detailModal.ticket.payment.status.toUpperCase()})
+                                            Code: {detailModal.ticket.payment.payment_code} &bull; Total: Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')} ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
                                     </Box>
                                 )}
@@ -1393,7 +1394,7 @@ export default function VisitorTicketsIndex({
                                     onClick={() => copyTicketLink(detailModal.ticket.ticket_code)}
                                     sx={{ textTransform: 'none', borderRadius: '8px', fontWeight: 700 }}
                                 >
-                                    {copySuccess ? 'Link Tersalin!' : 'Salin Link'}
+                                    {copySuccess ? 'Link Copied!' : 'Copy Link'}
                                 </Button>
                                 {detailModal.ticket.visitor_phone && (
                                     <Button
@@ -1416,7 +1417,7 @@ export default function VisitorTicketsIndex({
                                         onClick={() => handleResendEmail(detailModal.ticket.id, detailModal.ticket.visitor_email)}
                                         sx={{ bgcolor: '#0284c7', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#0369a1' } }}
                                     >
-                                        Kirim Email
+                                        Send Email
                                     </Button>
                                 )}
                             </Box>
@@ -1431,7 +1432,7 @@ export default function VisitorTicketsIndex({
                                     target="_blank"
                                     sx={{ bgcolor: '#8b5cf6', textTransform: 'none', borderRadius: '8px', fontWeight: 800, '&:hover': { bgcolor: '#7c3aed' } }}
                                 >
-                                    Cetak Lanyard
+                                    Print Badge
                                 </Button>
                                 <Button
                                     size="small"
@@ -1445,7 +1446,7 @@ export default function VisitorTicketsIndex({
                                         '&:hover': { bgcolor: detailModal.ticket.checked_in ? '#dc2626' : '#059669' }
                                     }}
                                 >
-                                    {detailModal.ticket.checked_in ? 'Batal Check In' : 'Check In Sekarang'}
+                                    {detailModal.ticket.checked_in ? 'Undo Check-In' : 'Check In Now'}
                                 </Button>
                             </Box>
                         </DialogActions>
@@ -1457,12 +1458,12 @@ export default function VisitorTicketsIndex({
             <Dialog open={editModal.open} onClose={() => setEditModal({ open: false, ticket: null })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <form onSubmit={handleEditSubmit}>
                     <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
-                        ✏️ Edit Data Pengunjung
+                        ✏️ Edit Visitor Information
                     </DialogTitle>
                     <DialogContent sx={{ pt: 2.5 }}>
                         <Stack spacing={2} sx={{ mt: 1 }}>
                             <TextField
-                                label="Nama Lengkap *"
+                                label="Full Name *"
                                 value={editData.visitor_name}
                                 onChange={(e) => setEditData('visitor_name', e.target.value)}
                                 fullWidth
@@ -1470,7 +1471,7 @@ export default function VisitorTicketsIndex({
                                 required
                             />
                             <TextField
-                                label="Email *"
+                                label="Email Address *"
                                 type="email"
                                 value={editData.visitor_email}
                                 onChange={(e) => setEditData('visitor_email', e.target.value)}
@@ -1479,39 +1480,39 @@ export default function VisitorTicketsIndex({
                                 required
                             />
                             <TextField
-                                label="No. WhatsApp / HP"
+                                label="WhatsApp / Phone Number"
                                 value={editData.visitor_phone}
                                 onChange={(e) => setEditData('visitor_phone', e.target.value)}
                                 fullWidth
                                 size="small"
                             />
                             <TextField
-                                label="Instansi / Perusahaan"
+                                label="Institution / Organization"
                                 value={editData.visitor_institution}
                                 onChange={(e) => setEditData('visitor_institution', e.target.value)}
                                 fullWidth
                                 size="small"
                             />
                             <FormControl fullWidth size="small">
-                                <InputLabel>Status Tiket</InputLabel>
+                                <InputLabel>Ticket Status</InputLabel>
                                 <Select
                                     value={editData.status}
-                                    label="Status Tiket"
+                                    label="Ticket Status"
                                     onChange={(e) => setEditData('status', e.target.value)}
                                 >
-                                    <MenuItem value="active">Active (Aktif)</MenuItem>
-                                    <MenuItem value="pending">Pending (Menunggu Pembayaran)</MenuItem>
-                                    <MenuItem value="cancelled">Cancelled (Dibatalkan)</MenuItem>
+                                    <MenuItem value="active">Active</MenuItem>
+                                    <MenuItem value="pending">Pending Payment</MenuItem>
+                                    <MenuItem value="cancelled">Cancelled</MenuItem>
                                 </Select>
                             </FormControl>
                         </Stack>
                     </DialogContent>
                     <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
                         <Button onClick={() => setEditModal({ open: false, ticket: null })} sx={{ textTransform: 'none' }}>
-                            Batal
+                            Cancel
                         </Button>
                         <Button type="submit" variant="contained" disabled={editProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
-                            {editProcessing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                            {editProcessing ? 'Saving...' : 'Save Changes'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -1521,19 +1522,19 @@ export default function VisitorTicketsIndex({
             <Dialog open={onsiteModalOpen} onClose={() => setOnsiteModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <form onSubmit={handleOnsiteSubmit}>
                     <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
-                        👤 Registrasi Pengunjung Onsite
+                        👤 Onsite Visitor Registration
                     </DialogTitle>
                     <DialogContent sx={{ pt: 2.5 }}>
                         <Typography variant="body2" sx={{ color: '#64748b', mb: 2, mt: 1 }}>
-                            Form bantuan pendaftaran langsung di lokasi acara (meja registrasi/lansia).
+                            Direct walk-in / on-desk registration form at the event venue.
                         </Typography>
 
                         <Stack spacing={2}>
                             <FormControl fullWidth size="small">
-                                <InputLabel>Kategori Pengunjung</InputLabel>
+                                <InputLabel>Visitor Category</InputLabel>
                                 <Select
                                     value={onsiteData.visitor_type}
-                                    label="Kategori Pengunjung"
+                                    label="Visitor Category"
                                     onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
                                 >
                                     <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
@@ -1542,12 +1543,12 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate (Rp 7.000.000)</MenuItem>
                                     <MenuItem value="student_undergraduate">Student Undergraduate (Rp 1.000.000)</MenuItem>
                                     <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
-                                    <MenuItem value="non_exclusive">Visitor Non-Exclusive (Gratis / Rp 0)</MenuItem>
+                                    <MenuItem value="non_exclusive">Visitor Pass (Free / Rp 0)</MenuItem>
                                 </Select>
                             </FormControl>
 
                             <TextField
-                                label="Nama Lengkap *"
+                                label="Full Name *"
                                 value={onsiteData.visitor_name}
                                 onChange={(e) => setOnsiteData('visitor_name', e.target.value)}
                                 fullWidth
@@ -1556,7 +1557,7 @@ export default function VisitorTicketsIndex({
                             />
 
                             <TextField
-                                label="Email *"
+                                label="Email Address *"
                                 type="email"
                                 value={onsiteData.visitor_email}
                                 onChange={(e) => setOnsiteData('visitor_email', e.target.value)}
@@ -1566,7 +1567,7 @@ export default function VisitorTicketsIndex({
                             />
 
                             <TextField
-                                label="No. WhatsApp / HP"
+                                label="WhatsApp / Phone Number"
                                 value={onsiteData.visitor_phone}
                                 onChange={(e) => setOnsiteData('visitor_phone', e.target.value)}
                                 fullWidth
@@ -1574,7 +1575,7 @@ export default function VisitorTicketsIndex({
                             />
 
                             <TextField
-                                label="Instansi / Perusahaan"
+                                label="Institution / Organization"
                                 value={onsiteData.visitor_institution}
                                 onChange={(e) => setOnsiteData('visitor_institution', e.target.value)}
                                 fullWidth
@@ -1584,15 +1585,15 @@ export default function VisitorTicketsIndex({
                             {onsiteData.visitor_type !== 'non_exclusive' && (
                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
-                                        Status Pembayaran Onsite:
+                                        Onsite Payment Status:
                                     </Typography>
                                     <RadioGroup
                                         value={onsiteData.payment_status}
                                         onChange={(e) => setOnsiteData('payment_status', e.target.value)}
                                     >
-                                        <FormControlLabel value="paid_cash" control={<Radio size="small" />} label="Lunas Tunai / EDC / QRIS di Lokasi" />
-                                        <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Gratis (VIP Invitation / Sponsor Bypass)" />
-                                        <FormControlLabel value="pending" control={<Radio size="small" />} label="Belum Lunas (Pending)" />
+                                        <FormControlLabel value="paid_cash" control={<Radio size="small" />} label="Paid Onsite (Cash / EDC / QRIS)" />
+                                        <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Complimentary (VIP Invitation / Sponsor Bypass)" />
+                                        <FormControlLabel value="pending" control={<Radio size="small" />} label="Unpaid (Pending)" />
                                     </RadioGroup>
                                 </Box>
                             )}
@@ -1600,10 +1601,10 @@ export default function VisitorTicketsIndex({
                     </DialogContent>
                     <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
                         <Button onClick={() => setOnsiteModalOpen(false)} sx={{ textTransform: 'none' }}>
-                            Batal
+                            Cancel
                         </Button>
                         <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
-                            {onsiteProcessing ? 'Mendaftarkan...' : 'Terbitkan Tiket Onsite'}
+                            {onsiteProcessing ? 'Issuing...' : 'Issue Onsite Ticket'}
                         </Button>
                     </DialogActions>
                 </form>
@@ -1615,7 +1616,7 @@ export default function VisitorTicketsIndex({
                     <>
                         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid #e2e8f0' }}>
                             <Typography variant="subtitle1" sx={{ fontWeight: 900 }}>
-                                📄 Bukti Transfer: {proofModal.payment.payment_code}
+                                📄 Payment Proof: {proofModal.payment.payment_code}
                             </Typography>
                             <IconButton onClick={() => setProofModal({ open: false, payment: null })} size="small">
                                 <CloseIcon />
@@ -1627,13 +1628,13 @@ export default function VisitorTicketsIndex({
                                 src={proofModal.payment.proof_of_payment?.startsWith('http') || proofModal.payment.proof_of_payment?.startsWith('/') 
                                     ? proofModal.payment.proof_of_payment 
                                     : `/storage/${proofModal.payment.proof_of_payment}`}
-                                alt="Bukti Transfer"
+                                alt="Payment Proof"
                                 sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
                             />
                         </DialogContent>
                         <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0' }}>
                             <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706' }}>
-                                Total Tagihan: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
+                                Total Amount: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
                             </Typography>
                             {proofModal.payment.status === 'pending' && (
                                 <Stack direction="row" spacing={1}>
@@ -1645,14 +1646,14 @@ export default function VisitorTicketsIndex({
                                         }}
                                         sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}
                                     >
-                                        Tolak
+                                        Reject
                                     </Button>
                                     <Button
                                         variant="contained"
                                         onClick={() => handleVerifyPayment(proofModal.payment.id)}
                                         sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
                                     >
-                                        Setujui & Aktifkan Tiket
+                                        Approve & Activate Ticket
                                     </Button>
                                 </Stack>
                             )}
@@ -1664,12 +1665,12 @@ export default function VisitorTicketsIndex({
             {/* MODAL 5: REJECT PAYMENT NOTES */}
             <Dialog open={rejectModal.open} onClose={() => setRejectModal({ open: false, paymentId: null, notes: '' })} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <DialogTitle sx={{ fontWeight: 900, color: '#ef4444' }}>
-                    Alasan Penolakan Pembayaran
+                    Payment Rejection Reason
                 </DialogTitle>
                 <DialogContent sx={{ pt: 2 }}>
                     <TextField
-                        label="Catatan Penolakan untuk Pengunjung"
-                        placeholder="Contoh: Nominal transfer kurang, foto bukti buram, dll."
+                        label="Rejection Note for Visitor"
+                        placeholder="e.g. Payment amount does not match, receipt image is unclear, etc."
                         value={rejectModal.notes}
                         onChange={(e) => setRejectModal(prev => ({ ...prev, notes: e.target.value }))}
                         fullWidth
@@ -1681,10 +1682,10 @@ export default function VisitorTicketsIndex({
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>
                     <Button onClick={() => setRejectModal({ open: false, paymentId: null, notes: '' })} sx={{ textTransform: 'none' }}>
-                        Batal
+                        Cancel
                     </Button>
                     <Button onClick={handleRejectPaymentSubmit} variant="contained" color="error" sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
-                        Tolak Pembayaran
+                        Reject Payment
                     </Button>
                 </DialogActions>
             </Dialog>
