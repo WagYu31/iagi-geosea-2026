@@ -68,7 +68,7 @@ export default function Register({
             badge: 'IAGI MEMBER',
             normalPrice: 3000000,
             price: 2500000,
-            tag: 'SPECIAL EARLY BIRD',
+            tag: 'IAGI MEMBER',
             discountAmount: 500000,
             tagColor: '#047857',
             tagBg: '#dcfce7',
@@ -85,7 +85,7 @@ export default function Register({
             badge: 'NON-MEMBER PRO',
             normalPrice: 4000000,
             price: 3000000,
-            tag: 'SPECIAL EARLY BIRD',
+            tag: 'NON-MEMBER PRO',
             discountAmount: 1000000,
             tagColor: '#0284c7',
             tagBg: '#e0f2fe',
@@ -102,7 +102,7 @@ export default function Register({
             badge: 'IAGI EXPATRIATE',
             normalPrice: 6000000,
             price: 5000000,
-            tag: 'SPECIAL EARLY BIRD',
+            tag: 'IAGI EXPATRIATE',
             discountAmount: 1000000,
             tagColor: '#b45309',
             tagBg: '#fef3c7',
@@ -119,7 +119,7 @@ export default function Register({
             badge: 'INTERNATIONAL DELEGATE',
             normalPrice: 7000000,
             price: 6000000,
-            tag: 'SPECIAL EARLY BIRD',
+            tag: 'INTERNATIONAL DELEGATE',
             discountAmount: 1000000,
             tagColor: '#7c3aed',
             tagBg: '#ede9fe',
@@ -136,7 +136,7 @@ export default function Register({
             badge: 'STUDENT PASS',
             normalPrice: 1000000,
             price: 750000,
-            tag: 'SPECIAL EARLY BIRD',
+            tag: 'STUDENT PASS',
             discountAmount: 250000,
             tagColor: '#4338ca',
             tagBg: '#e0e7ff',
@@ -565,8 +565,8 @@ export default function Register({
                 {/* Hero Header Section */}
                 <Box sx={{ textAlign: 'center', mb: 3.5 }}>
                     <Chip
-                        icon={<FlashOnIcon sx={{ fontSize: '15px !important', color: '#047857 !important' }} />}
-                        label="SPECIAL EARLY BIRD PASSES NOW OPEN &bull; 1 - 31 AUGUST 2026"
+                        icon={<ConfirmationNumberIcon sx={{ fontSize: '15px !important', color: '#047857 !important' }} />}
+                        label="CONFERENCE & VISITOR PASSES &bull; REGISTRATION OPEN"
                         size="small"
                         sx={{
                             bgcolor: '#ecfdf5',
@@ -1570,7 +1570,7 @@ export default function Register({
                                             </Box>
                                             {totalSavings > 0 && (
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800 }}>Early Bird Savings:</Typography>
+                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800 }}>Discount Savings:</Typography>
                                                     <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669' }}>
                                                         - IDR {totalSavings.toLocaleString('id-ID')}
                                                     </Typography>

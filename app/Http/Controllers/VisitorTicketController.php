@@ -61,7 +61,7 @@ class VisitorTicketController extends Controller
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
-        // Full category configuration list matching official conference pricing & early bird poster
+        // Full category configuration list matching official conference pricing
         $categories = [
             [
                 'id' => 'iagi_member_professional',
@@ -69,7 +69,7 @@ class VisitorTicketController extends Controller
                 'badge' => 'IAGI MEMBER',
                 'normalPrice' => 3000000,
                 'price' => floatval($settings['visitor_price_iagi_member_pro'] ?? 2500000),
-                'tag' => 'SPECIAL EARLY BIRD',
+                'tag' => 'IAGI MEMBER',
                 'tagColor' => '#047857',
                 'tagBg' => '#dcfce7',
                 'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
@@ -81,7 +81,7 @@ class VisitorTicketController extends Controller
                 'badge' => 'PROFESSIONAL',
                 'normalPrice' => 4000000,
                 'price' => floatval($settings['visitor_price_non_iagi_member_pro'] ?? 3000000),
-                'tag' => 'SPECIAL EARLY BIRD',
+                'tag' => 'PROFESSIONAL',
                 'tagColor' => '#0284c7',
                 'tagBg' => '#e0f2fe',
                 'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
@@ -93,7 +93,7 @@ class VisitorTicketController extends Controller
                 'badge' => 'IAGI EXPATRIATE',
                 'normalPrice' => 6000000,
                 'price' => floatval($settings['visitor_price_iagi_member_expat'] ?? 5000000),
-                'tag' => 'SPECIAL EARLY BIRD',
+                'tag' => 'IAGI EXPATRIATE',
                 'tagColor' => '#b45309',
                 'tagBg' => '#fef3c7',
                 'description' => 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
@@ -105,7 +105,7 @@ class VisitorTicketController extends Controller
                 'badge' => 'INTERNATIONAL DELEGATE',
                 'normalPrice' => 7000000,
                 'price' => floatval($settings['visitor_price_non_iagi_member_expat'] ?? 6000000),
-                'tag' => 'SPECIAL EARLY BIRD',
+                'tag' => 'INTERNATIONAL DELEGATE',
                 'tagColor' => '#7c3aed',
                 'tagBg' => '#ede9fe',
                 'description' => 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
@@ -117,7 +117,7 @@ class VisitorTicketController extends Controller
                 'badge' => 'STUDENT PASS',
                 'normalPrice' => 1000000,
                 'price' => floatval($settings['visitor_price_student'] ?? 750000),
-                'tag' => 'SPECIAL EARLY BIRD',
+                'tag' => 'STUDENT PASS',
                 'tagColor' => '#4338ca',
                 'tagBg' => '#e0e7ff',
                 'description' => 'Undergraduate student pass (valid student ID required), technical sessions & certificate.',
