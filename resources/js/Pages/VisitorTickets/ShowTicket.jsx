@@ -52,7 +52,7 @@ export default function ShowTicket({
                 },
             }}
         >
-            <Head title={`E-Tiket: ${ticket.visitor_name} - 55th PIT IAGI & GEOSEA 2026`} />
+            <Head title={`E-Ticket: ${ticket.visitor_name} - 55th PIT IAGI & GEOSEA 2026`} />
 
             <Container maxWidth="sm">
                 {/* Top Action Bar (hidden when printing) */}
@@ -74,7 +74,7 @@ export default function ShowTicket({
                             '&:hover': { color: '#094d42', bgcolor: '#f8fafc' },
                         }}
                     >
-                        Pendaftaran Baru
+                        New Registration
                     </Button>
                     <Button
                         variant="contained"
@@ -96,7 +96,7 @@ export default function ShowTicket({
                                 : '0 4px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.3)',
                         }}
                     >
-                        Cetak / Simpan PDF
+                        Print / Save PDF
                     </Button>
                 </Box>
 
@@ -157,12 +157,12 @@ export default function ShowTicket({
                             {isCheckedIn ? (
                                 <Chip
                                     icon={<CheckCircleIcon sx={{ fontSize: 16, color: '#059669 !important' }} />}
-                                    label={`SUDAH CHECK-IN: ${new Date(ticket.checked_in_at).toLocaleTimeString('id-ID')}`}
+                                    label={`CHECKED IN: ${new Date(ticket.checked_in_at).toLocaleTimeString('en-US')}`}
                                     sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 800, border: '1px solid #a7f3d0' }}
                                 />
                             ) : (
                                 <Chip
-                                    label="BELUM CHECK-IN (TUNJUKKAN DI PINTU MASUK)"
+                                    label="NOT CHECKED IN (SHOW AT GATE ENTRANCE)"
                                     sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 800, fontSize: '0.72rem' }}
                                 />
                             )}
@@ -217,7 +217,7 @@ export default function ShowTicket({
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                     <PersonIcon sx={{ color: isExclusive ? '#d97706' : '#059669', fontSize: 20 }} />
                                     <Box>
-                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>NAMA PENGUNJUNG</Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>VISITOR NAME</Typography>
                                         <Typography variant="body1" sx={{ fontWeight: 800, color: '#0f172a' }}>{ticket.visitor_name}</Typography>
                                     </Box>
                                 </Box>
@@ -226,7 +226,7 @@ export default function ShowTicket({
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                         <BusinessIcon sx={{ color: '#0284c7', fontSize: 20 }} />
                                         <Box>
-                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>INSTANSI / UNIVERSITAS</Typography>
+                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>INSTITUTION / UNIVERSITY</Typography>
                                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#334155' }}>{ticket.visitor_institution}</Typography>
                                         </Box>
                                     </Box>
@@ -235,7 +235,7 @@ export default function ShowTicket({
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                     <EmailIcon sx={{ color: '#64748b', fontSize: 20 }} />
                                     <Box>
-                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>EMAIL TERDAFTAR</Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.7rem', fontWeight: 700 }}>REGISTERED EMAIL</Typography>
                                         <Typography variant="body2" sx={{ color: '#334155' }}>{ticket.visitor_email}</Typography>
                                     </Box>
                                 </Box>
@@ -248,7 +248,7 @@ export default function ShowTicket({
                                 📍 {eventVenue}
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontWeight: 600 }}>
-                                📅 {eventDate} &bull; Tunjukkan QR Code ini kepada petugas gate scanner saat memasuki venue.
+                                📅 {eventDate} &bull; Present this QR Code to the gate scanner staff upon entering the venue.
                             </Typography>
                         </Box>
                     </Box>
@@ -258,7 +258,7 @@ export default function ShowTicket({
                 {groupTickets.length > 1 && (
                     <Box sx={{ '@media print': { display: 'none' } }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0f172a', mb: 2 }}>
-                            Tiket Anggota Rombongan Lainnya ({groupTickets.length} Orang):
+                            Other Group Tickets ({groupTickets.length} Participants):
                         </Typography>
                         <Stack spacing={1.5}>
                             {groupTickets.map((t) => (
@@ -288,7 +288,7 @@ export default function ShowTicket({
                                         </Typography>
                                     </Box>
                                     <Chip
-                                        label={t.checked_in ? 'Checked In' : 'Belum Scan'}
+                                        label={t.checked_in ? 'Checked In' : 'Pending Scan'}
                                         size="small"
                                         sx={{
                                             bgcolor: t.checked_in ? '#ecfdf5' : '#f1f5f9',

@@ -91,9 +91,9 @@ class VisitorTicketController extends Controller
             'members.*.institution' => 'nullable|string|max:150',
             'proof_of_payment' => 'required_if:visitor_type,exclusive|nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
-            'members.*.name.required' => 'Nama lengkap setiap anggota wajib diisi.',
-            'members.*.email.required' => 'Email setiap anggota wajib diisi.',
-            'proof_of_payment.required_if' => 'Bukti pembayaran wajib diunggah untuk tiket Exclusive.',
+            'members.*.name.required' => 'Full name is required for all participants.',
+            'members.*.email.required' => 'Email address is required for all participants.',
+            'proof_of_payment.required_if' => 'Payment proof is required for Exclusive VIP registration.',
         ]);
 
         $visitorType = $request->visitor_type;
@@ -159,7 +159,7 @@ class VisitorTicketController extends Controller
                 }
 
                 return redirect()->route('visitor.payment.status', ['payment_code' => $payment->payment_code])
-                    ->with('success', 'Pendaftaran Visitor Exclusive berhasil disubmit! Silakan tunggu verifikasi admin.');
+                    ->with('success', 'Visitor Exclusive registration submitted successfully! Please wait for committee verification.');
             } else {
                 // Non-Exclusive (Free)
                 $firstTicket = null;
@@ -197,7 +197,7 @@ class VisitorTicketController extends Controller
                 }
 
                 return redirect()->route('visitor.ticket.show', ['ticket_code' => $firstTicket->ticket_code])
-                    ->with('success', 'Pendaftaran Visitor Non-Exclusive berhasil! E-Tiket Anda telah terbit.');
+                    ->with('success', 'Visitor Non-Exclusive registration successful! Your E-Ticket has been issued.');
             }
         });
     }

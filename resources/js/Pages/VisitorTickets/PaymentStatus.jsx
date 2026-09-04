@@ -89,8 +89,8 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeBg: '#dcfce7',
               badgeText: '#047857',
               icon: <CheckCircleIcon sx={{ fontSize: 44, color: '#10b981' }} />,
-              title: 'Pembayaran Berhasil Diverifikasi! 🎉',
-              desc: 'Selamat! Tiket Exclusive Anda telah aktif. Anda dapat langsung membuka atau mencetak E-Tiket di bawah ini.',
+              title: 'Payment Successfully Verified! 🎉',
+              desc: 'Congratulations! Your Exclusive VIP Ticket is now active. You can view or print your E-Ticket below.',
           }
         : isRejected
         ? {
@@ -101,8 +101,8 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeBg: '#fee2e2',
               badgeText: '#b91c1c',
               icon: <HighlightOffIcon sx={{ fontSize: 44, color: '#ef4444' }} />,
-              title: 'Pembayaran Ditolak',
-              desc: payment.notes || 'Bukti transfer tidak sesuai dengan nominal tagihan. Silakan hubungi panitia untuk bantuan.',
+              title: 'Payment Rejected',
+              desc: payment.notes || 'Payment proof does not match the invoice amount. Please contact the committee for assistance.',
           }
         : {
               color: '#d97706',
@@ -112,8 +112,8 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeBg: '#fef3c7',
               badgeText: '#92400e',
               icon: <HourglassEmptyIcon sx={{ fontSize: 44, color: '#d97706', animation: 'spin 4s linear infinite' }} />,
-              title: 'Menunggu Verifikasi Panitia',
-              desc: 'Bukti transfer Anda telah diterima dan sedang dicek oleh tim bendahara IAGI. Halaman ini akan diperbarui secara otomatis.',
+              title: 'Awaiting Committee Verification',
+              desc: 'Your payment proof has been received and is being verified by the IAGI treasury team. This page will update automatically.',
           };
 
     return (
@@ -125,7 +125,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                 py: { xs: 2.5, md: 4 },
             }}
         >
-            <Head title={`Status Pembayaran: ${payment.payment_code || 'Detail'}`} />
+            <Head title={`Payment Status: ${payment.payment_code || 'Details'}`} />
 
             <style>
                 {`
@@ -177,7 +177,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                             },
                         }}
                     >
-                        Kembali ke Form Registrasi
+                        Back to Registration
                     </Button>
 
                     <Button
@@ -200,7 +200,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                             },
                         }}
                     >
-                        {isRefreshing ? 'Memeriksa...' : 'Cek Status Terbaru'}
+                        {isRefreshing ? 'Checking...' : 'Check Latest Status'}
                     </Button>
                 </Box>
 
@@ -249,7 +249,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                             <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', sm: 'flex-start' }, gap: 1, mb: 0.8, flexWrap: 'wrap' }}>
                                     <Chip
-                                        label={isApproved ? 'TERVERIFIKASI' : isRejected ? 'DITOLAK' : 'MENUNGGU VERIFIKASI'}
+                                        label={isApproved ? 'VERIFIED' : isRejected ? 'REJECTED' : 'AWAITING VERIFICATION'}
                                         size="small"
                                         sx={{
                                             bgcolor: statusTheme.badgeBg,
@@ -262,7 +262,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                     />
                                     {isPending && (
                                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', fontWeight: 600 }}>
-                                            &bull; Auto-refresh aktif tiap 10 detik
+                                            &bull; Auto-refresh active every 10 seconds
                                         </Typography>
                                     )}
                                 </Box>
@@ -308,7 +308,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         >
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', mb: 0.3 }}>
-                                    Kode Pembayaran:
+                                    Payment Code:
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                     <Typography
@@ -322,7 +322,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                     >
                                         {payment.payment_code}
                                     </Typography>
-                                    <Tooltip title={copiedCode ? 'Tersalin!' : 'Salin Kode'}>
+                                    <Tooltip title={copiedCode ? 'Copied!' : 'Copy Code'}>
                                         <IconButton size="small" onClick={handleCopyPaymentCode} sx={{ p: 0.3, color: '#0284c7' }}>
                                             <ContentCopyIcon sx={{ fontSize: 13 }} />
                                         </IconButton>
@@ -332,7 +332,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
 
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', mb: 0.3 }}>
-                                    Total Tagihan:
+                                    Total Amount:
                                 </Typography>
                                 <Typography
                                     variant="subtitle2"
@@ -348,7 +348,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
 
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', mb: 0.3 }}>
-                                    Kategori & Jumlah:
+                                    Category & Quantity:
                                 </Typography>
                                 <Typography
                                     variant="subtitle2"
@@ -358,7 +358,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         fontSize: '0.88rem',
                                     }}
                                 >
-                                    {tickets.length} Tiket Exclusive VIP
+                                    {tickets.length} Exclusive VIP Ticket(s)
                                 </Typography>
                             </Box>
                         </Box>
@@ -369,10 +369,10 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                 <Box sx={{ mb: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, px: 0.5 }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <ConfirmationNumberIcon sx={{ fontSize: 20, color: '#094d42' }} /> Daftar E-Tiket Peserta ({tickets.length})
+                            <ConfirmationNumberIcon sx={{ fontSize: 20, color: '#094d42' }} /> Participant E-Tickets ({tickets.length})
                         </Typography>
                         <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
-                            {isApproved ? 'Klik tombol hijau untuk melihat E-Tiket' : 'Tiket akan aktif setelah diverifikasi'}
+                            {isApproved ? 'Click the green button to view your E-Ticket' : 'Tickets will be activated once verified'}
                         </Typography>
                     </Box>
 
@@ -423,7 +423,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                     <Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>
-                                                {ticket.visitor_name || 'Nama Peserta'}
+                                                {ticket.visitor_name || 'Participant Name'}
                                             </Typography>
                                             <Chip
                                                 label={ticket.visitor_type === 'exclusive' ? 'VIP PASS' : 'FREE PASS'}
@@ -439,7 +439,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         </Box>
 
                                         <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.75rem' }}>
-                                            {ticket.visitor_email} &bull; {ticket.institution || 'Individu'}
+                                            {ticket.visitor_email} &bull; {ticket.institution || 'Individual'}
                                         </Typography>
 
                                         <Typography
@@ -493,7 +493,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                                 transition: 'all 0.12s ease',
                                             }}
                                         >
-                                            Buka E-Tiket & Lanyard
+                                            Open E-Ticket & Badge
                                         </Button>
                                     ) : (
                                         <Box
@@ -510,7 +510,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         >
                                             <HourglassEmptyIcon sx={{ fontSize: 14, color: '#d97706' }} />
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#92400e', fontSize: '0.74rem' }}>
-                                                Menunggu Verifikasi
+                                                Awaiting Verification
                                             </Typography>
                                         </Box>
                                     )}
@@ -539,17 +539,17 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         <ShieldOutlinedIcon sx={{ color: '#094d42', fontSize: 20 }} />
                         <Box>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>
-                                Butuh Bantuan Terkait Pembayaran?
+                                Need Assistance with Payment?
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>
-                                Hubungi Sekretariat Panitia Konferensi PIT IAGI & GEOSEA 2026
+                                Contact PIT IAGI & GEOSEA 2026 Conference Secretariat
                             </Typography>
                         </Box>
                     </Box>
 
                     <Button
                         component="a"
-                        href="https://wa.me/628121593522?text=Halo%20Panitia%20IAGI,%20saya%20ingin%20menanyakan%20status%20pembayaran%20tiket%20kode:%20"
+                        href="https://wa.me/628121593522?text=Hello%20IAGI%20Committee,%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20"
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
@@ -566,7 +566,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                             '&:hover': { bgcolor: '#dcfce7' },
                         }}
                     >
-                        Chat WhatsApp Panitia
+                        WhatsApp Committee
                     </Button>
                 </Paper>
             </Container>

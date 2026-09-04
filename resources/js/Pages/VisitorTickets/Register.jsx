@@ -205,7 +205,7 @@ export default function Register({
             }));
         } catch (error) {
             console.error('Image compression failed:', error);
-            alert('Gagal memproses gambar. Silakan coba file lain.');
+            alert('Failed to process image. Please try another file.');
         } finally {
             setCompressing(false);
         }
@@ -231,7 +231,7 @@ export default function Register({
             const initCamera = async () => {
                 try {
                     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                        throw new Error('Kamera WebRTC tidak didukung di browser ini.');
+                        throw new Error('WebRTC camera is not supported in this browser.');
                     }
 
                     let constraints = {
@@ -269,7 +269,7 @@ export default function Register({
                 } catch (err) {
                     console.error('Camera stream error:', err);
                     setCameraLoading(false);
-                    setCameraError('Tidak dapat mengakses kamera. Pastikan izin kamera telah diberikan atau gunakan kamera bawaan.');
+                    setCameraError('Unable to access camera. Please ensure camera permissions are granted or use your device camera.');
                 }
             };
 
@@ -317,11 +317,11 @@ export default function Register({
 
         canvas.toBlob((blob) => {
             if (!blob) {
-                alert('Gagal mengambil foto dari kamera.');
+                alert('Failed to capture photo from camera.');
                 return;
             }
 
-            const capturedFile = new File([blob], `bukti_transfer_${Date.now()}.jpg`, {
+            const capturedFile = new File([blob], `payment_proof_${Date.now()}.jpg`, {
                 type: 'image/jpeg',
                 lastModified: Date.now(),
             });
@@ -336,13 +336,13 @@ export default function Register({
         
         for (let i = 0; i < members.length; i++) {
             if (!members[i].name || !members[i].email) {
-                alert(`Harap lengkapi Nama dan Email untuk Peserta #${i + 1}`);
+                alert(`Please complete Full Name and Email for Participant #${i + 1}`);
                 return;
             }
         }
 
         if (visitorType === 'exclusive' && !proofFile) {
-            alert('Harap unggah bukti pembayaran untuk pendaftaran Visitor Exclusive.');
+            alert('Please upload payment proof for Visitor Exclusive registration.');
             return;
         }
 
@@ -365,7 +365,7 @@ export default function Register({
                 py: { xs: 2, md: 3 },
             }}
         >
-            <Head title="Registrasi Tiket Penonton - 55th PIT IAGI & GEOSEA 2026" />
+            <Head title="Visitor Ticket Registration - 55th PIT IAGI & GEOSEA 2026" />
 
             <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
                 {/* Header Navigation Bar */}
@@ -403,7 +403,7 @@ export default function Register({
                             },
                         }}
                     >
-                        Kembali ke Beranda
+                        Back to Home
                     </Button>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -427,7 +427,7 @@ export default function Register({
                             mb: 0.6,
                         }}
                     >
-                        Registrasi Tiket Penonton
+                        Visitor Ticket Registration
                     </Typography>
 
                     <Typography
@@ -441,7 +441,7 @@ export default function Register({
                             mb: 1.5,
                         }}
                     >
-                        Dapatkan tiket resmi & QR Code digital untuk akses arena pameran geologi, sesi poster ilmiah, serta zona industri energi & mineral.
+                        Get your official ticket & digital QR Code for access to the geological exhibition arena, scientific poster sessions, and energy & mineral industry zones.
                     </Typography>
 
                     {/* Venue & Date */}
@@ -487,7 +487,7 @@ export default function Register({
                             p: 2.5,
                         }}
                     >
-                        Pendaftaran tiket penonton saat ini sedang ditutup oleh panitia.
+                        Visitor ticket registration is currently closed by the committee.
                     </Alert>
                 ) : (
                     <form onSubmit={handleSubmit}>
@@ -503,7 +503,7 @@ export default function Register({
                             {/* LEFT COLUMN: STEPS 1, 2, 3 (FORM) */}
                             <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 65%' }, width: '100%' }}>
                                 <Stack spacing={2.5}>
-                                    {/* SECTION 1: PILIH KATEGORI TIKET */}
+                                    {/* SECTION 1: SELECT TICKET CATEGORY */}
                                     <Paper
                                         elevation={0}
                                         sx={{
@@ -532,7 +532,7 @@ export default function Register({
                                                 1
                                             </Box>
                                             <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                Pilih Kategori Tiket
+                                                Select Ticket Category
                                             </Typography>
                                         </Box>
 
@@ -580,15 +580,15 @@ export default function Register({
                                                         Visitor Non-Exclusive
                                                     </Typography>
                                                     <Typography variant="h6" sx={{ fontWeight: 900, color: '#059669', mb: 0.8, fontSize: '1.1rem' }}>
-                                                        GRATIS
+                                                        FREE
                                                     </Typography>
                                                     <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                        Akses pameran umum & poster presentation.
+                                                        Access to general exhibition & scientific poster sessions.
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                                                     <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                        <CheckCircleIcon sx={{ fontSize: 13, color: '#10b981' }} /> E-Tiket instan & Cetak Lanyard
+                                                        <CheckCircleIcon sx={{ fontSize: 13, color: '#10b981' }} /> Instant E-Ticket & Badge Printing
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -640,19 +640,19 @@ export default function Register({
                                                         Rp {priceExclusive.toLocaleString('id-ID')}
                                                     </Typography>
                                                     <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                        Plenary Session, VIP Lounge, Lanyard Gold & Seminar Kit.
+                                                        Plenary Session, VIP Lounge, Gold Lanyard & Seminar Kit.
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
                                                     <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                        <StarIcon sx={{ fontSize: 13, color: '#d97706' }} /> Akses Full VIP & Seminar Kit
+                                                        <StarIcon sx={{ fontSize: 13, color: '#d97706' }} /> Full VIP Access & Seminar Kit
                                                     </Typography>
                                                 </Box>
                                             </Box>
                                         </Box>
                                     </Paper>
 
-                                    {/* SECTION 2: DATA PENGUNJUNG */}
+                                    {/* SECTION 2: VISITOR INFORMATION */}
                                     <Paper
                                         elevation={0}
                                         sx={{
@@ -682,7 +682,7 @@ export default function Register({
                                                     2
                                                 </Box>
                                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                    Data Pengunjung {members.length > 1 && `(${members.length} Orang)`}
+                                                    Visitor Information {members.length > 1 && `(${members.length} Participants)`}
                                                 </Typography>
                                             </Box>
 
@@ -703,7 +703,7 @@ export default function Register({
                                                     '&:hover': { bgcolor: '#dcfce7' },
                                                 }}
                                             >
-                                                + Tambah Peserta
+                                                + Add Participant
                                             </Button>
                                         </Box>
 
@@ -737,7 +737,7 @@ export default function Register({
                                                                 {idx + 1}
                                                             </Box>
                                                             <Typography variant="caption" sx={{ fontWeight: 800, color: idx === 0 ? '#0284c7' : '#334155' }}>
-                                                                {idx === 0 ? 'Pemesan Utama / Ketua' : `Peserta #${idx + 1}`}
+                                                                {idx === 0 ? 'Primary Registrant / Group Leader' : `Participant #${idx + 1}`}
                                                             </Typography>
                                                         </Box>
 
@@ -755,8 +755,8 @@ export default function Register({
                                                     <Grid container spacing={1.5}>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
-                                                                label="Nama Lengkap *"
-                                                                placeholder="Sesuai KTP"
+                                                                label="Full Name *"
+                                                                placeholder="As shown on ID / Passport"
                                                                 value={member.name}
                                                                 onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
                                                                 fullWidth
@@ -767,9 +767,9 @@ export default function Register({
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
-                                                                label="Alamat Email *"
+                                                                label="Email Address *"
                                                                 type="email"
-                                                                placeholder="contoh@gmail.com"
+                                                                placeholder="name@example.com"
                                                                 value={member.email}
                                                                 onChange={(e) => handleMemberChange(idx, 'email', e.target.value)}
                                                                 fullWidth
@@ -780,8 +780,8 @@ export default function Register({
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
-                                                                label="No. WhatsApp / HP"
-                                                                placeholder="0812xxxxxxxx"
+                                                                label="WhatsApp / Phone Number"
+                                                                placeholder="+62 812xxxxxxx"
                                                                 value={member.phone}
                                                                 onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
                                                                 fullWidth
@@ -791,8 +791,8 @@ export default function Register({
                                                         </Grid>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
-                                                                label="Instansi / Universitas"
-                                                                placeholder="Contoh: ITB / Pertamina"
+                                                                label="Institution / University"
+                                                                placeholder="e.g. University / Company / Organization"
                                                                 value={member.institution}
                                                                 onChange={(e) => handleMemberChange(idx, 'institution', e.target.value)}
                                                                 fullWidth
@@ -806,7 +806,7 @@ export default function Register({
                                         </Stack>
                                     </Paper>
 
-                                    {/* SECTION 3: PEMBAYARAN (EXCLUSIVE ONLY) */}
+                                    {/* SECTION 3: VIP PAYMENT INSTRUCTIONS (EXCLUSIVE ONLY) */}
                                     {visitorType === 'exclusive' && (
                                         <Paper
                                             elevation={0}
@@ -836,7 +836,7 @@ export default function Register({
                                                     3
                                                 </Box>
                                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                    Instruksi Pembayaran VIP
+                                                    VIP Payment Instructions
                                                 </Typography>
                                             </Box>
 
@@ -883,7 +883,7 @@ export default function Register({
                                                     <AccountBalanceIcon sx={{ color: '#0284c7', fontSize: 20 }} />
                                                     <Box>
                                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>Bank Transfer</Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>Manual Transfer Bank</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>Manual Bank Transfer</Typography>
                                                     </Box>
                                                 </Paper>
                                             </Box>
@@ -901,11 +901,11 @@ export default function Register({
                                                     ) : (
                                                         <Box sx={{ p: 2, border: '2px dashed #cbd5e1', borderRadius: '10px', maxWidth: 160, mx: 'auto', mb: 1, bgcolor: '#fff' }}>
                                                             <QrCodeIcon sx={{ fontSize: 45, color: '#94a3b8' }} />
-                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b' }}>QRIS Resmi PIT IAGI</Typography>
+                                                            <Typography variant="caption" sx={{ display: 'block', color: '#64748b' }}>Official PIT IAGI QRIS</Typography>
                                                         </Box>
                                                     )}
                                                     <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, display: 'block' }}>
-                                                        Scan QRIS menggunakan aplikasi m-Banking / E-Wallet pilihan Anda.
+                                                        Scan the QRIS using your mobile banking or e-wallet application.
                                                     </Typography>
                                                 </Box>
                                             )}
@@ -914,7 +914,7 @@ export default function Register({
                                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', mb: 2 }}>
                                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#0284c7' }}>
-                                                            Rekening Transfer Bank:
+                                                            Bank Transfer Account Details:
                                                         </Typography>
                                                         <Button
                                                             size="small"
@@ -922,7 +922,7 @@ export default function Register({
                                                             onClick={handleCopyBankInfo}
                                                             sx={{ color: '#0284c7', fontSize: '0.7rem', p: 0.2 }}
                                                         >
-                                                            {copySuccess ? 'Tersalin!' : 'Salin'}
+                                                            {copySuccess ? 'Copied!' : 'Copy'}
                                                         </Button>
                                                     </Box>
                                                     <Typography variant="caption" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 1.5, borderRadius: '8px', border: '1px solid #e2e8f0', display: 'block' }}>
@@ -933,7 +933,7 @@ export default function Register({
 
                                             {/* Upload Proof with Direct Camera Trigger */}
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
-                                                Unggah Bukti Transfer *
+                                                Upload Payment Proof *
                                             </Typography>
 
                                             {/* Hidden Standard File Input */}
@@ -972,7 +972,7 @@ export default function Register({
                                                         '&:hover': { bgcolor: '#0369a1' },
                                                     }}
                                                 >
-                                                    📷 Buka Kamera Langsung
+                                                    📷 Open Live Camera
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
@@ -982,7 +982,7 @@ export default function Register({
                                                     disabled={compressing}
                                                     sx={{ borderRadius: '8px', borderColor: '#cbd5e1', color: '#475569', textTransform: 'none', fontWeight: 700, fontSize: '0.78rem' }}
                                                 >
-                                                    📁 Pilih dari Galeri
+                                                    📁 Choose from Files / Gallery
                                                 </Button>
                                             </Box>
 
@@ -990,20 +990,20 @@ export default function Register({
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.5 }}>
                                                     <CircularProgress size={16} sx={{ color: '#059669' }} />
                                                     <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700 }}>
-                                                        Mengompresi foto otomatis...
+                                                        Compressing image automatically...
                                                     </Typography>
                                                 </Box>
                                             )}
 
                                             {proofPreview && (
                                                 <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                    <Box component="img" src={proofPreview} alt="Bukti" sx={{ width: 48, height: 48, objectFit: 'cover', borderRadius: '6px', border: '1px solid #86efac' }} />
+                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 48, height: 48, objectFit: 'cover', borderRadius: '6px', border: '1px solid #86efac' }} />
                                                     <Box sx={{ flex: 1 }}>
                                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.4 }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 14 }} /> Foto berhasil diambil ({compressionStats?.compressed} KB)
+                                                            <CheckCircleIcon sx={{ fontSize: 14 }} /> Photo uploaded successfully ({compressionStats?.compressed} KB)
                                                         </Typography>
                                                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', display: 'block' }}>
-                                                            Siap dikirim bersama formulir pendaftaran.
+                                                            Ready to submit with registration form.
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -1140,7 +1140,7 @@ export default function Register({
                                                     mb: 0.2,
                                                 }}
                                             >
-                                                {primaryMember.name || 'Nama Peserta'}
+                                                {primaryMember.name || 'Participant Name'}
                                             </Typography>
 
                                             <Typography
@@ -1154,7 +1154,7 @@ export default function Register({
                                                     mb: 1.5,
                                                 }}
                                             >
-                                                {primaryMember.institution || 'Instansi / Universitas'}
+                                                {primaryMember.institution || 'Institution / University'}
                                             </Typography>
 
                                             {/* Bottom Banner */}
@@ -1184,26 +1184,26 @@ export default function Register({
                                     {/* Order Summary Box */}
                                     <Box sx={{ mt: 2, p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
-                                            Ringkasan Pesanan:
+                                            Order Summary:
                                         </Typography>
                                         <Stack spacing={0.6}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Kategori:</Typography>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Category:</Typography>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: isExclusive ? '#b45309' : '#059669' }}>
                                                     {isExclusive ? 'Exclusive VIP' : 'Non-Exclusive'}
                                                 </Typography>
                                             </Box>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Jumlah Tiket:</Typography>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Total Tickets:</Typography>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                                    {members.length} Orang
+                                                    {members.length} Ticket(s)
                                                 </Typography>
                                             </Box>
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Tagihan:</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Amount:</Typography>
                                                 <Typography variant="body2" sx={{ fontWeight: 900, color: isExclusive ? '#b45309' : '#059669' }}>
-                                                    {isExclusive ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'GRATIS'}
+                                                    {isExclusive ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'FREE'}
                                                 </Typography>
                                             </Box>
                                         </Stack>
@@ -1249,14 +1249,14 @@ export default function Register({
                                             }}
                                         >
                                             {processing 
-                                                ? 'Memproses...' 
+                                                ? 'Processing...' 
                                                 : isExclusive 
-                                                    ? `Terbitkan VIP (Rp ${totalEstimate.toLocaleString('id-ID')})` 
-                                                    : 'Terbitkan E-Tiket Gratis'
+                                                    ? `Purchase VIP Pass (Rp ${totalEstimate.toLocaleString('id-ID')})` 
+                                                    : 'Get Free E-Ticket'
                                             }
                                         </Button>
                                         <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', textAlign: 'center', mt: 1, fontSize: '0.68rem', fontWeight: 600 }}>
-                                            🔒 Data terenkripsi & dikelola Panitia IAGI
+                                            🔒 Encrypted & securely managed by IAGI Committee
                                         </Typography>
                                     </Box>
                                 </Paper>
@@ -1294,7 +1294,7 @@ export default function Register({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <PhotoCameraIcon sx={{ color: '#38bdf8' }} />
                         <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fff' }}>
-                            Ambil Foto Bukti Transfer
+                            Capture Payment Proof
                         </Typography>
                     </Box>
                     <IconButton onClick={stopCamera} size="small" sx={{ color: '#94a3b8', '&:hover': { color: '#fff' } }}>
@@ -1323,7 +1323,7 @@ export default function Register({
                             <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(0,0,0,0.85)', zIndex: 2 }}>
                                 <CircularProgress sx={{ color: '#38bdf8', mb: 2 }} />
                                 <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
-                                    Menghubungkan ke kamera...
+                                    Connecting to camera...
                                 </Typography>
                             </Box>
                         )}
@@ -1342,7 +1342,7 @@ export default function Register({
                                     }}
                                     sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 700 }}
                                 >
-                                    Gunakan Kamera Bawaan HP
+                                    Use Native Device Camera
                                 </Button>
                             </Box>
                         )}
@@ -1362,7 +1362,7 @@ export default function Register({
                                 }}
                             >
                                 <Typography variant="caption" sx={{ bgcolor: 'rgba(0,0,0,0.6)', px: 1, py: 0.3, borderRadius: '4px', color: '#fff', fontSize: '0.7rem' }}>
-                                    Arahkan ke struk / bukti transfer
+                                    Align receipt / payment proof within frame
                                 </Typography>
                             </Box>
                         )}
@@ -1393,7 +1393,7 @@ export default function Register({
                             '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
                         }}
                     >
-                        Ganti Kamera
+                        Switch Camera
                     </Button>
 
                     <Button
@@ -1413,7 +1413,7 @@ export default function Register({
                             '&:hover': { bgcolor: '#059669' },
                         }}
                     >
-                        📸 Jepret Foto
+                        📸 Capture Photo
                     </Button>
                 </DialogActions>
             </Dialog>
