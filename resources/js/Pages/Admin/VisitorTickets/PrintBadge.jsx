@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -6,96 +6,144 @@ import {
     Typography,
     Button,
     Chip,
+    Stack,
+    Tooltip,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import StarIcon from '@mui/icons-material/Star';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CATEGORY_MAP = {
     // Invited Categories
     vip: {
         label: 'VIP',
+        badge: 'VIP GUEST',
         banner: '#d97706',
+        gradient: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
         border: '#d97706',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     speaker: {
         label: 'SPEAKER',
+        badge: 'SPEAKER',
         banner: '#db2777',
+        gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
         border: '#db2777',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     panelist: {
         label: 'PANELIST',
+        badge: 'PANELIST',
         banner: '#7c3aed',
+        gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
         border: '#7c3aed',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     moderator: {
         label: 'MODERATOR',
+        badge: 'MODERATOR',
         banner: '#0891b2',
+        gradient: 'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
         border: '#0891b2',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     exhibition: {
         label: 'EXHIBITOR',
+        badge: 'EXHIBITOR',
         banner: '#ea580c',
+        gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)',
         border: '#ea580c',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     committee: {
         label: 'COMMITTEE',
+        badge: 'COMMITTEE',
         banner: '#2563eb',
+        gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
         border: '#2563eb',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     student_volunteer: {
         label: 'STUDENT VOLUNTEER',
+        badge: 'VOLUNTEER',
         banner: '#16a34a',
+        gradient: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
         border: '#16a34a',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'IAGI MEMBER - PROFESSIONAL',
+        badge: 'IAGI PRO',
         banner: '#094d42',
+        gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
         border: '#094d42',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     non_iagi_member_professional: {
         label: 'NON IAGI MEMBER - PROFESSIONAL',
+        badge: 'NON-IAGI PRO',
         banner: '#0284c7',
+        gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
         border: '#0284c7',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     iagi_member_expatriate: {
         label: 'IAGI MEMBER - EXPATRIATE',
+        badge: 'INTERNATIONAL DELEGATE',
         banner: '#7c3aed',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
         border: '#7c3aed',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     non_iagi_member_expatriate: {
         label: 'NON IAGI MEMBER - EXPATRIATE',
+        badge: 'INTERNATIONAL DELEGATE',
         banner: '#6d28d9',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
         border: '#6d28d9',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
     student_undergraduate: {
         label: 'STUDENT UNDERGRADUATE',
+        badge: 'STUDENT',
         banner: '#4338ca',
+        gradient: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
         border: '#4338ca',
-        textColor: '#fff',
+        textColor: '#ffffff',
+    },
+    student_postgraduate: {
+        label: 'STUDENT POSTGRADUATE',
+        badge: 'POSTGRADUATE',
+        banner: '#4f46e5',
+        gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+        border: '#4f46e5',
+        textColor: '#ffffff',
+    },
+    general_ticket: {
+        label: 'PARTICIPANT',
+        badge: 'PARTICIPANT',
+        banner: '#059669',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        border: '#059669',
+        textColor: '#ffffff',
     },
     exclusive: {
         label: 'VISITOR EXCLUSIVE (VIP)',
-        banner: '#eab308',
-        border: '#eab308',
-        textColor: '#000',
+        badge: 'VIP PASS',
+        banner: '#d97706',
+        gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        border: '#d97706',
+        textColor: '#ffffff',
     },
     non_exclusive: {
-        label: 'VISITOR PASS',
+        label: 'PARTICIPANT',
+        badge: 'PARTICIPANT',
         banner: '#059669',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
         border: '#059669',
-        textColor: '#fff',
+        textColor: '#ffffff',
     },
 };
 
@@ -104,25 +152,38 @@ export default function PrintBadge({
     templatePath = null,
 }) {
     const cat = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
+    const [showQr, setShowQr] = useState(true);
+    const [customCategoryBanner, setCustomCategoryBanner] = useState(
+        ticket.visitor_type && !['non_exclusive', 'general_ticket'].includes(ticket.visitor_type)
+    );
+
+    const defaultTemplate = '/images/lanyard-badge-template.png';
+    const bgImage = templatePath || defaultTemplate;
 
     useEffect(() => {
-        // Auto trigger print dialog after 500ms
+        // Auto trigger print dialog after initial render
         const timer = setTimeout(() => {
             window.print();
-        }, 600);
+        }, 700);
         return () => clearTimeout(timer);
     }, []);
+
+    const nameLength = (ticket.visitor_name || '').length;
+    const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.2rem' : '1.38rem';
+
+    const institutionLength = (ticket.visitor_institution || '').length;
+    const instFontSize = institutionLength > 28 ? '0.85rem' : institutionLength > 20 ? '0.95rem' : '1.08rem';
 
     return (
         <Box
             sx={{
                 minHeight: '100vh',
-                bgcolor: '#1e293b',
+                bgcolor: '#0f172a',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                p: 2,
+                p: { xs: 1.5, sm: 3 },
                 '@media print': {
                     bgcolor: '#fff',
                     p: 0,
@@ -130,192 +191,295 @@ export default function PrintBadge({
                 },
             }}
         >
-            <Head title={`Print Badge: ${ticket.visitor_name} (${cat.label})`} />
+            <Head title={`Print Badge: ${ticket.visitor_name} - 55th PIT IAGI & GEOSEA 2026`} />
 
-            {/* Action Bar (hidden when printing) */}
-            <Box sx={{ mb: 2, display: 'flex', gap: 2, '@media print': { display: 'none' } }}>
+            {/* Print Styling Fixes */}
+            <style>
+                {`
+                    @media print {
+                        @page {
+                            size: portrait;
+                            margin: 0;
+                        }
+                        body {
+                            background: #ffffff !important;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        #lanyard-card {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                    }
+                `}
+            </style>
+
+            {/* Top Action Bar (hidden when printing) */}
+            <Box
+                sx={{
+                    mb: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1.5,
+                    flexWrap: 'wrap',
+                    '@media print': { display: 'none' },
+                }}
+            >
                 <Button
                     variant="contained"
                     startIcon={<PrintIcon />}
                     onClick={() => window.print()}
                     sx={{
-                        bgcolor: cat.banner,
-                        color: cat.textColor,
-                        fontWeight: 800,
-                        borderRadius: '10px',
+                        bgcolor: '#10b981',
+                        color: '#ffffff',
+                        fontWeight: 900,
+                        fontSize: '0.9rem',
+                        borderRadius: '12px',
                         textTransform: 'none',
+                        px: 3,
+                        py: 1,
+                        boxShadow: '0 4px 0 #047857, 0 8px 20px rgba(16,185,129,0.3)',
+                        '&:hover': { bgcolor: '#059669', transform: 'translateY(-1px)' },
                     }}
                 >
                     Print Lanyard Badge
                 </Button>
+
                 <Button
                     variant="outlined"
-                    onClick={() => window.close()}
-                    sx={{ color: '#94a3b8', borderColor: '#475569', textTransform: 'none', borderRadius: '10px' }}
+                    startIcon={<QrCode2Icon />}
+                    onClick={() => setShowQr(!showQr)}
+                    sx={{
+                        color: showQr ? '#38bdf8' : '#94a3b8',
+                        borderColor: showQr ? '#0284c7' : '#475569',
+                        bgcolor: showQr ? 'rgba(2, 132, 199, 0.15)' : 'transparent',
+                        textTransform: 'none',
+                        fontWeight: 800,
+                        borderRadius: '12px',
+                        px: 2,
+                        py: 0.9,
+                    }}
                 >
-                    Close Window
+                    {showQr ? 'Hide Mini QR' : 'Show Mini QR'}
+                </Button>
+
+                <Button
+                    variant="outlined"
+                    startIcon={<CloseIcon />}
+                    onClick={() => window.close()}
+                    sx={{
+                        color: '#94a3b8',
+                        borderColor: '#475569',
+                        textTransform: 'none',
+                        fontWeight: 700,
+                        borderRadius: '12px',
+                        px: 2,
+                        py: 0.9,
+                        '&:hover': { color: '#ffffff', borderColor: '#cbd5e1' },
+                    }}
+                >
+                    Close
                 </Button>
             </Box>
 
-            {/* Physical Lanyard Card Container (Standard A6 Badge / 95mm x 135mm) */}
+            {/* Physical Lanyard Card Container (Matches 638x1011 aspect ratio = 0.631 : 1) */}
             <Box
                 id="lanyard-card"
                 sx={{
-                    width: '360px',
-                    height: '520px',
+                    width: { xs: '330px', sm: '380px' },
+                    height: { xs: '522px', sm: '602px' },
                     bgcolor: '#ffffff',
-                    borderRadius: '14px',
-                    border: `3px solid ${cat.border}`,
-                    boxShadow: '0 15px 35px rgba(0,0,0,0.4)',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)',
                     position: 'relative',
                     overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    backgroundImage: templatePath ? `url('${templatePath}')` : 'none',
-                    backgroundSize: 'cover',
+                    backgroundImage: `url('${bgImage}')`,
+                    backgroundSize: '100% 100%',
                     backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
                     '@media print': {
                         boxShadow: 'none',
-                        width: '95mm',
-                        height: '135mm',
-                        border: `2px solid ${cat.border}`,
+                        borderRadius: 0,
+                        width: '100mm',
+                        height: '158mm',
                         pageBreakInside: 'avoid',
                         margin: '0 auto',
                     },
                 }}
             >
-                {/* Lanyard Hole Punch Area Guide (Top Center) */}
-                <Box
-                    sx={{
-                        width: 32,
-                        height: 8,
-                        borderRadius: '4px',
-                        border: '1px dashed rgba(0,0,0,0.2)',
-                        mx: 'auto',
-                        mt: 1,
-                        '@media print': { border: '1px dashed #cbd5e1' },
-                    }}
-                />
-
-                {/* Event Header */}
-                <Box sx={{ textAlign: 'center', px: 2, pt: 1 }}>
-                    <Typography
-                        variant="caption"
-                        sx={{
-                            fontWeight: 800,
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
-                            color: '#1e293b',
-                            fontSize: '0.75rem',
-                            display: 'block',
-                        }}
-                    >
-                        55th PIT IAGI & GEOSEA XIX 2026
-                    </Typography>
-                    <Typography
-                        variant="caption"
-                        sx={{
-                            fontSize: '0.65rem',
-                            color: '#64748b',
-                            display: 'block',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Royal Ambarrukmo Yogyakarta &bull; 3-5 November 2026
-                    </Typography>
-                </Box>
-
-                {/* Card Center: QR Code & Visitor Details */}
-                <Box sx={{ textAlign: 'center', px: 2.5, my: 'auto' }}>
-                    {/* QR Code */}
+                {/* Optional Mini QR Code badge in top-right for quick gate check */}
+                {showQr && (
                     <Box
                         sx={{
-                            p: 1.5,
+                            position: 'absolute',
+                            top: { xs: '12px', sm: '16px' },
+                            right: { xs: '12px', sm: '16px' },
+                            p: 0.8,
                             bgcolor: '#ffffff',
-                            borderRadius: '10px',
-                            border: '1px solid #e2e8f0',
-                            width: 'fit-content',
-                            mx: 'auto',
-                            mb: 2,
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.06)',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.12)',
+                            textAlign: 'center',
+                            zIndex: 10,
+                            '@media print': {
+                                top: '4mm',
+                                right: '4mm',
+                                p: '1mm',
+                                borderRadius: '2mm',
+                                border: '0.5px solid #000',
+                            },
                         }}
                     >
                         <QRCodeSVG
                             value={ticket.ticket_code}
-                            size={120}
-                            level="H"
+                            size={44}
+                            level="M"
                             includeMargin={false}
                         />
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                display: 'block',
+                                fontFamily: 'monospace',
+                                fontWeight: 900,
+                                fontSize: '0.5rem',
+                                color: '#0f172a',
+                                mt: 0.2,
+                                letterSpacing: '0.02em',
+                                '@media print': {
+                                    fontSize: '6pt',
+                                },
+                            }}
+                        >
+                            {ticket.ticket_code}
+                        </Typography>
                     </Box>
+                )}
 
-                    {/* Visitor Name */}
+                {/* VISITOR NAME INPUT OVERLAY (Sits right above the Name line at y: 57.3%) */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '49.5%',
+                        height: '7.8%',
+                        left: '8%',
+                        right: '8%',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        pb: '1px',
+                        zIndex: 5,
+                    }}
+                >
                     <Typography
                         variant="h5"
                         sx={{
                             fontWeight: 900,
                             color: '#0f172a',
-                            lineHeight: 1.2,
-                            mb: 0.5,
-                            fontSize: '1.25rem',
+                            fontSize: nameFontSize,
+                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.02em',
+                            lineHeight: 1.1,
                             wordBreak: 'break-word',
+                            textAlign: 'center',
+                            width: '100%',
+                            textShadow: '0 0 1px rgba(255,255,255,0.8)',
+                            '@media print': {
+                                color: '#000000',
+                                fontSize: nameLength > 28 ? '11pt' : nameLength > 20 ? '13pt' : '15pt',
+                            },
                         }}
                     >
                         {ticket.visitor_name}
                     </Typography>
+                </Box>
 
-                    {/* Institution */}
-                    {ticket.visitor_institution && (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontWeight: 700,
-                                color: '#475569',
-                                fontSize: '0.85rem',
-                                mb: 0.5,
-                            }}
-                        >
-                            {ticket.visitor_institution}
-                        </Typography>
-                    )}
-
-                    {/* Ticket Code */}
+                {/* INSTITUTION INPUT OVERLAY (Sits right above the Institution line at y: 66.6%) */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '59.8%',
+                        height: '6.8%',
+                        left: '8%',
+                        right: '8%',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        pb: '1px',
+                        zIndex: 5,
+                    }}
+                >
                     <Typography
-                        variant="caption"
+                        variant="body1"
                         sx={{
-                            fontFamily: 'monospace',
                             fontWeight: 800,
-                            color: '#64748b',
-                            fontSize: '0.75rem',
-                            letterSpacing: '0.05em',
-                            display: 'block',
+                            color: '#1e293b',
+                            fontSize: instFontSize,
+                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            lineHeight: 1.15,
+                            wordBreak: 'break-word',
+                            textAlign: 'center',
+                            width: '100%',
+                            textShadow: '0 0 1px rgba(255,255,255,0.8)',
+                            '@media print': {
+                                color: '#000000',
+                                fontSize: institutionLength > 28 ? '9pt' : institutionLength > 20 ? '10pt' : '11.5pt',
+                            },
                         }}
                     >
-                        {ticket.ticket_code}
+                        {ticket.visitor_institution || '-'}
                     </Typography>
                 </Box>
 
-                {/* Bottom Category Banner */}
-                <Box
-                    sx={{
-                        bgcolor: cat.banner,
-                        color: cat.textColor,
-                        py: 1.2,
-                        textAlign: 'center',
-                        fontWeight: 900,
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        fontSize: '0.92rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 0.8,
-                    }}
-                >
-                    {ticket.visitor_type === 'exclusive' && <StarIcon sx={{ fontSize: 18 }} />}
-                    {cat.label}
-                    {ticket.visitor_type === 'exclusive' && <StarIcon sx={{ fontSize: 18 }} />}
-                </Box>
+                {/* DYNAMIC CATEGORY BANNER OVERLAY (For VIP, Speaker, Committee, Moderator, Exhibitor, etc.) */}
+                {customCategoryBanner && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '86.8%',
+                            bottom: '4.8%',
+                            left: '5%',
+                            right: '5%',
+                            borderRadius: '12px',
+                            background: cat.gradient,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                            zIndex: 8,
+                            px: 2,
+                            '@media print': {
+                                borderRadius: '3mm',
+                                boxShadow: 'none',
+                            },
+                        }}
+                    >
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                fontWeight: 950,
+                                color: cat.textColor,
+                                letterSpacing: '0.12em',
+                                textTransform: 'uppercase',
+                                fontSize: { xs: '1.25rem', sm: '1.45rem' },
+                                fontFamily: "'Inter', 'Montserrat', sans-serif",
+                                textAlign: 'center',
+                                '@media print': {
+                                    fontSize: '15pt',
+                                    color: '#ffffff !important',
+                                },
+                            }}
+                        >
+                            {cat.label}
+                        </Typography>
+                    </Box>
+                )}
             </Box>
         </Box>
     );
