@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Head } from '@inertiajs/react';
-import { QRCodeSVG } from 'qrcode.react';
 import {
     Box,
     Typography,
@@ -11,7 +10,6 @@ import {
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import StarIcon from '@mui/icons-material/Star';
-import QrCode2Icon from '@mui/icons-material/QrCode2';
 import CloseIcon from '@mui/icons-material/Close';
 
 const CATEGORY_MAP = {
@@ -152,7 +150,6 @@ export default function PrintBadge({
     templatePath = null,
 }) {
     const cat = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
-    const [showQr, setShowQr] = useState(true);
     const [customCategoryBanner, setCustomCategoryBanner] = useState(
         ticket.visitor_type && !['non_exclusive', 'general_ticket'].includes(ticket.visitor_type)
     );
@@ -248,24 +245,6 @@ export default function PrintBadge({
 
                 <Button
                     variant="outlined"
-                    startIcon={<QrCode2Icon />}
-                    onClick={() => setShowQr(!showQr)}
-                    sx={{
-                        color: showQr ? '#38bdf8' : '#94a3b8',
-                        borderColor: showQr ? '#0284c7' : '#475569',
-                        bgcolor: showQr ? 'rgba(2, 132, 199, 0.15)' : 'transparent',
-                        textTransform: 'none',
-                        fontWeight: 800,
-                        borderRadius: '12px',
-                        px: 2,
-                        py: 0.9,
-                    }}
-                >
-                    {showQr ? 'Hide Mini QR' : 'Show Mini QR'}
-                </Button>
-
-                <Button
-                    variant="outlined"
                     startIcon={<CloseIcon />}
                     onClick={() => window.close()}
                     sx={{
@@ -279,7 +258,7 @@ export default function PrintBadge({
                         '&:hover': { color: '#ffffff', borderColor: '#cbd5e1' },
                     }}
                 >
-                    Close
+                    Close Window
                 </Button>
             </Box>
 
@@ -308,55 +287,6 @@ export default function PrintBadge({
                     },
                 }}
             >
-                {/* Optional Mini QR Code badge in top-right for quick gate check */}
-                {showQr && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: { xs: '12px', sm: '16px' },
-                            right: { xs: '12px', sm: '16px' },
-                            p: 0.8,
-                            bgcolor: '#ffffff',
-                            borderRadius: '8px',
-                            border: '1px solid #cbd5e1',
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.12)',
-                            textAlign: 'center',
-                            zIndex: 10,
-                            '@media print': {
-                                top: '4mm',
-                                right: '4mm',
-                                p: '1mm',
-                                borderRadius: '2mm',
-                                border: '0.5px solid #000',
-                            },
-                        }}
-                    >
-                        <QRCodeSVG
-                            value={ticket.ticket_code}
-                            size={44}
-                            level="M"
-                            includeMargin={false}
-                        />
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                display: 'block',
-                                fontFamily: 'monospace',
-                                fontWeight: 900,
-                                fontSize: '0.5rem',
-                                color: '#0f172a',
-                                mt: 0.2,
-                                letterSpacing: '0.02em',
-                                '@media print': {
-                                    fontSize: '6pt',
-                                },
-                            }}
-                        >
-                            {ticket.ticket_code}
-                        </Typography>
-                    </Box>
-                )}
-
                 {/* VISITOR NAME INPUT OVERLAY (Sits right above the Name line at y: 57.3%) */}
                 <Box
                     sx={{
