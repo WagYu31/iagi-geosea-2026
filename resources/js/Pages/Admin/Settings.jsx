@@ -699,7 +699,12 @@ function DashboardAnnouncementTab({ inputSx, tealBtnSx, sectionCardSx, sectionTi
 // Visitor Tickets Configuration Tab Component
 function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
     const [enabled, setEnabled] = useState(getSettingValue('visitor_registration_enabled', '1') === '1');
-    const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 150000));
+    const [priceIagiPro, setPriceIagiPro] = useState(getSettingValue('visitor_ticket_price_iagi_member_professional', 2500000));
+    const [priceNonIagiPro, setPriceNonIagiPro] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_professional', 3000000));
+    const [priceIagiExpat, setPriceIagiExpat] = useState(getSettingValue('visitor_ticket_price_iagi_member_expatriate', 5000000));
+    const [priceNonIagiExpat, setPriceNonIagiExpat] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_expatriate', 6000000));
+    const [priceStudent, setPriceStudent] = useState(getSettingValue('visitor_ticket_price_student_undergraduate', 750000));
+    const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 500000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
     const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
     const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Royal Ambarrukmo Yogyakarta'));
@@ -717,6 +722,11 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
         try {
             const response = await axios.post(route('admin.settings.saveVisitorTickets'), {
                 visitor_registration_enabled: enabled ? '1' : '0',
+                visitor_ticket_price_iagi_member_professional: priceIagiPro,
+                visitor_ticket_price_non_iagi_member_professional: priceNonIagiPro,
+                visitor_ticket_price_iagi_member_expatriate: priceIagiExpat,
+                visitor_ticket_price_non_iagi_member_expatriate: priceNonIagiExpat,
+                visitor_ticket_price_student_undergraduate: priceStudent,
                 visitor_ticket_price_exclusive: priceExclusive,
                 visitor_ticket_price_non_exclusive: priceNonExclusive,
                 visitor_event_date: eventDate,
@@ -763,10 +773,10 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                 <Card elevation={0} sx={sectionCardSx}>
                     <CardContent sx={{ p: 3 }}>
                         <Typography variant="h6" sx={sectionTitleSx}>
-                            🎫 Konfigurasi Pendaftaran & Harga Tiket Penonton
+                            🎫 Konfigurasi Kategori & Harga Tiket Registrasi Konferensi
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mb: 3 }}>
-                            Atur status buka/tutup pendaftaran, harga tiket kategori Exclusive dan Non-Exclusive, serta informasi venue.
+                            Atur harga tiket spesial Early Bird, status buka/tutup pendaftaran, serta informasi venue.
                         </Typography>
 
                         <Stack spacing={3}>
@@ -783,7 +793,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                 }
                                 label={
                                     <Typography sx={{ fontWeight: 600, color: c.textPrimary }}>
-                                        Pendaftaran Tiket Penonton Aktif (Buka Registrasi Online)
+                                        Pendaftaran Tiket Registrasi Aktif (Buka Registrasi Online)
                                     </Typography>
                                 }
                             />
@@ -793,7 +803,62 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Harga Tiket Visitor Exclusive (IDR)"
+                                        label="IAGI Member Professional (Early Bird IDR)"
+                                        value={priceIagiPro}
+                                        onChange={(e) => setPriceIagiPro(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceIagiPro || 0).toLocaleString('id-ID')} (Normal: Rp 3.000.000)`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Non IAGI Member Professional (Early Bird IDR)"
+                                        value={priceNonIagiPro}
+                                        onChange={(e) => setPriceNonIagiPro(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceNonIagiPro || 0).toLocaleString('id-ID')} (Normal: Rp 4.000.000)`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="IAGI Member Expatriate (Early Bird IDR)"
+                                        value={priceIagiExpat}
+                                        onChange={(e) => setPriceIagiExpat(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceIagiExpat || 0).toLocaleString('id-ID')} (Normal: Rp 6.000.000)`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Non IAGI Member Expatriate (Early Bird IDR)"
+                                        value={priceNonIagiExpat}
+                                        onChange={(e) => setPriceNonIagiExpat(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceNonIagiExpat || 0).toLocaleString('id-ID')} (Normal: Rp 7.000.000)`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Student Undergraduate (Early Bird IDR)"
+                                        value={priceStudent}
+                                        onChange={(e) => setPriceStudent(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceStudent || 0).toLocaleString('id-ID')} (Normal: Rp 1.000.000)`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Visitor Exclusive VIP (IDR)"
                                         value={priceExclusive}
                                         onChange={(e) => setPriceExclusive(e.target.value)}
                                         sx={inputSx}
@@ -804,7 +869,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Harga Tiket Visitor Non-Exclusive (IDR)"
+                                        label="Visitor Non-Exclusive (IDR)"
                                         value={priceNonExclusive}
                                         onChange={(e) => setPriceNonExclusive(e.target.value)}
                                         sx={inputSx}

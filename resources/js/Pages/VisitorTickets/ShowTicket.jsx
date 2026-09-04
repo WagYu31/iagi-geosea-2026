@@ -24,13 +24,86 @@ import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+const CATEGORY_MAP = {
+    iagi_member_professional: {
+        label: 'IAGI Member Professional',
+        badge: 'PROFESSIONAL PASS',
+        gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+        border: '#094d42',
+        shadow: 'rgba(9, 77, 66, 0.25)',
+        textColor: '#094d42',
+        tagBg: '#dcfce7',
+        tagColor: '#15803d',
+    },
+    non_iagi_member_professional: {
+        label: 'Non IAGI Member Professional',
+        badge: 'PROFESSIONAL PASS',
+        gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+        border: '#0284c7',
+        shadow: 'rgba(2, 132, 199, 0.25)',
+        textColor: '#0284c7',
+        tagBg: '#e0f2fe',
+        tagColor: '#0369a1',
+    },
+    iagi_member_expatriate: {
+        label: 'IAGI Member Expatriate',
+        badge: 'INTERNATIONAL DELEGATE',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+        border: '#7c3aed',
+        shadow: 'rgba(124, 58, 237, 0.25)',
+        textColor: '#7c3aed',
+        tagBg: '#ede9fe',
+        tagColor: '#6d28d9',
+    },
+    non_iagi_member_expatriate: {
+        label: 'Non IAGI Member Expatriate',
+        badge: 'INTERNATIONAL DELEGATE',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
+        border: '#7c3aed',
+        shadow: 'rgba(124, 58, 237, 0.25)',
+        textColor: '#7c3aed',
+        tagBg: '#ede9fe',
+        tagColor: '#5b21b6',
+    },
+    student_undergraduate: {
+        label: 'Student Undergraduate',
+        badge: 'STUDENT PASS',
+        gradient: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
+        border: '#6366f1',
+        shadow: 'rgba(99, 102, 241, 0.25)',
+        textColor: '#4338ca',
+        tagBg: '#e0e7ff',
+        tagColor: '#3730a3',
+    },
+    exclusive: {
+        label: 'Visitor Exclusive (VIP)',
+        badge: 'VIP PASS',
+        gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        border: '#f59e0b',
+        shadow: 'rgba(245, 158, 11, 0.25)',
+        textColor: '#d97706',
+        tagBg: '#fef3c7',
+        tagColor: '#b45309',
+    },
+    non_exclusive: {
+        label: 'Visitor Non-Exclusive',
+        badge: 'FREE PASS',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        border: '#10b981',
+        shadow: 'rgba(16, 185, 129, 0.25)',
+        textColor: '#059669',
+        tagBg: '#ecfdf5',
+        tagColor: '#047857',
+    },
+};
+
 export default function ShowTicket({
     ticket = {},
     groupTickets = [],
     eventDate = '3-5 November 2026',
     eventVenue = 'Royal Ambarrukmo Yogyakarta',
 }) {
-    const isExclusive = ticket.visitor_type === 'exclusive';
+    const categoryInfo = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
     const isCheckedIn = ticket.checked_in;
 
     const handlePrint = () => {
@@ -81,9 +154,7 @@ export default function ShowTicket({
                         startIcon={<PrintIcon />}
                         onClick={handlePrint}
                         sx={{
-                            background: isExclusive
-                                ? 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)'
-                                : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                            background: categoryInfo.gradient,
                             color: '#fff',
                             fontWeight: 800,
                             borderRadius: '12px',
@@ -91,9 +162,7 @@ export default function ShowTicket({
                             fontSize: '0.9rem',
                             px: 3,
                             py: 1,
-                            boxShadow: isExclusive
-                                ? '0 4px 0 #b45309, 0 10px 20px rgba(245, 158, 11, 0.3)'
-                                : '0 4px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.3)',
+                            boxShadow: `0 4px 0 #04221d, 0 10px 20px ${categoryInfo.shadow}`,
                         }}
                     >
                         Print / Save PDF
@@ -105,10 +174,8 @@ export default function ShowTicket({
                     sx={{
                         borderRadius: '24px',
                         bgcolor: '#ffffff',
-                        border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
-                        boxShadow: isExclusive
-                            ? '0 20px 45px -10px rgba(245, 158, 11, 0.25), 0 8px 16px rgba(0,0,0,0.04)'
-                            : '0 20px 45px -10px rgba(16, 185, 129, 0.25), 0 8px 16px rgba(0,0,0,0.04)',
+                        border: `2px solid ${categoryInfo.border}`,
+                        boxShadow: `0 20px 45px -10px ${categoryInfo.shadow}, 0 8px 16px rgba(0,0,0,0.04)`,
                         overflow: 'hidden',
                         position: 'relative',
                         mb: 4,
@@ -122,21 +189,19 @@ export default function ShowTicket({
                     {/* Header Banner */}
                     <Box
                         sx={{
-                            background: isExclusive
-                                ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
-                                : 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+                            background: categoryInfo.gradient,
                             p: 3.5,
                             textAlign: 'center',
                             color: '#fff',
                         }}
                     >
                         <Chip
-                            icon={isExclusive ? <StarIcon sx={{ fontSize: 13, color: '#000 !important' }} /> : undefined}
-                            label={isExclusive ? 'OFFICIAL VIP PASS' : 'OFFICIAL VISITOR PASS'}
+                            icon={ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#000 !important' }} /> : undefined}
+                            label={categoryInfo.badge}
                             size="small"
                             sx={{
-                                bgcolor: isExclusive ? '#fff' : 'rgba(255,255,255,0.25)',
-                                color: isExclusive ? '#000' : '#fff',
+                                bgcolor: '#ffffff',
+                                color: categoryInfo.textColor,
                                 fontWeight: 900,
                                 fontSize: '0.72rem',
                                 letterSpacing: '0.06em',
@@ -147,7 +212,7 @@ export default function ShowTicket({
                             55th PIT IAGI & GEOSEA XIX 2026
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.9)', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700 }}>
-                            E-Ticket Pass &bull; Gate Admission
+                            {categoryInfo.label} Pass &bull; Gate Admission
                         </Typography>
                     </Box>
 

@@ -64,6 +64,60 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 
+const CATEGORY_META = {
+    iagi_member_professional: {
+        label: 'IAGI Member Professional',
+        shortLabel: 'IAGI PRO',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+    non_iagi_member_professional: {
+        label: 'Non IAGI Member Professional',
+        shortLabel: 'NON-IAGI PRO',
+        bg: '#e0f2fe',
+        color: '#0369a1',
+        border: '#7dd3fc',
+    },
+    iagi_member_expatriate: {
+        label: 'IAGI Member Expatriate',
+        shortLabel: 'IAGI EXPAT',
+        bg: '#ede9fe',
+        color: '#6d28d9',
+        border: '#c4b5fd',
+    },
+    non_iagi_member_expatriate: {
+        label: 'Non IAGI Member Expatriate',
+        shortLabel: 'NON-IAGI EXPAT',
+        bg: '#ede9fe',
+        color: '#5b21b6',
+        border: '#c4b5fd',
+    },
+    student_undergraduate: {
+        label: 'Student Undergraduate',
+        shortLabel: 'STUDENT',
+        bg: '#e0e7ff',
+        color: '#3730a3',
+        border: '#a5b4fc',
+    },
+    exclusive: {
+        label: 'Visitor Exclusive (VIP)',
+        shortLabel: 'EXCLUSIVE VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+    non_exclusive: {
+        label: 'Visitor Non-Exclusive',
+        shortLabel: 'NON-EXCLUSIVE',
+        bg: '#ecfdf5',
+        color: '#047857',
+        border: '#a7f3d0',
+    },
+};
+
+const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
+
 export default function VisitorTicketsIndex({
     tickets = {},
     stats = {},
@@ -331,8 +385,9 @@ export default function VisitorTicketsIndex({
         const phone = (ticket.visitor_phone || '').replace(/[^0-9]/g, '');
         const formattedPhone = phone.startsWith('0') ? '62' + phone.substring(1) : phone.startsWith('62') ? phone : '62' + phone;
         const ticketUrl = route('visitor.ticket.show', ticket.ticket_code);
+        const catLabel = getCategoryMeta(ticket.visitor_type).label;
         const msg = encodeURIComponent(
-            `Halo Bapak/Ibu ${ticket.visitor_name},\n\nTerima kasih telah mendaftar sebagai *Visitor ${ticket.visitor_type === 'exclusive' ? 'Exclusive VIP' : 'Non-Exclusive'}* pada Konferensi *55th PIT IAGI & GEOSEA XIX 2026*.\n\nBerikut adalah link E-Tiket Digital & Kartu Lanyard resmi Anda:\n👉 ${ticketUrl}\n\n*Kode Tiket:* ${ticket.ticket_code}\n\nHarap tunjukkan QR Code pada link di atas kepada petugas di pintu masuk / gate scanner saat hari acara. Sampai jumpa di lokasi!\n\n_Sekretariat Panitia IAGI-GEOSEA 2026_`
+            `Halo Bapak/Ibu ${ticket.visitor_name},\n\nTerima kasih telah mendaftar sebagai *${catLabel}* pada Konferensi *55th PIT IAGI & GEOSEA XIX 2026*.\n\nBerikut adalah link E-Tiket Digital & Kartu Lanyard resmi Anda:\n👉 ${ticketUrl}\n\n*Kode Tiket:* ${ticket.ticket_code}\n\nHarap tunjukkan QR Code pada link di atas kepada petugas di pintu masuk / gate scanner saat hari acara. Sampai jumpa di lokasi!\n\n_Sekretariat Panitia IAGI-GEOSEA 2026_`
         );
         return `https://wa.me/${formattedPhone}?text=${msg}`;
     };
@@ -652,8 +707,13 @@ export default function VisitorTicketsIndex({
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
                                     <MenuItem value="all">Semua Kategori</MenuItem>
-                                    <MenuItem value="exclusive">⭐ Exclusive (VIP)</MenuItem>
-                                    <MenuItem value="non_exclusive">🎟️ Non-Exclusive (Free)</MenuItem>
+                                    <MenuItem value="iagi_member_professional">IAGI Member Professional</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member Professional</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate">IAGI Member Expatriate</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member Expatriate</MenuItem>
+                                    <MenuItem value="student_undergraduate">Student Undergraduate</MenuItem>
+                                    <MenuItem value="exclusive">⭐ Visitor Exclusive (VIP)</MenuItem>
+                                    <MenuItem value="non_exclusive">🎟️ Visitor Non-Exclusive (Free)</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -935,17 +995,16 @@ export default function VisitorTicketsIndex({
                                                 {/* KATEGORI */}
                                                 <TableCell sx={{ py: 1.2 }}>
                                                     <Chip
-                                                        icon={isExc ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
-                                                        label={isExc ? 'EXCLUSIVE' : 'NON-EXCLUSIVE'}
+                                                        icon={t.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
+                                                        label={getCategoryMeta(t.visitor_type).shortLabel}
                                                         size="small"
                                                         sx={{
-                                                            bgcolor: isExc ? '#fef3c7' : '#ecfdf5',
-                                                            border: `1px solid ${isExc ? '#fde68a' : '#a7f3d0'}`,
-                                                            color: isExc ? '#92400e' : '#047857',
+                                                            bgcolor: getCategoryMeta(t.visitor_type).bg,
+                                                            border: `1px solid ${getCategoryMeta(t.visitor_type).border}`,
+                                                            color: getCategoryMeta(t.visitor_type).color,
                                                             fontWeight: 900,
                                                             fontSize: '0.65rem',
                                                             height: 22,
-                                                            boxShadow: isExc ? '0 2px 0 #fde68a' : '0 2px 0 #a7f3d0',
                                                         }}
                                                     />
                                                 </TableCell>
@@ -1262,11 +1321,12 @@ export default function VisitorTicketsIndex({
                                 </Typography>
                                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 1 }}>
                                     <Chip
-                                        label={detailModal.ticket.visitor_type === 'exclusive' ? 'EXCLUSIVE VIP' : 'NON-EXCLUSIVE'}
+                                        label={getCategoryMeta(detailModal.ticket.visitor_type).label}
                                         size="small"
                                         sx={{
-                                            bgcolor: detailModal.ticket.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
-                                            color: detailModal.ticket.visitor_type === 'exclusive' ? '#92400e' : '#047857',
+                                            bgcolor: getCategoryMeta(detailModal.ticket.visitor_type).bg,
+                                            color: getCategoryMeta(detailModal.ticket.visitor_type).color,
+                                            border: `1px solid ${getCategoryMeta(detailModal.ticket.visitor_type).border}`,
                                             fontWeight: 900,
                                         }}
                                     />
@@ -1476,8 +1536,13 @@ export default function VisitorTicketsIndex({
                                     label="Kategori Pengunjung"
                                     onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
                                 >
-                                    <MenuItem value="non_exclusive">Non-Exclusive (Gratis / Rp 0)</MenuItem>
-                                    <MenuItem value="exclusive">Exclusive VIP (Rp {Number(settings.priceExclusive || 150000).toLocaleString('id-ID')})</MenuItem>
+                                    <MenuItem value="iagi_member_professional">IAGI Member Professional (Rp 2.500.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member Professional (Rp 3.000.000)</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate">IAGI Member Expatriate (Rp 5.000.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member Expatriate (Rp 6.000.000)</MenuItem>
+                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 750.000)</MenuItem>
+                                    <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
+                                    <MenuItem value="non_exclusive">Visitor Non-Exclusive (Gratis / Rp 0)</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -1516,17 +1581,17 @@ export default function VisitorTicketsIndex({
                                 size="small"
                             />
 
-                            {onsiteData.visitor_type === 'exclusive' && (
+                            {onsiteData.visitor_type !== 'non_exclusive' && (
                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
-                                        Status Pembayaran Onsite Exclusive:
+                                        Status Pembayaran Onsite:
                                     </Typography>
                                     <RadioGroup
                                         value={onsiteData.payment_status}
                                         onChange={(e) => setOnsiteData('payment_status', e.target.value)}
                                     >
-                                        <FormControlLabel value="paid_cash" control={<Radio size="small" />} label="Lunas Tunai / Cash di Lokasi" />
-                                        <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Gratis (VIP Invitation / Bypass)" />
+                                        <FormControlLabel value="paid_cash" control={<Radio size="small" />} label="Lunas Tunai / EDC / QRIS di Lokasi" />
+                                        <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Gratis (VIP Invitation / Sponsor Bypass)" />
                                         <FormControlLabel value="pending" control={<Radio size="small" />} label="Belum Lunas (Pending)" />
                                     </RadioGroup>
                                 </Box>

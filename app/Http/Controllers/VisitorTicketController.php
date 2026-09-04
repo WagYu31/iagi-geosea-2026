@@ -41,6 +41,11 @@ class VisitorTicketController extends Controller
         $settings = LandingPageSetting::whereIn('key', [
             'visitor_ticket_price_exclusive',
             'visitor_ticket_price_non_exclusive',
+            'visitor_price_iagi_member_pro',
+            'visitor_price_non_iagi_member_pro',
+            'visitor_price_iagi_member_expat',
+            'visitor_price_non_iagi_member_expat',
+            'visitor_price_student',
             'visitor_registration_enabled',
             'visitor_qris_image',
             'visitor_bank_transfer_info',
@@ -48,7 +53,7 @@ class VisitorTicketController extends Controller
             'visitor_event_venue',
         ])->pluck('value', 'key');
 
-        $priceExclusive = floatval($settings['visitor_ticket_price_exclusive'] ?? 150000);
+        $priceExclusive = floatval($settings['visitor_ticket_price_exclusive'] ?? 500000);
         $priceNonExclusive = floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0);
         $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
         $qrisImage = !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null;
@@ -56,9 +61,98 @@ class VisitorTicketController extends Controller
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
+        // Full category configuration list matching official conference pricing & early bird poster
+        $categories = [
+            [
+                'id' => 'iagi_member_professional',
+                'name' => 'IAGI Member Professional',
+                'badge' => 'IAGI MEMBER',
+                'normalPrice' => 3000000,
+                'price' => floatval($settings['visitor_price_iagi_member_pro'] ?? 2500000),
+                'tag' => 'SPECIAL EARLY BIRD',
+                'tagColor' => '#047857',
+                'tagBg' => '#dcfce7',
+                'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
+                'perks' => ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+            ],
+            [
+                'id' => 'non_iagi_member_professional',
+                'name' => 'Non IAGI Member Professional',
+                'badge' => 'PROFESSIONAL',
+                'normalPrice' => 4000000,
+                'price' => floatval($settings['visitor_price_non_iagi_member_pro'] ?? 3000000),
+                'tag' => 'SPECIAL EARLY BIRD',
+                'tagColor' => '#0284c7',
+                'tagBg' => '#e0f2fe',
+                'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
+                'perks' => ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+            ],
+            [
+                'id' => 'iagi_member_expatriate',
+                'name' => 'IAGI Member Expatriate',
+                'badge' => 'IAGI EXPATRIATE',
+                'normalPrice' => 6000000,
+                'price' => floatval($settings['visitor_price_iagi_member_expat'] ?? 5000000),
+                'tag' => 'SPECIAL EARLY BIRD',
+                'tagColor' => '#b45309',
+                'tagBg' => '#fef3c7',
+                'description' => 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
+                'perks' => ['International Delegate', 'VIP Lanyard & Kit', 'Plenary & Gala Dinner'],
+            ],
+            [
+                'id' => 'non_iagi_member_expatriate',
+                'name' => 'Non IAGI Member Expatriate',
+                'badge' => 'INTERNATIONAL DELEGATE',
+                'normalPrice' => 7000000,
+                'price' => floatval($settings['visitor_price_non_iagi_member_expat'] ?? 6000000),
+                'tag' => 'SPECIAL EARLY BIRD',
+                'tagColor' => '#7c3aed',
+                'tagBg' => '#ede9fe',
+                'description' => 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
+                'perks' => ['International Delegate', 'VIP Lanyard & Kit', 'Plenary & Gala Dinner'],
+            ],
+            [
+                'id' => 'student_undergraduate',
+                'name' => 'Student Undergraduate',
+                'badge' => 'STUDENT PASS',
+                'normalPrice' => 1000000,
+                'price' => floatval($settings['visitor_price_student'] ?? 750000),
+                'tag' => 'SPECIAL EARLY BIRD',
+                'tagColor' => '#4338ca',
+                'tagBg' => '#e0e7ff',
+                'description' => 'Undergraduate student pass (valid student ID required), technical sessions & certificate.',
+                'perks' => ['Student ID Required', 'Technical Sessions', 'Exhibition & E-Certificate'],
+            ],
+            [
+                'id' => 'non_exclusive',
+                'name' => 'Visitor Non-Exclusive',
+                'badge' => 'FREE PASS',
+                'normalPrice' => 0,
+                'price' => 0,
+                'tag' => 'FREE PASS',
+                'tagColor' => '#059669',
+                'tagBg' => '#d1fae5',
+                'description' => 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
+                'perks' => ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
+            ],
+            [
+                'id' => 'exclusive',
+                'name' => 'Visitor Exclusive',
+                'badge' => 'VIP PASS',
+                'normalPrice' => $priceExclusive,
+                'price' => $priceExclusive,
+                'tag' => 'VIP PASS',
+                'tagColor' => '#d97706',
+                'tagBg' => '#fef3c7',
+                'description' => 'Plenary Session access, VIP Lounge entry, Gold Lanyard badge & official Seminar Kit.',
+                'perks' => ['Plenary Session Access', 'VIP Lounge & Gold Lanyard', 'Official Seminar Kit'],
+            ],
+        ];
+
         return Inertia::render('VisitorTickets/Register', [
             'priceExclusive' => $priceExclusive,
             'priceNonExclusive' => $priceNonExclusive,
+            'categories' => $categories,
             'enabled' => $enabled,
             'qrisImage' => $qrisImage,
             'bankTransferInfo' => $bankTransferInfo,
@@ -82,30 +176,64 @@ class VisitorTicketController extends Controller
      */
     public function store(Request $request)
     {
+        $allowedTypes = [
+            'non_exclusive',
+            'exclusive',
+            'iagi_member_professional',
+            'non_iagi_member_professional',
+            'iagi_member_expatriate',
+            'non_iagi_member_expatriate',
+            'student_undergraduate',
+        ];
+
         $request->validate([
-            'visitor_type' => 'required|in:exclusive,non_exclusive',
+            'visitor_type' => 'required|string|in:' . implode(',', $allowedTypes),
             'members' => 'required|array|min:1',
             'members.*.name' => 'required|string|max:150',
             'members.*.email' => 'required|email|max:150',
             'members.*.phone' => 'nullable|string|max:50',
             'members.*.institution' => 'nullable|string|max:150',
-            'proof_of_payment' => 'required_if:visitor_type,exclusive|nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'proof_of_payment' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
             'members.*.name.required' => 'Full name is required for all participants.',
             'members.*.email.required' => 'Email address is required for all participants.',
-            'proof_of_payment.required_if' => 'Payment proof is required for Exclusive VIP registration.',
         ]);
 
         $visitorType = $request->visitor_type;
         $members = $request->members;
         $totalMembers = count($members);
 
-        return DB::transaction(function () use ($request, $visitorType, $members, $totalMembers) {
+        $settings = LandingPageSetting::whereIn('key', [
+            'visitor_ticket_price_exclusive',
+            'visitor_ticket_price_non_exclusive',
+            'visitor_price_iagi_member_pro',
+            'visitor_price_non_iagi_member_pro',
+            'visitor_price_iagi_member_expat',
+            'visitor_price_non_iagi_member_expat',
+            'visitor_price_student',
+        ])->pluck('value', 'key');
+
+        $pricingMap = [
+            'non_exclusive' => 0,
+            'exclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 500000),
+            'iagi_member_professional' => floatval($settings['visitor_price_iagi_member_pro'] ?? 2500000),
+            'non_iagi_member_professional' => floatval($settings['visitor_price_non_iagi_member_pro'] ?? 3000000),
+            'iagi_member_expatriate' => floatval($settings['visitor_price_iagi_member_expat'] ?? 5000000),
+            'non_iagi_member_expatriate' => floatval($settings['visitor_price_non_iagi_member_expat'] ?? 6000000),
+            'student_undergraduate' => floatval($settings['visitor_price_student'] ?? 750000),
+        ];
+
+        $pricePerTicket = $pricingMap[$visitorType] ?? 0;
+        $isPaid = $pricePerTicket > 0;
+
+        if ($isPaid && !$request->hasFile('proof_of_payment')) {
+            return back()->withErrors(['proof_of_payment' => 'Payment proof is required for paid registration categories.']);
+        }
+
+        return DB::transaction(function () use ($request, $visitorType, $members, $totalMembers, $pricePerTicket, $isPaid) {
             $groupCode = $totalMembers > 1 ? 'GRP-' . strtoupper(Str::random(8)) : null;
 
-            if ($visitorType === 'exclusive') {
-                $priceSetting = LandingPageSetting::where('key', 'visitor_ticket_price_exclusive')->value('value');
-                $pricePerTicket = floatval($priceSetting ?: 150000);
+            if ($isPaid) {
                 $uniqueCode = rand(100, 999);
                 $totalAmount = ($pricePerTicket * $totalMembers) + $uniqueCode;
 
@@ -134,8 +262,8 @@ class VisitorTicketController extends Controller
                         'visitor_email' => $member['email'],
                         'visitor_phone' => $member['phone'] ?? null,
                         'visitor_institution' => $member['institution'] ?? null,
-                        'ticket_code' => VisitorTicket::generateTicketCode('exclusive'),
-                        'visitor_type' => 'exclusive',
+                        'ticket_code' => VisitorTicket::generateTicketCode($visitorType),
+                        'visitor_type' => $visitorType,
                         'is_group_leader' => $index === 0,
                         'group_code' => $groupCode,
                         'status' => 'pending',
@@ -159,9 +287,9 @@ class VisitorTicketController extends Controller
                 }
 
                 return redirect()->route('visitor.payment.status', ['payment_code' => $payment->payment_code])
-                    ->with('success', 'Visitor Exclusive registration submitted successfully! Please wait for committee verification.');
+                    ->with('success', 'Registration submitted successfully! Please wait for committee verification.');
             } else {
-                // Non-Exclusive (Free)
+                // Free Registration (Non-Exclusive)
                 $firstTicket = null;
                 $createdTickets = [];
 
@@ -173,8 +301,8 @@ class VisitorTicketController extends Controller
                         'visitor_email' => $member['email'],
                         'visitor_phone' => $member['phone'] ?? null,
                         'visitor_institution' => $member['institution'] ?? null,
-                        'ticket_code' => VisitorTicket::generateTicketCode('non_exclusive'),
-                        'visitor_type' => 'non_exclusive',
+                        'ticket_code' => VisitorTicket::generateTicketCode($visitorType),
+                        'visitor_type' => $visitorType,
                         'is_group_leader' => $index === 0,
                         'group_code' => $groupCode,
                         'status' => 'active', // Active immediately
@@ -197,7 +325,7 @@ class VisitorTicketController extends Controller
                 }
 
                 return redirect()->route('visitor.ticket.show', ['ticket_code' => $firstTicket->ticket_code])
-                    ->with('success', 'Visitor Non-Exclusive registration successful! Your E-Ticket has been issued.');
+                    ->with('success', 'Registration successful! Your E-Ticket has been issued.');
             }
         });
     }

@@ -64,7 +64,17 @@ class VisitorTicket extends Model
      */
     public static function generateTicketCode(string $type = 'non_exclusive'): string
     {
-        $prefix = $type === 'exclusive' ? 'TKT-EXC' : 'TKT-REG';
+        $prefixMap = [
+            'non_exclusive' => 'TKT-FREE',
+            'exclusive' => 'TKT-VIP',
+            'iagi_member_professional' => 'TKT-IPRO',
+            'non_iagi_member_professional' => 'TKT-NPRO',
+            'iagi_member_expatriate' => 'TKT-IEXP',
+            'non_iagi_member_expatriate' => 'TKT-NEXP',
+            'student_undergraduate' => 'TKT-STUD',
+        ];
+
+        $prefix = $prefixMap[$type] ?? 'TKT-VIS';
         $random = strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
         $code = "{$prefix}-" . date('y') . "-{$random}";
         
@@ -74,5 +84,23 @@ class VisitorTicket extends Model
         }
         
         return $code;
+    }
+
+    /**
+     * Get human-readable category name
+     */
+    public function getCategoryLabelAttribute(): string
+    {
+        $map = [
+            'iagi_member_professional' => 'IAGI Member Professional',
+            'non_iagi_member_professional' => 'Non IAGI Member Professional',
+            'iagi_member_expatriate' => 'IAGI Member Expatriate',
+            'non_iagi_member_expatriate' => 'Non IAGI Member Expatriate',
+            'student_undergraduate' => 'Student Undergraduate',
+            'exclusive' => 'Visitor Exclusive (VIP)',
+            'non_exclusive' => 'Visitor Non-Exclusive (Free)',
+        ];
+
+        return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));
     }
 }

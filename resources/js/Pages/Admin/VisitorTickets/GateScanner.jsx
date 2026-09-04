@@ -34,6 +34,60 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 
+const CATEGORY_MAP = {
+    iagi_member_professional: {
+        label: 'IAGI MEMBER PROFESSIONAL',
+        shortLabel: 'IAGI PRO',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+    non_iagi_member_professional: {
+        label: 'NON IAGI MEMBER PROFESSIONAL',
+        shortLabel: 'NON-IAGI PRO',
+        bg: '#e0f2fe',
+        color: '#0369a1',
+        border: '#7dd3fc',
+    },
+    iagi_member_expatriate: {
+        label: 'IAGI MEMBER EXPATRIATE',
+        shortLabel: 'IAGI EXPAT',
+        bg: '#ede9fe',
+        color: '#6d28d9',
+        border: '#c4b5fd',
+    },
+    non_iagi_member_expatriate: {
+        label: 'NON IAGI MEMBER EXPATRIATE',
+        shortLabel: 'NON-IAGI EXPAT',
+        bg: '#ede9fe',
+        color: '#5b21b6',
+        border: '#c4b5fd',
+    },
+    student_undergraduate: {
+        label: 'STUDENT UNDERGRADUATE',
+        shortLabel: 'STUDENT',
+        bg: '#e0e7ff',
+        color: '#3730a3',
+        border: '#a5b4fc',
+    },
+    exclusive: {
+        label: 'EXCLUSIVE VIP',
+        shortLabel: 'EXCLUSIVE VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+    non_exclusive: {
+        label: 'VISITOR NON-EXCLUSIVE',
+        shortLabel: 'NON-EXC',
+        bg: '#ecfdf5',
+        color: '#047857',
+        border: '#a7f3d0',
+    },
+};
+
+const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;
+
 export default function GateScanner({
     exclusiveTemplate = null,
     nonExclusiveTemplate = null,
@@ -709,12 +763,12 @@ export default function GateScanner({
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                                             <Chip
                                                 icon={scanResult.ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#92400e !important' }} /> : undefined}
-                                                label={scanResult.ticket.visitor_type === 'exclusive' ? 'EXCLUSIVE VIP' : 'NON-EXCLUSIVE'}
+                                                label={getCategoryMeta(scanResult.ticket.visitor_type).label}
                                                 size="small"
                                                 sx={{
-                                                    bgcolor: scanResult.ticket.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
-                                                    color: scanResult.ticket.visitor_type === 'exclusive' ? '#92400e' : '#047857',
-                                                    border: `1px solid ${scanResult.ticket.visitor_type === 'exclusive' ? '#fde68a' : '#a7f3d0'}`,
+                                                    bgcolor: getCategoryMeta(scanResult.ticket.visitor_type).bg,
+                                                    color: getCategoryMeta(scanResult.ticket.visitor_type).color,
+                                                    border: `1px solid ${getCategoryMeta(scanResult.ticket.visitor_type).border}`,
                                                     fontWeight: 900,
                                                     fontSize: '0.72rem',
                                                     height: 24,
@@ -750,21 +804,19 @@ export default function GateScanner({
                                         fullWidth
                                         startIcon={<PrintIcon />}
                                         sx={{
-                                            background: scanResult.ticket.visitor_type === 'exclusive'
-                                                ? 'linear-gradient(180deg, #d97706 0%, #b45309 100%)'
-                                                : 'linear-gradient(180deg, #7c3aed 0%, #6d28d9 100%)',
+                                            background: 'linear-gradient(180deg, #094d42 0%, #06352e 100%)',
                                             color: '#ffffff',
                                             fontWeight: 900,
                                             fontSize: '0.88rem',
                                             borderRadius: '12px',
                                             textTransform: 'none',
                                             py: 1.3,
-                                            boxShadow: scanResult.ticket.visitor_type === 'exclusive' ? '0 4px 0 #92400e' : '0 4px 0 #5b21b6',
+                                            boxShadow: '0 4px 0 #04221d',
                                             '&:hover': { transform: 'translateY(-1px)' },
                                             '&:active': { transform: 'translateY(2px)' },
                                         }}
                                     >
-                                        🖨️ Cetak Kartu Lanyard ({scanResult.ticket.visitor_type === 'exclusive' ? 'Exclusive VIP' : 'Non-Exclusive'})
+                                        🖨️ Cetak Kartu Lanyard ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
                                     </Button>
                                 )}
                             </Paper>
@@ -846,12 +898,12 @@ export default function GateScanner({
                                                 </Typography>
                                             </Box>
                                             <Chip
-                                                label={r.ticket?.visitor_type === 'exclusive' ? 'EXCLUSIVE' : 'NON-EXC'}
+                                                label={getCategoryMeta(r.ticket?.visitor_type).shortLabel}
                                                 size="small"
                                                 sx={{
-                                                    bgcolor: r.ticket?.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
-                                                    color: r.ticket?.visitor_type === 'exclusive' ? '#92400e' : '#047857',
-                                                    border: `1px solid ${r.ticket?.visitor_type === 'exclusive' ? '#fde68a' : '#a7f3d0'}`,
+                                                    bgcolor: getCategoryMeta(r.ticket?.visitor_type).bg,
+                                                    color: getCategoryMeta(r.ticket?.visitor_type).color,
+                                                    border: `1px solid ${getCategoryMeta(r.ticket?.visitor_type).border}`,
                                                     fontWeight: 900,
                                                     fontSize: '0.65rem',
                                                     height: 22,

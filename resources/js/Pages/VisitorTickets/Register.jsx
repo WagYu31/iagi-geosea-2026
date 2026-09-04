@@ -38,6 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 
 export default function Register({
+    categories: propCategories = [],
     priceExclusive: propPriceExclusive,
     priceNonExclusive: propPriceNonExclusive,
     enabled: propEnabled,
@@ -47,14 +48,127 @@ export default function Register({
     eventVenue: propEventVenue,
     settings = {},
 }) {
-    const priceExclusive = Number(propPriceExclusive ?? settings.priceExclusive ?? 150000);
-    const priceNonExclusive = Number(propPriceNonExclusive ?? settings.priceNonExclusive ?? 0);
+    const defaultCategories = [
+        {
+            id: 'iagi_member_professional',
+            name: 'IAGI Member Professional',
+            badge: 'IAGI MEMBER',
+            normalPrice: 3000000,
+            price: 2500000,
+            tag: 'SPECIAL EARLY BIRD',
+            tagColor: '#047857',
+            tagBg: '#dcfce7',
+            borderSelected: '#10b981',
+            bgSelected: '#f0fdf4',
+            lanyardTheme: { border: '#059669', banner: '#094d42', badge: 'IAGI MEMBER PRO' },
+            description: 'Access to full technical sessions, exhibition, seminar kit, official lanyard & lunches.',
+            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+        },
+        {
+            id: 'non_iagi_member_professional',
+            name: 'Non IAGI Member Professional',
+            badge: 'PROFESSIONAL',
+            normalPrice: 4000000,
+            price: 3000000,
+            tag: 'SPECIAL EARLY BIRD',
+            tagColor: '#0284c7',
+            tagBg: '#e0f2fe',
+            borderSelected: '#0284c7',
+            bgSelected: '#f0f9ff',
+            lanyardTheme: { border: '#0284c7', banner: '#0369a1', badge: 'NON-MEMBER PRO' },
+            description: 'Access to full technical sessions, exhibition, seminar kit, official lanyard & lunches.',
+            perks: ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+        },
+        {
+            id: 'iagi_member_expatriate',
+            name: 'IAGI Member Expatriate',
+            badge: 'IAGI EXPATRIATE',
+            normalPrice: 6000000,
+            price: 5000000,
+            tag: 'SPECIAL EARLY BIRD',
+            tagColor: '#b45309',
+            tagBg: '#fef3c7',
+            borderSelected: '#f59e0b',
+            bgSelected: '#fffbeb',
+            lanyardTheme: { border: '#f59e0b', banner: '#b45309', badge: 'IAGI EXPATRIATE' },
+            description: 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
+            perks: ['International Delegate', 'VIP Lanyard & Kit', 'Plenary & Gala Dinner'],
+        },
+        {
+            id: 'non_iagi_member_expatriate',
+            name: 'Non IAGI Member Expatriate',
+            badge: 'INTERNATIONAL DELEGATE',
+            normalPrice: 7000000,
+            price: 6000000,
+            tag: 'SPECIAL EARLY BIRD',
+            tagColor: '#7c3aed',
+            tagBg: '#ede9fe',
+            borderSelected: '#8b5cf6',
+            bgSelected: '#f5f3ff',
+            lanyardTheme: { border: '#8b5cf6', banner: '#6d28d9', badge: 'INTERNATIONAL DELEGATE' },
+            description: 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
+            perks: ['International Delegate', 'VIP Lanyard & Kit', 'Plenary & Gala Dinner'],
+        },
+        {
+            id: 'student_undergraduate',
+            name: 'Student Undergraduate',
+            badge: 'STUDENT PASS',
+            normalPrice: 1000000,
+            price: 750000,
+            tag: 'SPECIAL EARLY BIRD',
+            tagColor: '#4338ca',
+            tagBg: '#e0e7ff',
+            borderSelected: '#6366f1',
+            bgSelected: '#eef2ff',
+            lanyardTheme: { border: '#6366f1', banner: '#4338ca', badge: 'STUDENT PASS' },
+            description: 'Undergraduate student pass (valid student ID required), technical sessions & certificate.',
+            perks: ['Student ID Required', 'Technical Sessions', 'Exhibition & E-Certificate'],
+        },
+        {
+            id: 'non_exclusive',
+            name: 'Visitor Non-Exclusive',
+            badge: 'FREE PASS',
+            normalPrice: 0,
+            price: 0,
+            tag: 'FREE PASS',
+            tagColor: '#059669',
+            tagBg: '#d1fae5',
+            borderSelected: '#10b981',
+            bgSelected: '#f0fdf4',
+            lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS' },
+            description: 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
+            perks: ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
+        },
+        {
+            id: 'exclusive',
+            name: 'Visitor Exclusive',
+            badge: 'VIP PASS',
+            normalPrice: 500000,
+            price: 500000,
+            tag: 'VIP PASS',
+            tagColor: '#d97706',
+            tagBg: '#fef3c7',
+            borderSelected: '#f59e0b',
+            bgSelected: '#fffbeb',
+            lanyardTheme: { border: '#f59e0b', banner: '#d97706', badge: 'VISITOR VIP' },
+            description: 'Plenary Session access, VIP Lounge entry, Gold Lanyard badge & official Seminar Kit.',
+            perks: ['Plenary Session Access', 'VIP Lounge & Gold Lanyard', 'Official Seminar Kit'],
+        },
+    ];
+
+    const categoriesList = (propCategories && propCategories.length > 0)
+        ? propCategories.map(cat => {
+            const match = defaultCategories.find(d => d.id === cat.id);
+            return { ...match, ...cat };
+        })
+        : defaultCategories;
+
     const enabled = propEnabled ?? settings.enabled ?? true;
     const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
     const bankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
     const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
     const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
-    const [visitorType, setVisitorType] = useState('non_exclusive');
+    const [visitorType, setVisitorType] = useState('iagi_member_professional');
     const [paymentMethod, setPaymentMethod] = useState('qris_indo');
     const [members, setMembers] = useState([
         { name: '', email: '', phone: '', institution: '' }
@@ -78,7 +192,7 @@ export default function Register({
     const cameraInputRef = useRef(null);
 
     const { data, setData, post, processing, errors } = useForm({
-        visitor_type: 'non_exclusive',
+        visitor_type: 'iagi_member_professional',
         members: members,
         payment_method: 'qris_indo',
         proof_of_payment: null,
@@ -331,6 +445,12 @@ export default function Register({
         }, 'image/jpeg', 0.85);
     };
 
+    const selectedCategory = categoriesList.find(c => c.id === visitorType) || categoriesList[0];
+    const isPaid = (selectedCategory?.price ?? 0) > 0;
+    const totalEstimate = (selectedCategory?.price ?? 0) * members.length;
+    const isExclusive = isPaid;
+    const primaryMember = members[0] || { name: '', institution: '' };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -341,8 +461,8 @@ export default function Register({
             }
         }
 
-        if (visitorType === 'exclusive' && !proofFile) {
-            alert('Please upload payment proof for Visitor Exclusive registration.');
+        if (isPaid && !proofFile) {
+            alert(`Please upload payment proof for ${selectedCategory.name} registration.`);
             return;
         }
 
@@ -351,10 +471,6 @@ export default function Register({
             preserveScroll: true,
         });
     };
-
-    const totalEstimate = visitorType === 'exclusive' ? priceExclusive * members.length : 0;
-    const isExclusive = visitorType === 'exclusive';
-    const primaryMember = members[0] || { name: '', institution: '' };
 
     return (
         <Box
@@ -537,118 +653,102 @@ export default function Register({
                                         </Box>
 
                                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-                                            {/* Free Card */}
-                                            <Box
-                                                onClick={() => handleTypeChange('non_exclusive')}
-                                                sx={{
-                                                    cursor: 'pointer',
-                                                    borderRadius: '14px',
-                                                    bgcolor: visitorType === 'non_exclusive' ? '#f0fdf4' : '#ffffff',
-                                                    border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#e2e8f0'}`,
-                                                    p: 2,
-                                                    height: '100%',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'space-between',
-                                                    transition: 'all 0.2s',
-                                                    '&:hover': { borderColor: '#10b981', bgcolor: '#f0fdf4' },
-                                                }}
-                                            >
-                                                <Box>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                        <Chip
-                                                            label="FREE PASS"
-                                                            size="small"
-                                                            sx={{ bgcolor: '#dcfce7', color: '#047857', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
-                                                        />
-                                                        <Box
-                                                            sx={{
-                                                                width: 18,
-                                                                height: 18,
-                                                                borderRadius: '50%',
-                                                                border: `2px solid ${visitorType === 'non_exclusive' ? '#10b981' : '#cbd5e1'}`,
-                                                                bgcolor: visitorType === 'non_exclusive' ? '#10b981' : 'transparent',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}
-                                                        >
-                                                            {visitorType === 'non_exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
-                                                        </Box>
-                                                    </Box>
-                                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                        Visitor Non-Exclusive
-                                                    </Typography>
-                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#059669', mb: 0.8, fontSize: '1.1rem' }}>
-                                                        FREE
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                        Access to general exhibition & scientific poster sessions.
-                                                    </Typography>
-                                                </Box>
-                                                <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                    <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                        <CheckCircleIcon sx={{ fontSize: 13, color: '#10b981' }} /> Instant E-Ticket & Badge Printing
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
+                                            {categoriesList.map((cat) => {
+                                                const isSelected = visitorType === cat.id;
+                                                const isEarlyBird = cat.normalPrice && cat.normalPrice > cat.price;
+                                                return (
+                                                    <Box
+                                                        key={cat.id}
+                                                        onClick={() => handleTypeChange(cat.id)}
+                                                        sx={{
+                                                            cursor: 'pointer',
+                                                            borderRadius: '14px',
+                                                            bgcolor: isSelected ? (cat.bgSelected || '#f0fdf4') : '#ffffff',
+                                                            border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
+                                                            p: 2,
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            justifyContent: 'space-between',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            boxShadow: isSelected ? `0 6px 18px ${cat.borderSelected || '#10b981'}25` : 'none',
+                                                            transform: isSelected ? 'scale(1.01)' : 'scale(1)',
+                                                            '&:hover': {
+                                                                borderColor: cat.borderSelected || '#10b981',
+                                                                bgcolor: cat.bgSelected || '#f0fdf4',
+                                                            },
+                                                        }}
+                                                    >
+                                                        <Box>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, gap: 1 }}>
+                                                                <Chip
+                                                                    label={cat.tag || cat.badge}
+                                                                    size="small"
+                                                                    sx={{
+                                                                        bgcolor: cat.tagBg || '#dcfce7',
+                                                                        color: cat.tagColor || '#047857',
+                                                                        fontWeight: 900,
+                                                                        fontSize: '0.65rem',
+                                                                        height: 22,
+                                                                        letterSpacing: '0.03em',
+                                                                    }}
+                                                                />
+                                                                <Box
+                                                                    sx={{
+                                                                        width: 20,
+                                                                        height: 20,
+                                                                        borderRadius: '50%',
+                                                                        border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#cbd5e1'}`,
+                                                                        bgcolor: isSelected ? (cat.borderSelected || '#10b981') : 'transparent',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        transition: 'all 0.2s',
+                                                                        flexShrink: 0,
+                                                                    }}
+                                                                >
+                                                                    {isSelected && <CheckCircleIcon sx={{ fontSize: 14, color: '#fff' }} />}
+                                                                </Box>
+                                                            </Box>
 
-                                            {/* VIP Card */}
-                                            <Box
-                                                onClick={() => handleTypeChange('exclusive')}
-                                                sx={{
-                                                    cursor: 'pointer',
-                                                    borderRadius: '14px',
-                                                    bgcolor: visitorType === 'exclusive' ? '#fffbeb' : '#ffffff',
-                                                    border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#e2e8f0'}`,
-                                                    p: 2,
-                                                    height: '100%',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'space-between',
-                                                    transition: 'all 0.2s',
-                                                    '&:hover': { borderColor: '#f59e0b', bgcolor: '#fffbeb' },
-                                                }}
-                                            >
-                                                <Box>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                        <Chip
-                                                            icon={<StarIcon sx={{ fontSize: 11, color: '#92400e !important' }} />}
-                                                            label="VIP PASS"
-                                                            size="small"
-                                                            sx={{ bgcolor: '#fef3c7', color: '#92400e', fontWeight: 900, fontSize: '0.68rem', height: 20 }}
-                                                        />
-                                                        <Box
-                                                            sx={{
-                                                                width: 18,
-                                                                height: 18,
-                                                                borderRadius: '50%',
-                                                                border: `2px solid ${visitorType === 'exclusive' ? '#f59e0b' : '#cbd5e1'}`,
-                                                                bgcolor: visitorType === 'exclusive' ? '#f59e0b' : 'transparent',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                            }}
-                                                        >
-                                                            {visitorType === 'exclusive' && <CheckCircleIcon sx={{ fontSize: 13, color: '#fff' }} />}
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem', mb: 0.5, lineHeight: 1.3 }}>
+                                                                {cat.name}
+                                                            </Typography>
+
+                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.8, flexWrap: 'wrap' }}>
+                                                                {isEarlyBird && (
+                                                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 700, fontSize: '0.8rem' }}>
+                                                                        IDR {cat.normalPrice.toLocaleString('id-ID')}
+                                                                    </Typography>
+                                                                )}
+                                                                <Typography
+                                                                    variant="h6"
+                                                                    sx={{
+                                                                        fontWeight: 900,
+                                                                        color: cat.price === 0 ? '#059669' : (cat.tagColor || '#0f172a'),
+                                                                        fontSize: '1.15rem',
+                                                                        lineHeight: 1,
+                                                                    }}
+                                                                >
+                                                                    {cat.price === 0 ? 'FREE' : `IDR ${cat.price.toLocaleString('id-ID')}`}
+                                                                </Typography>
+                                                            </Box>
+
+                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4, mb: 1 }}>
+                                                                {cat.description}
+                                                            </Typography>
                                                         </Box>
+
+                                                        {cat.perks && cat.perks.length > 0 && (
+                                                            <Box sx={{ mt: 1.2, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                                                                <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.6, fontWeight: 700, fontSize: '0.72rem' }}>
+                                                                    <CheckCircleIcon sx={{ fontSize: 13, color: cat.borderSelected || '#10b981' }} /> {cat.perks.join(' • ')}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
                                                     </Box>
-                                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                        Visitor Exclusive
-                                                    </Typography>
-                                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#b45309', mb: 0.8, fontSize: '1.1rem' }}>
-                                                        Rp {priceExclusive.toLocaleString('id-ID')}
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', lineHeight: 1.4 }}>
-                                                        Plenary Session, VIP Lounge, Gold Lanyard & Seminar Kit.
-                                                    </Typography>
-                                                </Box>
-                                                <Box sx={{ mt: 1.5, pt: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                    <Typography variant="caption" sx={{ color: '#334155', display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 600 }}>
-                                                        <StarIcon sx={{ fontSize: 13, color: '#d97706' }} /> Full VIP Access & Seminar Kit
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
+                                                );
+                                            })}
                                         </Box>
                                     </Paper>
 
@@ -806,16 +906,16 @@ export default function Register({
                                         </Stack>
                                     </Paper>
 
-                                    {/* SECTION 3: VIP PAYMENT INSTRUCTIONS (EXCLUSIVE ONLY) */}
-                                    {visitorType === 'exclusive' && (
+                                    {/* SECTION 3: PAYMENT INSTRUCTIONS (PAID CATEGORIES) */}
+                                    {isPaid && (
                                         <Paper
                                             elevation={0}
                                             sx={{
                                                 p: 2.5,
                                                 borderRadius: '16px',
                                                 bgcolor: '#ffffff',
-                                                border: '1.5px solid #fde68a',
-                                                boxShadow: '0 4px 15px rgba(245, 158, 11, 0.08)',
+                                                border: `1.5px solid ${selectedCategory?.borderSelected || '#fde68a'}`,
+                                                boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
                                             }}
                                         >
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
@@ -824,7 +924,7 @@ export default function Register({
                                                         width: 26,
                                                         height: 26,
                                                         borderRadius: '8px',
-                                                        bgcolor: '#d97706',
+                                                        bgcolor: selectedCategory?.tagColor || '#094d42',
                                                         color: '#fff',
                                                         fontSize: '0.8rem',
                                                         display: 'flex',
@@ -836,7 +936,7 @@ export default function Register({
                                                     3
                                                 </Box>
                                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                                    VIP Payment Instructions
+                                                    Payment Instructions & Proof Upload ({selectedCategory?.name})
                                                 </Typography>
                                             </Box>
 
@@ -1027,14 +1127,14 @@ export default function Register({
                                 >
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                            <VisibilityIcon sx={{ fontSize: 14, color: isExclusive ? '#d97706' : '#059669' }} /> Live 3D Badge
+                                            <VisibilityIcon sx={{ fontSize: 14, color: selectedCategory.lanyardTheme?.banner || '#059669' }} /> Live 3D Badge
                                         </Typography>
                                         <Chip
-                                            label={isExclusive ? 'VIP PASS' : 'FREE PASS'}
+                                            label={selectedCategory.badge || 'PASS'}
                                             size="small"
                                             sx={{
-                                                bgcolor: isExclusive ? '#fef3c7' : '#ecfdf5',
-                                                color: isExclusive ? '#b45309' : '#047857',
+                                                bgcolor: selectedCategory.tagBg || '#ecfdf5',
+                                                color: selectedCategory.tagColor || '#047857',
                                                 fontWeight: 900,
                                                 fontSize: '0.68rem',
                                                 height: 20,
@@ -1058,7 +1158,7 @@ export default function Register({
                                                 sx={{
                                                     width: 30,
                                                     height: 18,
-                                                    bgcolor: isExclusive ? '#d97706' : '#094d42',
+                                                    bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
                                                     borderRadius: '3px 3px 0 0',
                                                 }}
                                             />
@@ -1080,10 +1180,8 @@ export default function Register({
                                                 transition: 'transform 0.15s ease-out',
                                                 borderRadius: '16px',
                                                 bgcolor: '#ffffff',
-                                                border: `2px solid ${isExclusive ? '#f59e0b' : '#10b981'}`,
-                                                boxShadow: isExclusive
-                                                    ? '0 12px 25px -5px rgba(245, 158, 11, 0.25), 0 4px 10px rgba(0,0,0,0.04)'
-                                                    : '0 12px 25px -5px rgba(16, 185, 129, 0.25), 0 4px 10px rgba(0,0,0,0.04)',
+                                                border: `2px solid ${selectedCategory.lanyardTheme?.border || '#10b981'}`,
+                                                boxShadow: `0 12px 25px -5px ${selectedCategory.lanyardTheme?.border || '#10b981'}40, 0 4px 10px rgba(0,0,0,0.04)`,
                                                 p: 2,
                                                 textAlign: 'center',
                                                 position: 'relative',
@@ -1147,7 +1245,7 @@ export default function Register({
                                                 variant="caption"
                                                 sx={{
                                                     fontWeight: 700,
-                                                    color: isExclusive ? '#d97706' : '#0284c7',
+                                                    color: selectedCategory.lanyardTheme?.banner || '#0284c7',
                                                     fontSize: '0.75rem',
                                                     display: 'block',
                                                     minHeight: '1.2em',
@@ -1160,7 +1258,7 @@ export default function Register({
                                             {/* Bottom Banner */}
                                             <Box
                                                 sx={{
-                                                    bgcolor: isExclusive ? '#f59e0b' : '#094d42',
+                                                    bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
                                                     color: '#ffffff',
                                                     py: 0.7,
                                                     borderRadius: '8px',
@@ -1174,9 +1272,9 @@ export default function Register({
                                                     gap: 0.5,
                                                 }}
                                             >
-                                                {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
-                                                {isExclusive ? 'VISITOR VIP' : 'VISITOR PASS'}
-                                                {isExclusive && <StarIcon sx={{ fontSize: 13 }} />}
+                                                {isPaid && <StarIcon sx={{ fontSize: 13 }} />}
+                                                {selectedCategory.lanyardTheme?.badge || selectedCategory.name}
+                                                {isPaid && <StarIcon sx={{ fontSize: 13 }} />}
                                             </Box>
                                         </Box>
                                     </Box>
@@ -1189,8 +1287,14 @@ export default function Register({
                                         <Stack spacing={0.6}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                                 <Typography variant="caption" sx={{ color: '#64748b' }}>Category:</Typography>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: isExclusive ? '#b45309' : '#059669' }}>
-                                                    {isExclusive ? 'Exclusive VIP' : 'Non-Exclusive'}
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: selectedCategory.tagColor || '#059669' }}>
+                                                    {selectedCategory.name}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography variant="caption" sx={{ color: '#64748b' }}>Price / Ticket:</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                    {selectedCategory.price > 0 ? `Rp ${selectedCategory.price.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
                                                 </Typography>
                                             </Box>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -1202,8 +1306,8 @@ export default function Register({
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>Total Amount:</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 900, color: isExclusive ? '#b45309' : '#059669' }}>
-                                                    {isExclusive ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'FREE'}
+                                                <Typography variant="body2" sx={{ fontWeight: 900, color: isPaid ? '#094d42' : '#059669' }}>
+                                                    {isPaid ? `Rp ${totalEstimate.toLocaleString('id-ID')}` : 'FREE'}
                                                 </Typography>
                                             </Box>
                                         </Stack>
@@ -1218,8 +1322,8 @@ export default function Register({
                                             disabled={processing || compressing}
                                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <ConfirmationNumberIcon />}
                                             sx={{
-                                                background: isExclusive 
-                                                    ? 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)' 
+                                                background: isPaid 
+                                                    ? 'linear-gradient(180deg, #094d42 0%, #06352e 100%)' 
                                                     : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
                                                 color: '#ffffff',
                                                 fontWeight: 900,
@@ -1227,22 +1331,22 @@ export default function Register({
                                                 py: 1.4,
                                                 borderRadius: '12px',
                                                 textTransform: 'none',
-                                                boxShadow: isExclusive
-                                                    ? '0 4px 0 #92400e, 0 8px 18px rgba(245, 158, 11, 0.35)'
+                                                boxShadow: isPaid
+                                                    ? '0 4px 0 #04221d, 0 8px 18px rgba(9, 77, 66, 0.35)'
                                                     : '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.35)',
                                                 '&:hover': {
-                                                    background: isExclusive
-                                                        ? 'linear-gradient(180deg, #fbbf24 0%, #b45309 100%)'
+                                                    background: isPaid
+                                                        ? 'linear-gradient(180deg, #0c6153 0%, #094d42 100%)'
                                                         : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
                                                     transform: 'translateY(-1px)',
-                                                    boxShadow: isExclusive
-                                                        ? '0 5px 0 #92400e, 0 10px 20px rgba(245, 158, 11, 0.45)'
+                                                    boxShadow: isPaid
+                                                        ? '0 5px 0 #04221d, 0 10px 20px rgba(9, 77, 66, 0.45)'
                                                         : '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.45)',
                                                 },
                                                 '&:active': {
                                                     transform: 'translateY(3px)',
-                                                    boxShadow: isExclusive
-                                                        ? '0 1px 0 #92400e, 0 3px 6px rgba(245, 158, 11, 0.3)'
+                                                    boxShadow: isPaid
+                                                        ? '0 1px 0 #04221d, 0 3px 6px rgba(9, 77, 66, 0.3)'
                                                         : '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
                                                 },
                                                 transition: 'all 0.12s ease',
@@ -1250,8 +1354,8 @@ export default function Register({
                                         >
                                             {processing 
                                                 ? 'Processing...' 
-                                                : isExclusive 
-                                                    ? `Purchase VIP Pass (Rp ${totalEstimate.toLocaleString('id-ID')})` 
+                                                : isPaid 
+                                                    ? `Register & Upload Proof (Rp ${totalEstimate.toLocaleString('id-ID')})` 
                                                     : 'Get Free E-Ticket'
                                             }
                                         </Button>

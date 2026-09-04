@@ -1401,6 +1401,11 @@ class LandingPageSettingController extends Controller
     public function saveVisitorTicketSettings(Request $request)
     {
         $validated = $request->validate([
+            'visitor_ticket_price_iagi_member_professional' => 'nullable|numeric|min:0',
+            'visitor_ticket_price_non_iagi_member_professional' => 'nullable|numeric|min:0',
+            'visitor_ticket_price_iagi_member_expatriate' => 'nullable|numeric|min:0',
+            'visitor_ticket_price_non_iagi_member_expatriate' => 'nullable|numeric|min:0',
+            'visitor_ticket_price_student_undergraduate' => 'nullable|numeric|min:0',
             'visitor_ticket_price_exclusive' => 'nullable|numeric|min:0',
             'visitor_ticket_price_non_exclusive' => 'nullable|numeric|min:0',
             'visitor_registration_enabled' => 'nullable|string|in:0,1',

@@ -10,11 +10,56 @@ import {
 import PrintIcon from '@mui/icons-material/Print';
 import StarIcon from '@mui/icons-material/Star';
 
+const CATEGORY_MAP = {
+    iagi_member_professional: {
+        label: 'IAGI MEMBER PROFESSIONAL',
+        banner: '#094d42',
+        border: '#094d42',
+        textColor: '#fff',
+    },
+    non_iagi_member_professional: {
+        label: 'NON IAGI MEMBER PROFESSIONAL',
+        banner: '#0284c7',
+        border: '#0284c7',
+        textColor: '#fff',
+    },
+    iagi_member_expatriate: {
+        label: 'IAGI MEMBER EXPATRIATE',
+        banner: '#7c3aed',
+        border: '#7c3aed',
+        textColor: '#fff',
+    },
+    non_iagi_member_expatriate: {
+        label: 'NON IAGI MEMBER EXPATRIATE',
+        banner: '#6d28d9',
+        border: '#6d28d9',
+        textColor: '#fff',
+    },
+    student_undergraduate: {
+        label: 'STUDENT UNDERGRADUATE',
+        banner: '#4338ca',
+        border: '#4338ca',
+        textColor: '#fff',
+    },
+    exclusive: {
+        label: 'VISITOR EXCLUSIVE (VIP)',
+        banner: '#eab308',
+        border: '#eab308',
+        textColor: '#000',
+    },
+    non_exclusive: {
+        label: 'VISITOR PASS',
+        banner: '#059669',
+        border: '#059669',
+        textColor: '#fff',
+    },
+};
+
 export default function PrintBadge({
     ticket = {},
     templatePath = null,
 }) {
-    const isExclusive = ticket.visitor_type === 'exclusive';
+    const cat = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
 
     useEffect(() => {
         // Auto trigger print dialog after 500ms
@@ -41,7 +86,7 @@ export default function PrintBadge({
                 },
             }}
         >
-            <Head title={`Cetak ID Card: ${ticket.visitor_name} (${isExclusive ? 'Exclusive' : 'Non-Exclusive'})`} />
+            <Head title={`Cetak ID Card: ${ticket.visitor_name} (${cat.label})`} />
 
             {/* Action Bar (hidden when printing) */}
             <Box sx={{ mb: 2, display: 'flex', gap: 2, '@media print': { display: 'none' } }}>
@@ -50,8 +95,8 @@ export default function PrintBadge({
                     startIcon={<PrintIcon />}
                     onClick={() => window.print()}
                     sx={{
-                        bgcolor: isExclusive ? '#eab308' : '#3b82f6',
-                        color: isExclusive ? '#000' : '#fff',
+                        bgcolor: cat.banner,
+                        color: cat.textColor,
                         fontWeight: 800,
                         borderRadius: '10px',
                         textTransform: 'none',
@@ -76,7 +121,7 @@ export default function PrintBadge({
                     height: '520px',
                     bgcolor: '#ffffff',
                     borderRadius: '14px',
-                    border: `3px solid ${isExclusive ? '#eab308' : '#2563eb'}`,
+                    border: `3px solid ${cat.border}`,
                     boxShadow: '0 15px 35px rgba(0,0,0,0.4)',
                     position: 'relative',
                     overflow: 'hidden',
@@ -90,7 +135,7 @@ export default function PrintBadge({
                         boxShadow: 'none',
                         width: '95mm',
                         height: '135mm',
-                        border: `2px solid ${isExclusive ? '#eab308' : '#2563eb'}`,
+                        border: `2px solid ${cat.border}`,
                         pageBreakInside: 'avoid',
                         margin: '0 auto',
                     },
@@ -206,26 +251,26 @@ export default function PrintBadge({
                     </Typography>
                 </Box>
 
-                {/* Bottom Category Banner (EXCLUSIVE vs NON-EXCLUSIVE) */}
+                {/* Bottom Category Banner */}
                 <Box
                     sx={{
-                        bgcolor: isExclusive ? '#eab308' : '#2563eb',
-                        color: isExclusive ? '#000' : '#fff',
+                        bgcolor: cat.banner,
+                        color: cat.textColor,
                         py: 1.2,
                         textAlign: 'center',
                         fontWeight: 900,
                         letterSpacing: '0.1em',
                         textTransform: 'uppercase',
-                        fontSize: '0.95rem',
+                        fontSize: '0.92rem',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: 0.8,
                     }}
                 >
-                    {isExclusive && <StarIcon sx={{ fontSize: 18 }} />}
-                    {isExclusive ? 'VISITOR EXCLUSIVE (VIP)' : 'VISITOR NON-EXCLUSIVE'}
-                    {isExclusive && <StarIcon sx={{ fontSize: 18 }} />}
+                    {ticket.visitor_type === 'exclusive' && <StarIcon sx={{ fontSize: 18 }} />}
+                    {cat.label}
+                    {ticket.visitor_type === 'exclusive' && <StarIcon sx={{ fontSize: 18 }} />}
                 </Box>
             </Box>
         </Box>
