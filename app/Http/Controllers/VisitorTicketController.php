@@ -368,4 +368,31 @@ class VisitorTicketController extends Controller
             'tickets' => $payment->tickets,
         ]);
     }
+
+    /**
+     * Display official payment receipt / invoice (Kwitansi & Invoice Resmi)
+     */
+    public function showReceipt($payment_code)
+    {
+        $payment = VisitorPayment::with(['tickets', 'verifiedBy'])->where('payment_code', $payment_code)->firstOrFail();
+
+        $settings = LandingPageSetting::whereIn('key', [
+            'visitor_event_date',
+            'visitor_event_venue',
+            'bank_info',
+            'visitor_bank_transfer_info',
+        ])->pluck('value', 'key');
+
+        $eventDate = $settings['visitor_event_date'] ?? '3 - 5 November 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
+        $bankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Bank Mandiri\nNo. Rek: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+
+        return Inertia::render('VisitorTickets/Receipt', [
+            'payment' => $payment,
+            'tickets' => $payment->tickets,
+            'eventDate' => $eventDate,
+            'eventVenue' => $eventVenue,
+            'bankInfo' => $bankInfo,
+        ]);
+    }
 }

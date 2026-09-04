@@ -63,6 +63,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 const CATEGORY_META = {
     // Invited Categories
@@ -1708,10 +1709,23 @@ export default function VisitorTicketsIndex({
                                 sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
                             />
                         </DialogContent>
-                        <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0' }}>
-                            <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706' }}>
-                                Total Amount: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
-                            </Typography>
+                        <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706' }}>
+                                    Total Amount: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
+                                </Typography>
+                                <Button
+                                    component="a"
+                                    href={route('visitor.receipt.show', proofModal.payment.payment_code)}
+                                    target="_blank"
+                                    size="small"
+                                    variant="outlined"
+                                    startIcon={<ReceiptLongIcon />}
+                                    sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px', color: '#094d42', borderColor: '#86efac' }}
+                                >
+                                    Kwitansi & Invoice
+                                </Button>
+                            </Box>
                             {proofModal.payment.status === 'pending' && (
                                 <Stack direction="row" spacing={1}>
                                     <Button

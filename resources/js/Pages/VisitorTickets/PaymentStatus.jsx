@@ -27,11 +27,34 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+
+const CATEGORY_MAP = {
+    vip: { label: 'VIP', shortLabel: 'VIP', badge: 'VIP GUEST', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    speaker: { label: 'Speaker', shortLabel: 'SPEAKER', badge: 'SPEAKER', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
+    panelist: { label: 'Panelist', shortLabel: 'PANELIST', badge: 'PANELIST', bg: '#f5f3ff', color: '#5b21b6', border: '#ddd6fe' },
+    moderator: { label: 'Moderator', shortLabel: 'MODERATOR', badge: 'MODERATOR', bg: '#ecfeff', color: '#155e75', border: '#a5f3fc' },
+    exhibition: { label: 'Exhibition', shortLabel: 'EXHIBITOR', badge: 'EXHIBITOR', bg: '#fff7ed', color: '#9a3412', border: '#fed7aa' },
+    committee: { label: 'Committee', shortLabel: 'COMMITTEE', badge: 'COMMITTEE', bg: '#eff6ff', color: '#1e40af', border: '#bfdbfe' },
+    student_volunteer: { label: 'Student Volunteer', shortLabel: 'VOLUNTEER', badge: 'VOLUNTEER', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
+    iagi_member_professional: { label: 'IAGI Member - Professional', shortLabel: 'IAGI PRO', badge: 'IAGI MEMBER', bg: '#dcfce7', color: '#15803d', border: '#86efac' },
+    non_iagi_member_professional: { label: 'Non IAGI Member - Professional', shortLabel: 'NON-IAGI PRO', badge: 'NON-MEMBER PRO', bg: '#e0f2fe', color: '#0369a1', border: '#7dd3fc' },
+    iagi_member_expatriate: { label: 'IAGI Member - Expatriate', shortLabel: 'IAGI EXPAT', badge: 'IAGI EXPATRIATE', bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
+    non_iagi_member_expatriate: { label: 'Non IAGI Member - Expatriate', shortLabel: 'NON-IAGI EXPAT', badge: 'INTERNATIONAL DELEGATE', bg: '#ede9fe', color: '#5b21b6', border: '#c4b5fd' },
+    student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT PASS', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
+    exclusive: { label: 'Visitor Exclusive (VIP)', shortLabel: 'EXCLUSIVE VIP', badge: 'VIP PASS', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    non_exclusive: { label: 'Visitor', shortLabel: 'VISITOR', badge: 'FREE PASS', bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
+};
+
+const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;
 
 export default function PaymentStatus({ payment = {}, tickets = [] }) {
     const isApproved = payment.status === 'approved';
     const isRejected = payment.status === 'rejected';
     const isPending = payment.status === 'pending' || !payment.status;
+
+    const firstCategory = tickets[0]?.visitor_type;
+    const categoryLabel = firstCategory ? getCategoryMeta(firstCategory).label : 'Ticket';
 
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [copiedCode, setCopiedCode] = useState(false);
@@ -148,6 +171,8 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
                         p: 1.2,
                         px: 2,
                         borderRadius: '14px',
@@ -180,28 +205,54 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         Back to Registration
                     </Button>
 
-                    <Button
-                        variant="outlined"
-                        startIcon={isRefreshing ? <CircularProgress size={14} color="inherit" /> : <RefreshIcon />}
-                        onClick={handleManualRefresh}
-                        disabled={isRefreshing}
-                        size="small"
-                        sx={{
-                            color: '#0284c7',
-                            borderColor: '#bae6fd',
-                            bgcolor: '#f0f9ff',
-                            textTransform: 'none',
-                            fontWeight: 800,
-                            borderRadius: '8px',
-                            fontSize: '0.78rem',
-                            '&:hover': {
-                                bgcolor: '#e0f2fe',
-                                borderColor: '#0284c7',
-                            },
-                        }}
-                    >
-                        {isRefreshing ? 'Checking...' : 'Check Latest Status'}
-                    </Button>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" alignItems="center">
+                        <Button
+                            component={Link}
+                            href={route('visitor.receipt.show', payment.payment_code)}
+                            startIcon={<ReceiptLongIcon />}
+                            size="small"
+                            variant="contained"
+                            sx={{
+                                bgcolor: '#094d42',
+                                color: '#ffffff',
+                                textTransform: 'none',
+                                fontWeight: 800,
+                                borderRadius: '8px',
+                                fontSize: '0.78rem',
+                                px: 1.8,
+                                py: 0.6,
+                                boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
+                                '&:hover': {
+                                    bgcolor: '#063830',
+                                },
+                            }}
+                        >
+                            📄 Cetak / Download Kwitansi
+                        </Button>
+
+                        <Button
+                            variant="outlined"
+                            startIcon={isRefreshing ? <CircularProgress size={14} color="inherit" /> : <RefreshIcon />}
+                            onClick={handleManualRefresh}
+                            disabled={isRefreshing}
+                            size="small"
+                            sx={{
+                                color: '#0284c7',
+                                borderColor: '#bae6fd',
+                                bgcolor: '#f0f9ff',
+                                textTransform: 'none',
+                                fontWeight: 800,
+                                borderRadius: '8px',
+                                fontSize: '0.78rem',
+                                '&:hover': {
+                                    bgcolor: '#e0f2fe',
+                                    borderColor: '#0284c7',
+                                },
+                            }}
+                        >
+                            {isRefreshing ? 'Checking...' : 'Check Status'}
+                        </Button>
+                    </Stack>
                 </Box>
 
                 {/* 3D TACTILE MAIN STATUS CARD */}
@@ -358,7 +409,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         fontSize: '0.88rem',
                                     }}
                                 >
-                                    {tickets.length} Exclusive VIP Ticket(s)
+                                    {tickets.length} {categoryLabel} Ticket(s)
                                 </Typography>
                             </Box>
                         </Box>
@@ -377,76 +428,79 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                     </Box>
 
                     <Stack spacing={2}>
-                        {tickets.map((ticket, idx) => (
-                            <Paper
-                                key={ticket.id || idx}
-                                elevation={0}
-                                sx={{
-                                    p: 2.2,
-                                    borderRadius: '16px',
-                                    bgcolor: '#ffffff',
-                                    border: '1px solid #e2e8f0',
-                                    boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
-                                    display: 'flex',
-                                    flexDirection: { xs: 'column', sm: 'row' },
-                                    justifyContent: 'space-between',
-                                    alignItems: { xs: 'flex-start', sm: 'center' },
-                                    gap: 2,
-                                    transition: 'all 0.2s',
-                                    '&:hover': {
-                                        borderColor: isApproved ? '#10b981' : '#cbd5e1',
-                                        boxShadow: '0 6px 20px rgba(0,0,0,0.05)',
-                                    },
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                    {/* Number / Initial Avatar */}
-                                    <Box
-                                        sx={{
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: '12px',
-                                            bgcolor: isApproved ? '#ecfdf5' : '#fef3c7',
-                                            border: `1.5px solid ${isApproved ? '#86efac' : '#fde68a'}`,
-                                            color: isApproved ? '#047857' : '#92400e',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontWeight: 900,
-                                            fontSize: '1rem',
-                                            flexShrink: 0,
-                                        }}
-                                    >
-                                        {ticket.visitor_name ? ticket.visitor_name.charAt(0).toUpperCase() : idx + 1}
-                                    </Box>
-
-                                    <Box>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>
-                                                {ticket.visitor_name || 'Participant Name'}
-                                            </Typography>
-                                            <Chip
-                                                label={ticket.visitor_type === 'exclusive' ? 'VIP PASS' : 'FREE PASS'}
-                                                size="small"
-                                                sx={{
-                                                    bgcolor: ticket.visitor_type === 'exclusive' ? '#fef3c7' : '#ecfdf5',
-                                                    color: ticket.visitor_type === 'exclusive' ? '#92400e' : '#047857',
-                                                    fontWeight: 900,
-                                                    fontSize: '0.62rem',
-                                                    height: 18,
-                                                }}
-                                            />
+                        {tickets.map((ticket, idx) => {
+                            const cat = getCategoryMeta(ticket.visitor_type);
+                            return (
+                                <Paper
+                                    key={ticket.id || idx}
+                                    elevation={0}
+                                    sx={{
+                                        p: 2.2,
+                                        borderRadius: '16px',
+                                        bgcolor: '#ffffff',
+                                        border: '1px solid #e2e8f0',
+                                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                                        display: 'flex',
+                                        flexDirection: { xs: 'column', sm: 'row' },
+                                        justifyContent: 'space-between',
+                                        alignItems: { xs: 'flex-start', sm: 'center' },
+                                        gap: 2,
+                                        transition: 'all 0.2s',
+                                        '&:hover': {
+                                            borderColor: isApproved ? '#10b981' : '#cbd5e1',
+                                            boxShadow: '0 6px 20px rgba(0,0,0,0.05)',
+                                        },
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        {/* Number / Initial Avatar */}
+                                        <Box
+                                            sx={{
+                                                width: 44,
+                                                height: 44,
+                                                borderRadius: '12px',
+                                                bgcolor: isApproved ? '#ecfdf5' : '#fef3c7',
+                                                border: `1.5px solid ${isApproved ? '#86efac' : '#fde68a'}`,
+                                                color: isApproved ? '#047857' : '#92400e',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontWeight: 900,
+                                                fontSize: '1rem',
+                                                flexShrink: 0,
+                                            }}
+                                        >
+                                            {ticket.visitor_name ? ticket.visitor_name.charAt(0).toUpperCase() : idx + 1}
                                         </Box>
 
-                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.75rem' }}>
-                                            {ticket.visitor_email} &bull; {ticket.institution || 'Individual'}
-                                        </Typography>
+                                        <Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>
+                                                    {ticket.visitor_name || 'Participant Name'}
+                                                </Typography>
+                                                <Chip
+                                                    label={cat.badge}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: cat.bg,
+                                                        color: cat.color,
+                                                        border: `1px solid ${cat.border}`,
+                                                        fontWeight: 900,
+                                                        fontSize: '0.62rem',
+                                                        height: 20,
+                                                    }}
+                                                />
+                                            </Box>
 
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                fontWeight: 800,
-                                                color: '#0284c7',
+                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.75rem' }}>
+                                                {ticket.visitor_email} &bull; {ticket.visitor_institution || ticket.institution || 'Individual'}
+                                            </Typography>
+
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    color: '#0284c7',
                                                 fontFamily: 'monospace',
                                                 fontSize: '0.78rem',
                                                 bgcolor: '#f0f9ff',
@@ -516,7 +570,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                     )}
                                 </Box>
                             </Paper>
-                        ))}
+                        ); })}
                     </Stack>
                 </Box>
 

@@ -225,7 +225,7 @@
     ]
   },
   "resources/js/Pages/Admin/VisitorTickets/Index.jsx": {
-    "file": "assets/Index-DYMp_p8M.js",
+    "file": "assets/Index-B9-yj0Qc.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/VisitorTickets/Index.jsx",
     "isDynamicEntry": true,
@@ -466,13 +466,26 @@
     ]
   },
   "resources/js/Pages/VisitorTickets/PaymentStatus.jsx": {
-    "file": "assets/PaymentStatus-zmg-um6r.js",
+    "file": "assets/PaymentStatus-DziriPEn.js",
     "name": "PaymentStatus",
     "src": "resources/js/Pages/VisitorTickets/PaymentStatus.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-D_lyMb2i.js",
       "_vendor-inertia-DS9mars9.js",
+      "_vendor-mui-icons-DFUWhBke.js",
+      "_vendor-react-zq6P3Ky3.js"
+    ]
+  },
+  "resources/js/Pages/VisitorTickets/Receipt.jsx": {
+    "file": "assets/Receipt-DrD9W_88.js",
+    "name": "Receipt",
+    "src": "resources/js/Pages/VisitorTickets/Receipt.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-mui-core-D_lyMb2i.js",
+      "_vendor-inertia-DS9mars9.js",
+      "_index-nsVV77qy.js",
       "_vendor-mui-icons-DFUWhBke.js",
       "_vendor-react-zq6P3Ky3.js"
     ]
@@ -515,7 +528,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BetwPV5w.js",
+    "file": "assets/app-B8z0xA53.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -565,6 +578,7 @@
       "resources/js/Pages/TermsAndConditions.jsx",
       "resources/js/Pages/TestAdmin.jsx",
       "resources/js/Pages/VisitorTickets/PaymentStatus.jsx",
+      "resources/js/Pages/VisitorTickets/Receipt.jsx",
       "resources/js/Pages/VisitorTickets/Register.jsx",
       "resources/js/Pages/VisitorTickets/ShowTicket.jsx",
       "resources/js/Pages/Welcome.jsx"
