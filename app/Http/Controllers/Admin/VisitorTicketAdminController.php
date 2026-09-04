@@ -121,16 +121,29 @@ class VisitorTicketAdminController extends Controller
             'visitor_email' => 'required|email|max:150',
             'visitor_phone' => 'nullable|string|max:50',
             'visitor_institution' => 'nullable|string|max:150',
-            'visitor_type' => 'required|in:exclusive,non_exclusive',
-            'payment_status' => 'required_if:visitor_type,exclusive|in:paid_cash,free_bypass,pending',
+            'visitor_type' => 'required|string|max:100',
+            'payment_status' => 'nullable|in:paid_cash,free_bypass,pending',
         ]);
 
         return DB::transaction(function () use ($request) {
             $paymentId = null;
+            $type = $request->visitor_type;
 
-            if ($request->visitor_type === 'exclusive') {
-                $priceSetting = LandingPageSetting::where('key', 'visitor_ticket_price_exclusive')->value('value');
-                $price = floatval($priceSetting ?: 150000);
+            $paidCategories = [
+                'iagi_member_professional' => 3000000,
+                'non_iagi_member_professional' => 4000000,
+                'iagi_member_expatriate' => 6000000,
+                'non_iagi_member_expatriate' => 7000000,
+                'student_undergraduate' => 1000000,
+                'exclusive' => 500000,
+            ];
+
+            $isPaidCategory = isset($paidCategories[$type]);
+
+            if ($isPaidCategory && $request->payment_status !== 'free_bypass') {
+                $settingKey = "visitor_ticket_price_{$type}";
+                $priceSetting = LandingPageSetting::where('key', $settingKey)->value('value');
+                $price = floatval($priceSetting ?: $paidCategories[$type]);
 
                 $payment = VisitorPayment::create([
                     'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(Str::random(6)),
@@ -138,11 +151,11 @@ class VisitorTicketAdminController extends Controller
                     'total_members' => 1,
                     'price_per_ticket' => $price,
                     'unique_code' => 0,
-                    'total_amount' => $request->payment_status === 'free_bypass' ? 0 : $price,
+                    'total_amount' => $price,
                     'status' => $request->payment_status === 'pending' ? 'pending' : 'approved',
                     'verified_at' => $request->payment_status === 'pending' ? null : now(),
                     'verified_by_admin_id' => Auth::id(),
-                    'notes' => 'Onsite registration by Admin: ' . Auth::user()->name,
+                    'notes' => 'Onsite registration by Admin: ' . (Auth::user()->name ?? 'Admin'),
                 ]);
 
                 $paymentId = $payment->id;
@@ -156,10 +169,10 @@ class VisitorTicketAdminController extends Controller
                 'visitor_email' => $request->visitor_email,
                 'visitor_phone' => $request->visitor_phone,
                 'visitor_institution' => $request->visitor_institution,
-                'ticket_code' => VisitorTicket::generateTicketCode($request->visitor_type),
-                'visitor_type' => $request->visitor_type,
+                'ticket_code' => VisitorTicket::generateTicketCode($type),
+                'visitor_type' => $type,
                 'is_group_leader' => true,
-                'status' => ($request->visitor_type === 'exclusive' && $request->payment_status === 'pending') ? 'pending' : 'active',
+                'status' => ($isPaidCategory && $request->payment_status === 'pending') ? 'pending' : 'active',
                 'checked_in' => false,
                 'card_printed' => false,
             ]);
@@ -174,7 +187,7 @@ class VisitorTicketAdminController extends Controller
                 }
             }
 
-            return back()->with('success', "Registrasi onsite berhasil! Kode Tiket: {$ticket->ticket_code}");
+            return back()->with('success', "Onsite registration successful! Ticket Code: {$ticket->ticket_code}");
         });
     }
 

@@ -65,8 +65,15 @@ class VisitorTicket extends Model
     public static function generateTicketCode(string $type = 'non_exclusive'): string
     {
         $prefixMap = [
-            'non_exclusive' => 'TKT-FREE',
-            'exclusive' => 'TKT-VIP',
+            'vip' => 'TKT-VIP',
+            'speaker' => 'TKT-SPK',
+            'panelist' => 'TKT-PNL',
+            'moderator' => 'TKT-MOD',
+            'exhibition' => 'TKT-EXH',
+            'committee' => 'TKT-COM',
+            'student_volunteer' => 'TKT-VOL',
+            'non_exclusive' => 'TKT-VIS',
+            'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
             'non_iagi_member_professional' => 'TKT-NPRO',
             'iagi_member_expatriate' => 'TKT-IEXP',
@@ -92,13 +99,20 @@ class VisitorTicket extends Model
     public function getCategoryLabelAttribute(): string
     {
         $map = [
+            'vip' => 'VIP',
+            'speaker' => 'Speaker',
+            'panelist' => 'Panelist',
+            'moderator' => 'Moderator',
+            'exhibition' => 'Exhibition',
+            'committee' => 'Committee',
+            'student_volunteer' => 'Student Volunteer',
             'iagi_member_professional' => 'IAGI Member - Professional',
             'non_iagi_member_professional' => 'Non IAGI Member - Professional',
             'iagi_member_expatriate' => 'IAGI Member - Expatriate',
             'non_iagi_member_expatriate' => 'Non IAGI Member - Expatriate',
             'student_undergraduate' => 'Student Undergraduate',
             'exclusive' => 'Visitor Exclusive (VIP)',
-            'non_exclusive' => 'Visitor Non-Exclusive (Free)',
+            'non_exclusive' => 'Visitor Pass',
         ];
 
         return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));

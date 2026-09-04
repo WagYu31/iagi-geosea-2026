@@ -11,6 +11,50 @@ import PrintIcon from '@mui/icons-material/Print';
 import StarIcon from '@mui/icons-material/Star';
 
 const CATEGORY_MAP = {
+    // Invited Categories
+    vip: {
+        label: 'VIP',
+        banner: '#d97706',
+        border: '#d97706',
+        textColor: '#fff',
+    },
+    speaker: {
+        label: 'SPEAKER',
+        banner: '#db2777',
+        border: '#db2777',
+        textColor: '#fff',
+    },
+    panelist: {
+        label: 'PANELIST',
+        banner: '#7c3aed',
+        border: '#7c3aed',
+        textColor: '#fff',
+    },
+    moderator: {
+        label: 'MODERATOR',
+        banner: '#0891b2',
+        border: '#0891b2',
+        textColor: '#fff',
+    },
+    exhibition: {
+        label: 'EXHIBITOR',
+        banner: '#ea580c',
+        border: '#ea580c',
+        textColor: '#fff',
+    },
+    committee: {
+        label: 'COMMITTEE',
+        banner: '#2563eb',
+        border: '#2563eb',
+        textColor: '#fff',
+    },
+    student_volunteer: {
+        label: 'STUDENT VOLUNTEER',
+        banner: '#16a34a',
+        border: '#16a34a',
+        textColor: '#fff',
+    },
+    // Conference / Standard Categories
     iagi_member_professional: {
         label: 'IAGI MEMBER - PROFESSIONAL',
         banner: '#094d42',

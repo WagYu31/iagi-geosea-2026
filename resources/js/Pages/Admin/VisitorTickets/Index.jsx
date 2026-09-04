@@ -65,6 +65,57 @@ import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 
 const CATEGORY_META = {
+    // Invited Categories
+    vip: {
+        label: 'VIP',
+        shortLabel: 'VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+    speaker: {
+        label: 'Speaker',
+        shortLabel: 'SPEAKER',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
+    },
+    panelist: {
+        label: 'Panelist',
+        shortLabel: 'PANELIST',
+        bg: '#f5f3ff',
+        color: '#5b21b6',
+        border: '#ddd6fe',
+    },
+    moderator: {
+        label: 'Moderator',
+        shortLabel: 'MODERATOR',
+        bg: '#ecfeff',
+        color: '#155e75',
+        border: '#a5f3fc',
+    },
+    exhibition: {
+        label: 'Exhibition',
+        shortLabel: 'EXHIBITOR',
+        bg: '#fff7ed',
+        color: '#9a3412',
+        border: '#fed7aa',
+    },
+    committee: {
+        label: 'Committee',
+        shortLabel: 'COMMITTEE',
+        bg: '#eff6ff',
+        color: '#1e40af',
+        border: '#bfdbfe',
+    },
+    student_volunteer: {
+        label: 'Student Volunteer',
+        shortLabel: 'VOLUNTEER',
+        bg: '#f0fdf4',
+        color: '#166534',
+        border: '#bbf7d0',
+    },
+    // Conference / Standard Categories
     iagi_member_professional: {
         label: 'IAGI Member - Professional',
         shortLabel: 'IAGI PRO',
@@ -708,6 +759,15 @@ export default function VisitorTicketsIndex({
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
                                     <MenuItem value="all">All Categories</MenuItem>
+                                    {/* Invited Categories */}
+                                    <MenuItem value="vip">⭐ VIP</MenuItem>
+                                    <MenuItem value="speaker">🎤 Speaker</MenuItem>
+                                    <MenuItem value="panelist">👥 Panelist</MenuItem>
+                                    <MenuItem value="moderator">🎯 Moderator</MenuItem>
+                                    <MenuItem value="exhibition">🏛️ Exhibition</MenuItem>
+                                    <MenuItem value="committee">👔 Committee</MenuItem>
+                                    <MenuItem value="student_volunteer">🤝 Student Volunteer</MenuItem>
+                                    {/* Conference Categories */}
                                     <MenuItem value="iagi_member_professional">IAGI Member - Professional</MenuItem>
                                     <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional</MenuItem>
                                     <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate</MenuItem>
@@ -1537,6 +1597,15 @@ export default function VisitorTicketsIndex({
                                     label="Visitor Category"
                                     onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
                                 >
+                                    {/* Invited Categories */}
+                                    <MenuItem value="vip">⭐ VIP (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">🎤 Speaker (Invited / Free)</MenuItem>
+                                    <MenuItem value="panelist">👥 Panelist (Invited / Free)</MenuItem>
+                                    <MenuItem value="moderator">🎯 Moderator (Invited / Free)</MenuItem>
+                                    <MenuItem value="exhibition">🏛️ Exhibition (Invited / Free)</MenuItem>
+                                    <MenuItem value="committee">👔 Committee (Invited / Free)</MenuItem>
+                                    <MenuItem value="student_volunteer">🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                    {/* Conference / Paid Categories */}
                                     <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
                                     <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional (Rp 4.000.000)</MenuItem>
                                     <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate (Rp 6.000.000)</MenuItem>
@@ -1582,7 +1651,14 @@ export default function VisitorTicketsIndex({
                                 size="small"
                             />
 
-                            {onsiteData.visitor_type !== 'non_exclusive' && (
+                            {[
+                                'iagi_member_professional',
+                                'non_iagi_member_professional',
+                                'iagi_member_expatriate',
+                                'non_iagi_member_expatriate',
+                                'student_undergraduate',
+                                'exclusive',
+                            ].includes(onsiteData.visitor_type) && (
                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
                                         Onsite Payment Status:

@@ -35,6 +35,57 @@ import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 
 const CATEGORY_MAP = {
+    // Invited Categories
+    vip: {
+        label: 'VIP',
+        shortLabel: 'VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+    speaker: {
+        label: 'SPEAKER',
+        shortLabel: 'SPEAKER',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
+    },
+    panelist: {
+        label: 'PANELIST',
+        shortLabel: 'PANELIST',
+        bg: '#f5f3ff',
+        color: '#5b21b6',
+        border: '#ddd6fe',
+    },
+    moderator: {
+        label: 'MODERATOR',
+        shortLabel: 'MODERATOR',
+        bg: '#ecfeff',
+        color: '#155e75',
+        border: '#a5f3fc',
+    },
+    exhibition: {
+        label: 'EXHIBITION',
+        shortLabel: 'EXHIBITOR',
+        bg: '#fff7ed',
+        color: '#9a3412',
+        border: '#fed7aa',
+    },
+    committee: {
+        label: 'COMMITTEE',
+        shortLabel: 'COMMITTEE',
+        bg: '#eff6ff',
+        color: '#1e40af',
+        border: '#bfdbfe',
+    },
+    student_volunteer: {
+        label: 'STUDENT VOLUNTEER',
+        shortLabel: 'VOLUNTEER',
+        bg: '#f0fdf4',
+        color: '#166534',
+        border: '#bbf7d0',
+    },
+    // Conference / Standard Categories
     iagi_member_professional: {
         label: 'IAGI MEMBER - PROFESSIONAL',
         shortLabel: 'IAGI PRO',
