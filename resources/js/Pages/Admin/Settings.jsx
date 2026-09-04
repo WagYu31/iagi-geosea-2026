@@ -699,11 +699,11 @@ function DashboardAnnouncementTab({ inputSx, tealBtnSx, sectionCardSx, sectionTi
 // Visitor Tickets Configuration Tab Component
 function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, isDark, c, settings, getSettingValue }) {
     const [enabled, setEnabled] = useState(getSettingValue('visitor_registration_enabled', '1') === '1');
-    const [priceIagiPro, setPriceIagiPro] = useState(getSettingValue('visitor_ticket_price_iagi_member_professional', 2500000));
-    const [priceNonIagiPro, setPriceNonIagiPro] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_professional', 3000000));
-    const [priceIagiExpat, setPriceIagiExpat] = useState(getSettingValue('visitor_ticket_price_iagi_member_expatriate', 5000000));
-    const [priceNonIagiExpat, setPriceNonIagiExpat] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_expatriate', 6000000));
-    const [priceStudent, setPriceStudent] = useState(getSettingValue('visitor_ticket_price_student_undergraduate', 750000));
+    const [priceIagiPro, setPriceIagiPro] = useState(getSettingValue('visitor_ticket_price_iagi_member_professional', 3000000));
+    const [priceNonIagiPro, setPriceNonIagiPro] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_professional', 4000000));
+    const [priceIagiExpat, setPriceIagiExpat] = useState(getSettingValue('visitor_ticket_price_iagi_member_expatriate', 6000000));
+    const [priceNonIagiExpat, setPriceNonIagiExpat] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_expatriate', 7000000));
+    const [priceStudent, setPriceStudent] = useState(getSettingValue('visitor_ticket_price_student_undergraduate', 1000000));
     const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 500000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
     const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
@@ -776,7 +776,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                             🎫 Konfigurasi Kategori & Harga Tiket Registrasi Konferensi
                         </Typography>
                         <Typography variant="body2" sx={{ color: c.textMuted, mb: 3 }}>
-                            Atur harga tiket spesial Early Bird, status buka/tutup pendaftaran, serta informasi venue.
+                            Atur harga tiket registrasi konferensi, status buka/tutup pendaftaran, serta informasi venue.
                         </Typography>
 
                         <Stack spacing={3}>
@@ -803,55 +803,55 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="IAGI Member Professional (Early Bird IDR)"
+                                        label="IAGI Member Professional (IDR)"
                                         value={priceIagiPro}
                                         onChange={(e) => setPriceIagiPro(e.target.value)}
                                         sx={inputSx}
-                                        helperText={`Rp ${Number(priceIagiPro || 0).toLocaleString('id-ID')} (Normal: Rp 3.000.000)`}
+                                        helperText={`Rp ${Number(priceIagiPro || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Non IAGI Member Professional (Early Bird IDR)"
+                                        label="Non IAGI Member Professional (IDR)"
                                         value={priceNonIagiPro}
                                         onChange={(e) => setPriceNonIagiPro(e.target.value)}
                                         sx={inputSx}
-                                        helperText={`Rp ${Number(priceNonIagiPro || 0).toLocaleString('id-ID')} (Normal: Rp 4.000.000)`}
+                                        helperText={`Rp ${Number(priceNonIagiPro || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="IAGI Member Expatriate (Early Bird IDR)"
+                                        label="IAGI Member Expatriate (IDR)"
                                         value={priceIagiExpat}
                                         onChange={(e) => setPriceIagiExpat(e.target.value)}
                                         sx={inputSx}
-                                        helperText={`Rp ${Number(priceIagiExpat || 0).toLocaleString('id-ID')} (Normal: Rp 6.000.000)`}
+                                        helperText={`Rp ${Number(priceIagiExpat || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Non IAGI Member Expatriate (Early Bird IDR)"
+                                        label="Non IAGI Member Expatriate (IDR)"
                                         value={priceNonIagiExpat}
                                         onChange={(e) => setPriceNonIagiExpat(e.target.value)}
                                         sx={inputSx}
-                                        helperText={`Rp ${Number(priceNonIagiExpat || 0).toLocaleString('id-ID')} (Normal: Rp 7.000.000)`}
+                                        helperText={`Rp ${Number(priceNonIagiExpat || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         fullWidth
                                         type="number"
-                                        label="Student Undergraduate (Early Bird IDR)"
+                                        label="Student Undergraduate (IDR)"
                                         value={priceStudent}
                                         onChange={(e) => setPriceStudent(e.target.value)}
                                         sx={inputSx}
-                                        helperText={`Rp ${Number(priceStudent || 0).toLocaleString('id-ID')} (Normal: Rp 1.000.000)`}
+                                        helperText={`Rp ${Number(priceStudent || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>

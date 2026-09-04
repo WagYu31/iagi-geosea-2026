@@ -187,7 +187,7 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-C_fShhxV.js",
+    "file": "assets/Settings-CXELfYme.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
@@ -478,7 +478,7 @@
     ]
   },
   "resources/js/Pages/VisitorTickets/Register.jsx": {
-    "file": "assets/Register-BAv0seAM.js",
+    "file": "assets/Register-Do4mLczu.js",
     "name": "Register",
     "src": "resources/js/Pages/VisitorTickets/Register.jsx",
     "isDynamicEntry": true,
@@ -515,7 +515,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BPDSjVck.js",
+    "file": "assets/app-C7ZHMyuw.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
