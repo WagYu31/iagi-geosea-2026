@@ -147,23 +147,6 @@ export default function Register({
             perks: ['Student ID Required', 'Technical Sessions', 'Exhibition & E-Certificate'],
         },
         {
-            id: 'exclusive',
-            group: 'visitor',
-            name: 'Visitor Exclusive',
-            badge: 'VIP PASS',
-            normalPrice: 500000,
-            price: 500000,
-            tag: 'VIP PASS',
-            discountAmount: 0,
-            tagColor: '#d97706',
-            tagBg: '#fef3c7',
-            borderSelected: '#f59e0b',
-            bgSelected: '#fffbeb',
-            lanyardTheme: { border: '#f59e0b', banner: '#d97706', badge: 'VISITOR VIP' },
-            description: 'Plenary Session access, VIP Lounge entry, Gold Lanyard badge & official Seminar Kit.',
-            perks: ['Plenary Session Access', 'VIP Lounge & Gold Lanyard', 'Official Seminar Kit'],
-        },
-        {
             id: 'non_exclusive',
             group: 'visitor',
             name: 'Visitor Non-Exclusive',
@@ -188,7 +171,6 @@ export default function Register({
         iagi_member_expatriate: 6000000,
         non_iagi_member_expatriate: 7000000,
         student_undergraduate: 1000000,
-        exclusive: 500000,
         non_exclusive: 0,
     };
 
@@ -723,8 +705,8 @@ export default function Register({
                                             <Box sx={{ display: 'flex', bgcolor: '#f1f5f9', p: 0.5, borderRadius: '10px', gap: 0.5 }}>
                                                 {[
                                                     { key: 'all', label: `All Passes (${categoriesList.length})` },
-                                                    { key: 'conference', label: 'Conference (5)' },
-                                                    { key: 'visitor', label: 'Visitor & Expo (2)' },
+                                                    { key: 'conference', label: `Conference (${categoriesList.filter(c => c.group === 'conference').length})` },
+                                                    { key: 'visitor', label: `Visitor & Expo (${categoriesList.filter(c => c.group === 'visitor').length})` },
                                                 ].map((tab) => (
                                                     <Button
                                                         key={tab.key}

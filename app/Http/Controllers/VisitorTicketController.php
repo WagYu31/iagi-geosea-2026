@@ -142,18 +142,6 @@ class VisitorTicketController extends Controller
                 'description' => 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
                 'perks' => ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
             ],
-            [
-                'id' => 'exclusive',
-                'name' => 'Visitor Exclusive',
-                'badge' => 'VIP PASS',
-                'normalPrice' => $priceExclusive,
-                'price' => $priceExclusive,
-                'tag' => 'VIP PASS',
-                'tagColor' => '#d97706',
-                'tagBg' => '#fef3c7',
-                'description' => 'Plenary Session access, VIP Lounge entry, Gold Lanyard badge & official Seminar Kit.',
-                'perks' => ['Plenary Session Access', 'VIP Lounge & Gold Lanyard', 'Official Seminar Kit'],
-            ],
         ];
 
         return Inertia::render('VisitorTickets/Register', [
