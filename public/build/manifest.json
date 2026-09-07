@@ -239,7 +239,7 @@
     ]
   },
   "resources/js/Pages/Admin/VisitorTickets/PrintBadge.jsx": {
-    "file": "assets/PrintBadge-CzfLY3eZ.js",
+    "file": "assets/PrintBadge-CIwbWa4C.js",
     "name": "PrintBadge",
     "src": "resources/js/Pages/Admin/VisitorTickets/PrintBadge.jsx",
     "isDynamicEntry": true,
@@ -527,7 +527,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-6IIu5qjK.js",
+    "file": "assets/app-CNf2c5oD.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,

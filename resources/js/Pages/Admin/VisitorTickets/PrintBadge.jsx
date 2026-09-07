@@ -222,54 +222,14 @@ export default function PrintBadge({
                     },
                 }}
             >
-                {/* VISITOR NAME INPUT OVERLAY (Sits right above the Name line at y: 730.6 / 58.3%) */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '49.0%',
-                        height: '8.8%',
-                        left: '8%',
-                        right: '8%',
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        justifyContent: 'center',
-                        textAlign: 'center',
-                        pb: '1px',
-                        zIndex: 5,
-                    }}
-                >
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            fontWeight: 900,
-                            color: '#0f172a',
-                            fontSize: nameFontSize,
-                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.02em',
-                            lineHeight: 1.1,
-                            wordBreak: 'break-word',
-                            textAlign: 'center',
-                            width: '100%',
-                            textShadow: '0 0 1px rgba(255,255,255,0.8)',
-                            '@media print': {
-                                color: '#000000',
-                                fontSize: nameLength > 28 ? '11pt' : nameLength > 20 ? '13pt' : '15pt',
-                            },
-                        }}
-                    >
-                        {ticket.visitor_name}
-                    </Typography>
-                </Box>
-
-                {/* INSTITUTION INPUT OVERLAY (Sits inside the frosted pill container at y: 765.5 - 856.5 / 61.1% - 68.35%) */}
+                {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Blue Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% with WHITE FONT) */}
                 <Box
                     sx={{
                         position: 'absolute',
                         top: '61.1%',
                         height: '7.25%',
-                        left: '14%',
-                        right: '14%',
+                        left: '15.5%',
+                        right: '15.5%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -278,10 +238,50 @@ export default function PrintBadge({
                     }}
                 >
                     <Typography
+                        variant="h5"
+                        sx={{
+                            fontWeight: 900,
+                            color: '#ffffff',
+                            fontSize: nameFontSize,
+                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.03em',
+                            lineHeight: 1.15,
+                            wordBreak: 'break-word',
+                            textAlign: 'center',
+                            width: '100%',
+                            textShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                            '@media print': {
+                                color: '#ffffff !important',
+                                fontSize: nameLength > 28 ? '10pt' : nameLength > 20 ? '12pt' : '14pt',
+                            },
+                        }}
+                    >
+                        {ticket.visitor_name}
+                    </Typography>
+                </Box>
+
+                {/* 2. INSTITUTION OVERLAY (Positioned BELOW the Blue Box at y: 865 - 922.6 / 68.8% - 73.6% right above underline) */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '68.8%',
+                        height: '4.8%',
+                        left: '10%',
+                        right: '10%',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        pb: '2px',
+                        zIndex: 5,
+                    }}
+                >
+                    <Typography
                         variant="body1"
                         sx={{
                             fontWeight: 800,
-                            color: '#1e293b',
+                            color: '#0f172a',
                             fontSize: instFontSize,
                             fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
                             textTransform: 'uppercase',
@@ -290,10 +290,9 @@ export default function PrintBadge({
                             wordBreak: 'break-word',
                             textAlign: 'center',
                             width: '100%',
-                            textShadow: '0 0 1px rgba(255,255,255,0.8)',
                             '@media print': {
-                                color: '#000000',
-                                fontSize: institutionLength > 28 ? '9pt' : institutionLength > 20 ? '10pt' : '11.5pt',
+                                color: '#000000 !important',
+                                fontSize: institutionLength > 28 ? '8.5pt' : institutionLength > 20 ? '9.5pt' : '11pt',
                             },
                         }}
                     >
