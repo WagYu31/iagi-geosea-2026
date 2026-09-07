@@ -152,6 +152,20 @@ const CATEGORY_META = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
+    student_postgraduate: {
+        label: 'Student Postgraduate',
+        shortLabel: 'POSTGRAD',
+        bg: '#e0e7ff',
+        color: '#4f46e5',
+        border: '#a5b4fc',
+    },
+    general_ticket: {
+        label: 'General Ticket / Participant',
+        shortLabel: 'PARTICIPANT',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
     exclusive: {
         label: 'Visitor Exclusive (VIP)',
         shortLabel: 'EXCLUSIVE VIP',
@@ -218,6 +232,7 @@ export default function VisitorTicketsIndex({
         visitor_email: '',
         visitor_phone: '',
         visitor_institution: '',
+        visitor_type: 'non_exclusive',
         status: 'active',
     });
 
@@ -368,6 +383,7 @@ export default function VisitorTicketsIndex({
             visitor_email: ticket.visitor_email || '',
             visitor_phone: ticket.visitor_phone || '',
             visitor_institution: ticket.visitor_institution || '',
+            visitor_type: ticket.visitor_type || 'non_exclusive',
             status: ticket.status || 'active',
         });
     };
@@ -1554,6 +1570,33 @@ export default function VisitorTicketsIndex({
                                 fullWidth
                                 size="small"
                             />
+                            <FormControl fullWidth size="small">
+                                <InputLabel>Visitor Category</InputLabel>
+                                <Select
+                                    value={editData.visitor_type}
+                                    label="Visitor Category"
+                                    onChange={(e) => setEditData('visitor_type', e.target.value)}
+                                >
+                                    {/* Invited Categories */}
+                                    <MenuItem value="vip">⭐ VIP (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">🎤 Speaker (Invited / Free)</MenuItem>
+                                    <MenuItem value="panelist">👥 Panelist (Invited / Free)</MenuItem>
+                                    <MenuItem value="moderator">🎯 Moderator (Invited / Free)</MenuItem>
+                                    <MenuItem value="exhibition">🏛️ Exhibition (Invited / Free)</MenuItem>
+                                    <MenuItem value="committee">👔 Committee (Invited / Free)</MenuItem>
+                                    <MenuItem value="student_volunteer">🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                    {/* Conference / Standard Categories */}
+                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional (Rp 4.000.000)</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate (Rp 6.000.000)</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate (Rp 7.000.000)</MenuItem>
+                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 1.000.000)</MenuItem>
+                                    <MenuItem value="student_postgraduate">Student Postgraduate</MenuItem>
+                                    <MenuItem value="general_ticket">General Ticket / Participant</MenuItem>
+                                    <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
+                                    <MenuItem value="non_exclusive">Visitor Pass (Free / Rp 0)</MenuItem>
+                                </Select>
+                            </FormControl>
                             <FormControl fullWidth size="small">
                                 <InputLabel>Ticket Status</InputLabel>
                                 <Select

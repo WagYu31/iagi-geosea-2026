@@ -508,6 +508,7 @@ class VisitorTicketAdminController extends Controller
             'visitor_email' => 'required|email|max:150',
             'visitor_phone' => 'nullable|string|max:50',
             'visitor_institution' => 'nullable|string|max:150',
+            'visitor_type' => 'required|string|max:100',
             'status' => 'required|in:active,pending,cancelled',
         ]);
 
@@ -516,6 +517,7 @@ class VisitorTicketAdminController extends Controller
             'visitor_email' => $request->visitor_email,
             'visitor_phone' => $request->visitor_phone,
             'visitor_institution' => $request->visitor_institution,
+            'visitor_type' => $request->visitor_type,
             'status' => $request->status,
         ]);
 
