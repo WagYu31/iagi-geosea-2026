@@ -12,153 +12,75 @@ import PrintIcon from '@mui/icons-material/Print';
 import StarIcon from '@mui/icons-material/Star';
 import CloseIcon from '@mui/icons-material/Close';
 
+// 9 Official Lanyard Badge SVG Designs
+export const BADGE_TEMPLATES = {
+    // 1. VIP (Invited / Free) & Exclusive VIP
+    vip: '/images/badges/VIP.svg',
+    exclusive: '/images/badges/VIP.svg',
+
+    // 2. Speaker (Invited / Free)
+    speaker: '/images/badges/Speaker.svg',
+
+    // 3. Panelist (Invited / Free)
+    panelist: '/images/badges/Panelist.svg',
+
+    // 4. Moderator (Invited / Free)
+    moderator: '/images/badges/Moderator.svg',
+
+    // 5. Exhibition (Invited / Free)
+    exhibition: '/images/badges/Exhibitor.svg',
+
+    // 6. Committee (Invited / Free)
+    committee: '/images/badges/Committee.svg',
+
+    // 7. Student Volunteer (Invited / Free)
+    student_volunteer: '/images/badges/Student_Volunteer.svg',
+
+    // 8. Conference & Standard Categories (Participant)
+    iagi_member_professional: '/images/badges/Participant.svg',
+    non_iagi_member_professional: '/images/badges/Participant.svg',
+    iagi_member_expatriate: '/images/badges/Participant.svg',
+    non_iagi_member_expatriate: '/images/badges/Participant.svg',
+    student_undergraduate: '/images/badges/Participant.svg',
+    student_postgraduate: '/images/badges/Participant.svg',
+    general_ticket: '/images/badges/Participant.svg',
+
+    // 9. Visitor Pass
+    non_exclusive: '/images/badges/Visitor.svg',
+};
+
 const CATEGORY_MAP = {
-    // Invited Categories
-    vip: {
-        label: 'VIP',
-        badge: 'VIP GUEST',
-        banner: '#d97706',
-        gradient: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
-        border: '#d97706',
-        textColor: '#ffffff',
-    },
-    speaker: {
-        label: 'SPEAKER',
-        badge: 'SPEAKER',
-        banner: '#db2777',
-        gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
-        border: '#db2777',
-        textColor: '#ffffff',
-    },
-    panelist: {
-        label: 'PANELIST',
-        badge: 'PANELIST',
-        banner: '#7c3aed',
-        gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-        border: '#7c3aed',
-        textColor: '#ffffff',
-    },
-    moderator: {
-        label: 'MODERATOR',
-        badge: 'MODERATOR',
-        banner: '#0891b2',
-        gradient: 'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
-        border: '#0891b2',
-        textColor: '#ffffff',
-    },
-    exhibition: {
-        label: 'EXHIBITOR',
-        badge: 'EXHIBITOR',
-        banner: '#ea580c',
-        gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)',
-        border: '#ea580c',
-        textColor: '#ffffff',
-    },
-    committee: {
-        label: 'COMMITTEE',
-        badge: 'COMMITTEE',
-        banner: '#2563eb',
-        gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        border: '#2563eb',
-        textColor: '#ffffff',
-    },
-    student_volunteer: {
-        label: 'STUDENT VOLUNTEER',
-        badge: 'VOLUNTEER',
-        banner: '#16a34a',
-        gradient: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
-        border: '#16a34a',
-        textColor: '#ffffff',
-    },
-    // Conference / Standard Categories
-    iagi_member_professional: {
-        label: 'IAGI MEMBER - PROFESSIONAL',
-        badge: 'IAGI PRO',
-        banner: '#094d42',
-        gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
-        border: '#094d42',
-        textColor: '#ffffff',
-    },
-    non_iagi_member_professional: {
-        label: 'NON IAGI MEMBER - PROFESSIONAL',
-        badge: 'NON-IAGI PRO',
-        banner: '#0284c7',
-        gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-        border: '#0284c7',
-        textColor: '#ffffff',
-    },
-    iagi_member_expatriate: {
-        label: 'IAGI MEMBER - EXPATRIATE',
-        badge: 'INTERNATIONAL DELEGATE',
-        banner: '#7c3aed',
-        gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
-        border: '#7c3aed',
-        textColor: '#ffffff',
-    },
-    non_iagi_member_expatriate: {
-        label: 'NON IAGI MEMBER - EXPATRIATE',
-        badge: 'INTERNATIONAL DELEGATE',
-        banner: '#6d28d9',
-        gradient: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
-        border: '#6d28d9',
-        textColor: '#ffffff',
-    },
-    student_undergraduate: {
-        label: 'STUDENT UNDERGRADUATE',
-        badge: 'STUDENT',
-        banner: '#4338ca',
-        gradient: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
-        border: '#4338ca',
-        textColor: '#ffffff',
-    },
-    student_postgraduate: {
-        label: 'STUDENT POSTGRADUATE',
-        badge: 'POSTGRADUATE',
-        banner: '#4f46e5',
-        gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-        border: '#4f46e5',
-        textColor: '#ffffff',
-    },
-    general_ticket: {
-        label: 'PARTICIPANT',
-        badge: 'PARTICIPANT',
-        banner: '#059669',
-        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        border: '#059669',
-        textColor: '#ffffff',
-    },
-    exclusive: {
-        label: 'VISITOR EXCLUSIVE (VIP)',
-        badge: 'VIP PASS',
-        banner: '#d97706',
-        gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-        border: '#d97706',
-        textColor: '#ffffff',
-    },
-    non_exclusive: {
-        label: 'PARTICIPANT',
-        badge: 'PARTICIPANT',
-        banner: '#059669',
-        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        border: '#059669',
-        textColor: '#ffffff',
-    },
+    vip: { label: 'VIP', short: 'VIP' },
+    speaker: { label: 'SPEAKER', short: 'SPEAKER' },
+    panelist: { label: 'PANELIST', short: 'PANELIST' },
+    moderator: { label: 'MODERATOR', short: 'MODERATOR' },
+    exhibition: { label: 'EXHIBITOR', short: 'EXHIBITOR' },
+    committee: { label: 'COMMITTEE', short: 'COMMITTEE' },
+    student_volunteer: { label: 'STUDENT VOLUNTEER', short: 'VOLUNTEER' },
+    iagi_member_professional: { label: 'IAGI MEMBER - PROFESSIONAL', short: 'IAGI PRO' },
+    non_iagi_member_professional: { label: 'NON IAGI MEMBER - PROFESSIONAL', short: 'NON-IAGI PRO' },
+    iagi_member_expatriate: { label: 'IAGI MEMBER - EXPATRIATE', short: 'IAGI EXPAT' },
+    non_iagi_member_expatriate: { label: 'NON IAGI MEMBER - EXPATRIATE', short: 'NON-IAGI EXPAT' },
+    student_undergraduate: { label: 'STUDENT UNDERGRADUATE', short: 'STUDENT' },
+    student_postgraduate: { label: 'STUDENT POSTGRADUATE', short: 'POSTGRAD' },
+    general_ticket: { label: 'PARTICIPANT', short: 'PARTICIPANT' },
+    exclusive: { label: 'VIP PASS', short: 'VIP' },
+    non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },
 };
 
 export default function PrintBadge({
     ticket = {},
     templatePath = null,
 }) {
-    const cat = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
-    const [customCategoryBanner, setCustomCategoryBanner] = useState(
-        ticket.visitor_type && !['non_exclusive', 'general_ticket'].includes(ticket.visitor_type)
-    );
+    const visitorType = ticket.visitor_type || 'non_exclusive';
+    const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
 
-    const defaultTemplate = '/images/lanyard-badge-template.png';
+    // Resolve template SVG based on category
+    const defaultTemplate = BADGE_TEMPLATES[visitorType] || '/images/badges/Participant.svg';
     const bgImage = templatePath || defaultTemplate;
 
     useEffect(() => {
-        // Preload image and wait for document ready
+        // Preload image and auto trigger system print dialog
         let printed = false;
         const triggerPrint = () => {
             if (printed) return;
@@ -179,10 +101,10 @@ export default function PrintBadge({
     }, [bgImage]);
 
     const nameLength = (ticket.visitor_name || '').length;
-    const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.2rem' : '1.38rem';
+    const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.22rem' : '1.4rem';
 
     const institutionLength = (ticket.visitor_institution || '').length;
-    const instFontSize = institutionLength > 28 ? '0.85rem' : institutionLength > 20 ? '0.95rem' : '1.08rem';
+    const instFontSize = institutionLength > 28 ? '0.82rem' : institutionLength > 20 ? '0.92rem' : '1.02rem';
 
     return (
         <Box
@@ -201,7 +123,7 @@ export default function PrintBadge({
                 },
             }}
         >
-            <Head title={`Print Badge: ${ticket.visitor_name} - 55th PIT IAGI & GEOSEA 2026`} />
+            <Head title={`Print Badge: ${ticket.visitor_name} - ${cat.label} - 55th PIT IAGI & GEOSEA 2026`} />
 
             {/* Print Styling Fixes */}
             <style>
@@ -253,7 +175,7 @@ export default function PrintBadge({
                         '&:hover': { bgcolor: '#059669', transform: 'translateY(-1px)' },
                     }}
                 >
-                    Print Lanyard Badge
+                    Print Lanyard Badge ({cat.short})
                 </Button>
 
                 <Button
@@ -275,12 +197,12 @@ export default function PrintBadge({
                 </Button>
             </Box>
 
-            {/* Physical Lanyard Card Container (Matches 638x1011 aspect ratio = 0.631 : 1) */}
+            {/* Physical Lanyard Card Container (Matches 790x1253 aspect ratio = 0.6305 : 1) */}
             <Box
                 id="lanyard-card"
                 sx={{
                     width: { xs: '330px', sm: '380px' },
-                    height: { xs: '522px', sm: '602px' },
+                    height: { xs: '523px', sm: '602px' },
                     bgcolor: '#ffffff',
                     borderRadius: '16px',
                     boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)',
@@ -294,18 +216,18 @@ export default function PrintBadge({
                         boxShadow: 'none',
                         borderRadius: 0,
                         width: '100mm',
-                        height: '158mm',
+                        height: '158.6mm',
                         pageBreakInside: 'avoid',
                         margin: '0 auto',
                     },
                 }}
             >
-                {/* VISITOR NAME INPUT OVERLAY (Sits right above the Name line at y: 57.3%) */}
+                {/* VISITOR NAME INPUT OVERLAY (Sits right above the Name line at y: 730.6 / 58.3%) */}
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: '49.5%',
-                        height: '7.8%',
+                        top: '49.0%',
+                        height: '8.8%',
                         left: '8%',
                         right: '8%',
                         display: 'flex',
@@ -340,19 +262,18 @@ export default function PrintBadge({
                     </Typography>
                 </Box>
 
-                {/* INSTITUTION INPUT OVERLAY (Sits right above the Institution line at y: 66.6%) */}
+                {/* INSTITUTION INPUT OVERLAY (Sits inside the frosted pill container at y: 765.5 - 856.5 / 61.1% - 68.35%) */}
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: '59.8%',
-                        height: '6.8%',
-                        left: '8%',
-                        right: '8%',
+                        top: '61.1%',
+                        height: '7.25%',
+                        left: '14%',
+                        right: '14%',
                         display: 'flex',
-                        alignItems: 'flex-end',
+                        alignItems: 'center',
                         justifyContent: 'center',
                         textAlign: 'center',
-                        pb: '1px',
                         zIndex: 5,
                     }}
                 >
@@ -379,50 +300,6 @@ export default function PrintBadge({
                         {ticket.visitor_institution || '-'}
                     </Typography>
                 </Box>
-
-                {/* DYNAMIC CATEGORY BANNER OVERLAY (For VIP, Speaker, Committee, Moderator, Exhibitor, etc.) */}
-                {customCategoryBanner && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '86.8%',
-                            bottom: '4.8%',
-                            left: '5%',
-                            right: '5%',
-                            borderRadius: '12px',
-                            background: cat.gradient,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                            zIndex: 8,
-                            px: 2,
-                            '@media print': {
-                                borderRadius: '3mm',
-                                boxShadow: 'none',
-                            },
-                        }}
-                    >
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                fontWeight: 950,
-                                color: cat.textColor,
-                                letterSpacing: '0.12em',
-                                textTransform: 'uppercase',
-                                fontSize: { xs: '1.25rem', sm: '1.45rem' },
-                                fontFamily: "'Inter', 'Montserrat', sans-serif",
-                                textAlign: 'center',
-                                '@media print': {
-                                    fontSize: '15pt',
-                                    color: '#ffffff !important',
-                                },
-                            }}
-                        >
-                            {cat.label}
-                        </Typography>
-                    </Box>
-                )}
             </Box>
         </Box>
     );

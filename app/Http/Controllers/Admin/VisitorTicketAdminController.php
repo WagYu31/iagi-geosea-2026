@@ -354,21 +354,43 @@ class VisitorTicketAdminController extends Controller
                 'checked_in_by_admin_id' => Auth::id(),
             ]);
 
-            // Get template path for printing
-            $templateKey = $ticket->visitor_type === 'exclusive' 
-                ? 'visitor_exclusive_lanyard_template' 
-                : 'visitor_non_exclusive_lanyard_template';
-                
-            $templatePath = LandingPageSetting::where('key', $templateKey)->value('value');
+            $templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
 
             return response()->json([
                 'success' => true,
                 'status' => 'checked_in',
                 'message' => 'Check-in BERHASIL! Selamat datang.',
                 'ticket' => $ticket,
-                'templatePath' => $templatePath ? '/storage/' . $templatePath : null,
+                'templatePath' => $templatePath,
             ]);
         });
+    }
+
+    /**
+     * Resolve badge template SVG for visitor type
+     */
+    public static function getBadgeTemplateForType($type)
+    {
+        $map = [
+            'vip' => '/images/badges/VIP.svg',
+            'speaker' => '/images/badges/Speaker.svg',
+            'panelist' => '/images/badges/Panelist.svg',
+            'moderator' => '/images/badges/Moderator.svg',
+            'exhibition' => '/images/badges/Exhibitor.svg',
+            'committee' => '/images/badges/Committee.svg',
+            'student_volunteer' => '/images/badges/Student_Volunteer.svg',
+            'iagi_member_professional' => '/images/badges/Participant.svg',
+            'non_iagi_member_professional' => '/images/badges/Participant.svg',
+            'iagi_member_expatriate' => '/images/badges/Participant.svg',
+            'non_iagi_member_expatriate' => '/images/badges/Participant.svg',
+            'student_undergraduate' => '/images/badges/Participant.svg',
+            'student_postgraduate' => '/images/badges/Participant.svg',
+            'general_ticket' => '/images/badges/Participant.svg',
+            'exclusive' => '/images/badges/VIP.svg',
+            'non_exclusive' => '/images/badges/Visitor.svg',
+        ];
+
+        return $map[$type] ?? '/images/badges/Participant.svg';
     }
 
     /**
@@ -384,15 +406,11 @@ class VisitorTicketAdminController extends Controller
             'card_printed_by_admin_id' => Auth::id(),
         ]);
 
-        $templateKey = $ticket->visitor_type === 'exclusive' 
-            ? 'visitor_exclusive_lanyard_template' 
-            : 'visitor_non_exclusive_lanyard_template';
-            
-        $templatePath = LandingPageSetting::where('key', $templateKey)->value('value');
+        $templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
 
         return Inertia::render('Admin/VisitorTickets/PrintBadge', [
             'ticket' => $ticket,
-            'templatePath' => $templatePath ? '/storage/' . $templatePath : null,
+            'templatePath' => $templatePath,
         ]);
     }
 

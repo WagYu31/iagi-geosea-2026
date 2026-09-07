@@ -205,10 +205,23 @@ export default function GateScanner({
         localStorage.setItem('gate_scanner_auto_print', String(val));
     };
 
-    // Preload Badge Background for 0ms print latency
+    // Preload Badge Background SVGs for 0ms print latency
     useEffect(() => {
-        const img = new Image();
-        img.src = '/images/lanyard-badge-template.png';
+        const badgeSvgs = [
+            '/images/badges/Committee.svg',
+            '/images/badges/Exhibitor.svg',
+            '/images/badges/Moderator.svg',
+            '/images/badges/Panelist.svg',
+            '/images/badges/Participant.svg',
+            '/images/badges/Speaker.svg',
+            '/images/badges/Student_Volunteer.svg',
+            '/images/badges/VIP.svg',
+            '/images/badges/Visitor.svg',
+        ];
+        badgeSvgs.forEach((src) => {
+            const img = new Image();
+            img.src = src;
+        });
 
         if (inputRef.current) {
             inputRef.current.focus();
