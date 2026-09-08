@@ -73,14 +73,18 @@ class VisitorTicketController extends Controller
             [
                 'id' => 'iagi_member_professional',
                 'name' => 'IAGI Member - Professional',
-                'badge' => 'IAGI MEMBER',
+                'badge' => 'PROFESSIONAL',
                 'normalPrice' => $priceIagiPro,
                 'price' => $priceIagiPro,
-                'tag' => 'IAGI MEMBER',
+                'tag' => 'PROFESSIONAL',
                 'tagColor' => '#047857',
                 'tagBg' => '#dcfce7',
-                'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
-                'perks' => ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+                'description' => 'For Professional IAGI Member',
+                'perks' => [
+                    'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
+                    'Seminar Kit',
+                    'Lunch and Snack',
+                ],
             ],
             [
                 'id' => 'non_iagi_member_professional',
