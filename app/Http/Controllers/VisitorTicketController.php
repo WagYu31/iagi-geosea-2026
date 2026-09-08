@@ -249,7 +249,9 @@ class VisitorTicketController extends Controller
             $groupCode = $totalMembers > 1 ? 'GRP-' . strtoupper(Str::random(8)) : null;
 
             if ($isPaid) {
-                $uniqueCode = rand(100, 999);
+                $uniqueCode = ($request->filled('unique_code') && intval($request->unique_code) >= 100 && intval($request->unique_code) <= 999)
+                    ? intval($request->unique_code)
+                    : rand(100, 999);
                 $totalAmount = ($pricePerTicket * $totalMembers) + $uniqueCode;
 
                 $proofPath = null;

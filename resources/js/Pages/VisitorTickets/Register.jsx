@@ -218,6 +218,7 @@ export default function Register({
     const [members, setMembers] = useState([
         { name: '', email: '', phone: '', institution: '' }
     ]);
+    const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 900));
     const [proofFile, setProofFile] = useState(null);
     const [proofPreview, setProofPreview] = useState(null);
     const [compressing, setCompressing] = useState(false);
@@ -240,6 +241,7 @@ export default function Register({
         visitor_type: 'iagi_member_professional',
         members: members,
         payment_method: 'foreign_bank_transfer',
+        unique_code: uniqueCode,
         proof_of_payment: null,
         original_file_size_kb: null,
         compressed_file_size_kb: null,
@@ -490,7 +492,8 @@ export default function Register({
 
     const selectedCategory = categoriesList.find(c => c.id === visitorType) || categoriesList[0];
     const isPaid = (selectedCategory?.price ?? 0) > 0;
-    const totalEstimate = (selectedCategory?.price ?? 0) * members.length;
+    const subtotal = (selectedCategory?.price ?? 0) * members.length;
+    const totalEstimate = isPaid ? subtotal + uniqueCode : 0;
     const primaryMember = members[0] || { name: '', institution: '' };
 
     const filteredCategories = selectedTab === 'all'
@@ -1331,12 +1334,26 @@ export default function Register({
                                                         >
                                                             {copySuccess ? 'Copied to Clipboard!' : 'Copy Info'}
                                                         </Button>
-                                                    </Box>
-                                                    <Typography variant="body2" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 2, borderRadius: '10px', border: '1px solid #e2e8f0', display: 'block', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                                                        {bankTransferInfo}
-                                                    </Typography>
-                                                </Box>
-                                            )}
+                                                            </Box>
+                                                            <Typography variant="body2" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 2, borderRadius: '10px', border: '1px solid #e2e8f0', display: 'block', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                                                                {bankTransferInfo}
+                                                            </Typography>
+
+                                                            {isPaid && (
+                                                                <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                                                    <Box>
+                                                                        <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'block' }}>
+                                                                            Total Transfer (Termasuk Kode Unik):
+                                                                        </Typography>
+                                                                        <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif' }}>
+                                                                            IDR {totalEstimate.toLocaleString('id-ID')}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                    <Chip label={`Kode Unik: ${uniqueCode}`} size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontSize: '0.74rem' }} />
+                                                                </Box>
+                                                            )}
+                                                        </Box>
+                                                    )}
 
                                             {/* Proof Upload Action Zone */}
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 1 }}>
@@ -1643,6 +1660,16 @@ export default function Register({
                                                     {members.length} Person(s)
                                                 </Typography>
                                             </Box>
+                                            {isPaid && (
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#64748b', fontWeight: 600 }}>
+                                                        Unique Code:
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0284c7' }}>
+                                                        +IDR {uniqueCode}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                             <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="subtitle2" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '0.9rem' }}>
