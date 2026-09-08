@@ -607,7 +607,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
 
                     <Button
                         component="a"
-                        href="https://wa.me/628121593522?text=Hello%20IAGI%20Committee,%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20"
+                        href={`https://wa.me/62859207771789?text=Hello%20IAGI%20Committee,%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
