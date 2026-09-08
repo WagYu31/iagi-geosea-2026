@@ -121,14 +121,18 @@ class VisitorTicketController extends Controller
             [
                 'id' => 'non_iagi_member_expatriate',
                 'name' => 'Non IAGI Member - Expatriate',
-                'badge' => 'INTERNATIONAL DELEGATE',
+                'badge' => 'EXPATRIATE',
                 'normalPrice' => $priceNonIagiExpat,
                 'price' => $priceNonIagiExpat,
-                'tag' => 'INTERNATIONAL DELEGATE',
+                'tag' => 'EXPATRIATE',
                 'tagColor' => '#7c3aed',
                 'tagBg' => '#ede9fe',
-                'description' => 'Full international delegate access, technical sessions, exhibition, VIP lanyard & gala dinner.',
-                'perks' => ['International Delegate', 'VIP Lanyard & Kit', 'Plenary & Gala Dinner'],
+                'description' => 'For Expatriate Non - IAGI Member',
+                'perks' => [
+                    'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
+                    'Seminar Kit',
+                    'Lunch and Snack',
+                ],
             ],
             [
                 'id' => 'student_undergraduate',
