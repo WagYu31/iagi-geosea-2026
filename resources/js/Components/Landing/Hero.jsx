@@ -161,7 +161,13 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
 });
 
 export default function Hero({ settings, auth }) {
+    const [videoMounted, setVideoMounted] = useState(false);
     const heroText = settings.hero_text || {};
+
+    useEffect(() => {
+        const timer = setTimeout(() => setVideoMounted(true), 300);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Split title into words for staggered animation
     const titleLine1 = heroText.title_line1 || 'PIT IAGI';
@@ -178,113 +184,50 @@ export default function Hero({ settings, auth }) {
                     'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(13, 122, 106, 0.15), transparent)',
             }}
         >
-            {/* Dynamic Background (Video on Desktop, Lightweight Poster on Mobile) */}
-            {settings.hero_background?.type === 'video' ? (
-                <>
-                    <Box
-                        component="video"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="none"
-                        poster="/about-background.jpg"
-                        sx={{
-                            display: { xs: 'none', md: 'block' },
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%) translateZ(0)',
-                            minWidth: '100%',
-                            minHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            objectFit: 'cover',
-                            zIndex: 0,
-                        }}
-                    >
-                        <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
-                    </Box>
-                    <Box
-                        component="img"
-                        src="/about-background.jpg"
-                        alt="Hero Background"
-                        fetchPriority="high"
-                        decoding="async"
-                        sx={{
-                            display: { xs: 'block', md: 'none' },
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            zIndex: 0,
-                        }}
-                    />
-                </>
-            ) : settings.hero_background?.type === 'image' ? (
+            {/* Instant Baseline Poster Image for 100 LCP / FCP */}
+            <Box
+                component="img"
+                src={settings.hero_background?.type === 'image' && settings.hero_background?.url ? settings.hero_background.url : '/about-background.jpg'}
+                alt="Hero Background"
+                fetchPriority="high"
+                decoding="async"
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    zIndex: 0,
+                }}
+            />
+
+            {/* Desktop Background Video (mounts after initial paint for 0ms TBT) */}
+            {videoMounted && settings.hero_background?.type !== 'image' && (
                 <Box
-                    component="img"
-                    src={settings.hero_background?.url}
-                    alt="Hero Background"
-                    fetchPriority="high"
-                    decoding="async"
+                    component="video"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
                     sx={{
+                        display: { xs: 'none', md: 'block' },
                         position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%) translateZ(0)',
+                        minWidth: '100%',
+                        minHeight: '100%',
+                        width: 'auto',
+                        height: 'auto',
                         objectFit: 'cover',
                         zIndex: 0,
-                        transform: 'translateZ(0)',
+                        animation: `${fadeIn} 0.8s ease-in both`,
                     }}
-                />
-            ) : (
-                <>
-                    <Box
-                        component="video"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="none"
-                        poster="/about-background.jpg"
-                        sx={{
-                            display: { xs: 'none', md: 'block' },
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%) translateZ(0)',
-                            minWidth: '100%',
-                            minHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            objectFit: 'cover',
-                            zIndex: 0,
-                        }}
-                    >
-                        <source src="/hero-background1.mp4" type="video/mp4" />
-                    </Box>
-                    <Box
-                        component="img"
-                        src="/about-background.jpg"
-                        alt="Hero Background"
-                        fetchPriority="high"
-                        decoding="async"
-                        sx={{
-                            display: { xs: 'block', md: 'none' },
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            zIndex: 0,
-                        }}
-                    />
-                </>
+                >
+                    <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
+                </Box>
             )}
 
             {/* Animated Gradient Overlay */}

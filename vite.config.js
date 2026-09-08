@@ -29,55 +29,27 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: {
-                    // Vendor chunks
-                    'vendor-react': ['react', 'react-dom'],
-                    'vendor-mui-core': ['@mui/material', '@mui/system', '@mui/styled-engine'],
-                    'vendor-mui-icons': ['@mui/icons-material'],
-                    'vendor-mui-charts': ['@mui/x-charts', '@mui/x-data-grid'],
-                    'vendor-inertia': ['@inertiajs/react'],
-                    'vendor-utils': ['react-countdown', 'prop-types', 'use-sync-external-store'],
-
-                    // Application chunks
-                    'pages-auth': [
-                        './resources/js/Pages/Auth/Login.jsx',
-                        './resources/js/Pages/Auth/Register.jsx',
-                        './resources/js/Pages/Auth/ConfirmPassword.jsx',
-                        './resources/js/Pages/Auth/ForgotPassword.jsx',
-                        './resources/js/Pages/Auth/ResetPassword.jsx',
-                        './resources/js/Pages/Auth/VerifyEmail.jsx'
-                    ],
-                    'pages-admin': [
-                        './resources/js/Pages/Admin/Dashboard.jsx',
-                        './resources/js/Pages/Admin/Submissions.jsx',
-                        './resources/js/Pages/Admin/Payments.jsx'
-                    ],
-                    'pages-profile': [
-                        './resources/js/Pages/Profile/Edit.jsx'
-                    ],
-                    'layouts': [
-                        './resources/js/Layouts/AuthenticatedLayout.jsx',
-                        './resources/js/Layouts/GuestLayout.jsx',
-                        './resources/js/Layouts/MUIGuestLayout.jsx',
-                        './resources/js/Layouts/SidebarLayout.jsx'
-                    ],
-                    'components': [
-                        './resources/js/Components/ApplicationLogo.jsx',
-                        './resources/js/Components/Checkbox.jsx',
-                        './resources/js/Components/DangerButton.jsx',
-                        './resources/js/Components/Dropdown.jsx',
-                        './resources/js/Components/InputError.jsx',
-                        './resources/js/Components/InputLabel.jsx',
-                        './resources/js/Components/Modal.jsx',
-                        './resources/js/Components/NavLink.jsx',
-                        './resources/js/Components/PrimaryButton.jsx',
-                        './resources/js/Components/ResponsiveNavLink.jsx',
-                        './resources/js/Components/SecondaryButton.jsx',
-                        './resources/js/Components/TextInput.jsx'
-                    ]
-                }
-            }
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('@mui/x-charts') || id.includes('@mui/x-data-grid')) {
+                            return 'vendor-mui-charts';
+                        }
+                        if (id.includes('@mui/icons-material')) {
+                            return 'vendor-mui-icons';
+                        }
+                        if (id.includes('@mui/material') || id.includes('@mui/system') || id.includes('@mui/styled-engine') || id.includes('@emotion')) {
+                            return 'vendor-mui-core';
+                        }
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+                            return 'vendor-react';
+                        }
+                        if (id.includes('@inertiajs') || id.includes('axios')) {
+                            return 'vendor-inertia';
+                        }
+                    }
+                },
+            },
         },
-        chunkSizeWarningLimit: 1000, // Increase warning limit to 1000kb
+        chunkSizeWarningLimit: 1000,
     },
 });

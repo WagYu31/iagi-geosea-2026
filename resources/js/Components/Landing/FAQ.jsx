@@ -127,6 +127,8 @@ export default function FAQ({ settings }) {
                                     }}
                                 >
                                     <AccordionSummary
+                                        id={`panel${sectionIndex}-header`}
+                                        aria-controls={`panel${sectionIndex}-content`}
                                         expandIcon={
                                             <ExpandMoreIcon
                                                 sx={{
@@ -153,7 +155,7 @@ export default function FAQ({ settings }) {
                                             {section.title}
                                         </Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails sx={{ pt: 0, pb: 2.5, px: 3 }}>
+                                    <AccordionDetails id={`panel${sectionIndex}-content`} sx={{ pt: 0, pb: 2.5, px: 3 }}>
                                         {section.items && section.items.map((step, stepIndex) => (
                                             <Box
                                                 key={stepIndex}
