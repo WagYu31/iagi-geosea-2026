@@ -63,6 +63,7 @@ export default function Footer({ settings, auth }) {
                 <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(180deg, #ffffff 0%, #fafffe 30%, #f5fdfb 60%, #edf8f5 100%)' }}>
                     <Container maxWidth="lg">
                         <Typography
+                            component="h2"
                             variant="h5"
                             align="center"
                             sx={{
@@ -79,7 +80,7 @@ export default function Footer({ settings, auth }) {
                             <Typography
                                 variant="body1"
                                 align="center"
-                                sx={{ mb: { xs: 3, md: 5 }, color: '#3b82f6', fontStyle: 'italic', maxWidth: 600, mx: 'auto' }}
+                                sx={{ mb: { xs: 3, md: 5 }, color: '#0d7a6a', fontStyle: 'italic', maxWidth: 600, mx: 'auto' }}
                             >
                                 {settings.sponsors_description}
                             </Typography>
@@ -151,13 +152,13 @@ export default function Footer({ settings, auth }) {
                                             <Box
                                                 component="img"
                                                 src={sponsor.logo}
-                                                alt="Supported by"
+                                                alt={sponsor.name ? `Supported by ${sponsor.name}` : 'Sponsor'}
                                                 loading="lazy"
                                                 decoding="async"
                                                 sx={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                                             />
                                         ) : (
-                                            <Typography sx={{ color: '#9ca3af', fontWeight: 500, fontSize: '0.9rem' }}>
+                                            <Typography sx={{ color: '#6b7280', fontWeight: 500, fontSize: '0.9rem' }}>
                                                 {sponsor.name || 'Sponsor'}
                                             </Typography>
                                         )}
@@ -188,6 +189,7 @@ export default function Footer({ settings, auth }) {
                             OUR PARTNERS
                         </Typography>
                         <Typography
+                            component="h2"
                             variant="h5"
                             align="center"
                             sx={{
@@ -209,6 +211,7 @@ export default function Footer({ settings, auth }) {
                                     href={partner.url || '#'}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`Visit partner website: ${partner.name || 'Partner'}`}
                                     sx={{
                                         display: 'block',
                                         maxWidth: 400,
@@ -230,7 +233,7 @@ export default function Footer({ settings, auth }) {
                                         <Box
                                             component="img"
                                             src={partner.poster}
-                                            alt={partner.name || 'Partner'}
+                                            alt={partner.name || 'Partner Poster'}
                                             loading="lazy"
                                             decoding="async"
                                             sx={{
@@ -288,6 +291,7 @@ export default function Footer({ settings, auth }) {
                             VENUE & LOCATION
                         </Typography>
                         <Typography
+                            component="h2"
                             variant="h4"
                             align="center"
                             sx={{
@@ -322,7 +326,7 @@ export default function Footer({ settings, auth }) {
                                         <Box sx={{ width: 40, height: 40, borderRadius: '10px', background: 'linear-gradient(135deg, #0d9488, #14b8a6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>
                                             🏛️
                                         </Box>
-                                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>
+                                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>
                                             {contact.venue_subtitle || 'Main Conference Hall'}
                                         </Typography>
                                     </Box>
@@ -330,7 +334,7 @@ export default function Footer({ settings, auth }) {
                                     {/* Address */}
                                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                                         <LocationOnIcon sx={{ color: '#4dd4ac', mt: 0.3, fontSize: 20, flexShrink: 0 }} />
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
                                             {contact.location || settings.contact_address || 'Address not set'}
                                         </Typography>
                                     </Box>
@@ -341,10 +345,11 @@ export default function Footer({ settings, auth }) {
                                         href={`https://wa.me/${(contact.phone || settings.contact_phone || '').replace(/[^0-9]/g, '')}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        aria-label={`Contact us on WhatsApp: ${contact.phone || settings.contact_phone || 'WhatsApp'}`}
                                         sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}
                                     >
                                         <Box sx={{ color: '#4dd4ac', display: 'flex', flexShrink: 0 }}><SocialIcon type="whatsapp" /></Box>
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem' }}>
                                             {contact.phone || settings.contact_phone}
                                         </Typography>
                                     </Box>
@@ -360,10 +365,11 @@ export default function Footer({ settings, auth }) {
                                         })()}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        aria-label={`Join our Telegram: ${contact.telegram || '@iagi_geosea2026'}`}
                                         sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}
                                     >
                                         <Box sx={{ color: '#4dd4ac', display: 'flex', flexShrink: 0 }}><SocialIcon type="telegram" /></Box>
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem' }}>
                                             {contact.telegram || '@iagi_geosea2026'}
                                         </Typography>
                                     </Box>
@@ -374,10 +380,11 @@ export default function Footer({ settings, auth }) {
                                         href={`https://mail.google.com/mail/?view=cm&fs=1&to=${contact.email || settings.contact_email || ''}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        aria-label={`Send an email to: ${contact.email || settings.contact_email || 'Email'}`}
                                         sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textDecoration: 'none', transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}
                                     >
                                         <EmailIcon sx={{ color: '#4dd4ac', fontSize: 20, flexShrink: 0 }} />
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem' }}>
                                             {contact.email || settings.contact_email}
                                         </Typography>
                                     </Box>
@@ -403,8 +410,8 @@ export default function Footer({ settings, auth }) {
                                     <Box sx={{ borderRadius: '20px', height: { xs: 260, md: '100%' }, minHeight: 280, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed rgba(255,255,255,0.2)' }}>
                                         <Box sx={{ textAlign: 'center', p: 4 }}>
                                             <Typography sx={{ fontSize: '3rem', mb: 1 }}>🗺️</Typography>
-                                            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600, mb: 0.5 }}>Interactive Map</Typography>
-                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>Set Maps URL in Landing Page Settings</Typography>
+                                            <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600, mb: 0.5 }}>Interactive Map</Typography>
+                                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>Set Maps URL in Landing Page Settings</Typography>
                                         </Box>
                                     </Box>
                                 )}
@@ -435,6 +442,7 @@ export default function Footer({ settings, auth }) {
                                 />
                                 <Box>
                                     <Typography
+                                        component="h3"
                                         variant="h6"
                                         sx={{
                                             fontWeight: 800,
@@ -448,19 +456,19 @@ export default function Footer({ settings, auth }) {
                                     >
                                         55ᵀᴴ IAGI Annual Scientific Meeting 2026
                                     </Typography>
-                                    <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                                    <Typography sx={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                                         GEOSEA XIX Convention & Exhibition
                                     </Typography>
                                 </Box>
                             </Box>
-                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.8, fontSize: '0.85rem' }}>
+                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontSize: '0.85rem' }}>
                                 Indonesian Association of Geologists (IAGI) proudly presents the 55th Annual Convention & GEOSEA XIX — Southeast Asia's premier geological conference.
                             </Typography>
                         </Grid>
 
                         {/* Quick Links */}
                         <Grid size={{ xs: 6, sm: 3, md: 2 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
+                            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
                                 Quick Links
                             </Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
@@ -473,9 +481,16 @@ export default function Footer({ settings, auth }) {
                                 ].map((item) => (
                                     <Typography
                                         key={item.target}
+                                        role="button"
+                                        tabIndex={0}
                                         onClick={() => document.getElementById(item.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                document.getElementById(item.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                            }
+                                        }}
                                         sx={{
-                                            color: 'rgba(255,255,255,0.6)',
+                                            color: 'rgba(255,255,255,0.8)',
                                             fontSize: '0.85rem',
                                             cursor: 'pointer',
                                             transition: 'all 0.25s ease',
@@ -490,21 +505,21 @@ export default function Footer({ settings, auth }) {
 
                         {/* Account */}
                         <Grid size={{ xs: 6, sm: 3, md: 2 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
+                            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
                                 Account
                             </Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
                                 {!auth?.user ? (
                                     <>
-                                        <MuiLink href="/register" sx={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
+                                        <MuiLink href="/register" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
                                             Register
                                         </MuiLink>
-                                        <MuiLink href="/login" sx={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
+                                        <MuiLink href="/login" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
                                             Login
                                         </MuiLink>
                                     </>
                                 ) : (
-                                    <MuiLink href="/dashboard" sx={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
+                                    <MuiLink href="/dashboard" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
                                         Dashboard
                                     </MuiLink>
                                 )}
@@ -513,7 +528,7 @@ export default function Footer({ settings, auth }) {
 
                         {/* Social Media */}
                         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
+                            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 700, color: '#4dd4ac', mb: 2, fontSize: '0.9rem' }}>
                                 Follow Us
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
@@ -568,7 +583,7 @@ export default function Footer({ settings, auth }) {
                             gap: 1.5,
                         }}
                     >
-                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', textAlign: { xs: 'center', md: 'left' } }}>
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.8rem', textAlign: { xs: 'center', md: 'left' } }}>
                             © 2026 PIT IAGI-GEOSEA XIX. All rights reserved.
                         </Typography>
                         {/* ISO Compliance Badges */}
@@ -589,9 +604,11 @@ export default function Footer({ settings, auth }) {
                             {['Privacy Policy', 'Terms of Service'].map((item) => (
                                 <Typography
                                     key={item}
+                                    role="button"
+                                    tabIndex={0}
                                     sx={{
                                         fontSize: '0.8rem',
-                                        color: 'rgba(255,255,255,0.4)',
+                                        color: 'rgba(255,255,255,0.75)',
                                         cursor: 'pointer',
                                         fontWeight: 500,
                                         transition: 'color 0.25s ease',

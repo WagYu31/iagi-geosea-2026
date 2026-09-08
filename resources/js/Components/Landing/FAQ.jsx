@@ -155,7 +155,7 @@ export default function FAQ({ settings }) {
                                             {section.title}
                                         </Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails id={`panel${sectionIndex}-content`} sx={{ pt: 0, pb: 2.5, px: 3 }}>
+                                    <AccordionDetails id={`panel${sectionIndex}-content`} aria-labelledby={`panel${sectionIndex}-header`} sx={{ pt: 0, pb: 2.5, px: 3 }}>
                                         {section.items && section.items.map((step, stepIndex) => (
                                             <Box
                                                 key={stepIndex}
@@ -164,6 +164,7 @@ export default function FAQ({ settings }) {
                                                 target={step.link ? '_blank' : undefined}
                                                 rel={step.link ? 'noopener noreferrer' : undefined}
                                                 download={step.link ? true : undefined}
+                                                aria-label={step.link ? `Download ${step.filename || step.text}` : undefined}
                                                 sx={{
                                                     display: 'flex',
                                                     alignItems: 'center',

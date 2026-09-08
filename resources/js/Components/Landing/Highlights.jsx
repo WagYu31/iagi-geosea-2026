@@ -200,6 +200,7 @@ export default function Highlights({ settings }) {
                                 </Box>
 
                                 <Typography
+                                    component="h3"
                                     variant="h6"
                                     sx={{
                                         fontWeight: 700,

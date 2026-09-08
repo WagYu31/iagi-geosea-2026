@@ -218,7 +218,7 @@ export default function AppAppBar({ auth }) {
 
                     {/* Mobile menu button */}
                     <Box sx={{ display: { xs: 'flex', lg: 'none' }, gap: 1 }}>
-                        <IconButton aria-label="Menu" onClick={() => setOpen(true)} sx={{ color: '#094d42' }}>
+                        <IconButton aria-label="Open navigation menu" onClick={() => setOpen(true)} sx={{ color: '#094d42' }}>
                             <MenuIcon />
                         </IconButton>
                         <Drawer
@@ -234,7 +234,7 @@ export default function AppAppBar({ auth }) {
                                     <Typography sx={{ fontWeight: 700, color: '#094d42', fontSize: '1rem' }}>
                                         IAGI-GEOSEA XIX 2026
                                     </Typography>
-                                    <IconButton aria-label="Close menu" onClick={() => setOpen(false)}>
+                                    <IconButton aria-label="Close navigation menu" onClick={() => setOpen(false)}>
                                         <CloseRoundedIcon />
                                     </IconButton>
                                 </Box>

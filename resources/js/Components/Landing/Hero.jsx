@@ -320,6 +320,7 @@ export default function Hero({ settings, auth }) {
                 {/* Title — word-by-word staggered reveal */}
                 <Typography
                     variant="h1"
+                    aria-label={`${titleLine1} ${titleLine2}`}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',

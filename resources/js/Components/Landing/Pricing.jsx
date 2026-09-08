@@ -94,7 +94,7 @@ export default function Pricing({ settings }) {
                                     </Box>
 
                                     {/* Title */}
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
+                                    <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
                                         {resource.title}
                                     </Typography>
 
@@ -110,6 +110,7 @@ export default function Pricing({ settings }) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         download
+                                        aria-label={`Download ${resource.title}`}
                                         variant="outlined"
                                         size="small"
                                         startIcon={<DownloadIcon />}

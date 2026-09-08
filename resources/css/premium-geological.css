@@ -1,8 +1,5 @@
 /* Premium Geological Strata Landing Page Styles */
 
-/* Import fonts if not already loaded */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
-
 /* CSS Variables for Premium Geological Theme */
 :root {
   --emerald-primary: #064e3b;

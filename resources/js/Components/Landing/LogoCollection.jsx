@@ -188,6 +188,7 @@ export default function LogoCollection({ settings }) {
 
                             {/* Member Name */}
                             <Typography
+                                component="h3"
                                 variant="subtitle2"
                                 sx={{
                                     fontWeight: 700,

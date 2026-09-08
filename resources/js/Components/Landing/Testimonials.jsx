@@ -171,6 +171,7 @@ export default function Testimonials({ settings }) {
                                         />
                                         <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, p: 3, zIndex: 2 }}>
                                             <Typography
+                                                component="h3"
                                                 variant="h6"
                                                 sx={{
                                                     color: 'white',
