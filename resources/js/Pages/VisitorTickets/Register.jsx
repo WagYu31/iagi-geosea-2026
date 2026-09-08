@@ -1518,7 +1518,7 @@ export default function Register({
                                             />
 
                                             <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.7rem', display: 'block' }}>
-                                                55TH PIT IAGI & GEOSEA 2026
+                                                55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.62rem', display: 'block', mb: 1.5, fontWeight: 700 }}>
                                                 ANNUAL SCIENTIFIC CONVENTION
