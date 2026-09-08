@@ -572,7 +572,7 @@ export default function Register({
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981' }} />
                         <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-                            Official Registration Portal &bull; PIT IAGI & GEOSEA 2026
+                            Official Registration Portal &bull; 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                         </Typography>
                     </Box>
                 </Box>
