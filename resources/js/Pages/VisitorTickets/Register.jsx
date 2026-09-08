@@ -528,7 +528,7 @@ export default function Register({
                 backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
             }}
         >
-            <Head title="Registration & Ticket Portal - 55th PIT IAGI & GEOSEA 2026" />
+            <Head title="Registration & Ticket Portal - 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026" />
 
             <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
                 {/* Top Nav Bar */}
@@ -622,7 +622,7 @@ export default function Register({
                             mb: 2,
                         }}
                     >
-                        Select your registration category below to receive your official conference badge, digital QR ticket pass, and seminar credentials for PIT IAGI & GEOSEA 2026.
+                        Select your registration category below to receive your official conference badge, digital QR ticket pass, and seminar credentials for 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026.
                     </Typography>
 
                     {/* Venue & Date Pills */}
