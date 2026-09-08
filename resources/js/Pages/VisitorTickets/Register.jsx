@@ -1310,7 +1310,10 @@ export default function Register({
                                             {/* Bank Transfer Container */}
                                             {paymentMethod === 'foreign_bank_transfer' && (
                                                 <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 1 }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0284c7' }}>
+                                                            Bank Account
+                                                        </Typography>
                                                         <Button
                                                             size="small"
                                                             startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
