@@ -180,8 +180,8 @@ export default function Register({
             borderSelected: '#10b981',
             bgSelected: '#f0fdf4',
             lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS' },
-            description: 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
-            perks: ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
+            description: 'For anyone who visiting on site',
+            perks: ['Free Registration', 'Access Exhibition Hall only'],
         },
     ];
 
@@ -1173,7 +1173,7 @@ export default function Register({
                                                     3
                                                 </Box>
                                                 <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
-                                                    Payment Instructions & Proof Upload ({selectedCategory?.name})
+                                                    Payment Method
                                                 </Typography>
                                             </Box>
 
@@ -1310,10 +1310,7 @@ export default function Register({
                                             {/* Bank Transfer Container */}
                                             {paymentMethod === 'foreign_bank_transfer' && (
                                                 <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0284c7' }}>
-                                                            Official Bank Account Details:
-                                                        </Typography>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 1 }}>
                                                         <Button
                                                             size="small"
                                                             startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
@@ -1340,7 +1337,7 @@ export default function Register({
 
                                             {/* Proof Upload Action Zone */}
                                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 1 }}>
-                                                Upload Payment Receipt / Proof of Transfer *
+                                                 Upload Payment Receipt *
                                             </Typography>
 
                                             <input

@@ -159,8 +159,8 @@ class VisitorTicketController extends Controller
                 'tag' => 'FREE PASS',
                 'tagColor' => '#059669',
                 'tagBg' => '#d1fae5',
-                'description' => 'Access to general geological exhibition arena & scientific poster exhibition sessions.',
-                'perks' => ['General Exhibition', 'Poster Sessions', 'Instant E-Ticket & Badge'],
+                'description' => 'For anyone who visiting on site',
+                'perks' => ['Free Registration', 'Access Exhibition Hall only'],
             ],
         ];
 
