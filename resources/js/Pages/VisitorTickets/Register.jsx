@@ -1345,13 +1345,13 @@ export default function Register({
                                                                 <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                                                                     <Box>
                                                                         <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'block' }}>
-                                                                            Total Transfer (Termasuk Kode Unik):
+                                                                            Total Transfer (Includes Unique Code):
                                                                         </Typography>
                                                                         <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif' }}>
                                                                             IDR {totalEstimate.toLocaleString('id-ID')}
                                                                         </Typography>
                                                                     </Box>
-                                                                    <Chip label={`Kode Unik: ${uniqueCode}`} size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontSize: '0.74rem' }} />
+                                                                    <Chip label={`Unique Code: ${uniqueCode}`} size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontSize: '0.74rem' }} />
                                                                 </Box>
                                                             )}
                                                         </Box>
@@ -1419,7 +1419,7 @@ export default function Register({
                                                         '&:hover': { bgcolor: '#f8fafc', borderColor: '#94a3b8' },
                                                     }}
                                                 >
-                                                    📁 Browse Gallery / File
+                                                    Browse Gallery / File
                                                 </Button>
                                             </Box>
 

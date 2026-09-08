@@ -309,7 +309,7 @@ export default function Receipt({
                                     {payment.unique_code > 0 && (
                                         <TableRow sx={{ bgcolor: '#fafafa' }}>
                                             <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.8rem' }}>
-                                                Kode Unik Pembayaran:
+                                                Payment Unique Code:
                                             </TableCell>
                                             <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.8rem' }}>
                                                 Rp {Number(payment.unique_code).toLocaleString('id-ID')}
@@ -318,7 +318,7 @@ export default function Receipt({
                                     )}
                                     <TableRow sx={{ bgcolor: '#ecfdf5' }}>
                                         <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.95rem', py: 1.5 }}>
-                                            TOTAL PEMBAYARAN:
+                                            TOTAL PAYMENT:
                                         </TableCell>
                                         <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '1.05rem', py: 1.5 }}>
                                             Rp {totalAmount.toLocaleString('id-ID')}
