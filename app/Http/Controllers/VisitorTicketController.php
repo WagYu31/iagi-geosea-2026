@@ -59,6 +59,8 @@ class VisitorTicketController extends Controller
         $bankTransferInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankTransferInfo);
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
+        $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
+        $qrisImage = $settings['visitor_qris_image'] ?? null;
 
         // Standard regular price mapping
         $priceIagiPro = floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000)));
