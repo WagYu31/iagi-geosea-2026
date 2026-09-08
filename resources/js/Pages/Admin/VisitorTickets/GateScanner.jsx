@@ -43,7 +43,74 @@ import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import DeskIcon from '@mui/icons-material/DesktopWindows';
 
 const CATEGORY_MAP = {
-    // Invited Categories
+    // 1. Participant
+    iagi_member_professional: {
+        label: 'PARTICIPANT: PROFESSIONAL (MEMBER)',
+        shortLabel: 'PRO (MEMBER)',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+    non_iagi_member_professional: {
+        label: 'PARTICIPANT: PROFESSIONAL (NON-MEMBER)',
+        shortLabel: 'PRO (NON-MEMBER)',
+        bg: '#e0f2fe',
+        color: '#0369a1',
+        border: '#7dd3fc',
+    },
+    iagi_member_expatriate: {
+        label: 'PARTICIPANT: EXPATRIATE (MEMBER)',
+        shortLabel: 'EXPAT (MEMBER)',
+        bg: '#ede9fe',
+        color: '#6d28d9',
+        border: '#c4b5fd',
+    },
+    non_iagi_member_expatriate: {
+        label: 'PARTICIPANT: EXPATRIATE (NON-MEMBER)',
+        shortLabel: 'EXPAT (NON-MEMBER)',
+        bg: '#ede9fe',
+        color: '#5b21b6',
+        border: '#c4b5fd',
+    },
+    student_undergraduate: {
+        label: 'PARTICIPANT: STUDENT UNDERGRADUATE',
+        shortLabel: 'STUDENT',
+        bg: '#e0e7ff',
+        color: '#3730a3',
+        border: '#a5b4fc',
+    },
+    student_postgraduate: {
+        label: 'PARTICIPANT: STUDENT POSTGRADUATE',
+        shortLabel: 'POSTGRAD',
+        bg: '#e0e7ff',
+        color: '#4f46e5',
+        border: '#a5b4fc',
+    },
+    general_ticket: {
+        label: 'PARTICIPANT: GENERAL',
+        shortLabel: 'PARTICIPANT',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+
+    // 2. Visitor
+    non_exclusive: {
+        label: 'VISITOR PASS',
+        shortLabel: 'VISITOR',
+        bg: '#ecfdf5',
+        color: '#047857',
+        border: '#a7f3d0',
+    },
+    exclusive: {
+        label: 'VISITOR EXCLUSIVE (VIP)',
+        shortLabel: 'VISITOR VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+
+    // 3. VIP
     vip: {
         label: 'VIP',
         shortLabel: 'VIP',
@@ -51,6 +118,8 @@ const CATEGORY_MAP = {
         color: '#92400e',
         border: '#fde68a',
     },
+
+    // 4. Speaker
     speaker: {
         label: 'SPEAKER',
         shortLabel: 'SPEAKER',
@@ -58,6 +127,8 @@ const CATEGORY_MAP = {
         color: '#9d174d',
         border: '#fbcfe8',
     },
+
+    // 5. Panelist
     panelist: {
         label: 'PANELIST',
         shortLabel: 'PANELIST',
@@ -65,6 +136,8 @@ const CATEGORY_MAP = {
         color: '#5b21b6',
         border: '#ddd6fe',
     },
+
+    // 6. Moderator
     moderator: {
         label: 'MODERATOR',
         shortLabel: 'MODERATOR',
@@ -72,13 +145,17 @@ const CATEGORY_MAP = {
         color: '#155e75',
         border: '#a5f3fc',
     },
+
+    // 7. Exhibition
     exhibition: {
         label: 'EXHIBITION',
-        shortLabel: 'EXHIBITOR',
+        shortLabel: 'EXHIBITION',
         bg: '#fff7ed',
         color: '#9a3412',
         border: '#fed7aa',
     },
+
+    // 8. Committee
     committee: {
         label: 'COMMITTEE',
         shortLabel: 'COMMITTEE',
@@ -86,76 +163,14 @@ const CATEGORY_MAP = {
         color: '#1e40af',
         border: '#bfdbfe',
     },
+
+    // 9. Student Volunteer
     student_volunteer: {
         label: 'STUDENT VOLUNTEER',
-        shortLabel: 'VOLUNTEER',
+        shortLabel: 'STUDENT VOLUNTEER',
         bg: '#f0fdf4',
         color: '#166534',
         border: '#bbf7d0',
-    },
-    // Conference / Standard Categories
-    iagi_member_professional: {
-        label: 'IAGI MEMBER - PROFESSIONAL',
-        shortLabel: 'IAGI PRO',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
-    non_iagi_member_professional: {
-        label: 'NON IAGI MEMBER - PROFESSIONAL',
-        shortLabel: 'NON-IAGI PRO',
-        bg: '#e0f2fe',
-        color: '#0369a1',
-        border: '#7dd3fc',
-    },
-    iagi_member_expatriate: {
-        label: 'IAGI MEMBER - EXPATRIATE',
-        shortLabel: 'IAGI EXPAT',
-        bg: '#ede9fe',
-        color: '#6d28d9',
-        border: '#c4b5fd',
-    },
-    non_iagi_member_expatriate: {
-        label: 'NON IAGI MEMBER - EXPATRIATE',
-        shortLabel: 'NON-IAGI EXPAT',
-        bg: '#ede9fe',
-        color: '#5b21b6',
-        border: '#c4b5fd',
-    },
-    student_undergraduate: {
-        label: 'STUDENT UNDERGRADUATE',
-        shortLabel: 'STUDENT',
-        bg: '#e0e7ff',
-        color: '#3730a3',
-        border: '#a5b4fc',
-    },
-    student_postgraduate: {
-        label: 'STUDENT POSTGRADUATE',
-        shortLabel: 'POSTGRAD',
-        bg: '#e0e7ff',
-        color: '#4f46e5',
-        border: '#a5b4fc',
-    },
-    general_ticket: {
-        label: 'GENERAL TICKET',
-        shortLabel: 'GENERAL',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
-    exclusive: {
-        label: 'EXCLUSIVE VIP',
-        shortLabel: 'EXCLUSIVE VIP',
-        bg: '#fef3c7',
-        color: '#92400e',
-        border: '#fde68a',
-    },
-    non_exclusive: {
-        label: 'VISITOR PASS',
-        shortLabel: 'VISITOR PASS',
-        bg: '#ecfdf5',
-        color: '#047857',
-        border: '#a7f3d0',
     },
 };
 

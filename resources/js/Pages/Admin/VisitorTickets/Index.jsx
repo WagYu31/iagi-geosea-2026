@@ -23,6 +23,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    ListSubheader,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -66,7 +67,74 @@ import SendIcon from '@mui/icons-material/Send';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 const CATEGORY_META = {
-    // Invited Categories
+    // 1. Participant
+    iagi_member_professional: {
+        label: 'Participant - Professional (Member)',
+        shortLabel: 'PRO (MEMBER)',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+    non_iagi_member_professional: {
+        label: 'Participant - Professional (Non-Member)',
+        shortLabel: 'PRO (NON-MEMBER)',
+        bg: '#e0f2fe',
+        color: '#0369a1',
+        border: '#7dd3fc',
+    },
+    iagi_member_expatriate: {
+        label: 'Participant - Expatriate (Member)',
+        shortLabel: 'EXPAT (MEMBER)',
+        bg: '#ede9fe',
+        color: '#6d28d9',
+        border: '#c4b5fd',
+    },
+    non_iagi_member_expatriate: {
+        label: 'Participant - Expatriate (Non-Member)',
+        shortLabel: 'EXPAT (NON-MEMBER)',
+        bg: '#ede9fe',
+        color: '#5b21b6',
+        border: '#c4b5fd',
+    },
+    student_undergraduate: {
+        label: 'Participant - Student Undergraduate',
+        shortLabel: 'STUDENT',
+        bg: '#e0e7ff',
+        color: '#3730a3',
+        border: '#a5b4fc',
+    },
+    student_postgraduate: {
+        label: 'Participant - Student Postgraduate',
+        shortLabel: 'POSTGRAD',
+        bg: '#e0e7ff',
+        color: '#4f46e5',
+        border: '#a5b4fc',
+    },
+    general_ticket: {
+        label: 'Participant - General',
+        shortLabel: 'PARTICIPANT',
+        bg: '#dcfce7',
+        color: '#15803d',
+        border: '#86efac',
+    },
+
+    // 2. Visitor
+    non_exclusive: {
+        label: 'Visitor Pass (Free)',
+        shortLabel: 'VISITOR',
+        bg: '#ecfdf5',
+        color: '#047857',
+        border: '#a7f3d0',
+    },
+    exclusive: {
+        label: 'Visitor Exclusive (VIP)',
+        shortLabel: 'VISITOR VIP',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+
+    // 3. VIP
     vip: {
         label: 'VIP',
         shortLabel: 'VIP',
@@ -74,6 +142,8 @@ const CATEGORY_META = {
         color: '#92400e',
         border: '#fde68a',
     },
+
+    // 4. Speaker
     speaker: {
         label: 'Speaker',
         shortLabel: 'SPEAKER',
@@ -81,6 +151,8 @@ const CATEGORY_META = {
         color: '#9d174d',
         border: '#fbcfe8',
     },
+
+    // 5. Panelist
     panelist: {
         label: 'Panelist',
         shortLabel: 'PANELIST',
@@ -88,6 +160,8 @@ const CATEGORY_META = {
         color: '#5b21b6',
         border: '#ddd6fe',
     },
+
+    // 6. Moderator
     moderator: {
         label: 'Moderator',
         shortLabel: 'MODERATOR',
@@ -95,13 +169,17 @@ const CATEGORY_META = {
         color: '#155e75',
         border: '#a5f3fc',
     },
+
+    // 7. Exhibition
     exhibition: {
         label: 'Exhibition',
-        shortLabel: 'EXHIBITOR',
+        shortLabel: 'EXHIBITION',
         bg: '#fff7ed',
         color: '#9a3412',
         border: '#fed7aa',
     },
+
+    // 8. Committee
     committee: {
         label: 'Committee',
         shortLabel: 'COMMITTEE',
@@ -109,76 +187,14 @@ const CATEGORY_META = {
         color: '#1e40af',
         border: '#bfdbfe',
     },
+
+    // 9. Student Volunteer
     student_volunteer: {
         label: 'Student Volunteer',
-        shortLabel: 'VOLUNTEER',
+        shortLabel: 'STUDENT VOLUNTEER',
         bg: '#f0fdf4',
         color: '#166534',
         border: '#bbf7d0',
-    },
-    // Conference / Standard Categories
-    iagi_member_professional: {
-        label: 'IAGI Member - Professional',
-        shortLabel: 'IAGI PRO',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
-    non_iagi_member_professional: {
-        label: 'Non IAGI Member - Professional',
-        shortLabel: 'NON-IAGI PRO',
-        bg: '#e0f2fe',
-        color: '#0369a1',
-        border: '#7dd3fc',
-    },
-    iagi_member_expatriate: {
-        label: 'IAGI Member - Expatriate',
-        shortLabel: 'IAGI EXPAT',
-        bg: '#ede9fe',
-        color: '#6d28d9',
-        border: '#c4b5fd',
-    },
-    non_iagi_member_expatriate: {
-        label: 'Non IAGI Member - Expatriate',
-        shortLabel: 'NON-IAGI EXPAT',
-        bg: '#ede9fe',
-        color: '#5b21b6',
-        border: '#c4b5fd',
-    },
-    student_undergraduate: {
-        label: 'Student Undergraduate',
-        shortLabel: 'STUDENT',
-        bg: '#e0e7ff',
-        color: '#3730a3',
-        border: '#a5b4fc',
-    },
-    student_postgraduate: {
-        label: 'Student Postgraduate',
-        shortLabel: 'POSTGRAD',
-        bg: '#e0e7ff',
-        color: '#4f46e5',
-        border: '#a5b4fc',
-    },
-    general_ticket: {
-        label: 'General Ticket / Participant',
-        shortLabel: 'PARTICIPANT',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
-    exclusive: {
-        label: 'Visitor Exclusive (VIP)',
-        shortLabel: 'EXCLUSIVE VIP',
-        bg: '#fef3c7',
-        color: '#92400e',
-        border: '#fde68a',
-    },
-    non_exclusive: {
-        label: 'Visitor Pass',
-        shortLabel: 'VISITOR PASS',
-        bg: '#ecfdf5',
-        color: '#047857',
-        border: '#a7f3d0',
     },
 };
 
@@ -775,23 +791,35 @@ export default function VisitorTicketsIndex({
                                     onChange={(e) => handleTypeFilterChange(e.target.value)}
                                     sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                                 >
-                                    <MenuItem value="all">All Categories</MenuItem>
-                                    {/* Invited Categories */}
-                                    <MenuItem value="vip">⭐ VIP</MenuItem>
-                                    <MenuItem value="speaker">🎤 Speaker</MenuItem>
-                                    <MenuItem value="panelist">👥 Panelist</MenuItem>
-                                    <MenuItem value="moderator">🎯 Moderator</MenuItem>
-                                    <MenuItem value="exhibition">🏛️ Exhibition</MenuItem>
-                                    <MenuItem value="committee">👔 Committee</MenuItem>
-                                    <MenuItem value="student_volunteer">🤝 Student Volunteer</MenuItem>
-                                    {/* Conference Categories */}
-                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate</MenuItem>
-                                    <MenuItem value="student_undergraduate">Student Undergraduate</MenuItem>
-                                    <MenuItem value="exclusive">⭐ Visitor Exclusive (VIP)</MenuItem>
-                                    <MenuItem value="non_exclusive">🎟️ Visitor Pass (Free)</MenuItem>
+                                    <MenuItem value="all" sx={{ fontWeight: 700 }}>All Categories</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        1. PARTICIPANT
+                                    </ListSubheader>
+                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Member)</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Non-Member)</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
+                                    <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
+                                    <MenuItem value="student_postgraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Postgraduate</MenuItem>
+                                    <MenuItem value="general_ticket" sx={{ pl: 3, fontSize: '0.82rem' }}>• General Ticket / Participant</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        2. VISITOR
+                                    </ListSubheader>
+                                    <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
+                                    <MenuItem value="exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>⭐ Visitor Exclusive (VIP)</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        ROLES & INVITATIONS (3 - 9)
+                                    </ListSubheader>
+                                    <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
+                                    <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Speaker</MenuItem>
+                                    <MenuItem value="panelist" sx={{ fontSize: '0.82rem' }}>5. 👥 Panelist</MenuItem>
+                                    <MenuItem value="moderator" sx={{ fontSize: '0.82rem' }}>6. 🎯 Moderator</MenuItem>
+                                    <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
+                                    <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
+                                    <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -1577,24 +1605,33 @@ export default function VisitorTicketsIndex({
                                     label="Visitor Category"
                                     onChange={(e) => setEditData('visitor_type', e.target.value)}
                                 >
-                                    {/* Invited Categories */}
-                                    <MenuItem value="vip">⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">🎤 Speaker (Invited / Free)</MenuItem>
-                                    <MenuItem value="panelist">👥 Panelist (Invited / Free)</MenuItem>
-                                    <MenuItem value="moderator">🎯 Moderator (Invited / Free)</MenuItem>
-                                    <MenuItem value="exhibition">🏛️ Exhibition (Invited / Free)</MenuItem>
-                                    <MenuItem value="committee">👔 Committee (Invited / Free)</MenuItem>
-                                    <MenuItem value="student_volunteer">🤝 Student Volunteer (Invited / Free)</MenuItem>
-                                    {/* Conference / Standard Categories */}
-                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional (Rp 4.000.000)</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate (Rp 6.000.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate (Rp 7.000.000)</MenuItem>
-                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 1.000.000)</MenuItem>
-                                    <MenuItem value="student_postgraduate">Student Postgraduate</MenuItem>
-                                    <MenuItem value="general_ticket">General Ticket / Participant</MenuItem>
-                                    <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
-                                    <MenuItem value="non_exclusive">Visitor Pass (Free / Rp 0)</MenuItem>
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        1. PARTICIPANT
+                                    </ListSubheader>
+                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member)</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member)</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
+                                    <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
+                                    <MenuItem value="student_postgraduate" sx={{ pl: 3 }}>• Student Postgraduate</MenuItem>
+                                    <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        2. VISITOR
+                                    </ListSubheader>
+                                    <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
+                                    <MenuItem value="exclusive" sx={{ pl: 3 }}>⭐ Visitor Exclusive (VIP)</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        ROLES & INVITATIONS (3 - 9)
+                                    </ListSubheader>
+                                    <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">4. 🎤 Speaker (Invited / Free)</MenuItem>
+                                    <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
+                                    <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
+                                    <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
+                                    <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
+                                    <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth size="small">
@@ -1641,22 +1678,33 @@ export default function VisitorTicketsIndex({
                                     label="Visitor Category"
                                     onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
                                 >
-                                    {/* Invited Categories */}
-                                    <MenuItem value="vip">⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">🎤 Speaker (Invited / Free)</MenuItem>
-                                    <MenuItem value="panelist">👥 Panelist (Invited / Free)</MenuItem>
-                                    <MenuItem value="moderator">🎯 Moderator (Invited / Free)</MenuItem>
-                                    <MenuItem value="exhibition">🏛️ Exhibition (Invited / Free)</MenuItem>
-                                    <MenuItem value="committee">👔 Committee (Invited / Free)</MenuItem>
-                                    <MenuItem value="student_volunteer">🤝 Student Volunteer (Invited / Free)</MenuItem>
-                                    {/* Conference / Paid Categories */}
-                                    <MenuItem value="iagi_member_professional">IAGI Member - Professional (Rp 3.000.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional">Non IAGI Member - Professional (Rp 4.000.000)</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate">IAGI Member - Expatriate (Rp 6.000.000)</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate">Non IAGI Member - Expatriate (Rp 7.000.000)</MenuItem>
-                                    <MenuItem value="student_undergraduate">Student Undergraduate (Rp 1.000.000)</MenuItem>
-                                    <MenuItem value="exclusive">Visitor Exclusive VIP (Rp 500.000)</MenuItem>
-                                    <MenuItem value="non_exclusive">Visitor Pass (Free / Rp 0)</MenuItem>
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        1. PARTICIPANT
+                                    </ListSubheader>
+                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member) - Rp 3.000.000</MenuItem>
+                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member) - Rp 4.000.000</MenuItem>
+                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
+                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
+                                    <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
+                                    <MenuItem value="student_postgraduate" sx={{ pl: 3 }}>• Student Postgraduate</MenuItem>
+                                    <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        2. VISITOR
+                                    </ListSubheader>
+                                    <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free / Rp 0)</MenuItem>
+                                    <MenuItem value="exclusive" sx={{ pl: 3 }}>⭐ Visitor Exclusive VIP (Rp 500.000)</MenuItem>
+
+                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                        ROLES & INVITATIONS (3 - 9)
+                                    </ListSubheader>
+                                    <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">4. 🎤 Speaker (Invited / Free)</MenuItem>
+                                    <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
+                                    <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
+                                    <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
+                                    <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
+                                    <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
 

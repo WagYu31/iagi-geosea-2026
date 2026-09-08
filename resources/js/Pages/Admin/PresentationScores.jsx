@@ -348,7 +348,7 @@ export default function PresentationScores({ submissions }) {
             <Head title="Presentation Scores — Admin" />
 
             <Box sx={{ p: { xs: 2, sm: 3.5 }, minHeight: '100vh', bgcolor: isDark ? c.surfaceBg : '#f1f5f9', fontFamily: fontDoc }}>
-                
+
                 {/* ═══ Header Section ═══ */}
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, mb: 3.5, gap: 2 }}>
                     <Box>

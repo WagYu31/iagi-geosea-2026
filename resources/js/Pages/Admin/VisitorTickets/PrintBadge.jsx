@@ -14,29 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 // 9 Official Lanyard Badge SVG Designs
 export const BADGE_TEMPLATES = {
-    // 1. VIP (Invited / Free) & Exclusive VIP
-    vip: '/images/badges/VIP.svg',
-    exclusive: '/images/badges/VIP.svg',
-
-    // 2. Speaker (Invited / Free)
-    speaker: '/images/badges/Speaker.svg',
-
-    // 3. Panelist (Invited / Free)
-    panelist: '/images/badges/Panelist.svg',
-
-    // 4. Moderator (Invited / Free)
-    moderator: '/images/badges/Moderator.svg',
-
-    // 5. Exhibition (Invited / Free)
-    exhibition: '/images/badges/Exhibitor.svg',
-
-    // 6. Committee (Invited / Free)
-    committee: '/images/badges/Committee.svg',
-
-    // 7. Student Volunteer (Invited / Free)
-    student_volunteer: '/images/badges/Student_Volunteer.svg',
-
-    // 8. Conference & Standard Categories (Participant)
+    // 1. Participant
     iagi_member_professional: '/images/badges/Participant.svg',
     non_iagi_member_professional: '/images/badges/Participant.svg',
     iagi_member_expatriate: '/images/badges/Participant.svg',
@@ -45,27 +23,66 @@ export const BADGE_TEMPLATES = {
     student_postgraduate: '/images/badges/Participant.svg',
     general_ticket: '/images/badges/Participant.svg',
 
-    // 9. Visitor Pass
+    // 2. Visitor
     non_exclusive: '/images/badges/Visitor.svg',
+    exclusive: '/images/badges/VIP.svg',
+
+    // 3. VIP
+    vip: '/images/badges/VIP.svg',
+
+    // 4. Speaker
+    speaker: '/images/badges/Speaker.svg',
+
+    // 5. Panelist
+    panelist: '/images/badges/Panelist.svg',
+
+    // 6. Moderator
+    moderator: '/images/badges/Moderator.svg',
+
+    // 7. Exhibition
+    exhibition: '/images/badges/Exhibitor.svg',
+
+    // 8. Committee
+    committee: '/images/badges/Committee.svg',
+
+    // 9. Student Volunteer
+    student_volunteer: '/images/badges/Student_Volunteer.svg',
 };
 
 const CATEGORY_MAP = {
-    vip: { label: 'VIP', short: 'VIP' },
-    speaker: { label: 'SPEAKER', short: 'SPEAKER' },
-    panelist: { label: 'PANELIST', short: 'PANELIST' },
-    moderator: { label: 'MODERATOR', short: 'MODERATOR' },
-    exhibition: { label: 'EXHIBITOR', short: 'EXHIBITOR' },
-    committee: { label: 'COMMITTEE', short: 'COMMITTEE' },
-    student_volunteer: { label: 'STUDENT VOLUNTEER', short: 'VOLUNTEER' },
-    iagi_member_professional: { label: 'IAGI MEMBER - PROFESSIONAL', short: 'IAGI PRO' },
-    non_iagi_member_professional: { label: 'NON IAGI MEMBER - PROFESSIONAL', short: 'NON-IAGI PRO' },
-    iagi_member_expatriate: { label: 'IAGI MEMBER - EXPATRIATE', short: 'IAGI EXPAT' },
-    non_iagi_member_expatriate: { label: 'NON IAGI MEMBER - EXPATRIATE', short: 'NON-IAGI EXPAT' },
-    student_undergraduate: { label: 'STUDENT UNDERGRADUATE', short: 'STUDENT' },
-    student_postgraduate: { label: 'STUDENT POSTGRADUATE', short: 'POSTGRAD' },
-    general_ticket: { label: 'PARTICIPANT', short: 'PARTICIPANT' },
-    exclusive: { label: 'VIP PASS', short: 'VIP' },
+    // 1. Participant
+    iagi_member_professional: { label: 'PARTICIPANT: PROFESSIONAL (MEMBER)', short: 'PRO MEMBER' },
+    non_iagi_member_professional: { label: 'PARTICIPANT: PROFESSIONAL (NON-MEMBER)', short: 'PRO NON-MEMBER' },
+    iagi_member_expatriate: { label: 'PARTICIPANT: EXPATRIATE (MEMBER)', short: 'EXPAT MEMBER' },
+    non_iagi_member_expatriate: { label: 'PARTICIPANT: EXPATRIATE (NON-MEMBER)', short: 'EXPAT NON-MEMBER' },
+    student_undergraduate: { label: 'PARTICIPANT: STUDENT UNDERGRADUATE', short: 'STUDENT' },
+    student_postgraduate: { label: 'PARTICIPANT: STUDENT POSTGRADUATE', short: 'POSTGRAD' },
+    general_ticket: { label: 'PARTICIPANT: GENERAL', short: 'PARTICIPANT' },
+
+    // 2. Visitor
     non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },
+    exclusive: { label: 'VISITOR EXCLUSIVE (VIP)', short: 'VISITOR VIP' },
+
+    // 3. VIP
+    vip: { label: 'VIP', short: 'VIP' },
+
+    // 4. Speaker
+    speaker: { label: 'SPEAKER', short: 'SPEAKER' },
+
+    // 5. Panelist
+    panelist: { label: 'PANELIST', short: 'PANELIST' },
+
+    // 6. Moderator
+    moderator: { label: 'MODERATOR', short: 'MODERATOR' },
+
+    // 7. Exhibition
+    exhibition: { label: 'EXHIBITION', short: 'EXHIBITION' },
+
+    // 8. Committee
+    committee: { label: 'COMMITTEE', short: 'COMMITTEE' },
+
+    // 9. Student Volunteer
+    student_volunteer: { label: 'STUDENT VOLUNTEER', short: 'STUDENT VOLUNTEER' },
 };
 
 export default function PrintBadge({
