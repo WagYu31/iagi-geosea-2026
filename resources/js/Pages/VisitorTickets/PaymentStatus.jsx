@@ -582,50 +582,80 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                 <Paper
                     elevation={0}
                     sx={{
-                        p: 2,
-                        borderRadius: '14px',
+                        p: 2.2,
+                        borderRadius: '16px',
                         bgcolor: '#ffffff',
                         border: '1px solid #e2e8f0',
                         display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
+                        flexDirection: { xs: 'column', md: 'row' },
                         justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 1.5,
+                        alignItems: { xs: 'flex-start', md: 'center' },
+                        gap: 2,
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <ShieldOutlinedIcon sx={{ color: '#094d42', fontSize: 20 }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                        <ShieldOutlinedIcon sx={{ color: '#094d42', fontSize: 22 }} />
                         <Box>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block' }}>
-                                Need Assistance with Payment?
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', fontSize: '0.82rem' }}>
+                                Need Assistance with Payment / Registration?
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>
-                                Contact PIT IAGI & GEOSEA 2026 Conference Secretariat
+                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem' }}>
+                                Contact PIT IAGI & GEOSEA 2026 Committee via WhatsApp
                             </Typography>
                         </Box>
                     </Box>
 
-                    <Button
-                        component="a"
-                        href={`https://wa.me/62859207771789?text=Hello%20IAGI%20Committee,%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
-                        size="small"
-                        sx={{
-                            bgcolor: '#f0fdf4',
-                            border: '1px solid #bbf7d0',
-                            color: '#15803d',
-                            fontWeight: 800,
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            fontSize: '0.78rem',
-                            px: 1.8,
-                            '&:hover': { bgcolor: '#dcfce7' },
-                        }}
-                    >
-                        WhatsApp Committee
-                    </Button>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.2} sx={{ width: { xs: '100%', md: 'auto' } }}>
+                        {/* Registrasi - Adeline */}
+                        <Button
+                            component="a"
+                            href={`https://wa.me/62859207771789?text=Hello%20Adeline%20(Registration),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 18 }} />}
+                            size="small"
+                            sx={{
+                                bgcolor: '#f0fdf4',
+                                border: '1px solid #bbf7d0',
+                                color: '#15803d',
+                                fontWeight: 800,
+                                borderRadius: '8px',
+                                textTransform: 'none',
+                                fontSize: '0.78rem',
+                                px: 1.5,
+                                py: 0.6,
+                                justifyContent: 'center',
+                                '&:hover': { bgcolor: '#dcfce7', borderColor: '#86efac' },
+                            }}
+                        >
+                            Registration (Adeline)
+                        </Button>
+
+                        {/* Secretariat - Tiyas */}
+                        <Button
+                            component="a"
+                            href={`https://wa.me/6281212200782?text=Hello%20Tiyas%20(Secretariat),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 18 }} />}
+                            size="small"
+                            sx={{
+                                bgcolor: '#f0fdf4',
+                                border: '1px solid #bbf7d0',
+                                color: '#15803d',
+                                fontWeight: 800,
+                                borderRadius: '8px',
+                                textTransform: 'none',
+                                fontSize: '0.78rem',
+                                px: 1.5,
+                                py: 0.6,
+                                justifyContent: 'center',
+                                '&:hover': { bgcolor: '#dcfce7', borderColor: '#86efac' },
+                            }}
+                        >
+                            Secretariat (Tiyas)
+                        </Button>
+                    </Stack>
                 </Paper>
             </Container>
         </Box>
