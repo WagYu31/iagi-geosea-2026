@@ -555,7 +555,7 @@ export default function VisitorTicketsIndex({
 
                         <Button
                             component={Link}
-                            href={route('admin.visitorTickets.gateScanner')}
+                            href={route('admin.gateScanner')}
                             variant="contained"
                             startIcon={<QrCodeScannerIcon />}
                             sx={{
@@ -584,9 +584,10 @@ export default function VisitorTicketsIndex({
                         </Button>
 
                         <Button
+                            component="a"
+                            href={route('admin.visitorTickets.export')}
                             variant="outlined"
                             startIcon={<DownloadIcon />}
-                            onClick={handleExportCsv}
                             sx={{
                                 color: '#334155',
                                 borderColor: '#cbd5e1',
