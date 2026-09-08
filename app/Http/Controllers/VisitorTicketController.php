@@ -95,8 +95,12 @@ class VisitorTicketController extends Controller
                 'tag' => 'PROFESSIONAL',
                 'tagColor' => '#0284c7',
                 'tagBg' => '#e0f2fe',
-                'description' => 'Full access to conference sessions, exhibition arena, seminar kit, official lanyard & lunches.',
-                'perks' => ['Full Conference Access', 'Seminar Kit & Lanyard', 'Exhibition & Lunches'],
+                'description' => 'For Professional Non - IAGI Member',
+                'perks' => [
+                    'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
+                    'Seminar Kit',
+                    'Lunch and Snack',
+                ],
             ],
             [
                 'id' => 'iagi_member_expatriate',
