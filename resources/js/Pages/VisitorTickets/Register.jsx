@@ -1398,7 +1398,7 @@ export default function Register({
                                                         '&:hover': { bgcolor: '#0369a1' },
                                                     }}
                                                 >
-                                                    📷 Open Live Camera
+                                                    Open Camera
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
