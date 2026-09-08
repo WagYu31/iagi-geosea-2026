@@ -1348,7 +1348,7 @@ export default function Register({
                                                                 <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                                                                     <Box>
                                                                         <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'block' }}>
-                                                                            Total Amount to Transfer (Includes Unique Code):
+                                                                            Total Amount to Transfer:
                                                                         </Typography>
                                                                         <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif' }}>
                                                                             IDR {totalEstimate.toLocaleString('id-ID')}
