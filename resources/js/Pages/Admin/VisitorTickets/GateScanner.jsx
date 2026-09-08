@@ -79,13 +79,6 @@ const CATEGORY_MAP = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
-    general_ticket: {
-        label: 'PARTICIPANT: GENERAL',
-        shortLabel: 'PARTICIPANT',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
 
     // 2. Visitor
     non_exclusive: {

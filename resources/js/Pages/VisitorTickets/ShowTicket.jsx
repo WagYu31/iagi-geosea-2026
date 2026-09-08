@@ -148,16 +148,6 @@ const CATEGORY_MAP = {
         tagBg: '#e0e7ff',
         tagColor: '#3730a3',
     },
-    general_ticket: {
-        label: 'General Ticket',
-        badge: 'ADMISSION PASS',
-        gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
-        border: '#094d42',
-        shadow: 'rgba(9, 77, 66, 0.25)',
-        textColor: '#094d42',
-        tagBg: '#dcfce7',
-        tagColor: '#15803d',
-    },
     non_exclusive: {
         label: 'Visitor',
         badge: 'FREE PASS',

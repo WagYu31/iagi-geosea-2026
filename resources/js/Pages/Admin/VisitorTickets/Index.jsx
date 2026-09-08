@@ -103,13 +103,6 @@ const CATEGORY_META = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
-    general_ticket: {
-        label: 'Participant - General',
-        shortLabel: 'PARTICIPANT',
-        bg: '#dcfce7',
-        color: '#15803d',
-        border: '#86efac',
-    },
 
     // 2. Visitor
     non_exclusive: {
@@ -773,7 +766,6 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
-                                    <MenuItem value="general_ticket" sx={{ pl: 3, fontSize: '0.82rem' }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
@@ -1583,7 +1575,6 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
-                                    <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
@@ -1654,7 +1645,6 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
-                                    <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
