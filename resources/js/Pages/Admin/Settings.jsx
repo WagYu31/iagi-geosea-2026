@@ -707,9 +707,14 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 500000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
     const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
-    const defaultBankTransferInfo = "Bank Mandiri\nAccount Number: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+    const defaultBankTransferInfo = "Bank Mandiri\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
     const rawBankInfo = getSettingValue('visitor_bank_transfer_info', defaultBankTransferInfo);
-    const initialBankInfo = typeof rawBankInfo === 'string' ? rawBankInfo.replace(/No\.\s*Rek\s*:/gi, 'Account Number:') : rawBankInfo;
+    const initialBankInfo = typeof rawBankInfo === 'string'
+        ? rawBankInfo
+            .replace(/No\.\s*Rek\s*:/gi, 'Account Number:')
+            .replace(/a\.\s*n\.\s*:?/gi, 'Account Holder: ')
+            .replace(/atas\s*nama\s*:?/gi, 'Account Holder: ')
+        : rawBankInfo;
     const [bankInfo, setBankInfo] = useState(initialBankInfo);
     
     const [exclusiveTemplate, setExclusiveTemplate] = useState(getSettingValue('visitor_exclusive_lanyard_template', ''));
