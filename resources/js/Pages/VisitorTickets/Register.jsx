@@ -1702,9 +1702,7 @@ export default function Register({
                                         >
                                             {processing 
                                                 ? 'Processing Registration...' 
-                                                : isPaid 
-                                                    ? `Register & Upload Proof (IDR ${totalEstimate.toLocaleString('id-ID')})` 
-                                                    : 'Claim Free E-Ticket'
+                                                : 'Submit Registration'
                                             }
                                         </Button>
                                         <Typography variant="caption" sx={{ color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1.2, fontSize: '0.72rem', fontWeight: 600 }}>
