@@ -41,8 +41,7 @@ const CATEGORY_MAP = {
     non_iagi_member_professional: { label: 'Non IAGI Member - Professional', shortLabel: 'NON-IAGI PRO', badge: 'NON-MEMBER PRO', bg: '#e0f2fe', color: '#0369a1', border: '#7dd3fc' },
     iagi_member_expatriate: { label: 'IAGI Member - Expatriate', shortLabel: 'IAGI EXPAT', badge: 'IAGI EXPATRIATE', bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
     non_iagi_member_expatriate: { label: 'Non IAGI Member - Expatriate', shortLabel: 'NON-IAGI EXPAT', badge: 'INTERNATIONAL DELEGATE', bg: '#ede9fe', color: '#5b21b6', border: '#c4b5fd' },
-    student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT PASS', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
-    exclusive: { label: 'Visitor Exclusive (VIP)', shortLabel: 'EXCLUSIVE VIP', badge: 'VIP PASS', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
     non_exclusive: { label: 'Visitor', shortLabel: 'VISITOR', badge: 'FREE PASS', bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
 };
 

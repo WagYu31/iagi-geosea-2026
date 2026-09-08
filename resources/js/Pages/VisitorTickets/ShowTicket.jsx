@@ -140,7 +140,7 @@ const CATEGORY_MAP = {
     },
     student_undergraduate: {
         label: 'Student Undergraduate',
-        badge: 'STUDENT PASS',
+        badge: 'STUDENT',
         gradient: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
         border: '#6366f1',
         shadow: 'rgba(99, 102, 241, 0.25)',

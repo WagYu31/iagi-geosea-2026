@@ -121,14 +121,18 @@ class VisitorTicketController extends Controller
             [
                 'id' => 'student_undergraduate',
                 'name' => 'Student Undergraduate',
-                'badge' => 'STUDENT PASS',
+                'badge' => 'STUDENT',
                 'normalPrice' => $priceStudent,
                 'price' => $priceStudent,
-                'tag' => 'STUDENT PASS',
+                'tag' => 'STUDENT',
                 'tagColor' => '#4338ca',
                 'tagBg' => '#e0e7ff',
-                'description' => 'Undergraduate student pass (valid student ID required), technical sessions & certificate.',
-                'perks' => ['Student ID Required', 'Technical Sessions', 'Exhibition & E-Certificate'],
+                'description' => 'For Undergraduate Student',
+                'perks' => [
+                    'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
+                    'Seminar Kit',
+                    'Lunch and Snack',
+                ],
             ],
             [
                 'id' => 'non_exclusive',

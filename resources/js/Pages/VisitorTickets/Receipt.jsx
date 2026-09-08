@@ -37,8 +37,7 @@ const CATEGORY_MAP = {
     non_iagi_member_professional: { label: 'Non IAGI Member - Professional', badge: 'NON-MEMBER PRO' },
     iagi_member_expatriate: { label: 'IAGI Member - Expatriate', badge: 'IAGI EXPATRIATE' },
     non_iagi_member_expatriate: { label: 'Non IAGI Member - Expatriate', badge: 'INTERNATIONAL DELEGATE' },
-    student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT PASS' },
-    exclusive: { label: 'Visitor Exclusive (VIP)', badge: 'VIP PASS' },
+    student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT' },
     non_exclusive: { label: 'Visitor', badge: 'FREE PASS' },
 };
 
