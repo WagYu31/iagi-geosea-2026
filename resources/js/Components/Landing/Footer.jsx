@@ -153,6 +153,7 @@ export default function Footer({ settings, auth }) {
                                                 src={sponsor.logo}
                                                 alt="Supported by"
                                                 loading="lazy"
+                                                decoding="async"
                                                 sx={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                                             />
                                         ) : (
@@ -230,6 +231,8 @@ export default function Footer({ settings, auth }) {
                                             component="img"
                                             src={partner.poster}
                                             alt={partner.name || 'Partner'}
+                                            loading="lazy"
+                                            decoding="async"
                                             sx={{
                                                 width: '100%',
                                                 height: 'auto',
@@ -420,6 +423,7 @@ export default function Footer({ settings, auth }) {
                                 <Avatar
                                     src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png"
                                     alt="PIT IAGI-GEOSEA XIX Logo"
+                                    imgProps={{ loading: 'lazy', decoding: 'async' }}
                                     sx={{
                                         width: 52,
                                         height: 52,

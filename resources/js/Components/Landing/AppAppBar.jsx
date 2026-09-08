@@ -79,6 +79,10 @@ export default function AppAppBar({ auth }) {
                                 component="img"
                                 src="/favicon.ico"
                                 alt="Logo"
+                                width={32}
+                                height={32}
+                                decoding="async"
+                                fetchPriority="high"
                                 sx={{ width: 32, height: 32, objectFit: 'contain' }}
                             />
                             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>

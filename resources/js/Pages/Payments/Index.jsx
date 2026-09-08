@@ -537,14 +537,34 @@ export default function Index({ payments = [], submissions = [], midtrans_client
     }, []);
 
 
-    const waitForSnap = () => new Promise((resolve, reject) => {
+    const loadSnapScript = (snapUrl, clientKey) => new Promise((resolve, reject) => {
         if (window.snap) return resolve(window.snap);
-        let tries = 0;
-        const interval = setInterval(() => {
-            if (window.snap) { clearInterval(interval); resolve(window.snap); }
-            if (++tries > 50) { clearInterval(interval); reject(new Error('Midtrans Snap failed to load. Please refresh.')); }
-        }, 200);
+        const existingScript = document.getElementById('midtrans-snap-sdk');
+        if (existingScript) {
+            existingScript.onload = () => resolve(window.snap);
+            return;
+        }
+        const script = document.createElement('script');
+        script.id = 'midtrans-snap-sdk';
+        script.src = snapUrl || 'https://app.midtrans.com/snap/snap.js';
+        if (clientKey) script.setAttribute('data-client-key', clientKey);
+        script.async = true;
+        script.onload = () => resolve(window.snap);
+        script.onerror = () => reject(new Error('Failed to load Midtrans Snap SDK.'));
+        document.body.appendChild(script);
     });
+
+    const waitForSnap = async (snapUrl, clientKey) => {
+        if (window.snap) return window.snap;
+        await loadSnapScript(snapUrl, clientKey);
+        let tries = 0;
+        return new Promise((resolve, reject) => {
+            const interval = setInterval(() => {
+                if (window.snap) { clearInterval(interval); resolve(window.snap); }
+                if (++tries > 50) { clearInterval(interval); reject(new Error('Midtrans Snap failed to load. Please refresh.')); }
+            }, 100);
+        });
+    };
 
     const handleMidtransPayment = async () => {
         if (!selectedSubmission) return;
@@ -573,7 +593,7 @@ export default function Index({ payments = [], submissions = [], midtrans_client
             // Midtrans: use Snap popup
             const currentOrderId = data.order_id;
             handleCloseDialog();
-            const snap = await waitForSnap();
+            const snap = await waitForSnap(data.snap_url, data.client_key);
 
             // Helper: call backend to check & sync Midtrans status
             const syncPaymentStatus = async () => {

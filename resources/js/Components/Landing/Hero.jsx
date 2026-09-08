@@ -178,37 +178,58 @@ export default function Hero({ settings, auth }) {
                     'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(13, 122, 106, 0.15), transparent)',
             }}
         >
-            {/* Dynamic Background (Video or Image) */}
+            {/* Dynamic Background (Video on Desktop, Lightweight Poster on Mobile) */}
             {settings.hero_background?.type === 'video' ? (
-                <Box
-                    component="video"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    poster="/about-background.jpg"
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) translateZ(0)',
-                        minWidth: '100%',
-                        minHeight: '100%',
-                        width: 'auto',
-                        height: 'auto',
-                        objectFit: 'cover',
-                        zIndex: 0,
-                    }}
-                >
-                    <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
-                </Box>
+                <>
+                    <Box
+                        component="video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="none"
+                        poster="/about-background.jpg"
+                        sx={{
+                            display: { xs: 'none', md: 'block' },
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) translateZ(0)',
+                            minWidth: '100%',
+                            minHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                        }}
+                    >
+                        <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
+                    </Box>
+                    <Box
+                        component="img"
+                        src="/about-background.jpg"
+                        alt="Hero Background"
+                        fetchPriority="high"
+                        decoding="async"
+                        sx={{
+                            display: { xs: 'block', md: 'none' },
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                        }}
+                    />
+                </>
             ) : settings.hero_background?.type === 'image' ? (
                 <Box
                     component="img"
                     src={settings.hero_background?.url}
                     alt="Hero Background"
-                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     sx={{
                         position: 'absolute',
                         top: 0,
@@ -221,29 +242,49 @@ export default function Hero({ settings, auth }) {
                     }}
                 />
             ) : (
-                <Box
-                    component="video"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    poster="/about-background.jpg"
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) translateZ(0)',
-                        minWidth: '100%',
-                        minHeight: '100%',
-                        width: 'auto',
-                        height: 'auto',
-                        objectFit: 'cover',
-                        zIndex: 0,
-                    }}
-                >
-                    <source src="/hero-background1.mp4" type="video/mp4" />
-                </Box>
+                <>
+                    <Box
+                        component="video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="none"
+                        poster="/about-background.jpg"
+                        sx={{
+                            display: { xs: 'none', md: 'block' },
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) translateZ(0)',
+                            minWidth: '100%',
+                            minHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                        }}
+                    >
+                        <source src="/hero-background1.mp4" type="video/mp4" />
+                    </Box>
+                    <Box
+                        component="img"
+                        src="/about-background.jpg"
+                        alt="Hero Background"
+                        fetchPriority="high"
+                        decoding="async"
+                        sx={{
+                            display: { xs: 'block', md: 'none' },
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                        }}
+                    />
+                </>
             )}
 
             {/* Animated Gradient Overlay */}
@@ -276,15 +317,17 @@ export default function Hero({ settings, auth }) {
                 }}
             />
 
-            {/* Floating Particles */}
-            <FloatingParticle size={12} top="15%" left="10%" delay={0} duration={18} variant={1} />
-            <FloatingParticle size={8} top="25%" left="85%" delay={2} duration={22} variant={2} />
-            <FloatingParticle size={16} top="60%" left="5%" delay={1} duration={20} variant={3} />
-            <FloatingParticle size={10} top="70%" left="90%" delay={3} duration={16} variant={1} />
-            <FloatingParticle size={6} top="40%" left="20%" delay={4} duration={24} variant={2} />
-            <FloatingParticle size={14} top="50%" left="75%" delay={0.5} duration={19} variant={3} />
-            <FloatingParticle size={8} top="80%" left="40%" delay={2.5} duration={21} variant={1} />
-            <FloatingParticle size={10} top="10%" left="60%" delay={1.5} duration={17} variant={2} />
+            {/* Floating Particles (Render only on desktop to eliminate mobile CPU overhead) */}
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <FloatingParticle size={12} top="15%" left="10%" delay={0} duration={18} variant={1} />
+                <FloatingParticle size={8} top="25%" left="85%" delay={2} duration={22} variant={2} />
+                <FloatingParticle size={16} top="60%" left="5%" delay={1} duration={20} variant={3} />
+                <FloatingParticle size={10} top="70%" left="90%" delay={3} duration={16} variant={1} />
+                <FloatingParticle size={6} top="40%" left="20%" delay={4} duration={24} variant={2} />
+                <FloatingParticle size={14} top="50%" left="75%" delay={0.5} duration={19} variant={3} />
+                <FloatingParticle size={8} top="80%" left="40%" delay={2.5} duration={21} variant={1} />
+                <FloatingParticle size={10} top="10%" left="60%" delay={1.5} duration={17} variant={2} />
+            </Box>
 
             <Container
                 sx={{
@@ -318,7 +361,10 @@ export default function Hero({ settings, auth }) {
                             component="img"
                             src={settings.hero_logo.url}
                             alt="Conference Logo"
-                            loading="eager"
+                            fetchPriority="high"
+                            decoding="async"
+                            width={160}
+                            height={160}
                             sx={{
                                 width: '110%',
                                 height: '110%',
@@ -576,6 +622,9 @@ export default function Hero({ settings, auth }) {
                                     src={logo.url}
                                     alt={`Partner ${index + 1}`}
                                     loading="lazy"
+                                    decoding="async"
+                                    width={56}
+                                    height={56}
                                     sx={{
                                         width: '85%',
                                         height: '85%',

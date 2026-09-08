@@ -163,6 +163,10 @@ export default function LogoCollection({ settings }) {
                                         component="img"
                                         src={member.logo}
                                         alt={member.name}
+                                        loading="lazy"
+                                        decoding="async"
+                                        width={80}
+                                        height={80}
                                         sx={{
                                             width: '90%',
                                             height: '90%',

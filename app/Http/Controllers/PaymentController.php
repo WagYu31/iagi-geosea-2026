@@ -126,6 +126,8 @@ class PaymentController extends Controller
                 'gateway'    => 'midtrans',
                 'snap_token' => $result['snap_token'],
                 'order_id'   => $result['order_id'],
+                'snap_url'   => config('midtrans.snap_url'),
+                'client_key' => config('midtrans.client_key'),
             ]);
         } catch (\Exception $e) {
             Log::error('Midtrans Snap token creation failed: ' . $e->getMessage(), [
