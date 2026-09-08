@@ -47,7 +47,6 @@ export default function FAQ({ settings }) {
                     backgroundImage: `url(${faqBg.url})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundAttachment: 'fixed',
                 }),
             }}
         >

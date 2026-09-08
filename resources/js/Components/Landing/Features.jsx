@@ -105,9 +105,7 @@ export default function Features({ settings }) {
     return (
         <Box id="about" sx={{
             py: { xs: 8, sm: 12 },
-            background: 'linear-gradient(135deg, #e6f7f4 0%, #f0fdfa 25%, #ffffff 50%, #e6f7f4 75%, #f0fdfa 100%)',
-            backgroundSize: '400% 400%',
-            animation: `${gradientShift} 12s ease infinite`,
+            background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 50%, #f0fdfa 100%)',
         }}>
             <Container maxWidth="lg">
                 {/* Top Section: Title + Stats Row */}

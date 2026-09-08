@@ -69,18 +69,20 @@ function FloatingParticle({ size, top, left, delay, duration, variant = 1 }) {
                 animation: `${anim} ${duration}s ease-in-out ${delay}s infinite`,
                 pointerEvents: 'none',
                 zIndex: 1,
-                transform: variant === 3 ? 'rotate(45deg)' : undefined,
+                transform: variant === 3 ? 'rotate(45deg)' : 'translate3d(0,0,0)',
+                willChange: 'transform',
             }}
         />
     );
 }
 
-export default function Hero({ settings, auth }) {
+// Isolated countdown timer component to prevent re-rendering the entire Hero every 1 second
+const CountdownSection = React.memo(function CountdownSection({ targetDateStr, fadeInUpAnim }) {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
-        const targetDate = new Date(settings.countdown_target_date || '2026-01-18T00:00:00').getTime();
-        const interval = setInterval(() => {
+        const targetDate = new Date(targetDateStr || '2026-01-18T00:00:00').getTime();
+        const calculate = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
             if (distance > 0) {
@@ -91,10 +93,74 @@ export default function Hero({ settings, auth }) {
                     seconds: Math.floor((distance % (1000 * 60)) / 1000),
                 });
             }
-        }, 1000);
+        };
+        calculate();
+        const interval = setInterval(calculate, 1000);
         return () => clearInterval(interval);
-    }, [settings.countdown_target_date]);
+    }, [targetDateStr]);
 
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                gap: { xs: 2, sm: 3 },
+                mt: 5,
+                animation: `${fadeInUpAnim} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.6s both`,
+                transform: 'translateZ(0)',
+                willChange: 'transform, opacity',
+            }}
+        >
+            {[
+                { value: countdown.days, label: 'Days' },
+                { value: countdown.hours, label: 'Hours' },
+                { value: countdown.minutes, label: 'Minutes' },
+                { value: countdown.seconds, label: 'Seconds' },
+            ].map((item) => (
+                <Box
+                    key={item.label}
+                    sx={{
+                        textAlign: 'center',
+                        px: { xs: 1.5, sm: 2.5 },
+                        py: { xs: 1.5, sm: 2 },
+                        borderRadius: '16px',
+                        bgcolor: 'rgba(255, 255, 255, 0.15)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        minWidth: { xs: 60, sm: 80 },
+                        transform: 'translateZ(0)',
+                    }}
+                >
+                    <Typography
+                        sx={{
+                            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                            fontWeight: 800,
+                            color: 'white',
+                            lineHeight: 1,
+                            fontFamily: '"Inter", "Segoe UI", sans-serif',
+                        }}
+                    >
+                        {String(item.value).padStart(2, '0')}
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: 'rgba(255,255,255,0.85)',
+                            fontWeight: 600,
+                            fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {item.label}
+                    </Typography>
+                </Box>
+            ))}
+        </Box>
+    );
+});
+
+export default function Hero({ settings, auth }) {
     const heroText = settings.hero_text || {};
 
     // Split title into words for staggered animation
@@ -121,11 +187,12 @@ export default function Hero({ settings, auth }) {
                     loop
                     playsInline
                     preload="metadata"
+                    poster="/about-background.jpg"
                     sx={{
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
-                        transform: 'translate(-50%, -50%)',
+                        transform: 'translate(-50%, -50%) translateZ(0)',
                         minWidth: '100%',
                         minHeight: '100%',
                         width: 'auto',
@@ -141,6 +208,7 @@ export default function Hero({ settings, auth }) {
                     component="img"
                     src={settings.hero_background?.url}
                     alt="Hero Background"
+                    loading="eager"
                     sx={{
                         position: 'absolute',
                         top: 0,
@@ -149,6 +217,7 @@ export default function Hero({ settings, auth }) {
                         height: '100%',
                         objectFit: 'cover',
                         zIndex: 0,
+                        transform: 'translateZ(0)',
                     }}
                 />
             ) : (
@@ -159,11 +228,12 @@ export default function Hero({ settings, auth }) {
                     loop
                     playsInline
                     preload="metadata"
+                    poster="/about-background.jpg"
                     sx={{
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
-                        transform: 'translate(-50%, -50%)',
+                        transform: 'translate(-50%, -50%) translateZ(0)',
                         minWidth: '100%',
                         minHeight: '100%',
                         width: 'auto',
@@ -473,10 +543,12 @@ export default function Hero({ settings, auth }) {
                             px: { xs: 2, sm: 4 },
                             py: 1.5,
                             borderRadius: '50px',
-                            bgcolor: alpha('#ffffff', 0.1),
-                            backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(255,255,255,0.15)',
+                            bgcolor: 'rgba(255, 255, 255, 0.15)',
+                            backdropFilter: 'blur(10px)',
+                            WebkitBackdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.2)',
                             animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both`,
+                            transform: 'translateZ(0)',
                         }}
                     >
                         {settings.hero_logos_secondary.map((logo, index) => (
@@ -493,9 +565,9 @@ export default function Hero({ settings, auth }) {
                                     justifyContent: 'center',
                                     boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
                                     border: '2px solid rgba(255,255,255,0.6)',
-                                    transition: 'transform 0.3s ease',
+                                    transition: 'transform 0.25s ease',
                                     '&:hover': {
-                                        transform: 'scale(1.1)',
+                                        transform: 'scale(1.08)',
                                     },
                                 }}
                             >
@@ -503,6 +575,7 @@ export default function Hero({ settings, auth }) {
                                     component="img"
                                     src={logo.url}
                                     alt={`Partner ${index + 1}`}
+                                    loading="lazy"
                                     sx={{
                                         width: '85%',
                                         height: '85%',
@@ -514,60 +587,8 @@ export default function Hero({ settings, auth }) {
                     </Box>
                 )}
 
-                {/* Countdown — fade in */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        gap: { xs: 2, sm: 3 },
-                        mt: 5,
-                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.6s both`,
-                    }}
-                >
-                    {[
-                        { value: countdown.days, label: 'Days' },
-                        { value: countdown.hours, label: 'Hours' },
-                        { value: countdown.minutes, label: 'Minutes' },
-                        { value: countdown.seconds, label: 'Seconds' },
-                    ].map((item) => (
-                        <Box
-                            key={item.label}
-                            sx={{
-                                textAlign: 'center',
-                                px: { xs: 1.5, sm: 2.5 },
-                                py: { xs: 1.5, sm: 2 },
-                                borderRadius: '16px',
-                                bgcolor: alpha('#ffffff', 0.12),
-                                backdropFilter: 'blur(12px)',
-                                border: '1px solid rgba(255,255,255,0.15)',
-                                minWidth: { xs: 60, sm: 80 },
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                                    fontWeight: 800,
-                                    color: 'white',
-                                    lineHeight: 1,
-                                    fontFamily: '"Inter", "Segoe UI", sans-serif',
-                                }}
-                            >
-                                {String(item.value).padStart(2, '0')}
-                            </Typography>
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    color: 'rgba(255,255,255,0.75)',
-                                    fontWeight: 600,
-                                    fontSize: { xs: '0.6rem', sm: '0.75rem' },
-                                    letterSpacing: '0.1em',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                {item.label}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
+                {/* Isolated Countdown Component (does not re-render parent Hero) */}
+                <CountdownSection targetDateStr={settings.countdown_target_date} fadeInUpAnim={fadeInUp} />
             </Container>
         </Box>
     );

@@ -37,9 +37,7 @@ export default function Highlights({ settings }) {
             id="timeline"
             sx={{
                 py: { xs: 8, sm: 12 },
-                background: 'linear-gradient(135deg, #ffffff 0%, #f5fdf9 25%, #f0f7f6 50%, #ffffff 75%, #f5fdf9 100%)',
-                backgroundSize: '400% 400%',
-                animation: `${gradientShift} 16s ease infinite`,
+                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdfa 50%, #ffffff 100%)',
             }}
         >
             <Container
