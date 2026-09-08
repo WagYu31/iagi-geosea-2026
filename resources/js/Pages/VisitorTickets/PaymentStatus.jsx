@@ -112,7 +112,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeText: '#047857',
               icon: <CheckCircleIcon sx={{ fontSize: 44, color: '#10b981' }} />,
               title: 'Payment Successfully Verified! 🎉',
-              desc: 'Congratulations! Your Exclusive VIP Ticket is now active. You can view or print your E-Ticket below.',
+              desc: `Congratulations! Your ${categoryLabel} Ticket is now active. You can view or print your E-Ticket below.`,
           }
         : isRejected
         ? {

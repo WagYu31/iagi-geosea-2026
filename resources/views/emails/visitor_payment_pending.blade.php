@@ -17,8 +17,8 @@
         <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">
             55th PIT IAGI & GEOSEA XIX 2026
         </h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0 0; font-size: 13px; font-weight: 500;">
-            Visitor Exclusive VIP Registration
+        <p style="color: rgba(255,255,255,0.92); margin: 6px 0 0 0; font-size: 14px; font-weight: 600;">
+            {{ $payment->category_label }} Registration
         </p>
     </div>
     
@@ -27,10 +27,10 @@
         
         <!-- Greeting -->
         <p style="font-size: 16px; margin-top: 0; margin-bottom: 8px;">
-            Hello <strong>Registrant</strong>,
+            Hello <strong>{{ $payment->primary_registrant_name }}</strong>,
         </p>
         <p style="font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 25px;">
-            Thank you for registering as a <strong>Visitor Exclusive VIP</strong> for <strong>55th PIT IAGI & GEOSEA XIX 2026</strong>. Your payment proof has been received and is currently being verified by the conference treasury team.
+            Thank you for registering for <strong>{{ $payment->category_label }}</strong> at <strong>55th PIT IAGI & GEOSEA XIX 2026</strong>. Your payment proof has been received and is currently being verified by the conference treasury team.
         </p>
         
         <!-- Payment Details Box -->
@@ -41,6 +41,10 @@
             </div>
 
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <tr style="border-top: 1px dashed #fde68a;">
+                    <td style="padding: 8px 0; color: #78350f; font-weight: 700;">Category:</td>
+                    <td style="padding: 8px 0; color: #78350f; font-weight: 800; text-align: right;">{{ $payment->category_label }}</td>
+                </tr>
                 <tr style="border-top: 1px dashed #fde68a;">
                     <td style="padding: 8px 0; color: #78350f; font-weight: 700;">Total Tickets:</td>
                     <td style="padding: 8px 0; color: #78350f; font-weight: 800; text-align: right;">{{ $payment->total_members }} Ticket(s)</td>

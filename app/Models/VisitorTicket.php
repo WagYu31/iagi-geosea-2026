@@ -99,20 +99,25 @@ class VisitorTicket extends Model
     public function getCategoryLabelAttribute(): string
     {
         $map = [
+            // 1. Participant
+            'iagi_member_professional' => 'Professional (Member)',
+            'non_iagi_member_professional' => 'Professional (Non-Member)',
+            'iagi_member_expatriate' => 'Expatriate (Member)',
+            'non_iagi_member_expatriate' => 'Expatriate (Non-Member)',
+            'student_undergraduate' => 'Student Undergraduate',
+
+            // 2. Visitor
+            'non_exclusive' => 'Visitor Pass (Free)',
+
+            // 3-9. Roles & Invitations
             'vip' => 'VIP',
+            'exclusive' => 'VIP',
             'speaker' => 'Speaker',
             'panelist' => 'Panelist',
             'moderator' => 'Moderator',
             'exhibition' => 'Exhibition',
             'committee' => 'Committee',
             'student_volunteer' => 'Student Volunteer',
-            'iagi_member_professional' => 'IAGI Member - Professional',
-            'non_iagi_member_professional' => 'Non IAGI Member - Professional',
-            'iagi_member_expatriate' => 'IAGI Member - Expatriate',
-            'non_iagi_member_expatriate' => 'Non IAGI Member - Expatriate',
-            'student_undergraduate' => 'Student Undergraduate',
-            'exclusive' => 'Visitor Exclusive (VIP)',
-            'non_exclusive' => 'Visitor',
         ];
 
         return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));

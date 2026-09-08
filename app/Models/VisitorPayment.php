@@ -42,4 +42,19 @@ class VisitorPayment extends Model
     {
         return $this->belongsTo(User::class, 'verified_by_admin_id');
     }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        $ticket = $this->tickets()->first();
+        if ($ticket) {
+            return $ticket->category_label;
+        }
+        return 'Conference Pass';
+    }
+
+    public function getPrimaryRegistrantNameAttribute(): string
+    {
+        $ticket = $this->tickets()->first();
+        return ($ticket && !empty($ticket->visitor_name)) ? $ticket->visitor_name : 'Registrant';
+    }
 }

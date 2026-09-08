@@ -17,8 +17,8 @@
         <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">
             55th PIT IAGI & GEOSEA XIX 2026
         </h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0 0; font-size: 13px; font-weight: 500;">
-            International Geosciences Conference & Exhibition
+        <p style="color: rgba(255,255,255,0.92); margin: 6px 0 0 0; font-size: 14px; font-weight: 600;">
+            {{ $ticket->category_label }} Digital Pass
         </p>
     </div>
     
@@ -30,7 +30,7 @@
             Hello <strong>{{ $ticket->visitor_name }}</strong>,
         </p>
         <p style="font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 25px;">
-            Congratulations! Your visitor ticket registration for <strong>55th PIT IAGI & GEOSEA XIX 2026</strong> is <strong>SUCCESSFUL & ACTIVE</strong>. Below are your official Digital E-Ticket details:
+            Congratulations! Your registration for <strong>{{ $ticket->category_label }}</strong> at <strong>55th PIT IAGI & GEOSEA XIX 2026</strong> is <strong>SUCCESSFUL & ACTIVE</strong>. Below are your official Digital E-Ticket details:
         </p>
         
         <!-- 3D Ticket Box -->
@@ -45,14 +45,18 @@
             </div>
 
             <div style="margin-top: 12px;">
-                <span style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; {{ $ticket->visitor_type === 'exclusive' ? 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;' : 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;' }}">
-                    {{ $ticket->visitor_type === 'exclusive' ? '⭐ EXCLUSIVE VIP VISITOR' : '🎟️ ' . strtoupper($ticket->category_label ?? 'VISITOR') }}
+                <span style="display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">
+                    🎟️ {{ strtoupper($ticket->category_label ?? 'CONFERENCE PASS') }}
                 </span>
             </div>
         </div>
 
         <!-- Details Table -->
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 13px;">
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 10px 0; color: #64748b; font-weight: 700; width: 140px;">Category</td>
+                <td style="padding: 10px 0; color: #094d42; font-weight: 800;">{{ $ticket->category_label }}</td>
+            </tr>
             <tr style="border-bottom: 1px solid #f1f5f9;">
                 <td style="padding: 10px 0; color: #64748b; font-weight: 700; width: 140px;">Visitor Name</td>
                 <td style="padding: 10px 0; color: #0f172a; font-weight: 700;">{{ $ticket->visitor_name }}</td>

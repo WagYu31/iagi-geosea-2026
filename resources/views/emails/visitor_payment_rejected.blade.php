@@ -17,8 +17,8 @@
         <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">
             55th PIT IAGI & GEOSEA XIX 2026
         </h1>
-        <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0 0; font-size: 13px; font-weight: 500;">
-            Visitor Ticket Verification Notice
+        <p style="color: rgba(255,255,255,0.92); margin: 6px 0 0 0; font-size: 14px; font-weight: 600;">
+            {{ $payment->category_label }} Payment Notice
         </p>
     </div>
     
@@ -27,10 +27,10 @@
         
         <!-- Greeting -->
         <p style="font-size: 16px; margin-top: 0; margin-bottom: 8px;">
-            Hello <strong>Registrant</strong>,
+            Hello <strong>{{ $payment->primary_registrant_name }}</strong>,
         </p>
         <p style="font-size: 14px; line-height: 1.7; color: #475569; margin-bottom: 25px;">
-            We regret to inform you that your payment proof for transaction <strong>{{ $payment->payment_code }}</strong> could not be approved with the following remarks:
+            We regret to inform you that your payment proof for transaction <strong>{{ $payment->payment_code }}</strong> (<strong>{{ $payment->category_label }}</strong>) could not be approved with the following remarks:
         </p>
         
         <!-- Rejection Reason Box -->
