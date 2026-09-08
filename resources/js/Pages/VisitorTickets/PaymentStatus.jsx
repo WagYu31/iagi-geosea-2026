@@ -30,19 +30,24 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 const CATEGORY_MAP = {
-    vip: { label: 'VIP', shortLabel: 'VIP', badge: 'VIP GUEST', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    // Roles & Invitations
+    vip: { label: 'VIP', shortLabel: 'VIP', badge: 'VIP', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
     speaker: { label: 'Speaker', shortLabel: 'SPEAKER', badge: 'SPEAKER', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
     panelist: { label: 'Panelist', shortLabel: 'PANELIST', badge: 'PANELIST', bg: '#f5f3ff', color: '#5b21b6', border: '#ddd6fe' },
     moderator: { label: 'Moderator', shortLabel: 'MODERATOR', badge: 'MODERATOR', bg: '#ecfeff', color: '#155e75', border: '#a5f3fc' },
-    exhibition: { label: 'Exhibition', shortLabel: 'EXHIBITOR', badge: 'EXHIBITOR', bg: '#fff7ed', color: '#9a3412', border: '#fed7aa' },
+    exhibition: { label: 'Exhibition', shortLabel: 'EXHIBITION', badge: 'EXHIBITION', bg: '#fff7ed', color: '#9a3412', border: '#fed7aa' },
     committee: { label: 'Committee', shortLabel: 'COMMITTEE', badge: 'COMMITTEE', bg: '#eff6ff', color: '#1e40af', border: '#bfdbfe' },
-    student_volunteer: { label: 'Student Volunteer', shortLabel: 'VOLUNTEER', badge: 'VOLUNTEER', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
-    iagi_member_professional: { label: 'IAGI Member - Professional', shortLabel: 'IAGI PRO', badge: 'IAGI MEMBER', bg: '#dcfce7', color: '#15803d', border: '#86efac' },
-    non_iagi_member_professional: { label: 'Non IAGI Member - Professional', shortLabel: 'NON-IAGI PRO', badge: 'NON-MEMBER PRO', bg: '#e0f2fe', color: '#0369a1', border: '#7dd3fc' },
-    iagi_member_expatriate: { label: 'IAGI Member - Expatriate', shortLabel: 'IAGI EXPAT', badge: 'IAGI EXPATRIATE', bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
-    non_iagi_member_expatriate: { label: 'Non IAGI Member - Expatriate', shortLabel: 'NON-IAGI EXPAT', badge: 'INTERNATIONAL DELEGATE', bg: '#ede9fe', color: '#5b21b6', border: '#c4b5fd' },
-    student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
-    non_exclusive: { label: 'Visitor', shortLabel: 'VISITOR', badge: 'FREE PASS', bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
+    student_volunteer: { label: 'Student Volunteer', shortLabel: 'VOLUNTEER', badge: 'STUDENT VOLUNTEER', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
+
+    // 1. Participant
+    iagi_member_professional: { label: 'Professional (Member)', shortLabel: 'PRO (MEMBER)', badge: 'PROFESSIONAL (MEMBER)', bg: '#dcfce7', color: '#15803d', border: '#86efac' },
+    non_iagi_member_professional: { label: 'Professional (Non-Member)', shortLabel: 'PRO (NON-MEMBER)', badge: 'PROFESSIONAL (NON-MEMBER)', bg: '#e0f2fe', color: '#0369a1', border: '#7dd3fc' },
+    iagi_member_expatriate: { label: 'Expatriate (Member)', shortLabel: 'EXPAT (MEMBER)', badge: 'EXPATRIATE (MEMBER)', bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
+    non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', shortLabel: 'EXPAT (NON-MEMBER)', badge: 'EXPATRIATE (NON-MEMBER)', bg: '#ede9fe', color: '#5b21b6', border: '#c4b5fd' },
+    student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT UNDERGRADUATE', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
+
+    // 2. Visitor
+    non_exclusive: { label: 'Visitor Pass (Free)', shortLabel: 'VISITOR', badge: 'VISITOR PASS (FREE)', bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
 };
 
 const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;

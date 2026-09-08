@@ -26,19 +26,24 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 const CATEGORY_MAP = {
-    vip: { label: 'VIP', badge: 'VIP GUEST' },
-    speaker: { label: 'Speaker', badge: 'KEYNOTE / SPEAKER' },
-    panelist: { label: 'Panelist', badge: 'PANELIST DELEGATE' },
-    moderator: { label: 'Moderator', badge: 'SESSION MODERATOR' },
-    exhibition: { label: 'Exhibition', badge: 'EXHIBITOR BOOTH' },
-    committee: { label: 'Committee', badge: 'ORGANIZING COMMITTEE' },
+    // Roles & Invitations
+    vip: { label: 'VIP', badge: 'VIP' },
+    speaker: { label: 'Speaker', badge: 'SPEAKER' },
+    panelist: { label: 'Panelist', badge: 'PANELIST' },
+    moderator: { label: 'Moderator', badge: 'MODERATOR' },
+    exhibition: { label: 'Exhibition', badge: 'EXHIBITION' },
+    committee: { label: 'Committee', badge: 'COMMITTEE' },
     student_volunteer: { label: 'Student Volunteer', badge: 'STUDENT VOLUNTEER' },
-    iagi_member_professional: { label: 'IAGI Member - Professional', badge: 'IAGI MEMBER' },
-    non_iagi_member_professional: { label: 'Non IAGI Member - Professional', badge: 'NON-MEMBER PRO' },
-    iagi_member_expatriate: { label: 'IAGI Member - Expatriate', badge: 'IAGI EXPATRIATE' },
-    non_iagi_member_expatriate: { label: 'Non IAGI Member - Expatriate', badge: 'INTERNATIONAL DELEGATE' },
-    student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT' },
-    non_exclusive: { label: 'Visitor', badge: 'FREE PASS' },
+
+    // 1. Participant
+    iagi_member_professional: { label: 'Professional (Member)', badge: 'PROFESSIONAL (MEMBER)' },
+    non_iagi_member_professional: { label: 'Professional (Non-Member)', badge: 'PROFESSIONAL (NON-MEMBER)' },
+    iagi_member_expatriate: { label: 'Expatriate (Member)', badge: 'EXPATRIATE (MEMBER)' },
+    non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', badge: 'EXPATRIATE (NON-MEMBER)' },
+    student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT UNDERGRADUATE' },
+
+    // 2. Visitor
+    non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },
 };
 
 function numberToWordsIndo(num) {

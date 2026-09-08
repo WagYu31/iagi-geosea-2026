@@ -29,7 +29,7 @@ const CATEGORY_MAP = {
     // Invited Categories
     vip: {
         label: 'VIP',
-        badge: 'VIP GUEST',
+        badge: 'VIP',
         gradient: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
         border: '#f59e0b',
         shadow: 'rgba(245, 158, 11, 0.25)',
@@ -39,7 +39,7 @@ const CATEGORY_MAP = {
     },
     speaker: {
         label: 'Speaker',
-        badge: 'KEYNOTE / SPEAKER',
+        badge: 'SPEAKER',
         gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
         border: '#ec4899',
         shadow: 'rgba(236, 72, 153, 0.25)',
@@ -49,7 +49,7 @@ const CATEGORY_MAP = {
     },
     panelist: {
         label: 'Panelist',
-        badge: 'PANELIST DELEGATE',
+        badge: 'PANELIST',
         gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
         border: '#8b5cf6',
         shadow: 'rgba(139, 92, 246, 0.25)',
@@ -59,7 +59,7 @@ const CATEGORY_MAP = {
     },
     moderator: {
         label: 'Moderator',
-        badge: 'SESSION MODERATOR',
+        badge: 'MODERATOR',
         gradient: 'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
         border: '#06b6d4',
         shadow: 'rgba(6, 182, 212, 0.25)',
@@ -69,7 +69,7 @@ const CATEGORY_MAP = {
     },
     exhibition: {
         label: 'Exhibition',
-        badge: 'EXHIBITOR BOOTH',
+        badge: 'EXHIBITION',
         gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)',
         border: '#f97316',
         shadow: 'rgba(249, 115, 22, 0.25)',
@@ -79,7 +79,7 @@ const CATEGORY_MAP = {
     },
     committee: {
         label: 'Committee',
-        badge: 'ORGANIZING COMMITTEE',
+        badge: 'COMMITTEE',
         gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
         border: '#3b82f6',
         shadow: 'rgba(59, 130, 246, 0.25)',
@@ -99,8 +99,8 @@ const CATEGORY_MAP = {
     },
     // Conference / Standard Categories
     iagi_member_professional: {
-        label: 'IAGI Member - Professional',
-        badge: 'PROFESSIONAL PASS',
+        label: 'Professional (Member)',
+        badge: 'PROFESSIONAL (MEMBER)',
         gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
         border: '#094d42',
         shadow: 'rgba(9, 77, 66, 0.25)',
@@ -109,8 +109,8 @@ const CATEGORY_MAP = {
         tagColor: '#15803d',
     },
     non_iagi_member_professional: {
-        label: 'Non IAGI Member - Professional',
-        badge: 'PROFESSIONAL PASS',
+        label: 'Professional (Non-Member)',
+        badge: 'PROFESSIONAL (NON-MEMBER)',
         gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
         border: '#0284c7',
         shadow: 'rgba(2, 132, 199, 0.25)',
@@ -119,8 +119,8 @@ const CATEGORY_MAP = {
         tagColor: '#0369a1',
     },
     iagi_member_expatriate: {
-        label: 'IAGI Member - Expatriate',
-        badge: 'INTERNATIONAL DELEGATE',
+        label: 'Expatriate (Member)',
+        badge: 'EXPATRIATE (MEMBER)',
         gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
         border: '#7c3aed',
         shadow: 'rgba(124, 58, 237, 0.25)',
@@ -129,8 +129,8 @@ const CATEGORY_MAP = {
         tagColor: '#6d28d9',
     },
     non_iagi_member_expatriate: {
-        label: 'Non IAGI Member - Expatriate',
-        badge: 'INTERNATIONAL DELEGATE',
+        label: 'Expatriate (Non-Member)',
+        badge: 'EXPATRIATE (NON-MEMBER)',
         gradient: 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)',
         border: '#7c3aed',
         shadow: 'rgba(124, 58, 237, 0.25)',
@@ -140,7 +140,7 @@ const CATEGORY_MAP = {
     },
     student_undergraduate: {
         label: 'Student Undergraduate',
-        badge: 'STUDENT',
+        badge: 'STUDENT UNDERGRADUATE',
         gradient: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
         border: '#6366f1',
         shadow: 'rgba(99, 102, 241, 0.25)',
@@ -149,8 +149,8 @@ const CATEGORY_MAP = {
         tagColor: '#3730a3',
     },
     non_exclusive: {
-        label: 'Visitor',
-        badge: 'FREE PASS',
+        label: 'Visitor Pass (Free)',
+        badge: 'VISITOR PASS (FREE)',
         gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
         border: '#10b981',
         shadow: 'rgba(16, 185, 129, 0.25)',
