@@ -208,6 +208,10 @@ export default function VisitorTicketsIndex({
     const [editModal, setEditModal] = useState({ open: false, ticket: null });
     const [proofModal, setProofModal] = useState({ open: false, payment: null });
     const [rejectModal, setRejectModal] = useState({ open: false, paymentId: null, notes: '' });
+    const [printModalOpen, setPrintModalOpen] = useState(false);
+    const [emailModalOpen, setEmailModalOpen] = useState(false);
+    const [emailTargetMode, setEmailTargetMode] = useState('selected'); // 'selected' or 'filtered'
+    const [emailSending, setEmailSending] = useState(false);
     const [bulkActionProcessing, setBulkActionProcessing] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
 
@@ -426,6 +430,7 @@ export default function VisitorTicketsIndex({
         if (actionName === 'verify_payment') confirmMsg = `Verify payment for ${selectedIds.length} selected tickets?`;
         if (actionName === 'check_in') confirmMsg = `Perform bulk check-in for ${selectedIds.length} selected tickets?`;
         if (actionName === 'undo_check_in') confirmMsg = `Undo check-in for ${selectedIds.length} selected tickets?`;
+        if (actionName === 'resend_email') confirmMsg = `Kirim / Resend E-Tiket ke ${selectedIds.length} email pengunjung yang dipilih?`;
 
         if (confirm(confirmMsg)) {
             setBulkActionProcessing(true);
@@ -440,6 +445,49 @@ export default function VisitorTicketsIndex({
                 }
             });
         }
+    };
+
+    const handleOpenPrintBadges = (mode = 'selected') => {
+        if (mode === 'selected') {
+            if (selectedIds.length === 0) {
+                alert('Pilih setidaknya 1 tiket untuk dicetak.');
+                return;
+            }
+            window.open(route('admin.visitorTickets.printBadgesBulk', { ids: selectedIds.join(','), mode: 'selected' }), '_blank');
+        } else {
+            const params = { mode: 'filtered' };
+            if (searchTerm) params.search = searchTerm;
+            if (typeFilter !== 'all') params.type = typeFilter;
+            if (checkedInFilter !== 'all') params.checked_in = checkedInFilter;
+            if (statusFilter !== 'all') params.status = statusFilter;
+            window.open(route('admin.visitorTickets.printBadgesBulk', params), '_blank');
+        }
+        setPrintModalOpen(false);
+    };
+
+    const handleSendBulkEmail = () => {
+        const payload = { mode: emailTargetMode };
+        if (emailTargetMode === 'selected') {
+            if (selectedIds.length === 0) {
+                alert('Pilih setidaknya 1 tiket untuk dikirimi email.');
+                return;
+            }
+            payload.ticket_ids = selectedIds;
+        } else {
+            if (searchTerm) payload.search = searchTerm;
+            if (typeFilter !== 'all') payload.type = typeFilter;
+            if (checkedInFilter !== 'all') payload.checked_in = checkedInFilter;
+            if (statusFilter !== 'all') payload.status = statusFilter;
+        }
+
+        setEmailSending(true);
+        router.post(route('admin.visitorTickets.resendEmailsBulk'), payload, {
+            preserveScroll: true,
+            onFinish: () => {
+                setEmailSending(false);
+                setEmailModalOpen(false);
+            },
+        });
     };
 
     const generateWhatsAppUrl = (ticket) => {
@@ -547,10 +595,41 @@ export default function VisitorTicketsIndex({
                         </Button>
 
                         <Button
-                            component={Link}
-                            href={route('admin.gateScanner')}
                             variant="contained"
-                            startIcon={<QrCodeScannerIcon />}
+                            startIcon={<PrintIcon />}
+                            onClick={() => setPrintModalOpen(true)}
+                            sx={{
+                                bgcolor: '#7c3aed',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                px: 2,
+                                py: 1,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                boxShadow: '0 4px 0 #6d28d9, 0 8px 16px rgba(124,58,237,0.2)',
+                                '&:hover': {
+                                    bgcolor: '#6d28d9',
+                                    boxShadow: '0 2px 0 #5b21b6, 0 4px 8px rgba(124,58,237,0.2)',
+                                    transform: 'translateY(2px)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(4px)',
+                                    boxShadow: 'none',
+                                },
+                                transition: 'all 0.12s ease',
+                            }}
+                        >
+                            Print Badges
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            startIcon={<EmailIcon />}
+                            onClick={() => {
+                                setEmailTargetMode(selectedIds.length > 0 ? 'selected' : 'filtered');
+                                setEmailModalOpen(true);
+                            }}
                             sx={{
                                 bgcolor: '#0284c7',
                                 color: '#ffffff',
@@ -563,7 +642,37 @@ export default function VisitorTicketsIndex({
                                 boxShadow: '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
                                 '&:hover': {
                                     bgcolor: '#0369a1',
-                                    boxShadow: '0 2px 0 #0284c7, 0 4px 8px rgba(2,132,199,0.2)',
+                                    boxShadow: '0 2px 0 #075985, 0 4px 8px rgba(2,132,199,0.2)',
+                                    transform: 'translateY(2px)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(4px)',
+                                    boxShadow: 'none',
+                                },
+                                transition: 'all 0.12s ease',
+                            }}
+                        >
+                            Resend E-Tickets
+                        </Button>
+
+                        <Button
+                            component={Link}
+                            href={route('admin.gateScanner')}
+                            variant="contained"
+                            startIcon={<QrCodeScannerIcon />}
+                            sx={{
+                                bgcolor: '#0d9488',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                px: 2,
+                                py: 1,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                boxShadow: '0 4px 0 #0f766e, 0 8px 16px rgba(13,148,136,0.2)',
+                                '&:hover': {
+                                    bgcolor: '#0f766e',
+                                    boxShadow: '0 2px 0 #115e59, 0 4px 8px rgba(13,148,136,0.2)',
                                     transform: 'translateY(2px)',
                                 },
                                 '&:active': {
@@ -877,6 +986,42 @@ export default function VisitorTicketsIndex({
                             <Button
                                 size="small"
                                 variant="contained"
+                                startIcon={<EmailIcon />}
+                                onClick={() => handleBulkAction('resend_email')}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#0284c7',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    boxShadow: '0 3px 0 #0369a1',
+                                    '&:hover': { bgcolor: '#0369a1' },
+                                }}
+                            >
+                                Resend Email ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<PrintIcon />}
+                                onClick={() => handleOpenPrintBadges('selected')}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#7c3aed',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    boxShadow: '0 3px 0 #6d28d9',
+                                    '&:hover': { bgcolor: '#6d28d9' },
+                                }}
+                            >
+                                Print Badges ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
                                 startIcon={<CheckIcon />}
                                 onClick={() => handleBulkAction('verify_payment')}
                                 disabled={bulkActionProcessing}
@@ -899,13 +1044,13 @@ export default function VisitorTicketsIndex({
                                 onClick={() => handleBulkAction('check_in')}
                                 disabled={bulkActionProcessing}
                                 sx={{
-                                    bgcolor: '#0284c7',
+                                    bgcolor: '#0d9488',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
-                                    boxShadow: '0 3px 0 #0369a1',
-                                    '&:hover': { bgcolor: '#0369a1' },
+                                    boxShadow: '0 3px 0 #0f766e',
+                                    '&:hover': { bgcolor: '#0f766e' },
                                 }}
                             >
                                 Bulk Check-In
@@ -1822,6 +1967,212 @@ export default function VisitorTicketsIndex({
                     </Button>
                     <Button onClick={handleRejectPaymentSubmit} variant="contained" color="error" sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
                         Reject Payment
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* MODAL 6: PRINT LANYARD BADGES (BULK / FILTERED) */}
+            <Dialog open={printModalOpen} onClose={() => setPrintModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
+                    <Box sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <PrintIcon sx={{ fontSize: 22 }} />
+                    </Box>
+                    Print Lanyard ID Badges
+                </DialogTitle>
+                <DialogContent sx={{ pt: 2 }}>
+                    <Typography variant="body2" sx={{ color: '#475569', mb: 2.5, lineHeight: 1.6 }}>
+                        Pilih cakupan tiket yang ingin dicetak ke dalam kartu Lanyard Badge fisik (100mm × 158.6mm). Sistem akan otomatis menerapkan template badge sesuai kategori masing-masing pengunjung.
+                    </Typography>
+
+                    <Stack spacing={2}>
+                        {/* Option 1: Selected Checkboxes */}
+                        <Paper
+                            onClick={() => selectedIds.length > 0 && handleOpenPrintBadges('selected')}
+                            elevation={0}
+                            sx={{
+                                p: 2,
+                                borderRadius: '14px',
+                                border: selectedIds.length > 0 ? '2px solid #7c3aed' : '1.5px dashed #cbd5e1',
+                                bgcolor: selectedIds.length > 0 ? '#f5f3ff' : '#f8fafc',
+                                cursor: selectedIds.length > 0 ? 'pointer' : 'not-allowed',
+                                opacity: selectedIds.length > 0 ? 1 : 0.6,
+                                transition: 'all 0.2s ease',
+                                '&:hover': selectedIds.length > 0 ? { transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(124,58,237,0.15)' } : {},
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Box>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: selectedIds.length > 0 ? '#6d28d9' : '#64748b' }}>
+                                        1. Cetak Tiket yang Dipilih ({selectedIds.length} Tiket)
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                        {selectedIds.length > 0 
+                                            ? `Mencetak ${selectedIds.length} kartu lanyard dari baris tabel yang Anda centang.`
+                                            : 'Centang checkbox pada tabel jika hanya ingin mencetak beberapa tiket tertentu.'}
+                                    </Typography>
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    disabled={selectedIds.length === 0}
+                                    onClick={(e) => { e.stopPropagation(); handleOpenPrintBadges('selected'); }}
+                                    sx={{ bgcolor: '#7c3aed', fontWeight: 800, textTransform: 'none', borderRadius: '8px', '&:hover': { bgcolor: '#6d28d9' } }}
+                                >
+                                    Cetak ({selectedIds.length})
+                                </Button>
+                            </Box>
+                        </Paper>
+
+                        {/* Option 2: All Filtered Tickets */}
+                        <Paper
+                            onClick={() => handleOpenPrintBadges('filtered')}
+                            elevation={0}
+                            sx={{
+                                p: 2,
+                                borderRadius: '14px',
+                                border: '2px solid #0284c7',
+                                bgcolor: '#f0f9ff',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(2,132,199,0.15)' },
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Box sx={{ flex: 1, pr: 2 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0369a1' }}>
+                                        2. Cetak Keseluruhan Sesuai Filter ({totalItems} Tiket)
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#475569', display: 'block' }}>
+                                        Mencetak semua data ({totalItems} tiket) dengan kriteria filter saat ini:
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', gap: 0.8, mt: 0.8, flexWrap: 'wrap' }}>
+                                        <Chip label={`Kategori: ${typeFilter === 'all' ? 'Semua' : (CATEGORY_META[typeFilter]?.shortLabel || typeFilter)}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
+                                        <Chip label={`Gate: ${checkedInFilter === 'all' ? 'Semua' : checkedInFilter === 'yes' ? 'Checked In' : 'Belum Check In'}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
+                                        <Chip label={`Status: ${statusFilter === 'all' ? 'Semua' : statusFilter.toUpperCase()}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
+                                    </Box>
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    onClick={(e) => { e.stopPropagation(); handleOpenPrintBadges('filtered'); }}
+                                    sx={{ bgcolor: '#0284c7', fontWeight: 800, textTransform: 'none', borderRadius: '8px', '&:hover': { bgcolor: '#0369a1' } }}
+                                >
+                                    Cetak Semua ({totalItems})
+                                </Button>
+                            </Box>
+                        </Paper>
+                    </Stack>
+                </DialogContent>
+                <DialogActions sx={{ p: 2, px: 2.5, borderTop: '1px solid #e2e8f0' }}>
+                    <Button onClick={() => setPrintModalOpen(false)} sx={{ textTransform: 'none', color: '#64748b' }}>
+                        Tutup
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* MODAL 7: BROADCAST / RESEND E-TICKETS EMAIL */}
+            <Dialog open={emailModalOpen} onClose={() => !emailSending && setEmailModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
+                    <Box sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: '#e0f2fe', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <EmailIcon sx={{ fontSize: 22 }} />
+                    </Box>
+                    Resend / Broadcast E-Ticket Emails
+                </DialogTitle>
+                <DialogContent sx={{ pt: 2 }}>
+                    <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
+                        Kirimkan ulang email resmi E-Tiket (beserta QR Code dan instruksi check-in) ke pengunjung terdaftar. Email hanya akan dikirimkan ke tiket berstatus <strong>AKTIF</strong> yang memiliki alamat email valid.
+                    </Typography>
+
+                    <RadioGroup
+                        value={emailTargetMode}
+                        onChange={(e) => setEmailTargetMode(e.target.value)}
+                        sx={{ mb: 2.5 }}
+                    >
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                px: 2,
+                                mb: 1.5,
+                                borderRadius: '12px',
+                                border: emailTargetMode === 'selected' ? '2px solid #0284c7' : '1px solid #e2e8f0',
+                                bgcolor: emailTargetMode === 'selected' ? '#f0f9ff' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setEmailTargetMode('selected')}
+                        >
+                            <FormControlLabel
+                                value="selected"
+                                control={<Radio size="small" />}
+                                label={
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                            Kirim ke Tiket yang Dipilih ({selectedIds.length} tiket)
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Hanya mengirimkan E-Tiket ke item yang dicentang di tabel saat ini.
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ width: '100%', m: 0 }}
+                            />
+                        </Paper>
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                px: 2,
+                                borderRadius: '12px',
+                                border: emailTargetMode === 'filtered' ? '2px solid #0284c7' : '1px solid #e2e8f0',
+                                bgcolor: emailTargetMode === 'filtered' ? '#f0f9ff' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setEmailTargetMode('filtered')}
+                        >
+                            <FormControlLabel
+                                value="filtered"
+                                control={<Radio size="small" />}
+                                label={
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                            Kirim ke Semua Sesuai Filter ({totalItems} tiket terdaftar)
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Mengirimkan ke semua tiket aktif yang sesuai filter pencarian/kategori.
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ width: '100%', m: 0 }}
+                            />
+                        </Paper>
+                    </RadioGroup>
+
+                    <Alert severity="info" sx={{ borderRadius: '12px', fontSize: '0.8rem', bgcolor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                        Pastikan konfigurasi SMTP di menu <strong>Email Settings</strong> sudah berstatus aktif dan teruji agar email terkirim dengan lancar tanpa terblokir.
+                    </Alert>
+                </DialogContent>
+                <DialogActions sx={{ p: 2, px: 2.5, borderTop: '1px solid #e2e8f0', justifyContent: 'space-between' }}>
+                    <Button onClick={() => setEmailModalOpen(false)} disabled={emailSending} sx={{ textTransform: 'none', color: '#64748b' }}>
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleSendBulkEmail}
+                        disabled={emailSending || (emailTargetMode === 'selected' && selectedIds.length === 0)}
+                        variant="contained"
+                        startIcon={emailSending ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <SendIcon />}
+                        sx={{
+                            bgcolor: '#0284c7',
+                            color: '#ffffff',
+                            fontWeight: 900,
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            px: 3,
+                            boxShadow: '0 3px 0 #0369a1',
+                            '&:hover': { bgcolor: '#0369a1' },
+                        }}
+                    >
+                        {emailSending ? 'Sedang Mengirim...' : `Kirim E-Tiket (${emailTargetMode === 'selected' ? selectedIds.length : totalItems})`}
                     </Button>
                 </DialogActions>
             </Dialog>

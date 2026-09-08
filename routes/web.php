@@ -246,7 +246,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
         Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');
         Route::post('/visitor-tickets/{id}/resend-email', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmail'])->name('visitorTickets.resendEmail');
+        Route::post('/visitor-tickets/resend-emails-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmailsBulk'])->name('visitorTickets.resendEmailsBulk');
         Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
+        Route::get('/visitor-tickets/print-badges-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadgesBulk'])->name('visitorTickets.printBadgesBulk');
         Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
         Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
         Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');

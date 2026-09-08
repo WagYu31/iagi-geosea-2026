@@ -35,9 +35,9 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
-     * Display visitor tickets management dashboard
+     * Helper query builder for filtering visitor tickets
      */
-    public function index(Request $request)
+    private function filterTicketsQuery(Request $request)
     {
         $query = VisitorTicket::with(['payment', 'registeredBy', 'checkedInBy', 'cardPrintedBy']);
 
@@ -74,6 +74,16 @@ class VisitorTicketAdminController extends Controller
                 $query->where('status', $status);
             }
         }
+
+        return $query;
+    }
+
+    /**
+     * Display visitor tickets management dashboard
+     */
+    public function index(Request $request)
+    {
+        $query = $this->filterTicketsQuery($request);
 
         $tickets = $query->latest()->paginate(25)->withQueryString();
 
@@ -409,8 +419,102 @@ class VisitorTicketAdminController extends Controller
 
         return Inertia::render('Admin/VisitorTickets/PrintBadge', [
             'ticket' => $ticket,
+            'tickets' => [$ticket],
             'templatePath' => $templatePath,
+            'isBulk' => false,
         ]);
+    }
+
+    /**
+     * Bulk Print Lanyard Badges (Selected or Filtered)
+     */
+    public function printBadgesBulk(Request $request)
+    {
+        $mode = $request->input('mode', 'selected'); // 'selected' or 'filtered'
+        $ids = $request->input('ids');
+
+        if ($mode === 'selected' || !empty($ids)) {
+            $idArray = is_array($ids) ? $ids : array_filter(explode(',', (string)$ids));
+            $tickets = VisitorTicket::with('payment')
+                ->whereIn('id', $idArray)
+                ->latest()
+                ->get();
+        } else {
+            $query = $this->filterTicketsQuery($request);
+            $tickets = $query->latest()->get();
+        }
+
+        if ($tickets->isEmpty()) {
+            return redirect()->route('admin.visitorTickets')->with('error', 'Tidak ada tiket yang dipilih atau sesuai filter untuk dicetak.');
+        }
+
+        // Mark all as card printed
+        VisitorTicket::whereIn('id', $tickets->pluck('id'))->update([
+            'card_printed' => true,
+            'card_printed_at' => now(),
+            'card_printed_by_admin_id' => Auth::id(),
+        ]);
+
+        // Map templatePath for each ticket
+        $tickets->transform(function ($ticket) {
+            $ticket->templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
+            return $ticket;
+        });
+
+        return Inertia::render('Admin/VisitorTickets/PrintBadge', [
+            'tickets' => $tickets,
+            'isBulk' => true,
+            'totalCount' => $tickets->count(),
+        ]);
+    }
+
+    /**
+     * Bulk Resend E-Ticket Emails (Selected or Filtered)
+     */
+    public function resendEmailsBulk(Request $request)
+    {
+        $mode = $request->input('mode', 'selected'); // 'selected' or 'filtered'
+        $ticketIds = $request->input('ticket_ids', []);
+
+        if ($mode === 'selected' || !empty($ticketIds)) {
+            $idArray = is_array($ticketIds) ? $ticketIds : array_filter(explode(',', (string)$ticketIds));
+            $tickets = VisitorTicket::whereIn('id', $idArray)
+                ->where('status', 'active')
+                ->whereNotNull('visitor_email')
+                ->where('visitor_email', '!=', '')
+                ->get();
+        } else {
+            $query = $this->filterTicketsQuery($request);
+            $tickets = $query->where('status', 'active')
+                ->whereNotNull('visitor_email')
+                ->where('visitor_email', '!=', '')
+                ->get();
+        }
+
+        if ($tickets->isEmpty()) {
+            return back()->with('error', 'Tidak ada tiket berstatus AKTIF dengan email valid yang ditemukan.');
+        }
+
+        $this->applySmtpSettings();
+
+        $successCount = 0;
+        $failCount = 0;
+
+        foreach ($tickets as $ticket) {
+            try {
+                Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                $successCount++;
+            } catch (\Exception $e) {
+                $failCount++;
+                Log::error("Bulk resend email failed for {$ticket->visitor_email}: " . $e->getMessage());
+            }
+        }
+
+        if ($failCount === 0) {
+            return back()->with('success', "E-Tiket berhasil dikirimkan ke {$successCount} email pengunjung.");
+        } else {
+            return back()->with('warning', "E-Tiket terkirim ke {$successCount} email ({$failCount} email gagal dikirim). Pastikan pengaturan SMTP sudah aktif.");
+        }
     }
 
     /**
@@ -543,7 +647,7 @@ class VisitorTicketAdminController extends Controller
     public function bulkAction(Request $request)
     {
         $request->validate([
-            'action' => 'required|in:verify_payment,check_in,undo_check_in,cancel_ticket,delete',
+            'action' => 'required|in:verify_payment,check_in,undo_check_in,cancel_ticket,delete,resend_email',
             'ticket_ids' => 'required|array',
             'ticket_ids.*' => 'integer|exists:visitor_tickets,id',
         ]);
@@ -553,6 +657,29 @@ class VisitorTicketAdminController extends Controller
         $tickets = VisitorTicket::whereIn('id', $ticketIds)->get();
 
         switch ($action) {
+            case 'resend_email':
+                $activeTickets = $tickets->where('status', 'active')->filter(fn($t) => !empty($t->visitor_email));
+                if ($activeTickets->isEmpty()) {
+                    return back()->with('error', 'Tidak ada tiket berstatus AKTIF dengan email valid dari item yang dipilih.');
+                }
+                $this->applySmtpSettings();
+                $successCount = 0;
+                $failCount = 0;
+                foreach ($activeTickets as $ticket) {
+                    try {
+                        Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                        $successCount++;
+                    } catch (\Exception $e) {
+                        $failCount++;
+                        Log::error("Bulk resend email failed for {$ticket->visitor_email}: " . $e->getMessage());
+                    }
+                }
+                if ($failCount === 0) {
+                    return back()->with('success', "E-Tiket berhasil dikirim ke {$successCount} email pengunjung.");
+                } else {
+                    return back()->with('warning', "E-Tiket terkirim ke {$successCount} email ({$failCount} email gagal).");
+                }
+
             case 'verify_payment':
                 $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
                 VisitorPayment::whereIn('id', $paymentIds)->update([
