@@ -233,7 +233,7 @@ export default function ShowTicket({
                                     '&:hover': { color: '#ffffff', bgcolor: '#094d42' },
                                 }}
                             >
-                                Kwitansi
+                                Official Receipt
                             </Button>
                         )}
                         <Button

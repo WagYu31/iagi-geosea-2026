@@ -226,7 +226,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                 },
                             }}
                         >
-                            📄 Cetak / Download Kwitansi
+                            Print / Download Receipt
                         </Button>
 
                         <Button

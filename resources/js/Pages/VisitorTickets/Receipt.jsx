@@ -90,7 +90,7 @@ export default function Receipt({
                 },
             }}
         >
-            <Head title={`Kwitansi & Invoice: ${payment.payment_code || 'Official Receipt'}`} />
+            <Head title={`Official Receipt & Invoice: ${payment.payment_code || 'Official Receipt'}`} />
 
             <Container maxWidth="md">
                 {/* ACTION BAR (Hidden when printing) */}
@@ -138,11 +138,11 @@ export default function Receipt({
                             '&:hover': { bgcolor: '#063830' },
                         }}
                     >
-                        🖨️ Cetak / Download PDF
+                        🖨️ Print / Download PDF
                     </Button>
                 </Box>
 
-                {/* OFFICIAL INVOICE & KWITANSI DOCUMENT */}
+                {/* OFFICIAL INVOICE & RECEIPT DOCUMENT */}
                 <Paper
                     elevation={0}
                     sx={{
@@ -178,7 +178,7 @@ export default function Receipt({
                             letterSpacing: '0.1em',
                         }}
                     >
-                        {isApproved ? 'LUNAS / PAID' : isRejected ? 'REJECTED' : 'AWAITING PAYMENT'}
+                        {isApproved ? 'PAID / VERIFIED' : isRejected ? 'REJECTED' : 'AWAITING PAYMENT'}
                     </Box>
 
                     {/* HEADER */}
@@ -209,11 +209,11 @@ export default function Receipt({
                                 OFFICIAL RECEIPT
                             </Typography>
                             <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', fontSize: '0.82rem', mb: 1 }}>
-                                KWITANSI PEMBAYARAN RESMI
+                                OFFICIAL PAYMENT RECEIPT
                             </Typography>
                             
                             <Chip
-                                label={isApproved ? '✅ LUNAS / VERIFIED' : isRejected ? '❌ REJECTED' : '⏳ MENUNGGU VERIFIKASI'}
+                                label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
                                 sx={{
                                     bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
                                     color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
@@ -230,27 +230,27 @@ export default function Receipt({
                     <Box sx={{ py: 2.5, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5, position: 'relative', zIndex: 1 }}>
                         <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 1 }}>
-                                👤 Ditujukan Kepada (Billed To):
+                                👤 Billed To:
                             </Typography>
                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>
-                                {primaryTicket.visitor_name || 'Peserta Terdaftar'}
+                                {primaryTicket.visitor_name || 'Registered Delegate'}
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', mt: 0.3 }}>
                                 <strong>Email:</strong> {primaryTicket.visitor_email || '-'}<br />
                                 <strong>Phone / WA:</strong> {primaryTicket.visitor_phone || '-'}<br />
-                                <strong>Institusi:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
+                                <strong>Institution:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
                             </Typography>
                         </Box>
 
                         <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 1 }}>
-                                📄 Rincian Transaksi:
+                                📄 Transaction Details:
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', lineHeight: 1.6 }}>
-                                <strong>No. Pembayaran:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
-                                <strong>Tanggal Dibuat:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
-                                <strong>Metode:</strong> {payment.payment_method === 'cash_onsite' ? 'Tunai Onsite (Cash / EDC)' : 'Transfer Bank Mandiri'}<br />
-                                <strong>Status:</strong> {isApproved ? `Diverifikasi (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('id-ID') : 'Verified'})` : 'Menunggu Konfirmasi Bendahara'}
+                                <strong>Payment No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
+                                <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
+                                <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Bank Mandiri Transfer'}<br />
+                                <strong>Status:</strong> {isApproved ? `Verified (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified'})` : 'Awaiting Treasury Confirmation'}
                             </Typography>
                         </Box>
                     </Box>
@@ -262,10 +262,10 @@ export default function Receipt({
                                 <TableHead sx={{ bgcolor: '#094d42' }}>
                                     <TableRow>
                                         <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>NO</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>NAMA PESERTA / DELEGATE</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>KATEGORI TIKET</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>KODE TIKET</TableCell>
-                                        <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>BIAYA (IDR)</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>PARTICIPANT / DELEGATE NAME</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CATEGORY</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CODE</TableCell>
+                                        <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>AMOUNT (IDR)</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -331,7 +331,7 @@ export default function Receipt({
                         {/* TERBILANG BOX */}
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
                             <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
-                                <strong>Terbilang:</strong> <em>"{terbilangText}"</em>
+                                <strong>Amount in Words:</strong> <em>"{terbilangText}"</em>
                             </Typography>
                         </Box>
                     </Box>
@@ -345,10 +345,10 @@ export default function Receipt({
                             </Box>
                             <Box>
                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.74rem' }}>
-                                    🛡️ VALIDASI RESMI DIGITAL
+                                    🛡️ OFFICIAL DIGITAL VALIDATION
                                 </Typography>
                                 <Typography variant="caption" sx={{ color: '#64748b', display: 'block', maxWidth: 240, fontSize: '0.68rem', lineHeight: 1.35 }}>
-                                    Scan QR code untuk memverifikasi keaslian kwitansi dan tiket peserta secara langsung di portal PIT IAGI 2026.
+                                    Scan QR code to verify the authenticity of this official receipt and delegate ticket on the PIT IAGI 2026 portal.
                                 </Typography>
                             </Box>
                         </Box>
@@ -356,10 +356,10 @@ export default function Receipt({
                         {/* Secretariat Stamp Area */}
                         <Box sx={{ textAlign: 'center', minWidth: 220 }}>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.5 }}>
-                                Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', mb: 4 }}>
-                                Panitia Pelaksana PIT IAGI & GEOSEA 2026
+                                Organizing Committee PIT IAGI & GEOSEA 2026
                             </Typography>
                             
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669' }}>
@@ -369,7 +369,7 @@ export default function Receipt({
                                 </Typography>
                             </Box>
                             <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', display: 'block' }}>
-                                Dokumen digital ini sah tanpa tanda tangan basah.
+                                This digital document is officially verified and valid without a wet signature.
                             </Typography>
                         </Box>
                     </Box>
