@@ -707,8 +707,10 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 500000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
     const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
-    const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Royal Ambarrukmo Yogyakarta'));
-    const [bankInfo, setBankInfo] = useState(getSettingValue('visitor_bank_transfer_info', "Bank Mandiri\nNo. Rek: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)"));
+    const defaultBankTransferInfo = "Bank Mandiri\nAccount Number: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+    const rawBankInfo = getSettingValue('visitor_bank_transfer_info', defaultBankTransferInfo);
+    const initialBankInfo = typeof rawBankInfo === 'string' ? rawBankInfo.replace(/No\.\s*Rek\s*:/gi, 'Account Number:') : rawBankInfo;
+    const [bankInfo, setBankInfo] = useState(initialBankInfo);
     
     const [exclusiveTemplate, setExclusiveTemplate] = useState(getSettingValue('visitor_exclusive_lanyard_template', ''));
     const [nonExclusiveTemplate, setNonExclusiveTemplate] = useState(getSettingValue('visitor_non_exclusive_lanyard_template', ''));

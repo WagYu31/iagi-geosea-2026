@@ -207,8 +207,10 @@ export default function Register({
     });
 
     const enabled = propEnabled ?? settings.enabled ?? true;
-    const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
-    const bankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
+    const rawBankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+    const bankTransferInfo = typeof rawBankTransferInfo === 'string'
+        ? rawBankTransferInfo.replace(/No\.\s*Rek\s*:/gi, 'Account Number:')
+        : rawBankTransferInfo;
     const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
     const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
     

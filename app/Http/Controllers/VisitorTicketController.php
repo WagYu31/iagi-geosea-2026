@@ -55,9 +55,8 @@ class VisitorTicketController extends Controller
 
         $priceExclusive = floatval($settings['visitor_ticket_price_exclusive'] ?? 500000);
         $priceNonExclusive = floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0);
-        $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
-        $qrisImage = !empty($settings['visitor_qris_image']) ? Storage::url($settings['visitor_qris_image']) : null;
-        $bankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nNo. Rek: 123-456-7890\na.n. Panitia PIT IAGI 2026";
+        $rawBankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+        $bankTransferInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankTransferInfo);
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
 
@@ -406,8 +405,8 @@ class VisitorTicketController extends Controller
         ])->pluck('value', 'key');
 
         $eventDate = $settings['visitor_event_date'] ?? '3 - 5 November 2026';
-        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
-        $bankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Bank Mandiri\nNo. Rek: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+        $rawBankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\na.n. Ikatan Ahli Geologi Indonesia (IAGI)";
+        $bankInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankInfo);
 
         return Inertia::render('VisitorTickets/Receipt', [
             'payment' => $payment,
