@@ -135,7 +135,6 @@ class VisitorTicketAdminController extends Controller
                 'iagi_member_expatriate' => 6000000,
                 'non_iagi_member_expatriate' => 7000000,
                 'student_undergraduate' => 1000000,
-                'exclusive' => 500000,
             ];
 
             $isPaidCategory = isset($paidCategories[$type]);

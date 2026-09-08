@@ -148,16 +148,6 @@ const CATEGORY_MAP = {
         tagBg: '#e0e7ff',
         tagColor: '#3730a3',
     },
-    student_postgraduate: {
-        label: 'Student Postgraduate',
-        badge: 'POSTGRADUATE PASS',
-        gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-        border: '#6366f1',
-        shadow: 'rgba(99, 102, 241, 0.25)',
-        textColor: '#4f46e5',
-        tagBg: '#e0e7ff',
-        tagColor: '#3730a3',
-    },
     general_ticket: {
         label: 'General Ticket',
         badge: 'ADMISSION PASS',
@@ -167,16 +157,6 @@ const CATEGORY_MAP = {
         textColor: '#094d42',
         tagBg: '#dcfce7',
         tagColor: '#15803d',
-    },
-    exclusive: {
-        label: 'Visitor Exclusive (VIP)',
-        badge: 'VIP PASS',
-        gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-        border: '#f59e0b',
-        shadow: 'rgba(245, 158, 11, 0.25)',
-        textColor: '#d97706',
-        tagBg: '#fef3c7',
-        tagColor: '#b45309',
     },
     non_exclusive: {
         label: 'Visitor',

@@ -79,13 +79,6 @@ const CATEGORY_MAP = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
-    student_postgraduate: {
-        label: 'PARTICIPANT: STUDENT POSTGRADUATE',
-        shortLabel: 'POSTGRAD',
-        bg: '#e0e7ff',
-        color: '#4f46e5',
-        border: '#a5b4fc',
-    },
     general_ticket: {
         label: 'PARTICIPANT: GENERAL',
         shortLabel: 'PARTICIPANT',
@@ -101,13 +94,6 @@ const CATEGORY_MAP = {
         bg: '#ecfdf5',
         color: '#047857',
         border: '#a7f3d0',
-    },
-    exclusive: {
-        label: 'VISITOR EXCLUSIVE (VIP)',
-        shortLabel: 'VISITOR VIP',
-        bg: '#fef3c7',
-        color: '#92400e',
-        border: '#fde68a',
     },
 
     // 3. VIP

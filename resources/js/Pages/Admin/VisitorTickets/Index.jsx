@@ -103,13 +103,6 @@ const CATEGORY_META = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
-    student_postgraduate: {
-        label: 'Participant - Student Postgraduate',
-        shortLabel: 'POSTGRAD',
-        bg: '#e0e7ff',
-        color: '#4f46e5',
-        border: '#a5b4fc',
-    },
     general_ticket: {
         label: 'Participant - General',
         shortLabel: 'PARTICIPANT',
@@ -125,13 +118,6 @@ const CATEGORY_META = {
         bg: '#ecfdf5',
         color: '#047857',
         border: '#a7f3d0',
-    },
-    exclusive: {
-        label: 'Visitor Exclusive (VIP)',
-        shortLabel: 'VISITOR VIP',
-        bg: '#fef3c7',
-        color: '#92400e',
-        border: '#fde68a',
     },
 
     // 3. VIP
@@ -315,9 +301,6 @@ export default function VisitorTicketsIndex({
     const handleStatCardClick = (statKey) => {
         if (statKey === 'all') {
             handleResetFilters();
-        } else if (statKey === 'exclusive') {
-            setTypeFilter('exclusive');
-            navigateFilters({ type: 'exclusive', page: 1 });
         } else if (statKey === 'non_exclusive') {
             setTypeFilter('non_exclusive');
             navigateFilters({ type: 'non_exclusive', page: 1 });
@@ -487,7 +470,6 @@ export default function VisitorTicketsIndex({
 
     const statCards = [
         { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
-        { key: 'exclusive', label: 'Exclusive (VIP)', value: stats.exclusivePaidCount || 0, icon: <StarIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
         { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
@@ -519,16 +501,8 @@ export default function VisitorTicketsIndex({
                     }}
                 >
                     <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.4 }}>
-                            <Typography
-                                variant="h4"
-                                sx={{
-                                    fontWeight: 900,
-                                    color: '#0f172a',
-                                    letterSpacing: '-0.03em',
-                                    fontSize: { xs: '1.4rem', sm: '1.75rem' },
-                                }}
-                            >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                                 Visitor Tickets
                             </Typography>
                             <Chip
@@ -540,39 +514,38 @@ export default function VisitorTicketsIndex({
                                     fontWeight: 900,
                                     fontSize: '0.65rem',
                                     height: 20,
-                                    border: '1px solid #86efac',
+                                    letterSpacing: '0.05em'
                                 }}
                             />
                         </Box>
-                        <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.84rem' }}>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 500 }}>
                             Central command for visitor registrations, payment verification, lanyard ID badge printing, & gate check-in.
                         </Typography>
                     </Box>
 
-                    {/* 3D Tactile Action Buttons */}
-                    <Stack direction="row" spacing={1.5} flexWrap="wrap">
+                    <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
                         <Button
                             variant="contained"
                             startIcon={<PersonAddIcon />}
                             onClick={() => setOnsiteModalOpen(true)}
                             sx={{
-                                background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                bgcolor: '#094d42',
                                 color: '#ffffff',
-                                fontWeight: 900,
+                                fontWeight: 800,
                                 fontSize: '0.82rem',
+                                px: 2,
+                                py: 1,
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                px: 2.2,
-                                py: 1,
-                                boxShadow: '0 4px 0 #047857, 0 8px 18px rgba(16, 185, 129, 0.3)',
+                                boxShadow: '0 4px 0 #06332b, 0 8px 16px rgba(9,77,66,0.2)',
                                 '&:hover': {
-                                    background: 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
-                                    transform: 'translateY(-1px)',
-                                    boxShadow: '0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.4)',
+                                    bgcolor: '#0d6356',
+                                    boxShadow: '0 2px 0 #06332b, 0 4px 8px rgba(9,77,66,0.2)',
+                                    transform: 'translateY(2px)',
                                 },
                                 '&:active': {
-                                    transform: 'translateY(3px)',
-                                    boxShadow: '0 1px 0 #047857, 0 3px 6px rgba(16, 185, 129, 0.3)',
+                                    transform: 'translateY(4px)',
+                                    boxShadow: 'none',
                                 },
                                 transition: 'all 0.12s ease',
                             }}
@@ -582,27 +555,27 @@ export default function VisitorTicketsIndex({
 
                         <Button
                             component={Link}
-                            href={route('admin.gateScanner')}
+                            href={route('admin.visitorTickets.gateScanner')}
                             variant="contained"
                             startIcon={<QrCodeScannerIcon />}
                             sx={{
-                                background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
+                                bgcolor: '#0284c7',
                                 color: '#ffffff',
-                                fontWeight: 900,
+                                fontWeight: 800,
                                 fontSize: '0.82rem',
+                                px: 2,
+                                py: 1,
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                px: 2.2,
-                                py: 1,
-                                boxShadow: '0 4px 0 #075985, 0 8px 18px rgba(2, 132, 199, 0.3)',
+                                boxShadow: '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
                                 '&:hover': {
-                                    background: 'linear-gradient(180deg, #38bdf8 0%, #075985 100%)',
-                                    transform: 'translateY(-1px)',
-                                    boxShadow: '0 5px 0 #075985, 0 10px 20px rgba(2, 132, 199, 0.4)',
+                                    bgcolor: '#0369a1',
+                                    boxShadow: '0 2px 0 #0284c7, 0 4px 8px rgba(2,132,199,0.2)',
+                                    transform: 'translateY(2px)',
                                 },
                                 '&:active': {
-                                    transform: 'translateY(3px)',
-                                    boxShadow: '0 1px 0 #075985, 0 3px 6px rgba(2, 132, 199, 0.3)',
+                                    transform: 'translateY(4px)',
+                                    boxShadow: 'none',
                                 },
                                 transition: 'all 0.12s ease',
                             }}
@@ -611,26 +584,25 @@ export default function VisitorTicketsIndex({
                         </Button>
 
                         <Button
-                            component="a"
-                            href={route('admin.visitorTickets.export')}
                             variant="outlined"
                             startIcon={<DownloadIcon />}
+                            onClick={handleExportCsv}
                             sx={{
-                                bgcolor: '#ffffff',
-                                borderColor: '#cbd5e1',
                                 color: '#334155',
+                                borderColor: '#cbd5e1',
+                                bgcolor: '#ffffff',
                                 fontWeight: 800,
                                 fontSize: '0.82rem',
+                                px: 2,
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                px: 2,
-                                py: 1,
-                                boxShadow: '0 3px 0 #e2e8f0',
+                                boxShadow: '0 3px 0 #cbd5e1',
                                 '&:hover': {
-                                    borderColor: '#0f172a',
                                     bgcolor: '#f8fafc',
-                                    transform: 'translateY(-1px)',
-                                    boxShadow: '0 4px 0 #cbd5e1',
+                                    borderColor: '#94a3b8',
+                                    transform: 'translateY(1px)',
+                                    boxShadow: '0 2px 0 #cbd5e1',
                                 },
                                 '&:active': {
                                     transform: 'translateY(2px)',
@@ -648,14 +620,13 @@ export default function VisitorTicketsIndex({
                 <Box
                     sx={{
                         display: 'grid',
-                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', lg: 'repeat(6, 1fr)' },
+                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', lg: 'repeat(5, 1fr)' },
                         gap: 2,
                         mb: 3,
                     }}
                 >
                     {statCards.map((s) => {
                         const isCardActive = 
-                            (s.key === 'exclusive' && typeFilter === 'exclusive') ||
                             (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
                             (s.key === 'pending' && statusFilter === 'pending');
@@ -801,14 +772,12 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
-                                    <MenuItem value="student_postgraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Postgraduate</MenuItem>
                                     <MenuItem value="general_ticket" sx={{ pl: 3, fontSize: '0.82rem' }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
                                     </ListSubheader>
                                     <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
-                                    <MenuItem value="exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>⭐ Visitor Exclusive (VIP)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         ROLES & INVITATIONS (3 - 9)
@@ -1613,14 +1582,12 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
-                                    <MenuItem value="student_postgraduate" sx={{ pl: 3 }}>• Student Postgraduate</MenuItem>
                                     <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
                                     </ListSubheader>
                                     <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
-                                    <MenuItem value="exclusive" sx={{ pl: 3 }}>⭐ Visitor Exclusive (VIP)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         ROLES & INVITATIONS (3 - 9)
@@ -1686,14 +1653,12 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
-                                    <MenuItem value="student_postgraduate" sx={{ pl: 3 }}>• Student Postgraduate</MenuItem>
                                     <MenuItem value="general_ticket" sx={{ pl: 3 }}>• General Ticket / Participant</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. VISITOR
                                     </ListSubheader>
                                     <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free / Rp 0)</MenuItem>
-                                    <MenuItem value="exclusive" sx={{ pl: 3 }}>⭐ Visitor Exclusive VIP (Rp 500.000)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         ROLES & INVITATIONS (3 - 9)
@@ -1749,7 +1714,6 @@ export default function VisitorTicketsIndex({
                                 'iagi_member_expatriate',
                                 'non_iagi_member_expatriate',
                                 'student_undergraduate',
-                                'exclusive',
                             ].includes(onsiteData.visitor_type) && (
                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
