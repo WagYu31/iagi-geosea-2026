@@ -13,6 +13,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import RegistrationClosedDialog from './RegistrationClosedDialog';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     display: 'flex',
@@ -43,6 +44,7 @@ const navItems = [
 
 export default function AppAppBar({ auth }) {
     const [open, setOpen] = useState(false);
+    const [closedModalOpen, setClosedModalOpen] = useState(false);
 
     const scrollTo = (id) => {
         setOpen(false);
@@ -194,23 +196,35 @@ export default function AppAppBar({ auth }) {
                                     Sign in
                                 </Button>
                                 <Button
-                                    component={Link}
-                                    href="/register"
+                                    onClick={() => setClosedModalOpen(true)}
                                     variant="contained"
                                     size="small"
                                     sx={{
-                                        background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+                                        background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                                        color: '#475569',
+                                        border: '1.5px solid #cbd5e1',
+                                        borderBottom: '3.5px solid #94a3b8',
                                         textTransform: 'none',
-                                        fontWeight: 600,
-                                        borderRadius: '8px',
-                                        px: 2.5,
-                                        boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
+                                        fontWeight: 800,
+                                        fontSize: '0.84rem',
+                                        borderRadius: '10px',
+                                        px: 2,
+                                        py: 0.6,
+                                        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                                        transition: 'all 0.15s ease',
                                         '&:hover': {
-                                            background: 'linear-gradient(135deg, #073d34 0%, #0a6356 100%)',
+                                            background: 'linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%)',
+                                            color: '#0f172a',
+                                            transform: 'translateY(-1px)',
+                                            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                                        },
+                                        '&:active': {
+                                            transform: 'translateY(1px)',
+                                            borderBottom: '1.5px solid #94a3b8',
                                         },
                                     }}
                                 >
-                                    Register
+                                    🔒 Register
                                 </Button>
                             </>
                         )}
@@ -280,17 +294,24 @@ export default function AppAppBar({ auth }) {
                                         </MenuItem>
                                         <MenuItem>
                                             <Button
-                                                component={Link}
-                                                href="/register"
+                                                onClick={() => {
+                                                    setOpen(false);
+                                                    setClosedModalOpen(true);
+                                                }}
                                                 variant="contained"
                                                 fullWidth
                                                 sx={{
-                                                    background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
+                                                    background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                                                    color: '#475569',
+                                                    border: '1.5px solid #cbd5e1',
+                                                    borderBottom: '3.5px solid #94a3b8',
                                                     textTransform: 'none',
-                                                    fontWeight: 600,
+                                                    fontWeight: 800,
+                                                    borderRadius: '10px',
+                                                    py: 1,
                                                 }}
                                             >
-                                                Register
+                                                🔒 Register (Closed)
                                             </Button>
                                         </MenuItem>
                                         <MenuItem>
@@ -316,6 +337,9 @@ export default function AppAppBar({ auth }) {
                     </Box>
                 </StyledToolbar>
             </Container>
+
+            {/* 3D Registration Closed Notice Dialog */}
+            <RegistrationClosedDialog open={closedModalOpen} onClose={() => setClosedModalOpen(false)} />
         </AppBar>
     );
 }

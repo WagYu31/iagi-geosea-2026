@@ -11,8 +11,13 @@ import Alert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LockClockOutlinedIcon from '@mui/icons-material/LockClockOutlined';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -69,44 +74,112 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Register - Closed" />
 
             {/* Header */}
-            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+            <Box sx={{ textAlign: 'center', mb: { xs: 2.5, sm: 3 } }}>
                 <Box
                     sx={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 56,
-                        height: 56,
-                        borderRadius: '16px',
-                        background: `linear-gradient(135deg, ${alpha(teal, 0.1)}, ${alpha(tealLight, 0.15)})`,
+                        width: 60,
+                        height: 60,
+                        borderRadius: '18px',
+                        background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                        border: '1.5px solid #fde68a',
+                        borderBottom: '3.5px solid #d97706',
+                        boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)',
                         mb: 2,
                     }}
                 >
-                    <PersonAddOutlinedIcon sx={{ fontSize: 28, color: teal }} />
+                    <LockClockOutlinedIcon sx={{ fontSize: 32, color: '#92400e' }} />
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                    <Chip
+                        label="🔒 REGISTRATION CLOSED"
+                        size="small"
+                        sx={{
+                            bgcolor: '#fee2e2',
+                            color: '#991b1b',
+                            fontWeight: 900,
+                            fontSize: '0.72rem',
+                            border: '1px solid #fca5a5',
+                            borderBottom: '2.5px solid #dc2626',
+                            boxShadow: '0 2px 5px rgba(220, 38, 38, 0.15)',
+                            height: 24,
+                            px: 0.8,
+                        }}
+                    />
                 </Box>
                 <Typography
                     variant="h5"
                     sx={{
-                        fontWeight: 800,
+                        fontWeight: 900,
                         color: '#111827',
-                        fontSize: { xs: '1.5rem', sm: '1.85rem' },
+                        fontSize: { xs: '1.4rem', sm: '1.75rem' },
                         mb: 0.5,
                     }}
                 >
-                    Create Account
+                    Author Registration is Closed
                 </Typography>
                 <Typography
                     sx={{
-                        color: '#6b7280',
-                        fontSize: '0.875rem',
+                        color: '#64748b',
+                        fontSize: '0.86rem',
+                        fontWeight: 500,
                     }}
                 >
-                    Register for 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
+                    55ᵀᴴ PIT IAGI - GEOSEA XIX 2026 Annual Convention
                 </Typography>
             </Box>
+
+            {/* 3D Closed Notice & Conference Passes CTA Card */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 2.5,
+                    mb: 3,
+                    borderRadius: '20px',
+                    background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
+                    border: '1.5px solid #a7f3d0',
+                    borderBottom: '4.5px solid #059669',
+                    boxShadow: '0 6px 20px rgba(5, 150, 105, 0.18)',
+                    textAlign: 'center',
+                }}
+            >
+                <Typography variant="body2" sx={{ color: '#065f46', fontSize: '0.88rem', lineHeight: 1.55, fontWeight: 600, mb: 2 }}>
+                    Online account creation for Paper Authors & Presenters has closed. You can still register for <strong>Conference & Visitor Passes</strong>.
+                </Typography>
+
+                <Button
+                    component={Link}
+                    href="/tickets"
+                    variant="contained"
+                    fullWidth
+                    endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+                    sx={{
+                        background: 'linear-gradient(180deg, #10b981 0%, #059669 50%, #047857 100%)',
+                        color: '#ffffff',
+                        fontWeight: 900,
+                        fontSize: '0.9rem',
+                        borderRadius: '12px',
+                        py: 1.1,
+                        textTransform: 'none',
+                        border: '1.5px solid #34d399',
+                        borderBottom: '3.5px solid #022c22',
+                        boxShadow: '0 4px 14px rgba(4, 120, 87, 0.35)',
+                        transition: 'all 0.15s ease',
+                        '&:hover': {
+                            background: 'linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%)',
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 6px 18px rgba(4, 120, 87, 0.45)',
+                        },
+                    }}
+                >
+                    🎟️ Get Conference & Visitor Pass
+                </Button>
+            </Paper>
 
             {/* Success Message */}
             {flash?.success && (

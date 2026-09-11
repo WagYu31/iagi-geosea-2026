@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import RegistrationClosedDialog from './RegistrationClosedDialog';
 
 // Keyframe animations
 const fadeInUp = keyframes`
@@ -162,6 +163,7 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
 
 export default function Hero({ settings, auth }) {
     const [videoMounted, setVideoMounted] = useState(false);
+    const [closedModalOpen, setClosedModalOpen] = useState(false);
     const heroText = settings.hero_text || {};
 
     useEffect(() => {
@@ -470,29 +472,36 @@ export default function Hero({ settings, auth }) {
                                 🎟️ Conference & Visitor Passes
                             </Button>
                             <Button
-                                component={Link}
-                                href="/register"
+                                onClick={() => setClosedModalOpen(true)}
                                 variant="contained"
                                 size="large"
                                 sx={{
-                                    background: 'linear-gradient(135deg, #4dd4ac 0%, #0d9488 100%)',
-                                    color: '#094d42',
+                                    background: 'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.1) 100%)',
+                                    color: '#ffffff',
                                     fontWeight: 700,
                                     textTransform: 'none',
                                     borderRadius: '12px',
                                     px: 3.5,
                                     py: 1.5,
                                     fontSize: '1rem',
-                                    boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
+                                    border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                                    borderBottom: '4px solid rgba(0, 0, 0, 0.35)',
+                                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.3)',
+                                    backdropFilter: 'blur(10px)',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
                                     '&:hover': {
-                                        background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
+                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.18) 100%)',
                                         transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 24px rgba(77, 212, 172, 0.5)',
+                                        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.25)',
                                     },
-                                    transition: 'all 0.3s ease',
+                                    '&:active': {
+                                        transform: 'translateY(1.5px)',
+                                        borderBottom: '1.5px solid rgba(0, 0, 0, 0.35)',
+                                    },
                                 }}
                             >
-                                Register Author
+                                🔒 Register Author (Closed)
                             </Button>
                             <Button
                                 component={Link}
@@ -583,6 +592,9 @@ export default function Hero({ settings, auth }) {
                 {/* Isolated Countdown Component (does not re-render parent Hero) */}
                 <CountdownSection targetDateStr={settings.countdown_target_date} fadeInUpAnim={fadeInUp} />
             </Container>
+
+            {/* 3D Registration Closed Notice Dialog */}
+            <RegistrationClosedDialog open={closedModalOpen} onClose={() => setClosedModalOpen(false)} />
         </Box>
     );
 }
