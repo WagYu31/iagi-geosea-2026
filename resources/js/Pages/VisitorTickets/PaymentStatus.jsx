@@ -14,6 +14,9 @@ import {
     CircularProgress,
     IconButton,
     Tooltip,
+    Dialog,
+    DialogContent,
+    DialogActions,
 } from '@mui/material';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -28,6 +31,12 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 
 const CATEGORY_MAP = {
     // Roles & Invitations
@@ -62,6 +71,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
 
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [copiedCode, setCopiedCode] = useState(false);
+    const [noticeModalOpen, setNoticeModalOpen] = useState(true);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     // 3D Card Tilt on Mouse Move
@@ -210,6 +220,30 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                     </Button>
 
                     <Stack direction="row" spacing={1} flexWrap="wrap" alignItems="center">
+                        <Button
+                            variant="outlined"
+                            startIcon={<InfoOutlinedIcon sx={{ color: '#d97706' }} />}
+                            onClick={() => setNoticeModalOpen(true)}
+                            size="small"
+                            sx={{
+                                color: '#92400e',
+                                borderColor: '#fde68a',
+                                bgcolor: '#fffbeb',
+                                textTransform: 'none',
+                                fontWeight: 800,
+                                borderRadius: '8px',
+                                fontSize: '0.78rem',
+                                px: 1.5,
+                                py: 0.6,
+                                '&:hover': {
+                                    bgcolor: '#fef3c7',
+                                    borderColor: '#f59e0b',
+                                },
+                            }}
+                        >
+                            Email & Verification Notice
+                        </Button>
+
                         <Button
                             component={Link}
                             href={route('visitor.receipt.show', payment.payment_code)}
@@ -657,6 +691,292 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         </Button>
                     </Stack>
                 </Paper>
+
+                {/* PROFESSIONAL EMAIL & 1X24H VERIFICATION POP-UP MODAL */}
+                <Dialog
+                    open={noticeModalOpen}
+                    onClose={() => setNoticeModalOpen(false)}
+                    maxWidth="sm"
+                    fullWidth
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '24px',
+                            border: '1.5px solid #e2e8f0',
+                            boxShadow: '0 25px 60px -15px rgba(0,0,0,0.3)',
+                            overflow: 'hidden',
+                            p: 0,
+                        }
+                    }}
+                >
+                    {/* Modal Header with Event Brand Gradient */}
+                    <Box
+                        sx={{
+                            background: 'linear-gradient(135deg, #094d42 0%, #063830 100%)',
+                            color: '#ffffff',
+                            p: 3,
+                            pb: 2.5,
+                            position: 'relative',
+                        }}
+                    >
+                        <IconButton
+                            size="small"
+                            onClick={() => setNoticeModalOpen(false)}
+                            sx={{
+                                position: 'absolute',
+                                top: 14,
+                                right: 14,
+                                color: '#ffffff',
+                                bgcolor: 'rgba(255,255,255,0.15)',
+                                '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
+                            }}
+                        >
+                            <CloseIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 1.5 }}>
+                            <Box
+                                sx={{
+                                    width: 38,
+                                    height: 38,
+                                    borderRadius: '10px',
+                                    bgcolor: 'rgba(255,255,255,0.15)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#fef08a',
+                                }}
+                            >
+                                <MarkEmailUnreadIcon sx={{ fontSize: 22 }} />
+                            </Box>
+                            <Chip
+                                label="OFFICIAL NOTIFICATION"
+                                size="small"
+                                sx={{
+                                    bgcolor: '#fef08a',
+                                    color: '#713f12',
+                                    fontWeight: 900,
+                                    fontSize: '0.65rem',
+                                    height: 20,
+                                    letterSpacing: '0.05em',
+                                }}
+                            />
+                        </Box>
+
+                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#ffffff', fontSize: '1.18rem', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+                            Important Notice: E-Ticket Delivery & Verification
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#cbd5e1', fontSize: '0.78rem', display: 'block', mt: 0.5 }}>
+                            55th PIT IAGI & GEOSEA XIX 2026 Organizing Committee
+                        </Typography>
+                    </Box>
+
+                    <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 }, bgcolor: '#ffffff' }}>
+                        <Stack spacing={2.5}>
+                            {/* Point 1: Check Spam Folder */}
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: '14px',
+                                    bgcolor: '#f0fdf4',
+                                    border: '1.5px solid #bbf7d0',
+                                    display: 'flex',
+                                    gap: 2,
+                                    alignItems: 'flex-start',
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: '10px',
+                                        bgcolor: '#dcfce7',
+                                        color: '#15803d',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        mt: 0.3,
+                                    }}
+                                >
+                                    <ForwardToInboxIcon sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#166534', fontSize: '0.9rem', mb: 0.4 }}>
+                                        1. Please Check Your Spam / Junk Folder
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#334155', fontSize: '0.82rem', lineHeight: 1.55 }}>
+                                        Official E-Tickets and registration receipts are automatically dispatched to your registered email address (<strong>{tickets[0]?.visitor_email || 'your email'}</strong>). If not found in your Primary Inbox, please check your <strong>Spam</strong>, <strong>Junk</strong>, or <strong>Promotions</strong> folder and mark it as <em>"Not Spam"</em>.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Point 2: 1x24 Hours Verification Window */}
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: '14px',
+                                    bgcolor: '#fffbeb',
+                                    border: '1.5px solid #fde68a',
+                                    display: 'flex',
+                                    gap: 2,
+                                    alignItems: 'flex-start',
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: '10px',
+                                        bgcolor: '#fef3c7',
+                                        color: '#b45309',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        mt: 0.3,
+                                    }}
+                                >
+                                    <AccessTimeIcon sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#92400e', fontSize: '0.9rem', mb: 0.4 }}>
+                                        2. 24-Hour (1x24 Hours) Verification Window
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#334155', fontSize: '0.82rem', lineHeight: 1.55 }}>
+                                        Payment verification and ticket activation take up to <strong>24 hours (1x24 Jam)</strong>. You may keep this page bookmarked to track real-time verification updates.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Point 3: Contact Committee if No Email */}
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    borderRadius: '14px',
+                                    bgcolor: '#f8fafc',
+                                    border: '1.5px solid #e2e8f0',
+                                    display: 'flex',
+                                    gap: 2,
+                                    alignItems: 'flex-start',
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: '10px',
+                                        bgcolor: '#f1f5f9',
+                                        color: '#0284c7',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        mt: 0.3,
+                                    }}
+                                >
+                                    <SupportAgentIcon sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.9rem', mb: 0.4 }}>
+                                        3. Haven't Received Email After 24 Hours?
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', lineHeight: 1.55, mb: 1.5 }}>
+                                        If you have not received your confirmation or E-Ticket after 24 hours, please contact our committee directly via WhatsApp with your Payment Code:
+                                    </Typography>
+
+                                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.8, bgcolor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', px: 1.2, py: 0.4, mb: 1.5 }}>
+                                        <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>
+                                            Payment Code:
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 900, color: '#094d42' }}>
+                                            {payment.payment_code}
+                                        </Typography>
+                                        <Tooltip title={copiedCode ? 'Copied!' : 'Copy Code'}>
+                                            <IconButton size="small" onClick={handleCopyPaymentCode} sx={{ p: 0.2, color: '#0284c7' }}>
+                                                <ContentCopyIcon sx={{ fontSize: 13 }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                                        <Button
+                                            component="a"
+                                            href={`https://wa.me/62859207771789?text=Hello%20Adeline%20(Registration),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 16 }} />}
+                                            size="small"
+                                            sx={{
+                                                bgcolor: '#f0fdf4',
+                                                border: '1px solid #bbf7d0',
+                                                color: '#15803d',
+                                                fontWeight: 800,
+                                                fontSize: '0.75rem',
+                                                borderRadius: '8px',
+                                                textTransform: 'none',
+                                                py: 0.6,
+                                                px: 1.5,
+                                                '&:hover': { bgcolor: '#dcfce7' },
+                                            }}
+                                        >
+                                            WhatsApp Registration (Adeline)
+                                        </Button>
+                                        <Button
+                                            component="a"
+                                            href={`https://wa.me/6281212200782?text=Hello%20Tiyas%20(Secretariat),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 16 }} />}
+                                            size="small"
+                                            sx={{
+                                                bgcolor: '#f0fdf4',
+                                                border: '1px solid #bbf7d0',
+                                                color: '#15803d',
+                                                fontWeight: 800,
+                                                fontSize: '0.75rem',
+                                                borderRadius: '8px',
+                                                textTransform: 'none',
+                                                py: 0.6,
+                                                px: 1.5,
+                                                '&:hover': { bgcolor: '#dcfce7' },
+                                            }}
+                                        >
+                                            WhatsApp Secretariat (Tiyas)
+                                        </Button>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                        </Stack>
+                    </DialogContent>
+
+                    <DialogActions sx={{ p: 2.5, px: 3, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
+                            Thank you for your cooperation and patience.
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            onClick={() => setNoticeModalOpen(false)}
+                            sx={{
+                                bgcolor: '#094d42',
+                                color: '#ffffff',
+                                fontWeight: 900,
+                                fontSize: '0.82rem',
+                                px: 3,
+                                py: 0.9,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                boxShadow: '0 3px 0 #063830, 0 6px 16px rgba(9,77,66,0.25)',
+                                '&:hover': {
+                                    bgcolor: '#063830',
+                                    transform: 'translateY(1px)',
+                                    boxShadow: '0 2px 0 #063830',
+                                },
+                            }}
+                        >
+                            I Understand & Proceed
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </Box>
     );
