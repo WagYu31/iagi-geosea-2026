@@ -693,7 +693,7 @@ export default function Register({
                                 },
                             }}
                         >
-                            🔍 Cek Status / Cari Tiket
+                            Check Status / Find Ticket
                         </Button>
 
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
@@ -870,7 +870,7 @@ export default function Register({
                                 <Box sx={{ textAlign: 'left' }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.3 }}>
                                         <Chip
-                                            label="⚡ SUDAH MENDAFTAR?"
+                                            label="⚡ ALREADY REGISTERED?"
                                             size="small"
                                             sx={{
                                                 bgcolor: '#fef08a',
@@ -883,7 +883,7 @@ export default function Register({
                                             }}
                                         />
                                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: { xs: 'none', sm: 'inline' } }}>
-                                            ALREADY REGISTERED?
+                                            FIND PASS & E-TICKET
                                         </Typography>
                                     </Box>
                                     <Typography
@@ -896,7 +896,7 @@ export default function Register({
                                             textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                                         }}
                                     >
-                                        Cek Status Pendaftaran & Cari E-Ticket Saya
+                                        Check Registration Status & Find My E-Ticket
                                     </Typography>
                                     <Typography
                                         variant="caption"
@@ -936,7 +936,7 @@ export default function Register({
                                         pointerEvents: 'none', // parent is clickable
                                     }}
                                 >
-                                    Cek Sekarang &bull; Search
+                                    Check Status Now &bull; Search
                                 </Button>
                             </Box>
                         </Paper>
@@ -2503,7 +2503,7 @@ export default function Register({
                                 Find My Ticket & Payment Status
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.84rem', mt: 0.3, fontWeight: 600 }}>
-                                Cek Status Pendaftaran & E-Ticket Peserta 55ᵀᴴ PIT IAGI-GEOSEA 2026
+                                Check Registration Status & Participant E-Ticket for 55ᵀᴴ PIT IAGI-GEOSEA 2026
                             </Typography>
                         </Box>
                     </Box>
@@ -2612,7 +2612,7 @@ export default function Register({
                             }}
                         />
                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.76rem', display: 'block', mt: 1, ml: 0.5, fontWeight: 600 }}>
-                            💡 <strong>Tip:</strong> Masukkan alamat email yang Anda gunakan saat mengisi formulir pendaftaran untuk menemukan seluruh tiket Anda.
+                            💡 <strong>Tip:</strong> Enter the email address used during registration to find all your registered tickets.
                         </Typography>
                     </Box>
 
@@ -2624,7 +2624,7 @@ export default function Register({
                                 Searching registration records...
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', mt: 0.4, display: 'block' }}>
-                                Sedang memeriksa data tiket dan bukti pembayaran di server.
+                                Checking ticket records and payment proofs on the server...
                             </Typography>
                         </Box>
                     )}
@@ -2662,7 +2662,7 @@ export default function Register({
                                             variant="outlined"
                                             size="small"
                                             component="a"
-                                            href="https://wa.me/628122699923?text=Halo%20Panitia%20PIT%20IAGI%2C%20saya%20ingin%20menanyakan%20status%20pendaftaran%20tiket%20saya."
+                                            href="https://wa.me/628122699923?text=Hello%20PIT%20IAGI%20Committee%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
@@ -2689,7 +2689,7 @@ export default function Register({
                                             variant="outlined"
                                             size="small"
                                             component="a"
-                                            href="https://wa.me/6281325779040?text=Halo%20Sekretariat%20PIT%20IAGI%2C%20saya%20ingin%20menanyakan%20status%20pendaftaran%20tiket%20saya."
+                                            href="https://wa.me/6281325779040?text=Hello%20PIT%20IAGI%20Secretariat%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
@@ -2737,7 +2737,7 @@ export default function Register({
                                     }}
                                 />
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
-                                    Klik tombol untuk membuka halaman status tiket / bukti bayar
+                                    Click button to open ticket verification / payment status page
                                 </Typography>
                             </Box>
 
