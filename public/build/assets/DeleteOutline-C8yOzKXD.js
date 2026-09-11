@@ -1,1 +1,0 @@
-import{j as t}from"./app-a7ADfRJU.js";import{c as o}from"./Typography-Dc9Eyd-9.js";const r=o(t.jsx("path",{d:"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM8 9h8v10H8zm7.5-5-1-1h-5l-1 1H5v2h14V4z"}));export{r as D};

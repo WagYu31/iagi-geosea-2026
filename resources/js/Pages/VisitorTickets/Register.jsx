@@ -48,6 +48,14 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import GroupsIcon from '@mui/icons-material/Groups';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ConstructionIcon from '@mui/icons-material/Construction';
+import SearchIcon from '@mui/icons-material/Search';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import axios from 'axios';
 
 export default function Register({
     categories: propCategories = [],
@@ -230,6 +238,63 @@ export default function Register({
     const [compressionStats, setCompressionStats] = useState(null);
     const [copySuccess, setCopySuccess] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    // Check Status & Find Ticket Modal State
+    const [checkStatusOpen, setCheckStatusOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResults, setSearchResults] = useState(null);
+    const [searchError, setSearchError] = useState(null);
+    const [searchHasSubmitted, setSearchHasSubmitted] = useState(false);
+    const [copiedCode, setCopiedCode] = useState(null);
+
+    const handleCopyCode = (code) => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code);
+            setCopiedCode(code);
+            setTimeout(() => setCopiedCode(null), 2000);
+        }
+    };
+
+    const handlePerformSearch = async (e) => {
+        if (e) e.preventDefault();
+        const trimmed = searchQuery.trim();
+        if (!trimmed || trimmed.length < 3) {
+            setSearchError('Please enter at least 3 characters (e.g. your Email, Phone Number, or Payment Code).');
+            return;
+        }
+
+        setIsSearching(true);
+        setSearchError(null);
+        setSearchResults(null);
+        setSearchHasSubmitted(true);
+
+        try {
+            const response = await axios.post(route('visitor.tickets.lookup'), {
+                query: trimmed,
+            });
+
+            if (response.data && response.data.success) {
+                setSearchResults(response.data.data || []);
+            } else {
+                setSearchError(response.data?.message || 'No registration records found.');
+                setSearchResults([]);
+            }
+        } catch (err) {
+            console.error('Ticket lookup failed:', err);
+            setSearchError(err.response?.data?.message || 'Failed to search records. Please check your internet connection or try again.');
+            setSearchResults([]);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const handleResetSearch = () => {
+        setSearchQuery('');
+        setSearchResults(null);
+        setSearchError(null);
+        setSearchHasSubmitted(false);
+    };
 
     // Live Camera Viewfinder Modal State
     const [cameraModalOpen, setCameraModalOpen] = useState(false);
@@ -545,8 +610,10 @@ export default function Register({
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
                         p: 1.2,
-                        px: 2.5,
+                        px: { xs: 1.8, sm: 2.5 },
                         borderRadius: '16px',
                         bgcolor: '#ffffff',
                         border: '1px solid #e2e8f0',
@@ -577,11 +644,41 @@ export default function Register({
                         Back to Home
                     </Button>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981' }} />
-                        <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-                            Official Registration Portal &bull; 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
-                        </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                        <Button
+                            onClick={() => {
+                                setCheckStatusOpen(true);
+                                setSearchError(null);
+                            }}
+                            startIcon={<SearchIcon sx={{ color: '#047857' }} />}
+                            size="small"
+                            sx={{
+                                bgcolor: '#ecfdf5',
+                                color: '#047857',
+                                border: '1px solid #a7f3d0',
+                                textTransform: 'none',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                borderRadius: '10px',
+                                px: 1.8,
+                                py: 0.6,
+                                boxShadow: '0 1px 3px rgba(4,120,87,0.08)',
+                                '&:hover': {
+                                    bgcolor: '#d1fae5',
+                                    borderColor: '#6ee7b7',
+                                    boxShadow: '0 2px 8px rgba(4,120,87,0.15)',
+                                },
+                            }}
+                        >
+                            Check Status / Find Ticket
+                        </Button>
+
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981' }} />
+                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
+                                Official Registration Portal &bull; 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
+                            </Typography>
+                        </Box>
                     </Box>
                 </Box>
 
@@ -662,6 +759,39 @@ export default function Register({
                                 {eventVenue}
                             </Typography>
                         </Box>
+                    </Box>
+
+                    {/* Quick Status Lookup Banner */}
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                            onClick={() => {
+                                setCheckStatusOpen(true);
+                                setSearchError(null);
+                            }}
+                            startIcon={<ManageSearchIcon sx={{ color: '#047857' }} />}
+                            endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important', color: '#047857' }} />}
+                            size="small"
+                            sx={{
+                                bgcolor: '#ffffff',
+                                border: '1px solid #cbd5e1',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                borderRadius: '30px',
+                                px: { xs: 2, sm: 2.5 },
+                                py: 0.7,
+                                textTransform: 'none',
+                                color: '#334155',
+                                fontSize: { xs: '0.78rem', sm: '0.84rem' },
+                                fontWeight: 600,
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    bgcolor: '#ecfdf5',
+                                    borderColor: '#10b981',
+                                    boxShadow: '0 4px 14px rgba(16,185,129,0.15)',
+                                },
+                            }}
+                        >
+                            Already registered? <Box component="span" sx={{ color: '#047857', fontWeight: 800, ml: 0.8 }}>Check Registration Status / Find My Ticket</Box>
+                        </Button>
                     </Box>
                 </Box>
 
@@ -1875,6 +2005,543 @@ export default function Register({
                         }}
                     >
                         Capture Photo
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* CHECK STATUS & FIND TICKET MODAL */}
+            <Dialog
+                open={checkStatusOpen}
+                onClose={() => setCheckStatusOpen(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '24px',
+                        bgcolor: '#ffffff',
+                        overflow: 'hidden',
+                        boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        p: { xs: 2.2, sm: 3 },
+                        pb: 2,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
+                        borderBottom: '1px solid #f1f5f9',
+                        bgcolor: '#f8fafc',
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8 }}>
+                        <Box
+                            sx={{
+                                width: 46,
+                                height: 46,
+                                borderRadius: '14px',
+                                bgcolor: '#ecfdf5',
+                                border: '1px solid #a7f3d0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#047857',
+                            }}
+                        >
+                            <ManageSearchIcon sx={{ fontSize: 28 }} />
+                        </Box>
+                        <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0f172a', lineHeight: 1.2, fontSize: { xs: '1.05rem', sm: '1.25rem' } }}>
+                                Find My Ticket & Payment Status
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.82rem', mt: 0.3 }}>
+                                Cek Status Pendaftaran & E-Ticket Peserta 55ᵀᴴ PIT IAGI-GEOSEA 2026
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <IconButton
+                        onClick={() => setCheckStatusOpen(false)}
+                        size="small"
+                        sx={{
+                            color: '#94a3b8',
+                            bgcolor: '#ffffff',
+                            border: '1px solid #e2e8f0',
+                            '&:hover': { color: '#0f172a', bgcolor: '#f1f5f9' },
+                        }}
+                    >
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                </DialogTitle>
+
+                <DialogContent sx={{ p: { xs: 2.2, sm: 3 } }}>
+                    {/* Search Input Box Form */}
+                    <Box component="form" onSubmit={handlePerformSearch} sx={{ mb: 2.5 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
+                            Search by Email / Phone / Payment Code
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="e.g. yourname@gmail.com, 08123456789, or VPAY-260911..."
+                            variant="outlined"
+                            size="medium"
+                            disabled={isSearching}
+                            autoFocus
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: '#047857' }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Stack direction="row" spacing={1} alignItems="center">
+                                            {searchQuery && (
+                                                <IconButton size="small" onClick={handleResetSearch} sx={{ color: '#94a3b8' }}>
+                                                    <HighlightOffIcon fontSize="small" />
+                                                </IconButton>
+                                            )}
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                disabled={isSearching || !searchQuery.trim()}
+                                                startIcon={isSearching ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <SearchIcon />}
+                                                sx={{
+                                                    bgcolor: '#047857',
+                                                    color: '#fff',
+                                                    fontWeight: 800,
+                                                    borderRadius: '10px',
+                                                    textTransform: 'none',
+                                                    px: 2.5,
+                                                    py: 0.9,
+                                                    boxShadow: 'none',
+                                                    '&:hover': { bgcolor: '#065f46' },
+                                                }}
+                                            >
+                                                {isSearching ? 'Searching...' : 'Search'}
+                                            </Button>
+                                        </Stack>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '14px',
+                                    bgcolor: '#f8fafc',
+                                    pr: 1,
+                                    '&:hover fieldset': { borderColor: '#10b981' },
+                                    '&.Mui-focused fieldset': { borderColor: '#047857', borderWidth: '2px' },
+                                },
+                            }}
+                        />
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.76rem', display: 'block', mt: 0.8, ml: 0.5 }}>
+                            💡 <strong>Tip:</strong> Masukkan alamat email yang Anda gunakan saat mengisi formulir pendaftaran untuk menemukan seluruh tiket Anda.
+                        </Typography>
+                    </Box>
+
+                    {/* Loading State */}
+                    {isSearching && (
+                        <Box sx={{ py: 6, textAlign: 'center' }}>
+                            <CircularProgress size={36} sx={{ color: '#047857', mb: 1.5 }} />
+                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#334155' }}>
+                                Searching registration records...
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                                Sedang memeriksa data tiket dan bukti pembayaran di server.
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {/* Search Error / Not Found State */}
+                    {!isSearching && searchError && (
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 2.5,
+                                borderRadius: '16px',
+                                bgcolor: '#fffbeb',
+                                border: '1px solid #fde68a',
+                                mb: 2,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                                <HourglassEmptyIcon sx={{ color: '#d97706', mt: 0.2 }} />
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                                        Registration Record Not Found
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#78350f', fontSize: '0.84rem', mt: 0.5, lineHeight: 1.5 }}>
+                                        {searchError}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#92400e', display: 'block', mt: 1 }}>
+                                        Need direct help? Contact the PIT IAGI organizing committee via WhatsApp:
+                                    </Typography>
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5 }}>
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            component="a"
+                                            href="https://wa.me/628122699923?text=Halo%20Panitia%20PIT%20IAGI%2C%20saya%20ingin%20menanyakan%20status%20pendaftaran%20tiket%20saya."
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontWeight: 700,
+                                                fontSize: '0.8rem',
+                                                borderRadius: '10px',
+                                                bgcolor: '#ffffff',
+                                                borderColor: '#86efac',
+                                                color: '#15803d',
+                                                '&:hover': { bgcolor: '#f0fdf4', borderColor: '#4ade80' },
+                                            }}
+                                        >
+                                            WhatsApp Registration (Adeline)
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            component="a"
+                                            href="https://wa.me/6281325779040?text=Halo%20Sekretariat%20PIT%20IAGI%2C%20saya%20ingin%20menanyakan%20status%20pendaftaran%20tiket%20saya."
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontWeight: 700,
+                                                fontSize: '0.8rem',
+                                                borderRadius: '10px',
+                                                bgcolor: '#ffffff',
+                                                borderColor: '#86efac',
+                                                color: '#15803d',
+                                                '&:hover': { bgcolor: '#f0fdf4', borderColor: '#4ade80' },
+                                            }}
+                                        >
+                                            WhatsApp Secretariat (Tiyas)
+                                        </Button>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                        </Paper>
+                    )}
+
+                    {/* Search Results List */}
+                    {!isSearching && searchResults && searchResults.length > 0 && (
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                <Chip
+                                    label={`Found ${searchResults.length} Registration Record(s)`}
+                                    size="small"
+                                    sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 800, border: '1px solid #a7f3d0' }}
+                                />
+                                <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                    Klik tombol untuk membuka halaman status tiket / bukti bayar
+                                </Typography>
+                            </Box>
+
+                            <Stack spacing={2}>
+                                {searchResults.map((item) => {
+                                    const isItemPending = item.status === 'pending' || item.payment_status === 'pending';
+                                    const isItemActive = item.status === 'active' || item.payment_status === 'verified';
+                                    const isItemRejected = item.status === 'rejected' || item.payment_status === 'rejected';
+
+                                    let badgeBg = '#f1f5f9';
+                                    let badgeColor = '#475569';
+                                    let badgeLabel = item.status?.toUpperCase() || 'UNKNOWN';
+
+                                    if (isItemPending) {
+                                        badgeBg = '#fef3c7';
+                                        badgeColor = '#b45309';
+                                        badgeLabel = '⏳ Awaiting Verification';
+                                    } else if (isItemActive) {
+                                        badgeBg = '#dcfce7';
+                                        badgeColor = '#15803d';
+                                        badgeLabel = '✓ Verified & Active';
+                                    } else if (isItemRejected) {
+                                        badgeBg = '#fee2e2';
+                                        badgeColor = '#b91c1c';
+                                        badgeLabel = '✕ Rejected';
+                                    } else if (item.status === 'used') {
+                                        badgeBg = '#e0e7ff';
+                                        badgeColor = '#4338ca';
+                                        badgeLabel = 'Check-in Done';
+                                    }
+
+                                    return (
+                                        <Paper
+                                            key={item.id}
+                                            elevation={0}
+                                            sx={{
+                                                p: 2.2,
+                                                borderRadius: '16px',
+                                                border: `1px solid ${isItemActive ? '#86efac' : isItemPending ? '#fde68a' : '#e2e8f0'}`,
+                                                bgcolor: isItemActive ? '#f0fdf4' : isItemPending ? '#fffdf7' : '#ffffff',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                                                transition: 'all 0.2s ease',
+                                                '&:hover': {
+                                                    boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+                                                    borderColor: isItemActive ? '#4ade80' : isItemPending ? '#f59e0b' : '#cbd5e1',
+                                                },
+                                            }}
+                                        >
+                                            <Grid container spacing={2} alignItems="center">
+                                                {/* Left Details */}
+                                                <Grid item xs={12} md={7}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.6 }}>
+                                                        <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1rem' }}>
+                                                            {item.name}
+                                                        </Typography>
+                                                        <Chip
+                                                            label={item.category_label}
+                                                            size="small"
+                                                            sx={{
+                                                                bgcolor: '#f1f5f9',
+                                                                color: '#334155',
+                                                                fontWeight: 700,
+                                                                fontSize: '0.68rem',
+                                                                height: 20,
+                                                            }}
+                                                        />
+                                                        <Chip
+                                                            label={badgeLabel}
+                                                            size="small"
+                                                            sx={{
+                                                                bgcolor: badgeBg,
+                                                                color: badgeColor,
+                                                                fontWeight: 800,
+                                                                fontSize: '0.7rem',
+                                                                height: 22,
+                                                                border: `1px solid ${badgeColor}33`,
+                                                            }}
+                                                        />
+                                                    </Box>
+
+                                                    <Stack spacing={0.4} sx={{ color: '#475569', fontSize: '0.8rem' }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                            <EmailOutlinedIcon sx={{ fontSize: 15, color: '#64748b' }} />
+                                                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 600 }}>
+                                                                {item.email}
+                                                            </Typography>
+                                                        </Box>
+                                                        {item.phone && (
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                                <PhoneIphoneIcon sx={{ fontSize: 15, color: '#64748b' }} />
+                                                                <Typography variant="caption" sx={{ color: '#475569' }}>
+                                                                    {item.phone}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
+                                                        {item.institution && (
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                                <BusinessOutlinedIcon sx={{ fontSize: 15, color: '#64748b' }} />
+                                                                <Typography variant="caption" sx={{ color: '#475569' }}>
+                                                                    {item.institution}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
+                                                    </Stack>
+
+                                                    {/* Code Box */}
+                                                    <Box sx={{ mt: 1.2, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                        {item.payment_code && (
+                                                            <Box
+                                                                sx={{
+                                                                    display: 'inline-flex',
+                                                                    alignItems: 'center',
+                                                                    gap: 0.6,
+                                                                    px: 1.2,
+                                                                    py: 0.3,
+                                                                    borderRadius: '8px',
+                                                                    bgcolor: '#f1f5f9',
+                                                                    border: '1px solid #e2e8f0',
+                                                                }}
+                                                            >
+                                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.74rem' }}>
+                                                                    Payment: {item.payment_code}
+                                                                </Typography>
+                                                                <Tooltip title={copiedCode === item.payment_code ? 'Copied!' : 'Copy Code'}>
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={() => handleCopyCode(item.payment_code)}
+                                                                        sx={{ p: 0.2, color: copiedCode === item.payment_code ? '#16a34a' : '#64748b' }}
+                                                                    >
+                                                                        {copiedCode === item.payment_code ? <CheckCircleIcon sx={{ fontSize: 13 }} /> : <ContentCopyIcon sx={{ fontSize: 13 }} />}
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            </Box>
+                                                        )}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: 0.6,
+                                                                px: 1.2,
+                                                                py: 0.3,
+                                                                borderRadius: '8px',
+                                                                bgcolor: '#f1f5f9',
+                                                                border: '1px solid #e2e8f0',
+                                                            }}
+                                                        >
+                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.74rem' }}>
+                                                                Ticket: {item.ticket_code}
+                                                            </Typography>
+                                                            <Tooltip title={copiedCode === item.ticket_code ? 'Copied!' : 'Copy Code'}>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={() => handleCopyCode(item.ticket_code)}
+                                                                    sx={{ p: 0.2, color: copiedCode === item.ticket_code ? '#16a34a' : '#64748b' }}
+                                                                >
+                                                                    {copiedCode === item.ticket_code ? <CheckCircleIcon sx={{ fontSize: 13 }} /> : <ContentCopyIcon sx={{ fontSize: 13 }} />}
+                                                                </IconButton>
+                            </Tooltip>
+                                                        </Box>
+                                                    </Box>
+                                                </Grid>
+
+                                                {/* Right Action CTA */}
+                                                <Grid item xs={12} md={5}>
+                                                    <Stack spacing={1} sx={{ alignItems: { xs: 'stretch', md: 'flex-end' } }}>
+                                                        {item.has_payment ? (
+                                                            <>
+                                                                <Button
+                                                                    component="a"
+                                                                    href={item.status_url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    variant="contained"
+                                                                    size="small"
+                                                                    endIcon={<ArrowForwardIcon />}
+                                                                    sx={{
+                                                                        bgcolor: isItemActive ? '#15803d' : '#047857',
+                                                                        color: '#fff',
+                                                                        fontWeight: 800,
+                                                                        fontSize: '0.82rem',
+                                                                        textTransform: 'none',
+                                                                        borderRadius: '10px',
+                                                                        px: 2,
+                                                                        py: 0.8,
+                                                                        boxShadow: 'none',
+                                                                        width: { xs: '100%', md: 'auto' },
+                                                                        '&:hover': { bgcolor: '#065f46' },
+                                                                    }}
+                                                                >
+                                                                    {isItemPending ? 'Open Payment Status Page' : 'Open Verification Page'}
+                                                                </Button>
+
+                                                                {isItemActive && (
+                                                                    <Stack direction="row" spacing={1} sx={{ width: { xs: '100%', md: 'auto' } }}>
+                                                                        <Button
+                                                                            component="a"
+                                                                            href={item.ticket_url}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            variant="outlined"
+                                                                            size="small"
+                                                                            startIcon={<QrCodeIcon />}
+                                                                            sx={{
+                                                                                color: '#047857',
+                                                                                borderColor: '#a7f3d0',
+                                                                                fontWeight: 700,
+                                                                                fontSize: '0.78rem',
+                                                                                textTransform: 'none',
+                                                                                borderRadius: '8px',
+                                                                                flex: 1,
+                                                                                '&:hover': { bgcolor: '#ecfdf5', borderColor: '#10b981' },
+                                                                            }}
+                                                                        >
+                                                                            E-Ticket
+                                                                        </Button>
+                                                                        {item.receipt_url && (
+                                                                            <Button
+                                                                                component="a"
+                                                                                href={item.receipt_url}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                variant="outlined"
+                                                                                size="small"
+                                                                                startIcon={<ReceiptLongIcon />}
+                                                                                sx={{
+                                                                                    color: '#475569',
+                                                                                    borderColor: '#cbd5e1',
+                                                                                    fontWeight: 700,
+                                                                                    fontSize: '0.78rem',
+                                                                                    textTransform: 'none',
+                                                                                    borderRadius: '8px',
+                                                                                    flex: 1,
+                                                                                    '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' },
+                                                                                }}
+                                                                            >
+                                                                                Receipt
+                                                                            </Button>
+                                                                        )}
+                                                                    </Stack>
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <Button
+                                                                component="a"
+                                                                href={item.ticket_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                variant="contained"
+                                                                size="small"
+                                                                endIcon={<ArrowForwardIcon />}
+                                                                startIcon={<QrCodeIcon />}
+                                                                sx={{
+                                                                    bgcolor: '#047857',
+                                                                    color: '#fff',
+                                                                    fontWeight: 800,
+                                                                    fontSize: '0.82rem',
+                                                                    textTransform: 'none',
+                                                                    borderRadius: '10px',
+                                                                    px: 2,
+                                                                    py: 0.8,
+                                                                    boxShadow: 'none',
+                                                                    width: { xs: '100%', md: 'auto' },
+                                                                    '&:hover': { bgcolor: '#065f46' },
+                                                                }}
+                                                            >
+                                                                View Digital E-Ticket
+                                                            </Button>
+                                                        )}
+                                                    </Stack>
+                                                </Grid>
+                                            </Grid>
+                                        </Paper>
+                                    );
+                                })}
+                            </Stack>
+                        </Box>
+                    )}
+                </DialogContent>
+
+                <DialogActions
+                    sx={{
+                        p: 2,
+                        px: 3,
+                        bgcolor: '#f8fafc',
+                        borderTop: '1px solid #f1f5f9',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                        PIT IAGI-GEOSEA XIX 2026 Ticketing Support
+                    </Typography>
+                    <Button
+                        onClick={() => setCheckStatusOpen(false)}
+                        sx={{
+                            color: '#334155',
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            borderRadius: '8px',
+                            px: 2,
+                        }}
+                    >
+                        Close
                     </Button>
                 </DialogActions>
             </Dialog>

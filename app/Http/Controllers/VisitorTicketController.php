@@ -423,4 +423,80 @@ class VisitorTicketController extends Controller
             'bankInfo' => $bankInfo,
         ]);
     }
+
+    /**
+     * Search and lookup visitor ticket / payment status by email, phone, ticket_code, or payment_code
+     */
+    public function lookup(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:3|max:150',
+        ]);
+
+        $search = trim($request->input('query'));
+
+        // Search in VisitorTicket (by email, phone, ticket_code, or visitor_name)
+        // Or search in VisitorPayment (by payment_code)
+        $tickets = VisitorTicket::with('payment')
+            ->where(function ($q) use ($search) {
+                $q->where('visitor_email', 'LIKE', "%{$search}%")
+                  ->orWhere('visitor_phone', 'LIKE', "%{$search}%")
+                  ->orWhere('ticket_code', 'LIKE', "%{$search}%")
+                  ->orWhere('visitor_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('payment', function ($pq) use ($search) {
+                      $pq->where('payment_code', 'LIKE', "%{$search}%");
+                  });
+            })
+            ->latest()
+            ->take(15)
+            ->get();
+
+        if ($tickets->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No registration or ticket records found matching "' . $search . '". Please ensure you entered the registered email, phone number, or payment code correctly.',
+                'data' => [],
+            ]);
+        }
+
+        // Format results
+        $results = $tickets->map(function ($ticket) {
+            $payment = $ticket->payment;
+            $hasPayment = !is_null($payment);
+            
+            // Determine primary destination URL
+            $statusUrl = $hasPayment 
+                ? route('visitor.payment.status', ['payment_code' => $payment->payment_code])
+                : route('visitor.ticket.show', ['ticket_code' => $ticket->ticket_code]);
+
+            $ticketUrl = route('visitor.ticket.show', ['ticket_code' => $ticket->ticket_code]);
+            $receiptUrl = $hasPayment ? route('visitor.receipt.show', ['payment_code' => $payment->payment_code]) : null;
+
+            return [
+                'id' => $ticket->id,
+                'name' => $ticket->visitor_name,
+                'email' => $ticket->visitor_email,
+                'phone' => $ticket->visitor_phone,
+                'institution' => $ticket->visitor_institution,
+                'ticket_code' => $ticket->ticket_code,
+                'visitor_type' => $ticket->visitor_type,
+                'category_label' => $ticket->category_label ?? ucwords(str_replace('_', ' ', $ticket->visitor_type)),
+                'status' => $ticket->status,
+                'has_payment' => $hasPayment,
+                'payment_code' => $payment ? $payment->payment_code : null,
+                'payment_status' => $payment ? $payment->status : null,
+                'total_amount' => $payment ? $payment->total_amount : 0,
+                'created_at_formatted' => $ticket->created_at ? $ticket->created_at->format('d M Y, H:i') : null,
+                'status_url' => $statusUrl,
+                'ticket_url' => $ticketUrl,
+                'receipt_url' => $receiptUrl,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Found ' . count($results) . ' registration record(s).',
+            'data' => $results,
+        ]);
+    }
 }
