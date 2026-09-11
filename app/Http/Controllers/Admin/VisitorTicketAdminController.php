@@ -42,7 +42,7 @@ class VisitorTicketAdminController extends Controller
         $query = VisitorTicket::with(['payment', 'registeredBy', 'checkedInBy', 'cardPrintedBy']);
 
         // Search filter
-        if ($search = $request->input('search')) {
+        if ($search = trim((string) $request->input('search', ''))) {
             $query->where(function ($q) use ($search) {
                 $q->where('visitor_name', 'like', "%{$search}%")
                   ->orWhere('visitor_email', 'like', "%{$search}%")
@@ -50,7 +50,22 @@ class VisitorTicketAdminController extends Controller
                   ->orWhere('visitor_institution', 'like', "%{$search}%")
                   ->orWhere('ticket_code', 'like', "%{$search}%")
                   ->orWhereHas('payment', function ($pq) use ($search) {
-                      $pq->where('payment_code', 'like', "%{$search}%");
+                      $pq->where('payment_code', 'like', "%{$search}%")
+                         ->orWhere('id', 'like', "%{$search}%");
+
+                      // Extract numeric ID if search is like "009" or "Receipt No. 009/..." or "009/PIT55..."
+                      if (preg_match('/(\d+)/', $search, $matches)) {
+                          $numericId = (int) $matches[1];
+                          if ($numericId > 0) {
+                              $pq->orWhere('id', $numericId);
+                          }
+                      }
+
+                      // Match LPAD padded ID e.g. "009", "008", "007"
+                      $cleanedSearch = preg_replace('/[^0-9]/', '', $search);
+                      if (!empty($cleanedSearch)) {
+                          $pq->orWhereRaw("LPAD(id, 3, '0') LIKE ?", ["%{$cleanedSearch}%"]);
+                      }
                   });
             });
         }

@@ -835,7 +835,7 @@ export default function VisitorTicketsIndex({
                     <Grid container spacing={1.5} alignItems="center">
                         <Grid item xs={12} md={4}>
                             <TextField
-                                placeholder="Search name, email, ticket code, institution..."
+                                placeholder="Search name, email, ticket code, INV / receipt no, institution..."
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 size="small"
@@ -846,6 +846,13 @@ export default function VisitorTicketsIndex({
                                             <SearchIcon sx={{ color: '#094d42', fontSize: 19 }} />
                                         </InputAdornment>
                                     ),
+                                    endAdornment: searchTerm ? (
+                                        <InputAdornment position="end">
+                                            <IconButton size="small" onClick={() => handleSearchChange('')} sx={{ p: 0.2 }}>
+                                                <CloseIcon sx={{ fontSize: 16, color: '#94a3b8' }} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ) : null,
                                 }}
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
