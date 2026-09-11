@@ -287,7 +287,7 @@ export default function AppAppBar({ auth }) {
                                                     color: '#fff',
                                                 }}
                                             >
-                                                🎟️ Conference & Visitor Passes
+                                                Register Conference
                                             </Button>
                                         </MenuItem>
                                         <MenuItem>
