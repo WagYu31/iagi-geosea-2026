@@ -650,27 +650,33 @@ export default function Register({
                                 setCheckStatusOpen(true);
                                 setSearchError(null);
                             }}
-                            startIcon={<SearchIcon sx={{ color: '#047857' }} />}
+                            startIcon={<SearchIcon sx={{ color: '#065f46' }} />}
                             size="small"
                             sx={{
-                                bgcolor: '#ecfdf5',
-                                color: '#047857',
-                                border: '1px solid #a7f3d0',
+                                background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
+                                color: '#065f46',
+                                border: '1.5px solid #6ee7b7',
+                                borderBottom: '3px solid #059669',
                                 textTransform: 'none',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                borderRadius: '10px',
-                                px: 1.8,
-                                py: 0.6,
-                                boxShadow: '0 1px 3px rgba(4,120,87,0.08)',
+                                fontSize: '0.84rem',
+                                borderRadius: '12px',
+                                px: 2,
+                                py: 0.65,
+                                boxShadow: '0 3px 8px rgba(4,120,87,0.18)',
+                                transition: 'all 0.2s ease',
                                 '&:hover': {
-                                    bgcolor: '#d1fae5',
-                                    borderColor: '#6ee7b7',
-                                    boxShadow: '0 2px 8px rgba(4,120,87,0.15)',
+                                    background: 'linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%)',
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 6px 14px rgba(4,120,87,0.25)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(1px)',
+                                    borderBottom: '1.5px solid #059669',
                                 },
                             }}
                         >
-                            Check Status / Find Ticket
+                            🔍 Cek Status / Cari Tiket
                         </Button>
 
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
@@ -761,37 +767,158 @@ export default function Register({
                         </Box>
                     </Box>
 
-                    {/* Quick Status Lookup Banner */}
-                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                        <Button
+                    {/* 3D High-Prominence Quick Status & Ticket Lookup Banner (Gambar 3) */}
+                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                        <Paper
+                            elevation={0}
                             onClick={() => {
                                 setCheckStatusOpen(true);
                                 setSearchError(null);
                             }}
-                            startIcon={<ManageSearchIcon sx={{ color: '#047857' }} />}
-                            endIcon={<ArrowForwardIcon sx={{ fontSize: '15px !important', color: '#047857' }} />}
-                            size="small"
                             sx={{
-                                bgcolor: '#ffffff',
-                                border: '1px solid #cbd5e1',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                                borderRadius: '30px',
-                                px: { xs: 2, sm: 2.5 },
-                                py: 0.7,
-                                textTransform: 'none',
-                                color: '#334155',
-                                fontSize: { xs: '0.78rem', sm: '0.84rem' },
-                                fontWeight: 600,
-                                transition: 'all 0.2s ease',
+                                maxWidth: 760,
+                                width: '100%',
+                                p: { xs: 1.8, sm: 2 },
+                                px: { xs: 2, sm: 2.8 },
+                                borderRadius: '20px',
+                                background: 'linear-gradient(135deg, #064e3b 0%, #047857 55%, #059669 100%)',
+                                color: '#ffffff',
+                                border: '2px solid #34d399',
+                                borderBottom: '5px solid #022c22',
+                                boxShadow: '0 12px 28px -6px rgba(4, 120, 87, 0.45), 0 4px 10px rgba(0,0,0,0.12), inset 0 2px 0 rgba(255, 255, 255, 0.35)',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                                gap: 2,
+                                transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                position: 'relative',
+                                overflow: 'hidden',
                                 '&:hover': {
-                                    bgcolor: '#ecfdf5',
-                                    borderColor: '#10b981',
-                                    boxShadow: '0 4px 14px rgba(16,185,129,0.15)',
+                                    transform: 'translateY(-4px) scale(1.015)',
+                                    borderColor: '#6ee7b7',
+                                    borderBottom: '5px solid #022c22',
+                                    boxShadow: '0 20px 38px -8px rgba(4, 120, 87, 0.6), 0 8px 16px rgba(0,0,0,0.18), inset 0 2px 0 rgba(255, 255, 255, 0.5)',
+                                    '& .cta-btn': {
+                                        transform: 'scale(1.04)',
+                                        boxShadow: '0 6px 18px rgba(245, 158, 11, 0.65)',
+                                    },
+                                    '& .search-icon-box': {
+                                        transform: 'rotate(-8deg) scale(1.1)',
+                                    },
                                 },
+                                '&:active': {
+                                    transform: 'translateY(2px)',
+                                    borderBottom: '2px solid #022c22',
+                                    boxShadow: '0 4px 12px rgba(4, 120, 87, 0.3)',
+                                },
+                                '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '50%',
+                                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.15), transparent)',
+                                    pointerEvents: 'none',
+                                }
                             }}
                         >
-                            Already registered? <Box component="span" sx={{ color: '#047857', fontWeight: 800, ml: 0.8 }}>Check Registration Status / Find My Ticket</Box>
-                        </Button>
+                            {/* Left Icon & Text */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
+                                <Box
+                                    className="search-icon-box"
+                                    sx={{
+                                        width: { xs: 44, sm: 52 },
+                                        height: { xs: 44, sm: 52 },
+                                        borderRadius: '14px',
+                                        bgcolor: 'rgba(255, 255, 255, 0.18)',
+                                        border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: '#fef08a',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.5)',
+                                        flexShrink: 0,
+                                        transition: 'transform 0.3s ease',
+                                    }}
+                                >
+                                    <ManageSearchIcon sx={{ fontSize: { xs: 26, sm: 32 } }} />
+                                </Box>
+                                <Box sx={{ textAlign: 'left' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.3 }}>
+                                        <Chip
+                                            label="⚡ SUDAH MENDAFTAR?"
+                                            size="small"
+                                            sx={{
+                                                bgcolor: '#fef08a',
+                                                color: '#713f12',
+                                                fontWeight: 900,
+                                                fontSize: '0.68rem',
+                                                letterSpacing: '0.04em',
+                                                height: 20,
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.12)',
+                                            }}
+                                        />
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 700, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: { xs: 'none', sm: 'inline' } }}>
+                                            ALREADY REGISTERED?
+                                        </Typography>
+                                    </Box>
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{
+                                            fontWeight: 900,
+                                            color: '#ffffff',
+                                            fontSize: { xs: '0.92rem', sm: '1.08rem' },
+                                            lineHeight: 1.25,
+                                            textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                        }}
+                                    >
+                                        Cek Status Pendaftaran & Cari E-Ticket Saya
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: 'rgba(255,255,255,0.88)',
+                                            fontSize: { xs: '0.72rem', sm: '0.78rem' },
+                                            display: 'block',
+                                            mt: 0.2,
+                                        }}
+                                    >
+                                        Check registration status, payment verification & retrieve QR ticket pass
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Right 3D Action CTA Button */}
+                            <Box sx={{ width: { xs: '100%', sm: 'auto' }, flexShrink: 0, textAlign: { xs: 'right', sm: 'inherit' } }}>
+                                <Button
+                                    className="cta-btn"
+                                    variant="contained"
+                                    endIcon={<ArrowForwardIcon sx={{ fontSize: '18px !important' }} />}
+                                    sx={{
+                                        width: { xs: '100%', sm: 'auto' },
+                                        background: 'linear-gradient(180deg, #fde047 0%, #eab308 50%, #ca8a04 100%)',
+                                        color: '#422006',
+                                        fontWeight: 900,
+                                        fontSize: '0.88rem',
+                                        borderRadius: '12px',
+                                        px: { xs: 2, sm: 2.8 },
+                                        py: 1,
+                                        textTransform: 'none',
+                                        border: '1.5px solid #fef08a',
+                                        borderBottom: '3.5px solid #713f12',
+                                        boxShadow: '0 4px 14px rgba(234, 179, 8, 0.45), inset 0 1px 0 rgba(255,255,255,0.8)',
+                                        textShadow: '0 1px 0 rgba(255,255,255,0.6)',
+                                        transition: 'all 0.2s ease',
+                                        pointerEvents: 'none', // parent is clickable
+                                    }}
+                                >
+                                    Cek Sekarang &bull; Search
+                                </Button>
+                            </Box>
+                        </Paper>
                     </Box>
                 </Box>
 
