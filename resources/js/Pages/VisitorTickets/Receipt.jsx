@@ -390,7 +390,7 @@ export default function Receipt({
                                 Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', mb: 4 }}>
-                                Organizing Committee PIT IAGI & GEOSEA 2026
+                                Organizing Committee 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                             </Typography>
                             
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669' }}>
