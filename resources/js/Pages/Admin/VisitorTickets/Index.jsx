@@ -723,7 +723,12 @@ export default function VisitorTicketsIndex({
                 <Box
                     sx={{
                         display: 'grid',
-                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', lg: 'repeat(5, 1fr)' },
+                        gridTemplateColumns: {
+                            xs: 'repeat(1, 1fr)',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(5, 1fr)',
+                        },
                         gap: 2,
                         mb: 3,
                     }}
@@ -832,130 +837,139 @@ export default function VisitorTicketsIndex({
                         mb: 3,
                     }}
                 >
-                    <Grid container spacing={1.5} alignItems="center">
-                        <Grid item xs={12} md={4}>
-                            <TextField
-                                placeholder="Search name, email, ticket code, INV / receipt no, institution..."
-                                value={searchTerm}
-                                onChange={(e) => handleSearchChange(e.target.value)}
-                                size="small"
-                                fullWidth
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon sx={{ color: '#094d42', fontSize: 19 }} />
-                                        </InputAdornment>
-                                    ),
-                                    endAdornment: searchTerm ? (
-                                        <InputAdornment position="end">
-                                            <IconButton size="small" onClick={() => handleSearchChange('')} sx={{ p: 0.2 }}>
-                                                <CloseIcon sx={{ fontSize: 16, color: '#94a3b8' }} />
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ) : null,
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '10px',
-                                        bgcolor: '#f8fafc',
-                                        fontSize: '0.84rem',
-                                    },
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={6} sm={3} md={2.2}>
-                            <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Category</InputLabel>
-                                <Select
-                                    value={typeFilter}
-                                    label="Category"
-                                    onChange={(e) => handleTypeFilterChange(e.target.value)}
-                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
-                                >
-                                    <MenuItem value="all" sx={{ fontWeight: 700 }}>All Categories</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        1. PARTICIPANT
-                                    </ListSubheader>
-                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Member)</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Non-Member)</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
-                                    <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        2. VISITOR
-                                    </ListSubheader>
-                                    <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        ROLES & INVITATIONS (3 - 9)
-                                    </ListSubheader>
-                                    <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
-                                    <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Speaker</MenuItem>
-                                    <MenuItem value="panelist" sx={{ fontSize: '0.82rem' }}>5. 👥 Panelist</MenuItem>
-                                    <MenuItem value="moderator" sx={{ fontSize: '0.82rem' }}>6. 🎯 Moderator</MenuItem>
-                                    <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
-                                    <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
-                                    <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6} sm={3} md={2.2}>
-                            <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Gate Status</InputLabel>
-                                <Select
-                                    value={checkedInFilter}
-                                    label="Gate Status"
-                                    onChange={(e) => handleCheckedInFilterChange(e.target.value)}
-                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
-                                >
-                                    <MenuItem value="all">All Statuses</MenuItem>
-                                    <MenuItem value="yes">✅ Checked In</MenuItem>
-                                    <MenuItem value="no">⏳ Not Checked In</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6} sm={3} md={2.2}>
-                            <FormControl size="small" fullWidth>
-                                <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Ticket Status</InputLabel>
-                                <Select
-                                    value={statusFilter}
-                                    label="Ticket Status"
-                                    onChange={(e) => handleStatusFilterChange(e.target.value)}
-                                    sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
-                                >
-                                    <MenuItem value="all">All Statuses</MenuItem>
-                                    <MenuItem value="active">Active</MenuItem>
-                                    <MenuItem value="pending">Pending Payment</MenuItem>
-                                    <MenuItem value="cancelled">Cancelled</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6} sm={3} md={1.4}>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                onClick={handleResetFilters}
-                                disabled={!hasActiveFilters}
-                                startIcon={<RestartAltIcon />}
-                                size="small"
-                                sx={{
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: {
+                                xs: '1fr',
+                                sm: 'repeat(2, 1fr)',
+                                md: 'repeat(2, 1fr)',
+                                lg: 'repeat(4, 1fr) auto',
+                                xl: '2.2fr 1.3fr 1.1fr 1.1fr auto',
+                            },
+                            gap: 1.5,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <TextField
+                            placeholder="Search name, email, ticket code, INV / receipt no, institution..."
+                            value={searchTerm}
+                            onChange={(e) => handleSearchChange(e.target.value)}
+                            size="small"
+                            fullWidth
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: '#094d42', fontSize: 19 }} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: searchTerm ? (
+                                    <InputAdornment position="end">
+                                        <IconButton size="small" onClick={() => handleSearchChange('')} sx={{ p: 0.2 }}>
+                                            <CloseIcon sx={{ fontSize: 16, color: '#94a3b8' }} />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ) : null,
+                            }}
+                            sx={{
+                                gridColumn: { sm: 'span 2', lg: 'span 1' },
+                                '& .MuiOutlinedInput-root': {
                                     borderRadius: '10px',
-                                    borderColor: '#cbd5e1',
-                                    color: '#475569',
-                                    textTransform: 'none',
-                                    fontWeight: 700,
-                                    fontSize: '0.78rem',
-                                    py: 0.9,
                                     bgcolor: '#f8fafc',
-                                    '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' },
-                                }}
+                                    fontSize: '0.84rem',
+                                },
+                            }}
+                        />
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Category</InputLabel>
+                            <Select
+                                value={typeFilter}
+                                label="Category"
+                                onChange={(e) => handleTypeFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                             >
-                                Reset
-                            </Button>
-                        </Grid>
-                    </Grid>
+                                <MenuItem value="all" sx={{ fontWeight: 700 }}>All Categories</MenuItem>
+
+                                <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                    1. PARTICIPANT
+                                </ListSubheader>
+                                <MenuItem value="iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Member)</MenuItem>
+                                <MenuItem value="non_iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Non-Member)</MenuItem>
+                                <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
+                                <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
+                                <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
+
+                                <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                    2. VISITOR
+                                </ListSubheader>
+                                <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
+
+                                <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                    ROLES & INVITATIONS (3 - 9)
+                                </ListSubheader>
+                                <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
+                                <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Speaker</MenuItem>
+                                <MenuItem value="panelist" sx={{ fontSize: '0.82rem' }}>5. 👥 Panelist</MenuItem>
+                                <MenuItem value="moderator" sx={{ fontSize: '0.82rem' }}>6. 🎯 Moderator</MenuItem>
+                                <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
+                                <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
+                                <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Gate Status</InputLabel>
+                            <Select
+                                value={checkedInFilter}
+                                label="Gate Status"
+                                onChange={(e) => handleCheckedInFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                            >
+                                <MenuItem value="all">All Statuses</MenuItem>
+                                <MenuItem value="yes">✅ Checked In</MenuItem>
+                                <MenuItem value="no">⏳ Not Checked In</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Ticket Status</InputLabel>
+                            <Select
+                                value={statusFilter}
+                                label="Ticket Status"
+                                onChange={(e) => handleStatusFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                            >
+                                <MenuItem value="all">All Statuses</MenuItem>
+                                <MenuItem value="active">Active</MenuItem>
+                                <MenuItem value="pending">Pending Payment</MenuItem>
+                                <MenuItem value="cancelled">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            onClick={handleResetFilters}
+                            disabled={!hasActiveFilters}
+                            startIcon={<RestartAltIcon />}
+                            size="small"
+                            sx={{
+                                height: 40,
+                                borderRadius: '10px',
+                                borderColor: '#cbd5e1',
+                                color: '#475569',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.78rem',
+                                whiteSpace: 'nowrap',
+                                bgcolor: '#f8fafc',
+                                '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' },
+                            }}
+                        >
+                            Reset
+                        </Button>
+                    </Box>
                 </Paper>
 
                 {/* FLOATING 3D BULK ACTION TOOLBAR */}
@@ -1097,11 +1111,24 @@ export default function VisitorTicketsIndex({
                         overflow: 'hidden',
                     }}
                 >
-                    <TableContainer>
-                        <Table size="small">
+                    <TableContainer
+                        sx={{
+                            width: '100%',
+                            overflowX: 'auto',
+                            WebkitOverflowScrolling: 'touch',
+                            '&::-webkit-scrollbar': { height: 8 },
+                            '&::-webkit-scrollbar-track': { bgcolor: '#f1f5f9' },
+                            '&::-webkit-scrollbar-thumb': {
+                                bgcolor: '#cbd5e1',
+                                borderRadius: 4,
+                                '&:hover': { bgcolor: '#94a3b8' },
+                            },
+                        }}
+                    >
+                        <Table size="small" sx={{ minWidth: 1250, tableLayout: 'auto' }}>
                             <TableHead>
                                 <TableRow sx={{ bgcolor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-                                    <TableCell padding="checkbox" sx={{ py: 1.5, px: 1.5 }}>
+                                    <TableCell padding="checkbox" sx={{ py: 1.5, px: 1.5, whiteSpace: 'nowrap' }}>
                                         <Checkbox
                                             size="small"
                                             indeterminate={selectedIds.length > 0 && selectedIds.length < ticketsData.length}
@@ -1110,15 +1137,15 @@ export default function VisitorTicketsIndex({
                                             sx={{ p: 0.5, color: '#94a3b8', '&.Mui-checked': { color: '#094d42' } }}
                                         />
                                     </TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>TICKET CODE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>INV</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PARTICIPANT / VISITOR</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CATEGORY</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>SOURCE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>TICKET STATUS</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PAYMENT</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CHECK-IN GATE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center' }}>ACTIONS</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET CODE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INV</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PARTICIPANT / VISITOR</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CATEGORY</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>SOURCE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET STATUS</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PAYMENT</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CHECK-IN GATE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center', whiteSpace: 'nowrap' }}>ACTIONS</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -1149,7 +1176,7 @@ export default function VisitorTicketsIndex({
                                                     '&.Mui-selected': { bgcolor: '#f0fdf4 !important' },
                                                 }}
                                             >
-                                                <TableCell padding="checkbox" sx={{ py: 1.2, px: 1.5 }}>
+                                                <TableCell padding="checkbox" sx={{ py: 1.2, px: 1.5, whiteSpace: 'nowrap' }}>
                                                     <Checkbox
                                                         size="small"
                                                         checked={isSelected}
@@ -1159,7 +1186,7 @@ export default function VisitorTicketsIndex({
                                                 </TableCell>
 
                                                 {/* TICKET CODE */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     <Box
                                                         sx={{
                                                             display: 'inline-block',
@@ -1172,17 +1199,18 @@ export default function VisitorTicketsIndex({
                                                             fontFamily: 'monospace',
                                                             fontWeight: 900,
                                                             fontSize: '0.8rem',
+                                                            whiteSpace: 'nowrap',
                                                         }}
                                                     >
                                                         {t.ticket_code}
                                                     </Box>
-                                                    <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.68rem', mt: 0.3 }}>
+                                                    <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.68rem', mt: 0.3, whiteSpace: 'nowrap' }}>
                                                         {new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </Typography>
                                                 </TableCell>
 
                                                 {/* INV / RECEIPT NO */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     {t.payment ? (
                                                         <Box>
                                                             <Tooltip title="Click to View Official Receipt" arrow>
@@ -1205,6 +1233,7 @@ export default function VisitorTicketsIndex({
                                                                         fontWeight: 800,
                                                                         fontSize: '0.72rem',
                                                                         textDecoration: 'none',
+                                                                        whiteSpace: 'nowrap',
                                                                         boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
                                                                         transition: 'all 0.15s ease',
                                                                         '&:hover': {
@@ -1222,19 +1251,19 @@ export default function VisitorTicketsIndex({
                                                                     </span>
                                                                 </Box>
                                                             </Tooltip>
-                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.67rem', mt: 0.3, fontFamily: 'monospace' }}>
+                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.67rem', mt: 0.3, fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
                                                                 {t.payment.payment_code}
                                                             </Typography>
                                                         </Box>
                                                     ) : (
-                                                        <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.75rem' }}>
+                                                        <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                                                             -
                                                         </Typography>
                                                     )}
                                                 </TableCell>
 
                                                 {/* PARTICIPANT / VISITOR */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, minWidth: 200 }}>
                                                     <Typography
                                                         variant="body2"
                                                         onClick={() => setDetailModal({ open: true, ticket: t })}
@@ -1253,12 +1282,12 @@ export default function VisitorTicketsIndex({
                                                     </Typography>
                                                     <Box sx={{ display: 'flex', gap: 1, mt: 0.3, flexWrap: 'wrap' }}>
                                                         {t.visitor_phone && (
-                                                            <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.68rem', fontWeight: 700 }}>
+                                                            <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.68rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
                                                                 📞 {t.visitor_phone}
                                                             </Typography>
                                                         )}
                                                         {t.visitor_institution && (
-                                                            <Typography variant="caption" sx={{ color: '#15803d', fontWeight: 700, fontSize: '0.68rem' }}>
+                                                            <Typography variant="caption" sx={{ color: '#15803d', fontWeight: 700, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>
                                                                 🏢 {t.visitor_institution}
                                                             </Typography>
                                                         )}
@@ -1266,7 +1295,7 @@ export default function VisitorTicketsIndex({
                                                 </TableCell>
 
                                                 {/* CATEGORY */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     <Chip
                                                         icon={t.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
                                                         label={getCategoryMeta(t.visitor_type).shortLabel}
@@ -1278,12 +1307,13 @@ export default function VisitorTicketsIndex({
                                                             fontWeight: 900,
                                                             fontSize: '0.65rem',
                                                             height: 22,
+                                                            whiteSpace: 'nowrap',
                                                         }}
                                                     />
                                                 </TableCell>
 
                                                 {/* SOURCE */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     <Chip
                                                         label={t.registration_source === 'admin_onsite' ? 'Onsite' : 'Online'}
                                                         size="small"
@@ -1294,12 +1324,13 @@ export default function VisitorTicketsIndex({
                                                             fontWeight: 800,
                                                             fontSize: '0.65rem',
                                                             height: 20,
+                                                            whiteSpace: 'nowrap',
                                                         }}
                                                     />
                                                 </TableCell>
 
                                                 {/* TICKET STATUS */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     <Chip
                                                         label={t.status.toUpperCase()}
                                                         size="small"
@@ -1310,15 +1341,16 @@ export default function VisitorTicketsIndex({
                                                             fontWeight: 900,
                                                             fontSize: '0.64rem',
                                                             height: 20,
+                                                            whiteSpace: 'nowrap',
                                                         }}
                                                     />
                                                 </TableCell>
 
                                                 {/* PAYMENT */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     {t.payment ? (
                                                         <Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem' }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                                                                 Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
                                                             </Typography>
                                                             <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2 }}>
@@ -1332,6 +1364,7 @@ export default function VisitorTicketsIndex({
                                                                         color: t.payment.status === 'approved' ? '#166534' : t.payment.status === 'pending' ? '#92400e' : '#991b1b',
                                                                         fontWeight: 900,
                                                                         border: `1px solid ${t.payment.status === 'approved' ? '#86efac' : t.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                                                        whiteSpace: 'nowrap',
                                                                     }}
                                                                 />
                                                                 {t.payment.proof_of_payment && (
@@ -1348,14 +1381,14 @@ export default function VisitorTicketsIndex({
                                                             </Stack>
                                                         </Box>
                                                     ) : (
-                                                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem' }}>
+                                                        <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem', whiteSpace: 'nowrap' }}>
                                                             FREE
                                                         </Typography>
                                                     )}
                                                 </TableCell>
 
                                                 {/* CHECK-IN GATE 1-CLICK TOGGLE */}
-                                                <TableCell sx={{ py: 1.2 }}>
+                                                <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     {t.checked_in ? (
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                                             <Chip
@@ -1372,6 +1405,7 @@ export default function VisitorTicketsIndex({
                                                                     height: 22,
                                                                     boxShadow: '0 2px 0 #86efac',
                                                                     cursor: 'pointer',
+                                                                    whiteSpace: 'nowrap',
                                                                     '&:hover': { bgcolor: '#bbf7d0' },
                                                                 }}
                                                             />
@@ -1393,6 +1427,7 @@ export default function VisitorTicketsIndex({
                                                                 fontWeight: 800,
                                                                 bgcolor: '#f8fafc',
                                                                 boxShadow: '0 2px 0 #e2e8f0',
+                                                                whiteSpace: 'nowrap',
                                                                 '&:hover': {
                                                                   borderColor: '#10b981',
                                                                   color: '#10b981',
@@ -1410,15 +1445,15 @@ export default function VisitorTicketsIndex({
                                                         </Button>
                                                     )}
                                                     {t.checked_in_at && (
-                                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.65rem', mt: 0.3 }}>
+                                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.65rem', mt: 0.3, whiteSpace: 'nowrap' }}>
                                                             {new Date(t.checked_in_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                                                         </Typography>
                                                     )}
                                                 </TableCell>
 
                                                 {/* 3D ACTION BUTTONS */}
-                                                <TableCell sx={{ py: 1.2, textAlign: 'center' }}>
-                                                    <Stack direction="row" spacing={0.4} justifyContent="center">
+                                                <TableCell sx={{ py: 1.2, textAlign: 'center', whiteSpace: 'nowrap', minWidth: 160 }}>
+                                                    <Stack direction="row" spacing={0.4} justifyContent="center" sx={{ flexWrap: 'nowrap' }}>
                                                         {/* Verify/Reject for Pending Payments */}
                                                         {t.payment && t.payment.status === 'pending' && (
                                                             <>
