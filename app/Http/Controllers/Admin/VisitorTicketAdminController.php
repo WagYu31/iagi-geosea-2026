@@ -48,7 +48,10 @@ class VisitorTicketAdminController extends Controller
                   ->orWhere('visitor_email', 'like', "%{$search}%")
                   ->orWhere('visitor_phone', 'like', "%{$search}%")
                   ->orWhere('visitor_institution', 'like', "%{$search}%")
-                  ->orWhere('ticket_code', 'like', "%{$search}%");
+                  ->orWhere('ticket_code', 'like', "%{$search}%")
+                  ->orWhereHas('payment', function ($pq) use ($search) {
+                      $pq->where('payment_code', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -529,6 +532,8 @@ class VisitorTicketAdminController extends Controller
 
         fputcsv($handle, [
             'Ticket Code',
+            'Invoice / Receipt No',
+            'Payment Code',
             'Visitor Name',
             'Email',
             'Phone / WhatsApp',
@@ -537,6 +542,7 @@ class VisitorTicketAdminController extends Controller
             'Registration Source',
             'Status',
             'Payment Method',
+            'Payment Status',
             'Amount (IDR)',
             'Checked In',
             'Checked In Time',
@@ -547,14 +553,17 @@ class VisitorTicketAdminController extends Controller
         foreach ($tickets as $t) {
             fputcsv($handle, [
                 $t->ticket_code,
+                $t->payment ? ($t->payment->receipt_no ?? '-') : '-',
+                $t->payment ? $t->payment->payment_code : '-',
                 $t->visitor_name,
                 $t->visitor_email,
                 $t->visitor_phone ?? '-',
                 $t->visitor_institution ?? '-',
-                strtoupper($t->visitor_type),
+                $t->category_label ?? strtoupper($t->visitor_type),
                 $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
                 strtoupper($t->status),
                 $t->payment ? strtoupper($t->payment->payment_method) : 'FREE',
+                $t->payment ? strtoupper($t->payment->status) : 'FREE',
                 $t->payment ? $t->payment->total_amount : 0,
                 $t->checked_in ? 'YES' : 'NO',
                 $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',

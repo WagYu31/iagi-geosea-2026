@@ -1104,6 +1104,7 @@ export default function VisitorTicketsIndex({
                                         />
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>TICKET CODE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>INV</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>PARTICIPANT / VISITOR</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>CATEGORY</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em' }}>SOURCE</TableCell>
@@ -1116,7 +1117,7 @@ export default function VisitorTicketsIndex({
                             <TableBody>
                                 {ticketsData.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={9} align="center" sx={{ py: 8, color: '#94a3b8' }}>
+                                        <TableCell colSpan={10} align="center" sx={{ py: 8, color: '#94a3b8' }}>
                                             <ConfirmationNumberIcon sx={{ fontSize: 50, opacity: 0.25, mb: 1, display: 'block', mx: 'auto' }} />
                                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#64748b' }}>
                                                 No visitor tickets match the selected filters.
@@ -1171,6 +1172,58 @@ export default function VisitorTicketsIndex({
                                                     <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.68rem', mt: 0.3 }}>
                                                         {new Date(t.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                     </Typography>
+                                                </TableCell>
+
+                                                {/* INV / RECEIPT NO */}
+                                                <TableCell sx={{ py: 1.2 }}>
+                                                    {t.payment ? (
+                                                        <Box>
+                                                            <Tooltip title="Click to View Official Receipt" arrow>
+                                                                <Box
+                                                                    component="a"
+                                                                    href={route('visitor.receipt.show', t.payment.payment_code)}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    sx={{
+                                                                        display: 'inline-flex',
+                                                                        alignItems: 'center',
+                                                                        gap: 0.5,
+                                                                        bgcolor: '#f8fafc',
+                                                                        border: '1px solid #cbd5e1',
+                                                                        color: '#094d42',
+                                                                        px: 0.8,
+                                                                        py: 0.35,
+                                                                        borderRadius: '6px',
+                                                                        fontFamily: 'monospace',
+                                                                        fontWeight: 800,
+                                                                        fontSize: '0.72rem',
+                                                                        textDecoration: 'none',
+                                                                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            bgcolor: '#f0fdf4',
+                                                                            borderColor: '#10b981',
+                                                                            color: '#047857',
+                                                                            transform: 'translateY(-1px)',
+                                                                            boxShadow: '0 2px 4px rgba(16, 185, 129, 0.15)',
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <ReceiptLongIcon sx={{ fontSize: 13, color: '#094d42' }} />
+                                                                    <span>
+                                                                        {(t.payment.receipt_no || t.receipt_no) ? (t.payment.receipt_no || t.receipt_no).replace('Receipt No. ', '') : t.payment.payment_code}
+                                                                    </span>
+                                                                </Box>
+                                                            </Tooltip>
+                                                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.67rem', mt: 0.3, fontFamily: 'monospace' }}>
+                                                                {t.payment.payment_code}
+                                                            </Typography>
+                                                        </Box>
+                                                    ) : (
+                                                        <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.75rem' }}>
+                                                            -
+                                                        </Typography>
+                                                    )}
                                                 </TableCell>
 
                                                 {/* PARTICIPANT / VISITOR */}
@@ -1423,6 +1476,21 @@ export default function VisitorTicketsIndex({
                                                             </Tooltip>
                                                         )}
 
+                                                        {/* Official Receipt */}
+                                                        {t.payment && (
+                                                            <Tooltip title="View Official Receipt">
+                                                                <IconButton
+                                                                    component="a"
+                                                                    href={route('visitor.receipt.show', t.payment.payment_code)}
+                                                                    target="_blank"
+                                                                    size="small"
+                                                                    sx={{ color: '#094d42', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', p: 0.5, borderRadius: '8px' }}
+                                                                >
+                                                                    <ReceiptLongIcon sx={{ fontSize: 15 }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+
                                                         {/* Print Badge */}
                                                         <Tooltip title="Print Lanyard Badge">
                                                             <IconButton
@@ -1586,11 +1654,38 @@ export default function VisitorTicketsIndex({
 
                                 {detailModal.ticket.payment && (
                                     <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', display: 'block', mb: 0.5 }}>
-                                            Payment Information:
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', display: 'block' }}>
+                                                Payment & Invoice Details:
+                                            </Typography>
+                                            <Button
+                                                size="small"
+                                                variant="outlined"
+                                                component="a"
+                                                href={route('visitor.receipt.show', detailModal.ticket.payment.payment_code)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                startIcon={<ReceiptLongIcon sx={{ fontSize: 14 }} />}
+                                                sx={{
+                                                    fontSize: '0.68rem',
+                                                    py: 0.3,
+                                                    px: 1.2,
+                                                    textTransform: 'none',
+                                                    fontWeight: 800,
+                                                    borderColor: '#86efac',
+                                                    color: '#15803d',
+                                                    bgcolor: '#ffffff',
+                                                    '&:hover': { bgcolor: '#dcfce7', borderColor: '#16a34a' }
+                                                }}
+                                            >
+                                                View Receipt / INV
+                                            </Button>
+                                        </Box>
+                                        <Typography variant="body2" sx={{ color: '#065f46', fontWeight: 800, fontFamily: 'monospace', mb: 0.3 }}>
+                                            {detailModal.ticket.payment.receipt_no || detailModal.ticket.receipt_no || 'Receipt Available'}
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: '#166534', fontWeight: 700 }}>
-                                            Code: {detailModal.ticket.payment.payment_code} &bull; Total: Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')} ({detailModal.ticket.payment.status.toUpperCase()})
+                                        <Typography variant="caption" sx={{ color: '#166534', fontWeight: 600, display: 'block' }}>
+                                            Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong> ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
                                     </Box>
                                 )}

@@ -39,6 +39,11 @@ class VisitorTicket extends Model
         'card_printed_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'category_label',
+        'receipt_no',
+    ];
+
     public function payment(): BelongsTo
     {
         return $this->belongsTo(VisitorPayment::class, 'payment_id');
@@ -121,5 +126,13 @@ class VisitorTicket extends Model
         ];
 
         return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));
+    }
+
+    /**
+     * Get associated invoice / receipt number
+     */
+    public function getReceiptNoAttribute(): ?string
+    {
+        return $this->payment?->receipt_no;
     }
 }
