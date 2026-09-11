@@ -852,7 +852,7 @@ export default function VisitorTicketsIndex({
                         }}
                     >
                         <TextField
-                            placeholder="Search name, email, ticket code, INV / receipt no, institution..."
+                            placeholder="Search name, email, ticket code, INVOICE / receipt no, institution..."
                             value={searchTerm}
                             onChange={(e) => handleSearchChange(e.target.value)}
                             size="small"
@@ -1138,7 +1138,7 @@ export default function VisitorTicketsIndex({
                                         />
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET CODE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INV</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INVOICE</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PARTICIPANT / VISITOR</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CATEGORY</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>SOURCE</TableCell>
@@ -1720,7 +1720,7 @@ export default function VisitorTicketsIndex({
                                                     '&:hover': { bgcolor: '#dcfce7', borderColor: '#16a34a' }
                                                 }}
                                             >
-                                                View Receipt / INV
+                                                View Receipt / INVOICE
                                             </Button>
                                         </Box>
                                         <Typography variant="body2" sx={{ color: '#065f46', fontWeight: 800, fontFamily: 'monospace', mb: 0.3 }}>
