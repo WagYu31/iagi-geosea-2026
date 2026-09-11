@@ -88,6 +88,7 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
     const bgImage = templatePath || ticket.templatePath || BADGE_TEMPLATES[visitorType] || '/images/badges/Participant.svg';
+    const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.svg'));
 
     const nameLength = (ticket.visitor_name || '').length;
     const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.22rem' : '1.4rem';
@@ -124,7 +125,7 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                 },
             }}
         >
-            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Blue Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% with WHITE FONT) */}
+            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% - BLACK FONT FOR VISITOR, WHITE FOR OTHERS) */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -143,7 +144,7 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                     variant="h5"
                     sx={{
                         fontWeight: 900,
-                        color: '#ffffff',
+                        color: isVisitor ? '#000000' : '#ffffff',
                         fontSize: nameFontSize,
                         fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
                         textTransform: 'uppercase',
@@ -152,9 +153,9 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                         wordBreak: 'break-word',
                         textAlign: 'center',
                         width: '100%',
-                        textShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                        textShadow: isVisitor ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
                         '@media print': {
-                            color: '#ffffff !important',
+                            color: isVisitor ? '#000000 !important' : '#ffffff !important',
                             fontSize: nameLength > 28 ? '10pt' : nameLength > 20 ? '12pt' : '14pt',
                         },
                     }}
