@@ -324,7 +324,7 @@ export default function Receipt({
                                 <TableHead sx={{ bgcolor: '#094d42' }}>
                                     <TableRow>
                                         <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>NO</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>PARTICIPANT / DELEGATE NAME</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>PARTICIPANT</TableCell>
                                         <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CATEGORY</TableCell>
                                         <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CODE</TableCell>
                                         <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>AMOUNT (IDR)</TableCell>
