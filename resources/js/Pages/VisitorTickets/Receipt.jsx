@@ -46,20 +46,51 @@ const CATEGORY_MAP = {
     non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },
 };
 
-function numberToWordsIndo(num) {
+function numberToWordsEn(num) {
     num = Math.floor(Math.abs(num));
-    const words = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
-    
-    if (num < 12) return words[num];
-    if (num < 20) return numberToWordsIndo(num - 10) + ' Belas';
-    if (num < 100) return numberToWordsIndo(Math.floor(num / 10)) + ' Puluh ' + words[num % 10];
-    if (num < 200) return 'Seratus ' + numberToWordsIndo(num - 100);
-    if (num < 1000) return numberToWordsIndo(Math.floor(num / 100)) + ' Ratus ' + numberToWordsIndo(num % 100);
-    if (num < 2000) return 'Seribu ' + numberToWordsIndo(num - 1000);
-    if (num < 1000000) return numberToWordsIndo(Math.floor(num / 1000)) + ' Ribu ' + numberToWordsIndo(num % 1000);
-    if (num < 1000000000) return numberToWordsIndo(Math.floor(num / 1000000)) + ' Juta ' + numberToWordsIndo(num % 1000000);
-    if (num < 1000000000000) return numberToWordsIndo(Math.floor(num / 1000000000)) + ' Milyar ' + numberToWordsIndo(num % 1000000000);
-    return num.toString();
+    if (num === 0) return 'Zero';
+
+    const ones = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+        'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+        'Seventeen', 'Eighteen', 'Nineteen'
+    ];
+    const tens = [
+        '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+    ];
+    const scales = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
+
+    function convertGroup(n) {
+        let str = '';
+        if (n >= 100) {
+            str += ones[Math.floor(n / 100)] + ' Hundred';
+            n %= 100;
+            if (n > 0) str += ' ';
+        }
+        if (n >= 20) {
+            str += tens[Math.floor(n / 10)];
+            n %= 10;
+            if (n > 0) str += ' ' + ones[n];
+        } else if (n > 0) {
+            str += ones[n];
+        }
+        return str;
+    }
+
+    let chunks = [];
+    let scaleIndex = 0;
+    while (num > 0) {
+        const chunk = num % 1000;
+        if (chunk !== 0) {
+            const groupStr = convertGroup(chunk);
+            const scaleStr = scales[scaleIndex];
+            chunks.unshift(scaleStr ? `${groupStr} ${scaleStr}` : groupStr);
+        }
+        num = Math.floor(num / 1000);
+        scaleIndex++;
+    }
+
+    return chunks.join(' ').trim();
 }
 
 export default function Receipt({
@@ -75,7 +106,7 @@ export default function Receipt({
 
     const primaryTicket = tickets[0] || {};
     const totalAmount = Number(payment.total_amount || 0);
-    const terbilangText = totalAmount > 0 ? (numberToWordsIndo(totalAmount).trim() + ' Rupiah') : 'Nol Rupiah';
+    const amountInWords = totalAmount > 0 ? (numberToWordsEn(totalAmount).trim() + ' Rupiah') : 'Zero Rupiah';
 
     const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
     const pDate = new Date(payment.created_at || Date.now());
@@ -362,7 +393,7 @@ export default function Receipt({
                         {/* TERBILANG BOX */}
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
                             <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
-                                <strong>Amount in Words:</strong> <em>"{terbilangText}"</em>
+                                <strong>Amount in Words:</strong> <em>"{amountInWords}"</em>
                             </Typography>
                         </Box>
                     </Box>
