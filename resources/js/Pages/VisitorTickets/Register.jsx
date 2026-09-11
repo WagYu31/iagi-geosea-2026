@@ -81,8 +81,9 @@ export default function Register({
             tagColor: '#047857',
             tagBg: '#dcfce7',
             borderSelected: '#10b981',
+            darkBorder: '#047857',
             bgSelected: '#f0fdf4',
-            lanyardTheme: { border: '#059669', banner: '#094d42', badge: 'PROFESSIONAL' },
+            lanyardTheme: { border: '#059669', banner: '#094d42', badge: 'PROFESSIONAL', darkBorder: '#022c22' },
             description: 'For Professional IAGI Member',
             perks: [
                 'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
@@ -102,8 +103,9 @@ export default function Register({
             tagColor: '#0284c7',
             tagBg: '#e0f2fe',
             borderSelected: '#0284c7',
+            darkBorder: '#0369a1',
             bgSelected: '#f0f9ff',
-            lanyardTheme: { border: '#0284c7', banner: '#0369a1', badge: 'PROFESSIONAL' },
+            lanyardTheme: { border: '#0284c7', banner: '#0369a1', badge: 'PROFESSIONAL', darkBorder: '#0c4a6e' },
             description: 'For Professional Non - IAGI Member',
             perks: [
                 'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
@@ -123,8 +125,9 @@ export default function Register({
             tagColor: '#b45309',
             tagBg: '#fef3c7',
             borderSelected: '#f59e0b',
+            darkBorder: '#b45309',
             bgSelected: '#fffbeb',
-            lanyardTheme: { border: '#f59e0b', banner: '#b45309', badge: 'EXPATRIATE' },
+            lanyardTheme: { border: '#f59e0b', banner: '#b45309', badge: 'EXPATRIATE', darkBorder: '#78350f' },
             description: 'For Expatriate IAGI Member',
             perks: [
                 'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
@@ -144,8 +147,9 @@ export default function Register({
             tagColor: '#7c3aed',
             tagBg: '#ede9fe',
             borderSelected: '#8b5cf6',
+            darkBorder: '#6d28d9',
             bgSelected: '#f5f3ff',
-            lanyardTheme: { border: '#8b5cf6', banner: '#6d28d9', badge: 'EXPATRIATE' },
+            lanyardTheme: { border: '#8b5cf6', banner: '#6d28d9', badge: 'EXPATRIATE', darkBorder: '#4c1d95' },
             description: 'For Expatriate Non - IAGI Member',
             perks: [
                 'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
@@ -165,8 +169,9 @@ export default function Register({
             tagColor: '#4338ca',
             tagBg: '#e0e7ff',
             borderSelected: '#6366f1',
+            darkBorder: '#4338ca',
             bgSelected: '#eef2ff',
-            lanyardTheme: { border: '#6366f1', banner: '#4338ca', badge: 'STUDENT' },
+            lanyardTheme: { border: '#6366f1', banner: '#4338ca', badge: 'STUDENT', darkBorder: '#312e81' },
             description: 'For Undergraduate Student',
             perks: [
                 'Full Access for Exhibition Hall/Panel Discussion/Technical Session',
@@ -186,8 +191,9 @@ export default function Register({
             tagColor: '#059669',
             tagBg: '#d1fae5',
             borderSelected: '#10b981',
+            darkBorder: '#047857',
             bgSelected: '#f0fdf4',
-            lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS' },
+            lanyardTheme: { border: '#10b981', banner: '#094d42', badge: 'VISITOR PASS', darkBorder: '#022c22' },
             description: 'For anyone who visiting on site',
             perks: ['Free Registration', 'Access Exhibition Hall only'],
         },
@@ -604,7 +610,7 @@ export default function Register({
             <Head title="Registration & Ticket Portal - 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026" />
 
             <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-                {/* Top Nav Bar */}
+                {/* 3D Top Nav Bar */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -612,13 +618,14 @@ export default function Register({
                         alignItems: 'center',
                         flexWrap: 'wrap',
                         gap: 1.5,
-                        p: 1.2,
-                        px: { xs: 1.8, sm: 2.5 },
-                        borderRadius: '16px',
-                        bgcolor: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                        mb: 3,
+                        p: 1.4,
+                        px: { xs: 2, sm: 2.8 },
+                        borderRadius: '20px',
+                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                        border: '1.5px solid #e2e8f0',
+                        borderBottom: '4.5px solid #cbd5e1',
+                        boxShadow: '0 10px 24px -4px rgba(0,0,0,0.05), inset 0 1px 0 #ffffff',
+                        mb: 3.5,
                     }}
                 >
                     <Button
@@ -629,22 +636,32 @@ export default function Register({
                         sx={{
                             color: '#334155',
                             textTransform: 'none',
-                            fontWeight: 700,
+                            fontWeight: 800,
                             fontSize: '0.84rem',
-                            borderRadius: '10px',
-                            px: 1.8,
-                            py: 0.6,
-                            bgcolor: '#f1f5f9',
+                            borderRadius: '12px',
+                            px: 2,
+                            py: 0.7,
+                            background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                            border: '1.5px solid #cbd5e1',
+                            borderBottom: '3.5px solid #94a3b8',
+                            boxShadow: '0 3px 6px rgba(0,0,0,0.05)',
+                            transition: 'all 0.15s ease',
                             '&:hover': {
                                 color: '#094d42',
-                                bgcolor: '#e2e8f0',
+                                background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 12px rgba(0,0,0,0.08)',
+                            },
+                            '&:active': {
+                                transform: 'translateY(1px)',
+                                borderBottom: '1.5px solid #94a3b8',
                             },
                         }}
                     >
                         Back to Home
                     </Button>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8, flexWrap: 'wrap' }}>
                         <Button
                             onClick={() => {
                                 setCheckStatusOpen(true);
@@ -656,19 +673,19 @@ export default function Register({
                                 background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
                                 color: '#065f46',
                                 border: '1.5px solid #6ee7b7',
-                                borderBottom: '3px solid #059669',
+                                borderBottom: '3.5px solid #059669',
                                 textTransform: 'none',
-                                fontWeight: 800,
+                                fontWeight: 900,
                                 fontSize: '0.84rem',
                                 borderRadius: '12px',
-                                px: 2,
-                                py: 0.65,
-                                boxShadow: '0 3px 8px rgba(4,120,87,0.18)',
+                                px: 2.2,
+                                py: 0.7,
+                                boxShadow: '0 4px 10px rgba(4,120,87,0.2), inset 0 1px 0 rgba(255,255,255,0.8)',
                                 transition: 'all 0.2s ease',
                                 '&:hover': {
                                     background: 'linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%)',
                                     transform: 'translateY(-2px)',
-                                    boxShadow: '0 6px 14px rgba(4,120,87,0.25)',
+                                    boxShadow: '0 7px 16px rgba(4,120,87,0.3)',
                                 },
                                 '&:active': {
                                     transform: 'translateY(1px)',
@@ -695,16 +712,18 @@ export default function Register({
                         label="CONFERENCE & VISITOR PASSES &bull; REGISTRATION OPEN"
                         size="small"
                         sx={{
-                            bgcolor: '#ecfdf5',
+                            background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
                             color: '#047857',
-                            border: '1px solid #a7f3d0',
+                            border: '1.5px solid #a7f3d0',
+                            borderBottom: '3px solid #059669',
                             fontWeight: 900,
                             fontSize: '0.72rem',
                             letterSpacing: '0.06em',
-                            px: 1,
-                            py: 0.4,
-                            mb: 1.5,
+                            px: 1.2,
+                            py: 0.5,
+                            mb: 1.8,
                             borderRadius: '20px',
+                            boxShadow: '0 3px 8px rgba(4,120,87,0.15)',
                         }}
                     />
 
@@ -717,6 +736,7 @@ export default function Register({
                             color: '#0f172a',
                             lineHeight: 1.2,
                             mb: 0.8,
+                            textShadow: '0 1px 2px rgba(0,0,0,0.06)',
                         }}
                     >
                         Conference & Visitor Registration
@@ -730,13 +750,13 @@ export default function Register({
                             mx: 'auto',
                             fontSize: { xs: '0.88rem', md: '0.95rem' },
                             lineHeight: 1.6,
-                            mb: 2,
+                            mb: 2.2,
                         }}
                     >
                         Select your registration category below to receive your official conference badge, digital QR ticket pass, and seminar credentials for 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026.
                     </Typography>
 
-                    {/* Venue & Date Pills */}
+                    {/* 3D Venue & Date Pills */}
                     <Box
                         sx={{
                             display: 'inline-flex',
@@ -744,24 +764,25 @@ export default function Register({
                             flexWrap: 'wrap',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            bgcolor: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '12px',
-                            px: 2.5,
-                            py: 0.8,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                            border: '1.5px solid #cbd5e1',
+                            borderBottom: '4px solid #94a3b8',
+                            borderRadius: '16px',
+                            px: 3,
+                            py: 1,
+                            boxShadow: '0 6px 18px rgba(0,0,0,0.05), inset 0 1px 0 #ffffff',
                         }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <EventIcon sx={{ fontSize: 18, color: '#0284c7' }} />
-                            <Typography variant="caption" sx={{ color: '#1e293b', fontWeight: 800, fontSize: '0.8rem' }}>
+                            <EventIcon sx={{ fontSize: 19, color: '#0284c7' }} />
+                            <Typography variant="caption" sx={{ color: '#0f172a', fontWeight: 900, fontSize: '0.82rem' }}>
                                 {eventDate}
                             </Typography>
                         </Box>
                         <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', borderColor: '#cbd5e1' }} />
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <LocationOnIcon sx={{ fontSize: 18, color: '#e11d48' }} />
-                            <Typography variant="caption" sx={{ color: '#1e293b', fontWeight: 800, fontSize: '0.8rem' }}>
+                            <LocationOnIcon sx={{ fontSize: 19, color: '#e11d48' }} />
+                            <Typography variant="caption" sx={{ color: '#0f172a', fontWeight: 900, fontSize: '0.82rem' }}>
                                 {eventVenue}
                             </Typography>
                         </Box>
@@ -956,23 +977,27 @@ export default function Register({
                                     <Paper
                                         elevation={0}
                                         sx={{
-                                            p: { xs: 2.5, sm: 3 },
-                                            borderRadius: '20px',
-                                            bgcolor: '#ffffff',
-                                            border: '1px solid #e2e8f0',
-                                            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+                                            p: { xs: 2.5, sm: 3.5 },
+                                            borderRadius: '24px',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #fcfdfd 100%)',
+                                            border: '1.5px solid #cbd5e1',
+                                            borderBottom: '5px solid #94a3b8',
+                                            boxShadow: '0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 2px 0 #ffffff',
                                         }}
                                     >
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1.5 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1.5 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                                 <Box
                                                     sx={{
-                                                        width: 28,
-                                                        height: 28,
+                                                        width: 32,
+                                                        height: 32,
                                                         borderRadius: '10px',
-                                                        bgcolor: '#094d42',
+                                                        background: 'linear-gradient(180deg, #059669 0%, #064e3b 100%)',
+                                                        border: '1px solid #34d399',
+                                                        borderBottom: '3.5px solid #022c22',
+                                                        boxShadow: '0 4px 10px rgba(4, 120, 87, 0.35), inset 0 1px 0 rgba(255,255,255,0.4)',
                                                         color: '#fff',
-                                                        fontSize: '0.85rem',
+                                                        fontSize: '0.92rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -981,13 +1006,13 @@ export default function Register({
                                                 >
                                                     1
                                                 </Box>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.08rem' }}>
                                                     Select Ticket Category
                                                 </Typography>
                                             </Box>
 
                                             {/* Category Segmented Tabs */}
-                                            <Box sx={{ display: 'flex', bgcolor: '#f1f5f9', p: 0.5, borderRadius: '10px', gap: 0.5 }}>
+                                            <Box sx={{ display: 'flex', bgcolor: '#e2e8f0', p: 0.6, borderRadius: '14px', border: '1px solid #cbd5e1', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)', gap: 0.6 }}>
                                                 {[
                                                     { key: 'all', label: `All Passes (${categoriesList.length})` },
                                                     { key: 'conference', label: `Conference (${categoriesList.filter(c => c.group === 'conference').length})` },
@@ -998,17 +1023,21 @@ export default function Register({
                                                         size="small"
                                                         onClick={() => setSelectedTab(tab.key)}
                                                         sx={{
-                                                            px: 1.5,
-                                                            py: 0.4,
-                                                            borderRadius: '8px',
-                                                            fontSize: '0.74rem',
-                                                            fontWeight: 800,
+                                                            px: 1.8,
+                                                            py: 0.6,
+                                                            borderRadius: '10px',
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: 900,
                                                             textTransform: 'none',
-                                                            bgcolor: selectedTab === tab.key ? '#ffffff' : 'transparent',
-                                                            color: selectedTab === tab.key ? '#094d42' : '#64748b',
-                                                            boxShadow: selectedTab === tab.key ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                                                            background: selectedTab === tab.key ? 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' : 'transparent',
+                                                            border: selectedTab === tab.key ? '1.5px solid #cbd5e1' : '1.5px solid transparent',
+                                                            borderBottom: selectedTab === tab.key ? '3.5px solid #94a3b8' : '3.5px solid transparent',
+                                                            color: selectedTab === tab.key ? '#064e3b' : '#64748b',
+                                                            boxShadow: selectedTab === tab.key ? '0 3px 8px rgba(0,0,0,0.08), inset 0 1px 0 #ffffff' : 'none',
+                                                            transition: 'all 0.15s ease',
                                                             '&:hover': {
-                                                                bgcolor: selectedTab === tab.key ? '#ffffff' : '#e2e8f0',
+                                                                bgcolor: selectedTab === tab.key ? '#ffffff' : 'rgba(255,255,255,0.6)',
+                                                                color: selectedTab === tab.key ? '#064e3b' : '#334155',
                                                             },
                                                         }}
                                                     >
@@ -1019,7 +1048,7 @@ export default function Register({
                                         </Box>
 
                                         {/* Categories Grid */}
-                                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+                                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.2 }}>
                                             {filteredCategories.map((cat) => {
                                                 const isSelected = visitorType === cat.id;
 
@@ -1029,23 +1058,29 @@ export default function Register({
                                                         onClick={() => handleTypeChange(cat.id)}
                                                         sx={{
                                                             cursor: 'pointer',
-                                                            borderRadius: '18px',
-                                                            bgcolor: isSelected ? (cat.bgSelected || '#f0fdf4') : '#ffffff',
+                                                            borderRadius: '20px',
+                                                            background: isSelected 
+                                                                ? (cat.bgSelected || 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)') 
+                                                                : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
                                                             border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
-                                                            p: 2.4,
+                                                            borderBottom: isSelected 
+                                                                ? `6px solid ${cat.darkBorder || '#047857'}` 
+                                                                : '5px solid #cbd5e1',
+                                                            p: 2.5,
                                                             height: '100%',
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             justifyContent: 'space-between',
-                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)',
                                                             boxShadow: isSelected 
-                                                                ? `0 10px 28px ${cat.borderSelected || '#10b981'}25, 0 2px 6px rgba(0,0,0,0.02)` 
-                                                                : '0 2px 6px rgba(0,0,0,0.02)',
-                                                            transform: isSelected ? 'translateY(-2px)' : 'none',
+                                                                ? `0 14px 30px -4px ${cat.borderSelected || '#10b981'}35, inset 0 2px 0 rgba(255,255,255,0.9)` 
+                                                                : '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
+                                                            transform: isSelected ? 'translateY(-3px)' : 'none',
                                                             '&:hover': {
                                                                 borderColor: cat.borderSelected || '#10b981',
-                                                                bgcolor: cat.bgSelected || '#f8fafc',
-                                                                transform: 'translateY(-2px)',
+                                                                borderBottom: isSelected ? `6px solid ${cat.darkBorder || '#047857'}` : `5px solid ${cat.borderSelected || '#94a3b8'}`,
+                                                                transform: 'translateY(-5px)',
+                                                                boxShadow: `0 16px 32px -4px rgba(15, 23, 42, 0.12), inset 0 1px 0 #ffffff`,
                                                             },
                                                         }}
                                                     >
@@ -1057,34 +1092,41 @@ export default function Register({
                                                                         label={cat.tag || cat.badge}
                                                                         size="small"
                                                                         sx={{
-                                                                            bgcolor: cat.tagBg || '#dcfce7',
+                                                                            background: isSelected 
+                                                                                ? `linear-gradient(180deg, #ffffff 0%, ${cat.tagBg || '#dcfce7'} 100%)` 
+                                                                                : `linear-gradient(180deg, ${cat.tagBg || '#dcfce7'} 0%, #f1f5f9 100%)`,
                                                                             color: cat.tagColor || '#047857',
                                                                             fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                                                            fontWeight: 800,
-                                                                            fontSize: '0.64rem',
-                                                                            height: 23,
-                                                                            px: 0.6,
-                                                                            letterSpacing: '0.07em',
-                                                                            borderRadius: '7px',
-                                                                            border: `1px solid ${cat.borderSelected || '#86efac'}45`,
+                                                                            fontWeight: 900,
+                                                                            fontSize: '0.66rem',
+                                                                            height: 25,
+                                                                            px: 1,
+                                                                            letterSpacing: '0.06em',
+                                                                            borderRadius: '8px',
+                                                                            border: `1.5px solid ${cat.borderSelected || '#86efac'}`,
+                                                                            borderBottom: `2.5px solid ${cat.darkBorder || '#4ade80'}`,
+                                                                            boxShadow: '0 2px 5px rgba(0,0,0,0.08)',
                                                                         }}
                                                                     />
                                                                 </Stack>
 
-                                                                {/* Radio Circle Indicator */}
+                                                                {/* 3D Radio Circle Indicator */}
                                                                 <Box
                                                                     sx={{
-                                                                        width: 22,
-                                                                        height: 22,
+                                                                        width: 24,
+                                                                        height: 24,
                                                                         borderRadius: '50%',
                                                                         border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#cbd5e1'}`,
-                                                                        bgcolor: isSelected ? (cat.borderSelected || '#10b981') : '#ffffff',
+                                                                        borderBottom: isSelected ? `3.5px solid ${cat.darkBorder || '#047857'}` : '3px solid #94a3b8',
+                                                                        background: isSelected 
+                                                                            ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' 
+                                                                            : 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
-                                                                        transition: 'all 0.15s ease',
+                                                                        transition: 'all 0.18s ease',
                                                                         flexShrink: 0,
-                                                                        boxShadow: isSelected ? `0 0 10px ${cat.borderSelected || '#10b981'}80` : 'none',
+                                                                        boxShadow: isSelected ? `0 4px 10px ${cat.borderSelected || '#10b981'}70` : 'inset 0 1px 2px rgba(0,0,0,0.06)',
                                                                     }}
                                                                 >
                                                                     {isSelected && <CheckCircleIcon sx={{ fontSize: 16, color: '#ffffff' }} />}
@@ -1096,9 +1138,9 @@ export default function Register({
                                                                 variant="subtitle1"
                                                                 sx={{
                                                                     fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                                                    fontWeight: 800,
+                                                                    fontWeight: 900,
                                                                     color: '#0f172a',
-                                                                    fontSize: '1.05rem',
+                                                                    fontSize: '1.08rem',
                                                                     mb: 0.8,
                                                                     lineHeight: 1.3,
                                                                     letterSpacing: '-0.02em',
@@ -1115,9 +1157,10 @@ export default function Register({
                                                                             fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
                                                                             fontWeight: 900,
                                                                             color: '#059669',
-                                                                            fontSize: '1.35rem',
+                                                                            fontSize: '1.45rem',
                                                                             letterSpacing: '0.02em',
                                                                             lineHeight: 1,
+                                                                            textShadow: '0 1px 1px rgba(5,150,105,0.2)',
                                                                         }}
                                                                     >
                                                                         FREE
@@ -1128,8 +1171,8 @@ export default function Register({
                                                                             component="span"
                                                                             sx={{
                                                                                 fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                                                                fontWeight: 800,
-                                                                                fontSize: '0.78rem',
+                                                                                fontWeight: 900,
+                                                                                fontSize: '0.8rem',
                                                                                 letterSpacing: '0.07em',
                                                                                 color: isSelected ? (cat.tagColor || '#047857') : '#64748b',
                                                                                 mr: 0.6,
@@ -1144,7 +1187,7 @@ export default function Register({
                                                                                 fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
                                                                                 fontWeight: 900,
                                                                                 color: isSelected ? (cat.tagColor || '#0f172a') : '#0f172a',
-                                                                                fontSize: '1.42rem',
+                                                                                fontSize: '1.5rem',
                                                                                 lineHeight: 1,
                                                                                 letterSpacing: '-0.03em',
                                                                             }}
@@ -1165,6 +1208,7 @@ export default function Register({
                                                                     lineHeight: 1.55,
                                                                     mb: 1.5,
                                                                     fontSize: '0.78rem',
+                                                                    fontWeight: 600,
                                                                 }}
                                                             >
                                                                 {cat.description}
@@ -1173,8 +1217,8 @@ export default function Register({
 
                                                         {/* Perks Bullet List */}
                                                         {cat.perks && cat.perks.length > 0 && (
-                                                            <Box sx={{ mt: 1, pt: 1.2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-                                                                <Stack spacing={0.6}>
+                                                            <Box sx={{ mt: 1, pt: 1.2, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+                                                                <Stack spacing={0.7}>
                                                                     {cat.perks.map((perk, perkIdx) => (
                                                                         <Box key={perkIdx} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                                                             <CheckCircleIcon sx={{ fontSize: 14, color: cat.borderSelected || '#10b981', flexShrink: 0 }} />
@@ -1204,23 +1248,27 @@ export default function Register({
                                     <Paper
                                         elevation={0}
                                         sx={{
-                                            p: { xs: 2.5, sm: 3 },
-                                            borderRadius: '20px',
-                                            bgcolor: '#ffffff',
-                                            border: '1px solid #e2e8f0',
-                                            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+                                            p: { xs: 2.5, sm: 3.5 },
+                                            borderRadius: '24px',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #fcfdfd 100%)',
+                                            border: '1.5px solid #cbd5e1',
+                                            borderBottom: '5px solid #94a3b8',
+                                            boxShadow: '0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 2px 0 #ffffff',
                                         }}
                                     >
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1.5 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                                 <Box
                                                     sx={{
-                                                        width: 28,
-                                                        height: 28,
+                                                        width: 32,
+                                                        height: 32,
                                                         borderRadius: '10px',
-                                                        bgcolor: '#094d42',
+                                                        background: 'linear-gradient(180deg, #059669 0%, #064e3b 100%)',
+                                                        border: '1px solid #34d399',
+                                                        borderBottom: '3.5px solid #022c22',
+                                                        boxShadow: '0 4px 10px rgba(4, 120, 87, 0.35), inset 0 1px 0 rgba(255,255,255,0.4)',
                                                         color: '#fff',
-                                                        fontSize: '0.85rem',
+                                                        fontSize: '0.92rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -1229,7 +1277,7 @@ export default function Register({
                                                 >
                                                     2
                                                 </Box>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.08rem' }}>
                                                     Participant Details {members.length > 1 && `(${members.length} People)`}
                                                 </Typography>
                                             </Box>
@@ -1239,16 +1287,27 @@ export default function Register({
                                                 onClick={addMember}
                                                 size="small"
                                                 sx={{
-                                                    color: '#094d42',
-                                                    bgcolor: '#f0fdf4',
-                                                    border: '1.5px dashed #86efac',
-                                                    borderRadius: '10px',
+                                                    color: '#065f46',
+                                                    background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)',
+                                                    border: '1.5px solid #86efac',
+                                                    borderBottom: '3.5px solid #16a34a',
+                                                    borderRadius: '12px',
                                                     textTransform: 'none',
-                                                    fontWeight: 800,
+                                                    fontWeight: 900,
                                                     fontSize: '0.8rem',
-                                                    px: 1.8,
-                                                    py: 0.6,
-                                                    '&:hover': { bgcolor: '#dcfce7', borderColor: '#4ade80' },
+                                                    px: 2,
+                                                    py: 0.7,
+                                                    boxShadow: '0 4px 10px rgba(22, 163, 74, 0.18), inset 0 1px 0 #ffffff',
+                                                    transition: 'all 0.15s ease',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 6px 14px rgba(22, 163, 74, 0.25)',
+                                                    },
+                                                    '&:active': {
+                                                        transform: 'translateY(1px)',
+                                                        borderBottom: '1.5px solid #16a34a',
+                                                    },
                                                 }}
                                             >
                                                 + Add Another Participant
@@ -1260,25 +1319,33 @@ export default function Register({
                                                 <Box
                                                     key={idx}
                                                     sx={{
-                                                        p: 2.5,
-                                                        borderRadius: '16px',
-                                                        bgcolor: '#f8fafc',
-                                                        border: '1px solid #e2e8f0',
+                                                        p: 2.8,
+                                                        borderRadius: '20px',
+                                                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                        border: '1.5px solid #cbd5e1',
+                                                        borderBottom: '4.5px solid #94a3b8',
+                                                        boxShadow: '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
                                                         position: 'relative',
                                                     }}
                                                 >
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.2 }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Chip
                                                                 label={idx === 0 ? 'Primary Registrant / Group Leader' : `Participant #${idx + 1}`}
                                                                 size="small"
                                                                 sx={{
-                                                                    bgcolor: idx === 0 ? '#e0f2fe' : '#e2e8f0',
-                                                                    color: idx === 0 ? '#0369a1' : '#475569',
+                                                                    background: idx === 0 
+                                                                        ? 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)' 
+                                                                        : 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                                                                    border: idx === 0 ? '1.5px solid #7dd3fc' : '1.5px solid #cbd5e1',
+                                                                    borderBottom: idx === 0 ? '3px solid #0284c7' : '3px solid #94a3b8',
+                                                                    color: idx === 0 ? '#0369a1' : '#334155',
                                                                     fontWeight: 900,
-                                                                    fontSize: '0.72rem',
-                                                                    height: 24,
+                                                                    fontSize: '0.74rem',
+                                                                    height: 26,
+                                                                    px: 1,
                                                                     borderRadius: '8px',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.06)',
                                                                 }}
                                                             />
                                                         </Box>
@@ -1289,11 +1356,19 @@ export default function Register({
                                                                 size="small"
                                                                 startIcon={<DeleteOutlineIcon sx={{ fontSize: 15 }} />}
                                                                 sx={{
-                                                                    color: '#ef4444',
-                                                                    fontSize: '0.72rem',
+                                                                    background: 'linear-gradient(180deg, #fee2e2 0%, #fecaca 100%)',
+                                                                    border: '1px solid #fca5a5',
+                                                                    borderBottom: '2.5px solid #ef4444',
+                                                                    color: '#991b1b',
+                                                                    fontSize: '0.74rem',
                                                                     fontWeight: 800,
                                                                     textTransform: 'none',
-                                                                    '&:hover': { bgcolor: '#fee2e2' },
+                                                                    borderRadius: '8px',
+                                                                    px: 1.5,
+                                                                    py: 0.4,
+                                                                    boxShadow: '0 2px 4px rgba(239, 68, 68, 0.15)',
+                                                                    '&:hover': { background: 'linear-gradient(180deg, #fecaca 0%, #fca5a5 100%)', transform: 'translateY(-1px)' },
+                                                                    '&:active': { transform: 'translateY(1px)', borderBottom: '1px solid #ef4444' },
                                                                 }}
                                                             >
                                                                 Remove
@@ -1302,7 +1377,7 @@ export default function Register({
                                                     </Box>
 
                                                     {/* 2x2 Airy Grid Input Layout */}
-                                                    <Grid container spacing={2}>
+                                                    <Grid container spacing={2.2}>
                                                         <Grid item xs={12} sm={6}>
                                                             <TextField
                                                                 label="Full Name *"
@@ -1315,15 +1390,32 @@ export default function Register({
                                                                 InputProps={{
                                                                     startAdornment: (
                                                                         <InputAdornment position="start">
-                                                                            <PersonOutlineIcon sx={{ color: '#094d42', fontSize: 18 }} />
+                                                                            <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                                <PersonOutlineIcon sx={{ color: '#047857', fontSize: 17 }} />
+                                                                            </Box>
                                                                         </InputAdornment>
                                                                     ),
                                                                 }}
                                                                 sx={{
                                                                     '& .MuiOutlinedInput-root': {
                                                                         bgcolor: '#ffffff',
-                                                                        borderRadius: '10px',
-                                                                        fontSize: '0.86rem',
+                                                                        borderRadius: '12px',
+                                                                        border: '1.5px solid #cbd5e1',
+                                                                        borderBottom: '3.5px solid #94a3b8',
+                                                                        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)',
+                                                                        fontSize: '0.88rem',
+                                                                        fontWeight: 700,
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            borderColor: '#94a3b8',
+                                                                            borderBottom: '3.5px solid #64748b',
+                                                                        },
+                                                                        '&.Mui-focused': {
+                                                                            border: '1.5px solid #059669',
+                                                                            borderBottom: '3.5px solid #047857',
+                                                                            boxShadow: '0 0 0 3px rgba(5, 150, 105, 0.15)',
+                                                                        },
+                                                                        '& fieldset': { border: 'none' },
                                                                     },
                                                                 }}
                                                             />
@@ -1341,15 +1433,32 @@ export default function Register({
                                                                 InputProps={{
                                                                     startAdornment: (
                                                                         <InputAdornment position="start">
-                                                                            <EmailOutlinedIcon sx={{ color: '#0284c7', fontSize: 18 }} />
+                                                                            <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: '#f0f9ff', border: '1px solid #bae6fd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                                <EmailOutlinedIcon sx={{ color: '#0284c7', fontSize: 17 }} />
+                                                                            </Box>
                                                                         </InputAdornment>
                                                                     ),
                                                                 }}
                                                                 sx={{
                                                                     '& .MuiOutlinedInput-root': {
                                                                         bgcolor: '#ffffff',
-                                                                        borderRadius: '10px',
-                                                                        fontSize: '0.86rem',
+                                                                        borderRadius: '12px',
+                                                                        border: '1.5px solid #cbd5e1',
+                                                                        borderBottom: '3.5px solid #94a3b8',
+                                                                        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)',
+                                                                        fontSize: '0.88rem',
+                                                                        fontWeight: 700,
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            borderColor: '#94a3b8',
+                                                                            borderBottom: '3.5px solid #64748b',
+                                                                        },
+                                                                        '&.Mui-focused': {
+                                                                            border: '1.5px solid #0284c7',
+                                                                            borderBottom: '3.5px solid #0369a1',
+                                                                            boxShadow: '0 0 0 3px rgba(2, 132, 199, 0.15)',
+                                                                        },
+                                                                        '& fieldset': { border: 'none' },
                                                                     },
                                                                 }}
                                                             />
@@ -1365,15 +1474,32 @@ export default function Register({
                                                                 InputProps={{
                                                                     startAdornment: (
                                                                         <InputAdornment position="start">
-                                                                            <PhoneIphoneIcon sx={{ color: '#059669', fontSize: 18 }} />
+                                                                            <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                                <PhoneIphoneIcon sx={{ color: '#059669', fontSize: 17 }} />
+                                                                            </Box>
                                                                         </InputAdornment>
                                                                     ),
                                                                 }}
                                                                 sx={{
                                                                     '& .MuiOutlinedInput-root': {
                                                                         bgcolor: '#ffffff',
-                                                                        borderRadius: '10px',
-                                                                        fontSize: '0.86rem',
+                                                                        borderRadius: '12px',
+                                                                        border: '1.5px solid #cbd5e1',
+                                                                        borderBottom: '3.5px solid #94a3b8',
+                                                                        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)',
+                                                                        fontSize: '0.88rem',
+                                                                        fontWeight: 700,
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            borderColor: '#94a3b8',
+                                                                            borderBottom: '3.5px solid #64748b',
+                                                                        },
+                                                                        '&.Mui-focused': {
+                                                                            border: '1.5px solid #059669',
+                                                                            borderBottom: '3.5px solid #047857',
+                                                                            boxShadow: '0 0 0 3px rgba(5, 150, 105, 0.15)',
+                                                                        },
+                                                                        '& fieldset': { border: 'none' },
                                                                     },
                                                                 }}
                                                             />
@@ -1389,15 +1515,32 @@ export default function Register({
                                                                 InputProps={{
                                                                     startAdornment: (
                                                                         <InputAdornment position="start">
-                                                                            <BusinessOutlinedIcon sx={{ color: '#7c3aed', fontSize: 18 }} />
+                                                                            <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: '#f5f3ff', border: '1px solid #ddd6fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                                <BusinessOutlinedIcon sx={{ color: '#7c3aed', fontSize: 17 }} />
+                                                                            </Box>
                                                                         </InputAdornment>
                                                                     ),
                                                                 }}
                                                                 sx={{
                                                                     '& .MuiOutlinedInput-root': {
                                                                         bgcolor: '#ffffff',
-                                                                        borderRadius: '10px',
-                                                                        fontSize: '0.86rem',
+                                                                        borderRadius: '12px',
+                                                                        border: '1.5px solid #cbd5e1',
+                                                                        borderBottom: '3.5px solid #94a3b8',
+                                                                        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)',
+                                                                        fontSize: '0.88rem',
+                                                                        fontWeight: 700,
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            borderColor: '#94a3b8',
+                                                                            borderBottom: '3.5px solid #64748b',
+                                                                        },
+                                                                        '&.Mui-focused': {
+                                                                            border: '1.5px solid #7c3aed',
+                                                                            borderBottom: '3.5px solid #6d28d9',
+                                                                            boxShadow: '0 0 0 3px rgba(124, 58, 237, 0.15)',
+                                                                        },
+                                                                        '& fieldset': { border: 'none' },
                                                                     },
                                                                 }}
                                                             />
@@ -1413,22 +1556,26 @@ export default function Register({
                                         <Paper
                                             elevation={0}
                                             sx={{
-                                                p: { xs: 2.5, sm: 3 },
-                                                borderRadius: '20px',
-                                                bgcolor: '#ffffff',
+                                                p: { xs: 2.5, sm: 3.5 },
+                                                borderRadius: '24px',
+                                                background: 'linear-gradient(180deg, #ffffff 0%, #fcfdfd 100%)',
                                                 border: `2px solid ${selectedCategory?.borderSelected || '#86efac'}`,
-                                                boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+                                                borderBottom: `5px solid ${selectedCategory?.darkBorder || '#047857'}`,
+                                                boxShadow: '0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 2px 0 #ffffff',
                                             }}
                                         >
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 2.5 }}>
                                                 <Box
                                                     sx={{
-                                                        width: 28,
-                                                        height: 28,
+                                                        width: 32,
+                                                        height: 32,
                                                         borderRadius: '10px',
-                                                        bgcolor: selectedCategory?.tagColor || '#094d42',
+                                                        background: 'linear-gradient(180deg, #059669 0%, #064e3b 100%)',
+                                                        border: '1px solid #34d399',
+                                                        borderBottom: '3.5px solid #022c22',
+                                                        boxShadow: '0 4px 10px rgba(4, 120, 87, 0.35), inset 0 1px 0 rgba(255,255,255,0.4)',
                                                         color: '#fff',
-                                                        fontSize: '0.85rem',
+                                                        fontSize: '0.92rem',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -1437,13 +1584,13 @@ export default function Register({
                                                 >
                                                     3
                                                 </Box>
-                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.08rem' }}>
                                                     Payment Method
                                                 </Typography>
                                             </Box>
 
                                             {/* Payment Method Selector Pills */}
-                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, mb: 2.5 }}>
+                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.8, mb: 2.5 }}>
                                                 {/* Bank Transfer (Active & Recommended) */}
                                                 <Paper
                                                     onClick={() => {
@@ -1451,40 +1598,53 @@ export default function Register({
                                                         setData('payment_method', 'foreign_bank_transfer');
                                                     }}
                                                     sx={{
-                                                        p: 2,
-                                                        borderRadius: '12px',
-                                                        bgcolor: paymentMethod === 'foreign_bank_transfer' ? '#f0f9ff' : '#f8fafc',
-                                                        border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#e2e8f0'}`,
+                                                        p: 2.2,
+                                                        borderRadius: '16px',
+                                                        background: paymentMethod === 'foreign_bank_transfer' 
+                                                            ? 'linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%)' 
+                                                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                        border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#cbd5e1'}`,
+                                                        borderBottom: paymentMethod === 'foreign_bank_transfer' ? '5px solid #0369a1' : '4px solid #94a3b8',
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
                                                         gap: 1.5,
-                                                        transition: 'all 0.15s ease',
-                                                        boxShadow: paymentMethod === 'foreign_bank_transfer' ? '0 4px 12px rgba(2, 132, 199, 0.12)' : 'none',
-                                                        '&:hover': { bgcolor: '#f0f9ff' },
+                                                        transition: 'all 0.18s ease',
+                                                        boxShadow: paymentMethod === 'foreign_bank_transfer' 
+                                                            ? '0 8px 20px rgba(2, 132, 199, 0.2), inset 0 1px 0 #ffffff' 
+                                                            : '0 3px 8px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff',
+                                                        transform: paymentMethod === 'foreign_bank_transfer' ? 'translateY(-2px)' : 'none',
+                                                        '&:hover': {
+                                                            borderColor: '#0284c7',
+                                                            borderBottom: '5px solid #0369a1',
+                                                            transform: 'translateY(-3px)',
+                                                            boxShadow: '0 10px 22px rgba(2, 132, 199, 0.25)',
+                                                        },
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#e0f2fe', color: '#0284c7' }}>
+                                                        <Box sx={{ p: 1, borderRadius: '10px', background: 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)', border: '1px solid #7dd3fc', borderBottom: '2.5px solid #0284c7', color: '#0284c7', boxShadow: '0 2px 4px rgba(2,132,199,0.2)' }}>
                                                             <AccountBalanceIcon sx={{ fontSize: 22 }} />
                                                         </Box>
                                                         <Box>
                                                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>Direct Bank Transfer / SWIFT</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 600 }}>Direct Bank Transfer / SWIFT</Typography>
                                                         </Box>
                                                     </Box>
                                                     <Chip
                                                         label="ACTIVE"
                                                         size="small"
                                                         sx={{
-                                                            height: 20,
-                                                            fontSize: '0.62rem',
+                                                            height: 22,
+                                                            fontSize: '0.64rem',
                                                             fontWeight: 900,
-                                                            bgcolor: '#dcfce7',
-                                                            color: '#15803d',
-                                                            border: '1px solid #bbf7d0',
-                                                            letterSpacing: '0.04em',
+                                                            background: 'linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%)',
+                                                            color: '#14532d',
+                                                            border: '1px solid #86efac',
+                                                            borderBottom: '2.5px solid #16a34a',
+                                                            letterSpacing: '0.05em',
+                                                            boxShadow: '0 2px 4px rgba(22,163,74,0.15)',
                                                         }}
                                                     />
                                                 </Paper>
@@ -1496,40 +1656,53 @@ export default function Register({
                                                         setData('payment_method', 'qris_indo');
                                                     }}
                                                     sx={{
-                                                        p: 2,
-                                                        borderRadius: '12px',
-                                                        bgcolor: paymentMethod === 'qris_indo' ? '#fffbeb' : '#f8fafc',
-                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#f59e0b' : '#e2e8f0'}`,
+                                                        p: 2.2,
+                                                        borderRadius: '16px',
+                                                        background: paymentMethod === 'qris_indo' 
+                                                            ? 'linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%)' 
+                                                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#f59e0b' : '#cbd5e1'}`,
+                                                        borderBottom: paymentMethod === 'qris_indo' ? '5px solid #b45309' : '4px solid #94a3b8',
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'space-between',
                                                         gap: 1.5,
-                                                        transition: 'all 0.15s ease',
-                                                        boxShadow: paymentMethod === 'qris_indo' ? '0 4px 12px rgba(245, 158, 11, 0.15)' : 'none',
-                                                        '&:hover': { bgcolor: '#fffbeb' },
+                                                        transition: 'all 0.18s ease',
+                                                        boxShadow: paymentMethod === 'qris_indo' 
+                                                            ? '0 8px 20px rgba(245, 158, 11, 0.2), inset 0 1px 0 #ffffff' 
+                                                            : '0 3px 8px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff',
+                                                        transform: paymentMethod === 'qris_indo' ? 'translateY(-2px)' : 'none',
+                                                        '&:hover': {
+                                                            borderColor: '#f59e0b',
+                                                            borderBottom: '5px solid #b45309',
+                                                            transform: 'translateY(-3px)',
+                                                            boxShadow: '0 10px 22px rgba(245, 158, 11, 0.25)',
+                                                        },
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                        <Box sx={{ p: 1, borderRadius: '8px', bgcolor: '#fef3c7', color: '#d97706' }}>
+                                                        <Box sx={{ p: 1, borderRadius: '10px', background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)', border: '1px solid #fcd34d', borderBottom: '2.5px solid #d97706', color: '#d97706', boxShadow: '0 2px 4px rgba(217,119,6,0.2)' }}>
                                                             <QrCodeIcon sx={{ fontSize: 22 }} />
                                                         </Box>
                                                         <Box>
                                                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>QRIS Indonesia</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>BCA, GoPay, OVO, Dana</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 600 }}>BCA, GoPay, OVO, Dana</Typography>
                                                         </Box>
                                                     </Box>
                                                     <Chip
                                                         label="COMING SOON"
                                                         size="small"
                                                         sx={{
-                                                            height: 20,
-                                                            fontSize: '0.62rem',
+                                                            height: 22,
+                                                            fontSize: '0.64rem',
                                                             fontWeight: 900,
-                                                            bgcolor: '#fef3c7',
-                                                            color: '#b45309',
-                                                            border: '1px solid #fde68a',
-                                                            letterSpacing: '0.03em',
+                                                            background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
+                                                            color: '#78350f',
+                                                            border: '1px solid #fcd34d',
+                                                            borderBottom: '2.5px solid #b45309',
+                                                            letterSpacing: '0.04em',
+                                                            boxShadow: '0 2px 4px rgba(180,83,9,0.15)',
                                                         }}
                                                     />
                                                 </Paper>
@@ -1537,14 +1710,14 @@ export default function Register({
 
                                             {/* QRIS Container (Maintenance / Coming Soon Display) */}
                                             {paymentMethod === 'qris_indo' && (
-                                                <Box sx={{ textAlign: 'center', p: 3, bgcolor: '#fffbeb', borderRadius: '14px', border: '1.5px dashed #fcd34d', mb: 2.5 }}>
-                                                    <Box sx={{ display: 'inline-flex', p: 1.5, borderRadius: '50%', bgcolor: '#fef3c7', color: '#d97706', mb: 1.2 }}>
-                                                        <ConstructionIcon sx={{ fontSize: 32 }} />
+                                                <Box sx={{ textAlign: 'center', p: 3.5, background: 'linear-gradient(180deg, #fffdf5 0%, #fffbeb 100%)', borderRadius: '18px', border: '2px dashed #fcd34d', borderBottom: '4.5px solid #f59e0b', mb: 2.5, boxShadow: '0 6px 16px rgba(245, 158, 11, 0.1)' }}>
+                                                    <Box sx={{ display: 'inline-flex', p: 1.8, borderRadius: '50%', background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)', border: '1.5px solid #fcd34d', borderBottom: '3px solid #d97706', color: '#d97706', mb: 1.5, boxShadow: '0 4px 10px rgba(217, 119, 6, 0.2)' }}>
+                                                        <ConstructionIcon sx={{ fontSize: 34 }} />
                                                     </Box>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#92400e', mb: 0.5 }}>
+                                                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#92400e', mb: 0.6 }}>
                                                         QRIS Indonesia (Under Maintenance / Coming Soon)
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ color: '#b45309', maxWidth: 480, mx: 'auto', mb: 2, fontSize: '0.82rem', lineHeight: 1.5 }}>
+                                                    <Typography variant="body2" sx={{ color: '#b45309', maxWidth: 480, mx: 'auto', mb: 2.2, fontSize: '0.84rem', lineHeight: 1.55 }}>
                                                         Instant QRIS payment gateway is currently under scheduled maintenance & gateway configuration. Please proceed with <strong>Bank Transfer</strong> for immediate registration processing.
                                                     </Typography>
                                                     <Button
@@ -1556,15 +1729,18 @@ export default function Register({
                                                             setData('payment_method', 'foreign_bank_transfer');
                                                         }}
                                                         sx={{
-                                                            bgcolor: '#0284c7',
+                                                            background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
                                                             color: '#fff',
-                                                            fontWeight: 800,
-                                                            borderRadius: '8px',
+                                                            fontWeight: 900,
+                                                            borderRadius: '12px',
                                                             textTransform: 'none',
-                                                            px: 2.5,
-                                                            py: 0.8,
-                                                            boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
-                                                            '&:hover': { bgcolor: '#0369a1' },
+                                                            px: 3,
+                                                            py: 1,
+                                                            border: '1.5px solid #38bdf8',
+                                                            borderBottom: '3.5px solid #075985',
+                                                            boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)',
+                                                            '&:hover': { background: 'linear-gradient(180deg, #0369a1 0%, #075985 100%)', transform: 'translateY(-1px)' },
+                                                            '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #075985' },
                                                         }}
                                                     >
                                                         Switch to Bank Transfer
@@ -1574,9 +1750,9 @@ export default function Register({
 
                                             {/* Bank Transfer Container */}
                                             {paymentMethod === 'foreign_bank_transfer' && (
-                                                <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2.5 }}>
-                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0284c7' }}>
+                                                <Box sx={{ p: 2.8, background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)', borderRadius: '18px', border: '1.5px solid #cbd5e1', borderBottom: '4.5px solid #94a3b8', mb: 2.5, boxShadow: '0 6px 18px rgba(0,0,0,0.04), inset 0 1px 0 #ffffff' }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.2 }}>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0284c7', fontSize: '0.92rem' }}>
                                                             Bank Account
                                                         </Typography>
                                                         <Button
@@ -1584,41 +1760,58 @@ export default function Register({
                                                             startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
                                                             onClick={handleCopyBankInfo}
                                                             sx={{
-                                                                color: '#0284c7',
-                                                                bgcolor: '#e0f2fe',
+                                                                color: '#0369a1',
+                                                                background: 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)',
+                                                                border: '1.5px solid #7dd3fc',
+                                                                borderBottom: '3px solid #0284c7',
                                                                 fontSize: '0.74rem',
-                                                                fontWeight: 800,
-                                                                borderRadius: '6px',
-                                                                px: 1.2,
+                                                                fontWeight: 900,
+                                                                borderRadius: '8px',
+                                                                px: 1.5,
+                                                                py: 0.5,
                                                                 textTransform: 'none',
-                                                                '&:hover': { bgcolor: '#bae6fd' },
+                                                                boxShadow: '0 2px 6px rgba(2, 132, 199, 0.2), inset 0 1px 0 #ffffff',
+                                                                '&:hover': { background: 'linear-gradient(180deg, #bae6fd 0%, #7dd3fc 100%)', transform: 'translateY(-1px)' },
+                                                                '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #0284c7' },
                                                             }}
                                                         >
                                                             {copySuccess ? 'Copied to Clipboard!' : 'Copy Info'}
                                                         </Button>
-                                                            </Box>
-                                                            <Typography variant="body2" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', bgcolor: '#fff', p: 2, borderRadius: '10px', border: '1px solid #e2e8f0', display: 'block', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                                                                {bankTransferInfo}
-                                                            </Typography>
+                                                    </Box>
+                                                    <Typography variant="body2" sx={{ color: '#0f172a', whiteSpace: 'pre-line', fontFamily: 'monospace', background: '#ffffff', p: 2.2, borderRadius: '14px', border: '1.5px solid #cbd5e1', borderBottom: '3.5px solid #94a3b8', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03)', display: 'block', fontSize: '0.86rem', lineHeight: 1.6, fontWeight: 600 }}>
+                                                        {bankTransferInfo}
+                                                    </Typography>
 
-                                                            {isPaid && (
-                                                                <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-                                                                    <Box>
-                                                                        <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'block' }}>
-                                                                            Total Amount to Transfer:
-                                                                        </Typography>
-                                                                        <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif' }}>
-                                                                            IDR {totalEstimate.toLocaleString('id-ID')}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                    <Chip label={`Unique Code: ${uniqueCode}`} size="small" sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontSize: '0.74rem' }} />
-                                                                </Box>
-                                                            )}
+                                                    {isPaid && (
+                                                        <Box sx={{ mt: 2, p: 2, background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', borderRadius: '14px', border: '2px solid #86efac', borderBottom: '4.5px solid #16a34a', boxShadow: '0 6px 16px rgba(22, 163, 74, 0.15), inset 0 1px 0 #ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                                            <Box>
+                                                                <Typography variant="caption" sx={{ color: '#166534', fontWeight: 800, display: 'block', fontSize: '0.74rem' }}>
+                                                                    Total Amount to Transfer:
+                                                                </Typography>
+                                                                <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontSize: '1.25rem', fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif' }}>
+                                                                    IDR {totalEstimate.toLocaleString('id-ID')}
+                                                                </Typography>
+                                                            </Box>
+                                                            <Chip 
+                                                                label={`Unique Code: ${uniqueCode}`} 
+                                                                size="small" 
+                                                                sx={{ 
+                                                                    background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)', 
+                                                                    border: '1.5px solid #86efac', 
+                                                                    borderBottom: '3px solid #16a34a', 
+                                                                    color: '#15803d', 
+                                                                    fontWeight: 900, 
+                                                                    fontSize: '0.75rem',
+                                                                    boxShadow: '0 2px 4px rgba(22,163,74,0.15)',
+                                                                }} 
+                                                            />
                                                         </Box>
                                                     )}
+                                                </Box>
+                                            )}
 
                                             {/* Proof Upload Action Zone */}
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 1 }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 900, color: '#334155', display: 'block', mb: 1.2, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                                                  Upload Payment Receipt *
                                             </Typography>
 
@@ -1638,24 +1831,35 @@ export default function Register({
                                                 style={{ display: 'none' }}
                                             />
 
-                                            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                                            <Box sx={{ display: 'flex', gap: 1.8, flexWrap: 'wrap' }}>
                                                 <Button
                                                     variant="contained"
                                                     size="small"
-                                                    startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
+                                                    startIcon={<PhotoCameraIcon sx={{ fontSize: 17 }} />}
                                                     onClick={handleOpenDirectCamera}
                                                     disabled={compressing}
                                                     sx={{
-                                                        borderRadius: '10px',
-                                                        bgcolor: '#0284c7',
+                                                        borderRadius: '14px',
+                                                        background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
+                                                        border: '1.5px solid #38bdf8',
+                                                        borderBottom: '4.5px solid #075985',
                                                         color: '#ffffff',
                                                         textTransform: 'none',
-                                                        fontWeight: 800,
-                                                        fontSize: '0.82rem',
-                                                        px: 2,
-                                                        py: 1,
-                                                        boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
-                                                        '&:hover': { bgcolor: '#0369a1' },
+                                                        fontWeight: 900,
+                                                        fontSize: '0.85rem',
+                                                        px: 2.5,
+                                                        py: 1.1,
+                                                        boxShadow: '0 6px 16px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255,255,255,0.4)',
+                                                        transition: 'all 0.15s ease',
+                                                        '&:hover': { 
+                                                            background: 'linear-gradient(180deg, #0369a1 0%, #075985 100%)',
+                                                            transform: 'translateY(-2px)',
+                                                            boxShadow: '0 8px 20px rgba(2, 132, 199, 0.45)',
+                                                        },
+                                                        '&:active': {
+                                                            transform: 'translateY(2px)',
+                                                            borderBottom: '2px solid #075985',
+                                                        },
                                                     }}
                                                 >
                                                     Open Camera
@@ -1663,20 +1867,32 @@ export default function Register({
                                                 <Button
                                                     variant="outlined"
                                                     size="small"
-                                                    startIcon={<CloudUploadIcon sx={{ fontSize: 16 }} />}
+                                                    startIcon={<CloudUploadIcon sx={{ fontSize: 17 }} />}
                                                     onClick={() => fileInputRef.current?.click()}
                                                     disabled={compressing}
                                                     sx={{
-                                                        borderRadius: '10px',
-                                                        borderColor: '#cbd5e1',
-                                                        color: '#334155',
+                                                        borderRadius: '14px',
+                                                        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                        border: '1.5px solid #cbd5e1',
+                                                        borderBottom: '4.5px solid #94a3b8',
+                                                        color: '#1e293b',
                                                         textTransform: 'none',
-                                                        fontWeight: 800,
-                                                        fontSize: '0.82rem',
-                                                        px: 2,
-                                                        py: 1,
-                                                        bgcolor: '#ffffff',
-                                                        '&:hover': { bgcolor: '#f8fafc', borderColor: '#94a3b8' },
+                                                        fontWeight: 900,
+                                                        fontSize: '0.85rem',
+                                                        px: 2.5,
+                                                        py: 1.1,
+                                                        boxShadow: '0 6px 16px rgba(0,0,0,0.06), inset 0 1px 0 #ffffff',
+                                                        transition: 'all 0.15s ease',
+                                                        '&:hover': { 
+                                                            background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
+                                                            transform: 'translateY(-2px)',
+                                                            borderColor: '#94a3b8',
+                                                            borderBottom: '4.5px solid #64748b',
+                                                        },
+                                                        '&:active': {
+                                                            transform: 'translateY(2px)',
+                                                            borderBottom: '2px solid #64748b',
+                                                        },
                                                     }}
                                                 >
                                                     Browse Gallery / File
@@ -1684,22 +1900,22 @@ export default function Register({
                                             </Box>
 
                                             {compressing && (
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.8 }}>
                                                     <CircularProgress size={16} sx={{ color: '#059669' }} />
-                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 700 }}>
+                                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800 }}>
                                                         Auto-compressing image preview...
                                                     </Typography>
                                                 </Box>
                                             )}
 
                                             {proofPreview && (
-                                                <Box sx={{ mt: 2, p: 2, bgcolor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 56, height: 56, objectFit: 'cover', borderRadius: '8px', border: '1.5px solid #86efac', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }} />
+                                                <Box sx={{ mt: 2.2, p: 2.2, background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)', border: '1.5px solid #86efac', borderBottom: '4px solid #16a34a', borderRadius: '16px', boxShadow: '0 6px 18px rgba(22, 163, 74, 0.15)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 60, height: 60, objectFit: 'cover', borderRadius: '10px', border: '2px solid #86efac', boxShadow: '0 3px 8px rgba(0,0,0,0.1)' }} />
                                                     <Box sx={{ flex: 1 }}>
-                                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.78rem' }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 16 }} /> Payment proof attached ({compressionStats?.compressed} KB)
+                                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.82rem' }}>
+                                                            <CheckCircleIcon sx={{ fontSize: 18 }} /> Payment proof attached ({compressionStats?.compressed} KB)
                                                         </Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', display: 'block' }}>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', display: 'block', fontWeight: 600, mt: 0.3 }}>
                                                             Original: {compressionStats?.original} KB &bull; Compressed for fast server verification.
                                                         </Typography>
                                                     </Box>
@@ -1716,26 +1932,31 @@ export default function Register({
                                     elevation={0}
                                     sx={{
                                         p: { xs: 2.5, sm: 3 },
-                                        borderRadius: '20px',
-                                        bgcolor: '#ffffff',
-                                        border: '1px solid #e2e8f0',
-                                        boxShadow: '0 4px 25px rgba(0,0,0,0.06)',
+                                        borderRadius: '24px',
+                                        background: 'linear-gradient(180deg, #ffffff 0%, #fcfdfd 100%)',
+                                        border: '1.5px solid #cbd5e1',
+                                        borderBottom: '5px solid #94a3b8',
+                                        boxShadow: '0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 2px 0 #ffffff',
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 0.6 }}>
-                                            <VisibilityIcon sx={{ fontSize: 15, color: selectedCategory.lanyardTheme?.banner || '#059669' }} /> Live 3D Lanyard Badge
+                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 0.6, fontSize: '0.75rem' }}>
+                                            <VisibilityIcon sx={{ fontSize: 16, color: selectedCategory.lanyardTheme?.banner || '#059669' }} /> Live 3D Lanyard Badge
                                         </Typography>
                                         <Chip
                                             label={selectedCategory.badge || 'PASS'}
                                             size="small"
                                             sx={{
-                                                bgcolor: selectedCategory.tagBg || '#ecfdf5',
+                                                background: `linear-gradient(180deg, ${selectedCategory.tagBg || '#ecfdf5'} 0%, ${selectedCategory.tagBg || '#ecfdf5'}ee 100%)`,
                                                 color: selectedCategory.tagColor || '#047857',
+                                                border: `1.5px solid ${selectedCategory.borderSelected || '#10b981'}`,
+                                                borderBottom: `2.5px solid ${selectedCategory.darkBorder || '#047857'}`,
                                                 fontWeight: 900,
                                                 fontSize: '0.68rem',
-                                                height: 22,
-                                                borderRadius: '6px',
+                                                height: 24,
+                                                px: 0.8,
+                                                borderRadius: '8px',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.06)',
                                             }}
                                         />
                                     </Box>
@@ -1752,23 +1973,28 @@ export default function Register({
                                     >
                                         {/* Lanyard Top Strap & Metallic Clip */}
                                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: -1, position: 'relative', zIndex: 3 }}>
+                                            {/* Fabric Strap with woven texture & depth */}
                                             <Box
                                                 sx={{
-                                                    width: 36,
-                                                    height: 20,
-                                                    bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
-                                                    borderRadius: '4px 4px 0 0',
-                                                    boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.2)',
+                                                    width: 38,
+                                                    height: 22,
+                                                    background: `linear-gradient(90deg, ${selectedCategory.lanyardTheme?.banner || '#094d42'} 0%, ${selectedCategory.lanyardTheme?.border || '#059669'} 50%, ${selectedCategory.lanyardTheme?.banner || '#094d42'} 100%)`,
+                                                    borderRadius: '6px 6px 0 0',
+                                                    border: '1px solid rgba(255,255,255,0.2)',
+                                                    borderBottom: 'none',
+                                                    boxShadow: 'inset 0 -3px 4px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.15)',
                                                 }}
                                             />
+                                            {/* Brushed Chrome / Stainless Swivel Clip */}
                                             <Box
                                                 sx={{
-                                                    width: 16,
-                                                    height: 12,
-                                                    bgcolor: '#e2e8f0',
-                                                    borderRadius: '3px',
-                                                    border: '1.5px solid #94a3b8',
-                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                    width: 18,
+                                                    height: 14,
+                                                    background: 'linear-gradient(180deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%)',
+                                                    borderRadius: '4px',
+                                                    border: '1.5px solid #e2e8f0',
+                                                    borderBottom: '2.5px solid #64748b',
+                                                    boxShadow: '0 3px 6px rgba(0,0,0,0.15), inset 0 1px 0 #ffffff',
                                                 }}
                                             />
                                         </Box>
@@ -1778,50 +2004,65 @@ export default function Register({
                                             sx={{
                                                 transform: `rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
                                                 transition: 'transform 0.15s ease-out',
-                                                borderRadius: '18px',
-                                                bgcolor: '#ffffff',
+                                                borderRadius: '20px',
+                                                background: 'linear-gradient(145deg, #ffffff 0%, #fcfdfd 60%, #f8fafc 100%)',
                                                 border: `2px solid ${selectedCategory.lanyardTheme?.border || '#10b981'}`,
-                                                boxShadow: `0 14px 30px -5px ${selectedCategory.lanyardTheme?.border || '#10b981'}35, 0 4px 12px rgba(0,0,0,0.04)`,
-                                                p: 2.5,
+                                                borderBottom: `6px solid ${selectedCategory.lanyardTheme?.darkBorder || '#047857'}`,
+                                                boxShadow: `0 18px 38px -6px ${selectedCategory.lanyardTheme?.border || '#10b981'}40, 0 6px 14px rgba(0,0,0,0.06), inset 0 2px 0 #ffffff`,
+                                                p: 2.8,
                                                 textAlign: 'center',
                                                 position: 'relative',
+                                                overflow: 'hidden',
+                                                '&::before': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    height: '45%',
+                                                    background: 'linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)',
+                                                    pointerEvents: 'none',
+                                                }
                                             }}
                                         >
                                             {/* Hole Punch */}
                                             <Box
                                                 sx={{
-                                                    width: 26,
-                                                    height: 6,
-                                                    borderRadius: '3px',
-                                                    bgcolor: '#e2e8f0',
+                                                    width: 28,
+                                                    height: 7,
+                                                    borderRadius: '4px',
+                                                    background: 'linear-gradient(180deg, #cbd5e1 0%, #f1f5f9 100%)',
+                                                    border: '1px solid #94a3b8',
                                                     mx: 'auto',
                                                     mb: 1.5,
+                                                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.25)',
                                                 }}
                                             />
 
-                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.7rem', display: 'block' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#094d42', fontSize: '0.72rem', display: 'block' }}>
                                                 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                                             </Typography>
-                                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.62rem', display: 'block', mb: 1.5, fontWeight: 700 }}>
+                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.64rem', display: 'block', mb: 1.5, fontWeight: 700 }}>
                                                 ANNUAL SCIENTIFIC CONVENTION
                                             </Typography>
 
-                                            {/* QR Code */}
+                                            {/* QR Code with 3D bevel */}
                                             <Box
                                                 sx={{
                                                     p: 1.2,
                                                     bgcolor: '#ffffff',
-                                                    borderRadius: '12px',
-                                                    border: '1px solid #e2e8f0',
+                                                    borderRadius: '14px',
+                                                    border: '1.5px solid #cbd5e1',
+                                                    borderBottom: '3.5px solid #94a3b8',
                                                     width: 'fit-content',
                                                     mx: 'auto',
-                                                    mb: 1.5,
-                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                                                    mb: 1.8,
+                                                    boxShadow: '0 6px 16px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.02)',
                                                 }}
                                             >
                                                 <QRCodeSVG
                                                     value="TKT-SAMPLE-PREVIEW"
-                                                    size={100}
+                                                    size={105}
                                                     level="H"
                                                     includeMargin={false}
                                                 />
@@ -1834,7 +2075,7 @@ export default function Register({
                                                     fontWeight: 900,
                                                     color: '#0f172a',
                                                     lineHeight: 1.2,
-                                                    fontSize: '1.05rem',
+                                                    fontSize: '1.08rem',
                                                     minHeight: '1.2em',
                                                     mb: 0.3,
                                                 }}
@@ -1847,7 +2088,7 @@ export default function Register({
                                                 sx={{
                                                     fontWeight: 700,
                                                     color: selectedCategory.lanyardTheme?.banner || '#0284c7',
-                                                    fontSize: '0.78rem',
+                                                    fontSize: '0.8rem',
                                                     display: 'block',
                                                     minHeight: '1.2em',
                                                     mb: 1.8,
@@ -1859,29 +2100,46 @@ export default function Register({
                                             {/* Bottom Banner */}
                                             <Box
                                                 sx={{
-                                                    bgcolor: selectedCategory.lanyardTheme?.banner || '#094d42',
+                                                    background: isPaid 
+                                                        ? `linear-gradient(180deg, ${selectedCategory.lanyardTheme?.banner || '#094d42'} 0%, ${selectedCategory.lanyardTheme?.darkBorder || '#042e27'} 100%)` 
+                                                        : `linear-gradient(180deg, ${selectedCategory.lanyardTheme?.banner || '#059669'} 0%, ${selectedCategory.lanyardTheme?.darkBorder || '#047857'} 100%)`,
                                                     color: '#ffffff',
-                                                    py: 0.8,
-                                                    borderRadius: '10px',
+                                                    py: 1,
+                                                    px: 1.5,
+                                                    borderRadius: '12px',
                                                     fontWeight: 900,
                                                     letterSpacing: '0.06em',
                                                     textTransform: 'uppercase',
-                                                    fontSize: '0.74rem',
+                                                    fontSize: '0.76rem',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    gap: 0.5,
+                                                    gap: 0.6,
+                                                    border: '1px solid rgba(255,255,255,0.3)',
+                                                    borderBottom: '3px solid rgba(0,0,0,0.3)',
+                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.4)',
+                                                    textShadow: '0 1px 2px rgba(0,0,0,0.4)',
                                                 }}
                                             >
-                                                {isPaid && <StarIcon sx={{ fontSize: 13 }} />}
+                                                {isPaid && <StarIcon sx={{ fontSize: 14, color: '#fef08a' }} />}
                                                 {selectedCategory.lanyardTheme?.badge || selectedCategory.name}
-                                                {isPaid && <StarIcon sx={{ fontSize: 13 }} />}
+                                                {isPaid && <StarIcon sx={{ fontSize: 14, color: '#fef08a' }} />}
                                             </Box>
                                         </Box>
                                     </Box>
 
                                     {/* Order Summary Box */}
-                                    <Box sx={{ mt: 2.5, p: 2.2, bgcolor: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                                    <Box 
+                                        sx={{ 
+                                            mt: 2.5, 
+                                            p: 2.5, 
+                                            background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)', 
+                                            borderRadius: '18px', 
+                                            border: '1.5px solid #cbd5e1',
+                                            borderBottom: '4px solid #94a3b8',
+                                            boxShadow: '0 6px 16px rgba(0,0,0,0.04), inset 0 1px 0 #ffffff',
+                                        }}
+                                    >
                                         <Typography
                                             variant="caption"
                                             sx={{
@@ -1892,12 +2150,12 @@ export default function Register({
                                                 letterSpacing: '0.08em',
                                                 display: 'block',
                                                 mb: 1.5,
-                                                fontSize: '0.72rem',
+                                                fontSize: '0.74rem',
                                             }}
                                         >
                                             Order Summary:
                                         </Typography>
-                                        <Stack spacing={1}>
+                                        <Stack spacing={1.2}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <Typography variant="caption" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: '#64748b', fontWeight: 600 }}>
                                                     Category:
@@ -1932,9 +2190,9 @@ export default function Register({
                                                     </Typography>
                                                 </Box>
                                             )}
-                                            <Divider sx={{ borderColor: '#e2e8f0', my: 0.5 }} />
+                                            <Divider sx={{ borderColor: '#cbd5e1', my: 0.5 }} />
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="subtitle2" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '0.9rem' }}>
+                                                <Typography variant="subtitle2" sx={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, color: '#0f172a', fontSize: '0.92rem' }}>
                                                     Total Amount:
                                                 </Typography>
                                                 <Typography
@@ -1943,8 +2201,9 @@ export default function Register({
                                                         fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
                                                         fontWeight: 900,
                                                         color: isPaid ? '#094d42' : '#059669',
-                                                        fontSize: '1.3rem',
+                                                        fontSize: '1.35rem',
                                                         letterSpacing: '-0.02em',
+                                                        textShadow: '0 1px 1px rgba(0,0,0,0.06)',
                                                     }}
                                                 >
                                                     {isPaid ? `IDR ${totalEstimate.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
@@ -1963,33 +2222,38 @@ export default function Register({
                                             startIcon={processing ? <CircularProgress size={18} color="inherit" /> : <ConfirmationNumberIcon />}
                                             sx={{
                                                 background: isPaid 
-                                                    ? 'linear-gradient(180deg, #094d42 0%, #06352e 100%)' 
-                                                    : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                                    ? 'linear-gradient(180deg, #094d42 0%, #063d34 50%, #03241e 100%)' 
+                                                    : 'linear-gradient(180deg, #10b981 0%, #059669 50%, #047857 100%)',
                                                 color: '#ffffff',
                                                 fontWeight: 900,
-                                                fontSize: '0.95rem',
-                                                py: 1.5,
-                                                borderRadius: '14px',
+                                                fontSize: '0.98rem',
+                                                py: 1.6,
+                                                borderRadius: '16px',
                                                 textTransform: 'none',
+                                                border: '1.5px solid rgba(255,255,255,0.4)',
+                                                borderBottom: isPaid ? '6px solid #021a15' : '6px solid #022c22',
                                                 boxShadow: isPaid
-                                                    ? '0 4px 0 #04221d, 0 10px 22px rgba(9, 77, 66, 0.35)'
-                                                    : '0 4px 0 #047857, 0 10px 22px rgba(16, 185, 129, 0.35)',
+                                                    ? '0 12px 28px -4px rgba(9, 77, 66, 0.5), inset 0 2px 0 rgba(255,255,255,0.45)'
+                                                    : '0 12px 28px -4px rgba(16, 185, 129, 0.5), inset 0 2px 0 rgba(255,255,255,0.45)',
+                                                textShadow: '0 1px 2px rgba(0,0,0,0.4)',
+                                                transition: 'all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)',
                                                 '&:hover': {
                                                     background: isPaid
-                                                        ? 'linear-gradient(180deg, #0c6153 0%, #094d42 100%)'
-                                                        : 'linear-gradient(180deg, #34d399 0%, #047857 100%)',
-                                                    transform: 'translateY(-2px)',
+                                                        ? 'linear-gradient(180deg, #0c6153 0%, #094d42 50%, #063d34 100%)'
+                                                        : 'linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%)',
+                                                    transform: 'translateY(-3px)',
+                                                    borderBottom: isPaid ? '7px solid #021a15' : '7px solid #022c22',
                                                     boxShadow: isPaid
-                                                        ? '0 6px 0 #04221d, 0 14px 25px rgba(9, 77, 66, 0.45)'
-                                                        : '0 6px 0 #047857, 0 14px 25px rgba(16, 185, 129, 0.45)',
+                                                        ? '0 16px 34px -4px rgba(9, 77, 66, 0.6), inset 0 2px 0 rgba(255,255,255,0.6)'
+                                                        : '0 16px 34px -4px rgba(16, 185, 129, 0.6), inset 0 2px 0 rgba(255,255,255,0.6)',
                                                 },
                                                 '&:active': {
-                                                    transform: 'translateY(2px)',
+                                                    transform: 'translateY(3px)',
+                                                    borderBottom: isPaid ? '2px solid #021a15' : '2px solid #022c22',
                                                     boxShadow: isPaid
-                                                        ? '0 2px 0 #04221d, 0 4px 8px rgba(9, 77, 66, 0.3)'
-                                                        : '0 2px 0 #047857, 0 4px 8px rgba(16, 185, 129, 0.3)',
+                                                        ? '0 4px 10px rgba(9, 77, 66, 0.35)'
+                                                        : '0 4px 10px rgba(16, 185, 129, 0.35)',
                                                 },
-                                                transition: 'all 0.12s ease',
                                             }}
                                         >
                                             {processing 
@@ -1997,7 +2261,7 @@ export default function Register({
                                                 : 'Submit Registration'
                                             }
                                         </Button>
-                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1.2, fontSize: '0.72rem', fontWeight: 600 }}>
+                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 1.4, fontSize: '0.72rem', fontWeight: 600 }}>
                                             <ShieldOutlinedIcon sx={{ fontSize: 14, color: '#059669' }} /> Encrypted & verified by IAGI Secretariat Committee
                                         </Typography>
                                     </Box>
@@ -2016,10 +2280,13 @@ export default function Register({
                 fullWidth
                 PaperProps={{
                     sx: {
-                        borderRadius: '20px',
-                        bgcolor: '#0f172a',
+                        borderRadius: '24px',
+                        background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)',
+                        border: '2px solid #475569',
+                        borderBottom: '6px solid #020617',
                         color: '#fff',
                         overflow: 'hidden',
+                        boxShadow: '0 25px 60px -10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)',
                     },
                 }}
             >
@@ -2028,19 +2295,33 @@ export default function Register({
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        p: 2,
-                        px: 2.5,
+                        p: 2.2,
+                        px: 3,
                         borderBottom: '1px solid rgba(255,255,255,0.1)',
+                        background: 'linear-gradient(180deg, #334155 0%, #1e293b 100%)',
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PhotoCameraIcon sx={{ color: '#38bdf8' }} />
-                        <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fff' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                        <Box sx={{ p: 0.6, borderRadius: '10px', bgcolor: 'rgba(56, 189, 248, 0.15)', border: '1px solid #38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <PhotoCameraIcon sx={{ color: '#38bdf8', fontSize: 20 }} />
+                        </Box>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#fff', fontSize: '1.05rem' }}>
                             Capture Payment Proof
                         </Typography>
                     </Box>
-                    <IconButton onClick={stopCamera} size="small" sx={{ color: '#94a3b8', '&:hover': { color: '#fff' } }}>
-                        <CloseIcon />
+                    <IconButton 
+                        onClick={stopCamera} 
+                        size="small" 
+                        sx={{ 
+                            color: '#94a3b8', 
+                            background: 'rgba(255,255,255,0.08)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            borderBottom: '2.5px solid rgba(0,0,0,0.4)',
+                            borderRadius: '10px',
+                            '&:hover': { color: '#fff', background: 'rgba(255,255,255,0.15)' } 
+                        }}
+                    >
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </DialogTitle>
 
@@ -2048,15 +2329,15 @@ export default function Register({
                     {cameraLoading && (
                         <Box sx={{ textAlign: 'center', p: 3 }}>
                             <CircularProgress sx={{ color: '#38bdf8', mb: 1.5 }} />
-                            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                                Initializing camera...
+                            <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 700 }}>
+                                Initializing camera stream...
                             </Typography>
                         </Box>
                     )}
 
                     {cameraError ? (
                         <Box sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="body2" sx={{ color: '#f87171', mb: 2 }}>
+                            <Typography variant="body2" sx={{ color: '#f87171', mb: 2, fontWeight: 700 }}>
                                 {cameraError}
                             </Typography>
                             <Button
@@ -2065,7 +2346,17 @@ export default function Register({
                                     stopCamera();
                                     cameraInputRef.current?.click();
                                 }}
-                                sx={{ color: '#38bdf8', borderColor: '#38bdf8', textTransform: 'none', borderRadius: '8px' }}
+                                sx={{
+                                    color: '#38bdf8',
+                                    background: 'linear-gradient(180deg, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%)',
+                                    borderColor: '#38bdf8',
+                                    borderBottom: '3px solid #0284c7',
+                                    textTransform: 'none',
+                                    fontWeight: 800,
+                                    borderRadius: '12px',
+                                    px: 2.5,
+                                    py: 0.8,
+                                }}
                             >
                                 Use Native Camera App
                             </Button>
@@ -2095,8 +2386,9 @@ export default function Register({
                                         transform: 'translate(-50%, -50%)',
                                         width: '75%',
                                         height: '65%',
-                                        border: '2px dashed rgba(56, 189, 248, 0.6)',
-                                        borderRadius: '12px',
+                                        border: '2px dashed rgba(56, 189, 248, 0.8)',
+                                        borderRadius: '16px',
+                                        boxShadow: '0 0 20px rgba(56, 189, 248, 0.25)',
                                         pointerEvents: 'none',
                                     }}
                                 />
@@ -2105,12 +2397,25 @@ export default function Register({
                     )}
                 </DialogContent>
 
-                <DialogActions sx={{ p: 2, px: 2.5, bgcolor: '#0f172a', borderTop: '1px solid rgba(255,255,255,0.1)', justifyContent: 'space-between' }}>
+                <DialogActions sx={{ p: 2, px: 3, bgcolor: '#0f172a', borderTop: '1px solid rgba(255,255,255,0.1)', justifyContent: 'space-between' }}>
                     <Button
                         startIcon={<CameraswitchIcon />}
                         onClick={handleSwitchCamera}
                         size="small"
-                        sx={{ color: '#94a3b8', textTransform: 'none', '&:hover': { color: '#fff' } }}
+                        sx={{
+                            color: '#e2e8f0',
+                            background: 'linear-gradient(180deg, #334155 0%, #1e293b 100%)',
+                            border: '1.5px solid #475569',
+                            borderBottom: '3px solid #0f172a',
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 800,
+                            px: 2,
+                            py: 0.8,
+                            boxShadow: '0 3px 8px rgba(0,0,0,0.3)',
+                            '&:hover': { background: 'linear-gradient(180deg, #475569 0%, #334155 100%)', color: '#fff' },
+                            '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #0f172a' },
+                        }}
                     >
                         Switch Camera
                     </Button>
@@ -2121,14 +2426,25 @@ export default function Register({
                         disabled={cameraLoading || !!cameraError}
                         startIcon={<PhotoCameraIcon />}
                         sx={{
-                            bgcolor: '#0284c7',
+                            background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
                             color: '#fff',
-                            fontWeight: 800,
-                            borderRadius: '10px',
+                            fontWeight: 900,
+                            borderRadius: '14px',
+                            border: '1.5px solid #38bdf8',
+                            borderBottom: '4px solid #0c4a6e',
                             textTransform: 'none',
-                            px: 3,
+                            px: 3.2,
                             py: 1,
-                            '&:hover': { bgcolor: '#0369a1' },
+                            boxShadow: '0 6px 18px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.4)',
+                            '&:hover': { 
+                                background: 'linear-gradient(180deg, #0369a1 0%, #075985 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 8px 22px rgba(2, 132, 199, 0.6)',
+                            },
+                            '&:active': {
+                                transform: 'translateY(2px)',
+                                borderBottom: '1.5px solid #0c4a6e',
+                            },
                         }}
                     >
                         Capture Photo
@@ -2145,44 +2461,48 @@ export default function Register({
                 PaperProps={{
                     sx: {
                         borderRadius: '24px',
-                        bgcolor: '#ffffff',
+                        background: 'linear-gradient(180deg, #ffffff 0%, #fcfdfd 100%)',
+                        border: '1.5px solid #cbd5e1',
+                        borderBottom: '6px solid #94a3b8',
                         overflow: 'hidden',
-                        boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+                        boxShadow: '0 25px 60px -12px rgba(15, 23, 42, 0.25), inset 0 2px 0 #ffffff',
                     },
                 }}
             >
                 <DialogTitle
                     sx={{
-                        p: { xs: 2.2, sm: 3 },
-                        pb: 2,
+                        p: { xs: 2.5, sm: 3 },
+                        pb: 2.2,
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'space-between',
-                        borderBottom: '1px solid #f1f5f9',
-                        bgcolor: '#f8fafc',
+                        borderBottom: '1.5px solid #e2e8f0',
+                        background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
                     }}
                 >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8 }}>
                         <Box
                             sx={{
-                                width: 46,
-                                height: 46,
+                                width: 48,
+                                height: 48,
                                 borderRadius: '14px',
-                                bgcolor: '#ecfdf5',
-                                border: '1px solid #a7f3d0',
+                                background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
+                                border: '1.5px solid #86efac',
+                                borderBottom: '3.5px solid #16a34a',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 color: '#047857',
+                                boxShadow: '0 4px 10px rgba(22, 163, 74, 0.15)',
                             }}
                         >
-                            <ManageSearchIcon sx={{ fontSize: 28 }} />
+                            <ManageSearchIcon sx={{ fontSize: 30 }} />
                         </Box>
                         <Box>
-                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0f172a', lineHeight: 1.2, fontSize: { xs: '1.05rem', sm: '1.25rem' } }}>
+                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', lineHeight: 1.2, fontSize: { xs: '1.1rem', sm: '1.3rem' } }}>
                                 Find My Ticket & Payment Status
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.82rem', mt: 0.3 }}>
+                            <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.84rem', mt: 0.3, fontWeight: 600 }}>
                                 Cek Status Pendaftaran & E-Ticket Peserta 55ᵀᴴ PIT IAGI-GEOSEA 2026
                             </Typography>
                         </Box>
@@ -2191,20 +2511,24 @@ export default function Register({
                         onClick={() => setCheckStatusOpen(false)}
                         size="small"
                         sx={{
-                            color: '#94a3b8',
-                            bgcolor: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            '&:hover': { color: '#0f172a', bgcolor: '#f1f5f9' },
+                            color: '#64748b',
+                            background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                            border: '1.5px solid #cbd5e1',
+                            borderBottom: '3px solid #94a3b8',
+                            borderRadius: '10px',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                            '&:hover': { color: '#0f172a', background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)' },
+                            '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #94a3b8' },
                         }}
                     >
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 </DialogTitle>
 
-                <DialogContent sx={{ p: { xs: 2.2, sm: 3 } }}>
+                <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
                     {/* Search Input Box Form */}
-                    <Box component="form" onSubmit={handlePerformSearch} sx={{ mb: 2.5 }}>
-                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', mb: 1 }}>
+                    <Box component="form" onSubmit={handlePerformSearch} sx={{ mb: 3 }}>
+                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 1, fontSize: '0.74rem' }}>
                             Search by Email / Phone / Payment Code
                         </Typography>
                         <TextField
@@ -2219,7 +2543,9 @@ export default function Register({
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: '#047857' }} />
+                                        <Box sx={{ p: 0.6, borderRadius: '8px', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <SearchIcon sx={{ color: '#047857', fontSize: 18 }} />
+                                        </Box>
                                     </InputAdornment>
                                 ),
                                 endAdornment: (
@@ -2234,17 +2560,28 @@ export default function Register({
                                                 type="submit"
                                                 variant="contained"
                                                 disabled={isSearching || !searchQuery.trim()}
-                                                startIcon={isSearching ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <SearchIcon />}
+                                                startIcon={isSearching ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <SearchIcon sx={{ fontSize: 17 }} />}
                                                 sx={{
-                                                    bgcolor: '#047857',
+                                                    background: 'linear-gradient(180deg, #10b981 0%, #059669 50%, #047857 100%)',
                                                     color: '#fff',
-                                                    fontWeight: 800,
-                                                    borderRadius: '10px',
+                                                    fontWeight: 900,
+                                                    borderRadius: '12px',
                                                     textTransform: 'none',
-                                                    px: 2.5,
-                                                    py: 0.9,
-                                                    boxShadow: 'none',
-                                                    '&:hover': { bgcolor: '#065f46' },
+                                                    px: 2.8,
+                                                    py: 1,
+                                                    border: '1.5px solid #34d399',
+                                                    borderBottom: '3.5px solid #022c22',
+                                                    boxShadow: '0 4px 12px rgba(4, 120, 87, 0.35), inset 0 1px 0 rgba(255,255,255,0.4)',
+                                                    transition: 'all 0.15s ease',
+                                                    '&:hover': { 
+                                                        background: 'linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 6px 16px rgba(4, 120, 87, 0.45)',
+                                                    },
+                                                    '&:active': {
+                                                        transform: 'translateY(1.5px)',
+                                                        borderBottom: '1.5px solid #022c22',
+                                                    },
                                                 }}
                                             >
                                                 {isSearching ? 'Searching...' : 'Search'}
@@ -2256,14 +2593,25 @@ export default function Register({
                             sx={{
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: '14px',
-                                    bgcolor: '#f8fafc',
+                                    background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                    border: '1.5px solid #cbd5e1',
+                                    borderBottom: '3.5px solid #94a3b8',
                                     pr: 1,
-                                    '&:hover fieldset': { borderColor: '#10b981' },
-                                    '&.Mui-focused fieldset': { borderColor: '#047857', borderWidth: '2px' },
+                                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02)',
+                                    '& fieldset': { border: 'none' },
+                                    '&:hover': { 
+                                        borderColor: '#10b981',
+                                        borderBottom: '3.5px solid #059669',
+                                    },
+                                    '&.Mui-focused': { 
+                                        borderColor: '#059669', 
+                                        borderBottom: '3.5px solid #047857',
+                                        boxShadow: '0 0 0 4px rgba(5, 150, 105, 0.12), inset 0 1px 2px rgba(0,0,0,0.03)',
+                                    },
                                 },
                             }}
                         />
-                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.76rem', display: 'block', mt: 0.8, ml: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.76rem', display: 'block', mt: 1, ml: 0.5, fontWeight: 600 }}>
                             💡 <strong>Tip:</strong> Masukkan alamat email yang Anda gunakan saat mengisi formulir pendaftaran untuk menemukan seluruh tiket Anda.
                         </Typography>
                     </Box>
@@ -2271,11 +2619,11 @@ export default function Register({
                     {/* Loading State */}
                     {isSearching && (
                         <Box sx={{ py: 6, textAlign: 'center' }}>
-                            <CircularProgress size={36} sx={{ color: '#047857', mb: 1.5 }} />
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#334155' }}>
+                            <CircularProgress size={38} sx={{ color: '#047857', mb: 1.8 }} />
+                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>
                                 Searching registration records...
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', mt: 0.4, display: 'block' }}>
                                 Sedang memeriksa data tiket dan bukti pembayaran di server.
                             </Typography>
                         </Box>
@@ -2286,26 +2634,30 @@ export default function Register({
                         <Paper
                             elevation={0}
                             sx={{
-                                p: 2.5,
-                                borderRadius: '16px',
-                                bgcolor: '#fffbeb',
-                                border: '1px solid #fde68a',
-                                mb: 2,
+                                p: 2.8,
+                                borderRadius: '18px',
+                                background: 'linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%)',
+                                border: '1.5px solid #fde68a',
+                                borderBottom: '4.5px solid #d97706',
+                                boxShadow: '0 6px 18px rgba(217, 119, 6, 0.12)',
+                                mb: 2.5,
                             }}
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                                <HourglassEmptyIcon sx={{ color: '#d97706', mt: 0.2 }} />
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.8 }}>
+                                <Box sx={{ p: 0.8, borderRadius: '10px', bgcolor: 'rgba(217, 119, 6, 0.15)', border: '1px solid #d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <HourglassEmptyIcon sx={{ color: '#b45309', fontSize: 22 }} />
+                                </Box>
                                 <Box sx={{ flex: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#92400e', fontSize: '0.95rem' }}>
                                         Registration Record Not Found
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: '#78350f', fontSize: '0.84rem', mt: 0.5, lineHeight: 1.5 }}>
+                                    <Typography variant="body2" sx={{ color: '#78350f', fontSize: '0.84rem', mt: 0.5, lineHeight: 1.5, fontWeight: 600 }}>
                                         {searchError}
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: '#92400e', display: 'block', mt: 1 }}>
+                                    <Typography variant="caption" sx={{ color: '#92400e', display: 'block', mt: 1.2, fontWeight: 700 }}>
                                         Need direct help? Contact the PIT IAGI organizing committee via WhatsApp:
                                     </Typography>
-                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5 }}>
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.8 }}>
                                         <Button
                                             variant="outlined"
                                             size="small"
@@ -2316,13 +2668,19 @@ export default function Register({
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
                                             sx={{
                                                 textTransform: 'none',
-                                                fontWeight: 700,
-                                                fontSize: '0.8rem',
-                                                borderRadius: '10px',
-                                                bgcolor: '#ffffff',
-                                                borderColor: '#86efac',
+                                                fontWeight: 800,
+                                                fontSize: '0.82rem',
+                                                borderRadius: '12px',
+                                                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)',
+                                                border: '1.5px solid #86efac',
+                                                borderBottom: '3px solid #16a34a',
                                                 color: '#15803d',
-                                                '&:hover': { bgcolor: '#f0fdf4', borderColor: '#4ade80' },
+                                                boxShadow: '0 3px 8px rgba(22, 163, 74, 0.12)',
+                                                px: 2,
+                                                py: 0.8,
+                                                transition: 'all 0.15s ease',
+                                                '&:hover': { background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)', transform: 'translateY(-1px)' },
+                                                '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #16a34a' },
                                             }}
                                         >
                                             WhatsApp Registration (Adeline)
@@ -2337,13 +2695,19 @@ export default function Register({
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
                                             sx={{
                                                 textTransform: 'none',
-                                                fontWeight: 700,
-                                                fontSize: '0.8rem',
-                                                borderRadius: '10px',
-                                                bgcolor: '#ffffff',
-                                                borderColor: '#86efac',
+                                                fontWeight: 800,
+                                                fontSize: '0.82rem',
+                                                borderRadius: '12px',
+                                                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)',
+                                                border: '1.5px solid #86efac',
+                                                borderBottom: '3px solid #16a34a',
                                                 color: '#15803d',
-                                                '&:hover': { bgcolor: '#f0fdf4', borderColor: '#4ade80' },
+                                                boxShadow: '0 3px 8px rgba(22, 163, 74, 0.12)',
+                                                px: 2,
+                                                py: 0.8,
+                                                transition: 'all 0.15s ease',
+                                                '&:hover': { background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)', transform: 'translateY(-1px)' },
+                                                '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #16a34a' },
                                             }}
                                         >
                                             WhatsApp Secretariat (Tiyas)
@@ -2361,38 +2725,57 @@ export default function Register({
                                 <Chip
                                     label={`Found ${searchResults.length} Registration Record(s)`}
                                     size="small"
-                                    sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 800, border: '1px solid #a7f3d0' }}
+                                    sx={{ 
+                                        background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)', 
+                                        color: '#047857', 
+                                        fontWeight: 900, 
+                                        border: '1.5px solid #86efac',
+                                        borderBottom: '2.5px solid #16a34a',
+                                        boxShadow: '0 2px 5px rgba(22, 163, 74, 0.12)',
+                                        height: 26,
+                                        px: 1,
+                                    }}
                                 />
-                                <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                                     Klik tombol untuk membuka halaman status tiket / bukti bayar
                                 </Typography>
                             </Box>
 
-                            <Stack spacing={2}>
+                            <Stack spacing={2.2}>
                                 {searchResults.map((item) => {
                                     const isItemPending = item.status === 'pending' || item.payment_status === 'pending';
                                     const isItemActive = item.status === 'active' || item.payment_status === 'verified';
                                     const isItemRejected = item.status === 'rejected' || item.payment_status === 'rejected';
 
-                                    let badgeBg = '#f1f5f9';
+                                    let badgeBg = 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)';
+                                    let badgeBorder = '#cbd5e1';
+                                    let badgeBottomBorder = '#94a3b8';
                                     let badgeColor = '#475569';
                                     let badgeLabel = item.status?.toUpperCase() || 'UNKNOWN';
 
                                     if (isItemPending) {
-                                        badgeBg = '#fef3c7';
-                                        badgeColor = '#b45309';
+                                        badgeBg = 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)';
+                                        badgeBorder = '#f59e0b';
+                                        badgeBottomBorder = '#b45309';
+                                        badgeColor = '#92400e';
                                         badgeLabel = '⏳ Awaiting Verification';
                                     } else if (isItemActive) {
-                                        badgeBg = '#dcfce7';
-                                        badgeColor = '#15803d';
+                                        badgeBg = 'linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%)';
+                                        badgeBorder = '#4ade80';
+                                        badgeBottomBorder = '#16a34a';
+                                        badgeColor = '#14532d';
                                         badgeLabel = '✓ Verified & Active';
                                     } else if (isItemRejected) {
-                                        badgeBg = '#fee2e2';
-                                        badgeColor = '#b91c1c';
+                                        badgeBg = 'linear-gradient(180deg, #fee2e2 0%, #fecaca 100%)';
+                                        badgeBorder = '#f87171';
+                                        badgeBottomBorder = '#dc2626';
+                                        badgeColor = '#991b1b';
                                         badgeLabel = '✕ Rejected';
                                     } else if (item.status === 'used') {
-                                        badgeBg = '#e0e7ff';
-                                        badgeColor = '#4338ca';
+                                        badgeBg = 'linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 100%)';
+                                        badgeBorder = '#818cf8';
+                                        badgeBottomBorder = '#4338ca';
+                                        badgeColor = '#312e81';
                                         badgeLabel = 'Check-in Done';
                                     }
 
@@ -2401,91 +2784,112 @@ export default function Register({
                                             key={item.id}
                                             elevation={0}
                                             sx={{
-                                                p: 2.2,
-                                                borderRadius: '16px',
-                                                border: `1px solid ${isItemActive ? '#86efac' : isItemPending ? '#fde68a' : '#e2e8f0'}`,
-                                                bgcolor: isItemActive ? '#f0fdf4' : isItemPending ? '#fffdf7' : '#ffffff',
-                                                boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-                                                transition: 'all 0.2s ease',
+                                                p: 2.5,
+                                                borderRadius: '20px',
+                                                border: `1.5px solid ${isItemActive ? '#86efac' : isItemPending ? '#fde68a' : '#cbd5e1'}`,
+                                                borderBottom: `4.5px solid ${isItemActive ? '#16a34a' : isItemPending ? '#d97706' : '#94a3b8'}`,
+                                                background: isItemActive 
+                                                    ? 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)' 
+                                                    : isItemPending 
+                                                        ? 'linear-gradient(180deg, #ffffff 0%, #fffdf5 100%)' 
+                                                        : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                boxShadow: isItemActive 
+                                                    ? '0 6px 18px rgba(22, 163, 74, 0.1), inset 0 1px 0 #ffffff' 
+                                                    : isItemPending 
+                                                        ? '0 6px 18px rgba(217, 119, 6, 0.1), inset 0 1px 0 #ffffff' 
+                                                        : '0 6px 18px rgba(0,0,0,0.04), inset 0 1px 0 #ffffff',
+                                                transition: 'all 0.18s ease',
                                                 '&:hover': {
-                                                    boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
-                                                    borderColor: isItemActive ? '#4ade80' : isItemPending ? '#f59e0b' : '#cbd5e1',
+                                                    transform: 'translateY(-2px)',
+                                                    boxShadow: isItemActive 
+                                                        ? '0 10px 24px rgba(22, 163, 74, 0.18)' 
+                                                        : isItemPending 
+                                                            ? '0 10px 24px rgba(217, 119, 6, 0.18)' 
+                                                            : '0 10px 24px rgba(0,0,0,0.08)',
                                                 },
                                             }}
                                         >
                                             <Grid container spacing={2} alignItems="center">
                                                 {/* Left Details */}
                                                 <Grid item xs={12} md={7}>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.6 }}>
-                                                        <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1rem' }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.8 }}>
+                                                        <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>
                                                             {item.name}
                                                         </Typography>
                                                         <Chip
                                                             label={item.category_label}
                                                             size="small"
                                                             sx={{
-                                                                bgcolor: '#f1f5f9',
+                                                                background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
                                                                 color: '#334155',
-                                                                fontWeight: 700,
+                                                                fontWeight: 800,
                                                                 fontSize: '0.68rem',
-                                                                height: 20,
+                                                                height: 22,
+                                                                border: '1px solid #cbd5e1',
+                                                                borderBottom: '2.5px solid #94a3b8',
+                                                                borderRadius: '8px',
                                                             }}
                                                         />
                                                         <Chip
                                                             label={badgeLabel}
                                                             size="small"
                                                             sx={{
-                                                                bgcolor: badgeBg,
+                                                                background: badgeBg,
                                                                 color: badgeColor,
-                                                                fontWeight: 800,
-                                                                fontSize: '0.7rem',
-                                                                height: 22,
-                                                                border: `1px solid ${badgeColor}33`,
+                                                                fontWeight: 900,
+                                                                fontSize: '0.72rem',
+                                                                height: 24,
+                                                                border: `1.5px solid ${badgeBorder}`,
+                                                                borderBottom: `2.5px solid ${badgeBottomBorder}`,
+                                                                borderRadius: '8px',
+                                                                boxShadow: '0 2px 5px rgba(0,0,0,0.06)',
                                                             }}
                                                         />
                                                     </Box>
 
-                                                    <Stack spacing={0.4} sx={{ color: '#475569', fontSize: '0.8rem' }}>
+                                                    <Stack spacing={0.5} sx={{ color: '#475569', fontSize: '0.82rem' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                            <EmailOutlinedIcon sx={{ fontSize: 15, color: '#64748b' }} />
-                                                            <Typography variant="caption" sx={{ color: '#334155', fontWeight: 600 }}>
+                                                            <EmailOutlinedIcon sx={{ fontSize: 16, color: '#059669' }} />
+                                                            <Typography variant="caption" sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.8rem' }}>
                                                                 {item.email}
                                                             </Typography>
                                                         </Box>
                                                         {item.phone && (
                                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                                <PhoneIphoneIcon sx={{ fontSize: 15, color: '#64748b' }} />
-                                                                <Typography variant="caption" sx={{ color: '#475569' }}>
+                                                                <PhoneIphoneIcon sx={{ fontSize: 16, color: '#0284c7' }} />
+                                                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
                                                                     {item.phone}
                                                                 </Typography>
                                                             </Box>
                                                         )}
                                                         {item.institution && (
                                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                                <BusinessOutlinedIcon sx={{ fontSize: 15, color: '#64748b' }} />
-                                                                <Typography variant="caption" sx={{ color: '#475569' }}>
+                                                                <BusinessOutlinedIcon sx={{ fontSize: 16, color: '#64748b' }} />
+                                                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
                                                                     {item.institution}
                                                                 </Typography>
                                                             </Box>
                                                         )}
                                                     </Stack>
 
-                                                    {/* Code Box */}
-                                                    <Box sx={{ mt: 1.2, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                    {/* Code Box with 3D Pills */}
+                                                    <Box sx={{ mt: 1.4, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                                                         {item.payment_code && (
                                                             <Box
                                                                 sx={{
                                                                     display: 'inline-flex',
                                                                     alignItems: 'center',
                                                                     gap: 0.6,
-                                                                    px: 1.2,
-                                                                    py: 0.3,
-                                                                    borderRadius: '8px',
-                                                                    bgcolor: '#f1f5f9',
-                                                                    border: '1px solid #e2e8f0',
+                                                                    px: 1.3,
+                                                                    py: 0.4,
+                                                                    borderRadius: '10px',
+                                                                    background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                                                                    border: '1px solid #cbd5e1',
+                                                                    borderBottom: '2.5px solid #94a3b8',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                                                                 }}
                                                             >
-                                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.74rem' }}>
+                                                                <Typography variant="caption" sx={{ fontWeight: 900, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.76rem' }}>
                                                                     Payment: {item.payment_code}
                                                                 </Typography>
                                                                 <Tooltip title={copiedCode === item.payment_code ? 'Copied!' : 'Copy Code'}>
@@ -2494,7 +2898,7 @@ export default function Register({
                                                                         onClick={() => handleCopyCode(item.payment_code)}
                                                                         sx={{ p: 0.2, color: copiedCode === item.payment_code ? '#16a34a' : '#64748b' }}
                                                                     >
-                                                                        {copiedCode === item.payment_code ? <CheckCircleIcon sx={{ fontSize: 13 }} /> : <ContentCopyIcon sx={{ fontSize: 13 }} />}
+                                                                        {copiedCode === item.payment_code ? <CheckCircleIcon sx={{ fontSize: 14 }} /> : <ContentCopyIcon sx={{ fontSize: 14 }} />}
                                                                     </IconButton>
                                                                 </Tooltip>
                                                             </Box>
@@ -2504,14 +2908,16 @@ export default function Register({
                                                                 display: 'inline-flex',
                                                                 alignItems: 'center',
                                                                 gap: 0.6,
-                                                                px: 1.2,
-                                                                py: 0.3,
-                                                                borderRadius: '8px',
-                                                                bgcolor: '#f1f5f9',
-                                                                border: '1px solid #e2e8f0',
+                                                                px: 1.3,
+                                                                py: 0.4,
+                                                                borderRadius: '10px',
+                                                                background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                                                                border: '1px solid #cbd5e1',
+                                                                borderBottom: '2.5px solid #94a3b8',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                                                             }}
                                                         >
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.74rem' }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 900, color: '#0f172a', fontFamily: 'monospace', fontSize: '0.76rem' }}>
                                                                 Ticket: {item.ticket_code}
                                                             </Typography>
                                                             <Tooltip title={copiedCode === item.ticket_code ? 'Copied!' : 'Copy Code'}>
@@ -2520,16 +2926,16 @@ export default function Register({
                                                                     onClick={() => handleCopyCode(item.ticket_code)}
                                                                     sx={{ p: 0.2, color: copiedCode === item.ticket_code ? '#16a34a' : '#64748b' }}
                                                                 >
-                                                                    {copiedCode === item.ticket_code ? <CheckCircleIcon sx={{ fontSize: 13 }} /> : <ContentCopyIcon sx={{ fontSize: 13 }} />}
+                                                                    {copiedCode === item.ticket_code ? <CheckCircleIcon sx={{ fontSize: 14 }} /> : <ContentCopyIcon sx={{ fontSize: 14 }} />}
                                                                 </IconButton>
-                            </Tooltip>
+                                                            </Tooltip>
                                                         </Box>
                                                     </Box>
                                                 </Grid>
 
                                                 {/* Right Action CTA */}
                                                 <Grid item xs={12} md={5}>
-                                                    <Stack spacing={1} sx={{ alignItems: { xs: 'stretch', md: 'flex-end' } }}>
+                                                    <Stack spacing={1.2} sx={{ alignItems: { xs: 'stretch', md: 'flex-end' } }}>
                                                         {item.has_payment ? (
                                                             <>
                                                                 <Button
@@ -2539,19 +2945,34 @@ export default function Register({
                                                                     rel="noopener noreferrer"
                                                                     variant="contained"
                                                                     size="small"
-                                                                    endIcon={<ArrowForwardIcon />}
+                                                                    endIcon={<ArrowForwardIcon sx={{ fontSize: 17 }} />}
                                                                     sx={{
-                                                                        bgcolor: isItemActive ? '#15803d' : '#047857',
+                                                                        background: isItemActive 
+                                                                            ? 'linear-gradient(180deg, #16a34a 0%, #15803d 100%)' 
+                                                                            : 'linear-gradient(180deg, #059669 0%, #047857 100%)',
                                                                         color: '#fff',
-                                                                        fontWeight: 800,
-                                                                        fontSize: '0.82rem',
+                                                                        fontWeight: 900,
+                                                                        fontSize: '0.84rem',
                                                                         textTransform: 'none',
-                                                                        borderRadius: '10px',
-                                                                        px: 2,
-                                                                        py: 0.8,
-                                                                        boxShadow: 'none',
+                                                                        borderRadius: '12px',
+                                                                        px: 2.4,
+                                                                        py: 0.9,
+                                                                        border: '1px solid rgba(255,255,255,0.4)',
+                                                                        borderBottom: isItemActive ? '3.5px solid #14532d' : '3.5px solid #022c22',
+                                                                        boxShadow: isItemActive ? '0 4px 12px rgba(22, 163, 74, 0.35)' : '0 4px 12px rgba(4, 120, 87, 0.35)',
                                                                         width: { xs: '100%', md: 'auto' },
-                                                                        '&:hover': { bgcolor: '#065f46' },
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': { 
+                                                                            background: isItemActive 
+                                                                                ? 'linear-gradient(180deg, #22c55e 0%, #16a34a 100%)' 
+                                                                                : 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                                                                            transform: 'translateY(-1.5px)',
+                                                                            boxShadow: isItemActive ? '0 6px 16px rgba(22, 163, 74, 0.45)' : '0 6px 16px rgba(4, 120, 87, 0.45)',
+                                                                        },
+                                                                        '&:active': {
+                                                                            transform: 'translateY(1px)',
+                                                                            borderBottom: isItemActive ? '1.5px solid #14532d' : '1.5px solid #022c22',
+                                                                        },
                                                                     }}
                                                                 >
                                                                     {isItemPending ? 'Open Payment Status Page' : 'Open Verification Page'}
@@ -2566,16 +2987,21 @@ export default function Register({
                                                                             rel="noopener noreferrer"
                                                                             variant="outlined"
                                                                             size="small"
-                                                                            startIcon={<QrCodeIcon />}
+                                                                            startIcon={<QrCodeIcon sx={{ fontSize: 16 }} />}
                                                                             sx={{
                                                                                 color: '#047857',
-                                                                                borderColor: '#a7f3d0',
-                                                                                fontWeight: 700,
-                                                                                fontSize: '0.78rem',
+                                                                                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)',
+                                                                                border: '1.5px solid #86efac',
+                                                                                borderBottom: '3px solid #16a34a',
+                                                                                fontWeight: 800,
+                                                                                fontSize: '0.8rem',
                                                                                 textTransform: 'none',
-                                                                                borderRadius: '8px',
+                                                                                borderRadius: '10px',
                                                                                 flex: 1,
-                                                                                '&:hover': { bgcolor: '#ecfdf5', borderColor: '#10b981' },
+                                                                                boxShadow: '0 2px 5px rgba(22, 163, 74, 0.1)',
+                                                                                transition: 'all 0.15s ease',
+                                                                                '&:hover': { background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)', transform: 'translateY(-1px)' },
+                                                                                '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #16a34a' },
                                                                             }}
                                                                         >
                                                                             E-Ticket
@@ -2588,16 +3014,21 @@ export default function Register({
                                                                                 rel="noopener noreferrer"
                                                                                 variant="outlined"
                                                                                 size="small"
-                                                                                startIcon={<ReceiptLongIcon />}
+                                                                                startIcon={<ReceiptLongIcon sx={{ fontSize: 16 }} />}
                                                                                 sx={{
-                                                                                    color: '#475569',
-                                                                                    borderColor: '#cbd5e1',
-                                                                                    fontWeight: 700,
-                                                                                    fontSize: '0.78rem',
+                                                                                    color: '#334155',
+                                                                                    background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                                                                                    border: '1.5px solid #cbd5e1',
+                                                                                    borderBottom: '3px solid #94a3b8',
+                                                                                    fontWeight: 800,
+                                                                                    fontSize: '0.8rem',
                                                                                     textTransform: 'none',
-                                                                                    borderRadius: '8px',
+                                                                                    borderRadius: '10px',
                                                                                     flex: 1,
-                                                                                    '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' },
+                                                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                                                                                    transition: 'all 0.15s ease',
+                                                                                    '&:hover': { background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)', transform: 'translateY(-1px)' },
+                                                                                    '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #94a3b8' },
                                                                                 }}
                                                                             >
                                                                                 Receipt
@@ -2614,20 +3045,31 @@ export default function Register({
                                                                 rel="noopener noreferrer"
                                                                 variant="contained"
                                                                 size="small"
-                                                                endIcon={<ArrowForwardIcon />}
-                                                                startIcon={<QrCodeIcon />}
+                                                                endIcon={<ArrowForwardIcon sx={{ fontSize: 17 }} />}
+                                                                startIcon={<QrCodeIcon sx={{ fontSize: 17 }} />}
                                                                 sx={{
-                                                                    bgcolor: '#047857',
+                                                                    background: 'linear-gradient(180deg, #10b981 0%, #059669 50%, #047857 100%)',
                                                                     color: '#fff',
-                                                                    fontWeight: 800,
-                                                                    fontSize: '0.82rem',
+                                                                    fontWeight: 900,
+                                                                    fontSize: '0.84rem',
                                                                     textTransform: 'none',
-                                                                    borderRadius: '10px',
-                                                                    px: 2,
-                                                                    py: 0.8,
-                                                                    boxShadow: 'none',
+                                                                    borderRadius: '12px',
+                                                                    px: 2.4,
+                                                                    py: 0.9,
+                                                                    border: '1.5px solid #34d399',
+                                                                    borderBottom: '3.5px solid #022c22',
+                                                                    boxShadow: '0 4px 12px rgba(4, 120, 87, 0.35)',
                                                                     width: { xs: '100%', md: 'auto' },
-                                                                    '&:hover': { bgcolor: '#065f46' },
+                                                                    transition: 'all 0.15s ease',
+                                                                    '&:hover': { 
+                                                                        background: 'linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%)',
+                                                                        transform: 'translateY(-1.5px)',
+                                                                        boxShadow: '0 6px 16px rgba(4, 120, 87, 0.45)',
+                                                                    },
+                                                                    '&:active': {
+                                                                        transform: 'translateY(1px)',
+                                                                        borderBottom: '1.5px solid #022c22',
+                                                                    },
                                                                 }}
                                                             >
                                                                 View Digital E-Ticket
@@ -2646,26 +3088,33 @@ export default function Register({
 
                 <DialogActions
                     sx={{
-                        p: 2,
-                        px: 3,
+                        p: 2.2,
+                        px: 3.5,
                         bgcolor: '#f8fafc',
-                        borderTop: '1px solid #f1f5f9',
+                        borderTop: '1.5px solid #e2e8f0',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
                     }}
                 >
-                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                         PIT IAGI-GEOSEA XIX 2026 Ticketing Support
                     </Typography>
                     <Button
                         onClick={() => setCheckStatusOpen(false)}
                         sx={{
                             color: '#334155',
-                            fontWeight: 700,
+                            background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                            border: '1.5px solid #cbd5e1',
+                            borderBottom: '3px solid #94a3b8',
+                            fontWeight: 800,
                             textTransform: 'none',
-                            borderRadius: '8px',
-                            px: 2,
+                            borderRadius: '10px',
+                            px: 2.5,
+                            py: 0.6,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+                            '&:hover': { background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)' },
+                            '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #94a3b8' },
                         }}
                     >
                         Close
