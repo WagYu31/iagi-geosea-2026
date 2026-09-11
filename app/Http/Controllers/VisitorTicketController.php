@@ -409,6 +409,7 @@ class VisitorTicketController extends Controller
         ])->pluck('value', 'key');
 
         $eventDate = $settings['visitor_event_date'] ?? '3 - 5 November 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
         $rawBankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
         $bankInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankInfo);
         $bankInfo = preg_replace('/a\.\s*n\.\s*:?/i', 'Account Holder: ', $bankInfo);
