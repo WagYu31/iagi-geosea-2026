@@ -64,7 +64,7 @@ export default function AppAppBar({ auth }) {
                 mt: 'calc(var(--template-frame-height, 0px) + 28px)',
             }}
         >
-            <Container maxWidth="lg">
+            <Container maxWidth="xl" sx={{ maxWidth: '1360px !important' }}>
                 <StyledToolbar variant="dense" disableGutters>
                     {/* Logo */}
                     <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
@@ -74,6 +74,7 @@ export default function AppAppBar({ auth }) {
                                 alignItems: 'center',
                                 gap: 1.5,
                                 cursor: 'pointer',
+                                flexShrink: 0,
                             }}
                             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         >
@@ -95,6 +96,7 @@ export default function AppAppBar({ auth }) {
                                         letterSpacing: '0.03em',
                                         color: '#094d42',
                                         lineHeight: 1.2,
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
@@ -106,6 +108,7 @@ export default function AppAppBar({ auth }) {
                                         letterSpacing: '0.1em',
                                         color: '#6b7280',
                                         textTransform: 'uppercase',
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     Annual Convention
@@ -113,7 +116,7 @@ export default function AppAppBar({ auth }) {
                             </Box>
                         </Box>
                         {/* Desktop nav links */}
-                        <Box sx={{ display: { xs: 'none', lg: 'flex' }, ml: 3 }}>
+                        <Box sx={{ display: { xs: 'none', lg: 'flex' }, ml: { lg: 2, xl: 3 }, gap: 0.5 }}>
                             {navItems.map((item) => (
                                 <Button
                                     key={item.target}
@@ -138,7 +141,7 @@ export default function AppAppBar({ auth }) {
                     </Box>
 
                     {/* Desktop CTA */}
-                    <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, alignItems: 'center' }}>
+                    <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, alignItems: 'center', flexShrink: 0 }}>
                         {auth?.user ? (
                             <Button
                                 component={Link}
@@ -151,6 +154,7 @@ export default function AppAppBar({ auth }) {
                                     fontWeight: 600,
                                     borderRadius: '8px',
                                     px: 2.5,
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
                                     '&:hover': {
                                         background: 'linear-gradient(135deg, #073d34 0%, #0a6356 100%)',
@@ -173,6 +177,8 @@ export default function AppAppBar({ auth }) {
                                         fontWeight: 700,
                                         borderRadius: '8px',
                                         px: 1.5,
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0,
                                         bgcolor: 'rgba(16, 185, 129, 0.08)',
                                         '&:hover': {
                                             borderColor: '#059669',
@@ -191,6 +197,8 @@ export default function AppAppBar({ auth }) {
                                         color: '#094d42',
                                         textTransform: 'none',
                                         fontWeight: 600,
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0,
                                     }}
                                 >
                                     Sign in
@@ -200,31 +208,21 @@ export default function AppAppBar({ auth }) {
                                     variant="contained"
                                     size="small"
                                     sx={{
-                                        background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
-                                        color: '#475569',
-                                        border: '1.5px solid #cbd5e1',
-                                        borderBottom: '3.5px solid #94a3b8',
+                                        background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
                                         textTransform: 'none',
-                                        fontWeight: 800,
-                                        fontSize: '0.84rem',
-                                        borderRadius: '10px',
-                                        px: 2,
-                                        py: 0.6,
-                                        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-                                        transition: 'all 0.15s ease',
+                                        fontWeight: 600,
+                                        borderRadius: '8px',
+                                        px: 2.5,
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0,
+                                        boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
+                                        cursor: 'pointer',
                                         '&:hover': {
-                                            background: 'linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%)',
-                                            color: '#0f172a',
-                                            transform: 'translateY(-1px)',
-                                            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                                        },
-                                        '&:active': {
-                                            transform: 'translateY(1px)',
-                                            borderBottom: '1.5px solid #94a3b8',
+                                            background: 'linear-gradient(135deg, #073d34 0%, #0a6356 100%)',
                                         },
                                     }}
                                 >
-                                    🔒 Register
+                                    Register
                                 </Button>
                             </>
                         )}
@@ -301,17 +299,14 @@ export default function AppAppBar({ auth }) {
                                                 variant="contained"
                                                 fullWidth
                                                 sx={{
-                                                    background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
-                                                    color: '#475569',
-                                                    border: '1.5px solid #cbd5e1',
-                                                    borderBottom: '3.5px solid #94a3b8',
+                                                    background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
                                                     textTransform: 'none',
-                                                    fontWeight: 800,
-                                                    borderRadius: '10px',
-                                                    py: 1,
+                                                    fontWeight: 600,
+                                                    borderRadius: '8px',
+                                                    color: '#fff',
                                                 }}
                                             >
-                                                🔒 Register (Closed)
+                                                Register
                                             </Button>
                                         </MenuItem>
                                         <MenuItem>

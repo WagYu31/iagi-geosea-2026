@@ -476,32 +476,26 @@ export default function Hero({ settings, auth }) {
                                 variant="contained"
                                 size="large"
                                 sx={{
-                                    background: 'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.1) 100%)',
-                                    color: '#ffffff',
+                                    background: 'linear-gradient(135deg, #4dd4ac 0%, #0d9488 100%)',
+                                    color: '#094d42',
                                     fontWeight: 700,
                                     textTransform: 'none',
                                     borderRadius: '12px',
                                     px: 3.5,
                                     py: 1.5,
                                     fontSize: '1rem',
-                                    border: '1.5px solid rgba(255, 255, 255, 0.4)',
-                                    borderBottom: '4px solid rgba(0, 0, 0, 0.35)',
-                                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.3)',
-                                    backdropFilter: 'blur(10px)',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
                                     cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
                                     '&:hover': {
-                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.18) 100%)',
+                                        background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
                                         transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.25)',
+                                        boxShadow: '0 8px 24px rgba(77, 212, 172, 0.5)',
                                     },
-                                    '&:active': {
-                                        transform: 'translateY(1.5px)',
-                                        borderBottom: '1.5px solid rgba(0, 0, 0, 0.35)',
-                                    },
+                                    transition: 'all 0.3s ease',
                                 }}
                             >
-                                🔒 Register Author (Closed)
+                                Register Author
                             </Button>
                             <Button
                                 component={Link}

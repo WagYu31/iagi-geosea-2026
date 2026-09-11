@@ -533,7 +533,7 @@ export default function Footer({ settings, auth }) {
                                                 '&:hover': { color: '#4dd4ac' },
                                             }}
                                         >
-                                            Register (Closed)
+                                            Register
                                         </MuiLink>
                                         <MuiLink href="/login" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
                                             Login
