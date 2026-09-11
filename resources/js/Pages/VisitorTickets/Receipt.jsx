@@ -194,22 +194,23 @@ export default function Receipt({
                     </Box>
 
                     {/* HEADER */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2.5, pb: 3, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2.5, pb: 3, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1 }}>
                         <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                                <Box sx={{ width: 44, height: 44, borderRadius: '10px', bgcolor: '#094d42', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1.4rem' }}>
-                                    🏛️
-                                </Box>
-                                <Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#094d42', lineHeight: 1.15, fontSize: '1.05rem', letterSpacing: '-0.01em' }}>
-                                        55th PIT IAGI & GEOSEA XIX 2026
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.04em' }}>
-                                        ANNUAL SCIENTIFIC CONVENTION & EXHIBITION
-                                    </Typography>
-                                </Box>
+                            <Box sx={{ mb: 1.2 }}>
+                                <Box
+                                    component="img"
+                                    src="/images/iagi-geosea-logo-banner.png"
+                                    alt="55th PIT IAGI & GEOSEA XIX 2026 - Annual Scientific Convention & Exhibition"
+                                    sx={{
+                                        height: { xs: 50, sm: 62, md: 70 },
+                                        width: 'auto',
+                                        maxWidth: '100%',
+                                        objectFit: 'contain',
+                                        display: 'block',
+                                    }}
+                                />
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.4, fontSize: '0.75rem' }}>
+                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.45, fontSize: '0.75rem' }}>
                                 <strong>Venue:</strong> {eventVenue}<br />
                                 <strong>Date:</strong> {eventDate} &bull; Yogyakarta, Indonesia<br />
                                 <strong>Host:</strong> Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
@@ -276,7 +277,7 @@ export default function Receipt({
                                 📄 Transaction Details:
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', lineHeight: 1.6 }}>
-                                <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber}</span><br />
+                                <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
                                 <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
                                 <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
                                 <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Bank Mandiri Transfer'}<br />
