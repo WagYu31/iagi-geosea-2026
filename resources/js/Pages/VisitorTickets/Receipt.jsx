@@ -77,6 +77,13 @@ export default function Receipt({
     const totalAmount = Number(payment.total_amount || 0);
     const terbilangText = totalAmount > 0 ? (numberToWordsIndo(totalAmount).trim() + ' Rupiah') : 'Nol Rupiah';
 
+    const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+    const pDate = new Date(payment.created_at || Date.now());
+    const romanMonth = romanMonths[pDate.getMonth()] || 'VIII';
+    const pYear = pDate.getFullYear() || 2026;
+    const pNum = String(payment.id || 1).padStart(3, '0');
+    const receiptNumber = payment.receipt_no || `Receipt No. ${pNum}/PIT55-GEOSEA/REC-R/${romanMonth}/${pYear}`;
+
     const handlePrint = () => {
         window.print();
     };
@@ -95,7 +102,7 @@ export default function Receipt({
                 },
             }}
         >
-            <Head title={`Official Receipt & Invoice: ${payment.payment_code || 'Official Receipt'}`} />
+            <Head title={`${receiptNumber} - ${payment.payment_code || 'Official Receipt'}`} />
 
             <Container maxWidth="md">
                 {/* ACTION BAR (Hidden when printing) */}
@@ -113,15 +120,15 @@ export default function Receipt({
                         href={route('visitor.payment.status', payment.payment_code)}
                         startIcon={<ArrowBackIcon />}
                         sx={{
-                            color: '#475569',
-                            bgcolor: '#ffffff',
-                            border: '1px solid #cbd5e1',
+                            color: '#094d42',
                             fontWeight: 700,
-                            textTransform: 'none',
+                            bgcolor: '#ffffff',
+                            border: '1px solid #e2e8f0',
                             borderRadius: '10px',
                             px: 2,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
-                            '&:hover': { bgcolor: '#f8fafc', color: '#094d42' },
+                            py: 0.8,
+                            textTransform: 'none',
+                            '&:hover': { bgcolor: '#f8fafc', borderColor: '#094d42' },
                         }}
                     >
                         Back to Payment Status
@@ -135,8 +142,8 @@ export default function Receipt({
                             bgcolor: '#094d42',
                             color: '#ffffff',
                             fontWeight: 800,
-                            textTransform: 'none',
                             borderRadius: '10px',
+                            textTransform: 'none',
                             px: 3,
                             py: 1,
                             boxShadow: '0 4px 12px rgba(9, 77, 66, 0.3)',
@@ -209,25 +216,42 @@ export default function Receipt({
                             </Typography>
                         </Box>
 
-                        <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 200 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.5 }}>
+                        <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 220 }}>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3 }}>
                                 OFFICIAL RECEIPT
                             </Typography>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', fontSize: '0.82rem', mb: 1 }}>
-                                OFFICIAL PAYMENT RECEIPT
+                            <Typography
+                                variant="subtitle2"
+                                sx={{
+                                    fontWeight: 800,
+                                    color: '#094d42',
+                                    fontFamily: 'monospace',
+                                    fontSize: '0.82rem',
+                                    mb: 1,
+                                    bgcolor: '#f0fdf4',
+                                    border: '1px solid #bbf7d0',
+                                    px: 1.2,
+                                    py: 0.3,
+                                    borderRadius: '6px',
+                                    display: 'inline-block',
+                                }}
+                            >
+                                {receiptNumber}
                             </Typography>
                             
-                            <Chip
-                                label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
-                                sx={{
-                                    bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
-                                    color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
-                                    fontWeight: 900,
-                                    fontSize: '0.75rem',
-                                    border: `1.5px solid ${isApproved ? '#86efac' : isRejected ? '#fca5a5' : '#fde68a'}`,
-                                    height: 26,
-                                }}
-                            />
+                            <div>
+                                <Chip
+                                    label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
+                                    sx={{
+                                        bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
+                                        color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
+                                        fontWeight: 900,
+                                        fontSize: '0.75rem',
+                                        border: `1.5px solid ${isApproved ? '#86efac' : isRejected ? '#fca5a5' : '#fde68a'}`,
+                                        height: 26,
+                                    }}
+                                />
+                            </div>
                         </Box>
                     </Box>
 
@@ -252,7 +276,8 @@ export default function Receipt({
                                 📄 Transaction Details:
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', lineHeight: 1.6 }}>
-                                <strong>Payment No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
+                                <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber}</span><br />
+                                <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
                                 <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
                                 <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Bank Mandiri Transfer'}<br />
                                 <strong>Status:</strong> {isApproved ? `Verified (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified'})` : 'Awaiting Treasury Confirmation'}
