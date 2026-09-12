@@ -495,7 +495,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Register Author
+                                Author Register
                             </Button>
                             <Button
                                 component={Link}
