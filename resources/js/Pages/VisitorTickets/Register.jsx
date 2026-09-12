@@ -709,7 +709,7 @@ export default function Register({
                 <Box sx={{ textAlign: 'center', mb: 3.5 }}>
                     <Chip
                         icon={<ConfirmationNumberIcon sx={{ fontSize: '15px !important', color: '#047857 !important' }} />}
-                        label="CONFERENCE & VISITOR PASSES &bull; REGISTRATION OPEN"
+                        label="CONFERENCE & VISITOR &bull; REGISTRATION OPEN"
                         size="small"
                         sx={{
                             background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
