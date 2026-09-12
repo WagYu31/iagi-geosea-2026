@@ -221,9 +221,10 @@ export default function Register({
     });
 
     const enabled = propEnabled ?? settings.enabled ?? true;
-    const rawBankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
+    const rawBankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Mandiri Bank\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
     const bankTransferInfo = typeof rawBankTransferInfo === 'string'
         ? rawBankTransferInfo
+            .replace(/Bank\s+Mandiri/gi, 'Mandiri Bank')
             .replace(/No\.\s*Rek\s*:/gi, 'Account Number:')
             .replace(/a\.\s*n\.\s*:?/gi, 'Account Holder: ')
             .replace(/atas\s*nama\s*:?/gi, 'Account Holder: ')

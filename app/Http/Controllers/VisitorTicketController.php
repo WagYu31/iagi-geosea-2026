@@ -55,8 +55,9 @@ class VisitorTicketController extends Controller
 
         $priceExclusive = floatval($settings['visitor_ticket_price_exclusive'] ?? 500000);
         $priceNonExclusive = floatval($settings['visitor_ticket_price_non_exclusive'] ?? 0);
-        $rawBankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
-        $bankTransferInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankTransferInfo);
+        $rawBankTransferInfo = $settings['visitor_bank_transfer_info'] ?? "Mandiri Bank\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
+        $bankTransferInfo = preg_replace('/Bank\s+Mandiri/i', 'Mandiri Bank', $rawBankTransferInfo);
+        $bankTransferInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $bankTransferInfo);
         $bankTransferInfo = preg_replace('/a\.\s*n\.\s*:?/i', 'Account Holder: ', $bankTransferInfo);
         $bankTransferInfo = preg_replace('/atas\s*nama\s*:?/i', 'Account Holder: ', $bankTransferInfo);
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
@@ -410,8 +411,9 @@ class VisitorTicketController extends Controller
 
         $eventDate = $settings['visitor_event_date'] ?? '3 - 5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
-        $rawBankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Bank Mandiri\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
-        $bankInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $rawBankInfo);
+        $rawBankInfo = $settings['visitor_bank_transfer_info'] ?? $settings['bank_info'] ?? "Mandiri Bank\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
+        $bankInfo = preg_replace('/Bank\s+Mandiri/i', 'Mandiri Bank', $rawBankInfo);
+        $bankInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account Number:', $bankInfo);
         $bankInfo = preg_replace('/a\.\s*n\.\s*:?/i', 'Account Holder: ', $bankInfo);
         $bankInfo = preg_replace('/atas\s*nama\s*:?/i', 'Account Holder: ', $bankInfo);
 
