@@ -469,7 +469,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Register Conference
+                                Conference Register
                             </Button>
                             <Button
                                 onClick={() => setClosedModalOpen(true)}
