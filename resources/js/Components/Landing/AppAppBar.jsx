@@ -287,7 +287,7 @@ export default function AppAppBar({ auth }) {
                                                     color: '#fff',
                                                 }}
                                             >
-                                                Conference Register
+                                                Conference Registration
                                             </Button>
                                         </MenuItem>
                                         <MenuItem>

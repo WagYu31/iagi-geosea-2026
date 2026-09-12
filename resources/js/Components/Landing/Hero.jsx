@@ -469,7 +469,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Conference Register
+                                Conference Registration
                             </Button>
                             <Button
                                 onClick={() => setClosedModalOpen(true)}
@@ -495,7 +495,7 @@ export default function Hero({ settings, auth }) {
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Author Register
+                                Author Registration
                             </Button>
                             <Button
                                 component={Link}
