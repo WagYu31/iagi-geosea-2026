@@ -393,7 +393,7 @@ export default function Receipt({
                         {/* TERBILANG BOX */}
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
                             <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
-                                <strong>Amount in Words:</strong> <em>"{amountInWords}"</em>
+                                <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
                             </Typography>
                         </Box>
                     </Box>
