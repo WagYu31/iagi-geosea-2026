@@ -419,13 +419,16 @@ export default function Receipt({
                         </Box>
 
                         {/* Secretariat Stamp Area */}
-                        <Box sx={{ textAlign: 'center', minWidth: 220 }}>
+                        <Box sx={{ textAlign: 'center', minWidth: { xs: 220, sm: 260 } }}>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.5 }}>
                                 Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', mb: 4 }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block' }}>
                                 Organizing Committee 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                             </Typography>
+                            
+                            {/* Space for Wet Stamp & Manual Signature */}
+                            <Box sx={{ height: { xs: 75, sm: 85 } }} />
                             
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669' }}>
                                 <VerifiedIcon sx={{ fontSize: 18 }} />
@@ -433,7 +436,7 @@ export default function Receipt({
                                     TREASURY SECRETARIAT
                                 </Typography>
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', display: 'block' }}>
+                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', display: 'block', mt: 0.3 }}>
                                 This digital document is officially verified and valid without a wet signature.
                             </Typography>
                         </Box>
