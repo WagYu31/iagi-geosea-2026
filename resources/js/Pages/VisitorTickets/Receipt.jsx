@@ -390,10 +390,13 @@ export default function Receipt({
                             </Table>
                         </TableContainer>
 
-                        {/* TERBILANG BOX */}
-                        <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
-                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem' }}>
+                        {/* TERBILANG & IN PAYMENT OF BOX */}
+                        <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
+                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem', display: 'block', mb: 0.8 }}>
                                 <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem', display: 'block', lineHeight: 1.4 }}>
+                                <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
                             </Typography>
                         </Box>
                     </Box>
