@@ -253,26 +253,6 @@ export default function Receipt({
                         },
                     }}
                 >
-                    {/* WATERMARK */}
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '45%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%) rotate(-30deg)',
-                            fontSize: { xs: '3.5rem', sm: '5.5rem' },
-                            fontWeight: 900,
-                            color: isApproved ? 'rgba(16, 185, 129, 0.06)' : isRejected ? 'rgba(239, 68, 68, 0.06)' : 'rgba(245, 158, 11, 0.06)',
-                            userSelect: 'none',
-                            pointerEvents: 'none',
-                            whiteSpace: 'nowrap',
-                            zIndex: 0,
-                            letterSpacing: '0.1em',
-                        }}
-                    >
-                        {isApproved ? 'PAID / VERIFIED' : isRejected ? 'REJECTED' : 'AWAITING PAYMENT'}
-                    </Box>
-
                     {/* TOP & MIDDLE CONTENT WRAPPER */}
                     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                         {/* HEADER */}
