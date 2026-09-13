@@ -465,7 +465,7 @@ export default function Receipt({
                         {/* Secretariat Stamp Area */}
                         <Box sx={{ textAlign: 'center', minWidth: { xs: 200, sm: 240 }, '@media print': { minWidth: '220px !important' } }}>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.72rem', display: 'block', mb: 0.3 }}>
-                                Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.74rem' }}>
                                 Organizing Committee 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
