@@ -428,10 +428,13 @@ export default function Receipt({
                             </Typography>
                             
                             {/* Space for Wet Stamp & Manual Signature */}
-                            <Box sx={{ height: { xs: 75, sm: 85 } }} />
+                            <Box sx={{ height: { xs: 70, sm: 80 } }} />
                             
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669' }}>
-                                <VerifiedIcon sx={{ fontSize: 18 }} />
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.88rem', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                                Dwi Grevani Hayuti
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669', mt: 0.4 }}>
+                                <VerifiedIcon sx={{ fontSize: 16 }} />
                                 <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.76rem', letterSpacing: '0.04em' }}>
                                     Treasurer of IAGI
                                 </Typography>
