@@ -138,13 +138,14 @@ export default function Receipt({
                 <style>{`
                     @page {
                         size: A4 portrait;
-                        margin: 6mm 8mm;
+                        margin: 8mm 10mm;
                     }
                     @media print {
                         html, body {
                             background-color: #ffffff !important;
                             margin: 0 !important;
                             padding: 0 !important;
+                            height: 100% !important;
                             -webkit-print-color-adjust: exact !important;
                             print-color-adjust: exact !important;
                         }
@@ -154,16 +155,17 @@ export default function Receipt({
                         .receipt-paper-box {
                             border: 1.5px solid #cbd5e1 !important;
                             border-radius: 16px !important;
-                            padding: 16px 20px !important;
+                            padding: 22px 26px !important;
                             box-shadow: none !important;
                             margin: 0 auto !important;
                             max-width: 100% !important;
+                            min-height: 268mm !important;
+                            display: flex !important;
+                            flex-direction: column !important;
+                            justify-content: space-between !important;
+                            box-sizing: border-box !important;
                             page-break-inside: avoid !important;
                             break-inside: avoid !important;
-                        }
-                        .print-compact-py {
-                            padding-top: 4px !important;
-                            padding-bottom: 4px !important;
                         }
                     }
                 `}</style>
@@ -232,11 +234,20 @@ export default function Receipt({
                         boxShadow: '0 20px 40px -15px rgba(0,0,0,0.07)',
                         position: 'relative',
                         overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: { sm: '750px', md: '820px' },
+                        justifyContent: 'space-between',
                         '@media print': {
-                            p: '16px 20px !important',
+                            p: '22px 26px !important',
                             borderRadius: '16px !important',
                             border: '1.5px solid #cbd5e1 !important',
                             boxShadow: 'none !important',
+                            minHeight: '268mm !important',
+                            display: 'flex !important',
+                            flexDirection: 'column !important',
+                            justifyContent: 'space-between !important',
+                            boxSizing: 'border-box !important',
                             breakInside: 'avoid !important',
                             pageBreakInside: 'avoid !important',
                         },
@@ -262,191 +273,194 @@ export default function Receipt({
                         {isApproved ? 'PAID / VERIFIED' : isRejected ? 'REJECTED' : 'AWAITING PAYMENT'}
                     </Box>
 
-                    {/* HEADER */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2, pb: 2, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1, '@media print': { pb: 1.5, flexWrap: 'nowrap !important' } }}>
-                        <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
-                            <Box sx={{ mb: 1 }}>
-                                <Box
-                                    component="img"
-                                    src="/images/iagi-geosea-logo-banner.png"
-                                    alt="55th PIT IAGI & GEOSEA XIX 2026 - Annual Scientific Convention & Exhibition"
-                                    sx={{
-                                        height: { xs: 45, sm: 55, md: 62 },
-                                        width: 'auto',
-                                        maxWidth: '100%',
-                                        objectFit: 'contain',
-                                        display: 'block',
-                                    }}
-                                />
+                    {/* TOP & MIDDLE CONTENT WRAPPER */}
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        {/* HEADER */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2, pb: 2, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1, '@media print': { pb: 1.5, flexWrap: 'nowrap !important' } }}>
+                            <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
+                                <Box sx={{ mb: 1 }}>
+                                    <Box
+                                        component="img"
+                                        src="/images/iagi-geosea-logo-banner.png"
+                                        alt="55th PIT IAGI & GEOSEA XIX 2026 - Annual Scientific Convention & Exhibition"
+                                        sx={{
+                                            height: { xs: 45, sm: 55, md: 62 },
+                                            width: 'auto',
+                                            maxWidth: '100%',
+                                            objectFit: 'contain',
+                                            display: 'block',
+                                        }}
+                                    />
+                                </Box>
+                                <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.4, fontSize: '0.72rem' }}>
+                                    <strong>Venue:</strong> {eventVenue}<br />
+                                    <strong>Date:</strong> {eventDate} &bull; Yogyakarta, Indonesia<br />
+                                    <strong>Host:</strong> Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
+                                </Typography>
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.4, fontSize: '0.72rem' }}>
-                                <strong>Venue:</strong> {eventVenue}<br />
-                                <strong>Date:</strong> {eventDate} &bull; Yogyakarta, Indonesia<br />
-                                <strong>Host:</strong> Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
-                            </Typography>
-                        </Box>
 
-                        <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 200 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3, fontSize: { xs: '1.2rem', sm: '1.4rem' } }}>
-                                OFFICIAL RECEIPT
-                            </Typography>
-                            <Typography
-                                variant="subtitle2"
-                                sx={{
-                                    fontWeight: 800,
-                                    color: '#094d42',
-                                    fontFamily: 'monospace',
-                                    fontSize: '0.78rem',
-                                    mb: 0.8,
-                                    bgcolor: '#f0fdf4',
-                                    border: '1px solid #bbf7d0',
-                                    px: 1,
-                                    py: 0.2,
-                                    borderRadius: '6px',
-                                    display: 'inline-block',
-                                }}
-                            >
-                                {receiptNumber}
-                            </Typography>
-                            
-                            <div>
-                                <Chip
-                                    label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
+                            <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 200 }}>
+                                <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3, fontSize: { xs: '1.2rem', sm: '1.4rem' } }}>
+                                    OFFICIAL RECEIPT
+                                </Typography>
+                                <Typography
+                                    variant="subtitle2"
                                     sx={{
-                                        bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
-                                        color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
-                                        fontWeight: 900,
-                                        fontSize: '0.72rem',
-                                        border: `1.5px solid ${isApproved ? '#86efac' : isRejected ? '#fca5a5' : '#fde68a'}`,
-                                        height: 24,
+                                        fontWeight: 800,
+                                        color: '#094d42',
+                                        fontFamily: 'monospace',
+                                        fontSize: '0.78rem',
+                                        mb: 0.8,
+                                        bgcolor: '#f0fdf4',
+                                        border: '1px solid #bbf7d0',
+                                        px: 1,
+                                        py: 0.2,
+                                        borderRadius: '6px',
+                                        display: 'inline-block',
                                     }}
-                                />
-                            </div>
+                                >
+                                    {receiptNumber}
+                                </Typography>
+                                
+                                <div>
+                                    <Chip
+                                        label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
+                                        sx={{
+                                            bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
+                                            color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
+                                            fontWeight: 900,
+                                            fontSize: '0.72rem',
+                                            border: `1.5px solid ${isApproved ? '#86efac' : isRejected ? '#fca5a5' : '#fde68a'}`,
+                                            height: 24,
+                                        }}
+                                    />
+                                </div>
+                            </Box>
                         </Box>
-                    </Box>
 
-                    {/* METADATA INFO BAR */}
-                    <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, position: 'relative', zIndex: 1, '@media print': { py: 1.2, gap: 1.5, gridTemplateColumns: '1fr 1fr !important' } }}>
-                        <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
-                                👤 Billed To:
-                            </Typography>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.90rem' }}>
-                                {primaryTicket.visitor_name || 'Registered Delegate'}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', mt: 0.2, lineHeight: 1.5 }}>
-                                <strong>Email:</strong> {primaryTicket.visitor_email || '-'}<br />
-                                <strong>Phone / WA:</strong> {primaryTicket.visitor_phone || '-'}<br />
-                                <strong>Institution:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
-                            </Typography>
+                        {/* METADATA INFO BAR */}
+                        <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, position: 'relative', zIndex: 1, '@media print': { py: 1.2, gap: 1.5, gridTemplateColumns: '1fr 1fr !important' } }}>
+                            <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
+                                    👤 Billed To:
+                                </Typography>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.90rem' }}>
+                                    {primaryTicket.visitor_name || 'Registered Delegate'}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', mt: 0.2, lineHeight: 1.5 }}>
+                                    <strong>Email:</strong> {primaryTicket.visitor_email || '-'}<br />
+                                    <strong>Phone / WA:</strong> {primaryTicket.visitor_phone || '-'}<br />
+                                    <strong>Institution:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
+                                    📄 Transaction Details:
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', lineHeight: 1.5 }}>
+                                    <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
+                                    <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
+                                    <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
+                                    <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Mandiri Bank Transfer'}<br />
+                                    <strong>Status:</strong> {isApproved ? `Verified (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified'})` : 'Awaiting Treasury Confirmation'}
+                                </Typography>
+                            </Box>
                         </Box>
 
-                        <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
-                                📄 Transaction Details:
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', lineHeight: 1.5 }}>
-                                <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
-                                <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
-                                <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
-                                <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Mandiri Bank Transfer'}<br />
-                                <strong>Status:</strong> {isApproved ? `Verified (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified'})` : 'Awaiting Treasury Confirmation'}
-                            </Typography>
-                        </Box>
-                    </Box>
-
-                    {/* PARTICIPANTS & ITEMS TABLE */}
-                    <Box sx={{ mt: 0.5, mb: 2, position: 'relative', zIndex: 1, '@media print': { mb: 1.5 } }}>
-                        <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px' }}>
-                            <Table size="small">
-                                <TableHead sx={{ bgcolor: '#094d42' }}>
-                                    <TableRow>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>NO</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>PARTICIPANT</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CATEGORY</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CODE</TableCell>
-                                        <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>AMOUNT (IDR)</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {tickets.map((t, idx) => {
-                                        const cat = CATEGORY_MAP[t.visitor_type] || CATEGORY_MAP.non_exclusive;
-                                        const price = Number(payment.price_per_ticket || (totalAmount / (tickets.length || 1)));
-                                        return (
-                                            <TableRow key={t.id || idx} sx={{ '&:nth-of-type(even)': { bgcolor: '#f8fafc' } }}>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>{idx + 1}</TableCell>
-                                                <TableCell sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.80rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
-                                                    {t.visitor_name}
-                                                    {t.visitor_institution && (
-                                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.68rem', lineHeight: 1.2 }}>
-                                                            {t.visitor_institution}
-                                                        </Typography>
-                                                    )}
+                        {/* PARTICIPANTS & ITEMS TABLE */}
+                        <Box sx={{ mt: 0.5, mb: 2, position: 'relative', zIndex: 1, '@media print': { mb: 1.5 } }}>
+                            <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+                                <Table size="small">
+                                    <TableHead sx={{ bgcolor: '#094d42' }}>
+                                        <TableRow>
+                                            <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>NO</TableCell>
+                                            <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>PARTICIPANT</TableCell>
+                                            <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CATEGORY</TableCell>
+                                            <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CODE</TableCell>
+                                            <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>AMOUNT (IDR)</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {tickets.map((t, idx) => {
+                                            const cat = CATEGORY_MAP[t.visitor_type] || CATEGORY_MAP.non_exclusive;
+                                            const price = Number(payment.price_per_ticket || (totalAmount / (tickets.length || 1)));
+                                            return (
+                                                <TableRow key={t.id || idx} sx={{ '&:nth-of-type(even)': { bgcolor: '#f8fafc' } }}>
+                                                    <TableCell sx={{ fontWeight: 700, fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>{idx + 1}</TableCell>
+                                                    <TableCell sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.80rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
+                                                        {t.visitor_name}
+                                                        {t.visitor_institution && (
+                                                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.68rem', lineHeight: 1.2 }}>
+                                                                {t.visitor_institution}
+                                                            </Typography>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
+                                                        <Chip
+                                                            label={cat.label}
+                                                            size="small"
+                                                            sx={{
+                                                                fontWeight: 800,
+                                                                fontSize: '0.65rem',
+                                                                bgcolor: '#f1f5f9',
+                                                                color: '#334155',
+                                                                height: 20,
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#0284c7', fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
+                                                        {t.ticket_code}
+                                                    </TableCell>
+                                                    <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.78rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
+                                                        Rp {price.toLocaleString('id-ID')}
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                        {/* Breakdown Rows */}
+                                        {payment.unique_code > 0 && (
+                                            <TableRow sx={{ bgcolor: '#fafafa' }}>
+                                                <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                    Payment Unique Code:
                                                 </TableCell>
-                                                <TableCell sx={{ py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
-                                                    <Chip
-                                                        label={cat.label}
-                                                        size="small"
-                                                        sx={{
-                                                            fontWeight: 800,
-                                                            fontSize: '0.65rem',
-                                                            bgcolor: '#f1f5f9',
-                                                            color: '#334155',
-                                                            height: 20,
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#0284c7', fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
-                                                    {t.ticket_code}
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.78rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
-                                                    Rp {price.toLocaleString('id-ID')}
+                                                <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                    Rp {Number(payment.unique_code).toLocaleString('id-ID')}
                                                 </TableCell>
                                             </TableRow>
-                                        );
-                                    })}
-                                    {/* Breakdown Rows */}
-                                    {payment.unique_code > 0 && (
-                                        <TableRow sx={{ bgcolor: '#fafafa' }}>
-                                            <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                Payment Unique Code:
+                                        )}
+                                        <TableRow sx={{ bgcolor: '#ecfdf5' }}>
+                                            <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.88rem', py: 1 }}>
+                                                TOTAL PAYMENT:
                                             </TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                Rp {Number(payment.unique_code).toLocaleString('id-ID')}
+                                            <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.98rem', py: 1 }}>
+                                                Rp {totalAmount.toLocaleString('id-ID')}
                                             </TableCell>
                                         </TableRow>
-                                    )}
-                                    <TableRow sx={{ bgcolor: '#ecfdf5' }}>
-                                        <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.88rem', py: 1 }}>
-                                            TOTAL PAYMENT:
-                                        </TableCell>
-                                        <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.98rem', py: 1 }}>
-                                            Rp {totalAmount.toLocaleString('id-ID')}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
 
-                        {/* TERBILANG & IN PAYMENT OF BOX */}
-                        <Box sx={{ mt: 1.2, p: 1.4, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1', '@media print': { mt: 0.8, p: 1 } }}>
-                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.4 }}>
-                                <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
-                                <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
-                            </Typography>
+                            {/* TERBILANG & IN PAYMENT OF BOX */}
+                            <Box sx={{ mt: 1.2, p: 1.4, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1', '@media print': { mt: 1, p: 1.2 } }}>
+                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.4 }}>
+                                    <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
+                                    <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
+                                </Typography>
+                            </Box>
                         </Box>
                     </Box>
 
-                    {/* SIGNATURE & AUTHENTICITY FOOTER */}
+                    {/* SIGNATURE & AUTHENTICITY FOOTER (Anchored cleanly at bottom) */}
                     <Box sx={{ 
-                        mt: 2.5, pt: 2, borderTop: '1.5px solid #e2e8f0', 
+                        mt: 'auto', pt: 2, borderTop: '1.5px solid #e2e8f0', 
                         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', 
                         flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2, position: 'relative', zIndex: 1,
                         '@media print': {
-                            mt: '12px !important',
-                            pt: '10px !important',
+                            mt: 'auto !important',
+                            pt: '12px !important',
                             flexWrap: 'nowrap !important',
                             gap: '16px !important',
                             breakInside: 'avoid !important',
