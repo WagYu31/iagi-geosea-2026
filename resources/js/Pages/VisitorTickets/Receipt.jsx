@@ -127,23 +127,58 @@ export default function Receipt({
                 py: { xs: 2, md: 5 },
                 color: '#0f172a',
                 '@media print': {
-                    bgcolor: '#ffffff',
+                    bgcolor: '#ffffff !important',
                     p: 0,
+                    m: 0,
                     minHeight: 'auto',
                 },
             }}
         >
-            <Head title={`${receiptNumber} - ${payment.payment_code || 'Official Receipt'}`} />
+            <Head title={`${receiptNumber} - ${payment.payment_code || 'Official Receipt'}`}>
+                <style>{`
+                    @page {
+                        size: A4 portrait;
+                        margin: 6mm 8mm;
+                    }
+                    @media print {
+                        html, body {
+                            background-color: #ffffff !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        .no-print {
+                            display: none !important;
+                        }
+                        .receipt-paper-box {
+                            border: 1.5px solid #cbd5e1 !important;
+                            border-radius: 16px !important;
+                            padding: 16px 20px !important;
+                            box-shadow: none !important;
+                            margin: 0 auto !important;
+                            max-width: 100% !important;
+                            page-break-inside: avoid !important;
+                            break-inside: avoid !important;
+                        }
+                        .print-compact-py {
+                            padding-top: 4px !important;
+                            padding-bottom: 4px !important;
+                        }
+                    }
+                `}</style>
+            </Head>
 
-            <Container maxWidth="md">
+            <Container maxWidth="md" sx={{ '@media print': { maxWidth: '100% !important', p: '0 !important', m: '0 !important' } }}>
                 {/* ACTION BAR (Hidden when printing) */}
                 <Box
+                    className="no-print"
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         mb: 3,
-                        '@media print': { display: 'none' },
+                        '@media print': { display: 'none !important' },
                     }}
                 >
                     <Button
@@ -188,8 +223,9 @@ export default function Receipt({
                 {/* OFFICIAL INVOICE & RECEIPT DOCUMENT */}
                 <Paper
                     elevation={0}
+                    className="receipt-paper-box"
                     sx={{
-                        p: { xs: 3, sm: 5 },
+                        p: { xs: 3, sm: 4.5 },
                         borderRadius: '20px',
                         bgcolor: '#ffffff',
                         border: '1.5px solid #e2e8f0',
@@ -197,10 +233,12 @@ export default function Receipt({
                         position: 'relative',
                         overflow: 'hidden',
                         '@media print': {
-                            boxShadow: 'none',
-                            border: 'none',
-                            p: 0,
-                            borderRadius: 0,
+                            p: '16px 20px !important',
+                            borderRadius: '16px !important',
+                            border: '1.5px solid #cbd5e1 !important',
+                            boxShadow: 'none !important',
+                            breakInside: 'avoid !important',
+                            pageBreakInside: 'avoid !important',
                         },
                     }}
                 >
@@ -225,15 +263,15 @@ export default function Receipt({
                     </Box>
 
                     {/* HEADER */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2.5, pb: 3, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2, pb: 2, borderBottom: '2px solid #094d42', position: 'relative', zIndex: 1, '@media print': { pb: 1.5, flexWrap: 'nowrap !important' } }}>
                         <Box sx={{ maxWidth: { xs: '100%', sm: '60%' } }}>
-                            <Box sx={{ mb: 1.2 }}>
+                            <Box sx={{ mb: 1 }}>
                                 <Box
                                     component="img"
                                     src="/images/iagi-geosea-logo-banner.png"
                                     alt="55th PIT IAGI & GEOSEA XIX 2026 - Annual Scientific Convention & Exhibition"
                                     sx={{
-                                        height: { xs: 50, sm: 62, md: 70 },
+                                        height: { xs: 45, sm: 55, md: 62 },
                                         width: 'auto',
                                         maxWidth: '100%',
                                         objectFit: 'contain',
@@ -241,15 +279,15 @@ export default function Receipt({
                                     }}
                                 />
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.45, fontSize: '0.75rem' }}>
+                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', lineHeight: 1.4, fontSize: '0.72rem' }}>
                                 <strong>Venue:</strong> {eventVenue}<br />
                                 <strong>Date:</strong> {eventDate} &bull; Yogyakarta, Indonesia<br />
                                 <strong>Host:</strong> Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
                             </Typography>
                         </Box>
 
-                        <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 220 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3 }}>
+                        <Box sx={{ textAlign: { xs: 'left', sm: 'right' }, minWidth: 200 }}>
+                            <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3, fontSize: { xs: '1.2rem', sm: '1.4rem' } }}>
                                 OFFICIAL RECEIPT
                             </Typography>
                             <Typography
@@ -258,12 +296,12 @@ export default function Receipt({
                                     fontWeight: 800,
                                     color: '#094d42',
                                     fontFamily: 'monospace',
-                                    fontSize: '0.82rem',
-                                    mb: 1,
+                                    fontSize: '0.78rem',
+                                    mb: 0.8,
                                     bgcolor: '#f0fdf4',
                                     border: '1px solid #bbf7d0',
-                                    px: 1.2,
-                                    py: 0.3,
+                                    px: 1,
+                                    py: 0.2,
                                     borderRadius: '6px',
                                     display: 'inline-block',
                                 }}
@@ -278,9 +316,9 @@ export default function Receipt({
                                         bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
                                         color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
                                         fontWeight: 900,
-                                        fontSize: '0.75rem',
+                                        fontSize: '0.72rem',
                                         border: `1.5px solid ${isApproved ? '#86efac' : isRejected ? '#fca5a5' : '#fde68a'}`,
-                                        height: 26,
+                                        height: 24,
                                     }}
                                 />
                             </div>
@@ -288,26 +326,26 @@ export default function Receipt({
                     </Box>
 
                     {/* METADATA INFO BAR */}
-                    <Box sx={{ py: 2.5, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5, position: 'relative', zIndex: 1 }}>
-                        <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 1 }}>
+                    <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, position: 'relative', zIndex: 1, '@media print': { py: 1.2, gap: 1.5, gridTemplateColumns: '1fr 1fr !important' } }}>
+                        <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
                                 👤 Billed To:
                             </Typography>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.90rem' }}>
                                 {primaryTicket.visitor_name || 'Registered Delegate'}
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', mt: 0.3 }}>
+                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', mt: 0.2, lineHeight: 1.5 }}>
                                 <strong>Email:</strong> {primaryTicket.visitor_email || '-'}<br />
                                 <strong>Phone / WA:</strong> {primaryTicket.visitor_phone || '-'}<br />
                                 <strong>Institution:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
                             </Typography>
                         </Box>
 
-                        <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 1 }}>
+                        <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
                                 📄 Transaction Details:
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.82rem', lineHeight: 1.6 }}>
+                            <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', lineHeight: 1.5 }}>
                                 <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
                                 <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
                                 <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
@@ -318,16 +356,16 @@ export default function Receipt({
                     </Box>
 
                     {/* PARTICIPANTS & ITEMS TABLE */}
-                    <Box sx={{ mt: 1, mb: 3, position: 'relative', zIndex: 1 }}>
+                    <Box sx={{ mt: 0.5, mb: 2, position: 'relative', zIndex: 1, '@media print': { mb: 1.5 } }}>
                         <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px' }}>
                             <Table size="small">
                                 <TableHead sx={{ bgcolor: '#094d42' }}>
                                     <TableRow>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>NO</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>PARTICIPANT</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CATEGORY</TableCell>
-                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>TICKET CODE</TableCell>
-                                        <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.78rem', py: 1.2 }}>AMOUNT (IDR)</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>NO</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>PARTICIPANT</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CATEGORY</TableCell>
+                                        <TableCell sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>TICKET CODE</TableCell>
+                                        <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 800, fontSize: '0.75rem', py: 0.8 }}>AMOUNT (IDR)</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -336,32 +374,32 @@ export default function Receipt({
                                         const price = Number(payment.price_per_ticket || (totalAmount / (tickets.length || 1)));
                                         return (
                                             <TableRow key={t.id || idx} sx={{ '&:nth-of-type(even)': { bgcolor: '#f8fafc' } }}>
-                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.8rem' }}>{idx + 1}</TableCell>
-                                                <TableCell sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.84rem' }}>
+                                                <TableCell sx={{ fontWeight: 700, fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>{idx + 1}</TableCell>
+                                                <TableCell sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.80rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
                                                     {t.visitor_name}
                                                     {t.visitor_institution && (
-                                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.68rem', lineHeight: 1.2 }}>
                                                             {t.visitor_institution}
                                                         </Typography>
                                                     )}
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell sx={{ py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
                                                     <Chip
                                                         label={cat.label}
                                                         size="small"
                                                         sx={{
                                                             fontWeight: 800,
-                                                            fontSize: '0.68rem',
+                                                            fontSize: '0.65rem',
                                                             bgcolor: '#f1f5f9',
                                                             color: '#334155',
-                                                            height: 22,
+                                                            height: 20,
                                                         }}
                                                     />
                                                 </TableCell>
-                                                <TableCell sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#0284c7', fontSize: '0.8rem' }}>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#0284c7', fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
                                                     {t.ticket_code}
                                                 </TableCell>
-                                                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.82rem' }}>
+                                                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.78rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
                                                     Rp {price.toLocaleString('id-ID')}
                                                 </TableCell>
                                             </TableRow>
@@ -370,19 +408,19 @@ export default function Receipt({
                                     {/* Breakdown Rows */}
                                     {payment.unique_code > 0 && (
                                         <TableRow sx={{ bgcolor: '#fafafa' }}>
-                                            <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.8rem' }}>
+                                            <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
                                                 Payment Unique Code:
                                             </TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.8rem' }}>
+                                            <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
                                                 Rp {Number(payment.unique_code).toLocaleString('id-ID')}
                                             </TableCell>
                                         </TableRow>
                                     )}
                                     <TableRow sx={{ bgcolor: '#ecfdf5' }}>
-                                        <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.95rem', py: 1.5 }}>
+                                        <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.88rem', py: 1 }}>
                                             TOTAL PAYMENT:
                                         </TableCell>
-                                        <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '1.05rem', py: 1.5 }}>
+                                        <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.98rem', py: 1 }}>
                                             Rp {totalAmount.toLocaleString('id-ID')}
                                         </TableCell>
                                     </TableRow>
@@ -391,55 +429,67 @@ export default function Receipt({
                         </TableContainer>
 
                         {/* TERBILANG & IN PAYMENT OF BOX */}
-                        <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1' }}>
-                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem', display: 'block', mb: 0.8 }}>
+                        <Box sx={{ mt: 1.2, p: 1.4, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1', '@media print': { mt: 0.8, p: 1 } }}>
+                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.4 }}>
                                 <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem', display: 'block', lineHeight: 1.4 }}>
+                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
                                 <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
                             </Typography>
                         </Box>
                     </Box>
 
                     {/* SIGNATURE & AUTHENTICITY FOOTER */}
-                    <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 3, position: 'relative', zIndex: 1 }}>
+                    <Box sx={{ 
+                        mt: 2.5, pt: 2, borderTop: '1.5px solid #e2e8f0', 
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', 
+                        flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2, position: 'relative', zIndex: 1,
+                        '@media print': {
+                            mt: '12px !important',
+                            pt: '10px !important',
+                            flexWrap: 'nowrap !important',
+                            gap: '16px !important',
+                            breakInside: 'avoid !important',
+                            pageBreakInside: 'avoid !important',
+                        }
+                    }}>
                         {/* QR Authentication */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'inline-block' }}>
-                                <QRCodeSVG value={route('visitor.payment.status', payment.payment_code)} size={74} level="M" />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, maxWidth: { xs: '100%', sm: '50%' }, '@media print': { maxWidth: '50% !important' } }}>
+                            <Box sx={{ p: 0.8, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'inline-block', flexShrink: 0 }}>
+                                <QRCodeSVG value={route('visitor.payment.status', payment.payment_code)} size={64} level="M" />
                             </Box>
                             <Box>
-                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.74rem' }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.72rem', mb: 0.2 }}>
                                     🛡️ OFFICIAL DIGITAL VALIDATION
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: '#64748b', display: 'block', maxWidth: 240, fontSize: '0.68rem', lineHeight: 1.35 }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', display: 'block', maxWidth: 220, fontSize: '0.65rem', lineHeight: 1.3 }}>
                                     Scan QR code to verify the authenticity of this official receipt and delegate ticket on the PIT IAGI 2026 portal.
                                 </Typography>
                             </Box>
                         </Box>
 
                         {/* Secretariat Stamp Area */}
-                        <Box sx={{ textAlign: 'center', minWidth: { xs: 220, sm: 260 } }}>
-                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.5 }}>
+                        <Box sx={{ textAlign: 'center', minWidth: { xs: 200, sm: 240 }, '@media print': { minWidth: '220px !important' } }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.72rem', display: 'block', mb: 0.3 }}>
                                 Yogyakarta, {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </Typography>
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.74rem' }}>
                                 Organizing Committee 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
                             </Typography>
                             
                             {/* Space for Wet Stamp & Manual Signature */}
-                            <Box sx={{ height: { xs: 70, sm: 80 } }} />
+                            <Box sx={{ height: { xs: 50, sm: 60 }, '@media print': { height: '50px !important' } }} />
                             
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.88rem', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
                                 Dwi Grevani Hayuti
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669', mt: 0.4 }}>
-                                <VerifiedIcon sx={{ fontSize: 16 }} />
-                                <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.76rem', letterSpacing: '0.04em' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669', mt: 0.2 }}>
+                                <VerifiedIcon sx={{ fontSize: 15 }} />
+                                <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.72rem', letterSpacing: '0.04em' }}>
                                     Treasurer of IAGI
                                 </Typography>
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', display: 'block', mt: 0.3 }}>
+                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.62rem', display: 'block', mt: 0.2 }}>
                                 This digital document is officially verified and valid without a wet signature.
                             </Typography>
                         </Box>
