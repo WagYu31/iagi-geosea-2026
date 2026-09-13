@@ -433,7 +433,7 @@ export default function Receipt({
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, color: '#059669' }}>
                                 <VerifiedIcon sx={{ fontSize: 18 }} />
                                 <Typography variant="caption" sx={{ fontWeight: 900, fontSize: '0.76rem', letterSpacing: '0.04em' }}>
-                                    TREASURY SECRETARIAT
+                                    TREASURER SECRETARIAT
                                 </Typography>
                             </Box>
                             <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', display: 'block', mt: 0.3 }}>
