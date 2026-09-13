@@ -472,7 +472,7 @@ export default function Receipt({
                             </Typography>
                             
                             {/* Space for Wet Stamp & Manual Signature */}
-                            <Box sx={{ height: { xs: 50, sm: 60 }, '@media print': { height: '50px !important' } }} />
+                            <Box sx={{ height: { xs: 75, sm: 85 }, '@media print': { height: '75px !important' } }} />
                             
                             <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
                                 Dwi Grevani Hayuti
