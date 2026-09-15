@@ -53,15 +53,9 @@ class VisitorPayment extends Model
     {
         $num = str_pad((string) ($this->id ?? 1), 3, '0', STR_PAD_LEFT);
         $date = $this->created_at ?? now();
-        $romanMonths = [
-            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
-            7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
-        ];
-        $month = (int) $date->format('n');
-        $romanMonth = $romanMonths[$month] ?? 'VIII';
         $year = $date->format('Y');
 
-        return "Receipt No. {$num}/PIT55-GEOSEA/REC-R/{$romanMonth}/{$year}";
+        return "Receipt No. {$num}/PIT55-GEOSEA/REC-R/XI/{$year}";
     }
 
     public function getCategoryLabelAttribute(): string
