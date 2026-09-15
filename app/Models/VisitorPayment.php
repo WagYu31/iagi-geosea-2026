@@ -61,7 +61,7 @@ class VisitorPayment extends Model
         $romanMonth = $romanMonths[$month] ?? 'IX';
         $year = $date->format('Y');
 
-        return "Receipt No. {$num}/PIT55-GEOSEA/REC-R/{$romanMonth}/{$year}";
+        return "Receipt No. {$num}/PIT55-GEOSEA/PY-R/{$romanMonth}/{$year}";
     }
 
     public function getCategoryLabelAttribute(): string
