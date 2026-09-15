@@ -93,6 +93,22 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Debt filter
+        if ($debt = $request->input('debt')) {
+            if ($debt === 'debt') {
+                $query->whereHas('payment', function ($pq) {
+                    $pq->where('is_debt', true);
+                });
+            } elseif ($debt === 'no_debt') {
+                $query->where(function ($q) {
+                    $q->whereDoesntHave('payment')
+                      ->orWhereHas('payment', function ($pq) {
+                          $pq->where('is_debt', false);
+                      });
+                });
+            }
+        }
+
         return $query;
     }
 
@@ -112,6 +128,8 @@ class VisitorTicketAdminController extends Controller
             'nonExclusiveCount' => VisitorTicket::where('visitor_type', 'non_exclusive')->count(),
             'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
             'pendingVerificationCount' => VisitorPayment::where('status', 'pending')->count(),
+            'debtCount' => VisitorPayment::where('is_debt', true)->count(),
+            'debtTotalRevenue' => VisitorPayment::where('is_debt', true)->sum('total_amount'),
             'totalRevenue' => VisitorPayment::where('status', 'approved')->sum('total_amount'),
         ];
 
@@ -135,6 +153,7 @@ class VisitorTicketAdminController extends Controller
                 'type' => $request->input('type', 'all'),
                 'checked_in' => $request->input('checked_in', 'all'),
                 'status' => $request->input('status', 'all'),
+                'debt' => $request->input('debt', 'all'),
             ],
         ]);
     }
@@ -221,12 +240,18 @@ class VisitorTicketAdminController extends Controller
     /**
      * Verify Exclusive Visitor Payment
      */
-    public function verifyPayment($id)
+    public function verifyPayment(Request $request, $id)
     {
         $payment = VisitorPayment::findOrFail($id);
         
+        $isDebt = $request->boolean('is_debt');
+        $debtNotes = $request->input('debt_notes');
+
         $payment->update([
             'status' => 'approved',
+            'is_debt' => $isDebt,
+            'debt_notes' => $isDebt ? $debtNotes : null,
+            'debt_settled_at' => $isDebt ? null : ($payment->is_debt ? now() : $payment->debt_settled_at),
             'verified_at' => now(),
             'verified_by_admin_id' => Auth::id(),
         ]);
@@ -249,7 +274,98 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
-        return back()->with('success', 'Pembayaran visitor berhasil diverifikasi, tiket telah diaktifkan, dan email E-Tiket telah dikirimkan ke pengunjung.');
+        $msg = $isDebt 
+            ? 'Pembayaran berhasil diverifikasi dengan TAG HUTANG (Tanggungan). Tiket aktif & E-Tiket telah dikirim.' 
+            : 'Pembayaran visitor berhasil diverifikasi, tiket telah diaktifkan, dan email E-Tiket telah dikirimkan ke pengunjung.';
+
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Update Payment Proof image and/or manage Debt status by Admin
+     */
+    public function updatePaymentProof(Request $request, $id)
+    {
+        $payment = VisitorPayment::findOrFail($id);
+
+        $request->validate([
+            'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
+            'is_debt' => 'nullable|boolean',
+            'debt_notes' => 'nullable|string|max:1000',
+            'settle_debt' => 'nullable|boolean',
+            'status' => 'nullable|in:pending,approved,rejected',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $dataToUpdate = [];
+
+        if ($request->hasFile('proof_of_payment')) {
+            $file = $request->file('proof_of_payment');
+            $originalSize = (int) round($file->getSize() / 1024);
+            $path = $file->store('visitor_proofs', 'public');
+            $dataToUpdate['proof_of_payment'] = $path;
+            $dataToUpdate['original_file_size_kb'] = $originalSize;
+            $dataToUpdate['compressed_file_size_kb'] = $originalSize;
+        }
+
+        if ($request->has('notes')) {
+            $dataToUpdate['notes'] = $request->input('notes');
+        }
+
+        // Handle debt status
+        if ($request->boolean('settle_debt')) {
+            $dataToUpdate['is_debt'] = false;
+            $dataToUpdate['debt_settled_at'] = now();
+        } elseif ($request->has('is_debt')) {
+            $isDebt = $request->boolean('is_debt');
+            $dataToUpdate['is_debt'] = $isDebt;
+            if ($isDebt) {
+                $dataToUpdate['debt_notes'] = $request->input('debt_notes');
+                $dataToUpdate['debt_settled_at'] = null;
+            } else {
+                $dataToUpdate['debt_settled_at'] = now();
+            }
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            $dataToUpdate['status'] = $status;
+            if ($status === 'approved' && !$payment->verified_at) {
+                $dataToUpdate['verified_at'] = now();
+                $dataToUpdate['verified_by_admin_id'] = Auth::id();
+            }
+        }
+
+        $payment->update($dataToUpdate);
+
+        // If status is approved, ensure tickets are active
+        if ($payment->status === 'approved') {
+            VisitorTicket::where('payment_id', $payment->id)->where('status', '!=', 'active')->update([
+                'status' => 'active',
+            ]);
+        }
+
+        return back()->with('success', 'Bukti bayar dan status pembayaran berhasil diperbarui.');
+    }
+
+    /**
+     * Toggle Debt status directly
+     */
+    public function toggleDebt(Request $request, $id)
+    {
+        $payment = VisitorPayment::findOrFail($id);
+        
+        $isDebt = $request->boolean('is_debt');
+        $debtNotes = $request->input('debt_notes');
+
+        $payment->update([
+            'is_debt' => $isDebt,
+            'debt_notes' => $isDebt ? $debtNotes : null,
+            'debt_settled_at' => $isDebt ? null : now(),
+        ]);
+
+        $msg = $isDebt ? 'Pembayaran berhasil ditandai sebagai HUTANG / TANGGUNGAN.' : 'Tag Hutang berhasil dicabut (Pembayaran Lunas).';
+        return back()->with('success', $msg);
     }
 
     /**

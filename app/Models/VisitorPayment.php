@@ -22,6 +22,9 @@ class VisitorPayment extends Model
         'original_file_size_kb',
         'compressed_file_size_kb',
         'status',
+        'is_debt',
+        'debt_notes',
+        'debt_settled_at',
         'verified_at',
         'verified_by_admin_id',
         'notes',
@@ -30,6 +33,8 @@ class VisitorPayment extends Model
     protected $casts = [
         'price_per_ticket' => 'decimal:2',
         'total_amount' => 'decimal:2',
+        'is_debt' => 'boolean',
+        'debt_settled_at' => 'datetime',
         'verified_at' => 'datetime',
     ];
 

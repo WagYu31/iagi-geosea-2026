@@ -243,6 +243,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
         Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
         Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
+        Route::post('/visitor-tickets/payment/{id}/update-proof', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentProof'])->name('visitorTickets.updatePaymentProof');
+        Route::patch('/visitor-tickets/payment/{id}/toggle-debt', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleDebt'])->name('visitorTickets.toggleDebt');
         Route::patch('/visitor-tickets/{id}/toggle-checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleCheckIn'])->name('visitorTickets.toggleCheckIn');
         Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
         Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');

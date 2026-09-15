@@ -65,6 +65,11 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -198,6 +203,7 @@ export default function VisitorTicketsIndex({
     const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
     const [checkedInFilter, setCheckedInFilter] = useState(filters.checked_in || 'all');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
+    const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
 
     // Multi-select state
     const [selectedIds, setSelectedIds] = useState([]);
@@ -207,6 +213,7 @@ export default function VisitorTicketsIndex({
     const [detailModal, setDetailModal] = useState({ open: false, ticket: null });
     const [editModal, setEditModal] = useState({ open: false, ticket: null });
     const [proofModal, setProofModal] = useState({ open: false, payment: null });
+    const [debtApprovalModal, setDebtApprovalModal] = useState({ open: false, paymentId: null, debtNotes: '' });
     const [rejectModal, setRejectModal] = useState({ open: false, paymentId: null, notes: '' });
     const [printModalOpen, setPrintModalOpen] = useState(false);
     const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -214,6 +221,16 @@ export default function VisitorTicketsIndex({
     const [emailSending, setEmailSending] = useState(false);
     const [bulkActionProcessing, setBulkActionProcessing] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    // Proof & Debt Editing states (inside Proof Lightbox Modal)
+    const [isEditingProof, setIsEditingProof] = useState(false);
+    const [proofFile, setProofFile] = useState(null);
+    const [proofPreview, setProofPreview] = useState(null);
+    const [editIsDebt, setEditIsDebt] = useState(false);
+    const [editDebtNotes, setEditDebtNotes] = useState('');
+    const [editStatus, setEditStatus] = useState('approved');
+    const [editAdminNotes, setEditAdminNotes] = useState('');
+    const [updatingProof, setUpdatingProof] = useState(false);
 
     // Onsite Registration Form
     const { data: onsiteData, setData: setOnsiteData, post: postOnsite, processing: onsiteProcessing, reset: resetOnsite, errors: onsiteErrors } = useForm({
@@ -243,6 +260,7 @@ export default function VisitorTicketsIndex({
             type: overrides.type !== undefined ? overrides.type : typeFilter,
             checked_in: overrides.checked_in !== undefined ? overrides.checked_in : checkedInFilter,
             status: overrides.status !== undefined ? overrides.status : statusFilter,
+            debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
             page: overrides.page || 1,
         };
 
@@ -250,6 +268,7 @@ export default function VisitorTicketsIndex({
         if (params.type === 'all') delete params.type;
         if (params.checked_in === 'all') delete params.checked_in;
         if (params.status === 'all') delete params.status;
+        if (params.debt === 'all') delete params.debt;
         if (params.page === 1) delete params.page;
 
         router.get(route('admin.visitorTickets'), params, {
@@ -282,12 +301,18 @@ export default function VisitorTicketsIndex({
         navigateFilters({ status: val, page: 1 });
     };
 
+    const handleDebtFilterChange = (val) => {
+        setDebtFilter(val);
+        navigateFilters({ debt: val, page: 1 });
+    };
+
     const handleResetFilters = () => {
         setSearchTerm('');
         setTypeFilter('all');
         setCheckedInFilter('all');
         setStatusFilter('all');
-        navigateFilters({ search: '', type: 'all', checked_in: 'all', status: 'all', page: 1 });
+        setDebtFilter('all');
+        navigateFilters({ search: '', type: 'all', checked_in: 'all', status: 'all', debt: 'all', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -307,7 +332,96 @@ export default function VisitorTicketsIndex({
         } else if (statKey === 'pending') {
             setStatusFilter('pending');
             navigateFilters({ status: 'pending', page: 1 });
+        } else if (statKey === 'debt') {
+            setDebtFilter('debt');
+            navigateFilters({ debt: 'debt', page: 1 });
         }
+    };
+
+    // Open Proof of Payment Lightbox Modal
+    const handleOpenProofModal = (payment) => {
+        setProofModal({ open: true, payment });
+        setIsEditingProof(false);
+        setProofFile(null);
+        setProofPreview(null);
+        setEditIsDebt(Boolean(payment?.is_debt));
+        setEditDebtNotes(payment?.debt_notes || '');
+        setEditStatus(payment?.status || 'approved');
+        setEditAdminNotes(payment?.notes || '');
+    };
+
+    // Handle File upload change for proof
+    const handleProofFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProofFile(file);
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (ev) => setProofPreview(ev.target.result);
+                reader.readAsDataURL(file);
+            } else {
+                setProofPreview(null);
+            }
+        }
+    };
+
+    // Handle updating payment proof & debt status submit
+    const handleUpdatePaymentProofSubmit = (e) => {
+        if (e) e.preventDefault();
+        if (!proofModal.payment) return;
+
+        setUpdatingProof(true);
+        const formData = new FormData();
+        if (proofFile) {
+            formData.append('proof_of_payment', proofFile);
+        }
+        formData.append('is_debt', editIsDebt ? '1' : '0');
+        formData.append('debt_notes', editDebtNotes || '');
+        formData.append('notes', editAdminNotes || '');
+        formData.append('status', editStatus || proofModal.payment.status);
+
+        router.post(route('admin.visitorTickets.updatePaymentProof', proofModal.payment.id), formData, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setUpdatingProof(false);
+                setProofModal({ open: false, payment: null });
+                setIsEditingProof(false);
+                setProofFile(null);
+                setProofPreview(null);
+            },
+            onError: () => {
+                setUpdatingProof(false);
+            }
+        });
+    };
+
+    // Settle Debt Quick Action (Cabut Tag Hutang)
+    const handleSettleDebtQuick = (paymentId) => {
+        if (confirm('Cabut TAG HUTANG dan tandai pembayaran ini telah LUNAS sepenuhnya?')) {
+            router.patch(route('admin.visitorTickets.toggleDebt', paymentId), {
+                is_debt: false,
+            }, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setProofModal({ open: false, payment: null });
+                }
+            });
+        }
+    };
+
+    // Handle Approval with Debt Tag Submit
+    const handleVerifyWithDebtSubmit = () => {
+        if (!debtApprovalModal.paymentId) return;
+        router.patch(route('admin.visitorTickets.verifyPayment', debtApprovalModal.paymentId), {
+            is_debt: true,
+            debt_notes: debtApprovalModal.debtNotes,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' });
+                setProofModal({ open: false, payment: null });
+            }
+        });
     };
 
     // Single Ticket Actions
@@ -330,8 +444,10 @@ export default function VisitorTicketsIndex({
     };
 
     const handleVerifyPayment = (paymentId) => {
-        if (confirm('Verify and activate ticket for this payment?')) {
-            router.patch(route('admin.visitorTickets.verifyPayment', paymentId), {}, {
+        if (confirm('Verify and activate ticket for this payment (Status: LUNAS)?')) {
+            router.patch(route('admin.visitorTickets.verifyPayment', paymentId), {
+                is_debt: false,
+            }, {
                 preserveScroll: true,
                 onSuccess: () => {
                     setProofModal({ open: false, payment: null });
@@ -514,10 +630,11 @@ export default function VisitorTicketsIndex({
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
         { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
+        { key: 'debt', label: 'Tanggungan / Hutang', value: `${stats.debtCount || 0} Tiket`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all';
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all';
 
     return (
         <SidebarLayout>
@@ -843,9 +960,9 @@ export default function VisitorTicketsIndex({
                             gridTemplateColumns: {
                                 xs: '1fr',
                                 sm: 'repeat(2, 1fr)',
-                                md: 'repeat(2, 1fr)',
-                                lg: 'repeat(4, 1fr) auto',
-                                xl: '2.2fr 1.3fr 1.1fr 1.1fr auto',
+                                md: 'repeat(3, 1fr)',
+                                lg: 'repeat(5, 1fr) auto',
+                                xl: '2fr 1.2fr 1fr 1fr 1.1fr auto',
                             },
                             gap: 1.5,
                             alignItems: 'center',
@@ -872,7 +989,7 @@ export default function VisitorTicketsIndex({
                                 ) : null,
                             }}
                             sx={{
-                                gridColumn: { sm: 'span 2', lg: 'span 1' },
+                                gridColumn: { sm: 'span 2', md: 'span 3', lg: 'span 1' },
                                 '& .MuiOutlinedInput-root': {
                                     borderRadius: '10px',
                                     bgcolor: '#f8fafc',
@@ -944,6 +1061,20 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="active">Active</MenuItem>
                                 <MenuItem value="pending">Pending Payment</MenuItem>
                                 <MenuItem value="cancelled">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Hutang</InputLabel>
+                            <Select
+                                value={debtFilter}
+                                label="Status Hutang"
+                                onChange={(e) => handleDebtFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                            >
+                                <MenuItem value="all">Semua Tagihan</MenuItem>
+                                <MenuItem value="debt" sx={{ color: '#b45309', fontWeight: 800 }}>⚠️ Tag HUTANG ({stats.debtCount || 0})</MenuItem>
+                                <MenuItem value="no_debt" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Lunas Penuh / Free</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -1353,7 +1484,7 @@ export default function VisitorTicketsIndex({
                                                             <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                                                                 Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
                                                             </Typography>
-                                                            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2 }}>
+                                                            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
                                                                 <Chip
                                                                     label={t.payment.status.toUpperCase()}
                                                                     size="small"
@@ -1367,18 +1498,59 @@ export default function VisitorTicketsIndex({
                                                                         whiteSpace: 'nowrap',
                                                                     }}
                                                                 />
-                                                                {t.payment.proof_of_payment && (
-                                                                    <Tooltip title="View Transfer Proof">
-                                                                        <IconButton
+                                                                {t.payment.is_debt ? (
+                                                                    <Tooltip title={`⚠️ STATUS HUTANG (Tanggungan): ${t.payment.debt_notes || 'Kesepakatan bendahara'}. Klik untuk edit bukti transfer & cabut hutang.`} arrow>
+                                                                        <Chip
+                                                                            icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#92400e !important' }} />}
+                                                                            label="HUTANG"
                                                                             size="small"
-                                                                            onClick={() => setProofModal({ open: true, payment: t.payment })}
-                                                                            sx={{ p: 0.2, color: '#0284c7' }}
-                                                                        >
-                                                                            <VisibilityIcon sx={{ fontSize: 15 }} />
-                                                                        </IconButton>
+                                                                            onClick={() => handleOpenProofModal(t.payment)}
+                                                                            sx={{
+                                                                                height: 18,
+                                                                                fontSize: '0.58rem',
+                                                                                bgcolor: '#fef3c7',
+                                                                                color: '#92400e',
+                                                                                fontWeight: 900,
+                                                                                border: '1px solid #f59e0b',
+                                                                                cursor: 'pointer',
+                                                                                whiteSpace: 'nowrap',
+                                                                                '&:hover': { bgcolor: '#fde68a' },
+                                                                            }}
+                                                                        />
                                                                     </Tooltip>
-                                                                )}
+                                                                ) : t.payment.debt_settled_at ? (
+                                                                    <Tooltip title={`Hutang lunas & diselesaikan pada ${new Date(t.payment.debt_settled_at).toLocaleDateString('id-ID')}`} arrow>
+                                                                        <Chip
+                                                                            icon={<TaskAltIcon sx={{ fontSize: '11px !important', color: '#15803d !important' }} />}
+                                                                            label="LUNAS"
+                                                                            size="small"
+                                                                            sx={{
+                                                                                height: 18,
+                                                                                fontSize: '0.56rem',
+                                                                                bgcolor: '#f0fdf4',
+                                                                                color: '#15803d',
+                                                                                fontWeight: 800,
+                                                                                border: '1px solid #bbf7d0',
+                                                                                whiteSpace: 'nowrap',
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                ) : null}
+                                                                <Tooltip title="Lihat & Edit Bukti Bayar / Tag Hutang">
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        onClick={() => handleOpenProofModal(t.payment)}
+                                                                        sx={{ p: 0.2, color: t.payment.is_debt ? '#d97706' : '#0284c7' }}
+                                                                    >
+                                                                        <VisibilityIcon sx={{ fontSize: 15 }} />
+                                                                    </IconButton>
+                                                                </Tooltip>
                                                             </Stack>
+                                                            {t.payment.is_debt && t.payment.debt_notes && (
+                                                                <Typography variant="caption" sx={{ color: '#b45309', display: 'block', fontSize: '0.64rem', fontWeight: 600, mt: 0.2, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                                    📝 {t.payment.debt_notes}
+                                                                </Typography>
+                                                            )}
                                                         </Box>
                                                     ) : (
                                                         <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem', whiteSpace: 'nowrap' }}>
@@ -1695,40 +1867,75 @@ export default function VisitorTicketsIndex({
                                 </Box>
 
                                 {detailModal.ticket.payment && (
-                                    <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', display: 'block' }}>
-                                                Payment & Invoice Details:
-                                            </Typography>
-                                            <Button
-                                                size="small"
-                                                variant="outlined"
-                                                component="a"
-                                                href={route('visitor.receipt.show', detailModal.ticket.payment.payment_code)}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                startIcon={<ReceiptLongIcon sx={{ fontSize: 14 }} />}
-                                                sx={{
-                                                    fontSize: '0.68rem',
-                                                    py: 0.3,
-                                                    px: 1.2,
-                                                    textTransform: 'none',
-                                                    fontWeight: 800,
-                                                    borderColor: '#86efac',
-                                                    color: '#15803d',
-                                                    bgcolor: '#ffffff',
-                                                    '&:hover': { bgcolor: '#dcfce7', borderColor: '#16a34a' }
-                                                }}
-                                            >
-                                                View Receipt / INVOICE
-                                            </Button>
+                                    <Box sx={{ p: 2, bgcolor: detailModal.ticket.payment.is_debt ? '#fffbeb' : '#f0fdf4', borderRadius: '12px', border: `1.5px solid ${detailModal.ticket.payment.is_debt ? '#f59e0b' : '#bbf7d0'}` }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8, flexWrap: 'wrap', gap: 1 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: detailModal.ticket.payment.is_debt ? '#92400e' : '#166534', display: 'block' }}>
+                                                    Payment & Invoice Details:
+                                                </Typography>
+                                                {detailModal.ticket.payment.is_debt && (
+                                                    <Chip
+                                                        icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#92400e !important' }} />}
+                                                        label="TAG HUTANG"
+                                                        size="small"
+                                                        sx={{ height: 18, fontSize: '0.58rem', bgcolor: '#fef3c7', color: '#92400e', fontWeight: 900, border: '1px solid #f59e0b' }}
+                                                    />
+                                                )}
+                                            </Box>
+                                            <Stack direction="row" spacing={1}>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    onClick={() => handleOpenProofModal(detailModal.ticket.payment)}
+                                                    startIcon={<VisibilityIcon sx={{ fontSize: 13 }} />}
+                                                    sx={{
+                                                        fontSize: '0.68rem',
+                                                        py: 0.3,
+                                                        px: 1.2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 800,
+                                                        borderColor: detailModal.ticket.payment.is_debt ? '#f59e0b' : '#cbd5e1',
+                                                        color: detailModal.ticket.payment.is_debt ? '#92400e' : '#0284c7',
+                                                        bgcolor: '#ffffff',
+                                                    }}
+                                                >
+                                                    {detailModal.ticket.payment.is_debt ? 'Kelola Hutang / Bukti' : 'Lihat Bukti'}
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    component="a"
+                                                    href={route('visitor.receipt.show', detailModal.ticket.payment.payment_code)}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    startIcon={<ReceiptLongIcon sx={{ fontSize: 14 }} />}
+                                                    sx={{
+                                                        fontSize: '0.68rem',
+                                                        py: 0.3,
+                                                        px: 1.2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 800,
+                                                        borderColor: '#86efac',
+                                                        color: '#15803d',
+                                                        bgcolor: '#ffffff',
+                                                        '&:hover': { bgcolor: '#dcfce7', borderColor: '#16a34a' }
+                                                    }}
+                                                >
+                                                    Receipt / INVOICE
+                                                </Button>
+                                            </Stack>
                                         </Box>
-                                        <Typography variant="body2" sx={{ color: '#065f46', fontWeight: 800, fontFamily: 'monospace', mb: 0.3 }}>
+                                        <Typography variant="body2" sx={{ color: detailModal.ticket.payment.is_debt ? '#92400e' : '#065f46', fontWeight: 800, fontFamily: 'monospace', mb: 0.3 }}>
                                             {detailModal.ticket.payment.receipt_no || detailModal.ticket.receipt_no || 'Receipt Available'}
                                         </Typography>
-                                        <Typography variant="caption" sx={{ color: '#166534', fontWeight: 600, display: 'block' }}>
+                                        <Typography variant="caption" sx={{ color: detailModal.ticket.payment.is_debt ? '#78350f' : '#166534', fontWeight: 600, display: 'block' }}>
                                             Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong> ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
+                                        {detailModal.ticket.payment.is_debt && detailModal.ticket.payment.debt_notes && (
+                                            <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 700, display: 'block', mt: 0.5, bgcolor: '#fef3c7', p: 0.8, borderRadius: '6px' }}>
+                                                📝 Catatan Hutang: "{detailModal.ticket.payment.debt_notes}"
+                                            </Typography>
+                                        )}
                                     </Box>
                                 )}
                             </Stack>
@@ -2015,32 +2222,372 @@ export default function VisitorTicketsIndex({
                 </form>
             </Dialog>
 
-            {/* MODAL 4: PROOF OF PAYMENT LIGHTBOX */}
-            <Dialog open={proofModal.open} onClose={() => setProofModal({ open: false, payment: null })} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+            {/* MODAL 4: PROOF OF PAYMENT LIGHTBOX & DEBT MANAGEMENT */}
+            <Dialog open={proofModal.open} onClose={() => setProofModal({ open: false, payment: null })} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: '18px', overflow: 'hidden' } }}>
                 {proofModal.payment && (
                     <>
-                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid #e2e8f0' }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 900 }}>
-                                📄 Payment Proof: {proofModal.payment.payment_code}
-                            </Typography>
+                        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, px: 2.5, bgcolor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
+                                    📄 Bukti Bayar: <span style={{ fontFamily: 'monospace' }}>{proofModal.payment.payment_code}</span>
+                                </Typography>
+                                <Chip
+                                    label={proofModal.payment.status.toUpperCase()}
+                                    size="small"
+                                    sx={{
+                                        height: 22,
+                                        fontSize: '0.65rem',
+                                        bgcolor: proofModal.payment.status === 'approved' ? '#dcfce7' : proofModal.payment.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                        color: proofModal.payment.status === 'approved' ? '#166534' : proofModal.payment.status === 'pending' ? '#92400e' : '#991b1b',
+                                        fontWeight: 900,
+                                        border: `1px solid ${proofModal.payment.status === 'approved' ? '#86efac' : proofModal.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                    }}
+                                />
+                                {proofModal.payment.is_debt ? (
+                                    <Chip
+                                        icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#92400e !important' }} />}
+                                        label="⚠️ TAG HUTANG (TANGGUNGAN)"
+                                        size="small"
+                                        sx={{
+                                            height: 22,
+                                            fontSize: '0.65rem',
+                                            bgcolor: '#fef3c7',
+                                            color: '#92400e',
+                                            fontWeight: 900,
+                                            border: '1px solid #f59e0b',
+                                        }}
+                                    />
+                                ) : proofModal.payment.debt_settled_at ? (
+                                    <Chip
+                                        icon={<TaskAltIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
+                                        label="✅ LUNAS (HUTANG SELESAI)"
+                                        size="small"
+                                        sx={{
+                                            height: 22,
+                                            fontSize: '0.65rem',
+                                            bgcolor: '#f0fdf4',
+                                            color: '#15803d',
+                                            fontWeight: 800,
+                                            border: '1px solid #bbf7d0',
+                                        }}
+                                    />
+                                ) : null}
+                            </Box>
                             <IconButton onClick={() => setProofModal({ open: false, payment: null })} size="small">
                                 <CloseIcon />
                             </IconButton>
                         </DialogTitle>
-                        <DialogContent sx={{ p: 2.5, textAlign: 'center', bgcolor: '#0f172a' }}>
-                            <Box
-                                component="img"
-                                src={proofModal.payment.proof_of_payment?.startsWith('http') || proofModal.payment.proof_of_payment?.startsWith('/') 
-                                    ? proofModal.payment.proof_of_payment 
-                                    : `/storage/${proofModal.payment.proof_of_payment}`}
-                                alt="Payment Proof"
-                                sx={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
-                            />
+
+                        <DialogContent sx={{ p: 2.5, bgcolor: '#ffffff' }}>
+                            {/* DEBT ALERT BANNER */}
+                            {proofModal.payment.is_debt && (
+                                <Box
+                                    sx={{
+                                        bgcolor: '#fffbeb',
+                                        border: '1.5px solid #f59e0b',
+                                        borderRadius: '12px',
+                                        p: 2,
+                                        mb: 2.5,
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        justifyContent: 'space-between',
+                                        flexWrap: 'wrap',
+                                        gap: 1.5,
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', gap: 1.2, flex: 1, minWidth: 260 }}>
+                                        <WarningAmberIcon sx={{ color: '#d97706', fontSize: 26, mt: 0.2 }} />
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#92400e', fontSize: '0.9rem' }}>
+                                                Status Pembayaran: TAG HUTANG / TANGGUNGAN
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#78350f', fontWeight: 600, mt: 0.3, fontSize: '0.82rem' }}>
+                                                {proofModal.payment.debt_notes ? `Catatan Hutang: "${proofModal.payment.debt_notes}"` : 'Bukti saat ini adalah bukti chat / kesepakatan dengan bendahara.'}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#a16207', display: 'block', fontSize: '0.74rem', mt: 0.5 }}>
+                                                💡 Jika peserta sudah mentransfer uangnya, klik tombol <strong>"Ganti Bukti & Cabut Hutang"</strong> di bawah untuk mengunggah slip transfer asli dan mengubah status menjadi Lunas.
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        color="success"
+                                        startIcon={<TaskAltIcon />}
+                                        onClick={() => handleSettleDebtQuick(proofModal.payment.id)}
+                                        sx={{
+                                            bgcolor: '#16a34a',
+                                            fontWeight: 900,
+                                            fontSize: '0.76rem',
+                                            textTransform: 'none',
+                                            borderRadius: '8px',
+                                            whiteSpace: 'nowrap',
+                                            boxShadow: '0 2px 0 #15803d',
+                                            '&:hover': { bgcolor: '#15803d' },
+                                        }}
+                                    >
+                                        Cabut Tag Hutang (Tandai Lunas)
+                                    </Button>
+                                </Box>
+                            )}
+
+                            {/* DEBT SETTLED INFO BANNER */}
+                            {!proofModal.payment.is_debt && proofModal.payment.debt_settled_at && (
+                                <Alert severity="success" sx={{ mb: 2.5, borderRadius: '10px', fontWeight: 600, fontSize: '0.82rem' }}>
+                                    Tag Hutang untuk pembayaran ini telah dicabut dan ditandai Lunas pada{' '}
+                                    {new Date(proofModal.payment.debt_settled_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}.
+                                </Alert>
+                            )}
+
+                            {/* PROOF IMAGE DISPLAY / PREVIEW */}
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 2,
+                                    bgcolor: '#0f172a',
+                                    borderRadius: '14px',
+                                    textAlign: 'center',
+                                    position: 'relative',
+                                    mb: 2.5,
+                                    border: '1px solid #334155',
+                                }}
+                            >
+                                {proofPreview ? (
+                                    <Box>
+                                        <Chip
+                                            label="Preview Bukti Baru (Belum Disimpan)"
+                                            size="small"
+                                            sx={{ position: 'absolute', top: 12, left: 12, bgcolor: '#f59e0b', color: '#000', fontWeight: 900, fontSize: '0.7rem' }}
+                                        />
+                                        <Box
+                                            component="img"
+                                            src={proofPreview}
+                                            alt="New Payment Proof Preview"
+                                            sx={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '8px', mt: 2 }}
+                                        />
+                                        <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', mt: 1 }}>
+                                            File terpilih: {proofFile?.name} ({(proofFile?.size / 1024).toFixed(0)} KB)
+                                        </Typography>
+                                    </Box>
+                                ) : proofModal.payment.proof_of_payment ? (
+                                    proofModal.payment.proof_of_payment.endsWith('.pdf') ? (
+                                        <Box sx={{ py: 6 }}>
+                                            <ReceiptLongIcon sx={{ fontSize: 60, color: '#38bdf8', mb: 1.5 }} />
+                                            <Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 700, mb: 1.5 }}>
+                                                Dokumen Bukti Bayar (PDF)
+                                            </Typography>
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                component="a"
+                                                href={proofModal.payment.proof_of_payment?.startsWith('http') || proofModal.payment.proof_of_payment?.startsWith('/') 
+                                                    ? proofModal.payment.proof_of_payment 
+                                                    : `/storage/${proofModal.payment.proof_of_payment}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 800, borderRadius: '8px' }}
+                                            >
+                                                Buka PDF Bukti Bayar di Tab Baru
+                                            </Button>
+                                        </Box>
+                                    ) : (
+                                        <Box
+                                            component="img"
+                                            src={proofModal.payment.proof_of_payment?.startsWith('http') || proofModal.payment.proof_of_payment?.startsWith('/') 
+                                                ? proofModal.payment.proof_of_payment 
+                                                : `/storage/${proofModal.payment.proof_of_payment}`}
+                                            alt="Payment Proof"
+                                            sx={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
+                                        />
+                                    )
+                                ) : (
+                                    <Box sx={{ py: 6, color: '#94a3b8' }}>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                                            Belum ada file bukti bayar yang diunggah.
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </Paper>
+
+                            {/* COLLAPSIBLE EDIT BUKTI & STATUS HUTANG FORM */}
+                            <Box sx={{ mb: 1 }}>
+                                <Button
+                                    variant={isEditingProof ? 'contained' : 'outlined'}
+                                    startIcon={<EditIcon />}
+                                    onClick={() => setIsEditingProof(!isEditingProof)}
+                                    size="small"
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: 800,
+                                        fontSize: '0.8rem',
+                                        borderRadius: '10px',
+                                        bgcolor: isEditingProof ? '#0f172a' : '#f8fafc',
+                                        color: isEditingProof ? '#ffffff' : '#094d42',
+                                        borderColor: '#cbd5e1',
+                                        mb: 1.5,
+                                    }}
+                                >
+                                    {isEditingProof ? 'Tutup Panel Edit' : '✏️ Edit Bukti Bayar & Kelola Tag Hutang'}
+                                </Button>
+
+                                {isEditingProof && (
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            p: 2.2,
+                                            borderRadius: '14px',
+                                            bgcolor: '#f8fafc',
+                                            border: '1.5px solid #cbd5e1',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                        }}
+                                    >
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <CloudUploadIcon sx={{ color: '#094d42', fontSize: 20 }} />
+                                            Update File Bukti Bayar & Pengaturan Hutang
+                                        </Typography>
+
+                                        <form onSubmit={handleUpdatePaymentProofSubmit}>
+                                            <Stack spacing={2}>
+                                                {/* File Upload input */}
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', display: 'block', mb: 0.5 }}>
+                                                        Ganti File Bukti Transfer (JPG, PNG, PDF max 10MB)
+                                                    </Typography>
+                                                    <Button
+                                                        variant="outlined"
+                                                        component="label"
+                                                        startIcon={<CloudUploadIcon />}
+                                                        fullWidth
+                                                        sx={{
+                                                            py: 1.2,
+                                                            borderStyle: 'dashed',
+                                                            borderWidth: 2,
+                                                            borderColor: '#94a3b8',
+                                                            borderRadius: '10px',
+                                                            textTransform: 'none',
+                                                            fontWeight: 700,
+                                                            color: '#334155',
+                                                            bgcolor: '#ffffff',
+                                                            '&:hover': { bgcolor: '#f1f5f9', borderColor: '#094d42' },
+                                                        }}
+                                                    >
+                                                        {proofFile ? `File Dipilih: ${proofFile.name}` : 'Pilih File Bukti Bayar Baru dari Komputer'}
+                                                        <input
+                                                            type="file"
+                                                            hidden
+                                                            accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf"
+                                                            onChange={handleProofFileChange}
+                                                        />
+                                                    </Button>
+                                                </Box>
+
+                                                {/* Debt checkbox & notes */}
+                                                <Box sx={{ p: 1.5, borderRadius: '10px', bgcolor: editIsDebt ? '#fffbeb' : '#ffffff', border: editIsDebt ? '1.5px solid #f59e0b' : '1px solid #e2e8f0' }}>
+                                                    <FormControlLabel
+                                                        control={
+                                                            <Checkbox
+                                                                checked={editIsDebt}
+                                                                onChange={(e) => setEditIsDebt(e.target.checked)}
+                                                                sx={{ color: '#f59e0b', '&.Mui-checked': { color: '#d97706' } }}
+                                                            />
+                                                        }
+                                                        label={
+                                                            <Box>
+                                                                <Typography variant="body2" sx={{ fontWeight: 800, color: editIsDebt ? '#92400e' : '#1e293b' }}>
+                                                                    Tandai sebagai TAG HUTANG / Tanggungan
+                                                                </Typography>
+                                                                <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
+                                                                    Centang jika peserta belum melunasi pembayaran (misal: bukti chat bendahara / janji bayar onsite).
+                                                                </Typography>
+                                                            </Box>
+                                                        }
+                                                    />
+
+                                                    {editIsDebt && (
+                                                        <TextField
+                                                            label="Catatan Hutang / Kesepakatan Bendahara"
+                                                            placeholder="Contoh: Chat WA dg Ibu Ani (Bendahara), janji transfer tgl 20 Sep 2026"
+                                                            value={editDebtNotes}
+                                                            onChange={(e) => setEditDebtNotes(e.target.value)}
+                                                            fullWidth
+                                                            size="small"
+                                                            multiline
+                                                            rows={2}
+                                                            sx={{ mt: 1.5, bgcolor: '#ffffff' }}
+                                                        />
+                                                    )}
+                                                </Box>
+
+                                                {/* Payment status selector */}
+                                                <FormControl size="small" fullWidth>
+                                                    <InputLabel>Status Pembayaran</InputLabel>
+                                                    <Select
+                                                        value={editStatus}
+                                                        label="Status Pembayaran"
+                                                        onChange={(e) => setEditStatus(e.target.value)}
+                                                        sx={{ bgcolor: '#ffffff' }}
+                                                    >
+                                                        <MenuItem value="approved">✅ Approved (Tiket Aktif)</MenuItem>
+                                                        <MenuItem value="pending">⏳ Pending Verification</MenuItem>
+                                                        <MenuItem value="rejected">❌ Rejected</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+
+                                                {/* Admin internal notes */}
+                                                <TextField
+                                                    label="Catatan Internal Admin (Opsional)"
+                                                    placeholder="Catatan tambahan internal panitia..."
+                                                    value={editAdminNotes}
+                                                    onChange={(e) => setEditAdminNotes(e.target.value)}
+                                                    fullWidth
+                                                    size="small"
+                                                    multiline
+                                                    rows={2}
+                                                    sx={{ bgcolor: '#ffffff' }}
+                                                />
+
+                                                {/* Submit Button */}
+                                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, pt: 1 }}>
+                                                    <Button
+                                                        onClick={() => {
+                                                            setIsEditingProof(false);
+                                                            setProofFile(null);
+                                                            setProofPreview(null);
+                                                        }}
+                                                        size="small"
+                                                        sx={{ textTransform: 'none' }}
+                                                    >
+                                                        Batal
+                                                    </Button>
+                                                    <Button
+                                                        type="submit"
+                                                        variant="contained"
+                                                        disabled={updatingProof}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#094d42',
+                                                            color: '#ffffff',
+                                                            fontWeight: 900,
+                                                            borderRadius: '8px',
+                                                            textTransform: 'none',
+                                                            px: 2.5,
+                                                            '&:hover': { bgcolor: '#0d6356' }
+                                                        }}
+                                                    >
+                                                        {updatingProof ? 'Menyimpan...' : '💾 Simpan Perubahan Bukti & Status'}
+                                                    </Button>
+                                                </Box>
+                                            </Stack>
+                                        </form>
+                                    </Paper>
+                                )}
+                            </Box>
                         </DialogContent>
-                        <DialogActions sx={{ p: 2, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: 1 }}>
+
+                        <DialogActions sx={{ p: 2, px: 2.5, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1.5 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706' }}>
-                                    Total Amount: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
+                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706', fontSize: '0.9rem' }}>
+                                    Total: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
                                 </Typography>
                                 <Button
                                     component="a"
@@ -2049,35 +2596,123 @@ export default function VisitorTicketsIndex({
                                     size="small"
                                     variant="outlined"
                                     startIcon={<ReceiptLongIcon />}
-                                    sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px', color: '#094d42', borderColor: '#86efac' }}
+                                    sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px', color: '#094d42', borderColor: '#86efac', bgcolor: '#ffffff' }}
                                 >
                                     Kwitansi & Invoice
                                 </Button>
                             </Box>
+
+                            {/* ACTIONS FOR PENDING STATUS */}
                             {proofModal.payment.status === 'pending' && (
-                                <Stack direction="row" spacing={1}>
+                                <Stack direction="row" spacing={1} flexWrap="wrap">
                                     <Button
-                                        variant="contained"
+                                        variant="outlined"
                                         color="error"
                                         onClick={() => {
                                             setRejectModal({ open: true, paymentId: proofModal.payment.id, notes: '' });
                                         }}
-                                        sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}
+                                        sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px' }}
                                     >
                                         Reject
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        onClick={() => handleVerifyPayment(proofModal.payment.id)}
-                                        sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
+                                        startIcon={<WarningAmberIcon />}
+                                        onClick={() => {
+                                            setDebtApprovalModal({
+                                                open: true,
+                                                paymentId: proofModal.payment.id,
+                                                debtNotes: proofModal.payment.debt_notes || 'Bukti chat dengan bendahara (Tanggungan)',
+                                            });
+                                        }}
+                                        sx={{
+                                            bgcolor: '#d97706',
+                                            color: '#ffffff',
+                                            textTransform: 'none',
+                                            fontWeight: 900,
+                                            borderRadius: '8px',
+                                            '&:hover': { bgcolor: '#b45309' },
+                                        }}
                                     >
-                                        Approve & Activate Ticket
+                                        Approve dgn TAG HUTANG
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => handleVerifyPayment(proofModal.payment.id)}
+                                        sx={{ bgcolor: '#10b981', color: '#ffffff', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
+                                    >
+                                        Approve & Activate (LUNAS)
                                     </Button>
                                 </Stack>
+                            )}
+
+                            {/* ACTIONS FOR APPROVED STATUS */}
+                            {proofModal.payment.status === 'approved' && proofModal.payment.is_debt && (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    startIcon={<TaskAltIcon />}
+                                    onClick={() => handleSettleDebtQuick(proofModal.payment.id)}
+                                    sx={{
+                                        bgcolor: '#16a34a',
+                                        textTransform: 'none',
+                                        fontWeight: 900,
+                                        borderRadius: '8px',
+                                        boxShadow: '0 2px 0 #15803d',
+                                        '&:hover': { bgcolor: '#15803d' },
+                                    }}
+                                >
+                                    Cabut Tag Hutang (Tandai Lunas)
+                                </Button>
                             )}
                         </DialogActions>
                     </>
                 )}
+            </Dialog>
+
+            {/* MODAL 4B: APPROVE WITH DEBT TAG DIALOG */}
+            <Dialog open={debtApprovalModal.open} onClose={() => setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+                <DialogTitle sx={{ fontWeight: 900, color: '#92400e', display: 'flex', alignItems: 'center', gap: 1, bgcolor: '#fffbeb', borderBottom: '1px solid #fde68a' }}>
+                    <WarningAmberIcon sx={{ color: '#d97706' }} />
+                    Verifikasi Pembayaran dengan TAG HUTANG
+                </DialogTitle>
+                <DialogContent sx={{ pt: 2.5 }}>
+                    <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
+                        Tiket pengunjung akan <strong>diaktifkan</strong> dan <strong>E-Tiket QR Code</strong> akan langsung dikirimkan ke email peserta. Namun status pembayaran akan diberi tanda <strong>⚠️ HUTANG (Tanggungan)</strong> hingga peserta melunasi dan admin mengunggah bukti transfer asli.
+                    </Typography>
+
+                    <TextField
+                        label="Catatan Hutang / Kesepakatan Bendahara *"
+                        placeholder="Contoh: Chat persetujuan dg Bendahara (Ibu Ani), janji bayar tanggal 20 September 2026"
+                        value={debtApprovalModal.debtNotes}
+                        onChange={(e) => setDebtApprovalModal(prev => ({ ...prev, debtNotes: e.target.value }))}
+                        fullWidth
+                        multiline
+                        rows={3}
+                        size="small"
+                        required
+                    />
+                </DialogContent>
+                <DialogActions sx={{ p: 2, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+                    <Button onClick={() => setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' })} sx={{ textTransform: 'none' }}>
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleVerifyWithDebtSubmit}
+                        variant="contained"
+                        startIcon={<WarningAmberIcon />}
+                        sx={{
+                            bgcolor: '#d97706',
+                            color: '#ffffff',
+                            textTransform: 'none',
+                            fontWeight: 900,
+                            borderRadius: '8px',
+                            '&:hover': { bgcolor: '#b45309' },
+                        }}
+                    >
+                        Approve Tiket dgn TAG HUTANG
+                    </Button>
+                </DialogActions>
             </Dialog>
 
             {/* MODAL 5: REJECT PAYMENT NOTES */}
