@@ -1269,7 +1269,7 @@ export default function VisitorTicketsIndex({
                                         />
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET CODE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INVOICE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INVOICE / RECEIPT</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PARTICIPANT / VISITOR</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CATEGORY</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>SOURCE</TableCell>
@@ -2587,7 +2587,7 @@ export default function VisitorTicketsIndex({
                         <DialogActions sx={{ p: 2, px: 2.5, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1.5 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                 <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706', fontSize: '0.9rem' }}>
-                                    Total: Rp {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
+                                    IDR {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
                                 </Typography>
                                 <Button
                                     component="a"
