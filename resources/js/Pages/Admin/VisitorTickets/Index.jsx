@@ -397,7 +397,7 @@ export default function VisitorTicketsIndex({
 
     // Settle Debt Quick Action (Cabut Tag Hutang)
     const handleSettleDebtQuick = (paymentId) => {
-        if (confirm('Cabut TAG HUTANG dan tandai pembayaran ini telah LUNAS sepenuhnya?')) {
+        if (confirm('Clear DEBT TAG and mark this payment as fully PAID?')) {
             router.patch(route('admin.visitorTickets.toggleDebt', paymentId), {
                 is_debt: false,
             }, {
@@ -444,7 +444,7 @@ export default function VisitorTicketsIndex({
     };
 
     const handleVerifyPayment = (paymentId) => {
-        if (confirm('Verify and activate ticket for this payment (Status: LUNAS)?')) {
+        if (confirm('Verify and activate ticket for this payment (Status: FULLY PAID)?')) {
             router.patch(route('admin.visitorTickets.verifyPayment', paymentId), {
                 is_debt: false,
             }, {
@@ -630,7 +630,7 @@ export default function VisitorTicketsIndex({
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
         { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
-        { key: 'debt', label: 'Tanggungan / Hutang', value: `${stats.debtCount || 0} Tiket`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
+        { key: 'debt', label: 'Outstanding Debt', value: `${stats.debtCount || 0} Tickets`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
@@ -1065,16 +1065,16 @@ export default function VisitorTicketsIndex({
                         </FormControl>
 
                         <FormControl size="small" fullWidth>
-                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Hutang</InputLabel>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Debt Status</InputLabel>
                             <Select
                                 value={debtFilter}
-                                label="Status Hutang"
+                                label="Debt Status"
                                 onChange={(e) => handleDebtFilterChange(e.target.value)}
                                 sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                             >
-                                <MenuItem value="all">Semua Tagihan</MenuItem>
-                                <MenuItem value="debt" sx={{ color: '#b45309', fontWeight: 800 }}>⚠️ Tag HUTANG ({stats.debtCount || 0})</MenuItem>
-                                <MenuItem value="no_debt" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Lunas Penuh / Free</MenuItem>
+                                <MenuItem value="all">All Debt Statuses</MenuItem>
+                                <MenuItem value="debt" sx={{ color: '#b45309', fontWeight: 800 }}>⚠️ Debt Tagged ({stats.debtCount || 0})</MenuItem>
+                                <MenuItem value="no_debt" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Fully Paid / Free</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -1499,10 +1499,10 @@ export default function VisitorTicketsIndex({
                                                                     }}
                                                                 />
                                                                 {t.payment.is_debt ? (
-                                                                    <Tooltip title={`⚠️ STATUS HUTANG (Tanggungan): ${t.payment.debt_notes || 'Kesepakatan bendahara'}. Klik untuk edit bukti transfer & cabut hutang.`} arrow>
+                                                                    <Tooltip title={`⚠️ DEBT STATUS (Receivable): ${t.payment.debt_notes || 'Treasurer agreement'}. Click to edit transfer proof & clear debt tag.`} arrow>
                                                                         <Chip
                                                                             icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#92400e !important' }} />}
-                                                                            label="HUTANG"
+                                                                            label="DEBT"
                                                                             size="small"
                                                                             onClick={() => handleOpenProofModal(t.payment)}
                                                                             sx={{
@@ -1519,10 +1519,10 @@ export default function VisitorTicketsIndex({
                                                                         />
                                                                     </Tooltip>
                                                                 ) : t.payment.debt_settled_at ? (
-                                                                    <Tooltip title={`Hutang lunas & diselesaikan pada ${new Date(t.payment.debt_settled_at).toLocaleDateString('id-ID')}`} arrow>
+                                                                    <Tooltip title={`Debt settled & cleared on ${new Date(t.payment.debt_settled_at).toLocaleDateString('en-GB')}`} arrow>
                                                                         <Chip
                                                                             icon={<TaskAltIcon sx={{ fontSize: '11px !important', color: '#15803d !important' }} />}
-                                                                            label="LUNAS"
+                                                                            label="PAID"
                                                                             size="small"
                                                                             sx={{
                                                                                 height: 18,
@@ -1536,7 +1536,7 @@ export default function VisitorTicketsIndex({
                                                                         />
                                                                     </Tooltip>
                                                                 ) : null}
-                                                                <Tooltip title="Lihat & Edit Bukti Bayar / Tag Hutang">
+                                                                <Tooltip title="View & Edit Payment Proof / Debt Tag">
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleOpenProofModal(t.payment)}
@@ -1876,7 +1876,7 @@ export default function VisitorTicketsIndex({
                                                 {detailModal.ticket.payment.is_debt && (
                                                     <Chip
                                                         icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#92400e !important' }} />}
-                                                        label="TAG HUTANG"
+                                                        label="DEBT TAG"
                                                         size="small"
                                                         sx={{ height: 18, fontSize: '0.58rem', bgcolor: '#fef3c7', color: '#92400e', fontWeight: 900, border: '1px solid #f59e0b' }}
                                                     />
@@ -1899,7 +1899,7 @@ export default function VisitorTicketsIndex({
                                                         bgcolor: '#ffffff',
                                                     }}
                                                 >
-                                                    {detailModal.ticket.payment.is_debt ? 'Kelola Hutang / Bukti' : 'Lihat Bukti'}
+                                                    {detailModal.ticket.payment.is_debt ? 'Manage Debt / Proof' : 'View Proof'}
                                                 </Button>
                                                 <Button
                                                     size="small"
@@ -1933,7 +1933,7 @@ export default function VisitorTicketsIndex({
                                         </Typography>
                                         {detailModal.ticket.payment.is_debt && detailModal.ticket.payment.debt_notes && (
                                             <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 700, display: 'block', mt: 0.5, bgcolor: '#fef3c7', p: 0.8, borderRadius: '6px' }}>
-                                                📝 Catatan Hutang: "{detailModal.ticket.payment.debt_notes}"
+                                                📝 Debt Notes: "{detailModal.ticket.payment.debt_notes}"
                                             </Typography>
                                         )}
                                     </Box>
@@ -2229,7 +2229,7 @@ export default function VisitorTicketsIndex({
                         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, px: 2.5, bgcolor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                    📄 Bukti Bayar: <span style={{ fontFamily: 'monospace' }}>{proofModal.payment.payment_code}</span>
+                                    📄 Payment Proof: <span style={{ fontFamily: 'monospace' }}>{proofModal.payment.payment_code}</span>
                                 </Typography>
                                 <Chip
                                     label={proofModal.payment.status.toUpperCase()}
@@ -2246,7 +2246,7 @@ export default function VisitorTicketsIndex({
                                 {proofModal.payment.is_debt ? (
                                     <Chip
                                         icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#92400e !important' }} />}
-                                        label="⚠️ TAG HUTANG (TANGGUNGAN)"
+                                        label="⚠️ DEBT TAG (RECEIVABLE)"
                                         size="small"
                                         sx={{
                                             height: 22,
@@ -2260,7 +2260,7 @@ export default function VisitorTicketsIndex({
                                 ) : proofModal.payment.debt_settled_at ? (
                                     <Chip
                                         icon={<TaskAltIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
-                                        label="✅ LUNAS (HUTANG SELESAI)"
+                                        label="✅ PAID (DEBT CLEARED)"
                                         size="small"
                                         sx={{
                                             height: 22,
@@ -2299,13 +2299,13 @@ export default function VisitorTicketsIndex({
                                         <WarningAmberIcon sx={{ color: '#d97706', fontSize: 26, mt: 0.2 }} />
                                         <Box>
                                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#92400e', fontSize: '0.9rem' }}>
-                                                Status Pembayaran: TAG HUTANG / TANGGUNGAN
+                                                Payment Status: DEBT TAG / OUTSTANDING RECEIVABLE
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: '#78350f', fontWeight: 600, mt: 0.3, fontSize: '0.82rem' }}>
-                                                {proofModal.payment.debt_notes ? `Catatan Hutang: "${proofModal.payment.debt_notes}"` : 'Bukti saat ini adalah bukti chat / kesepakatan dengan bendahara.'}
+                                                {proofModal.payment.debt_notes ? `Debt Notes: "${proofModal.payment.debt_notes}"` : 'Current proof is a chat/agreement with the treasurer.'}
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: '#a16207', display: 'block', fontSize: '0.74rem', mt: 0.5 }}>
-                                                💡 Jika peserta sudah mentransfer uangnya, klik tombol <strong>"Ganti Bukti & Cabut Hutang"</strong> di bawah untuk mengunggah slip transfer asli dan mengubah status menjadi Lunas.
+                                                💡 Once the attendee has transferred the payment, click <strong>"Edit Payment Proof & Manage Debt"</strong> below to upload the transfer slip and mark as fully paid.
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -2326,7 +2326,7 @@ export default function VisitorTicketsIndex({
                                             '&:hover': { bgcolor: '#15803d' },
                                         }}
                                     >
-                                        Cabut Tag Hutang (Tandai Lunas)
+                                        Clear Debt Tag (Mark as Paid)
                                     </Button>
                                 </Box>
                             )}
@@ -2334,8 +2334,8 @@ export default function VisitorTicketsIndex({
                             {/* DEBT SETTLED INFO BANNER */}
                             {!proofModal.payment.is_debt && proofModal.payment.debt_settled_at && (
                                 <Alert severity="success" sx={{ mb: 2.5, borderRadius: '10px', fontWeight: 600, fontSize: '0.82rem' }}>
-                                    Tag Hutang untuk pembayaran ini telah dicabut dan ditandai Lunas pada{' '}
-                                    {new Date(proofModal.payment.debt_settled_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}.
+                                    The debt tag for this payment has been cleared and marked as Fully Paid on{' '}
+                                    {new Date(proofModal.payment.debt_settled_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}.
                                 </Alert>
                             )}
 
@@ -2355,7 +2355,7 @@ export default function VisitorTicketsIndex({
                                 {proofPreview ? (
                                     <Box>
                                         <Chip
-                                            label="Preview Bukti Baru (Belum Disimpan)"
+                                            label="New Proof Preview (Unsaved)"
                                             size="small"
                                             sx={{ position: 'absolute', top: 12, left: 12, bgcolor: '#f59e0b', color: '#000', fontWeight: 900, fontSize: '0.7rem' }}
                                         />
@@ -2366,7 +2366,7 @@ export default function VisitorTicketsIndex({
                                             sx={{ maxWidth: '100%', maxHeight: '55vh', objectFit: 'contain', borderRadius: '8px', mt: 2 }}
                                         />
                                         <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', mt: 1 }}>
-                                            File terpilih: {proofFile?.name} ({(proofFile?.size / 1024).toFixed(0)} KB)
+                                            Selected File: {proofFile?.name} ({(proofFile?.size / 1024).toFixed(0)} KB)
                                         </Typography>
                                     </Box>
                                 ) : proofModal.payment.proof_of_payment ? (
@@ -2374,7 +2374,7 @@ export default function VisitorTicketsIndex({
                                         <Box sx={{ py: 6 }}>
                                             <ReceiptLongIcon sx={{ fontSize: 60, color: '#38bdf8', mb: 1.5 }} />
                                             <Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 700, mb: 1.5 }}>
-                                                Dokumen Bukti Bayar (PDF)
+                                                Payment Proof Document (PDF)
                                             </Typography>
                                             <Button
                                                 variant="contained"
@@ -2387,7 +2387,7 @@ export default function VisitorTicketsIndex({
                                                 rel="noopener noreferrer"
                                                 sx={{ bgcolor: '#0284c7', textTransform: 'none', fontWeight: 800, borderRadius: '8px' }}
                                             >
-                                                Buka PDF Bukti Bayar di Tab Baru
+                                                Open Payment Proof PDF in New Tab
                                             </Button>
                                         </Box>
                                     ) : (
@@ -2403,7 +2403,7 @@ export default function VisitorTicketsIndex({
                                 ) : (
                                     <Box sx={{ py: 6, color: '#94a3b8' }}>
                                         <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                                            Belum ada file bukti bayar yang diunggah.
+                                            No payment proof file uploaded yet.
                                         </Typography>
                                     </Box>
                                 )}
@@ -2427,7 +2427,7 @@ export default function VisitorTicketsIndex({
                                         mb: 1.5,
                                     }}
                                 >
-                                    {isEditingProof ? 'Tutup Panel Edit' : '✏️ Edit Bukti Bayar & Kelola Tag Hutang'}
+                                    {isEditingProof ? 'Close Edit Panel' : '✏️ Edit Payment Proof & Manage Debt'}
                                 </Button>
 
                                 {isEditingProof && (
@@ -2443,7 +2443,7 @@ export default function VisitorTicketsIndex({
                                     >
                                         <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <CloudUploadIcon sx={{ color: '#094d42', fontSize: 20 }} />
-                                            Update File Bukti Bayar & Pengaturan Hutang
+                                            Update Payment Proof File & Debt Settings
                                         </Typography>
 
                                         <form onSubmit={handleUpdatePaymentProofSubmit}>
@@ -2451,7 +2451,7 @@ export default function VisitorTicketsIndex({
                                                 {/* File Upload input */}
                                                 <Box>
                                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', display: 'block', mb: 0.5 }}>
-                                                        Ganti File Bukti Transfer (JPG, PNG, PDF max 10MB)
+                                                        Replace Transfer Proof File (JPG, PNG, PDF max 10MB)
                                                     </Typography>
                                                     <Button
                                                         variant="outlined"
@@ -2471,7 +2471,7 @@ export default function VisitorTicketsIndex({
                                                             '&:hover': { bgcolor: '#f1f5f9', borderColor: '#094d42' },
                                                         }}
                                                     >
-                                                        {proofFile ? `File Dipilih: ${proofFile.name}` : 'Pilih File Bukti Bayar Baru dari Komputer'}
+                                                        {proofFile ? `Selected File: ${proofFile.name}` : 'Choose New Payment Proof File from Computer'}
                                                         <input
                                                             type="file"
                                                             hidden
@@ -2494,10 +2494,10 @@ export default function VisitorTicketsIndex({
                                                         label={
                                                             <Box>
                                                                 <Typography variant="body2" sx={{ fontWeight: 800, color: editIsDebt ? '#92400e' : '#1e293b' }}>
-                                                                    Tandai sebagai TAG HUTANG / Tanggungan
+                                                                    Mark as DEBT TAG (Outstanding Receivable)
                                                                 </Typography>
                                                                 <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
-                                                                    Centang jika peserta belum melunasi pembayaran (misal: bukti chat bendahara / janji bayar onsite).
+                                                                    Check if the attendee has not fully settled payment yet (e.g. treasurer agreement chat / promise to pay onsite).
                                                                 </Typography>
                                                             </Box>
                                                         }
@@ -2505,8 +2505,8 @@ export default function VisitorTicketsIndex({
 
                                                     {editIsDebt && (
                                                         <TextField
-                                                            label="Catatan Hutang / Kesepakatan Bendahara"
-                                                            placeholder="Contoh: Chat WA dg Ibu Ani (Bendahara), janji transfer tgl 20 Sep 2026"
+                                                            label="Debt Notes / Treasurer Agreement"
+                                                            placeholder="e.g. WhatsApp agreement with Treasurer (Mrs. Ani), promised transfer by Sept 20, 2026"
                                                             value={editDebtNotes}
                                                             onChange={(e) => setEditDebtNotes(e.target.value)}
                                                             fullWidth
@@ -2520,14 +2520,14 @@ export default function VisitorTicketsIndex({
 
                                                 {/* Payment status selector */}
                                                 <FormControl size="small" fullWidth>
-                                                    <InputLabel>Status Pembayaran</InputLabel>
+                                                    <InputLabel>Payment Status</InputLabel>
                                                     <Select
                                                         value={editStatus}
-                                                        label="Status Pembayaran"
+                                                        label="Payment Status"
                                                         onChange={(e) => setEditStatus(e.target.value)}
                                                         sx={{ bgcolor: '#ffffff' }}
                                                     >
-                                                        <MenuItem value="approved">✅ Approved (Tiket Aktif)</MenuItem>
+                                                        <MenuItem value="approved">✅ Approved (Ticket Active)</MenuItem>
                                                         <MenuItem value="pending">⏳ Pending Verification</MenuItem>
                                                         <MenuItem value="rejected">❌ Rejected</MenuItem>
                                                     </Select>
@@ -2535,8 +2535,8 @@ export default function VisitorTicketsIndex({
 
                                                 {/* Admin internal notes */}
                                                 <TextField
-                                                    label="Catatan Internal Admin (Opsional)"
-                                                    placeholder="Catatan tambahan internal panitia..."
+                                                    label="Internal Admin Notes (Optional)"
+                                                    placeholder="Additional internal committee notes..."
                                                     value={editAdminNotes}
                                                     onChange={(e) => setEditAdminNotes(e.target.value)}
                                                     fullWidth
@@ -2557,7 +2557,7 @@ export default function VisitorTicketsIndex({
                                                         size="small"
                                                         sx={{ textTransform: 'none' }}
                                                     >
-                                                        Batal
+                                                        Cancel
                                                     </Button>
                                                     <Button
                                                         type="submit"
@@ -2574,7 +2574,7 @@ export default function VisitorTicketsIndex({
                                                             '&:hover': { bgcolor: '#0d6356' }
                                                         }}
                                                     >
-                                                        {updatingProof ? 'Menyimpan...' : '💾 Simpan Perubahan Bukti & Status'}
+                                                        {updatingProof ? 'Saving...' : '💾 Save Proof & Status Changes'}
                                                     </Button>
                                                 </Box>
                                             </Stack>
@@ -2598,7 +2598,7 @@ export default function VisitorTicketsIndex({
                                     startIcon={<ReceiptLongIcon />}
                                     sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px', color: '#094d42', borderColor: '#86efac', bgcolor: '#ffffff' }}
                                 >
-                                    Kwitansi & Invoice
+                                    Receipt & Invoice
                                 </Button>
                             </Box>
 
@@ -2622,7 +2622,7 @@ export default function VisitorTicketsIndex({
                                             setDebtApprovalModal({
                                                 open: true,
                                                 paymentId: proofModal.payment.id,
-                                                debtNotes: proofModal.payment.debt_notes || 'Bukti chat dengan bendahara (Tanggungan)',
+                                                debtNotes: proofModal.payment.debt_notes || 'Treasurer agreement chat (Outstanding Receivable)',
                                             });
                                         }}
                                         sx={{
@@ -2634,14 +2634,14 @@ export default function VisitorTicketsIndex({
                                             '&:hover': { bgcolor: '#b45309' },
                                         }}
                                     >
-                                        Approve dgn TAG HUTANG
+                                        Approve with DEBT TAG
                                     </Button>
                                     <Button
                                         variant="contained"
                                         onClick={() => handleVerifyPayment(proofModal.payment.id)}
                                         sx={{ bgcolor: '#10b981', color: '#ffffff', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
                                     >
-                                        Approve & Activate (LUNAS)
+                                        Approve & Activate (PAID)
                                     </Button>
                                 </Stack>
                             )}
@@ -2662,7 +2662,7 @@ export default function VisitorTicketsIndex({
                                         '&:hover': { bgcolor: '#15803d' },
                                     }}
                                 >
-                                    Cabut Tag Hutang (Tandai Lunas)
+                                    Clear Debt Tag (Mark as Paid)
                                 </Button>
                             )}
                         </DialogActions>
@@ -2674,16 +2674,16 @@ export default function VisitorTicketsIndex({
             <Dialog open={debtApprovalModal.open} onClose={() => setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <DialogTitle sx={{ fontWeight: 900, color: '#92400e', display: 'flex', alignItems: 'center', gap: 1, bgcolor: '#fffbeb', borderBottom: '1px solid #fde68a' }}>
                     <WarningAmberIcon sx={{ color: '#d97706' }} />
-                    Verifikasi Pembayaran dengan TAG HUTANG
+                    Verify Payment with DEBT TAG
                 </DialogTitle>
                 <DialogContent sx={{ pt: 2.5 }}>
                     <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
-                        Tiket pengunjung akan <strong>diaktifkan</strong> dan <strong>E-Tiket QR Code</strong> akan langsung dikirimkan ke email peserta. Namun status pembayaran akan diberi tanda <strong>⚠️ HUTANG (Tanggungan)</strong> hingga peserta melunasi dan admin mengunggah bukti transfer asli.
+                        The visitor ticket will be <strong>activated</strong> and the <strong>E-Ticket QR Code</strong> will be sent immediately to the attendee's email. However, the payment status will be tagged as <strong>⚠️ DEBT (Outstanding / Receivable)</strong> until the attendee completes the transfer and the admin uploads the real payment proof.
                     </Typography>
 
                     <TextField
-                        label="Catatan Hutang / Kesepakatan Bendahara *"
-                        placeholder="Contoh: Chat persetujuan dg Bendahara (Ibu Ani), janji bayar tanggal 20 September 2026"
+                        label="Debt Notes / Treasurer Agreement *"
+                        placeholder="e.g. Approval chat with Treasurer, promised payment date September 20, 2026"
                         value={debtApprovalModal.debtNotes}
                         onChange={(e) => setDebtApprovalModal(prev => ({ ...prev, debtNotes: e.target.value }))}
                         fullWidth
@@ -2695,7 +2695,7 @@ export default function VisitorTicketsIndex({
                 </DialogContent>
                 <DialogActions sx={{ p: 2, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
                     <Button onClick={() => setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' })} sx={{ textTransform: 'none' }}>
-                        Batal
+                        Cancel
                     </Button>
                     <Button
                         onClick={handleVerifyWithDebtSubmit}
@@ -2710,7 +2710,7 @@ export default function VisitorTicketsIndex({
                             '&:hover': { bgcolor: '#b45309' },
                         }}
                     >
-                        Approve Tiket dgn TAG HUTANG
+                        Approve Ticket with DEBT TAG
                     </Button>
                 </DialogActions>
             </Dialog>
