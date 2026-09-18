@@ -121,16 +121,25 @@ class VisitorTicketAdminController extends Controller
 
         $tickets = $query->latest()->paginate(25)->withQueryString();
 
-        // Calculate global summary stats
+        // Cleanup any orphan payments that have no associated visitor tickets
+        try {
+            VisitorPayment::whereDoesntHave('tickets')->delete();
+        } catch (\Exception $e) {
+            Log::warning('Orphan visitor payments cleanup: ' . $e->getMessage());
+        }
+
+        // Calculate global summary stats linked to actual visitor tickets
         $stats = [
             'totalVisitors' => VisitorTicket::count(),
             'exclusivePaidCount' => VisitorTicket::where('visitor_type', 'exclusive')->where('status', 'active')->count(),
-            'nonExclusiveCount' => VisitorTicket::where('visitor_type', 'non_exclusive')->count(),
+            'nonExclusiveCount' => VisitorTicket::whereIn('visitor_type', ['non_exclusive', 'visitor'])->count(),
             'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
-            'pendingVerificationCount' => VisitorPayment::where('status', 'pending')->count(),
-            'debtCount' => VisitorPayment::where('is_debt', true)->count(),
-            'debtTotalRevenue' => VisitorPayment::where('is_debt', true)->sum('total_amount'),
-            'totalRevenue' => VisitorPayment::where('status', 'approved')->sum('total_amount'),
+            'pendingVerificationCount' => VisitorTicket::where('status', 'pending')->count(),
+            'debtCount' => VisitorTicket::whereHas('payment', function ($pq) {
+                $pq->where('is_debt', true);
+            })->count(),
+            'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
+            'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
         ];
 
         // Lanyard Templates from settings
@@ -775,8 +784,13 @@ class VisitorTicketAdminController extends Controller
         $ticket = VisitorTicket::findOrFail($id);
         $name = $ticket->visitor_name;
         $code = $ticket->ticket_code;
+        $paymentId = $ticket->payment_id;
 
         $ticket->delete();
+
+        if ($paymentId && VisitorTicket::where('payment_id', $paymentId)->count() === 0) {
+            VisitorPayment::where('id', $paymentId)->delete();
+        }
 
         return back()->with('success', "Tiket {$code} ({$name}) berhasil dihapus.");
     }
@@ -851,7 +865,13 @@ class VisitorTicketAdminController extends Controller
                 return back()->with('success', count($ticketIds) . ' tiket berhasil dibatalkan.');
 
             case 'delete':
+                $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
                 VisitorTicket::whereIn('id', $ticketIds)->delete();
+                foreach ($paymentIds as $pid) {
+                    if (VisitorTicket::where('payment_id', $pid)->count() === 0) {
+                        VisitorPayment::where('id', $pid)->delete();
+                    }
+                }
                 return back()->with('success', count($ticketIds) . ' tiket berhasil dihapus dari sistem.');
         }
 

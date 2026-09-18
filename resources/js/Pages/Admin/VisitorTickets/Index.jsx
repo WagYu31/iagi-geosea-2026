@@ -844,7 +844,7 @@ export default function VisitorTicketsIndex({
                             xs: 'repeat(1, 1fr)',
                             sm: 'repeat(2, 1fr)',
                             md: 'repeat(3, 1fr)',
-                            lg: 'repeat(5, 1fr)',
+                            lg: 'repeat(6, 1fr)',
                         },
                         gap: 2,
                         mb: 3,
@@ -852,9 +852,11 @@ export default function VisitorTicketsIndex({
                 >
                     {statCards.map((s) => {
                         const isCardActive = 
+                            (s.key === 'all' && !hasActiveFilters) ||
                             (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
-                            (s.key === 'pending' && statusFilter === 'pending');
+                            (s.key === 'pending' && statusFilter === 'pending') ||
+                            (s.key === 'debt' && debtFilter === 'debt');
 
                         return (
                             <Paper
