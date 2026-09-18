@@ -139,7 +139,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeText: '#b91c1c',
               icon: <HighlightOffIcon sx={{ fontSize: 44, color: '#ef4444' }} />,
               title: 'Payment Rejected',
-              desc: payment.notes || 'Payment proof does not match the invoice amount. Please contact the committee for assistance.',
+              desc: payment.notes || 'Payment receipt does not match the invoice amount. Please contact the committee for assistance.',
           }
         : {
               color: '#d97706',
@@ -150,7 +150,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
               badgeText: '#92400e',
               icon: <HourglassEmptyIcon sx={{ fontSize: 44, color: '#d97706', animation: 'spin 4s linear infinite' }} />,
               title: 'Awaiting Committee Verification',
-              desc: 'Your payment proof has been received and is being verified by the IAGI treasury team. This page will update automatically.',
+              desc: 'Your payment receipt has been received and is being verified by the IAGI treasury team. This page will update automatically.',
           };
 
     return (
