@@ -3351,7 +3351,7 @@ export default function Register({
                                 lineHeight: 1.4,
                             }}
                         >
-                            Pendaftaran Free Visitor Pass Belum Dibuka
+                            Free Visitor Pass Registration Opens Soon
                         </Typography>
 
                         <Typography
@@ -3364,9 +3364,9 @@ export default function Register({
                                 px: { xs: 0, sm: 2 },
                             }}
                         >
-                            Tiket <strong>Free Visitor Pass</strong> (Akses Area Pameran & Expo) baru akan dibuka secara otomatis pada tanggal <strong>3 November 2026</strong>.
+                            Online registration for the <strong>Free Visitor Pass</strong> (Exhibition & Expo Floor Access) will officially open on <strong>November 3, 2026</strong>.
                             <br /><br />
-                            Untuk menghadiri seluruh sesi seminar teknis, oral & poster presentation, lunch, dinner, banquet, dan kit konferensi, silakan pilih salah satu <strong>Full Conference Pass</strong> yang saat ini sudah dibuka.
+                            To access all technical seminar sessions, oral & poster presentations, lunches, dinners, banquet, and receive the official conference kit, please select one of the <strong>Full Conference Passes</strong> currently available.
                         </Typography>
 
                         <Paper
@@ -3394,7 +3394,7 @@ export default function Register({
                                     lineHeight: 1.5,
                                 }}
                             >
-                                Ingin akses penuh ke seluruh agenda ilmiah PIT IAGI - GEOSEA XIX 2026? Daftarkan diri Anda sekarang pada kategori <strong>Conference Pass</strong>.
+                                Looking for full access to all scientific agendas at 55th PIT IAGI & GEOSEA XIX 2026? Register now with a <strong>Conference Pass</strong>.
                             </Typography>
                         </Paper>
                     </Box>
@@ -3422,7 +3422,7 @@ export default function Register({
                             px: 2,
                         }}
                     >
-                        Tutup
+                        Close
                     </Button>
 
                     <Button
@@ -3450,7 +3450,7 @@ export default function Register({
                             },
                         }}
                     >
-                        Pilih Conference Pass
+                        Select Conference Pass
                     </Button>
                 </DialogActions>
             </Dialog>
