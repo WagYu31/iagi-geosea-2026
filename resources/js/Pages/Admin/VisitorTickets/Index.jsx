@@ -2622,7 +2622,7 @@ export default function VisitorTicketsIndex({
                                             setDebtApprovalModal({
                                                 open: true,
                                                 paymentId: proofModal.payment.id,
-                                                debtNotes: proofModal.payment.debt_notes || 'Treasurer agreement chat (Outstanding Receivable)',
+                                                debtNotes: proofModal.payment.debt_notes || 'Outstanding payment agreement with Secretariat',
                                             });
                                         }}
                                         sx={{
@@ -2674,16 +2674,16 @@ export default function VisitorTicketsIndex({
             <Dialog open={debtApprovalModal.open} onClose={() => setDebtApprovalModal({ open: false, paymentId: null, debtNotes: '' })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <DialogTitle sx={{ fontWeight: 900, color: '#92400e', display: 'flex', alignItems: 'center', gap: 1, bgcolor: '#fffbeb', borderBottom: '1px solid #fde68a' }}>
                     <WarningAmberIcon sx={{ color: '#d97706' }} />
-                    Verify Payment with DEBT TAG
+                    OUTSTANDING PAYMENT VERIFICATION
                 </DialogTitle>
                 <DialogContent sx={{ pt: 2.5 }}>
                     <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
-                        The visitor ticket will be <strong>activated</strong> and the <strong>E-Ticket QR Code</strong> will be sent immediately to the attendee's email. However, the payment status will be tagged as <strong>⚠️ DEBT (Outstanding / Receivable)</strong> until the attendee completes the transfer and the admin uploads the real payment proof.
+                        The participant ticket will be <strong>activated</strong>, and the <strong>E-Ticket QR Code</strong> will be sent directly to the participant’s email. The payment status will be marked as <strong>⚠️ OUTSTANDING VERIFICATION PAYMENT</strong> until the participant settles the payment and the admin uploads the original transfer receipt.
                     </Typography>
 
                     <TextField
-                        label="Debt Notes / Treasurer Agreement *"
-                        placeholder="e.g. Approval chat with Treasurer, promised payment date September 20, 2026"
+                        label="Outstanding Payment Note with Secretariat *"
+                        placeholder="e.g. Chat approval with Secretariat, promised payment date September 20, 2026"
                         value={debtApprovalModal.debtNotes}
                         onChange={(e) => setDebtApprovalModal(prev => ({ ...prev, debtNotes: e.target.value }))}
                         fullWidth
