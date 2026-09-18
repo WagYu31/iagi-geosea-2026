@@ -1536,7 +1536,7 @@ export default function VisitorTicketsIndex({
                                                                         />
                                                                     </Tooltip>
                                                                 ) : null}
-                                                                <Tooltip title="View & Update Payment">
+                                                                <Tooltip title="View & Update Payment Status">
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleOpenProofModal(t.payment)}
@@ -2305,7 +2305,7 @@ export default function VisitorTicketsIndex({
                                                 {proofModal.payment.debt_notes ? `Outstanding Note: "${proofModal.payment.debt_notes}"` : 'Current proof is a chat/agreement with the secretariat.'}
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: '#a16207', display: 'block', fontSize: '0.74rem', mt: 0.5 }}>
-                                                💡 Once the attendee has transferred the payment, click <strong>"Update Payment"</strong> below to upload the transfer slip and mark as fully paid.
+                                                💡 Once the attendee has transferred the payment, click <strong>"Update Payment Status"</strong> below to upload the transfer slip and mark as fully paid.
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -2427,7 +2427,7 @@ export default function VisitorTicketsIndex({
                                         mb: 1.5,
                                     }}
                                 >
-                                    {isEditingProof ? 'Close Edit Panel' : '✏️ Update Payment'}
+                                    {isEditingProof ? 'Close Edit Panel' : '✏️ Update Payment Status'}
                                 </Button>
 
                                 {isEditingProof && (
@@ -2443,7 +2443,7 @@ export default function VisitorTicketsIndex({
                                     >
                                         <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <CloudUploadIcon sx={{ color: '#094d42', fontSize: 20 }} />
-                                            Update Payment
+                                            Update Payment Status
                                         </Typography>
 
                                         <form onSubmit={handleUpdatePaymentProofSubmit}>
