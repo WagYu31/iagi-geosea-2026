@@ -393,7 +393,7 @@ export default function Receipt({
                                                         {t.ticket_code}
                                                     </TableCell>
                                                     <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.78rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>
-                                                        Rp {price.toLocaleString('id-ID')}
+                                                        IDR {price.toLocaleString('id-ID')}
                                                     </TableCell>
                                                 </TableRow>
                                             );
@@ -405,7 +405,7 @@ export default function Receipt({
                                                     Payment Unique Code:
                                                 </TableCell>
                                                 <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                    Rp {Number(payment.unique_code).toLocaleString('id-ID')}
+                                                    IDR {Number(payment.unique_code).toLocaleString('id-ID')}
                                                 </TableCell>
                                             </TableRow>
                                         )}
@@ -414,7 +414,7 @@ export default function Receipt({
                                                 TOTAL PAYMENT:
                                             </TableCell>
                                             <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.98rem', py: 1 }}>
-                                                Rp {totalAmount.toLocaleString('id-ID')}
+                                                IDR {totalAmount.toLocaleString('id-ID')}
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>

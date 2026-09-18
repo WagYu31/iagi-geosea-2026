@@ -431,7 +431,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         fontSize: '0.95rem',
                                     }}
                                 >
-                                    Rp {Number(payment.total_amount || 0).toLocaleString('id-ID')}
+                                    IDR {Number(payment.total_amount || 0).toLocaleString('id-ID')}
                                 </Typography>
                             </Box>
 

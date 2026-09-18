@@ -2195,7 +2195,7 @@ export default function Register({
                                                         textShadow: '0 1px 1px rgba(0,0,0,0.06)',
                                                     }}
                                                 >
-                                                    {isPaid ? `IDR ${totalEstimate.toLocaleString('id-ID')}` : 'FREE (Rp 0)'}
+                                                    {isPaid ? `IDR ${totalEstimate.toLocaleString('id-ID')}` : 'FREE (IDR 0)'}
                                                 </Typography>
                                             </Box>
                                         </Stack>
