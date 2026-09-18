@@ -1697,168 +1697,50 @@ export default function Register({
                                                 </Typography>
                                             </Box>
 
-                                            {/* Payment Method Selector Pills */}
-                                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.8, mb: 2.5 }}>
-                                                {/* Bank Transfer (Active & Recommended) */}
-                                                <Paper
-                                                    onClick={() => {
-                                                        setPaymentMethod('foreign_bank_transfer');
-                                                        setData('payment_method', 'foreign_bank_transfer');
-                                                    }}
-                                                    sx={{
-                                                        p: 2.2,
-                                                        borderRadius: '16px',
-                                                        background: paymentMethod === 'foreign_bank_transfer' 
-                                                            ? 'linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%)' 
-                                                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-                                                        border: `2px solid ${paymentMethod === 'foreign_bank_transfer' ? '#0284c7' : '#cbd5e1'}`,
-                                                        borderBottom: paymentMethod === 'foreign_bank_transfer' ? '5px solid #0369a1' : '4px solid #94a3b8',
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                        gap: 1.5,
-                                                        transition: 'all 0.18s ease',
-                                                        boxShadow: paymentMethod === 'foreign_bank_transfer' 
-                                                            ? '0 8px 20px rgba(2, 132, 199, 0.2), inset 0 1px 0 #ffffff' 
-                                                            : '0 3px 8px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff',
-                                                        transform: paymentMethod === 'foreign_bank_transfer' ? 'translateY(-2px)' : 'none',
-                                                        '&:hover': {
-                                                            borderColor: '#0284c7',
-                                                            borderBottom: '5px solid #0369a1',
-                                                            transform: 'translateY(-3px)',
-                                                            boxShadow: '0 10px 22px rgba(2, 132, 199, 0.25)',
-                                                        },
-                                                    }}
-                                                >
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                        <Box sx={{ p: 1, borderRadius: '10px', background: 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)', border: '1px solid #7dd3fc', borderBottom: '2.5px solid #0284c7', color: '#0284c7', boxShadow: '0 2px 4px rgba(2,132,199,0.2)' }}>
-                                                            <AccountBalanceIcon sx={{ fontSize: 22 }} />
-                                                        </Box>
-                                                        <Box>
-                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 600 }}>Direct Bank Transfer / SWIFT</Typography>
-                                                        </Box>
+                                            {/* Bank Transfer (Active & Official Method) */}
+                                            <Paper
+                                                sx={{
+                                                    p: 2,
+                                                    mb: 2.2,
+                                                    borderRadius: '16px',
+                                                    background: 'linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%)',
+                                                    border: '2px solid #0284c7',
+                                                    borderBottom: '5px solid #0369a1',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    gap: 1.5,
+                                                    boxShadow: '0 4px 14px rgba(2, 132, 199, 0.15), inset 0 1px 0 #ffffff',
+                                                }}
+                                            >
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                    <Box sx={{ p: 1, borderRadius: '10px', background: 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)', border: '1px solid #7dd3fc', borderBottom: '2.5px solid #0284c7', color: '#0284c7', boxShadow: '0 2px 4px rgba(2,132,199,0.2)' }}>
+                                                        <AccountBalanceIcon sx={{ fontSize: 22 }} />
                                                     </Box>
-                                                    <Chip
-                                                        label="ACTIVE"
-                                                        size="small"
-                                                        sx={{
-                                                            height: 22,
-                                                            fontSize: '0.64rem',
-                                                            fontWeight: 900,
-                                                            background: 'linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%)',
-                                                            color: '#14532d',
-                                                            border: '1px solid #86efac',
-                                                            borderBottom: '2.5px solid #16a34a',
-                                                            letterSpacing: '0.05em',
-                                                            boxShadow: '0 2px 4px rgba(22,163,74,0.15)',
-                                                        }}
-                                                    />
-                                                </Paper>
-
-                                                {/* QRIS Indonesia (Under Maintenance / Coming Soon) */}
-                                                <Paper
-                                                    onClick={() => {
-                                                        setPaymentMethod('qris_indo');
-                                                        setData('payment_method', 'qris_indo');
-                                                    }}
-                                                    sx={{
-                                                        p: 2.2,
-                                                        borderRadius: '16px',
-                                                        background: paymentMethod === 'qris_indo' 
-                                                            ? 'linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%)' 
-                                                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-                                                        border: `2px solid ${paymentMethod === 'qris_indo' ? '#f59e0b' : '#cbd5e1'}`,
-                                                        borderBottom: paymentMethod === 'qris_indo' ? '5px solid #b45309' : '4px solid #94a3b8',
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                        gap: 1.5,
-                                                        transition: 'all 0.18s ease',
-                                                        boxShadow: paymentMethod === 'qris_indo' 
-                                                            ? '0 8px 20px rgba(245, 158, 11, 0.2), inset 0 1px 0 #ffffff' 
-                                                            : '0 3px 8px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff',
-                                                        transform: paymentMethod === 'qris_indo' ? 'translateY(-2px)' : 'none',
-                                                        '&:hover': {
-                                                            borderColor: '#f59e0b',
-                                                            borderBottom: '5px solid #b45309',
-                                                            transform: 'translateY(-3px)',
-                                                            boxShadow: '0 10px 22px rgba(245, 158, 11, 0.25)',
-                                                        },
-                                                    }}
-                                                >
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                                        <Box sx={{ p: 1, borderRadius: '10px', background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)', border: '1px solid #fcd34d', borderBottom: '2.5px solid #d97706', color: '#d97706', boxShadow: '0 2px 4px rgba(217,119,6,0.2)' }}>
-                                                            <QrCodeIcon sx={{ fontSize: 22 }} />
-                                                        </Box>
-                                                        <Box>
-                                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>QRIS Indonesia</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', fontWeight: 600 }}>BCA, GoPay, OVO, Dana</Typography>
-                                                        </Box>
+                                                    <Box>
+                                                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a' }}>Bank Transfer</Typography>
+                                                        <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.74rem', fontWeight: 700 }}>Direct Bank Transfer / SWIFT (Official Payment Method)</Typography>
                                                     </Box>
-                                                    <Chip
-                                                        label="COMING SOON"
-                                                        size="small"
-                                                        sx={{
-                                                            height: 22,
-                                                            fontSize: '0.64rem',
-                                                            fontWeight: 900,
-                                                            background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
-                                                            color: '#78350f',
-                                                            border: '1px solid #fcd34d',
-                                                            borderBottom: '2.5px solid #b45309',
-                                                            letterSpacing: '0.04em',
-                                                            boxShadow: '0 2px 4px rgba(180,83,9,0.15)',
-                                                        }}
-                                                    />
-                                                </Paper>
-                                            </Box>
-
-                                            {/* QRIS Container (Maintenance / Coming Soon Display) */}
-                                            {paymentMethod === 'qris_indo' && (
-                                                <Box sx={{ textAlign: 'center', p: 3.5, background: 'linear-gradient(180deg, #fffdf5 0%, #fffbeb 100%)', borderRadius: '18px', border: '2px dashed #fcd34d', borderBottom: '4.5px solid #f59e0b', mb: 2.5, boxShadow: '0 6px 16px rgba(245, 158, 11, 0.1)' }}>
-                                                    <Box sx={{ display: 'inline-flex', p: 1.8, borderRadius: '50%', background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)', border: '1.5px solid #fcd34d', borderBottom: '3px solid #d97706', color: '#d97706', mb: 1.5, boxShadow: '0 4px 10px rgba(217, 119, 6, 0.2)' }}>
-                                                        <ConstructionIcon sx={{ fontSize: 34 }} />
-                                                    </Box>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#92400e', mb: 0.6 }}>
-                                                        QRIS Indonesia (Under Maintenance / Coming Soon)
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: '#b45309', maxWidth: 480, mx: 'auto', mb: 2.2, fontSize: '0.84rem', lineHeight: 1.55 }}>
-                                                        Instant QRIS payment gateway is currently under scheduled maintenance & gateway configuration. Please proceed with <strong>Bank Transfer</strong> for immediate registration processing.
-                                                    </Typography>
-                                                    <Button
-                                                        variant="contained"
-                                                        size="small"
-                                                        startIcon={<AccountBalanceIcon sx={{ fontSize: 16 }} />}
-                                                        onClick={() => {
-                                                            setPaymentMethod('foreign_bank_transfer');
-                                                            setData('payment_method', 'foreign_bank_transfer');
-                                                        }}
-                                                        sx={{
-                                                            background: 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)',
-                                                            color: '#fff',
-                                                            fontWeight: 900,
-                                                            borderRadius: '12px',
-                                                            textTransform: 'none',
-                                                            px: 3,
-                                                            py: 1,
-                                                            border: '1.5px solid #38bdf8',
-                                                            borderBottom: '3.5px solid #075985',
-                                                            boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)',
-                                                            '&:hover': { background: 'linear-gradient(180deg, #0369a1 0%, #075985 100%)', transform: 'translateY(-1px)' },
-                                                            '&:active': { transform: 'translateY(1px)', borderBottom: '1.5px solid #075985' },
-                                                        }}
-                                                    >
-                                                        Switch to Bank Transfer
-                                                    </Button>
                                                 </Box>
-                                            )}
+                                                <Chip
+                                                    label="ACTIVE"
+                                                    size="small"
+                                                    sx={{
+                                                        height: 22,
+                                                        fontSize: '0.64rem',
+                                                        fontWeight: 900,
+                                                        background: 'linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%)',
+                                                        color: '#14532d',
+                                                        border: '1px solid #86efac',
+                                                        borderBottom: '2.5px solid #16a34a',
+                                                        letterSpacing: '0.05em',
+                                                        boxShadow: '0 2px 4px rgba(22,163,74,0.15)',
+                                                    }}
+                                                />
+                                            </Paper>
 
                                             {/* Bank Transfer Container */}
-                                            {paymentMethod === 'foreign_bank_transfer' && (
-                                                <Box sx={{ p: 2.8, background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)', borderRadius: '18px', border: '1.5px solid #cbd5e1', borderBottom: '4.5px solid #94a3b8', mb: 2.5, boxShadow: '0 6px 18px rgba(0,0,0,0.04), inset 0 1px 0 #ffffff' }}>
+                                            <Box sx={{ p: 2.8, background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)', borderRadius: '18px', border: '1.5px solid #cbd5e1', borderBottom: '4.5px solid #94a3b8', mb: 2.5, boxShadow: '0 6px 18px rgba(0,0,0,0.04), inset 0 1px 0 #ffffff' }}>
                                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.2 }}>
                                                         <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0284c7', fontSize: '0.92rem' }}>
                                                             Bank Account
@@ -1916,7 +1798,6 @@ export default function Register({
                                                         </Box>
                                                     )}
                                                 </Box>
-                                            )}
 
                                             {/* Proof Upload Action Zone */}
                                             <Typography variant="caption" sx={{ fontWeight: 900, color: '#334155', display: 'block', mb: 1.2, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
