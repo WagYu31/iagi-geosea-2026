@@ -55,6 +55,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import axios from 'axios';
 
 export default function Register({
@@ -66,6 +67,8 @@ export default function Register({
     bankTransferInfo: propBankTransferInfo,
     eventDate: propEventDate,
     eventVenue: propEventVenue,
+    isFreeUnlocked: propIsFreeUnlocked,
+    freeUnlockTimestamp: propFreeUnlockTimestamp,
     settings = {},
 }) {
     const defaultCategories = [
@@ -234,6 +237,35 @@ export default function Register({
     
     const [selectedTab, setSelectedTab] = useState('all'); // 'all', 'conference', 'visitor'
     const [visitorType, setVisitorType] = useState('iagi_member_professional');
+
+    // Free Visitor Pass (non_exclusive) Unlock: Nov 3, 2026 00:00:00 WIB (UTC+7)
+    const FREE_UNLOCK_TS = propFreeUnlockTimestamp ?? settings.freeUnlockTimestamp ?? new Date('2026-11-03T00:00:00+07:00').getTime();
+
+    const [isFreeTicketOpen, setIsFreeTicketOpen] = useState(() => {
+        if (typeof propIsFreeUnlocked === 'boolean') return propIsFreeUnlocked;
+        if (typeof settings.isFreeUnlocked === 'boolean') return settings.isFreeUnlocked;
+        return Date.now() >= FREE_UNLOCK_TS;
+    });
+
+    const [comingSoonModalOpen, setComingSoonModalOpen] = useState(false);
+
+    // Auto-unlock live timer (triggers immediately when date transitions to Nov 3, 2026 00:00:00)
+    useEffect(() => {
+        if (Date.now() >= FREE_UNLOCK_TS) {
+            setIsFreeTicketOpen(true);
+            return;
+        }
+
+        const timer = setInterval(() => {
+            if (Date.now() >= FREE_UNLOCK_TS) {
+                setIsFreeTicketOpen(true);
+                clearInterval(timer);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [FREE_UNLOCK_TS]);
+
     const [paymentMethod, setPaymentMethod] = useState('foreign_bank_transfer');
     const [members, setMembers] = useState([
         { name: '', email: '', phone: '', institution: '' }
@@ -325,6 +357,10 @@ export default function Register({
     });
 
     const handleTypeChange = (type) => {
+        if (type === 'non_exclusive' && !isFreeTicketOpen) {
+            setComingSoonModalOpen(true);
+            return;
+        }
         setVisitorType(type);
         setData('visitor_type', type);
     };
@@ -580,6 +616,11 @@ export default function Register({
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        if (visitorType === 'non_exclusive' && !isFreeTicketOpen) {
+            setComingSoonModalOpen(true);
+            return;
+        }
+
         for (let i = 0; i < members.length; i++) {
             if (!members[i].name || !members[i].email) {
                 alert(`Please complete Full Name and Email for Participant #${i + 1}`);
@@ -1052,35 +1093,47 @@ export default function Register({
                                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.2 }}>
                                             {filteredCategories.map((cat) => {
                                                 const isSelected = visitorType === cat.id;
+                                                const isLocked = (cat.id === 'non_exclusive' || cat.price === 0) && !isFreeTicketOpen;
 
                                                 return (
                                                     <Box
                                                         key={cat.id}
-                                                        onClick={() => handleTypeChange(cat.id)}
+                                                        onClick={() => isLocked ? setComingSoonModalOpen(true) : handleTypeChange(cat.id)}
                                                         sx={{
                                                             cursor: 'pointer',
                                                             borderRadius: '20px',
-                                                            background: isSelected 
-                                                                ? (cat.bgSelected || 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)') 
-                                                                : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-                                                            border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
-                                                            borderBottom: isSelected 
-                                                                ? `6px solid ${cat.darkBorder || '#047857'}` 
-                                                                : '5px solid #cbd5e1',
+                                                            position: 'relative',
+                                                            background: isLocked
+                                                                ? 'linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%)'
+                                                                : isSelected 
+                                                                    ? (cat.bgSelected || 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)') 
+                                                                    : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                                            border: isLocked
+                                                                ? '2px dashed #cbd5e1'
+                                                                : `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#e2e8f0'}`,
+                                                            borderBottom: isLocked
+                                                                ? '5px solid #94a3b8'
+                                                                : isSelected 
+                                                                    ? `6px solid ${cat.darkBorder || '#047857'}` 
+                                                                    : '5px solid #cbd5e1',
                                                             p: 2.5,
                                                             height: '100%',
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             justifyContent: 'space-between',
                                                             transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                                            boxShadow: isSelected 
-                                                                ? `0 14px 30px -4px ${cat.borderSelected || '#10b981'}35, inset 0 2px 0 rgba(255,255,255,0.9)` 
-                                                                : '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
-                                                            transform: isSelected ? 'translateY(-3px)' : 'none',
+                                                            boxShadow: isLocked
+                                                                ? '0 4px 14px -2px rgba(15, 23, 42, 0.04), inset 0 1px 0 #ffffff'
+                                                                : isSelected 
+                                                                    ? `0 14px 30px -4px ${cat.borderSelected || '#10b981'}35, inset 0 2px 0 rgba(255,255,255,0.9)` 
+                                                                    : '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
+                                                            transform: isSelected && !isLocked ? 'translateY(-3px)' : 'none',
                                                             '&:hover': {
-                                                                borderColor: cat.borderSelected || '#10b981',
-                                                                borderBottom: isSelected ? `6px solid ${cat.darkBorder || '#047857'}` : `5px solid ${cat.borderSelected || '#94a3b8'}`,
-                                                                transform: 'translateY(-5px)',
+                                                                borderColor: isLocked ? '#94a3b8' : (cat.borderSelected || '#10b981'),
+                                                                borderBottom: isLocked 
+                                                                    ? '5px solid #64748b' 
+                                                                    : isSelected ? `6px solid ${cat.darkBorder || '#047857'}` : `5px solid ${cat.borderSelected || '#94a3b8'}`,
+                                                                transform: 'translateY(-4px)',
                                                                 boxShadow: `0 16px 32px -4px rgba(15, 23, 42, 0.12), inset 0 1px 0 #ffffff`,
                                                             },
                                                         }}
@@ -1093,10 +1146,12 @@ export default function Register({
                                                                         label={cat.tag || cat.badge}
                                                                         size="small"
                                                                         sx={{
-                                                                            background: isSelected 
-                                                                                ? `linear-gradient(180deg, #ffffff 0%, ${cat.tagBg || '#dcfce7'} 100%)` 
-                                                                                : `linear-gradient(180deg, ${cat.tagBg || '#dcfce7'} 0%, #f1f5f9 100%)`,
-                                                                            color: cat.tagColor || '#047857',
+                                                                            background: isLocked
+                                                                                ? 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)'
+                                                                                : isSelected 
+                                                                                    ? `linear-gradient(180deg, #ffffff 0%, ${cat.tagBg || '#dcfce7'} 100%)` 
+                                                                                    : `linear-gradient(180deg, ${cat.tagBg || '#dcfce7'} 0%, #f1f5f9 100%)`,
+                                                                            color: isLocked ? '#64748b' : (cat.tagColor || '#047857'),
                                                                             fontFamily: '"Plus Jakarta Sans", sans-serif',
                                                                             fontWeight: 900,
                                                                             fontSize: '0.66rem',
@@ -1104,34 +1159,75 @@ export default function Register({
                                                                             px: 1,
                                                                             letterSpacing: '0.06em',
                                                                             borderRadius: '8px',
-                                                                            border: `1.5px solid ${cat.borderSelected || '#86efac'}`,
-                                                                            borderBottom: `2.5px solid ${cat.darkBorder || '#4ade80'}`,
-                                                                            boxShadow: '0 2px 5px rgba(0,0,0,0.08)',
+                                                                            border: isLocked ? '1.5px solid #cbd5e1' : `1.5px solid ${cat.borderSelected || '#86efac'}`,
+                                                                            borderBottom: isLocked ? '2.5px solid #94a3b8' : `2.5px solid ${cat.darkBorder || '#4ade80'}`,
+                                                                            boxShadow: '0 2px 5px rgba(0,0,0,0.06)',
                                                                         }}
                                                                     />
+                                                                    {isLocked && (
+                                                                        <Chip
+                                                                            icon={<LockOutlinedIcon sx={{ fontSize: '12px !important', color: '#92400e !important' }} />}
+                                                                            label="COMING SOON"
+                                                                            size="small"
+                                                                            sx={{
+                                                                                background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
+                                                                                color: '#92400e',
+                                                                                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                                                                fontWeight: 900,
+                                                                                fontSize: '0.65rem',
+                                                                                height: 25,
+                                                                                px: 0.8,
+                                                                                letterSpacing: '0.05em',
+                                                                                borderRadius: '8px',
+                                                                                border: '1.5px solid #fcd34d',
+                                                                                borderBottom: '2.5px solid #f59e0b',
+                                                                                boxShadow: '0 2px 5px rgba(0,0,0,0.06)',
+                                                                            }}
+                                                                        />
+                                                                    )}
                                                                 </Stack>
 
-                                                                {/* 3D Radio Circle Indicator */}
-                                                                <Box
-                                                                    sx={{
-                                                                        width: 24,
-                                                                        height: 24,
-                                                                        borderRadius: '50%',
-                                                                        border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#cbd5e1'}`,
-                                                                        borderBottom: isSelected ? `3.5px solid ${cat.darkBorder || '#047857'}` : '3px solid #94a3b8',
-                                                                        background: isSelected 
-                                                                            ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' 
-                                                                            : 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        transition: 'all 0.18s ease',
-                                                                        flexShrink: 0,
-                                                                        boxShadow: isSelected ? `0 4px 10px ${cat.borderSelected || '#10b981'}70` : 'inset 0 1px 2px rgba(0,0,0,0.06)',
-                                                                    }}
-                                                                >
-                                                                    {isSelected && <CheckCircleIcon sx={{ fontSize: 16, color: '#ffffff' }} />}
-                                                                </Box>
+                                                                {/* 3D Radio Circle / Lock Indicator */}
+                                                                {isLocked ? (
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: 24,
+                                                                            height: 24,
+                                                                            borderRadius: '50%',
+                                                                            border: '2px solid #cbd5e1',
+                                                                            borderBottom: '3px solid #94a3b8',
+                                                                            background: 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            flexShrink: 0,
+                                                                            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)',
+                                                                        }}
+                                                                    >
+                                                                        <LockOutlinedIcon sx={{ fontSize: 13, color: '#64748b' }} />
+                                                                    </Box>
+                                                                ) : (
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: 24,
+                                                                            height: 24,
+                                                                            borderRadius: '50%',
+                                                                            border: `2px solid ${isSelected ? (cat.borderSelected || '#10b981') : '#cbd5e1'}`,
+                                                                            borderBottom: isSelected ? `3.5px solid ${cat.darkBorder || '#047857'}` : '3px solid #94a3b8',
+                                                                            background: isSelected 
+                                                                                ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' 
+                                                                                : 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            transition: 'all 0.18s ease',
+                                                                            flexShrink: 0,
+                                                                            boxShadow: isSelected ? `0 4px 10px ${cat.borderSelected || '#10b981'}70` : 'inset 0 1px 2px rgba(0,0,0,0.06)',
+                                                                        }}
+                                                                    >
+                                                                        {isSelected && <CheckCircleIcon sx={{ fontSize: 16, color: '#ffffff' }} />}
+                                                                    </Box>
+                                                                )}
                                                             </Box>
 
                                                             {/* Category Title */}
@@ -1140,7 +1236,7 @@ export default function Register({
                                                                 sx={{
                                                                     fontFamily: '"Plus Jakarta Sans", sans-serif',
                                                                     fontWeight: 900,
-                                                                    color: '#0f172a',
+                                                                    color: isLocked ? '#475569' : '#0f172a',
                                                                     fontSize: '1.08rem',
                                                                     mb: 0.8,
                                                                     lineHeight: 1.3,
@@ -1150,22 +1246,38 @@ export default function Register({
                                                                 {cat.name}
                                                             </Typography>
 
-                                                            {/* Price Display with Outfit font & separated IDR prefix */}
-                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1.2, flexWrap: 'wrap' }}>
+                                                            {/* Price Display */}
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.2, flexWrap: 'wrap' }}>
                                                                 {cat.price === 0 ? (
-                                                                    <Typography
-                                                                        sx={{
-                                                                            fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
-                                                                            fontWeight: 900,
-                                                                            color: '#059669',
-                                                                            fontSize: '1.45rem',
-                                                                            letterSpacing: '0.02em',
-                                                                            lineHeight: 1,
-                                                                            textShadow: '0 1px 1px rgba(5,150,105,0.2)',
-                                                                        }}
-                                                                    >
-                                                                        FREE
-                                                                    </Typography>
+                                                                    <>
+                                                                        <Typography
+                                                                            sx={{
+                                                                                fontFamily: '"Outfit", "Plus Jakarta Sans", sans-serif',
+                                                                                fontWeight: 900,
+                                                                                color: isLocked ? '#64748b' : '#059669',
+                                                                                fontSize: '1.45rem',
+                                                                                letterSpacing: '0.02em',
+                                                                                lineHeight: 1,
+                                                                                textShadow: isLocked ? 'none' : '0 1px 1px rgba(5,150,105,0.2)',
+                                                                            }}
+                                                                        >
+                                                                            FREE
+                                                                        </Typography>
+                                                                        {isLocked && (
+                                                                            <Chip
+                                                                                label="LOCKED"
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    height: 20,
+                                                                                    fontSize: '0.62rem',
+                                                                                    fontWeight: 900,
+                                                                                    bgcolor: '#f1f5f9',
+                                                                                    color: '#64748b',
+                                                                                    border: '1px solid #cbd5e1',
+                                                                                }}
+                                                                            />
+                                                                        )}
+                                                                    </>
                                                                 ) : (
                                                                     <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
                                                                         <Typography
@@ -1222,12 +1334,12 @@ export default function Register({
                                                                 <Stack spacing={0.7}>
                                                                     {cat.perks.map((perk, perkIdx) => (
                                                                         <Box key={perkIdx} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                                            <CheckCircleIcon sx={{ fontSize: 14, color: cat.borderSelected || '#10b981', flexShrink: 0 }} />
+                                                                            <CheckCircleIcon sx={{ fontSize: 14, color: isLocked ? '#94a3b8' : (cat.borderSelected || '#10b981'), flexShrink: 0 }} />
                                                                             <Typography
                                                                                 variant="caption"
                                                                                 sx={{
                                                                                     fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                                                                    color: '#334155',
+                                                                                    color: isLocked ? '#64748b' : '#334155',
                                                                                     fontWeight: 700,
                                                                                     fontSize: '0.74rem',
                                                                                 }}
@@ -3119,6 +3231,226 @@ export default function Register({
                         }}
                     >
                         Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* COMING SOON MODAL FOR FREE VISITOR PASS */}
+            <Dialog
+                open={comingSoonModalOpen}
+                onClose={() => setComingSoonModalOpen(false)}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '24px',
+                        border: '1.5px solid #cbd5e1',
+                        borderBottom: '6px solid #94a3b8',
+                        boxShadow: '0 24px 48px -12px rgba(15, 23, 42, 0.25)',
+                        overflow: 'hidden',
+                        background: '#ffffff',
+                    }
+                }}
+            >
+                <Box
+                    sx={{
+                        p: 3,
+                        background: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%)',
+                        color: '#ffffff',
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box
+                            sx={{
+                                width: 44,
+                                height: 44,
+                                borderRadius: '14px',
+                                background: 'rgba(255,255,255,0.15)',
+                                backdropFilter: 'blur(8px)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1px solid rgba(255,255,255,0.25)',
+                                borderBottom: '3px solid rgba(0,0,0,0.2)',
+                            }}
+                        >
+                            <LockOutlinedIcon sx={{ fontSize: 24, color: '#fef08a' }} />
+                        </Box>
+                        <Box>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                    fontWeight: 900,
+                                    fontSize: '1.15rem',
+                                    letterSpacing: '-0.02em',
+                                    lineHeight: 1.2,
+                                }}
+                            >
+                                Free Visitor Pass Coming Soon
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: '#a7f3d0',
+                                    fontWeight: 600,
+                                    fontSize: '0.78rem',
+                                }}
+                            >
+                                55th PIT IAGI & GEOSEA XIX 2026
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <IconButton
+                        onClick={() => setComingSoonModalOpen(false)}
+                        sx={{
+                            color: '#ffffff',
+                            bgcolor: 'rgba(255,255,255,0.1)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
+                        }}
+                    >
+                        <CloseIcon sx={{ fontSize: 20 }} />
+                    </IconButton>
+                </Box>
+
+                <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
+                    <Box sx={{ textAlign: 'center', my: 1 }}>
+                        <Box
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                px: 2.2,
+                                py: 0.8,
+                                borderRadius: '999px',
+                                background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
+                                border: '1.5px solid #fcd34d',
+                                borderBottom: '3px solid #f59e0b',
+                                color: '#92400e',
+                                fontWeight: 900,
+                                fontSize: '0.85rem',
+                                mb: 2.5,
+                            }}
+                        >
+                            <CalendarMonthIcon sx={{ fontSize: 18 }} />
+                            <span>Opens on November 3, 2026 (00:00 WIB)</span>
+                        </Box>
+
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                fontWeight: 900,
+                                color: '#0f172a',
+                                mb: 1.5,
+                                fontSize: '1.15rem',
+                                lineHeight: 1.4,
+                            }}
+                        >
+                            Pendaftaran Free Visitor Pass Belum Dibuka
+                        </Typography>
+
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                color: '#475569',
+                                lineHeight: 1.7,
+                                mb: 3,
+                                px: { xs: 0, sm: 2 },
+                            }}
+                        >
+                            Tiket <strong>Free Visitor Pass</strong> (Akses Area Pameran & Expo) baru akan dibuka secara otomatis pada tanggal <strong>3 November 2026</strong>.
+                            <br /><br />
+                            Untuk menghadiri seluruh sesi seminar teknis, oral & poster presentation, lunch, dinner, banquet, dan kit konferensi, silakan pilih salah satu <strong>Full Conference Pass</strong> yang saat ini sudah dibuka.
+                        </Typography>
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 2,
+                                borderRadius: '16px',
+                                background: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)',
+                                border: '1.5px solid #a7f3d0',
+                                borderBottom: '3.5px solid #34d399',
+                                textAlign: 'left',
+                                display: 'flex',
+                                gap: 1.5,
+                                alignItems: 'flex-start',
+                            }}
+                        >
+                            <CheckCircleIcon sx={{ fontSize: 20, color: '#059669', mt: 0.2, flexShrink: 0 }} />
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                                    color: '#065f46',
+                                    fontWeight: 700,
+                                    fontSize: '0.8rem',
+                                    lineHeight: 1.5,
+                                }}
+                            >
+                                Ingin akses penuh ke seluruh agenda ilmiah PIT IAGI - GEOSEA XIX 2026? Daftarkan diri Anda sekarang pada kategori <strong>Conference Pass</strong>.
+                            </Typography>
+                        </Paper>
+                    </Box>
+                </DialogContent>
+
+                <DialogActions
+                    sx={{
+                        p: 2.2,
+                        px: 3.5,
+                        bgcolor: '#f8fafc',
+                        borderTop: '1.5px solid #e2e8f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
+                    }}
+                >
+                    <Button
+                        onClick={() => setComingSoonModalOpen(false)}
+                        sx={{
+                            color: '#64748b',
+                            fontWeight: 800,
+                            textTransform: 'none',
+                            px: 2,
+                        }}
+                    >
+                        Tutup
+                    </Button>
+
+                    <Button
+                        onClick={() => {
+                            setComingSoonModalOpen(false);
+                            setSelectedTab('conference');
+                            setVisitorType('iagi_member_professional');
+                            setData('visitor_type', 'iagi_member_professional');
+                        }}
+                        variant="contained"
+                        sx={{
+                            background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
+                            color: '#ffffff',
+                            fontWeight: 900,
+                            textTransform: 'none',
+                            borderRadius: '12px',
+                            px: 2.8,
+                            py: 1,
+                            border: '1.5px solid #34d399',
+                            borderBottom: '3.5px solid #047857',
+                            boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                            '&:hover': {
+                                background: 'linear-gradient(180deg, #34d399 0%, #10b981 100%)',
+                                transform: 'translateY(-1px)',
+                            },
+                        }}
+                    >
+                        Pilih Conference Pass
                     </Button>
                 </DialogActions>
             </Dialog>

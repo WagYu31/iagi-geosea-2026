@@ -72,6 +72,11 @@ class VisitorTicketController extends Controller
         $priceNonIagiExpat = floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000)));
         $priceStudent = floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000)));
 
+        // Free visitor pass is locked until Nov 3, 2026 00:00:00 WIB
+        $freeTicketUnlockTime = \Carbon\Carbon::create(2026, 11, 3, 0, 0, 0, 'Asia/Jakarta');
+        $isFreeUnlocked = now('Asia/Jakarta')->greaterThanOrEqualTo($freeTicketUnlockTime);
+        $freeUnlockTimestamp = $freeTicketUnlockTime->timestamp * 1000;
+
         // Full category configuration list matching official conference pricing (regular prices)
         $categories = [
             [
@@ -165,6 +170,7 @@ class VisitorTicketController extends Controller
                 'tagBg' => '#d1fae5',
                 'description' => 'For anyone who visiting on site',
                 'perks' => ['Free Registration', 'Access Exhibition Hall only'],
+                'isLocked' => !$isFreeUnlocked,
             ],
         ];
 
@@ -177,6 +183,8 @@ class VisitorTicketController extends Controller
             'bankTransferInfo' => $bankTransferInfo,
             'eventDate' => $eventDate,
             'eventVenue' => $eventVenue,
+            'isFreeUnlocked' => $isFreeUnlocked,
+            'freeUnlockTimestamp' => $freeUnlockTimestamp,
             'settings' => [
                 'priceExclusive' => $priceExclusive,
                 'priceNonExclusive' => $priceNonExclusive,
@@ -186,6 +194,8 @@ class VisitorTicketController extends Controller
                 'bankInfo' => $bankTransferInfo,
                 'eventDate' => $eventDate,
                 'eventVenue' => $eventVenue,
+                'isFreeUnlocked' => $isFreeUnlocked,
+                'freeUnlockTimestamp' => $freeUnlockTimestamp,
             ]
         ]);
     }
@@ -219,6 +229,17 @@ class VisitorTicketController extends Controller
         ]);
 
         $visitorType = $request->visitor_type;
+
+        // Prevent free ticket registration before Nov 3, 2026 00:00:00 WIB
+        if ($visitorType === 'non_exclusive') {
+            $freeTicketUnlockTime = \Carbon\Carbon::create(2026, 11, 3, 0, 0, 0, 'Asia/Jakarta');
+            if (now('Asia/Jakarta')->lessThan($freeTicketUnlockTime)) {
+                return back()->withErrors([
+                    'visitor_type' => 'Visitor Pass (Free) registration is coming soon and is not currently open.'
+                ]);
+            }
+        }
+
         $members = $request->members;
         $totalMembers = count($members);
 
