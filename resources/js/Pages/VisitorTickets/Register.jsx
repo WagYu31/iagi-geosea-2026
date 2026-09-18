@@ -3336,7 +3336,7 @@ export default function Register({
                                 mb: 2.5,
                             }}
                         >
-                            <CalendarMonthIcon sx={{ fontSize: 18 }} />
+                            <EventIcon sx={{ fontSize: 18 }} />
                             <span>Opens on November 3, 2026 (00:00 WIB)</span>
                         </Box>
 
