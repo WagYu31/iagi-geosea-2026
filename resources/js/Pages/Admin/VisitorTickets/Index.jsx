@@ -397,7 +397,7 @@ export default function VisitorTicketsIndex({
 
     // Settle Debt Quick Action (Cabut Tag Hutang)
     const handleSettleDebtQuick = (paymentId) => {
-        if (confirm('Clear DEBT TAG and mark this payment as fully PAID?')) {
+        if (confirm('Clear INVOICE TAG and mark this payment as fully PAID?')) {
             router.patch(route('admin.visitorTickets.toggleDebt', paymentId), {
                 is_debt: false,
             }, {
@@ -2229,7 +2229,7 @@ export default function VisitorTicketsIndex({
                         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, px: 2.5, bgcolor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a' }}>
-                                    📄 Payment Proof: <span style={{ fontFamily: 'monospace' }}>{proofModal.payment.payment_code}</span>
+                                    📄 Payment Code: <span style={{ fontFamily: 'monospace' }}>{proofModal.payment.payment_code}</span>
                                 </Typography>
                                 <Chip
                                     label={proofModal.payment.status.toUpperCase()}
@@ -2246,7 +2246,7 @@ export default function VisitorTicketsIndex({
                                 {proofModal.payment.is_debt ? (
                                     <Chip
                                         icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#92400e !important' }} />}
-                                        label="⚠️ DEBT TAG (RECEIVABLE)"
+                                        label="⚠️ INVOICE TAG (OUTSTANDING)"
                                         size="small"
                                         sx={{
                                             height: 22,
@@ -2260,7 +2260,7 @@ export default function VisitorTicketsIndex({
                                 ) : proofModal.payment.debt_settled_at ? (
                                     <Chip
                                         icon={<TaskAltIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
-                                        label="✅ PAID (DEBT CLEARED)"
+                                        label="✅ PAID (INVOICE CLEARED)"
                                         size="small"
                                         sx={{
                                             height: 22,
@@ -2299,10 +2299,10 @@ export default function VisitorTicketsIndex({
                                         <WarningAmberIcon sx={{ color: '#d97706', fontSize: 26, mt: 0.2 }} />
                                         <Box>
                                             <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#92400e', fontSize: '0.9rem' }}>
-                                                Payment Status: DEBT TAG / OUTSTANDING RECEIVABLE
+                                                Payment Status: INVOICE TAG / OUTSTANDING RECEIVABLE
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: '#78350f', fontWeight: 600, mt: 0.3, fontSize: '0.82rem' }}>
-                                                {proofModal.payment.debt_notes ? `Debt Notes: "${proofModal.payment.debt_notes}"` : 'Current proof is a chat/agreement with the treasurer.'}
+                                                {proofModal.payment.debt_notes ? `Outstanding Note: "${proofModal.payment.debt_notes}"` : 'Current proof is a chat/agreement with the secretariat.'}
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: '#a16207', display: 'block', fontSize: '0.74rem', mt: 0.5 }}>
                                                 💡 Once the attendee has transferred the payment, click <strong>"Edit Payment Proof & Manage Debt"</strong> below to upload the transfer slip and mark as fully paid.
@@ -2326,7 +2326,7 @@ export default function VisitorTicketsIndex({
                                             '&:hover': { bgcolor: '#15803d' },
                                         }}
                                     >
-                                        Clear Debt Tag (Mark as Paid)
+                                        Clear Invoice Tag (Mark as Paid)
                                     </Button>
                                 </Box>
                             )}
@@ -2334,7 +2334,7 @@ export default function VisitorTicketsIndex({
                             {/* DEBT SETTLED INFO BANNER */}
                             {!proofModal.payment.is_debt && proofModal.payment.debt_settled_at && (
                                 <Alert severity="success" sx={{ mb: 2.5, borderRadius: '10px', fontWeight: 600, fontSize: '0.82rem' }}>
-                                    The debt tag for this payment has been cleared and marked as Fully Paid on{' '}
+                                    The invoice tag for this payment has been cleared and marked as Fully Paid on{' '}
                                     {new Date(proofModal.payment.debt_settled_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })}.
                                 </Alert>
                             )}
@@ -2662,7 +2662,7 @@ export default function VisitorTicketsIndex({
                                         '&:hover': { bgcolor: '#15803d' },
                                     }}
                                 >
-                                    Clear Debt Tag (Mark as Paid)
+                                    Clear Invoice Tag (Mark as Paid)
                                 </Button>
                             )}
                         </DialogActions>
