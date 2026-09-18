@@ -247,8 +247,6 @@ export default function Register({
         return Date.now() >= FREE_UNLOCK_TS;
     });
 
-    const [comingSoonModalOpen, setComingSoonModalOpen] = useState(false);
-
     // Auto-unlock live timer (triggers immediately when date transitions to Nov 3, 2026 00:00:00)
     useEffect(() => {
         if (Date.now() >= FREE_UNLOCK_TS) {
@@ -358,7 +356,6 @@ export default function Register({
 
     const handleTypeChange = (type) => {
         if (type === 'non_exclusive' && !isFreeTicketOpen) {
-            setComingSoonModalOpen(true);
             return;
         }
         setVisitorType(type);
@@ -617,7 +614,6 @@ export default function Register({
         e.preventDefault();
         
         if (visitorType === 'non_exclusive' && !isFreeTicketOpen) {
-            setComingSoonModalOpen(true);
             return;
         }
 
@@ -1098,9 +1094,10 @@ export default function Register({
                                                 return (
                                                     <Box
                                                         key={cat.id}
-                                                        onClick={() => isLocked ? setComingSoonModalOpen(true) : handleTypeChange(cat.id)}
+                                                        onClick={() => !isLocked && handleTypeChange(cat.id)}
                                                         sx={{
-                                                            cursor: 'pointer',
+                                                            cursor: isLocked ? 'not-allowed' : 'pointer',
+                                                            opacity: isLocked ? 0.8 : 1,
                                                             borderRadius: '20px',
                                                             position: 'relative',
                                                             background: isLocked
@@ -1128,11 +1125,9 @@ export default function Register({
                                                                     ? `0 14px 30px -4px ${cat.borderSelected || '#10b981'}35, inset 0 2px 0 rgba(255,255,255,0.9)` 
                                                                     : '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
                                                             transform: isSelected && !isLocked ? 'translateY(-3px)' : 'none',
-                                                            '&:hover': {
-                                                                borderColor: isLocked ? '#94a3b8' : (cat.borderSelected || '#10b981'),
-                                                                borderBottom: isLocked 
-                                                                    ? '5px solid #64748b' 
-                                                                    : isSelected ? `6px solid ${cat.darkBorder || '#047857'}` : `5px solid ${cat.borderSelected || '#94a3b8'}`,
+                                                            '&:hover': isLocked ? {} : {
+                                                                borderColor: cat.borderSelected || '#10b981',
+                                                                borderBottom: isSelected ? `6px solid ${cat.darkBorder || '#047857'}` : `5px solid ${cat.borderSelected || '#94a3b8'}`,
                                                                 transform: 'translateY(-4px)',
                                                                 boxShadow: `0 16px 32px -4px rgba(15, 23, 42, 0.12), inset 0 1px 0 #ffffff`,
                                                             },
@@ -3231,226 +3226,6 @@ export default function Register({
                         }}
                     >
                         Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* COMING SOON MODAL FOR FREE VISITOR PASS */}
-            <Dialog
-                open={comingSoonModalOpen}
-                onClose={() => setComingSoonModalOpen(false)}
-                maxWidth="sm"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: '24px',
-                        border: '1.5px solid #cbd5e1',
-                        borderBottom: '6px solid #94a3b8',
-                        boxShadow: '0 24px 48px -12px rgba(15, 23, 42, 0.25)',
-                        overflow: 'hidden',
-                        background: '#ffffff',
-                    }
-                }}
-            >
-                <Box
-                    sx={{
-                        p: 3,
-                        background: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%)',
-                        color: '#ffffff',
-                        position: 'relative',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box
-                            sx={{
-                                width: 44,
-                                height: 44,
-                                borderRadius: '14px',
-                                background: 'rgba(255,255,255,0.15)',
-                                backdropFilter: 'blur(8px)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1px solid rgba(255,255,255,0.25)',
-                                borderBottom: '3px solid rgba(0,0,0,0.2)',
-                            }}
-                        >
-                            <LockOutlinedIcon sx={{ fontSize: 24, color: '#fef08a' }} />
-                        </Box>
-                        <Box>
-                            <Typography
-                                variant="h6"
-                                sx={{
-                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                    fontWeight: 900,
-                                    fontSize: '1.15rem',
-                                    letterSpacing: '-0.02em',
-                                    lineHeight: 1.2,
-                                }}
-                            >
-                                Free Visitor Pass Coming Soon
-                            </Typography>
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    color: '#a7f3d0',
-                                    fontWeight: 600,
-                                    fontSize: '0.78rem',
-                                }}
-                            >
-                                55th PIT IAGI & GEOSEA XIX 2026
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <IconButton
-                        onClick={() => setComingSoonModalOpen(false)}
-                        sx={{
-                            color: '#ffffff',
-                            bgcolor: 'rgba(255,255,255,0.1)',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
-                        }}
-                    >
-                        <CloseIcon sx={{ fontSize: 20 }} />
-                    </IconButton>
-                </Box>
-
-                <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
-                    <Box sx={{ textAlign: 'center', my: 1 }}>
-                        <Box
-                            sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                px: 2.2,
-                                py: 0.8,
-                                borderRadius: '999px',
-                                background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
-                                border: '1.5px solid #fcd34d',
-                                borderBottom: '3px solid #f59e0b',
-                                color: '#92400e',
-                                fontWeight: 900,
-                                fontSize: '0.85rem',
-                                mb: 2.5,
-                            }}
-                        >
-                            <EventIcon sx={{ fontSize: 18 }} />
-                            <span>Opens on November 3, 2026 (00:00 WIB)</span>
-                        </Box>
-
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                fontWeight: 900,
-                                color: '#0f172a',
-                                mb: 1.5,
-                                fontSize: '1.15rem',
-                                lineHeight: 1.4,
-                            }}
-                        >
-                            Free Visitor Pass Registration Opens Soon
-                        </Typography>
-
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                color: '#475569',
-                                lineHeight: 1.7,
-                                mb: 3,
-                                px: { xs: 0, sm: 2 },
-                            }}
-                        >
-                            Online registration for the <strong>Free Visitor Pass</strong> (Exhibition & Expo Floor Access) will officially open on <strong>November 3, 2026</strong>.
-                            <br /><br />
-                            To access all technical seminar sessions, oral & poster presentations, lunches, dinners, banquet, and receive the official conference kit, please select one of the <strong>Full Conference Passes</strong> currently available.
-                        </Typography>
-
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 2,
-                                borderRadius: '16px',
-                                background: 'linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%)',
-                                border: '1.5px solid #a7f3d0',
-                                borderBottom: '3.5px solid #34d399',
-                                textAlign: 'left',
-                                display: 'flex',
-                                gap: 1.5,
-                                alignItems: 'flex-start',
-                            }}
-                        >
-                            <CheckCircleIcon sx={{ fontSize: 20, color: '#059669', mt: 0.2, flexShrink: 0 }} />
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
-                                    color: '#065f46',
-                                    fontWeight: 700,
-                                    fontSize: '0.8rem',
-                                    lineHeight: 1.5,
-                                }}
-                            >
-                                Looking for full access to all scientific agendas at 55th PIT IAGI & GEOSEA XIX 2026? Register now with a <strong>Conference Pass</strong>.
-                            </Typography>
-                        </Paper>
-                    </Box>
-                </DialogContent>
-
-                <DialogActions
-                    sx={{
-                        p: 2.2,
-                        px: 3.5,
-                        bgcolor: '#f8fafc',
-                        borderTop: '1.5px solid #e2e8f0',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: 1.5,
-                    }}
-                >
-                    <Button
-                        onClick={() => setComingSoonModalOpen(false)}
-                        sx={{
-                            color: '#64748b',
-                            fontWeight: 800,
-                            textTransform: 'none',
-                            px: 2,
-                        }}
-                    >
-                        Close
-                    </Button>
-
-                    <Button
-                        onClick={() => {
-                            setComingSoonModalOpen(false);
-                            setSelectedTab('conference');
-                            setVisitorType('iagi_member_professional');
-                            setData('visitor_type', 'iagi_member_professional');
-                        }}
-                        variant="contained"
-                        sx={{
-                            background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
-                            color: '#ffffff',
-                            fontWeight: 900,
-                            textTransform: 'none',
-                            borderRadius: '12px',
-                            px: 2.8,
-                            py: 1,
-                            border: '1.5px solid #34d399',
-                            borderBottom: '3.5px solid #047857',
-                            boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
-                            '&:hover': {
-                                background: 'linear-gradient(180deg, #34d399 0%, #10b981 100%)',
-                                transform: 'translateY(-1px)',
-                            },
-                        }}
-                    >
-                        Select Conference Pass
                     </Button>
                 </DialogActions>
             </Dialog>
