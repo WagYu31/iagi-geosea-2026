@@ -2634,14 +2634,14 @@ export default function VisitorTicketsIndex({
                                             '&:hover': { bgcolor: '#b45309' },
                                         }}
                                     >
-                                        Approve with DEBT TAG
+                                        Approve - Invoice
                                     </Button>
                                     <Button
                                         variant="contained"
                                         onClick={() => handleVerifyPayment(proofModal.payment.id)}
                                         sx={{ bgcolor: '#10b981', color: '#ffffff', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
                                     >
-                                        Approve & Activate (PAID)
+                                        Approve - Fully Paid
                                     </Button>
                                 </Stack>
                             )}
@@ -2710,7 +2710,7 @@ export default function VisitorTicketsIndex({
                             '&:hover': { bgcolor: '#b45309' },
                         }}
                     >
-                        Approve Ticket with DEBT TAG
+                        Approve - Invoice
                     </Button>
                 </DialogActions>
             </Dialog>
