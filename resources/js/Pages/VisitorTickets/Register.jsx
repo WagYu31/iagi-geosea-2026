@@ -625,7 +625,7 @@ export default function Register({
         }
 
         if (isPaid && !proofFile) {
-            alert(`Please upload payment proof for ${selectedCategory.name} registration.`);
+            alert(`Please upload payment receipt for ${selectedCategory.name} registration.`);
             return;
         }
 
@@ -1899,10 +1899,10 @@ export default function Register({
 
                                             {proofPreview && (
                                                 <Box sx={{ mt: 2.2, p: 2.2, background: 'linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%)', border: '1.5px solid #86efac', borderBottom: '4px solid #16a34a', borderRadius: '16px', boxShadow: '0 6px 18px rgba(22, 163, 74, 0.15)', display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <Box component="img" src={proofPreview} alt="Proof Preview" sx={{ width: 60, height: 60, objectFit: 'cover', borderRadius: '10px', border: '2px solid #86efac', boxShadow: '0 3px 8px rgba(0,0,0,0.1)' }} />
+                                                    <Box component="img" src={proofPreview} alt="Receipt Preview" sx={{ width: 60, height: 60, objectFit: 'cover', borderRadius: '10px', border: '2px solid #86efac', boxShadow: '0 3px 8px rgba(0,0,0,0.1)' }} />
                                                     <Box sx={{ flex: 1 }}>
                                                         <Typography variant="caption" sx={{ fontWeight: 900, color: '#059669', display: 'flex', alignItems: 'center', gap: 0.5, fontSize: '0.82rem' }}>
-                                                            <CheckCircleIcon sx={{ fontSize: 18 }} /> Payment proof attached ({compressionStats?.compressed} KB)
+                                                             <CheckCircleIcon sx={{ fontSize: 18 }} /> Payment receipt attached ({compressionStats?.compressed} KB)
                                                         </Typography>
                                                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', display: 'block', fontWeight: 600, mt: 0.3 }}>
                                                             Original: {compressionStats?.original} KB &bull; Compressed for fast server verification.
@@ -2295,7 +2295,7 @@ export default function Register({
                             <PhotoCameraIcon sx={{ color: '#38bdf8', fontSize: 20 }} />
                         </Box>
                         <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#fff', fontSize: '1.05rem' }}>
-                            Capture Payment Proof
+                            Capture Payment Receipt
                         </Typography>
                     </Box>
                     <IconButton 
@@ -2613,7 +2613,7 @@ export default function Register({
                                 Searching registration records...
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b', mt: 0.4, display: 'block' }}>
-                                Checking ticket records and payment proofs on the server...
+                                Checking ticket records and payment receipts on the server...
                             </Typography>
                         </Box>
                     )}
