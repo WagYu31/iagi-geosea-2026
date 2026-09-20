@@ -112,8 +112,7 @@ export default function Receipt({
     const pDate = new Date(payment.created_at || Date.now());
     const romanMonth = romanMonths[pDate.getMonth()] || 'IX';
     const pYear = pDate.getFullYear() || 2026;
-    const pNum = String(payment.id || 1).padStart(3, '0');
-    const receiptNumber = payment.receipt_no || `Receipt No. ${pNum}/PIT55-GEOSEA/PY-R/${romanMonth}/${pYear}`;
+    const receiptNumber = payment.receipt_no || `Receipt No. ${pNum}/PIT-IAGI/PY-R/${romanMonth}/${pYear}`;
 
     const handlePrint = () => {
         window.print();

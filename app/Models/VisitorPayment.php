@@ -56,7 +56,18 @@ class VisitorPayment extends Model
 
     public function getReceiptNoAttribute(): string
     {
-        $num = str_pad((string) ($this->id ?? 1), 3, '0', STR_PAD_LEFT);
+        $rank = 1;
+        if ($this->id) {
+            $rank = self::where('id', '<=', $this->id)->count();
+            if ($rank === 0) {
+                $rank = 1;
+            }
+        }
+
+        // Sequence number starts from 13 (e.g. 1st payment = 013, 2nd = 014, etc.)
+        $sequenceNumber = $rank + 12;
+        $num = str_pad((string) $sequenceNumber, 3, '0', STR_PAD_LEFT);
+
         $date = $this->created_at ?? now();
         $romanMonths = [
             1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
@@ -66,7 +77,7 @@ class VisitorPayment extends Model
         $romanMonth = $romanMonths[$month] ?? 'IX';
         $year = $date->format('Y');
 
-        return "Receipt No. {$num}/PIT55-GEOSEA/PY-R/{$romanMonth}/{$year}";
+        return "Receipt No. {$num}/PIT-IAGI/PY-R/{$romanMonth}/{$year}";
     }
 
     public function getCategoryLabelAttribute(): string
