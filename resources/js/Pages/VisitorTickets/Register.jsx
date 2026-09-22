@@ -236,6 +236,8 @@ export default function Register({
             .replace(/a\.\s*n\.\s*:?/gi, 'Account Holder : ')
             .replace(/atas\s*nama\s*:?/gi, 'Account Holder : ')
         : rawBankTransferInfo;
+    const enabled = propEnabled ?? settings.enabled ?? true;
+    const qrisImage = propQrisImage ?? settings.qrisImage ?? null;
     const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
     const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
     
