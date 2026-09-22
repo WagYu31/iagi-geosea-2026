@@ -223,14 +223,18 @@ export default function Register({
         };
     });
 
-    const enabled = propEnabled ?? settings.enabled ?? true;
-    const rawBankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? "Mandiri Bank\nAccount Number: 137-00-1234567-8\nAccount Holder: Ikatan Ahli Geologi Indonesia (IAGI)";
+    const defaultBankTransferInfo = "Bank : Mandiri\nAccount No. : 1030099991461\nAccount Holder : IAGI";
+    const rawBankTransferInfo = propBankTransferInfo ?? settings.bankTransferInfo ?? settings.bankInfo ?? defaultBankTransferInfo;
     const bankTransferInfo = typeof rawBankTransferInfo === 'string'
         ? rawBankTransferInfo
-            .replace(/Bank\s+Mandiri/gi, 'Mandiri Bank')
-            .replace(/No\.\s*Rek\s*:/gi, 'Account Number:')
-            .replace(/a\.\s*n\.\s*:?/gi, 'Account Holder: ')
-            .replace(/atas\s*nama\s*:?/gi, 'Account Holder: ')
+            .replace(/137-00-1234567-8/g, '1030099991461')
+            .replace(/Ikatan Ahli Geologi Indonesia \(IAGI\)/g, 'IAGI')
+            .replace(/Mandiri\s+Bank/gi, 'Bank : Mandiri')
+            .replace(/Bank\s+Mandiri/gi, 'Bank : Mandiri')
+            .replace(/Account\s+Number\s*:/gi, 'Account No. :')
+            .replace(/No\.\s*Rek\s*:/gi, 'Account No. :')
+            .replace(/a\.\s*n\.\s*:?/gi, 'Account Holder : ')
+            .replace(/atas\s*nama\s*:?/gi, 'Account Holder : ')
         : rawBankTransferInfo;
     const eventDate = propEventDate ?? settings.eventDate ?? '3-5 November 2026';
     const eventVenue = propEventVenue ?? settings.eventVenue ?? 'Royal Ambarrukmo Yogyakarta';
