@@ -2657,7 +2657,7 @@ export default function Register({
                                             variant="outlined"
                                             size="small"
                                             component="a"
-                                            href="https://wa.me/628122699923?text=Hello%20PIT%20IAGI%20Committee%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
+                                            href="https://wa.me/6285920771789?text=Hello%20Adeline%20(Registration)%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}
@@ -2684,7 +2684,7 @@ export default function Register({
                                             variant="outlined"
                                             size="small"
                                             component="a"
-                                            href="https://wa.me/6281325779040?text=Hello%20PIT%20IAGI%20Secretariat%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
+                                            href="https://wa.me/628111581461?text=Hello%20Tiyas%20(Secretariat)%2C%20I%20would%20like%20to%20inquire%20about%20my%20registration%20status."
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}

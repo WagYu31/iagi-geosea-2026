@@ -285,7 +285,7 @@ export default function RegistrationClosedDialog({ open, onClose }) {
                             variant="outlined"
                             size="small"
                             component="a"
-                            href="https://wa.me/6281325779040?text=Hello%20PIT%20IAGI%20Secretariat%2C%20I%20have%20an%20inquiry%20regarding%20Author%20Registration."
+                            href="https://wa.me/628111581461?text=Hello%20PIT%20IAGI%20Secretariat%20(Tiyas)%2C%20I%20have%20an%20inquiry%20regarding%20Author%20Registration."
                             target="_blank"
                             rel="noopener noreferrer"
                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a' }} />}

@@ -643,7 +643,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         {/* Registrasi - Adeline */}
                         <Button
                             component="a"
-                            href={`https://wa.me/62859207771789?text=Hello%20Adeline%20(Registration),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
+                            href={`https://wa.me/6285920771789?text=Hello%20Adeline%20(Registration),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 18 }} />}
@@ -668,7 +668,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                         {/* Secretariat - Tiyas */}
                         <Button
                             component="a"
-                            href={`https://wa.me/6281212200782?text=Hello%20Tiyas%20(Secretariat),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
+                            href={`https://wa.me/628111581461?text=Hello%20Tiyas%20(Secretariat),%20I%20would%20like%20to%20inquire%20about%20my%20visitor%20ticket%20payment%20code:%20${payment.payment_code || ''}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 18 }} />}
@@ -901,7 +901,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                                         <Button
                                             component="a"
-                                            href={`https://wa.me/62859207771789?text=Hello%20Adeline%20(Registration),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
+                                            href={`https://wa.me/6285920771789?text=Hello%20Adeline%20(Registration),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 16 }} />}
@@ -923,7 +923,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         </Button>
                                         <Button
                                             component="a"
-                                            href={`https://wa.me/6281212200782?text=Hello%20Tiyas%20(Secretariat),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
+                                            href={`https://wa.me/628111581461?text=Hello%20Tiyas%20(Secretariat),%20I%20have%20not%20received%20my%20e-ticket%20email%20after%2024%20hours.%20Payment%20Code:%20${payment.payment_code || ''}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             startIcon={<WhatsAppIcon sx={{ color: '#16a34a', fontSize: 16 }} />}
