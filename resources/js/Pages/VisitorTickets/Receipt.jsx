@@ -218,7 +218,7 @@ export default function Receipt({
                             '&:hover': { bgcolor: '#063830' },
                         }}
                     >
-                        🖨️ Print / Download PDF
+                        Print / Download PDF
                     </Button>
                 </Box>
 
@@ -304,7 +304,7 @@ export default function Receipt({
                                 
                                 <div>
                                     <Chip
-                                        label={isApproved ? '✅ VERIFIED / PAID' : isRejected ? '❌ REJECTED' : '⏳ AWAITING VERIFICATION'}
+                                        label={isApproved ? 'VERIFIED / PAID' : isRejected ? 'REJECTED' : 'AWAITING VERIFICATION'}
                                         sx={{
                                             bgcolor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
                                             color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
@@ -322,7 +322,7 @@ export default function Receipt({
                         <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, position: 'relative', zIndex: 1, '@media print': { py: 1.2, gap: 1.5, gridTemplateColumns: '1fr 1fr !important' } }}>
                             <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
-                                    👤 Billed To:
+                                    Billed To:
                                 </Typography>
                                 <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.90rem' }}>
                                     {primaryTicket.visitor_name || 'Registered Delegate'}
@@ -336,7 +336,7 @@ export default function Receipt({
 
                             <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
-                                    📄 Transaction Details:
+                                    Transaction Details:
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', lineHeight: 1.5 }}>
                                     <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
@@ -421,17 +421,120 @@ export default function Receipt({
                                 </Table>
                             </TableContainer>
 
-                            {/* TERBILANG & IN PAYMENT OF BOX */}
-                            <Box sx={{ mt: 1.2, p: 1.4, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px dashed #cbd5e1', '@media print': { mt: 1, p: 1.2 } }}>
-                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.4 }}>
-                                    <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35, mb: 0.4 }}>
-                                    <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
-                                    <strong>Note:</strong> Please complete the payment at least 7 days prior to the convention
-                                </Typography>
+                            {/* OFFICIAL AMOUNT RECEIVED & PAYMENT DETAILS (PROFESSIONAL TYPOGRAPHIC BOX, NO ICONS) */}
+                            <Box
+                                sx={{
+                                    mt: 1.4,
+                                    p: { xs: 1.5, sm: 1.8 },
+                                    bgcolor: '#f8fafc',
+                                    borderRadius: '10px',
+                                    border: '1px solid #e2e8f0',
+                                    '@media print': {
+                                        mt: 1,
+                                        p: 1.2,
+                                        bgcolor: '#ffffff !important',
+                                        border: '1px solid #cbd5e1 !important',
+                                    },
+                                }}
+                            >
+                                {/* 1. AMOUNT RECEIVED */}
+                                <Box sx={{ pb: 1, mb: 1, borderBottom: '1px solid #e2e8f0', '@media print': { pb: 0.8, mb: 0.8 } }}>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            fontWeight: 800,
+                                            color: '#64748b',
+                                            fontSize: '0.67rem',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.08em',
+                                            display: 'block',
+                                            mb: 0.3,
+                                        }}
+                                    >
+                                        Amount Received
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif',
+                                            fontStyle: 'italic',
+                                            fontWeight: 700,
+                                            fontSize: { xs: '0.94rem', sm: '1.05rem' },
+                                            color: '#0f172a',
+                                            lineHeight: 1.35,
+                                        }}
+                                    >
+                                        {amountInWords}
+                                    </Typography>
+                                </Box>
+
+                                {/* 2. PAYMENT FOR */}
+                                <Box sx={{ pb: 1, mb: 1, borderBottom: '1px solid #e2e8f0', '@media print': { pb: 0.8, mb: 0.8 } }}>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            fontWeight: 800,
+                                            color: '#64748b',
+                                            fontSize: '0.67rem',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.08em',
+                                            display: 'block',
+                                            mb: 0.3,
+                                        }}
+                                    >
+                                        Payment For
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '0.80rem',
+                                            fontWeight: 500,
+                                            color: '#334155',
+                                            lineHeight: 1.45,
+                                        }}
+                                    >
+                                        Registration Payment for the{' '}
+                                        <strong style={{ fontWeight: 800, color: '#094d42' }}>
+                                            55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
+                                        </strong>
+                                    </Typography>
+                                </Box>
+
+                                {/* 3. PAYMENT REMINDER (NO ICON, SLEEK PROFESSIONAL CALLOUT) */}
+                                <Box
+                                    sx={{
+                                        p: { xs: 1.1, sm: 1.3 },
+                                        borderRadius: '8px',
+                                        bgcolor: '#eff6ff',
+                                        border: '1px solid #bfdbfe',
+                                        borderLeft: '4px solid #0284c7',
+                                        '@media print': {
+                                            p: 0.9,
+                                            bgcolor: '#f8fafc !important',
+                                            border: '1px solid #cbd5e1 !important',
+                                            borderLeft: '4px solid #094d42 !important',
+                                        },
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            fontWeight: 800,
+                                            color: '#0369a1',
+                                            fontSize: '0.74rem',
+                                            mb: 0.2,
+                                            '@media print': { color: '#094d42 !important' },
+                                        }}
+                                    >
+                                        Payment Reminder:
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: '#334155',
+                                            fontSize: '0.74rem',
+                                            lineHeight: 1.45,
+                                        }}
+                                    >
+                                        Please complete the payment at least <strong>7 days prior to the convention</strong>.
+                                    </Typography>
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
@@ -457,7 +560,7 @@ export default function Receipt({
                             </Box>
                             <Box>
                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.72rem', mb: 0.2 }}>
-                                    🛡️ OFFICIAL DIGITAL VALIDATION
+                                    OFFICIAL DIGITAL VALIDATION
                                 </Typography>
                                 <Typography variant="caption" sx={{ color: '#64748b', display: 'block', maxWidth: 220, fontSize: '0.65rem', lineHeight: 1.3 }}>
                                     Scan QR code to verify the authenticity of this official receipt and delegate ticket on the PIT IAGI 2026 portal.
