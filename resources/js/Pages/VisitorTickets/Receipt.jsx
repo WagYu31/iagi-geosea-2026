@@ -321,16 +321,21 @@ export default function Receipt({
                         {/* METADATA INFO BAR */}
                         <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, position: 'relative', zIndex: 1, '@media print': { py: 1.2, gap: 1.5, gridTemplateColumns: '1fr 1fr !important' } }}>
                             <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', '@media print': { p: 1.4 } }}>
-                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', mb: 0.6 }}>
-                                    Billed To:
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                        {payment.is_mixed_category ? 'Billed To (PIC / Company):' : 'Billed To:'}
+                                    </Typography>
+                                    {payment.is_mixed_category && (
+                                        <Chip label="GROUP / CORPORATE" size="small" sx={{ height: 18, fontSize: '0.60rem', fontWeight: 900, bgcolor: '#094d42', color: '#fff' }} />
+                                    )}
+                                </Box>
                                 <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '0.90rem' }}>
-                                    {primaryTicket.visitor_name || 'Registered Delegate'}
+                                    {payment.is_mixed_category ? (payment.pic_name || primaryTicket.visitor_name) : (primaryTicket.visitor_name || 'Registered Delegate')}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', mt: 0.2, lineHeight: 1.5 }}>
-                                    <strong>Email:</strong> {primaryTicket.visitor_email || '-'}<br />
-                                    <strong>Phone / WA:</strong> {primaryTicket.visitor_phone || '-'}<br />
-                                    <strong>Institution:</strong> {primaryTicket.visitor_institution || primaryTicket.institution || 'Individual'}
+                                    <strong>Email:</strong> {payment.is_mixed_category ? (payment.pic_email || primaryTicket.visitor_email || '-') : (primaryTicket.visitor_email || '-')}<br />
+                                    <strong>Phone / WA:</strong> {payment.is_mixed_category ? (payment.pic_phone || primaryTicket.visitor_phone || '-') : (primaryTicket.visitor_phone || '-')}<br />
+                                    <strong>Institution:</strong> {payment.is_mixed_category ? (payment.pic_institution || primaryTicket.visitor_institution || 'Corporate / Group') : (primaryTicket.visitor_institution || primaryTicket.institution || 'Individual')}
                                 </Typography>
                             </Box>
 
@@ -364,7 +369,9 @@ export default function Receipt({
                                     <TableBody>
                                         {tickets.map((t, idx) => {
                                             const cat = CATEGORY_MAP[t.visitor_type] || CATEGORY_MAP.non_exclusive;
-                                            const price = Number(payment.price_per_ticket || (totalAmount / (tickets.length || 1)));
+                                            const price = Number(t.individual_price && Number(t.individual_price) > 0 
+                                                ? t.individual_price 
+                                                : (payment.price_per_ticket || (totalAmount / (tickets.length || 1))));
                                             return (
                                                 <TableRow key={t.id || idx} sx={{ '&:nth-of-type(even)': { bgcolor: '#f8fafc' } }}>
                                                     <TableCell sx={{ fontWeight: 700, fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>{idx + 1}</TableCell>
@@ -400,14 +407,24 @@ export default function Receipt({
                                         })}
                                         {/* Breakdown Rows */}
                                         {payment.unique_code > 0 && (
-                                            <TableRow sx={{ bgcolor: '#fafafa' }}>
-                                                <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                    Payment Unique Code:
-                                                </TableCell>
-                                                <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                    IDR {Number(payment.unique_code).toLocaleString('id-ID')}
-                                                </TableCell>
-                                            </TableRow>
+                                            <>
+                                                <TableRow sx={{ bgcolor: '#fafafa' }}>
+                                                    <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                        Subtotal ({tickets.length} Participants):
+                                                    </TableCell>
+                                                    <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                        IDR {(totalAmount - Number(payment.unique_code)).toLocaleString('id-ID')}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow sx={{ bgcolor: '#fafafa' }}>
+                                                    <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                        Payment Unique Code:
+                                                    </TableCell>
+                                                    <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
+                                                        IDR {Number(payment.unique_code).toLocaleString('id-ID')}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </>
                                         )}
                                         <TableRow sx={{ bgcolor: '#ecfdf5' }}>
                                             <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.88rem', py: 1 }}>

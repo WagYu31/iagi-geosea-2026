@@ -20,6 +20,7 @@ class VisitorTicket extends Model
         'visitor_institution',
         'ticket_code',
         'visitor_type',
+        'individual_price',
         'is_group_leader',
         'group_code',
         'status',
@@ -32,6 +33,7 @@ class VisitorTicket extends Model
     ];
 
     protected $casts = [
+        'individual_price' => 'decimal:2',
         'is_group_leader' => 'boolean',
         'checked_in' => 'boolean',
         'checked_in_at' => 'datetime',

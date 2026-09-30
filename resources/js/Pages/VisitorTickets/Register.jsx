@@ -749,6 +749,57 @@ export default function Register({
                     </Box>
                 </Box>
 
+                {/* REGISTRATION MODE TOGGLE BANNER */}
+                <Box sx={{ mb: 3.5, display: 'flex', justifyContent: 'center' }}>
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 0.6,
+                            borderRadius: '30px',
+                            bgcolor: '#e2e8f0',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            border: '1px solid #cbd5e1',
+                        }}
+                    >
+                        <Button
+                            size="small"
+                            sx={{
+                                borderRadius: '24px',
+                                px: 2.8,
+                                py: 0.8,
+                                fontWeight: 800,
+                                fontSize: '0.84rem',
+                                textTransform: 'none',
+                                color: '#ffffff',
+                                bgcolor: '#094d42',
+                                boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
+                                '&:hover': { bgcolor: '#06362e' },
+                            }}
+                        >
+                            👤 Individual / Same Category
+                        </Button>
+                        <Button
+                            component={Link}
+                            href="/tickets/group"
+                            size="small"
+                            sx={{
+                                borderRadius: '24px',
+                                px: 2.5,
+                                py: 0.8,
+                                fontWeight: 700,
+                                fontSize: '0.82rem',
+                                textTransform: 'none',
+                                color: '#475569',
+                                bgcolor: 'transparent',
+                                '&:hover': { bgcolor: '#cbd5e1', color: '#0f172a' },
+                            }}
+                        >
+                            🏢 Company / Group (Mixed Categories)
+                        </Button>
+                    </Paper>
+                </Box>
+
                 {/* Hero Header Section */}
                 <Box sx={{ textAlign: 'center', mb: 3.5 }}>
                     <Chip

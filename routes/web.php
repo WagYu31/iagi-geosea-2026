@@ -36,6 +36,7 @@ Route::get('/refund-policy', function () { return Inertia::render('RefundPolicy'
 
 // Public Visitor Tickets Registration & E-Ticket Routes
 Route::get('/tickets', [App\Http\Controllers\VisitorTicketController::class, 'index'])->name('visitor.tickets');
+Route::get('/tickets/group', [App\Http\Controllers\VisitorTicketController::class, 'groupIndex'])->name('visitor.tickets.group');
 Route::post('/tickets', [App\Http\Controllers\VisitorTicketController::class, 'store'])->name('visitor.tickets.store');
 Route::post('/tickets/lookup', [App\Http\Controllers\VisitorTicketController::class, 'lookup'])->name('visitor.tickets.lookup');
 Route::get('/tickets/payment/{payment_code}', [App\Http\Controllers\VisitorTicketController::class, 'paymentStatus'])->name('visitor.payment.status');

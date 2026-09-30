@@ -392,10 +392,32 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                 borderRadius: '14px',
                                 border: '1px solid #e2e8f0',
                                 display: 'grid',
-                                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+                                gridTemplateColumns: { xs: '1fr', sm: payment.is_mixed_category ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr' },
                                 gap: 2,
                             }}
                         >
+                            {payment.is_mixed_category && (
+                                <Box>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', mb: 0.3 }}>
+                                        PIC / Company:
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        sx={{
+                                            fontWeight: 900,
+                                            color: '#094d42',
+                                            fontSize: '0.88rem',
+                                            lineHeight: 1.2,
+                                        }}
+                                    >
+                                        {payment.pic_name}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>
+                                        {payment.pic_institution || 'Corporate'}
+                                    </Typography>
+                                </Box>
+                            )}
+
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', mb: 0.3 }}>
                                     Payment Code:
@@ -448,7 +470,7 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                         fontSize: '0.88rem',
                                     }}
                                 >
-                                    {tickets.length} {categoryLabel} Ticket(s)
+                                    {payment.is_mixed_category ? `${tickets.length} Delegate(s) (Mixed Categories)` : `${tickets.length} ${categoryLabel} Ticket(s)`}
                                 </Typography>
                             </Box>
                         </Box>
@@ -529,6 +551,20 @@ export default function PaymentStatus({ payment = {}, tickets = [] }) {
                                                         height: 20,
                                                     }}
                                                 />
+                                                {ticket.individual_price && Number(ticket.individual_price) > 0 && (
+                                                    <Chip
+                                                        label={`IDR ${Number(ticket.individual_price).toLocaleString('id-ID')}`}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#f8fafc',
+                                                            color: '#094d42',
+                                                            border: '1px solid #cbd5e1',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.62rem',
+                                                            height: 20,
+                                                        }}
+                                                    />
+                                                )}
                                             </Box>
 
                                             <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.75rem' }}>

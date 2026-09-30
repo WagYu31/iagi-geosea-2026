@@ -205,10 +205,260 @@ class VisitorTicketController extends Controller
     }
 
     /**
+     * Display dedicated Company / Mixed-Category Group Registration page
+     */
+    public function groupIndex()
+    {
+        $settings = LandingPageSetting::whereIn('key', [
+            'visitor_ticket_price_exclusive',
+            'visitor_ticket_price_non_exclusive',
+            'visitor_price_iagi_member_pro',
+            'visitor_price_non_iagi_member_pro',
+            'visitor_price_iagi_member_expat',
+            'visitor_price_non_iagi_member_expat',
+            'visitor_price_student',
+            'visitor_registration_enabled',
+            'visitor_qris_image',
+            'visitor_bank_transfer_info',
+            'visitor_event_date',
+            'visitor_event_venue',
+        ])->pluck('value', 'key');
+
+        $defaultBankTransferInfo = "Bank : Mandiri\nAccount No. : 1030099991461\nAccount Holder : IAGI";
+        $rawBankTransferInfo = $settings['visitor_bank_transfer_info'] ?? $defaultBankTransferInfo;
+        $bankTransferInfo = str_replace(['137-00-1234567-8', 'Ikatan Ahli Geologi Indonesia (IAGI)'], ['1030099991461', 'IAGI'], $rawBankTransferInfo);
+        $bankTransferInfo = preg_replace('/Mandiri\s+Bank/i', 'Bank : Mandiri', $bankTransferInfo);
+        $bankTransferInfo = preg_replace('/Bank\s+Mandiri/i', 'Bank : Mandiri', $bankTransferInfo);
+        $bankTransferInfo = preg_replace('/Account\s+Number\s*:/i', 'Account No. :', $bankTransferInfo);
+        $bankTransferInfo = preg_replace('/No\.\s*Rek\s*:/i', 'Account No. :', $bankTransferInfo);
+        $bankTransferInfo = preg_replace('/a\.\s*n\.\s*:?/i', 'Account Holder : ', $bankTransferInfo);
+        $bankTransferInfo = preg_replace('/atas\s*nama\s*:?/i', 'Account Holder : ', $bankTransferInfo);
+        $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
+        $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
+        $enabled = ($settings['visitor_registration_enabled'] ?? '1') === '1';
+        $qrisImage = $settings['visitor_qris_image'] ?? null;
+
+        $priceIagiPro = floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000)));
+        $priceNonIagiPro = floatval($settings['visitor_ticket_price_non_iagi_member_professional'] ?? ($settings['visitor_price_non_iagi_member_pro'] == '3000000' && !isset($settings['visitor_ticket_price_non_iagi_member_professional']) ? 4000000 : ($settings['visitor_price_non_iagi_member_pro'] ?? 4000000)));
+        $priceIagiExpat = floatval($settings['visitor_ticket_price_iagi_member_expatriate'] ?? ($settings['visitor_price_iagi_member_expat'] == '5000000' ? 6000000 : ($settings['visitor_price_iagi_member_expat'] ?? 6000000)));
+        $priceNonIagiExpat = floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000)));
+        $priceStudent = floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000)));
+
+        // Only paid categories are permitted in mixed corporate / group registration
+        $paidCategories = [
+            [
+                'id' => 'iagi_member_professional',
+                'name' => 'Professional (Member)',
+                'badge' => 'PROFESSIONAL (MEMBER)',
+                'normalPrice' => $priceIagiPro,
+                'price' => $priceIagiPro,
+                'tag' => 'PROFESSIONAL (MEMBER)',
+                'tagColor' => '#047857',
+                'tagBg' => '#dcfce7',
+                'description' => 'For Professional IAGI Member',
+            ],
+            [
+                'id' => 'non_iagi_member_professional',
+                'name' => 'Professional (Non-Member)',
+                'badge' => 'PROFESSIONAL (NON-MEMBER)',
+                'normalPrice' => $priceNonIagiPro,
+                'price' => $priceNonIagiPro,
+                'tag' => 'PROFESSIONAL (NON-MEMBER)',
+                'tagColor' => '#0284c7',
+                'tagBg' => '#e0f2fe',
+                'description' => 'For Professional Non - IAGI Member',
+            ],
+            [
+                'id' => 'iagi_member_expatriate',
+                'name' => 'Expatriate (Member)',
+                'badge' => 'EXPATRIATE (MEMBER)',
+                'normalPrice' => $priceIagiExpat,
+                'price' => $priceIagiExpat,
+                'tag' => 'EXPATRIATE (MEMBER)',
+                'tagColor' => '#b45309',
+                'tagBg' => '#fef3c7',
+                'description' => 'For Expatriate IAGI Member',
+            ],
+            [
+                'id' => 'non_iagi_member_expatriate',
+                'name' => 'Expatriate (Non-Member)',
+                'badge' => 'EXPATRIATE (NON-MEMBER)',
+                'normalPrice' => $priceNonIagiExpat,
+                'price' => $priceNonIagiExpat,
+                'tag' => 'EXPATRIATE (NON-MEMBER)',
+                'tagColor' => '#7c3aed',
+                'tagBg' => '#ede9fe',
+                'description' => 'For Expatriate Non - IAGI Member',
+            ],
+            [
+                'id' => 'student_undergraduate',
+                'name' => 'Student Undergraduate',
+                'badge' => 'STUDENT UNDERGRADUATE',
+                'normalPrice' => $priceStudent,
+                'price' => $priceStudent,
+                'tag' => 'STUDENT UNDERGRADUATE',
+                'tagColor' => '#4338ca',
+                'tagBg' => '#e0e7ff',
+                'description' => 'For Undergraduate Student',
+            ],
+        ];
+
+        return Inertia::render('VisitorTickets/GroupRegister', [
+            'categories' => $paidCategories,
+            'enabled' => $enabled,
+            'qrisImage' => $qrisImage,
+            'bankTransferInfo' => $bankTransferInfo,
+            'eventDate' => $eventDate,
+            'eventVenue' => $eventVenue,
+            'settings' => [
+                'enabled' => $enabled,
+                'qrisImage' => $qrisImage,
+                'bankTransferInfo' => $bankTransferInfo,
+                'bankInfo' => $bankTransferInfo,
+                'eventDate' => $eventDate,
+                'eventVenue' => $eventVenue,
+            ]
+        ]);
+    }
+
+    /**
      * Store new visitor ticket registration (Single or Group)
      */
     public function store(Request $request)
     {
+        $settings = LandingPageSetting::whereIn('key', [
+            'visitor_ticket_price_exclusive',
+            'visitor_ticket_price_non_exclusive',
+            'visitor_price_iagi_member_pro',
+            'visitor_price_non_iagi_member_pro',
+            'visitor_price_iagi_member_expat',
+            'visitor_price_non_iagi_member_expat',
+            'visitor_price_student',
+        ])->pluck('value', 'key');
+
+        $pricingMap = [
+            'non_exclusive' => 0,
+            'exclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 500000),
+            'iagi_member_professional' => floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000))),
+            'non_iagi_member_professional' => floatval($settings['visitor_ticket_price_non_iagi_member_professional'] ?? ($settings['visitor_price_non_iagi_member_pro'] == '3000000' && !isset($settings['visitor_ticket_price_non_iagi_member_professional']) ? 4000000 : ($settings['visitor_price_non_iagi_member_pro'] ?? 4000000))),
+            'iagi_member_expatriate' => floatval($settings['visitor_ticket_price_iagi_member_expatriate'] ?? ($settings['visitor_price_iagi_member_expat'] == '5000000' ? 6000000 : ($settings['visitor_price_iagi_member_expat'] ?? 6000000))),
+            'non_iagi_member_expatriate' => floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000))),
+            'student_undergraduate' => floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000))),
+        ];
+
+        $registrationMode = $request->input('registration_mode', 'single');
+
+        // =========================================================================
+        // MODE: MIXED CATEGORIES (COMPANY / GROUP REGISTRATION)
+        // =========================================================================
+        if ($registrationMode === 'mixed') {
+            $paidPricingMap = $pricingMap;
+            unset($paidPricingMap['non_exclusive']);
+            $allowedPaidTypes = array_keys($paidPricingMap);
+
+            $request->validate([
+                'pic' => 'required|array',
+                'pic.name' => 'required|string|max:150',
+                'pic.email' => 'required|email|max:150',
+                'pic.phone' => 'nullable|string|max:50',
+                'pic.institution' => 'required|string|max:150',
+                'members' => 'required|array|min:1|max:50',
+                'members.*.name' => 'required|string|max:150',
+                'members.*.email' => 'required|email|max:150',
+                'members.*.phone' => 'nullable|string|max:50',
+                'members.*.institution' => 'nullable|string|max:150',
+                'members.*.visitor_type' => 'required|string|in:' . implode(',', $allowedPaidTypes),
+                'proof_of_payment' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            ], [
+                'pic.name.required' => 'PIC / Contact Person Name is required.',
+                'pic.email.required' => 'PIC / Contact Person Email is required.',
+                'pic.institution.required' => 'Institution / Company Name is required.',
+                'members.*.name.required' => 'Full name is required for all participants.',
+                'members.*.email.required' => 'Email address is required for all participants.',
+                'members.*.visitor_type.required' => 'Ticket category must be selected for all participants.',
+                'proof_of_payment.required' => 'Proof of payment is required for corporate / group registration.',
+            ]);
+
+            $members = $request->members;
+            $totalMembers = count($members);
+
+            // Compute subtotal from individual categories
+            $subtotal = 0;
+            foreach ($members as $m) {
+                $subtotal += ($paidPricingMap[$m['visitor_type']] ?? 0);
+            }
+
+            $uniqueCode = ($request->filled('unique_code') && intval($request->unique_code) >= 100 && intval($request->unique_code) <= 999)
+                ? intval($request->unique_code)
+                : rand(100, 999);
+            $totalAmount = $subtotal + $uniqueCode;
+
+            return DB::transaction(function () use ($request, $members, $totalMembers, $paidPricingMap, $uniqueCode, $totalAmount) {
+                $groupCode = 'GRP-' . strtoupper(Str::random(8));
+
+                $proofPath = null;
+                if ($request->hasFile('proof_of_payment')) {
+                    $proofPath = $request->file('proof_of_payment')->store('visitor_proofs', 'public');
+                }
+
+                $payment = VisitorPayment::create([
+                    'payment_code' => 'VPAY-' . date('ymd') . '-' . strtoupper(Str::random(6)),
+                    'payment_method' => 'bank_transfer',
+                    'total_members' => $totalMembers,
+                    'price_per_ticket' => 0, // Mixed pricing per participant
+                    'unique_code' => $uniqueCode,
+                    'total_amount' => $totalAmount,
+                    'proof_of_payment' => $proofPath,
+                    'status' => 'pending',
+                    'is_mixed_category' => true,
+                    'pic_name' => $request->input('pic.name'),
+                    'pic_email' => $request->input('pic.email'),
+                    'pic_phone' => $request->input('pic.phone'),
+                    'pic_institution' => $request->input('pic.institution'),
+                ]);
+
+                foreach ($members as $index => $member) {
+                    $vType = $member['visitor_type'];
+                    $individualPrice = $paidPricingMap[$vType] ?? 0;
+                    $institution = !empty($member['institution']) ? $member['institution'] : $request->input('pic.institution');
+
+                    VisitorTicket::create([
+                        'payment_id' => $payment->id,
+                        'registration_source' => 'online_self',
+                        'visitor_name' => $member['name'],
+                        'visitor_email' => $member['email'],
+                        'visitor_phone' => $member['phone'] ?? null,
+                        'visitor_institution' => $institution,
+                        'ticket_code' => VisitorTicket::generateTicketCode($vType),
+                        'visitor_type' => $vType,
+                        'individual_price' => $individualPrice,
+                        'is_group_leader' => ($index === 0),
+                        'group_code' => $groupCode,
+                        'status' => 'pending',
+                        'checked_in' => false,
+                        'card_printed' => false,
+                    ]);
+                }
+
+                // Send Pending Payment Email to PIC
+                $picEmail = $request->input('pic.email');
+                if (!empty($picEmail)) {
+                    try {
+                        $this->applySmtpSettings();
+                        Mail::to($picEmail)->send(new VisitorPaymentPending($payment));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send visitor payment pending email to PIC: ' . $e->getMessage());
+                    }
+                }
+
+                return redirect()->route('visitor.payment.status', ['payment_code' => $payment->payment_code])
+                    ->with('success', 'Corporate / Group registration submitted successfully! Please wait for committee verification.');
+            });
+        }
+
+        // =========================================================================
+        // MODE: SINGLE CATEGORY (ORIGINAL REGISTRATION FLOW)
+        // =========================================================================
         $allowedTypes = [
             'non_exclusive',
             'exclusive',
@@ -247,26 +497,6 @@ class VisitorTicketController extends Controller
         $members = $request->members;
         $totalMembers = count($members);
 
-        $settings = LandingPageSetting::whereIn('key', [
-            'visitor_ticket_price_exclusive',
-            'visitor_ticket_price_non_exclusive',
-            'visitor_price_iagi_member_pro',
-            'visitor_price_non_iagi_member_pro',
-            'visitor_price_iagi_member_expat',
-            'visitor_price_non_iagi_member_expat',
-            'visitor_price_student',
-        ])->pluck('value', 'key');
-
-        $pricingMap = [
-            'non_exclusive' => 0,
-            'exclusive' => floatval($settings['visitor_ticket_price_exclusive'] ?? 500000),
-            'iagi_member_professional' => floatval($settings['visitor_ticket_price_iagi_member_professional'] ?? ($settings['visitor_price_iagi_member_pro'] == '2500000' ? 3000000 : ($settings['visitor_price_iagi_member_pro'] ?? 3000000))),
-            'non_iagi_member_professional' => floatval($settings['visitor_ticket_price_non_iagi_member_professional'] ?? ($settings['visitor_price_non_iagi_member_pro'] == '3000000' && !isset($settings['visitor_ticket_price_non_iagi_member_professional']) ? 4000000 : ($settings['visitor_price_non_iagi_member_pro'] ?? 4000000))),
-            'iagi_member_expatriate' => floatval($settings['visitor_ticket_price_iagi_member_expatriate'] ?? ($settings['visitor_price_iagi_member_expat'] == '5000000' ? 6000000 : ($settings['visitor_price_iagi_member_expat'] ?? 6000000))),
-            'non_iagi_member_expatriate' => floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000))),
-            'student_undergraduate' => floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000))),
-        ];
-
         $pricePerTicket = $pricingMap[$visitorType] ?? 0;
         $isPaid = $pricePerTicket > 0;
 
@@ -297,6 +527,7 @@ class VisitorTicketController extends Controller
                     'total_amount' => $totalAmount,
                     'proof_of_payment' => $proofPath,
                     'status' => 'pending',
+                    'is_mixed_category' => false,
                 ]);
 
                 $firstTicket = null;
@@ -310,6 +541,7 @@ class VisitorTicketController extends Controller
                         'visitor_institution' => $member['institution'] ?? null,
                         'ticket_code' => VisitorTicket::generateTicketCode($visitorType),
                         'visitor_type' => $visitorType,
+                        'individual_price' => $pricePerTicket,
                         'is_group_leader' => $index === 0,
                         'group_code' => $groupCode,
                         'status' => 'pending',
@@ -349,6 +581,7 @@ class VisitorTicketController extends Controller
                         'visitor_institution' => $member['institution'] ?? null,
                         'ticket_code' => VisitorTicket::generateTicketCode($visitorType),
                         'visitor_type' => $visitorType,
+                        'individual_price' => 0,
                         'is_group_leader' => $index === 0,
                         'group_code' => $groupCode,
                         'status' => 'active', // Active immediately

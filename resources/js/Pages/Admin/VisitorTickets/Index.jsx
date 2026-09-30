@@ -210,6 +210,7 @@ export default function VisitorTicketsIndex({
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
+    const [registrationTypeFilter, setRegistrationTypeFilter] = useState(filters.registration_type || 'all');
     const [checkedInFilter, setCheckedInFilter] = useState(filters.checked_in || 'all');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
@@ -267,6 +268,7 @@ export default function VisitorTicketsIndex({
         const params = {
             search: overrides.search !== undefined ? overrides.search : searchTerm,
             type: overrides.type !== undefined ? overrides.type : typeFilter,
+            registration_type: overrides.registration_type !== undefined ? overrides.registration_type : registrationTypeFilter,
             checked_in: overrides.checked_in !== undefined ? overrides.checked_in : checkedInFilter,
             status: overrides.status !== undefined ? overrides.status : statusFilter,
             debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
@@ -275,6 +277,7 @@ export default function VisitorTicketsIndex({
 
         if (!params.search) delete params.search;
         if (params.type === 'all') delete params.type;
+        if (params.registration_type === 'all') delete params.registration_type;
         if (params.checked_in === 'all') delete params.checked_in;
         if (params.status === 'all') delete params.status;
         if (params.debt === 'all') delete params.debt;
@@ -300,6 +303,11 @@ export default function VisitorTicketsIndex({
         navigateFilters({ type: val, page: 1 });
     };
 
+    const handleRegistrationTypeFilterChange = (val) => {
+        setRegistrationTypeFilter(val);
+        navigateFilters({ registration_type: val, page: 1 });
+    };
+
     const handleCheckedInFilterChange = (val) => {
         setCheckedInFilter(val);
         navigateFilters({ checked_in: val, page: 1 });
@@ -318,10 +326,11 @@ export default function VisitorTicketsIndex({
     const handleResetFilters = () => {
         setSearchTerm('');
         setTypeFilter('all');
+        setRegistrationTypeFilter('all');
         setCheckedInFilter('all');
         setStatusFilter('all');
         setDebtFilter('all');
-        navigateFilters({ search: '', type: 'all', checked_in: 'all', status: 'all', debt: 'all', page: 1 });
+        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -643,7 +652,7 @@ export default function VisitorTicketsIndex({
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all';
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all';
 
     return (
         <SidebarLayout>
@@ -1048,6 +1057,20 @@ export default function VisitorTicketsIndex({
                         </FormControl>
 
                         <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Reg. Type</InputLabel>
+                            <Select
+                                value={registrationTypeFilter}
+                                label="Reg. Type"
+                                onChange={(e) => handleRegistrationTypeFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                            >
+                                <MenuItem value="all">All Types</MenuItem>
+                                <MenuItem value="individual">👤 Individual</MenuItem>
+                                <MenuItem value="mixed">🏢 Group / Mixed ({stats.groupRegistrationCount || 0})</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
                             <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Gate Status</InputLabel>
                             <Select
                                 value={checkedInFilter}
@@ -1423,7 +1446,7 @@ export default function VisitorTicketsIndex({
                                                     <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
                                                         {t.visitor_email}
                                                     </Typography>
-                                                    <Box sx={{ display: 'flex', gap: 1, mt: 0.3, flexWrap: 'wrap' }}>
+                                                    <Box sx={{ display: 'flex', gap: 1, mt: 0.3, flexWrap: 'wrap', alignItems: 'center' }}>
                                                         {t.visitor_phone && (
                                                             <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.68rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
                                                                 📞 {t.visitor_phone}
@@ -1433,6 +1456,20 @@ export default function VisitorTicketsIndex({
                                                             <Typography variant="caption" sx={{ color: '#15803d', fontWeight: 700, fontSize: '0.68rem', whiteSpace: 'nowrap' }}>
                                                                 🏢 {t.visitor_institution}
                                                             </Typography>
+                                                        )}
+                                                        {t.payment?.is_mixed_category && (
+                                                            <Chip
+                                                                label={`GROUP: ${t.payment.pic_name || 'Corporate'}`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 18,
+                                                                    fontSize: '0.60rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: '#ede9fe',
+                                                                    color: '#6d28d9',
+                                                                    border: '1px solid #c4b5fd',
+                                                                }}
+                                                            />
                                                         )}
                                                     </Box>
                                                 </TableCell>
@@ -1453,6 +1490,11 @@ export default function VisitorTicketsIndex({
                                                             whiteSpace: 'nowrap',
                                                         }}
                                                     />
+                                                    {t.individual_price && Number(t.individual_price) > 0 && (
+                                                        <Typography variant="caption" sx={{ color: '#094d42', fontWeight: 800, fontSize: '0.67rem', display: 'block', mt: 0.3 }}>
+                                                            Rp {Number(t.individual_price).toLocaleString('id-ID')}
+                                                        </Typography>
+                                                    )}
                                                 </TableCell>
 
                                                 {/* SOURCE */}
@@ -1943,6 +1985,16 @@ export default function VisitorTicketsIndex({
                                         <Typography variant="caption" sx={{ color: detailModal.ticket.payment.is_debt ? '#78350f' : '#166534', fontWeight: 600, display: 'block' }}>
                                             Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong> ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
+                                        {detailModal.ticket.payment.is_mixed_category && (
+                                            <Box sx={{ mt: 1, p: 1.2, bgcolor: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#6d28d9', display: 'block' }}>
+                                                    🏢 CORPORATE / GROUP REGISTRATION (PIC DETAILS)
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: '#4c1d95', display: 'block', mt: 0.3 }}>
+                                                    PIC: <strong>{detailModal.ticket.payment.pic_name}</strong> ({detailModal.ticket.payment.pic_institution || 'Corporate'}) &bull; {detailModal.ticket.payment.pic_email} &bull; {detailModal.ticket.payment.pic_phone || '-'}
+                                                </Typography>
+                                            </Box>
+                                        )}
                                         {detailModal.ticket.payment.is_debt && detailModal.ticket.payment.debt_notes && (
                                             <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 700, display: 'block', mt: 0.5, bgcolor: '#fef3c7', p: 0.8, borderRadius: '6px' }}>
                                                 📝 Debt Notes: "{detailModal.ticket.payment.debt_notes}"

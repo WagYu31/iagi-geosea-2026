@@ -52,6 +52,9 @@ class VisitorTicketAdminController extends Controller
                   ->orWhereHas('payment', function ($pq) use ($search) {
                       $pq->where('payment_code', 'like', "%{$search}%")
                          ->orWhere('debt_notes', 'like', "%{$search}%")
+                         ->orWhere('pic_name', 'like', "%{$search}%")
+                         ->orWhere('pic_email', 'like', "%{$search}%")
+                         ->orWhere('pic_institution', 'like', "%{$search}%")
                          ->orWhere('id', 'like', "%{$search}%");
 
                       // Extract numeric sequence if search is like "013", "13", "014", etc.
@@ -78,6 +81,22 @@ class VisitorTicketAdminController extends Controller
         if ($type = $request->input('type')) {
             if ($type !== 'all') {
                 $query->where('visitor_type', $type);
+            }
+        }
+
+        // Registration Type filter (All / Individual / Mixed Group)
+        if ($regType = $request->input('registration_type')) {
+            if ($regType === 'mixed' || $regType === 'group') {
+                $query->whereHas('payment', function ($pq) {
+                    $pq->where('is_mixed_category', true);
+                });
+            } elseif ($regType === 'single' || $regType === 'individual') {
+                $query->where(function ($q) {
+                    $q->whereDoesntHave('payment')
+                      ->orWhereHas('payment', function ($pq) {
+                          $pq->where('is_mixed_category', false);
+                      });
+                });
             }
         }
 
@@ -144,6 +163,7 @@ class VisitorTicketAdminController extends Controller
             })->count(),
             'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
             'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
+            'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
         ];
 
         // Lanyard Templates from settings
@@ -164,6 +184,7 @@ class VisitorTicketAdminController extends Controller
             'filters' => [
                 'search' => $request->input('search', ''),
                 'type' => $request->input('type', 'all'),
+                'registration_type' => $request->input('registration_type', 'all'),
                 'checked_in' => $request->input('checked_in', 'all'),
                 'status' => $request->input('status', 'all'),
                 'debt' => $request->input('debt', 'all'),
