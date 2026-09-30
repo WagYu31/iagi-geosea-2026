@@ -426,8 +426,11 @@ export default function Receipt({
                                 <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', mb: 0.4 }}>
                                     <strong>Amount Received:</strong> <em>"{amountInWords}"</em>
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
+                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35, mb: 0.4 }}>
                                     <strong>In Payment of:</strong> Registration Payment for the 55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.74rem', display: 'block', lineHeight: 1.35 }}>
+                                    <strong>Note:</strong> Please complete the payment at least 7 days prior to the convention
                                 </Typography>
                             </Box>
                         </Box>
