@@ -456,9 +456,9 @@ export default function Receipt({
                                     <Typography
                                         sx={{
                                             fontWeight: 700,
-                                            fontSize: { xs: '0.88rem', sm: '0.96rem' },
+                                            fontSize: '0.80rem',
                                             color: '#0f172a',
-                                            lineHeight: 1.4,
+                                            lineHeight: 1.45,
                                         }}
                                     >
                                         {amountInWords}
