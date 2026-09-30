@@ -455,12 +455,10 @@ export default function Receipt({
                                     </Typography>
                                     <Typography
                                         sx={{
-                                            fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif',
-                                            fontStyle: 'italic',
                                             fontWeight: 700,
-                                            fontSize: { xs: '0.94rem', sm: '1.05rem' },
+                                            fontSize: { xs: '0.88rem', sm: '0.96rem' },
                                             color: '#0f172a',
-                                            lineHeight: 1.35,
+                                            lineHeight: 1.4,
                                         }}
                                     >
                                         {amountInWords}
@@ -491,8 +489,15 @@ export default function Receipt({
                                             lineHeight: 1.45,
                                         }}
                                     >
-                                        Registration Payment for the{' '}
-                                        <strong style={{ fontWeight: 800, color: '#094d42' }}>
+                                        Registration Payment for the
+                                        <strong
+                                            style={{
+                                                display: 'block',
+                                                fontWeight: 800,
+                                                color: '#094d42',
+                                                marginTop: '2px',
+                                            }}
+                                        >
                                             55th IAGI Annual Scientific Meeting & Convention and GEOSEA XIX Regional Congress 2026
                                         </strong>
                                     </Typography>
