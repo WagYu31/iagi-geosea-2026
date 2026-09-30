@@ -34,6 +34,7 @@ const CATEGORY_MAP = {
     exhibition: { label: 'Exhibition', badge: 'EXHIBITION' },
     committee: { label: 'Committee', badge: 'COMMITTEE' },
     student_volunteer: { label: 'Student Volunteer', badge: 'STUDENT VOLUNTEER' },
+    board: { label: 'Board', badge: 'BOARD' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', badge: 'PROFESSIONAL (MEMBER)' },

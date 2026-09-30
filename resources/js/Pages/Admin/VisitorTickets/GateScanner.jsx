@@ -151,6 +151,15 @@ const CATEGORY_MAP = {
         color: '#166534',
         border: '#bbf7d0',
     },
+
+    // 10. Board
+    board: {
+        label: 'BOARD',
+        shortLabel: 'BOARD',
+        bg: '#fef3c7',
+        color: '#b45309',
+        border: '#fde68a',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;

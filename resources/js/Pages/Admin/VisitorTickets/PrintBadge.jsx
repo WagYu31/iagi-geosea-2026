@@ -48,6 +48,9 @@ export const BADGE_TEMPLATES = {
 
     // 9. Student Volunteer
     student_volunteer: '/images/badges/Student_Volunteer.svg',
+
+    // 10. Board
+    board: '/images/badges/VIP.svg',
 };
 
 const CATEGORY_MAP = {
@@ -82,6 +85,9 @@ const CATEGORY_MAP = {
 
     // 9. Student Volunteer
     student_volunteer: { label: 'STUDENT VOLUNTEER', short: 'STUDENT VOLUNTEER' },
+
+    // 10. Board
+    board: { label: 'BOARD', short: 'BOARD' },
 };
 
 function SingleLanyardCard({ ticket, templatePath, isBulk }) {

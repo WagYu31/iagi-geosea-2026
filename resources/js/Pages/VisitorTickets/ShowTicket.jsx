@@ -97,6 +97,16 @@ const CATEGORY_MAP = {
         tagBg: '#f0fdf4',
         tagColor: '#166534',
     },
+    board: {
+        label: 'Board',
+        badge: 'BOARD',
+        gradient: 'linear-gradient(135deg, #d97706 0%, #92400e 100%)',
+        border: '#d97706',
+        shadow: 'rgba(217, 119, 6, 0.25)',
+        textColor: '#b45309',
+        tagBg: '#fef3c7',
+        tagColor: '#92400e',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',

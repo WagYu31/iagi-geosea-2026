@@ -180,6 +180,15 @@ const CATEGORY_META = {
         color: '#166534',
         border: '#bbf7d0',
     },
+
+    // 10. Board
+    board: {
+        label: 'Board',
+        shortLabel: 'BOARD',
+        bg: '#fef3c7',
+        color: '#b45309',
+        border: '#fde68a',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
@@ -1025,7 +1034,7 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                    ROLES & INVITATIONS (3 - 9)
+                                    ROLES & INVITATIONS (3 - 10)
                                 </ListSubheader>
                                 <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
                                 <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Speaker</MenuItem>
@@ -1034,6 +1043,7 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
                                 <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
                                 <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
+                                <MenuItem value="board" sx={{ fontSize: '0.82rem' }}>10. 🎖️ Board (Invited / Free)</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -2073,7 +2083,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        ROLES & INVITATIONS (3 - 9)
+                                        ROLES & INVITATIONS (3 - 10)
                                     </ListSubheader>
                                     <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
                                     <MenuItem value="speaker">4. 🎤 Speaker (Invited / Free)</MenuItem>
@@ -2082,6 +2092,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
                                     <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
                                     <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                    <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth size="small">
@@ -2143,7 +2154,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free / Rp 0)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        ROLES & INVITATIONS (3 - 9)
+                                        ROLES & INVITATIONS (3 - 10)
                                     </ListSubheader>
                                     <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
                                     <MenuItem value="speaker">4. 🎤 Speaker (Invited / Free)</MenuItem>
@@ -2152,6 +2163,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
                                     <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
                                     <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                    <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
 

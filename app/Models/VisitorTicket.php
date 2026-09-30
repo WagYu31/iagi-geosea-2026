@@ -77,6 +77,7 @@ class VisitorTicket extends Model
             'exhibition' => 'TKT-EXH',
             'committee' => 'TKT-COM',
             'student_volunteer' => 'TKT-VOL',
+            'board' => 'TKT-BRD',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
@@ -114,7 +115,7 @@ class VisitorTicket extends Model
             // 2. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',
 
-            // 3-9. Roles & Invitations
+            // 3-10. Roles & Invitations
             'vip' => 'VIP',
             'exclusive' => 'VIP',
             'speaker' => 'Speaker',
@@ -123,6 +124,7 @@ class VisitorTicket extends Model
             'exhibition' => 'Exhibition',
             'committee' => 'Committee',
             'student_volunteer' => 'Student Volunteer',
+            'board' => 'Board',
         ];
 
         return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));
