@@ -50,7 +50,7 @@ export const BADGE_TEMPLATES = {
     student_volunteer: '/images/badges/Student_Volunteer.svg',
 
     // 10. Board
-    board: '/images/badges/VIP.svg',
+    board: '/images/badges/Board.svg',
 };
 
 const CATEGORY_MAP = {

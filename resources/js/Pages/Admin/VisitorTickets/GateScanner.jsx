@@ -219,6 +219,7 @@ export default function GateScanner({
             '/images/badges/Speaker.svg',
             '/images/badges/Student_Volunteer.svg',
             '/images/badges/VIP.svg',
+            '/images/badges/Board.svg',
             '/images/badges/Visitor.svg',
         ];
         badgeSvgs.forEach((src) => {
