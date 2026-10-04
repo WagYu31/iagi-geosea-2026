@@ -326,9 +326,9 @@ export default function GroupRegister({
                                 fontSize: '0.84rem',
                                 textTransform: 'none',
                                 color: '#ffffff',
-                                bgcolor: '#094d42',
-                                boxShadow: '0 2px 8px rgba(9, 77, 66, 0.25)',
-                                '&:hover': { bgcolor: '#06362e' },
+                                bgcolor: '#0f172a',
+                                boxShadow: '0 4px 12px rgba(15, 23, 42, 0.3)',
+                                '&:hover': { bgcolor: '#1e293b' },
                             }}
                         >
                             🏢 Company / Group (Mixed Categories)
@@ -343,11 +343,12 @@ export default function GroupRegister({
                         p: { xs: 3, md: 4.5 },
                         mb: 4,
                         borderRadius: '20px',
-                        background: 'linear-gradient(135deg, #094d42 0%, #06362e 100%)',
+                        background: 'linear-gradient(135deg, #0a192f 0%, #0f172a 50%, #1e293b 100%)',
                         color: '#ffffff',
                         position: 'relative',
                         overflow: 'hidden',
-                        boxShadow: '0 10px 30px rgba(9, 77, 66, 0.15)',
+                        boxShadow: '0 12px 35px rgba(10, 25, 47, 0.35)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
                     }}
                 >
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -356,24 +357,35 @@ export default function GroupRegister({
                                 label="CORPORATE & GROUP ACCESS"
                                 size="small"
                                 sx={{
-                                    bgcolor: 'rgba(255,255,255,0.18)',
-                                    color: '#fef3c7',
+                                    bgcolor: 'rgba(56, 189, 248, 0.16)',
+                                    color: '#38bdf8',
+                                    border: '1px solid rgba(56, 189, 248, 0.35)',
                                     fontWeight: 800,
                                     fontSize: '0.70rem',
                                     letterSpacing: '0.08em',
                                     backdropFilter: 'blur(4px)',
                                 }}
                             />
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>
                                 55th PIT IAGI & GEOSEA XIX 2026
                             </Typography>
                         </Stack>
 
-                        <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, fontSize: { xs: '1.5rem', sm: '2rem', md: '2.4rem' } }}>
+                        <Typography 
+                            variant="h4" 
+                            sx={{ 
+                                fontWeight: 900, 
+                                mb: 1, 
+                                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.4rem' },
+                                color: '#ffffff !important',
+                                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
                             Mixed-Category Group Registration
                         </Typography>
                         <Typography variant="body1" sx={{ color: '#e2e8f0', maxWidth: 760, fontSize: { xs: '0.9rem', md: '1rem' }, lineHeight: 1.6 }}>
-                            Register your company delegation or organization in a single transaction. Each participant can have their own ticket category (Professional Member/Non-Member, Expatriate, or Student) with 1 unified invoice and 1 payment proof.
+                            Register your company delegation or organization in a single transaction. Each participant can have their own ticket category (Professional Member/Non-Member, Expatriate, or Student) with 1 unified invoice and 1 payment receipt.
                         </Typography>
 
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 2.5, pt: 2, borderTop: '1px solid rgba(255,255,255,0.15)' }}>
@@ -384,7 +396,7 @@ export default function GroupRegister({
                                 📍 <strong>Venue:</strong> {eventVenue}
                             </Typography>
                             <Box sx={{ flexGrow: 1 }} />
-                            <Link href="/tickets" style={{ textDecoration: 'none', color: '#86efac', fontSize: '0.78rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <Link href="/tickets" style={{ textDecoration: 'none', color: '#38bdf8', fontSize: '0.78rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                                 <SearchIcon sx={{ fontSize: 16 }} /> Lookup Existing Registration
                             </Link>
                         </Stack>
@@ -850,7 +862,7 @@ export default function GroupRegister({
                                     {/* PROOF OF PAYMENT UPLOAD */}
                                     <Box sx={{ mb: 2.5 }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 0.8 }}>
-                                            Upload Proof of Payment (Bukti Transfer) *
+                                            Upload Payment Receipt (Bukti Transfer) *
                                         </Typography>
 
                                         <input
