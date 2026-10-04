@@ -862,7 +862,7 @@ export default function GroupRegister({
                                     {/* PROOF OF PAYMENT UPLOAD */}
                                     <Box sx={{ mb: 2.5 }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 0.8 }}>
-                                            Upload Payment Receipt (Bukti Transfer) *
+                                            Upload Payment Receipt *
                                         </Typography>
 
                                         <input
