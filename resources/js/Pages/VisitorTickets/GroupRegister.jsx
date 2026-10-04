@@ -439,7 +439,7 @@ export default function GroupRegister({
                                     </Box>
                                     <Box>
                                         <Typography variant="h6" sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem' }}>
-                                            PIC / Company Information (Penanggung Jawab)
+                                            PIC Group
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: '#64748b' }}>
                                             The person or corporate representative in charge of registration and receiving the official invoice.
