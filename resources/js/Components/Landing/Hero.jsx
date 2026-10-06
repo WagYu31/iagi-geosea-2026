@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import RegistrationClosedDialog from './RegistrationClosedDialog';
 
 // Keyframe animations
 const fadeInUp = keyframes`
@@ -163,7 +162,6 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
 
 export default function Hero({ settings, auth }) {
     const [videoMounted, setVideoMounted] = useState(false);
-    const [closedModalOpen, setClosedModalOpen] = useState(false);
     const heroText = settings.hero_text || {};
 
     useEffect(() => {
@@ -472,7 +470,8 @@ export default function Hero({ settings, auth }) {
                                 Conference Registration
                             </Button>
                             <Button
-                                onClick={() => setClosedModalOpen(true)}
+                                component={Link}
+                                href="/register"
                                 variant="contained"
                                 size="large"
                                 sx={{
@@ -586,9 +585,6 @@ export default function Hero({ settings, auth }) {
                 {/* Isolated Countdown Component (does not re-render parent Hero) */}
                 <CountdownSection targetDateStr={settings.countdown_target_date} fadeInUpAnim={fadeInUp} />
             </Container>
-
-            {/* 3D Registration Closed Notice Dialog */}
-            <RegistrationClosedDialog open={closedModalOpen} onClose={() => setClosedModalOpen(false)} />
         </Box>
     );
 }

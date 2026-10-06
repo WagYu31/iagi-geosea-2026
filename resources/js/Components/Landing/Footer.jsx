@@ -11,7 +11,6 @@ import Avatar from '@mui/material/Avatar';
 import MuiLink from '@mui/material/Link';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import RegistrationClosedDialog from './RegistrationClosedDialog';
 
 const SocialIcon = ({ type }) => {
     const icons = {
@@ -50,7 +49,6 @@ const SocialIcon = ({ type }) => {
 };
 
 export default function Footer({ settings, auth }) {
-    const [closedModalOpen, setClosedModalOpen] = useState(false);
     const contact = settings.contact_info || {};
     const hero = settings.hero_text || {};
     const social = settings.social_media || {};
@@ -514,25 +512,7 @@ export default function Footer({ settings, auth }) {
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
                                 {!auth?.user ? (
                                     <>
-                                        <MuiLink
-                                            component="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                setClosedModalOpen(true);
-                                            }}
-                                            sx={{
-                                                color: 'rgba(255,255,255,0.8)',
-                                                textDecoration: 'none',
-                                                fontSize: '0.85rem',
-                                                transition: 'all 0.25s ease',
-                                                cursor: 'pointer',
-                                                background: 'none',
-                                                border: 'none',
-                                                p: 0,
-                                                textAlign: 'left',
-                                                '&:hover': { color: '#4dd4ac' },
-                                            }}
-                                        >
+                                        <MuiLink href="/register" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
                                             Register
                                         </MuiLink>
                                         <MuiLink href="/login" sx={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '0.85rem', transition: 'all 0.25s ease', '&:hover': { color: '#4dd4ac' } }}>
@@ -643,9 +623,6 @@ export default function Footer({ settings, auth }) {
                     </Box>
                 </Container>
             </Box>
-
-            {/* 3D Registration Closed Notice Dialog */}
-            <RegistrationClosedDialog open={closedModalOpen} onClose={() => setClosedModalOpen(false)} />
         </>
     );
 }

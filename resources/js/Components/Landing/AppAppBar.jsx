@@ -13,7 +13,6 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import RegistrationClosedDialog from './RegistrationClosedDialog';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     display: 'flex',
@@ -44,7 +43,6 @@ const navItems = [
 
 export default function AppAppBar({ auth }) {
     const [open, setOpen] = useState(false);
-    const [closedModalOpen, setClosedModalOpen] = useState(false);
 
     const scrollTo = (id) => {
         setOpen(false);
@@ -204,7 +202,8 @@ export default function AppAppBar({ auth }) {
                                     Sign in
                                 </Button>
                                 <Button
-                                    onClick={() => setClosedModalOpen(true)}
+                                    component={Link}
+                                    href="/register"
                                     variant="contained"
                                     size="small"
                                     sx={{
@@ -292,10 +291,8 @@ export default function AppAppBar({ auth }) {
                                         </MenuItem>
                                         <MenuItem>
                                             <Button
-                                                onClick={() => {
-                                                    setOpen(false);
-                                                    setClosedModalOpen(true);
-                                                }}
+                                                component={Link}
+                                                href="/register"
                                                 variant="contained"
                                                 fullWidth
                                                 sx={{
@@ -332,9 +329,6 @@ export default function AppAppBar({ auth }) {
                     </Box>
                 </StyledToolbar>
             </Container>
-
-            {/* 3D Registration Closed Notice Dialog */}
-            <RegistrationClosedDialog open={closedModalOpen} onClose={() => setClosedModalOpen(false)} />
         </AppBar>
     );
 }
