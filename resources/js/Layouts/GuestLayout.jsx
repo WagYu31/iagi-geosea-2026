@@ -82,7 +82,18 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                 }}
             />
 
-            <Container maxWidth={wide ? 'lg' : maxWidth} sx={{ position: 'relative', zIndex: 1, width: '100%' }}>
+            <Container
+                maxWidth={false}
+                sx={{
+                    position: 'relative',
+                    zIndex: 1,
+                    width: '100%',
+                    maxWidth: wide ? { xs: '100%', sm: '640px', md: '1060px', lg: '1140px' } : '550px',
+                    px: { xs: 1.5, sm: 2.5, md: 3 },
+                    py: { xs: 2, md: 3 },
+                    my: 'auto',
+                }}
+            >
                 {wide ? (
                     children
                 ) : (
