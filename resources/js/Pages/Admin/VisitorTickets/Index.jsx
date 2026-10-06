@@ -70,6 +70,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -207,6 +210,33 @@ export default function VisitorTicketsIndex({
     const totalItems = tickets.total || 0;
     const currentPage = tickets.current_page || 1;
     const lastPage = tickets.last_page || 1;
+
+    // Passcode Security for Visitor Tickets (Password: del08)
+    const VISITOR_TICKETS_PASSCODE = 'del08';
+    const [isUnlocked, setIsUnlocked] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return sessionStorage.getItem('visitor_tickets_unlocked') === 'true';
+        }
+        return false;
+    });
+    const [directPasscode, setDirectPasscode] = useState('');
+    const [directPasscodeError, setDirectPasscodeError] = useState('');
+    const [showDirectPasscode, setShowDirectPasscode] = useState(false);
+
+    const handleUnlockDirect = (e) => {
+        if (e) e.preventDefault();
+        if (directPasscode.trim() === VISITOR_TICKETS_PASSCODE) {
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('visitor_tickets_unlocked', 'true');
+            }
+            setIsUnlocked(true);
+            setDirectPasscodeError('');
+            setDirectPasscode('');
+        } else {
+            setDirectPasscodeError('Sandi salah! Akses ditolak.');
+            setDirectPasscode('');
+        }
+    };
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
@@ -658,7 +688,144 @@ export default function VisitorTicketsIndex({
         <SidebarLayout>
             <Head title="Visitor & Conference Tickets - Admin" />
 
-            <Box sx={{ py: 3, px: { xs: 2, sm: 3 }, maxWidth: '1440px', mx: 'auto' }}>
+            {/* Direct Access Passcode Dialog (If opened directly / refreshed) */}
+            {!isUnlocked && (
+                <Dialog
+                    open={true}
+                    disableEscapeKeyDown
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '24px',
+                            p: 1.5,
+                            maxWidth: '420px',
+                            width: '100%',
+                            boxShadow: '0 25px 70px rgba(0,0,0,0.4)',
+                            border: '1.5px solid rgba(16, 185, 129, 0.3)',
+                            textAlign: 'center',
+                        }
+                    }}
+                >
+                    <DialogTitle sx={{ pt: 2, pb: 1 }}>
+                        <Box
+                            sx={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                bgcolor: 'rgba(16, 185, 129, 0.12)',
+                                color: '#059669',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mx: 'auto',
+                                mb: 2,
+                                border: '2px solid rgba(16, 185, 129, 0.25)',
+                            }}
+                        >
+                            <LockOutlinedIcon sx={{ fontSize: 32 }} />
+                        </Box>
+                        <Typography variant="h5" sx={{ fontWeight: 800, color: '#0f172a', letterSpacing: '-0.01em' }}>
+                            Akses Menu Terproteksi
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b', mt: 0.8, fontSize: '0.84rem' }}>
+                            Halaman <b>Visitor Tickets</b> memerlukan otorisasi sandi. Silakan masukkan sandi untuk mengakses menu ini.
+                        </Typography>
+                    </DialogTitle>
+                    <form onSubmit={handleUnlockDirect}>
+                        <DialogContent sx={{ pt: 1, pb: 2.5 }}>
+                            {directPasscodeError && (
+                                <Alert severity="error" sx={{ mb: 2, borderRadius: '10px', fontSize: '0.82rem', textAlign: 'left' }}>
+                                    {directPasscodeError}
+                                </Alert>
+                            )}
+                            <TextField
+                                autoFocus
+                                fullWidth
+                                size="small"
+                                placeholder="Masukkan sandi..."
+                                type={showDirectPasscode ? 'text' : 'password'}
+                                value={directPasscode}
+                                onChange={(e) => {
+                                    setDirectPasscode(e.target.value);
+                                    if (directPasscodeError) setDirectPasscodeError('');
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <VpnKeyIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => setShowDirectPasscode(!showDirectPasscode)}
+                                                size="small"
+                                            >
+                                                {showDirectPasscode ? <VisibilityOff sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '12px',
+                                        bgcolor: '#f8fafc',
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#10b981',
+                                            borderWidth: '2px',
+                                        },
+                                    },
+                                }}
+                            />
+                        </DialogContent>
+                        <DialogActions sx={{ px: 2, pb: 2, display: 'flex', gap: 1.5, justifyContent: 'center' }}>
+                            <Button
+                                onClick={() => router.visit(route('admin.dashboard'))}
+                                variant="outlined"
+                                sx={{
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    color: '#64748b',
+                                    borderColor: '#cbd5e1',
+                                    px: 2.5,
+                                    py: 1,
+                                    '&:hover': { borderColor: '#94a3b8', bgcolor: 'transparent' },
+                                }}
+                            >
+                                Kembali ke Dashboard
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                sx={{
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    fontWeight: 700,
+                                    bgcolor: '#059669',
+                                    boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                                    px: 3,
+                                    py: 1,
+                                    '&:hover': { bgcolor: '#047857' },
+                                }}
+                            >
+                                Buka Akses
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </Dialog>
+            )}
+
+            <Box sx={{
+                py: 3,
+                px: { xs: 2, sm: 3 },
+                maxWidth: '1440px',
+                mx: 'auto',
+                filter: !isUnlocked ? 'blur(12px)' : 'none',
+                pointerEvents: !isUnlocked ? 'none' : 'auto',
+                userSelect: !isUnlocked ? 'none' : 'auto',
+                transition: 'filter 0.3s ease',
+            }}>
                 {/* 3D HEADER & QUICK ACTION BAR */}
                 <Box
                     sx={{
@@ -693,6 +860,37 @@ export default function VisitorTicketsIndex({
                                     letterSpacing: '0.05em'
                                 }}
                             />
+                            <Tooltip title="Kunci menu ini kembali untuk proteksi">
+                                <Button
+                                    size="small"
+                                    startIcon={<LockOutlinedIcon sx={{ fontSize: 14 }} />}
+                                    onClick={() => {
+                                        if (typeof window !== 'undefined') {
+                                            sessionStorage.removeItem('visitor_tickets_unlocked');
+                                        }
+                                        setIsUnlocked(false);
+                                    }}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.74rem',
+                                        fontWeight: 700,
+                                        borderRadius: '8px',
+                                        color: '#64748b',
+                                        border: '1px solid #e2e8f0',
+                                        bgcolor: '#f8fafc',
+                                        py: 0.2,
+                                        px: 1,
+                                        height: 22,
+                                        '&:hover': {
+                                            bgcolor: '#fee2e2',
+                                            color: '#dc2626',
+                                            borderColor: '#fca5a5',
+                                        },
+                                    }}
+                                >
+                                    Kunci Menu
+                                </Button>
+                            </Tooltip>
                         </Box>
                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 500 }}>
                             Central command for visitor registrations, payment verification, lanyard ID badge printing, & gate check-in.

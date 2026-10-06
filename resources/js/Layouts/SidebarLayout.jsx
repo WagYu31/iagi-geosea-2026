@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,6 +16,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import Alert from '@mui/material/Alert';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ArticleIcon from '@mui/icons-material/Article';
 import PaymentIcon from '@mui/icons-material/Payment';
@@ -34,6 +42,10 @@ import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import ShieldIcon from '@mui/icons-material/Shield';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useThemeMode } from '../ThemeContext';
 
 const drawerWidth = 270;
@@ -48,6 +60,30 @@ function SidebarLayout({ children }) {
   const { mode, toggleMode } = useThemeMode();
   const isDark = mode === 'dark';
   const c = theme.palette.custom;
+
+  // Passcode protection for Visitor Tickets
+  const VISITOR_TICKETS_PASSCODE = 'del08';
+  const [passcodeModalOpen, setPasscodeModalOpen] = useState(false);
+  const [passcodeValue, setPasscodeValue] = useState('');
+  const [passcodeError, setPasscodeError] = useState('');
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [targetProtectedUrl, setTargetProtectedUrl] = useState('');
+
+  const handleVerifyPasscode = (e) => {
+    if (e) e.preventDefault();
+    if (passcodeValue.trim() === VISITOR_TICKETS_PASSCODE) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('visitor_tickets_unlocked', 'true');
+      }
+      setPasscodeModalOpen(false);
+      setPasscodeError('');
+      setPasscodeValue('');
+      router.visit(targetProtectedUrl || route('admin.visitorTickets'));
+    } else {
+      setPasscodeError('Sandi salah! Akses ditolak.');
+      setPasscodeValue('');
+    }
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -266,10 +302,28 @@ function SidebarLayout({ children }) {
         {menuItems.map((item) => {
           const active = isActive(item.href);
           const outlineIcon = outlineIconMap[item.text] || item.icon;
+          const isProtectedMenu = item.text === 'Visitor Tickets';
+
+          const handleMenuClick = (e) => {
+            if (isProtectedMenu) {
+              const isUnlocked = typeof window !== 'undefined' && sessionStorage.getItem('visitor_tickets_unlocked') === 'true';
+              if (!isUnlocked) {
+                e.preventDefault();
+                setTargetProtectedUrl(item.href);
+                setPasscodeValue('');
+                setPasscodeError('');
+                setShowPasscode(false);
+                setMobileOpen(false);
+                setPasscodeModalOpen(true);
+              }
+            }
+          };
+
           const button = (
             <ListItemButton
               component={Link}
               href={item.href}
+              onClick={handleMenuClick}
               aria-current={active ? 'page' : undefined}
               sx={{
                 borderRadius: '14px',
@@ -576,6 +630,136 @@ function SidebarLayout({ children }) {
         <Toolbar sx={{ minHeight: { xs: 56, sm: 60 } }} />
         {children}
       </Box>
+
+      {/* ─── Protected Menu Passcode Dialog ─── */}
+      <Dialog
+        open={passcodeModalOpen}
+        onClose={() => {
+          setPasscodeModalOpen(false);
+          setPasscodeError('');
+          setPasscodeValue('');
+        }}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            p: 1,
+            boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+            border: '1.5px solid rgba(16, 185, 129, 0.25)',
+          },
+        }}
+      >
+        <DialogTitle sx={{ pb: 1, textAlign: 'center' }}>
+          <Box
+            sx={{
+              width: 52,
+              height: 52,
+              borderRadius: '50%',
+              bgcolor: 'rgba(16, 185, 129, 0.1)',
+              color: '#059669',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 1.5,
+              border: '1.5px solid rgba(16, 185, 129, 0.2)',
+            }}
+          >
+            <LockOutlinedIcon sx={{ fontSize: 26 }} />
+          </Box>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: isDark ? '#ffffff' : '#0f172a', fontSize: '1.15rem' }}>
+            Akses Menu Terproteksi
+          </Typography>
+          <Typography variant="body2" sx={{ color: isDark ? 'rgba(255,255,255,0.6)' : '#64748b', fontSize: '0.82rem', mt: 0.5 }}>
+            Masukkan sandi otorisasi untuk mengakses menu <b>Visitor Tickets</b>.
+          </Typography>
+        </DialogTitle>
+        <form onSubmit={handleVerifyPasscode}>
+          <DialogContent sx={{ pt: 1, pb: 2 }}>
+            {passcodeError && (
+              <Alert severity="error" sx={{ mb: 2, borderRadius: '10px', fontSize: '0.82rem' }}>
+                {passcodeError}
+              </Alert>
+            )}
+            <TextField
+              autoFocus
+              fullWidth
+              size="small"
+              placeholder="Masukkan sandi..."
+              type={showPasscode ? 'text' : 'password'}
+              value={passcodeValue}
+              onChange={(e) => {
+                setPasscodeValue(e.target.value);
+                if (passcodeError) setPasscodeError('');
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <VpnKeyIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      size="small"
+                      onClick={() => setShowPasscode(!showPasscode)}
+                      aria-label="toggle password visibility"
+                    >
+                      {showPasscode ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc',
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#10b981',
+                    borderWidth: '2px',
+                  },
+                },
+              }}
+            />
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+            <Button
+              onClick={() => {
+                setPasscodeModalOpen(false);
+                setPasscodeError('');
+                setPasscodeValue('');
+              }}
+              variant="outlined"
+              sx={{
+                borderRadius: '10px',
+                textTransform: 'none',
+                fontWeight: 600,
+                color: '#64748b',
+                borderColor: '#cbd5e1',
+                '&:hover': { borderColor: '#94a3b8', bgcolor: 'transparent' },
+              }}
+            >
+              Batal
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                borderRadius: '10px',
+                textTransform: 'none',
+                fontWeight: 700,
+                bgcolor: '#059669',
+                boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                '&:hover': { bgcolor: '#047857' },
+              }}
+            >
+              Buka Akses
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Box>
   );
 }
