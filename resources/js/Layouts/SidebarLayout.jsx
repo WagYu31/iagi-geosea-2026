@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -84,6 +84,17 @@ function SidebarLayout({ children }) {
       setPasscodeValue('');
     }
   };
+
+  // If user navigates to any page that is NOT Visitor Tickets, immediately clear unlocked state
+  useEffect(() => {
+    const isVisitorTickets = typeof window !== 'undefined'
+      ? (window.location.pathname.includes('visitor-tickets') || currentRoute.includes('visitor-tickets'))
+      : currentRoute.includes('visitor-tickets');
+
+    if (!isVisitorTickets && typeof window !== 'undefined') {
+      sessionStorage.removeItem('visitor_tickets_unlocked');
+    }
+  }, [currentRoute]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -306,6 +317,22 @@ function SidebarLayout({ children }) {
 
           const handleMenuClick = (e) => {
             if (isProtectedMenu) {
+              const isCurrentlyOnVisitorTickets = typeof window !== 'undefined'
+                ? (window.location.pathname.includes('visitor-tickets') || currentRoute.includes('visitor-tickets'))
+                : currentRoute.includes('visitor-tickets');
+
+              // If coming from another menu, ALWAYS prompt for passcode!
+              if (!isCurrentlyOnVisitorTickets) {
+                e.preventDefault();
+                setTargetProtectedUrl(item.href);
+                setPasscodeValue('');
+                setPasscodeError('');
+                setShowPasscode(false);
+                setMobileOpen(false);
+                setPasscodeModalOpen(true);
+                return;
+              }
+
               const isUnlocked = typeof window !== 'undefined' && sessionStorage.getItem('visitor_tickets_unlocked') === 'true';
               if (!isUnlocked) {
                 e.preventDefault();
@@ -315,6 +342,11 @@ function SidebarLayout({ children }) {
                 setShowPasscode(false);
                 setMobileOpen(false);
                 setPasscodeModalOpen(true);
+              }
+            } else {
+              // Navigating to any other menu resets visitor tickets lock
+              if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('visitor_tickets_unlocked');
               }
             }
           };

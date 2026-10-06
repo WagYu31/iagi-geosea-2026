@@ -238,6 +238,15 @@ export default function VisitorTicketsIndex({
         }
     };
 
+    // When leaving the Visitor Tickets page, automatically re-lock it
+    useEffect(() => {
+        return () => {
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('visitor_tickets_unlocked');
+            }
+        };
+    }, []);
+
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
     const [registrationTypeFilter, setRegistrationTypeFilter] = useState(filters.registration_type || 'all');
