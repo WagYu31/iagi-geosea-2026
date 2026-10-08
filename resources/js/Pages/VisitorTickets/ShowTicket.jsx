@@ -107,6 +107,26 @@ const CATEGORY_MAP = {
         tagBg: '#fef3c7',
         tagColor: '#92400e',
     },
+    sponsorship: {
+        label: 'Sponsorship',
+        badge: 'SPONSORSHIP',
+        gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+        border: '#059669',
+        shadow: 'rgba(5, 150, 105, 0.25)',
+        textColor: '#059669',
+        tagBg: '#ecfdf5',
+        tagColor: '#065f46',
+    },
+    sponsor: {
+        label: 'Sponsorship',
+        badge: 'SPONSORSHIP',
+        gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+        border: '#059669',
+        shadow: 'rgba(5, 150, 105, 0.25)',
+        textColor: '#059669',
+        tagBg: '#ecfdf5',
+        tagColor: '#065f46',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',

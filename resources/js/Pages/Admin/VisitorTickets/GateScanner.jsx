@@ -160,6 +160,22 @@ const CATEGORY_MAP = {
         color: '#b45309',
         border: '#fde68a',
     },
+
+    // 11. Sponsorship
+    sponsorship: {
+        label: 'SPONSORSHIP',
+        shortLabel: 'SPONSORSHIP',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
+    sponsor: {
+        label: 'SPONSORSHIP',
+        shortLabel: 'SPONSORSHIP',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;
