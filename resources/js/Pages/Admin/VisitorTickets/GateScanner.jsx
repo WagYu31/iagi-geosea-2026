@@ -221,6 +221,7 @@ export default function GateScanner({
             '/images/badges/VIP.svg',
             '/images/badges/Board.svg',
             '/images/badges/Visitor.svg',
+            '/images/badges/Sponsorship.svg',
         ];
         badgeSvgs.forEach((src) => {
             const img = new Image();
