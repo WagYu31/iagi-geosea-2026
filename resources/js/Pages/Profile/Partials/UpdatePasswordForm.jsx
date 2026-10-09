@@ -222,21 +222,28 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </Box>
 
                 {/* Update Button */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pt: 1 }}>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'stretch', sm: 'center' },
+                    gap: 1.5,
+                    pt: 1,
+                }}>
                     <Button
                         type="submit"
                         variant="contained"
                         disabled={processing}
                         startIcon={processing ? <CircularProgress size={16} color="inherit" /> : <SecurityIcon />}
                         sx={{
+                            width: { xs: '100%', sm: 'auto' },
                             background: 'linear-gradient(135deg, #094d42 0%, #059669 100%)',
                             color: '#ffffff',
                             borderRadius: '12px',
                             px: 3,
-                            py: 1.2,
+                            py: 1.3,
                             textTransform: 'none',
                             fontWeight: 800,
-                            fontSize: '0.86rem',
+                            fontSize: '0.88rem',
                             letterSpacing: '0.02em',
                             boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)',
                             '&:hover': {
@@ -250,7 +257,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     </Button>
 
                     {recentlySuccessful && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, color: '#059669' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', sm: 'flex-start' }, gap: 0.6, color: '#059669' }}>
                             <CheckCircleIcon sx={{ fontSize: 18 }} />
                             <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.82rem' }}>
                                 Password updated!

@@ -5,11 +5,11 @@ import {
     Box, Typography, Card, CardContent, Chip, Button, TextField,
     Stack, useTheme, Alert, LinearProgress, Tooltip,
     Snackbar, Dialog, DialogContent, Grid, Avatar, IconButton, Divider,
+    Collapse,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import MicIcon from '@mui/icons-material/Mic';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
@@ -18,6 +18,8 @@ import StarIcon from '@mui/icons-material/Star';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ShieldIcon from '@mui/icons-material/Shield';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import CircularProgress from '@mui/material/CircularProgress';
 
 /* ────────────────────────────────────────────
@@ -28,9 +30,6 @@ const TOKENS = {
     brandTeal: '#094d42',
     brandEmerald: '#059669',
     accentCyan: '#0284c7',
-    sectionA: '#0284c7', // Presentation delivery
-    sectionB: '#059669', // Presentation content
-    sectionC: '#d97706', // Manuscript quality
     exceptional: '#059669',
     good: '#2563eb',
     acceptable: '#d97706',
@@ -136,6 +135,7 @@ export default function ScoreForm({ submission, presentationScore }) {
     const { flash } = usePage().props;
     const [successDialog, setSuccessDialog] = useState({ open: false, score: null });
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
 
     // Initial form state
     const initialData = {};
@@ -220,14 +220,15 @@ export default function ScoreForm({ submission, presentationScore }) {
             <Head title={`Evaluation: ${submission.title} • 55th PIT IAGI & GEOSEA 2026`} />
 
             <Box sx={{
-                p: { xs: 2, sm: 3, md: 4 },
+                p: { xs: 1.5, sm: 2.5, md: 4 },
+                pb: { xs: 14, lg: 5 }, // Extra bottom padding on mobile so content is never covered by the floating bottom bar
                 minHeight: '100vh',
                 bgcolor: c.surfaceBg,
                 maxWidth: '1600px',
                 mx: 'auto',
             }}>
                 {/* ── BREADCRUMB & BACK ACTION ── */}
-                <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
                     <Button
                         component={Link}
                         href={route('juri.submissions')}
@@ -235,27 +236,27 @@ export default function ScoreForm({ submission, presentationScore }) {
                         sx={{
                             textTransform: 'none',
                             fontWeight: 700,
-                            fontSize: '0.85rem',
+                            fontSize: { xs: '0.78rem', sm: '0.85rem' },
                             color: c.textSecondary,
                             borderRadius: '10px',
-                            px: 1.5,
-                            py: 0.6,
+                            px: 1.2,
+                            py: 0.5,
                             '&:hover': {
                                 bgcolor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
                                 color: c.textPrimary,
                             },
                         }}
                     >
-                        Back to Assigned Presentations
+                        Back to Presentations
                     </Button>
 
                     <Chip
-                        icon={<ShieldIcon sx={{ fontSize: '14px !important' }} />}
-                        label="Confidential Rubric Evaluation"
+                        icon={<ShieldIcon sx={{ fontSize: '13px !important' }} />}
+                        label="Confidential Rubric"
                         size="small"
                         sx={{
                             fontWeight: 700,
-                            fontSize: '0.7rem',
+                            fontSize: '0.68rem',
                             borderRadius: '8px',
                             bgcolor: isDark ? 'rgba(16, 185, 129, 0.12)' : '#ecfdf5',
                             color: '#059669',
@@ -268,9 +269,9 @@ export default function ScoreForm({ submission, presentationScore }) {
                 <Box sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: '24px',
-                    p: { xs: 3, sm: 4 },
-                    mb: 3.5,
+                    borderRadius: { xs: '18px', sm: '24px' },
+                    p: { xs: 2.2, sm: 3.5, md: 4 },
+                    mb: { xs: 2.5, sm: 3.5 },
                     background: isDark
                         ? 'linear-gradient(135deg, #052e25 0%, #031c17 50%, #02120e 100%)'
                         : 'linear-gradient(135deg, #094d42 0%, #063830 50%, #03241f 100%)',
@@ -282,8 +283,8 @@ export default function ScoreForm({ submission, presentationScore }) {
                         position: 'absolute',
                         top: -70,
                         right: -70,
-                        width: 260,
-                        height: 260,
+                        width: 220,
+                        height: 220,
                         borderRadius: '50%',
                         background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
                         pointerEvents: 'none',
@@ -291,16 +292,16 @@ export default function ScoreForm({ submission, presentationScore }) {
 
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
                         {/* Badges strip */}
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 1.8 }}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.8, mb: 1.5 }}>
                             <Chip
                                 icon={isOral ? <MicIcon sx={{ fontSize: '13px !important' }} /> : <WallpaperIcon sx={{ fontSize: '13px !important' }} />}
                                 label={isOral ? 'ORAL PRESENTATION' : 'POSTER PRESENTATION'}
                                 size="small"
                                 sx={{
-                                    height: 24,
-                                    fontSize: '0.7rem',
+                                    height: 22,
+                                    fontSize: '0.68rem',
                                     fontWeight: 800,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     bgcolor: isOral ? 'rgba(2, 132, 199, 0.25)' : 'rgba(147, 51, 234, 0.25)',
                                     color: isOral ? '#7dd3fc' : '#d8b4fe',
                                     border: `1px solid ${isOral ? '#38bdf8' : '#c084fc'}`,
@@ -310,24 +311,24 @@ export default function ScoreForm({ submission, presentationScore }) {
                                 label={paperCode}
                                 size="small"
                                 sx={{
-                                    height: 24,
+                                    height: 22,
                                     fontFamily: 'monospace',
-                                    fontSize: '0.72rem',
+                                    fontSize: '0.68rem',
                                     fontWeight: 800,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     bgcolor: 'rgba(255, 255, 255, 0.12)',
                                     color: '#ffffff',
                                     border: '1px solid rgba(255, 255, 255, 0.18)',
                                 }}
                             />
                             <Chip
-                                label="55th PIT IAGI & GEOSEA XIX 2026"
+                                label="PIT IAGI & GEOSEA 2026"
                                 size="small"
                                 sx={{
-                                    height: 24,
-                                    fontSize: '0.7rem',
+                                    height: 22,
+                                    fontSize: '0.66rem',
                                     fontWeight: 700,
-                                    borderRadius: '8px',
+                                    borderRadius: '6px',
                                     bgcolor: 'rgba(245, 158, 11, 0.2)',
                                     color: '#fde68a',
                                     border: '1px solid rgba(245, 158, 11, 0.35)',
@@ -339,34 +340,34 @@ export default function ScoreForm({ submission, presentationScore }) {
                         <Typography variant="h4" sx={{
                             fontWeight: 900,
                             letterSpacing: '-0.025em',
-                            fontSize: { xs: '1.4rem', sm: '1.85rem', md: '2.1rem' },
-                            lineHeight: 1.25,
+                            fontSize: { xs: '1.25rem', sm: '1.65rem', md: '2.1rem' },
+                            lineHeight: 1.3,
                             color: '#ffffff',
-                            mb: 2,
+                            mb: 1.8,
                             maxWidth: 1000,
                         }}>
                             {submission.title}
                         </Typography>
 
                         {/* Presenter details */}
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1.5, sm: 3 }} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1.2, sm: 3 }} alignItems={{ xs: 'flex-start', sm: 'center' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                 <Avatar sx={{
-                                    width: 38,
-                                    height: 38,
+                                    width: { xs: 34, sm: 38 },
+                                    height: { xs: 34, sm: 38 },
                                     bgcolor: isOral ? '#0284c7' : '#9333ea',
                                     color: '#ffffff',
                                     fontWeight: 800,
-                                    fontSize: '0.9rem',
+                                    fontSize: '0.85rem',
                                     border: '2px solid rgba(255,255,255,0.3)',
                                 }}>
                                     {presenterName.charAt(0).toUpperCase()}
                                 </Avatar>
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase' }}>
                                         Author / Presenter
                                     </Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#ffffff', fontSize: '0.92rem' }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#ffffff', fontSize: { xs: '0.84rem', sm: '0.92rem' } }}>
                                         {presenterName}
                                     </Typography>
                                 </Box>
@@ -375,57 +376,148 @@ export default function ScoreForm({ submission, presentationScore }) {
                             <Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.15)', display: { xs: 'none', sm: 'block' } }} />
 
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <SchoolIcon sx={{ color: 'rgba(255,255,255,0.7)', fontSize: 18 }} />
+                                <SchoolIcon sx={{ color: 'rgba(255,255,255,0.7)', fontSize: 16 }} />
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase' }}>
                                         Institution
                                     </Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.92)', fontSize: '0.86rem' }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.92)', fontSize: { xs: '0.8rem', sm: '0.86rem' } }}>
                                         {institution}
                                     </Typography>
                                 </Box>
                             </Box>
-
-                            {submission.paper_sub_theme && (
-                                <>
-                                    <Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.15)', display: { xs: 'none', sm: 'block' } }} />
-                                    <Box>
-                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>
-                                            Sub-Theme
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#a7f3d0', fontSize: '0.86rem' }}>
-                                            {submission.paper_sub_theme}
-                                        </Typography>
-                                    </Box>
-                                </>
-                            )}
                         </Stack>
                     </Box>
                 </Box>
 
+                {/* ── MOBILE-ONLY LIVE SCORE SUMMARY BANNER (Top Glance on Mobile) ── */}
+                <Box sx={{ display: { xs: 'block', lg: 'none' }, mb: 2.5 }}>
+                    <Card elevation={0} sx={{
+                        borderRadius: '16px',
+                        border: `1.5px solid ${liveScore.allFilled ? grade.border : c.cardBorder}`,
+                        bgcolor: c.cardBg,
+                        p: 2,
+                        boxShadow: isDark ? '0 4px 15px rgba(0,0,0,0.3)' : '0 4px 15px rgba(0,0,0,0.03)',
+                    }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase' }}>
+                                    Current Weighted Score
+                                </Typography>
+                                <Stack direction="row" alignItems="baseline" spacing={0.6} sx={{ mt: 0.2 }}>
+                                    <Typography variant="h4" sx={{ fontWeight: 900, color: liveScore.allFilled ? grade.color : c.textPrimary, fontFamily: 'monospace' }}>
+                                        {liveScore.allFilled ? liveScore.total.toFixed(2) : (liveScore.total > 0 ? liveScore.total.toFixed(2) : '—')}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: c.textSecondary }}>/10</Typography>
+                                    {liveScore.total > 0 && (
+                                        <Chip
+                                            label={grade.label}
+                                            size="small"
+                                            sx={{
+                                                height: 18,
+                                                fontSize: '0.6rem',
+                                                fontWeight: 800,
+                                                bgcolor: grade.bg,
+                                                color: grade.color,
+                                                border: `1px solid ${grade.border}`,
+                                                ml: 0.5,
+                                            }}
+                                        />
+                                    )}
+                                </Stack>
+                            </Box>
+
+                            <Box sx={{ textAlign: 'right' }}>
+                                <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase', display: 'block' }}>
+                                    Criteria Scored
+                                </Typography>
+                                <Chip
+                                    label={`${liveScore.filledCount} of ${liveScore.totalCount} completed`}
+                                    size="small"
+                                    sx={{
+                                        mt: 0.3,
+                                        fontWeight: 800,
+                                        fontSize: '0.68rem',
+                                        bgcolor: liveScore.allFilled ? '#ecfdf5' : 'rgba(245, 158, 11, 0.12)',
+                                        color: liveScore.allFilled ? '#059669' : '#d97706',
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+
+                        <LinearProgress
+                            variant="determinate"
+                            value={(liveScore.filledCount / liveScore.totalCount) * 100}
+                            sx={{
+                                height: 5,
+                                borderRadius: 3,
+                                mt: 1.5,
+                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                                '& .MuiLinearProgress-bar': {
+                                    borderRadius: 3,
+                                    background: liveScore.allFilled
+                                        ? 'linear-gradient(90deg, #059669 0%, #10b981 100%)'
+                                        : 'linear-gradient(90deg, #d97706 0%, #f59e0b 100%)',
+                                },
+                            }}
+                        />
+
+                        {/* Expandable Category details on mobile */}
+                        <Box sx={{ mt: 1.5, pt: 1, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'}` }}>
+                            <Button
+                                size="small"
+                                fullWidth
+                                onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+                                endIcon={mobileSummaryOpen ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />}
+                                sx={{ textTransform: 'none', fontSize: '0.74rem', fontWeight: 700, color: c.textSecondary, py: 0.2 }}
+                            >
+                                {mobileSummaryOpen ? 'Hide Category Breakdown' : 'View Category Breakdown'}
+                            </Button>
+
+                            <Collapse in={mobileSummaryOpen}>
+                                <Stack spacing={1} sx={{ mt: 1, pt: 0.5 }}>
+                                    {rubric.map(cat => {
+                                        const catStat = liveScore.catScores[cat.id];
+                                        return (
+                                            <Box key={cat.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 600, color: c.textSecondary, fontSize: '0.72rem' }}>
+                                                    {cat.id}. {cat.category} ({cat.weight})
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: cat.sectionColor, fontFamily: 'monospace', fontSize: '0.72rem' }}>
+                                                    {catStat?.ws.toFixed(2)} / {catStat?.maxW.toFixed(2)} pts ({Math.round(catStat?.pct || 0)}%)
+                                                </Typography>
+                                            </Box>
+                                        );
+                                    })}
+                                </Stack>
+                            </Collapse>
+                        </Box>
+                    </Card>
+                </Box>
+
                 {/* ── MAIN 2-COLUMN COCKPIT (Bento + Sticky Score HUD) ── */}
-                <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3.5}>
+                <form id="evaluation-form" onSubmit={handleSubmit}>
+                    <Grid container spacing={{ xs: 2.5, md: 3.5 }}>
                         {/* ── LEFT COLUMN: Rubric Criteria & Inputs ── */}
                         <Grid size={{ xs: 12, lg: 8 }}>
-                            <Stack spacing={3}>
+                            <Stack spacing={{ xs: 2.5, sm: 3 }}>
                                 {/* Rubric Legend Bento Card */}
                                 <Card elevation={0} sx={{
-                                    borderRadius: '20px',
+                                    borderRadius: { xs: '18px', sm: '20px' },
                                     border: `1.5px solid ${c.cardBorder}`,
                                     bgcolor: c.cardBg,
-                                    p: { xs: 2.5, sm: 3 },
+                                    p: { xs: 2, sm: 2.5 },
                                     boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
                                 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.2 }}>
                                         <Typography variant="subtitle2" sx={{
                                             fontWeight: 800,
-                                            fontSize: '0.78rem',
+                                            fontSize: { xs: '0.72rem', sm: '0.78rem' },
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.06em',
                                             color: c.textSecondary,
                                         }}>
-                                            Standard 10-Point Scoring Scale Reference
+                                            10-Point Scoring Scale Reference
                                         </Typography>
                                         <Tooltip title="Scores are normalized on a 1-10 integer scale per criterion, then multiplied by the assigned ISO weight to produce the weighted score." arrow>
                                             <IconButton size="small">
@@ -434,28 +526,26 @@ export default function ScoreForm({ submission, presentationScore }) {
                                         </Tooltip>
                                     </Box>
 
-                                    <Grid container spacing={1}>
+                                    <Grid container spacing={0.8}>
                                         {[
-                                            { range: '9 – 10', label: 'Exceptional (Top 5%)', color: TOKENS.exceptional, bg: isDark ? 'rgba(5, 150, 105, 0.15)' : '#ecfdf5', border: '#a7f3d0' },
+                                            { range: '9 – 10', label: 'Exceptional', color: TOKENS.exceptional, bg: isDark ? 'rgba(5, 150, 105, 0.15)' : '#ecfdf5', border: '#a7f3d0' },
                                             { range: '7 – 8', label: 'Good / Strong', color: TOKENS.good, bg: isDark ? 'rgba(37, 99, 235, 0.15)' : '#eff6ff', border: '#bfdbfe' },
                                             { range: '5 – 6', label: 'Acceptable', color: TOKENS.acceptable, bg: isDark ? 'rgba(217, 119, 6, 0.15)' : '#fffbeb', border: '#fde68a' },
-                                            { range: '3 – 4', label: 'Below Standard', color: TOKENS.belowStd, bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', border: '#fed7aa' },
+                                            { range: '3 – 4', label: 'Below Std', color: TOKENS.belowStd, bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', border: '#fed7aa' },
                                             { range: '1 – 2', label: 'Unsatisfactory', color: TOKENS.unsatisfactory, bg: isDark ? 'rgba(220, 38, 38, 0.15)' : '#fef2f2', border: '#fecaca' },
                                         ].map((tier, idx) => (
-                                            <Grid size={{ xs: 6, sm: 2.4 }} key={idx}>
+                                            <Grid size={{ xs: 4, sm: 2.4 }} key={idx}>
                                                 <Box sx={{
-                                                    p: 1.2,
-                                                    borderRadius: '12px',
+                                                    p: 0.8,
+                                                    borderRadius: '10px',
                                                     textAlign: 'center',
                                                     bgcolor: tier.bg,
                                                     border: `1px solid ${tier.border}`,
-                                                    transition: 'transform 0.15s ease',
-                                                    '&:hover': { transform: 'translateY(-2px)' },
                                                 }}>
-                                                    <Typography variant="h6" sx={{
+                                                    <Typography variant="body2" sx={{
                                                         fontWeight: 900,
                                                         color: tier.color,
-                                                        fontSize: '1.05rem',
+                                                        fontSize: '0.9rem',
                                                         lineHeight: 1.1,
                                                         fontFamily: 'monospace',
                                                     }}>
@@ -463,11 +553,13 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                     </Typography>
                                                     <Typography variant="caption" sx={{
                                                         color: tier.color,
-                                                        fontSize: '0.64rem',
+                                                        fontSize: '0.62rem',
                                                         fontWeight: 700,
                                                         display: 'block',
-                                                        mt: 0.3,
-                                                        letterSpacing: '0.02em',
+                                                        mt: 0.2,
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
                                                     }}>
                                                         {tier.label}
                                                     </Typography>
@@ -485,7 +577,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                             key={cat.id}
                                             elevation={0}
                                             sx={{
-                                                borderRadius: '24px',
+                                                borderRadius: { xs: '18px', sm: '24px' },
                                                 border: `1.5px solid ${c.cardBorder}`,
                                                 bgcolor: c.cardBg,
                                                 overflow: 'hidden',
@@ -494,27 +586,27 @@ export default function ScoreForm({ submission, presentationScore }) {
                                         >
                                             {/* Section Header */}
                                             <Box sx={{
-                                                p: { xs: 2.5, sm: 3 },
+                                                p: { xs: 2, sm: 3 },
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
                                                 borderBottom: `1.5px solid ${c.cardBorder}`,
                                                 display: 'flex',
                                                 flexWrap: 'wrap',
                                                 alignItems: 'center',
                                                 justifyContent: 'space-between',
-                                                gap: 2,
+                                                gap: 1.5,
                                             }}>
-                                                <Stack direction="row" spacing={2} alignItems="center">
+                                                <Stack direction="row" spacing={1.5} alignItems="center">
                                                     <Box sx={{
-                                                        width: 44,
-                                                        height: 44,
-                                                        borderRadius: '12px',
+                                                        width: { xs: 36, sm: 42 },
+                                                        height: { xs: 36, sm: 42 },
+                                                        borderRadius: '10px',
                                                         bgcolor: `${cat.sectionColor}18`,
                                                         color: cat.sectionColor,
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
                                                         fontWeight: 900,
-                                                        fontSize: '1.25rem',
+                                                        fontSize: { xs: '1.05rem', sm: '1.2rem' },
                                                         border: `1.5px solid ${cat.sectionColor}35`,
                                                     }}>
                                                         {cat.id}
@@ -523,31 +615,31 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                         <Typography variant="h6" sx={{
                                                             fontWeight: 900,
                                                             color: c.textPrimary,
-                                                            fontSize: { xs: '1.05rem', sm: '1.2rem' },
+                                                            fontSize: { xs: '0.98rem', sm: '1.15rem' },
                                                             letterSpacing: '-0.015em',
                                                         }}>
                                                             {cat.category}
                                                         </Typography>
-                                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.74rem', fontWeight: 600 }}>
-                                                            {cat.items.length} Rubric Criteria • Weight Contribution: <strong>{cat.weight}</strong>
+                                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.72rem', fontWeight: 600 }}>
+                                                            {cat.items.length} Criteria • Weight: <strong>{cat.weight}</strong>
                                                         </Typography>
                                                     </Box>
                                                 </Stack>
 
                                                 {/* Category sub-score badge */}
                                                 <Box sx={{
-                                                    px: 2,
-                                                    py: 0.8,
-                                                    borderRadius: '12px',
+                                                    px: 1.5,
+                                                    py: 0.5,
+                                                    borderRadius: '10px',
                                                     bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
                                                     border: `1px solid ${c.cardBorder}`,
                                                     textAlign: 'right',
                                                 }}>
-                                                    <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.64rem', fontWeight: 700, textTransform: 'uppercase', display: 'block' }}>
-                                                        Section Points
+                                                    <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', display: 'block' }}>
+                                                        Points
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ fontWeight: 900, color: cat.sectionColor, fontFamily: 'monospace', fontSize: '0.95rem' }}>
-                                                        {catStat?.ws.toFixed(2) || '0.00'} / {catStat?.maxW.toFixed(2)} pts
+                                                    <Typography variant="body2" sx={{ fontWeight: 900, color: cat.sectionColor, fontFamily: 'monospace', fontSize: '0.88rem' }}>
+                                                        {catStat?.ws.toFixed(2) || '0.00'} / {catStat?.maxW.toFixed(2)}
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -564,7 +656,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                         <Box
                                                             key={item.field}
                                                             sx={{
-                                                                p: { xs: 2.5, sm: 3 },
+                                                                p: { xs: 2, sm: 3 },
                                                                 bgcolor: hasVal
                                                                     ? (isDark ? `${cat.sectionColor}08` : `${cat.sectionColor}04`)
                                                                     : 'transparent',
@@ -572,16 +664,16 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                             }}
                                                         >
                                                             {/* Top Info Row */}
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 1.5 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}>
                                                                 <Box sx={{ flex: 1 }}>
-                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.4, flexWrap: 'wrap' }}>
                                                                         <Chip
                                                                             label={item.code}
                                                                             size="small"
                                                                             sx={{
-                                                                                height: 22,
+                                                                                height: 20,
                                                                                 fontWeight: 900,
-                                                                                fontSize: '0.7rem',
+                                                                                fontSize: '0.68rem',
                                                                                 borderRadius: '6px',
                                                                                 bgcolor: `${cat.sectionColor}15`,
                                                                                 color: cat.sectionColor,
@@ -591,7 +683,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                                         <Typography variant="subtitle1" sx={{
                                                                             fontWeight: 800,
                                                                             color: c.textPrimary,
-                                                                            fontSize: { xs: '0.92rem', sm: '1rem' },
+                                                                            fontSize: { xs: '0.88rem', sm: '0.98rem' },
                                                                         }}>
                                                                             {item.label}
                                                                         </Typography>
@@ -599,8 +691,8 @@ export default function ScoreForm({ submission, presentationScore }) {
 
                                                                     <Typography variant="body2" sx={{
                                                                         color: c.textSecondary,
-                                                                        fontSize: '0.82rem',
-                                                                        lineHeight: 1.5,
+                                                                        fontSize: { xs: '0.78rem', sm: '0.82rem' },
+                                                                        lineHeight: 1.45,
                                                                         maxWidth: 720,
                                                                     }}>
                                                                         {item.desc}
@@ -609,50 +701,35 @@ export default function ScoreForm({ submission, presentationScore }) {
 
                                                                 {/* Weight Badge */}
                                                                 <Chip
-                                                                    label={`Weight: ${item.weight}%`}
+                                                                    label={`${item.weight}%`}
                                                                     size="small"
                                                                     sx={{
-                                                                        height: 24,
+                                                                        height: 22,
                                                                         fontWeight: 800,
-                                                                        fontSize: '0.72rem',
-                                                                        borderRadius: '8px',
+                                                                        fontSize: '0.7rem',
+                                                                        borderRadius: '6px',
                                                                         bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
                                                                         color: c.textPrimary,
+                                                                        flexShrink: 0,
                                                                     }}
                                                                 />
                                                             </Box>
 
-                                                            {/* Interactive 1–10 Scoring Pill Selector + Numeric Input */}
+                                                            {/* ── ERGONOMIC SCORING SELECTOR (Mobile Optimized 2x5 Grid / Desktop Row) ── */}
                                                             <Box sx={{
-                                                                mt: 2,
-                                                                p: 1.8,
-                                                                borderRadius: '16px',
+                                                                mt: 1.8,
+                                                                p: { xs: 1.4, sm: 1.8 },
+                                                                borderRadius: '14px',
                                                                 bgcolor: isDark ? 'rgba(0,0,0,0.25)' : '#f8fafc',
                                                                 border: `1px solid ${hasVal ? (isDark ? 'rgba(16, 185, 129, 0.3)' : '#cbd5e1') : c.cardBorder}`,
-                                                                display: 'flex',
-                                                                flexDirection: { xs: 'column', md: 'row' },
-                                                                alignItems: { xs: 'stretch', md: 'center' },
-                                                                justifyContent: 'space-between',
-                                                                gap: 2,
                                                             }}>
-                                                                {/* 10 Quick Pills */}
+                                                                {/* Mobile 2x5 Grid / Desktop 1x10 row */}
                                                                 <Box sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    gap: 0.6,
-                                                                    flexWrap: 'wrap',
+                                                                    display: 'grid',
+                                                                    gridTemplateColumns: { xs: 'repeat(5, 1fr)', md: 'repeat(10, 1fr)' },
+                                                                    gap: { xs: 0.8, sm: 1 },
+                                                                    mb: 1.5,
                                                                 }}>
-                                                                    <Typography variant="caption" sx={{
-                                                                        color: c.textSecondary,
-                                                                        fontSize: '0.7rem',
-                                                                        fontWeight: 700,
-                                                                        textTransform: 'uppercase',
-                                                                        mr: 1,
-                                                                        display: { xs: 'block', sm: 'inline-block' },
-                                                                    }}>
-                                                                        Score (1-10):
-                                                                    </Typography>
-
                                                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                                                                         const isSelected = rawVal === num;
                                                                         const numGrade = getGradeTier(num);
@@ -661,14 +738,13 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                                                 key={num}
                                                                                 onClick={() => setData(item.field, num)}
                                                                                 sx={{
-                                                                                    width: { xs: 32, sm: 36 },
-                                                                                    height: { xs: 32, sm: 36 },
+                                                                                    height: { xs: 40, sm: 42 },
                                                                                     borderRadius: '10px',
                                                                                     display: 'flex',
                                                                                     alignItems: 'center',
                                                                                     justifyContent: 'center',
                                                                                     fontWeight: 900,
-                                                                                    fontSize: '0.86rem',
+                                                                                    fontSize: { xs: '0.92rem', sm: '0.98rem' },
                                                                                     fontFamily: 'monospace',
                                                                                     cursor: 'pointer',
                                                                                     userSelect: 'none',
@@ -678,15 +754,14 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                                                         : (isDark ? 'rgba(255,255,255,0.03)' : '#ffffff'),
                                                                                     color: isSelected ? numGrade.color : c.textSecondary,
                                                                                     boxShadow: isSelected ? `0 2px 10px ${numGrade.color}35` : 'none',
-                                                                                    transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                                                                                    transform: isSelected ? 'scale(1.04)' : 'scale(1)',
                                                                                     transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                                                                                     '&:hover': {
                                                                                         borderColor: numGrade.color,
                                                                                         color: numGrade.color,
                                                                                         bgcolor: isDark ? `${numGrade.color}15` : numGrade.bg,
-                                                                                        transform: 'translateY(-1px)',
                                                                                     },
-                                                                                    '&:active': { transform: 'scale(0.95)' },
+                                                                                    '&:active': { transform: 'scale(0.92)' },
                                                                                 }}
                                                                             >
                                                                                 {num}
@@ -695,32 +770,27 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                                     })}
                                                                 </Box>
 
-                                                                {/* Score readout / quick input */}
+                                                                {/* Bottom Info & Numeric Manual Input Row */}
                                                                 <Box sx={{
                                                                     display: 'flex',
                                                                     alignItems: 'center',
+                                                                    justifyContent: 'space-between',
+                                                                    pt: 1,
+                                                                    borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0'}`,
                                                                     gap: 1.5,
-                                                                    justifyContent: { xs: 'space-between', md: 'flex-end' },
-                                                                    borderLeft: { md: `1.5px solid ${c.cardBorder}` },
-                                                                    pl: { md: 2 },
                                                                 }}>
-                                                                    <Box sx={{ textAlign: 'right' }}>
-                                                                        <Typography variant="caption" sx={{
-                                                                            color: c.textSecondary,
-                                                                            fontSize: '0.64rem',
-                                                                            fontWeight: 700,
-                                                                            textTransform: 'uppercase',
-                                                                            display: 'block',
-                                                                        }}>
-                                                                            Weighted Value
-                                                                        </Typography>
+                                                                    {/* Weighted Score tag */}
+                                                                    <Box>
                                                                         {hasVal ? (
-                                                                            <Stack direction="row" spacing={0.8} alignItems="center" justifyContent="flex-end">
-                                                                                <Typography variant="subtitle2" sx={{
+                                                                            <Stack direction="row" spacing={0.8} alignItems="center">
+                                                                                <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase' }}>
+                                                                                    Weighted:
+                                                                                </Typography>
+                                                                                <Typography variant="body2" sx={{
                                                                                     fontWeight: 900,
                                                                                     color: itemGrade.color,
                                                                                     fontFamily: 'monospace',
-                                                                                    fontSize: '0.98rem',
+                                                                                    fontSize: '0.9rem',
                                                                                 }}>
                                                                                     +{weightedVal} pts
                                                                                 </Typography>
@@ -739,51 +809,56 @@ export default function ScoreForm({ submission, presentationScore }) {
                                                                                 />
                                                                             </Stack>
                                                                         ) : (
-                                                                            <Typography variant="caption" sx={{ color: c.textSecondary, fontStyle: 'italic' }}>
-                                                                                Not scored yet
+                                                                            <Typography variant="caption" sx={{ color: c.textSecondary, fontStyle: 'italic', fontSize: '0.72rem' }}>
+                                                                                Tap a score from 1 to 10
                                                                             </Typography>
                                                                         )}
                                                                     </Box>
 
-                                                                    {/* Input box fallback */}
-                                                                    <TextField
-                                                                        value={rawVal || ''}
-                                                                        onChange={(e) => {
-                                                                            const val = parseInt(e.target.value);
-                                                                            if (!e.target.value) setData(item.field, '');
-                                                                            else if (val >= 1 && val <= 10) setData(item.field, val);
-                                                                        }}
-                                                                        type="number"
-                                                                        placeholder="-"
-                                                                        size="small"
-                                                                        inputProps={{
-                                                                            min: 1,
-                                                                            max: 10,
-                                                                            style: {
-                                                                                textAlign: 'center',
-                                                                                fontWeight: 900,
-                                                                                fontSize: '1rem',
-                                                                                fontFamily: 'monospace',
-                                                                                padding: '6px 4px',
-                                                                            },
-                                                                        }}
-                                                                        sx={{
-                                                                            width: 52,
-                                                                            '& .MuiOutlinedInput-root': {
-                                                                                borderRadius: '10px',
-                                                                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
-                                                                                '& fieldset': {
-                                                                                    borderColor: hasVal ? itemGrade.color : c.cardBorder,
-                                                                                    borderWidth: hasVal ? 2 : 1,
+                                                                    {/* Manual Input Fallback */}
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.68rem', display: { xs: 'none', sm: 'inline' } }}>
+                                                                            Custom:
+                                                                        </Typography>
+                                                                        <TextField
+                                                                            value={rawVal || ''}
+                                                                            onChange={(e) => {
+                                                                                const val = parseInt(e.target.value);
+                                                                                if (!e.target.value) setData(item.field, '');
+                                                                                else if (val >= 1 && val <= 10) setData(item.field, val);
+                                                                            }}
+                                                                            type="number"
+                                                                            placeholder="-"
+                                                                            size="small"
+                                                                            inputProps={{
+                                                                                min: 1,
+                                                                                max: 10,
+                                                                                style: {
+                                                                                    textAlign: 'center',
+                                                                                    fontWeight: 900,
+                                                                                    fontSize: '0.95rem',
+                                                                                    fontFamily: 'monospace',
+                                                                                    padding: '4px 2px',
                                                                                 },
-                                                                            },
-                                                                        }}
-                                                                    />
+                                                                            }}
+                                                                            sx={{
+                                                                                width: 48,
+                                                                                '& .MuiOutlinedInput-root': {
+                                                                                    borderRadius: '8px',
+                                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+                                                                                    '& fieldset': {
+                                                                                        borderColor: hasVal ? itemGrade.color : c.cardBorder,
+                                                                                        borderWidth: hasVal ? 2 : 1,
+                                                                                    },
+                                                                                },
+                                                                            }}
+                                                                        />
+                                                                    </Box>
                                                                 </Box>
                                                             </Box>
 
                                                             {errors[item.field] && (
-                                                                <Typography variant="caption" sx={{ color: '#dc2626', mt: 1, display: 'block', fontWeight: 600 }}>
+                                                                <Typography variant="caption" sx={{ color: '#dc2626', mt: 0.8, display: 'block', fontWeight: 600 }}>
                                                                     {errors[item.field]}
                                                                 </Typography>
                                                             )}
@@ -797,36 +872,36 @@ export default function ScoreForm({ submission, presentationScore }) {
 
                                 {/* Evaluator Qualitative Notes Bento Card */}
                                 <Card elevation={0} sx={{
-                                    borderRadius: '24px',
+                                    borderRadius: { xs: '18px', sm: '24px' },
                                     border: `1.5px solid ${c.cardBorder}`,
                                     bgcolor: c.cardBg,
-                                    p: { xs: 2.5, sm: 3.5 },
+                                    p: { xs: 2, sm: 3 },
                                     boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
                                 }}>
                                     <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1.5 }}>
-                                        <RateReviewIcon sx={{ color: '#059669', fontSize: 24 }} />
+                                        <RateReviewIcon sx={{ color: '#059669', fontSize: 22 }} />
                                         <Box>
-                                            <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.05rem' }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: { xs: '0.95rem', sm: '1.05rem' } }}>
                                                 Evaluator Comments & Recommendations
                                             </Typography>
-                                            <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.76rem' }}>
-                                                Provide constructive scientific remarks, presentation feedback, or publication recommendations (Optional).
+                                            <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.72rem' }}>
+                                                Provide constructive feedback or publication recommendations (Optional).
                                             </Typography>
                                         </Box>
                                     </Stack>
 
                                     <TextField
                                         multiline
-                                        rows={4}
+                                        rows={3}
                                         fullWidth
                                         placeholder="Enter constructive notes for the committee and authors..."
                                         value={data.juri_notes}
                                         onChange={(e) => setData('juri_notes', e.target.value)}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
-                                                borderRadius: '14px',
-                                                fontSize: '0.88rem',
-                                                lineHeight: 1.6,
+                                                borderRadius: '12px',
+                                                fontSize: '0.86rem',
+                                                lineHeight: 1.5,
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                                                 '& fieldset': { borderColor: c.cardBorder },
                                                 '&:hover fieldset': { borderColor: '#059669' },
@@ -838,11 +913,11 @@ export default function ScoreForm({ submission, presentationScore }) {
                             </Stack>
                         </Grid>
 
-                        {/* ── RIGHT COLUMN: STICKY LIVE SCORING HUD COCKPIT ── */}
-                        <Grid size={{ xs: 12, lg: 4 }}>
+                        {/* ── RIGHT COLUMN: DESKTOP STICKY LIVE SCORING HUD COCKPIT ── */}
+                        <Grid size={{ xs: 12, lg: 4 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
                             <Box sx={{
-                                position: { lg: 'sticky' },
-                                top: { lg: 24 },
+                                position: 'sticky',
+                                top: 24,
                                 zIndex: 10,
                             }}>
                                 <Card elevation={0} sx={{
@@ -886,7 +961,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                         <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 0.8, my: 1 }}>
                                             <Typography variant="h2" sx={{
                                                 fontWeight: 900,
-                                                fontSize: { xs: '3rem', sm: '3.6rem' },
+                                                fontSize: '3.6rem',
                                                 lineHeight: 1,
                                                 fontFamily: 'monospace',
                                                 letterSpacing: '-0.03em',
@@ -931,7 +1006,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                     </Box>
 
                                     {/* Breakdown Bars */}
-                                    <Box sx={{ p: { xs: 2.5, sm: 3 } }}>
+                                    <Box sx={{ p: 3 }}>
                                         {/* Completion progress */}
                                         <Box sx={{ mb: 3 }}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
@@ -1072,6 +1147,86 @@ export default function ScoreForm({ submission, presentationScore }) {
                         </Grid>
                     </Grid>
                 </form>
+
+                {/* ── MOBILE-ONLY FLOATING DOCKED BOTTOM BAR (Instant Thumb Action) ── */}
+                <Box sx={{
+                    display: { xs: 'block', lg: 'none' },
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1100,
+                    bgcolor: isDark ? 'rgba(3, 28, 23, 0.95)' : 'rgba(255, 255, 255, 0.96)',
+                    backdropFilter: 'blur(16px)',
+                    borderTop: `1.5px solid ${isDark ? 'rgba(16, 185, 129, 0.3)' : '#cbd5e1'}`,
+                    boxShadow: '0 -10px 30px rgba(0, 0, 0, 0.15)',
+                    px: 2,
+                    py: 1.5,
+                }}>
+                    <Box sx={{ maxWidth: '600px', mx: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+                        {/* Score Glance */}
+                        <Box sx={{ minWidth: 120 }}>
+                            <Typography variant="caption" sx={{
+                                color: c.textSecondary,
+                                fontWeight: 700,
+                                fontSize: '0.62rem',
+                                textTransform: 'uppercase',
+                                display: 'block',
+                                lineHeight: 1,
+                            }}>
+                                Total Score
+                            </Typography>
+                            <Stack direction="row" alignItems="baseline" spacing={0.4} sx={{ mt: 0.2 }}>
+                                <Typography variant="h5" sx={{
+                                    fontWeight: 900,
+                                    color: liveScore.allFilled ? grade.color : c.textPrimary,
+                                    fontFamily: 'monospace',
+                                    lineHeight: 1,
+                                }}>
+                                    {liveScore.allFilled ? liveScore.total.toFixed(2) : (liveScore.total > 0 ? liveScore.total.toFixed(2) : '—')}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.7rem' }}>/10</Typography>
+                            </Stack>
+                            <Typography variant="caption" sx={{
+                                color: liveScore.allFilled ? '#059669' : '#d97706',
+                                fontWeight: 800,
+                                fontSize: '0.65rem',
+                                display: 'block',
+                                mt: 0.2,
+                            }}>
+                                {liveScore.allFilled ? 'All 10 Scored ✓' : `${liveScore.totalCount - liveScore.filledCount} left to score`}
+                            </Typography>
+                        </Box>
+
+                        {/* Submit Button right at thumb's reach */}
+                        <Button
+                            type="submit"
+                            form="evaluation-form"
+                            variant="contained"
+                            disabled={processing || !liveScore.allFilled}
+                            startIcon={processing ? <CircularProgress size={16} color="inherit" /> : (isEditing ? <SaveIcon sx={{ fontSize: 18 }} /> : <CheckCircleIcon sx={{ fontSize: 18 }} />)}
+                            sx={{
+                                flex: 1,
+                                py: 1.3,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 900,
+                                fontSize: '0.86rem',
+                                letterSpacing: '0.01em',
+                                ...(liveScore.allFilled ? {
+                                    background: 'linear-gradient(135deg, #094d42 0%, #059669 100%)',
+                                    color: '#ffffff',
+                                    boxShadow: '0 4px 16px rgba(5, 150, 105, 0.4)',
+                                } : {
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                                    color: c.textSecondary,
+                                }),
+                            }}
+                        >
+                            {processing ? 'Saving...' : isEditing ? 'Update Evaluation' : 'Submit Evaluation'}
+                        </Button>
+                    </Box>
+                </Box>
             </Box>
 
             {/* ═══ SUCCESS CELEBRATION MODAL ═══ */}
@@ -1080,9 +1235,9 @@ export default function ScoreForm({ submission, presentationScore }) {
                 onClose={() => setSuccessDialog({ ...successDialog, open: false })}
                 PaperProps={{
                     sx: {
-                        borderRadius: '24px',
+                        borderRadius: { xs: '20px', sm: '24px' },
                         maxWidth: 440,
-                        width: '90%',
+                        width: '92%',
                         bgcolor: c.cardBg,
                         border: `1.5px solid ${c.cardBorder}`,
                         textAlign: 'center',
@@ -1093,32 +1248,32 @@ export default function ScoreForm({ submission, presentationScore }) {
             >
                 <Box sx={{
                     background: 'linear-gradient(135deg, #094d42 0%, #059669 100%)',
-                    py: 4,
-                    px: 3,
+                    py: 3.5,
+                    px: 2.5,
                     color: '#ffffff',
                 }}>
-                    <TaskAltIcon sx={{ fontSize: 64, mb: 1, color: '#a7f3d0' }} />
-                    <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em' }}>
+                    <TaskAltIcon sx={{ fontSize: 56, mb: 1, color: '#a7f3d0' }} />
+                    <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                         Evaluation Recorded!
                     </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)', mt: 0.5, fontSize: '0.85rem' }}>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)', mt: 0.5, fontSize: '0.82rem' }}>
                         The scientific score for this presentation has been finalized.
                     </Typography>
                 </Box>
 
-                <DialogContent sx={{ p: 3.5 }}>
+                <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
                     {successDialog.score !== null && (
                         <Box sx={{
-                            p: 2.5,
+                            p: 2,
                             borderRadius: '16px',
                             bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                             border: `1px solid ${c.cardBorder}`,
-                            mb: 3,
+                            mb: 2.5,
                         }}>
                             <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>
                                 Final Recorded Score
                             </Typography>
-                            <Typography variant="h3" sx={{ fontWeight: 900, color: '#059669', fontFamily: 'monospace', my: 0.5 }}>
+                            <Typography variant="h3" sx={{ fontWeight: 900, color: '#059669', fontFamily: 'monospace', my: 0.5, fontSize: { xs: '2.2rem', sm: '3rem' } }}>
                                 {successDialog.score.toFixed(2)}/10
                             </Typography>
                             <Chip
@@ -1135,7 +1290,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                         </Box>
                     )}
 
-                    <Stack spacing={1.5}>
+                    <Stack spacing={1.2}>
                         <Button
                             fullWidth
                             variant="contained"
@@ -1146,7 +1301,7 @@ export default function ScoreForm({ submission, presentationScore }) {
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 fontWeight: 800,
-                                py: 1.4,
+                                py: 1.3,
                                 color: '#ffffff',
                                 boxShadow: '0 6px 18px rgba(5, 150, 105, 0.35)',
                                 '&:hover': {

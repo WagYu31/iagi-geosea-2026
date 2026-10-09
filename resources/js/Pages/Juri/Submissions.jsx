@@ -229,10 +229,11 @@ export default function JuriSubmissions({ scores = [] }) {
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }}>
                         {/* Live Search */}
                         <TextField
-                            placeholder="Search by title, author, institution, or paper code..."
+                            placeholder="Search title, author, institution, code..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             size="small"
+                            fullWidth
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -252,11 +253,23 @@ export default function JuriSubmissions({ scores = [] }) {
                                     bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
                                 }
                             }}
-                            sx={{ minWidth: { md: 400 } }}
+                            sx={{ minWidth: { md: 360 }, flex: { md: 1 } }}
                         />
 
-                        {/* Filter Tabs */}
-                        <Stack direction="row" spacing={0.8} sx={{ overflowX: 'auto', pb: { xs: 0.5, md: 0 } }}>
+                        {/* Filter Tabs with Smooth Touch Momentum Scrolling */}
+                        <Stack
+                            direction="row"
+                            spacing={0.8}
+                            sx={{
+                                overflowX: 'auto',
+                                WebkitOverflowScrolling: 'touch',
+                                scrollbarWidth: 'none',
+                                '&::-webkit-scrollbar': { display: 'none' },
+                                pb: { xs: 0.5, md: 0 },
+                                width: { xs: '100%', md: 'auto' },
+                                flexShrink: 0,
+                            }}
+                        >
                             {[
                                 { key: 'all', label: `All (${totalCount})` },
                                 { key: 'pending', label: `Pending (${pendingCount})` },
@@ -273,11 +286,12 @@ export default function JuriSubmissions({ scores = [] }) {
                                         sx={{
                                             textTransform: 'none',
                                             borderRadius: '10px',
-                                            fontSize: '0.8rem',
+                                            fontSize: '0.78rem',
                                             fontWeight: active ? 800 : 600,
-                                            px: 1.8,
+                                            px: { xs: 1.5, sm: 1.8 },
                                             py: 0.7,
                                             minWidth: 'fit-content',
+                                            flexShrink: 0,
                                             bgcolor: active
                                                 ? (isDark ? '#059669' : '#094d42')
                                                 : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
