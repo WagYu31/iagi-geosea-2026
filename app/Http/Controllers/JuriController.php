@@ -19,15 +19,23 @@ class JuriController extends Controller
             ->with(['submission.user'])
             ->get();
 
+        $completedScores = $assignedScores->whereNotNull('weighted_final_score');
+        $averageScore = $completedScores->count() > 0 ? round($completedScores->avg('weighted_final_score'), 2) : null;
+        $oralCount = $assignedScores->where('rubric_type', 'oral')->count();
+        $posterCount = $assignedScores->where('rubric_type', 'poster')->count();
+
         $analytics = [
             'totalAssigned' => $assignedScores->count(),
-            'completed'     => $assignedScores->whereNotNull('weighted_final_score')->count(),
+            'completed'     => $completedScores->count(),
             'pending'       => $assignedScores->whereNull('weighted_final_score')->count(),
+            'averageScore'  => $averageScore,
+            'oralCount'     => $oralCount,
+            'posterCount'   => $posterCount,
         ];
 
         return Inertia::render('Juri/Dashboard', [
             'analytics'          => $analytics,
-            'recentAssignments'  => $assignedScores->sortByDesc('created_at')->take(5)->values(),
+            'recentAssignments'  => $assignedScores->sortByDesc('created_at')->values(),
         ]);
     }
 
