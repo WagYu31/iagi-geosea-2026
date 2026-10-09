@@ -1,23 +1,20 @@
-import { Head } from '@inertiajs/react';
+import React from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
-    Box,
-    Typography,
-    Paper,
-    Avatar,
-    Chip,
-    Grid,
-    Stack,
-    useTheme,
+    Box, Typography, Card, CardContent, Avatar, Chip,
+    Grid, Stack, useTheme, Divider,
 } from '@mui/material';
 import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
+import SecurityIcon from '@mui/icons-material/Security';
+import SchoolIcon from '@mui/icons-material/School';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { usePage } from '@inertiajs/react';
 
 export default function Edit({ mustVerifyEmail, status }) {
     const theme = useTheme();
@@ -26,245 +23,431 @@ export default function Edit({ mustVerifyEmail, status }) {
     const { auth } = usePage().props;
     const user = auth.user;
 
-    const getRoleBadgeStyle = (role) => {
+    const getRoleConfig = (role) => {
         switch (role?.toLowerCase()) {
             case 'admin':
-                return { bgcolor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' };
+                return { label: 'ADMINISTRATOR', bg: '#fef2f2', color: '#dc2626', border: '#fecaca' };
             case 'reviewer':
-                return { bgcolor: '#fffbeb', color: '#d97706', border: '1px solid #fde68a' };
+                return { label: 'SCIENTIFIC REVIEWER', bg: '#fffbeb', color: '#d97706', border: '#fde68a' };
+            case 'juri':
+                return { label: 'OFFICIAL JURY / JUDGE', bg: '#ecfdf5', color: '#059669', border: '#a7f3d0' };
             default:
-                return { bgcolor: '#eff6ff', color: '#2563eb', border: '1px solid #dbeafe' };
+                return { label: (role || 'PARTICIPANT').toUpperCase(), bg: '#eff6ff', color: '#2563eb', border: '#bfdbfe' };
         }
     };
 
+    const roleConfig = getRoleConfig(user.role);
+
     return (
         <SidebarLayout>
-            <Head title="Profile" />
+            <Head title="Profile Settings • 55th PIT IAGI & GEOSEA 2026" />
 
-            <Box component="main" role="main" aria-label="Profile Settings" sx={{ p: { xs: 2, sm: 3.5 }, maxWidth: '1400px', margin: '0 auto' }}>
-                {/* Page Header */}
-                <Box sx={{ mb: 3.5 }}>
-                    <Typography sx={{
-                        fontWeight: 800,
-                        color: c.textPrimary,
-                        fontSize: { xs: '1.5rem', sm: '1.85rem' },
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.2,
-                    }}>
-                        Profile 👤
-                    </Typography>
-                    <Typography sx={{ color: c.textMuted, fontSize: '0.875rem', mt: 0.5 }}>
-                        Manage your account information and security
-                    </Typography>
-                </Box>
-
-                {/* Profile Card */}
-                <Paper elevation={0} role="region" aria-label="User Profile Summary" sx={{
-                    p: { xs: 2.5, md: 3 },
-                    mb: 3,
-                    border: `1px solid ${c.cardBorder}`,
-                    borderRadius: '16px',
-                    bgcolor: c.cardBg,
+            <Box component="main" role="main" aria-label="Profile Settings" sx={{
+                p: { xs: 2, sm: 3, md: 4 },
+                maxWidth: '1600px',
+                mx: 'auto',
+                minHeight: '100vh',
+                bgcolor: c.surfaceBg,
+            }}>
+                {/* ── 21st.dev HERO PROFILE BANNER ── */}
+                <Box sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: '3px',
-                        background: 'linear-gradient(90deg, #0d7a6a, #1abc9c)',
-                    },
+                    borderRadius: '24px',
+                    p: { xs: 3, sm: 4 },
+                    mb: 3.5,
+                    background: isDark
+                        ? 'linear-gradient(135deg, #052e25 0%, #031c17 50%, #02120e 100%)'
+                        : 'linear-gradient(135deg, #094d42 0%, #063830 50%, #03241f 100%)',
+                    color: '#ffffff',
+                    boxShadow: '0 20px 45px -15px rgba(4, 41, 35, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(16, 185, 129, 0.25)',
                 }}>
                     <Box sx={{
+                        position: 'absolute',
+                        top: -70,
+                        right: -70,
+                        width: 260,
+                        height: 260,
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
+                        pointerEvents: 'none',
+                    }} />
+
+                    <Box sx={{
+                        position: 'relative',
+                        zIndex: 1,
                         display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: { xs: 'center', sm: 'flex-start' },
-                        gap: { xs: 2, sm: 3 },
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: { xs: 'flex-start', md: 'center' },
+                        justifyContent: 'space-between',
+                        gap: 3,
                     }}>
-                        <Avatar aria-hidden="true" sx={{
-                            width: { xs: 64, sm: 72 },
-                            height: { xs: 64, sm: 72 },
-                            bgcolor: '#ecfdf5',
-                            color: '#0d7a6a',
-                            fontSize: { xs: '1.5rem', sm: '1.8rem' },
-                            fontWeight: 800,
-                            border: '3px solid #d1fae5',
-                        }}>
-                            {user.name?.charAt(0).toUpperCase() || 'U'}
-                        </Avatar>
-                        <Box sx={{ textAlign: { xs: 'center', sm: 'left' }, flex: 1 }}>
-                            <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: c.textPrimary, lineHeight: 1.3 }}>
-                                {user.name}
-                            </Typography>
-                            <Typography sx={{ color: c.textMuted, fontSize: '0.85rem', mt: 0.3 }}>
-                                {user.email}
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 1, mt: 1.5, justifyContent: { xs: 'center', sm: 'flex-start' }, flexWrap: 'wrap' }}>
-                                <Chip
-                                    label={user.role?.toUpperCase() || 'USER'}
-                                    size="small"
-                                    sx={{
-                                        ...getRoleBadgeStyle(user.role),
-                                        fontWeight: 700,
-                                        fontSize: '0.65rem',
-                                        borderRadius: '8px',
-                                        height: 24,
-                                    }}
-                                />
-                                {user.email_verified_at && (
+                        {/* Avatar & User meta */}
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                            <Avatar sx={{
+                                width: { xs: 72, sm: 88 },
+                                height: { xs: 72, sm: 88 },
+                                bgcolor: '#10b981',
+                                color: '#ffffff',
+                                fontSize: { xs: '1.8rem', sm: '2.2rem' },
+                                fontWeight: 900,
+                                border: '4px solid rgba(255, 255, 255, 0.25)',
+                                boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                            }}>
+                                {user.name?.charAt(0).toUpperCase() || 'U'}
+                            </Avatar>
+
+                            <Box>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 1 }}>
                                     <Chip
-                                        label="✓ Verified"
+                                        label={roleConfig.label}
                                         size="small"
                                         sx={{
-                                            bgcolor: '#ecfdf5',
-                                            color: '#059669',
-                                            border: '1px solid #d1fae5',
-                                            fontWeight: 700,
-                                            fontSize: '0.65rem',
-                                            borderRadius: '8px',
-                                            height: 24,
+                                            height: 22,
+                                            fontWeight: 800,
+                                            fontSize: '0.66rem',
+                                            borderRadius: '6px',
+                                            bgcolor: 'rgba(255, 255, 255, 0.15)',
+                                            color: '#ffffff',
+                                            border: '1px solid rgba(255, 255, 255, 0.25)',
                                         }}
                                     />
-                                )}
-                            </Box>
-                        </Box>
-                    </Box>
-                </Paper>
+                                    {user.email_verified_at && (
+                                        <Chip
+                                            icon={<VerifiedOutlinedIcon sx={{ fontSize: '13px !important', color: '#6ee7b7 !important' }} />}
+                                            label="Verified Account"
+                                            size="small"
+                                            sx={{
+                                                height: 22,
+                                                fontWeight: 800,
+                                                fontSize: '0.66rem',
+                                                borderRadius: '6px',
+                                                bgcolor: 'rgba(16, 185, 129, 0.25)',
+                                                color: '#a7f3d0',
+                                                border: '1px solid rgba(16, 185, 129, 0.35)',
+                                            }}
+                                        />
+                                    )}
+                                    <Chip
+                                        label="55th PIT IAGI & GEOSEA XIX 2026"
+                                        size="small"
+                                        sx={{
+                                            height: 22,
+                                            fontWeight: 700,
+                                            fontSize: '0.66rem',
+                                            borderRadius: '6px',
+                                            bgcolor: 'rgba(245, 158, 11, 0.2)',
+                                            color: '#fde68a',
+                                            border: '1px solid rgba(245, 158, 11, 0.35)',
+                                        }}
+                                    />
+                                </Box>
 
-                {/* Grid Layout for Forms */}
-                <Grid container spacing={2.5}>
-                    {/* Profile Information */}
-                    <Grid item xs={12} lg={8}>
-                        <Paper elevation={0} role="region" aria-label="Profile Information" sx={{
-                            p: { xs: 2.5, md: 3 },
-                            border: `1px solid ${c.cardBorder}`,
-                            borderRadius: '16px',
-                            bgcolor: c.cardBg,
-                            height: '100%',
-                        }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                <PersonOutlineRoundedIcon sx={{ color: c.textSecondary, fontSize: '1.1rem' }} />
-                                <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
-                                    Profile Information
+                                <Typography variant="h4" sx={{
+                                    fontWeight: 900,
+                                    letterSpacing: '-0.025em',
+                                    fontSize: { xs: '1.4rem', sm: '1.85rem' },
+                                    lineHeight: 1.2,
+                                    color: '#ffffff',
+                                    mb: 0.5,
+                                }}>
+                                    {user.name}
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.88rem' }}>
+                                    {user.email}
+                                    {user.affiliation ? ` • ${user.affiliation}` : ''}
                                 </Typography>
                             </Box>
-                            <Typography sx={{ color: c.textMuted, fontSize: '0.8rem', mb: 2.5, pl: 3.5 }}>
-                                Update your account's profile information and email address.
+                        </Stack>
+
+                        {/* Quick Status Tag on Right */}
+                        <Box sx={{
+                            display: { xs: 'none', md: 'block' },
+                            p: 2,
+                            borderRadius: '16px',
+                            bgcolor: 'rgba(0, 0, 0, 0.22)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            textAlign: 'right',
+                            minWidth: 180,
+                        }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', display: 'block', fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                                System Privileges
                             </Typography>
-                            <UpdateProfileInformationForm
-                                mustVerifyEmail={mustVerifyEmail}
-                                status={status}
-                            />
-                        </Paper>
+                            <Typography variant="body1" sx={{ fontWeight: 800, color: '#6ee7b7', mt: 0.3 }}>
+                                {user.role ? user.role.toUpperCase() : 'USER'}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', display: 'block', mt: 0.2 }}>
+                                Active Delegate / Committee
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
+
+                {/* ── BENTO GRID: PROFILE INFO, ACCOUNT METADATA & PASSWORD ── */}
+                <Grid container spacing={3}>
+                    {/* BENTO CARD 1: Profile Information */}
+                    <Grid size={{ xs: 12, md: 6, lg: 4.5 }}>
+                        <Card elevation={0} sx={{
+                            borderRadius: '24px',
+                            border: `1.5px solid ${c.cardBorder}`,
+                            bgcolor: c.cardBg,
+                            p: { xs: 2.5, sm: 3.5 },
+                            height: '100%',
+                            boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                                <Box sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '12px',
+                                    bgcolor: 'rgba(16, 185, 129, 0.12)',
+                                    color: '#059669',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <PersonOutlineRoundedIcon sx={{ fontSize: 22 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.05rem' }}>
+                                        Profile Information
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.75rem' }}>
+                                        Update your personal data and contact details.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Divider sx={{ my: 2, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' }} />
+
+                            <Box sx={{ flex: 1 }}>
+                                <UpdateProfileInformationForm
+                                    mustVerifyEmail={mustVerifyEmail}
+                                    status={status}
+                                />
+                            </Box>
+                        </Card>
                     </Grid>
 
-                    {/* Account Info Card */}
-                    <Grid item xs={12} lg={4}>
-                        <Paper elevation={0} role="region" aria-label="Account Details" sx={{
-                            p: { xs: 2.5, md: 3 },
-                            border: `1px solid ${c.cardBorder}`,
-                            borderRadius: '16px',
-                            bgcolor: c.surfaceBg,
+                    {/* BENTO CARD 2: Account Information & Credentials */}
+                    <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+                        <Card elevation={0} sx={{
+                            borderRadius: '24px',
+                            border: `1.5px solid ${c.cardBorder}`,
+                            bgcolor: c.cardBg,
+                            p: { xs: 2.5, sm: 3.5 },
+                            height: '100%',
+                            boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}>
-                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary, mb: 2.5 }}>
-                                Account Info
-                            </Typography>
-                            <Stack spacing={2.5}>
-                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                                <Box sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '12px',
+                                    bgcolor: 'rgba(2, 132, 199, 0.12)',
+                                    color: '#0284c7',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <BadgeOutlinedIcon sx={{ fontSize: 22 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.05rem' }}>
+                                        Account Details
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.75rem' }}>
+                                        Privileges and verified platform status.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Divider sx={{ my: 2, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' }} />
+
+                            <Stack spacing={2} sx={{ flex: 1 }}>
+                                {/* Tile 1: Member Since */}
+                                <Box sx={{
+                                    p: 2,
+                                    borderRadius: '16px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.8,
+                                }}>
                                     <Box sx={{
-                                        width: 36,
-                                        height: 36,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: '#ecfdf5',
+                                        bgcolor: 'rgba(5, 150, 105, 0.12)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        flexShrink: 0,
+                                        color: '#059669',
                                     }}>
-                                        <CalendarMonthOutlinedIcon sx={{ fontSize: '1rem', color: '#059669' }} />
+                                        <CalendarMonthOutlinedIcon sx={{ fontSize: 20 }} />
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase', display: 'block' }}>
                                             Member Since
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: c.textPrimary }}>
-                                            {new Date(user.created_at).toLocaleDateString('en-US', {
+                                        <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.88rem' }}>
+                                            {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', {
                                                 year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            })}
+                                                month: 'short',
+                                                day: 'numeric',
+                                            }) : 'Conference 2026'}
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+
+                                {/* Tile 2: Verification Status */}
+                                <Box sx={{
+                                    p: 2,
+                                    borderRadius: '16px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.8,
+                                }}>
                                     <Box sx={{
-                                        width: 36,
-                                        height: 36,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: user.email_verified_at ? '#ecfdf5' : '#fffbeb',
+                                        bgcolor: user.email_verified_at ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        flexShrink: 0,
+                                        color: user.email_verified_at ? '#059669' : '#d97706',
                                     }}>
-                                        <VerifiedOutlinedIcon sx={{ fontSize: '1rem', color: user.email_verified_at ? '#059669' : '#d97706' }} />
+                                        <VerifiedOutlinedIcon sx={{ fontSize: 20 }} />
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase', display: 'block' }}>
                                             Account Status
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: user.email_verified_at ? '#059669' : '#d97706' }}>
-                                            {user.email_verified_at ? '✓ Verified' : '⚠ Unverified'}
+                                        <Typography variant="body2" sx={{ fontWeight: 800, color: user.email_verified_at ? '#059669' : '#d97706', fontSize: '0.88rem' }}>
+                                            {user.email_verified_at ? '✓ Verified Account' : '⚠ Unverified'}
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+
+                                {/* Tile 3: Role */}
+                                <Box sx={{
+                                    p: 2,
+                                    borderRadius: '16px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.8,
+                                }}>
                                     <Box sx={{
-                                        width: 36,
-                                        height: 36,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: '#eff6ff',
+                                        bgcolor: 'rgba(2, 132, 199, 0.12)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        flexShrink: 0,
+                                        color: '#0284c7',
                                     }}>
-                                        <BadgeOutlinedIcon sx={{ fontSize: '1rem', color: '#2563eb' }} />
+                                        <SecurityIcon sx={{ fontSize: 20 }} />
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                            Role
+                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase', display: 'block' }}>
+                                            Platform Role
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, color: c.textPrimary, textTransform: 'capitalize' }}>
-                                            {user.role || 'User'}
+                                        <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.88rem', textTransform: 'capitalize' }}>
+                                            {user.role || 'Participant'}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* Tile 4: Conference Standing */}
+                                <Box sx={{
+                                    p: 2,
+                                    borderRadius: '16px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.8,
+                                }}>
+                                    <Box sx={{
+                                        width: 38,
+                                        height: 38,
+                                        borderRadius: '10px',
+                                        bgcolor: 'rgba(217, 119, 6, 0.12)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: '#d97706',
+                                    }}>
+                                        <WorkspacePremiumIcon sx={{ fontSize: 20 }} />
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, fontSize: '0.68rem', textTransform: 'uppercase', display: 'block' }}>
+                                            Conference Access
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.88rem' }}>
+                                            55th PIT IAGI & GEOSEA
                                         </Typography>
                                     </Box>
                                 </Box>
                             </Stack>
-                        </Paper>
+                        </Card>
                     </Grid>
 
-                    {/* Update Password */}
-                    <Grid item xs={12}>
-                        <Paper elevation={0} role="region" aria-label="Update Password" sx={{
-                            p: { xs: 2.5, md: 3 },
-                            border: `1px solid ${c.cardBorder}`,
-                            borderRadius: '16px',
+                    {/* BENTO CARD 3: Update Password */}
+                    <Grid size={{ xs: 12, md: 12, lg: 4.5 }}>
+                        <Card elevation={0} sx={{
+                            borderRadius: '24px',
+                            border: `1.5px solid ${c.cardBorder}`,
                             bgcolor: c.cardBg,
+                            p: { xs: 2.5, sm: 3.5 },
+                            height: '100%',
+                            boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                <LockOutlinedIcon sx={{ color: c.textSecondary, fontSize: '1.1rem' }} />
-                                <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: c.textPrimary }}>
-                                    Update Password
-                                </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                                <Box sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '12px',
+                                    bgcolor: 'rgba(217, 119, 6, 0.12)',
+                                    color: '#d97706',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <LockOutlinedIcon sx={{ fontSize: 22 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '1.05rem' }}>
+                                        Update Password
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.75rem' }}>
+                                        Ensure your account uses a secure passphrase.
+                                    </Typography>
+                                </Box>
                             </Box>
-                            <Typography sx={{ color: c.textMuted, fontSize: '0.8rem', mb: 2.5, pl: 3.5 }}>
-                                Ensure your account is using a long, random password to stay secure.
-                            </Typography>
-                            <UpdatePasswordForm />
-                        </Paper>
+
+                            <Divider sx={{ my: 2, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' }} />
+
+                            <Box sx={{ flex: 1 }}>
+                                <UpdatePasswordForm />
+                            </Box>
+                        </Card>
                     </Grid>
                 </Grid>
             </Box>
