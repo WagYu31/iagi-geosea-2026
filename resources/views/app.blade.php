@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="description" content="55th Annual Convention of Indonesian Association of Geologists (IAGI) and GEOSEA XIX 2026 — Southeast Asia's premier geological conference.">
 
@@ -13,9 +13,12 @@
         <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
         <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon.png">
         <link rel="manifest" href="/manifest.json">
-        <meta name="theme-color" content="#004D40">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#052e25" media="(prefers-color-scheme: dark)">
         <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
         <!-- Fonts: Preconnect & Asynchronous Loading with Swap -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

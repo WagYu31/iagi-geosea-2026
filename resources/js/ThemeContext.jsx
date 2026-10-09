@@ -22,6 +22,13 @@ export function ThemeContextProvider({ children }) {
         localStorage.setItem('theme-mode', mode);
         // Set class on body for Tailwind/CSS dark mode
         document.documentElement.classList.toggle('dark', mode === 'dark');
+
+        // Dynamically update theme-color meta tag for seamless iOS/Android status bar matching
+        if (typeof document !== 'undefined') {
+            const themeColor = mode === 'dark' ? '#052e25' : '#ffffff';
+            const metaTags = document.querySelectorAll('meta[name="theme-color"]');
+            metaTags.forEach(meta => meta.setAttribute('content', themeColor));
+        }
     }, [mode]);
 
     const toggleMode = () => {

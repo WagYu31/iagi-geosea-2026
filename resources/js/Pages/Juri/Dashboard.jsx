@@ -143,7 +143,7 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
             <Head title="Juri Assessment Deck • 55th PIT IAGI & GEOSEA 2026" />
 
             <Box sx={{
-                p: { xs: 2, sm: 3, md: 4 },
+                p: { xs: 1.5, sm: 2.5, md: 4 },
                 minHeight: '100vh',
                 bgcolor: c.surfaceBg,
                 maxWidth: '1600px',
@@ -153,9 +153,9 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                 <Box sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: '24px',
-                    p: { xs: 3, sm: 3.5, md: 4 },
-                    mb: 3.5,
+                    borderRadius: { xs: '20px', sm: '24px' },
+                    p: { xs: 2.2, sm: 3.5, md: 4 },
+                    mb: { xs: 2.5, md: 3.5 },
                     background: isDark
                         ? 'linear-gradient(135deg, #052e25 0%, #031c17 50%, #02120e 100%)'
                         : 'linear-gradient(135deg, #094d42 0%, #063830 50%, #03241f 100%)',
@@ -165,8 +165,8 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     justifyContent: 'space-between',
-                    alignItems: { xs: 'flex-start', md: 'center' },
-                    gap: 3,
+                    alignItems: { xs: 'stretch', md: 'center' },
+                    gap: { xs: 2, sm: 2.5, md: 3 },
                 }}>
                     {/* Background Decorative Mesh & Glow */}
                     <Box sx={{
@@ -193,20 +193,20 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                     {/* Left Column: Greeting & Meta */}
                     <Box sx={{ position: 'relative', zIndex: 1, maxWidth: { md: '65%' } }}>
                         {/* Status Live Tag */}
-                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 1.5 }}>
                             <Box sx={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: 0.8,
-                                px: 1.5,
+                                px: { xs: 1.2, sm: 1.5 },
                                 py: 0.4,
                                 borderRadius: '20px',
                                 bgcolor: 'rgba(255, 255, 255, 0.1)',
                                 backdropFilter: 'blur(10px)',
                                 border: '1px solid rgba(255, 255, 255, 0.15)',
-                                fontSize: '0.72rem',
+                                fontSize: { xs: '0.66rem', sm: '0.72rem' },
                                 fontWeight: 800,
-                                letterSpacing: '0.06em',
+                                letterSpacing: '0.04em',
                                 color: '#a7f3d0',
                                 textTransform: 'uppercase',
                             }}>
@@ -216,22 +216,16 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     borderRadius: '50%',
                                     bgcolor: '#10b981',
                                     boxShadow: '0 0 8px #10b981',
-                                    animation: 'pulse 2s infinite',
-                                    '@keyframes pulse': {
-                                        '0%': { transform: 'scale(0.95)', opacity: 0.8 },
-                                        '50%': { transform: 'scale(1.3)', opacity: 1 },
-                                        '100%': { transform: 'scale(0.95)', opacity: 0.8 },
-                                    }
                                 }} />
                                 Scientific Jury Evaluation Deck
                             </Box>
                             <Box sx={{
-                                px: 1.2,
+                                px: { xs: 1, sm: 1.2 },
                                 py: 0.4,
                                 borderRadius: '20px',
                                 bgcolor: 'rgba(217, 119, 6, 0.2)',
                                 border: '1px solid rgba(245, 158, 11, 0.35)',
-                                fontSize: '0.7rem',
+                                fontSize: { xs: '0.64rem', sm: '0.7rem' },
                                 fontWeight: 800,
                                 color: '#fde68a',
                                 letterSpacing: '0.04em',
@@ -244,7 +238,7 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                         <Typography variant="h3" sx={{
                             fontWeight: 900,
                             letterSpacing: '-0.03em',
-                            fontSize: { xs: '1.75rem', sm: '2.15rem', md: '2.45rem' },
+                            fontSize: { xs: '1.45rem', sm: '2.1rem', md: '2.45rem' },
                             lineHeight: 1.15,
                             color: '#ffffff',
                             mb: 1,
@@ -255,7 +249,7 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                         {/* Description */}
                         <Typography variant="body1" sx={{
                             color: 'rgba(255, 255, 255, 0.82)',
-                            fontSize: { xs: '0.88rem', sm: '0.95rem' },
+                            fontSize: { xs: '0.84rem', sm: '0.95rem' },
                             lineHeight: 1.5,
                             mb: 2,
                             fontWeight: 400,
@@ -264,47 +258,47 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                         </Typography>
 
                         {/* Submeta Pills */}
-                        <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap sx={{ gap: 1 }}>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ gap: 0.8 }}>
                             <Box sx={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 0.75,
-                                px: 1.2,
+                                gap: 0.6,
+                                px: 1.1,
                                 py: 0.4,
                                 borderRadius: '8px',
                                 bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                fontSize: '0.75rem',
+                                fontSize: '0.72rem',
                                 color: 'rgba(255, 255, 255, 0.9)',
                                 fontWeight: 600,
                             }}>
-                                <CalendarTodayIcon sx={{ fontSize: 14, color: '#34d399' }} />
+                                <CalendarTodayIcon sx={{ fontSize: 13, color: '#34d399' }} />
                                 {formattedDate}
                             </Box>
                             <Box sx={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 0.75,
-                                px: 1.2,
+                                gap: 0.6,
+                                px: 1.1,
                                 py: 0.4,
                                 borderRadius: '8px',
                                 bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                fontSize: '0.75rem',
+                                fontSize: '0.72rem',
                                 color: 'rgba(255, 255, 255, 0.9)',
                                 fontWeight: 600,
                             }}>
-                                <ShieldIcon sx={{ fontSize: 14, color: '#60a5fa' }} />
+                                <ShieldIcon sx={{ fontSize: 13, color: '#60a5fa' }} />
                                 Blind Evaluation Integrity Protected
                             </Box>
                         </Stack>
                     </Box>
 
-                    {/* Right Column: High-Impact CTAs */}
+                    {/* Right Column: High-Impact CTAs - Column on mobile so button is full-width and not squished! */}
                     <Box sx={{
                         position: 'relative',
                         zIndex: 1,
                         display: 'flex',
-                        flexDirection: { xs: 'row', md: 'column' },
-                        gap: 1.5,
+                        flexDirection: { xs: 'column', sm: 'row', md: 'column' },
+                        gap: 1.2,
                         width: { xs: '100%', md: 'auto' },
                         minWidth: { md: 240 },
                     }}>
@@ -312,15 +306,16 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                             component={Link}
                             href={route('juri.submissions')}
                             variant="contained"
+                            fullWidth
                             endIcon={<ArrowForwardIcon />}
                             sx={{
                                 background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                                 color: '#ffffff',
                                 px: 3,
-                                py: 1.3,
+                                py: 1.4,
                                 borderRadius: '14px',
                                 textTransform: 'none',
-                                fontWeight: 800,
+                                fontWeight: 900,
                                 fontSize: '0.92rem',
                                 letterSpacing: '0.01em',
                                 boxShadow: '0 8px 24px rgba(217, 119, 6, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
@@ -330,36 +325,35 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     boxShadow: '0 12px 28px rgba(217, 119, 6, 0.5)',
                                 },
                                 transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                                flex: 1,
                             }}
                         >
                             Open Scoring Deck
                         </Button>
 
                         <Box sx={{
-                            p: 1.5,
-                            borderRadius: '14px',
+                            p: 1.2,
+                            borderRadius: '12px',
                             bgcolor: 'rgba(0, 0, 0, 0.25)',
                             backdropFilter: 'blur(10px)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             textAlign: 'center',
                         }}>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', fontSize: '0.72rem', fontWeight: 600 }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', fontSize: '0.68rem', fontWeight: 600 }}>
                                 EVALUATION TIMELINE
                             </Typography>
-                            <Typography variant="body2" sx={{ color: '#fde68a', fontWeight: 800, fontSize: '0.82rem', mt: 0.2 }}>
+                            <Typography variant="body2" sx={{ color: '#fde68a', fontWeight: 800, fontSize: '0.8rem', mt: 0.2 }}>
                                 PIT IAGI 2026 Session 1
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
 
-                {/* ── BENTO METRIC CARDS (Taste-Skill 4-Col Grid) ── */}
-                <Grid container spacing={2.5} sx={{ mb: 4 }}>
+                {/* ── BENTO METRIC CARDS: 2x2 Grid on Mobile for Instant Glance without Endless Scrolling! ── */}
+                <Grid container spacing={{ xs: 1.5, sm: 2.5 }} sx={{ mb: { xs: 3, md: 4 } }}>
                     {statCards.map((card, index) => (
-                        <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
+                        <Grid size={{ xs: 6, sm: 6, lg: 3 }} key={index}>
                             <Card elevation={0} sx={{
-                                borderRadius: '20px',
+                                borderRadius: { xs: '16px', sm: '20px' },
                                 border: `1.5px solid ${card.borderColor}`,
                                 bgcolor: c.cardBg,
                                 height: '100%',
@@ -384,13 +378,13 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     pointerEvents: 'none',
                                 }} />
 
-                                <CardContent sx={{ p: 2.5, position: 'relative', zIndex: 1, '&:last-child': { pb: 2.5 } }}>
+                                <CardContent sx={{ p: { xs: 1.5, sm: 2.5 }, position: 'relative', zIndex: 1, '&:last-child': { pb: { xs: 1.5, sm: 2.5 } } }}>
                                     {/* Top Bar: Icon + Badge */}
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 1.2, sm: 2 } }}>
                                         <Box sx={{
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: '12px',
+                                            width: { xs: 34, sm: 44 },
+                                            height: { xs: 34, sm: 44 },
+                                            borderRadius: '10px',
                                             bgcolor: isDark ? `${card.color}18` : `${card.color}12`,
                                             display: 'flex',
                                             alignItems: 'center',
@@ -398,7 +392,7 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                             color: card.color,
                                             border: `1px solid ${card.color}35`,
                                         }}>
-                                            {React.cloneElement(card.icon, { sx: { fontSize: 22 } })}
+                                            {React.cloneElement(card.icon, { sx: { fontSize: { xs: 18, sm: 22 } } })}
                                         </Box>
 
                                         <Chip
@@ -408,11 +402,13 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                                 bgcolor: isDark ? `${card.color}20` : `${card.color}15`,
                                                 color: card.color,
                                                 fontWeight: 800,
-                                                fontSize: '0.68rem',
+                                                fontSize: { xs: '0.58rem', sm: '0.68rem' },
                                                 letterSpacing: '0.04em',
-                                                height: 24,
-                                                borderRadius: '8px',
+                                                height: { xs: 20, sm: 24 },
+                                                borderRadius: '6px',
                                                 border: `1px solid ${card.color}30`,
+                                                maxWidth: { xs: 75, sm: 'none' },
+                                                '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis', px: { xs: 0.6, sm: 1 } },
                                             }}
                                         />
                                     </Box>
@@ -421,7 +417,7 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     <Typography variant="h3" sx={{
                                         fontWeight: 900,
                                         color: c.textPrimary,
-                                        fontSize: { xs: '1.85rem', sm: '2.1rem' },
+                                        fontSize: { xs: '1.45rem', sm: '2.1rem' },
                                         letterSpacing: '-0.03em',
                                         lineHeight: 1.1,
                                         fontFeatureSettings: '"tnum"',
@@ -433,8 +429,9 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     <Typography variant="body2" sx={{
                                         color: c.textPrimary,
                                         fontWeight: 700,
-                                        fontSize: '0.85rem',
-                                        mt: 0.6,
+                                        fontSize: { xs: '0.74rem', sm: '0.85rem' },
+                                        mt: 0.4,
+                                        lineHeight: 1.3,
                                     }}>
                                         {card.title}
                                     </Typography>
@@ -443,9 +440,12 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                     <Typography variant="caption" sx={{
                                         color: c.textSecondary,
                                         display: 'block',
-                                        fontSize: '0.75rem',
+                                        fontSize: { xs: '0.64rem', sm: '0.75rem' },
                                         fontWeight: 500,
-                                        mt: 0.4,
+                                        mt: 0.3,
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
                                     }}>
                                         {card.sub}
                                     </Typography>
@@ -569,8 +569,19 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                         }}
                                     />
 
-                                    {/* Filter Pills */}
-                                    <Stack direction="row" spacing={0.8} sx={{ width: { xs: '100%', sm: 'auto' }, overflowX: 'auto', pb: { xs: 0.5, sm: 0 } }}>
+                                    {/* Filter Pills with Momentum Touch Scrolling */}
+                                    <Stack
+                                        direction="row"
+                                        spacing={0.8}
+                                        sx={{
+                                            width: { xs: '100%', sm: 'auto' },
+                                            overflowX: 'auto',
+                                            WebkitOverflowScrolling: 'touch',
+                                            scrollbarWidth: 'none',
+                                            '&::-webkit-scrollbar': { display: 'none' },
+                                            pb: { xs: 0.5, sm: 0 },
+                                        }}
+                                    >
                                         {[
                                             { key: 'all', label: `All (${totalAssigned})` },
                                             { key: 'pending', label: `Pending (${pending})` },
@@ -592,6 +603,8 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                                         px: 1.5,
                                                         py: 0.6,
                                                         minWidth: 'fit-content',
+                                                        flexShrink: 0,
+                                                        whiteSpace: 'nowrap',
                                                         bgcolor: active
                                                             ? (isDark ? '#059669' : '#094d42')
                                                             : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
@@ -1054,6 +1067,8 @@ export default function JuriDashboard({ analytics = {}, recentAssignments = [] }
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
+                                            flexWrap: 'wrap',
+                                            gap: 0.6,
                                             p: 1.2,
                                             borderRadius: '10px',
                                             bgcolor: tier.bg,
