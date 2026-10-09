@@ -43,7 +43,7 @@ export default function Edit({ mustVerifyEmail, status }) {
             <Head title="Profile Settings • 55th PIT IAGI & GEOSEA 2026" />
 
             <Box component="main" role="main" aria-label="Profile Settings" sx={{
-                p: { xs: 2, sm: 3, md: 4 },
+                p: { xs: 1.5, sm: 2.5, md: 4 },
                 maxWidth: '1600px',
                 mx: 'auto',
                 minHeight: '100vh',
@@ -53,9 +53,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <Box sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: '24px',
-                    p: { xs: 3, sm: 4 },
-                    mb: 3.5,
+                    borderRadius: { xs: '20px', sm: '24px' },
+                    p: { xs: 2.2, sm: 3, md: 4 },
+                    mb: { xs: 2, sm: 3 },
                     background: isDark
                         ? 'linear-gradient(135deg, #052e25 0%, #031c17 50%, #02120e 100%)'
                         : 'linear-gradient(135deg, #094d42 0%, #063830 50%, #03241f 100%)',
@@ -81,32 +81,33 @@ export default function Edit({ mustVerifyEmail, status }) {
                         flexDirection: { xs: 'column', md: 'row' },
                         alignItems: { xs: 'flex-start', md: 'center' },
                         justifyContent: 'space-between',
-                        gap: 3,
+                        gap: 2,
                     }}>
-                        {/* Avatar & User meta */}
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ xs: 'flex-start', sm: 'center' }}>
+                        {/* Avatar & User meta - Horizontal on mobile for sleek compact layout */}
+                        <Stack direction="row" spacing={{ xs: 2, sm: 3 }} alignItems="center">
                             <Avatar sx={{
-                                width: { xs: 72, sm: 88 },
-                                height: { xs: 72, sm: 88 },
+                                width: { xs: 56, sm: 84 },
+                                height: { xs: 56, sm: 84 },
                                 bgcolor: '#10b981',
                                 color: '#ffffff',
-                                fontSize: { xs: '1.8rem', sm: '2.2rem' },
+                                fontSize: { xs: '1.45rem', sm: '2.2rem' },
                                 fontWeight: 900,
-                                border: '4px solid rgba(255, 255, 255, 0.25)',
+                                border: '3px solid rgba(255, 255, 255, 0.25)',
                                 boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                                flexShrink: 0,
                             }}>
                                 {user.name?.charAt(0).toUpperCase() || 'U'}
                             </Avatar>
 
-                            <Box>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 1 }}>
+                            <Box sx={{ minWidth: 0 }}>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.8, mb: 0.8 }}>
                                     <Chip
                                         label={roleConfig.label}
                                         size="small"
                                         sx={{
                                             height: 22,
                                             fontWeight: 800,
-                                            fontSize: '0.66rem',
+                                            fontSize: '0.64rem',
                                             borderRadius: '6px',
                                             bgcolor: 'rgba(255, 255, 255, 0.15)',
                                             color: '#ffffff',
@@ -121,7 +122,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             sx={{
                                                 height: 22,
                                                 fontWeight: 800,
-                                                fontSize: '0.66rem',
+                                                fontSize: '0.64rem',
                                                 borderRadius: '6px',
                                                 bgcolor: 'rgba(16, 185, 129, 0.25)',
                                                 color: '#a7f3d0',
@@ -135,11 +136,12 @@ export default function Edit({ mustVerifyEmail, status }) {
                                         sx={{
                                             height: 22,
                                             fontWeight: 700,
-                                            fontSize: '0.66rem',
+                                            fontSize: '0.64rem',
                                             borderRadius: '6px',
                                             bgcolor: 'rgba(245, 158, 11, 0.2)',
                                             color: '#fde68a',
                                             border: '1px solid rgba(245, 158, 11, 0.35)',
+                                            display: { xs: 'none', sm: 'inline-flex' },
                                         }}
                                     />
                                 </Box>
@@ -147,15 +149,21 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 <Typography variant="h4" sx={{
                                     fontWeight: 900,
                                     letterSpacing: '-0.025em',
-                                    fontSize: { xs: '1.4rem', sm: '1.85rem' },
+                                    fontSize: { xs: '1.25rem', sm: '1.85rem' },
                                     lineHeight: 1.2,
                                     color: '#ffffff',
-                                    mb: 0.5,
+                                    mb: 0.3,
                                 }}>
                                     {user.name}
                                 </Typography>
 
-                                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.88rem' }}>
+                                <Typography variant="body2" sx={{
+                                    color: 'rgba(255,255,255,0.8)',
+                                    fontSize: { xs: '0.78rem', sm: '0.88rem' },
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>
                                     {user.email}
                                     {user.affiliation ? ` • ${user.affiliation}` : ''}
                                 </Typography>
@@ -187,14 +195,14 @@ export default function Edit({ mustVerifyEmail, status }) {
                 </Box>
 
                 {/* ── BENTO GRID: PROFILE INFO, ACCOUNT METADATA & PASSWORD ── */}
-                <Grid container spacing={3}>
+                <Grid container spacing={{ xs: 2, md: 3 }}>
                     {/* BENTO CARD 1: Profile Information */}
                     <Grid size={{ xs: 12, md: 6, lg: 4.5 }}>
                         <Card elevation={0} sx={{
-                            borderRadius: '24px',
+                            borderRadius: { xs: '18px', sm: '24px' },
                             border: `1.5px solid ${c.cardBorder}`,
                             bgcolor: c.cardBg,
-                            p: { xs: 2.5, sm: 3.5 },
+                            p: { xs: 2, sm: 3.5 },
                             height: '100%',
                             boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
                             display: 'flex',

@@ -87,7 +87,7 @@ export default function JuriSubmissions({ scores = [] }) {
             <Head title="Assigned Presentations • 55th PIT IAGI & GEOSEA 2026" />
 
             <Box sx={{
-                p: { xs: 2, sm: 3, md: 4 },
+                p: { xs: 1.5, sm: 2.5, md: 4 },
                 minHeight: '100vh',
                 bgcolor: c.surfaceBg,
                 maxWidth: '1600px',
@@ -97,9 +97,9 @@ export default function JuriSubmissions({ scores = [] }) {
                 <Box sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: '24px',
-                    p: { xs: 3, sm: 3.5, md: 4 },
-                    mb: 3.5,
+                    borderRadius: { xs: '20px', sm: '24px' },
+                    p: { xs: 2.2, sm: 3, md: 4 },
+                    mb: { xs: 2, sm: 3 },
                     background: isDark
                         ? 'linear-gradient(135deg, #052e25 0%, #031c17 50%, #02120e 100%)'
                         : 'linear-gradient(135deg, #094d42 0%, #063830 50%, #03241f 100%)',
@@ -121,20 +121,20 @@ export default function JuriSubmissions({ scores = [] }) {
 
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
                         {/* Live Status Badge */}
-                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.8, mb: { xs: 1, sm: 1.5 } }}>
                             <Box sx={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: 0.8,
-                                px: 1.5,
-                                py: 0.4,
+                                px: { xs: 1.2, sm: 1.5 },
+                                py: 0.35,
                                 borderRadius: '20px',
                                 bgcolor: 'rgba(255, 255, 255, 0.1)',
                                 backdropFilter: 'blur(10px)',
                                 border: '1px solid rgba(255, 255, 255, 0.15)',
-                                fontSize: '0.72rem',
+                                fontSize: { xs: '0.64rem', sm: '0.72rem' },
                                 fontWeight: 800,
-                                letterSpacing: '0.06em',
+                                letterSpacing: '0.04em',
                                 color: '#a7f3d0',
                                 textTransform: 'uppercase',
                             }}>
@@ -148,12 +148,12 @@ export default function JuriSubmissions({ scores = [] }) {
                                 Scientific Evaluation Portal
                             </Box>
                             <Box sx={{
-                                px: 1.2,
-                                py: 0.4,
+                                px: { xs: 1, sm: 1.2 },
+                                py: 0.35,
                                 borderRadius: '20px',
                                 bgcolor: 'rgba(217, 119, 6, 0.2)',
                                 border: '1px solid rgba(245, 158, 11, 0.35)',
-                                fontSize: '0.7rem',
+                                fontSize: { xs: '0.64rem', sm: '0.7rem' },
                                 fontWeight: 800,
                                 color: '#fde68a',
                                 letterSpacing: '0.04em',
@@ -166,27 +166,28 @@ export default function JuriSubmissions({ scores = [] }) {
                         <Typography variant="h3" sx={{
                             fontWeight: 900,
                             letterSpacing: '-0.03em',
-                            fontSize: { xs: '1.65rem', sm: '2.1rem', md: '2.35rem' },
-                            lineHeight: 1.15,
+                            fontSize: { xs: '1.35rem', sm: '1.9rem', md: '2.35rem' },
+                            lineHeight: 1.2,
                             color: '#ffffff',
-                            mb: 1,
+                            mb: { xs: 0.6, sm: 1 },
                         }}>
                             Assigned Presentations ⚖️
                         </Typography>
 
-                        {/* Subtitle */}
+                        {/* Subtitle - visible on desktop, concise on mobile */}
                         <Typography variant="body1" sx={{
                             color: 'rgba(255, 255, 255, 0.82)',
-                            fontSize: { xs: '0.88rem', sm: '0.95rem' },
-                            lineHeight: 1.5,
-                            mb: 2.5,
+                            fontSize: { xs: '0.78rem', sm: '0.92rem' },
+                            lineHeight: 1.45,
+                            mb: { xs: 1.5, sm: 2.5 },
                             maxWidth: 700,
+                            display: { xs: 'none', sm: 'block' },
                         }}>
                             Review, evaluate, and submit rubric scores for your assigned scientific presentations. All evaluations are cryptographically secured and confidential.
                         </Typography>
 
-                        {/* Metric Highlights in Hero */}
-                        <Grid container spacing={2} sx={{ maxWidth: 850 }}>
+                        {/* Metric Highlights in Hero (Compact on mobile) */}
+                        <Grid container spacing={{ xs: 1, sm: 1.5, md: 2 }} sx={{ maxWidth: 850 }}>
                             {[
                                 { label: 'Total Assigned', val: totalCount, sub: `${oralCount} Oral • ${posterCount} Poster`, color: '#67e8f9' },
                                 { label: 'Scored & Finalized', val: scoredCount, sub: averageScore ? `Avg Score: ${averageScore}/10` : 'None scored yet', color: '#6ee7b7' },
@@ -195,19 +196,27 @@ export default function JuriSubmissions({ scores = [] }) {
                             ].map((m, idx) => (
                                 <Grid size={{ xs: 6, sm: 3 }} key={idx}>
                                     <Box sx={{
-                                        p: 1.5,
-                                        borderRadius: '14px',
+                                        p: { xs: 1.1, sm: 1.5 },
+                                        borderRadius: { xs: '12px', sm: '14px' },
                                         bgcolor: 'rgba(0, 0, 0, 0.25)',
                                         backdropFilter: 'blur(10px)',
                                         border: '1px solid rgba(255, 255, 255, 0.1)',
                                     }}>
-                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', fontSize: { xs: '0.58rem', sm: '0.68rem' }, fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase' }}>
                                             {m.label}
                                         </Typography>
-                                        <Typography variant="h5" sx={{ fontWeight: 900, color: m.color, fontSize: '1.45rem', mt: 0.2, fontFamily: 'monospace' }}>
+                                        <Typography variant="h5" sx={{ fontWeight: 900, color: m.color, fontSize: { xs: '1.25rem', sm: '1.45rem' }, mt: 0.1, fontFamily: 'monospace', lineHeight: 1.1 }}>
                                             {m.val}
                                         </Typography>
-                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.7rem', display: 'block', mt: 0.2 }}>
+                                        <Typography variant="caption" sx={{
+                                            color: 'rgba(255,255,255,0.65)',
+                                            fontSize: { xs: '0.62rem', sm: '0.7rem' },
+                                            display: 'block',
+                                            mt: 0.2,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                        }}>
                                             {m.sub}
                                         </Typography>
                                     </Box>
@@ -219,11 +228,11 @@ export default function JuriSubmissions({ scores = [] }) {
 
                 {/* ── SEARCH & FILTER CONTROLS (21st.dev Style) ── */}
                 <Card elevation={0} sx={{
-                    borderRadius: '20px',
+                    borderRadius: { xs: '16px', sm: '20px' },
                     border: `1.5px solid ${c.cardBorder}`,
                     bgcolor: c.cardBg,
-                    p: { xs: 2, sm: 2.5 },
-                    mb: 3.5,
+                    p: { xs: 1.5, sm: 2.2 },
+                    mb: { xs: 2, sm: 3 },
                     boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 20px rgba(0,0,0,0.02)',
                 }}>
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }}>
@@ -386,11 +395,11 @@ export default function JuriSubmissions({ scores = [] }) {
                                                 : 'linear-gradient(90deg, #9333ea 0%, #c084fc 100%)',
                                         }} />
 
-                                        <CardContent sx={{ p: { xs: 2.5, sm: 3 }, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                        <CardContent sx={{ p: { xs: 1.8, sm: 2.5 }, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                             <Box>
                                                 {/* Category + Code + Status */}
-                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 0.8, mb: 1.5 }}>
+                                                    <Stack direction="row" spacing={0.8} alignItems="center" flexWrap="wrap">
                                                         <Chip
                                                             icon={isOral ? <MicIcon sx={{ fontSize: '13px !important' }} /> : <WallpaperIcon sx={{ fontSize: '13px !important' }} />}
                                                             label={isOral ? 'ORAL' : 'POSTER'}
@@ -434,7 +443,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                     borderRadius: '6px',
                                                                     bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                                                                     color: c.textSecondary,
-                                                                    maxWidth: 180,
+                                                                    maxWidth: { xs: 150, sm: 180 },
                                                                     '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
                                                                 }}
                                                             />
@@ -485,18 +494,18 @@ export default function JuriSubmissions({ scores = [] }) {
                                                     href={route('juri.submissions.view', score.submission_id)}
                                                     variant="h6"
                                                     sx={{
-                                                        fontSize: { xs: '1rem', sm: '1.08rem' },
+                                                        fontSize: { xs: '0.94rem', sm: '1.08rem' },
                                                         fontWeight: 800,
                                                         color: c.textPrimary,
-                                                        lineHeight: 1.4,
+                                                        lineHeight: 1.35,
                                                         letterSpacing: '-0.015em',
-                                                        mb: 2,
+                                                        mb: { xs: 1.2, sm: 2 },
                                                         display: '-webkit-box',
                                                         WebkitLineClamp: 2,
                                                         WebkitBoxOrient: 'vertical',
                                                         overflow: 'hidden',
                                                         textDecoration: 'none',
-                                                        minHeight: '2.8rem',
+                                                        minHeight: 'auto',
                                                         '&:hover': {
                                                             color: '#059669',
                                                             textDecoration: 'underline',
@@ -507,13 +516,13 @@ export default function JuriSubmissions({ scores = [] }) {
                                                 </Typography>
 
                                                 {/* Author & Affiliation Details */}
-                                                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2.5 }}>
+                                                <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: { xs: 1.5, sm: 2.2 } }}>
                                                     <Avatar sx={{
-                                                        width: 38,
-                                                        height: 38,
+                                                        width: { xs: 32, sm: 38 },
+                                                        height: { xs: 32, sm: 38 },
                                                         bgcolor: isOral ? '#0284c7' : '#9333ea',
                                                         color: '#ffffff',
-                                                        fontSize: '0.85rem',
+                                                        fontSize: { xs: '0.78rem', sm: '0.85rem' },
                                                         fontWeight: 800,
                                                     }}>
                                                         {presenterName.charAt(0).toUpperCase()}
@@ -522,7 +531,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                         <Typography variant="body2" sx={{
                                                             fontWeight: 700,
                                                             color: c.textPrimary,
-                                                            fontSize: '0.86rem',
+                                                            fontSize: '0.84rem',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
                                                             whiteSpace: 'nowrap',
@@ -531,7 +540,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                         </Typography>
                                                         <Typography variant="caption" sx={{
                                                             color: c.textSecondary,
-                                                            fontSize: '0.74rem',
+                                                            fontSize: '0.72rem',
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             gap: 0.5,

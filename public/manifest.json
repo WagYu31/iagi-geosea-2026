@@ -4,8 +4,8 @@
   "description": "Premium Conference Payment Center and Registration System",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#004D40",
-  "theme_color": "#004D40",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/favicon.png",
