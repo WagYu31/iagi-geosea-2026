@@ -561,6 +561,7 @@ class VisitorTicketAdminController extends Controller
             'board' => '/images/badges/Board.svg',
             'sponsorship' => '/images/badges/Sponsorship.svg',
             'sponsor' => '/images/badges/Sponsorship.svg',
+            'delegate' => '/images/badges/Sponsorship.svg',
             'iagi_member_professional' => '/images/badges/Participant.svg',
             'non_iagi_member_professional' => '/images/badges/Participant.svg',
             'iagi_member_expatriate' => '/images/badges/Participant.svg',

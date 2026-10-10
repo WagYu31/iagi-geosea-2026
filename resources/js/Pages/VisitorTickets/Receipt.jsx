@@ -37,8 +37,9 @@ const CATEGORY_MAP = {
     committee: { label: 'Committee', badge: 'COMMITTEE' },
     student_volunteer: { label: 'Student Volunteer', badge: 'STUDENT VOLUNTEER' },
     board: { label: 'Board', badge: 'BOARD' },
-    sponsorship: { label: 'Sponsorship', badge: 'SPONSORSHIP' },
-    sponsor: { label: 'Sponsorship', badge: 'SPONSORSHIP' },
+    sponsorship: { label: 'Delegate', badge: 'DELEGATE' },
+    sponsor: { label: 'Delegate', badge: 'DELEGATE' },
+    delegate: { label: 'Delegate', badge: 'DELEGATE' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', badge: 'PROFESSIONAL (MEMBER)' },

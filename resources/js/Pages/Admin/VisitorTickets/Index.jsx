@@ -207,17 +207,24 @@ const CATEGORY_META = {
         border: '#fde68a',
     },
 
-    // 11. Sponsorship
+    // 11. Delegate
     sponsorship: {
-        label: 'Sponsorship',
-        shortLabel: 'SPONSORSHIP',
+        label: 'Delegate',
+        shortLabel: 'DELEGATE',
         bg: '#ecfdf5',
         color: '#065f46',
         border: '#a7f3d0',
     },
     sponsor: {
-        label: 'Sponsorship',
-        shortLabel: 'SPONSORSHIP',
+        label: 'Delegate',
+        shortLabel: 'DELEGATE',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
+    delegate: {
+        label: 'Delegate',
+        shortLabel: 'DELEGATE',
         bg: '#ecfdf5',
         color: '#065f46',
         border: '#a7f3d0',
@@ -1290,7 +1297,7 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
                                 <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
                                 <MenuItem value="board" sx={{ fontSize: '0.82rem' }}>10. 🎖️ Board (Invited / Free)</MenuItem>
-                                <MenuItem value="sponsorship" sx={{ fontSize: '0.82rem' }}>11. 💎 Sponsorship (Invited / Free)</MenuItem>
+                                <MenuItem value="sponsorship" sx={{ fontSize: '0.82rem' }}>11. 💎 Delegate (Invited / Free)</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -2383,7 +2390,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
                                     <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
                                     <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
-                                    <MenuItem value="sponsorship">11. 💎 Sponsorship (Invited / Free)</MenuItem>
+                                    <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth size="small">
@@ -2455,7 +2462,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
                                     <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
                                     <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
-                                    <MenuItem value="sponsorship">11. 💎 Sponsorship (Invited / Free)</MenuItem>
+                                    <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
 

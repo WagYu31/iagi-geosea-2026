@@ -54,9 +54,10 @@ export const BADGE_TEMPLATES = {
     // 10. Board
     board: '/images/badges/Board.svg',
 
-    // 11. Sponsorship
+    // 11. Delegate
     sponsorship: '/images/badges/Sponsorship.svg',
     sponsor: '/images/badges/Sponsorship.svg',
+    delegate: '/images/badges/Sponsorship.svg',
 };
 
 const CATEGORY_MAP = {
@@ -97,9 +98,10 @@ const CATEGORY_MAP = {
     // 10. Board
     board: { label: 'BOARD', short: 'BOARD' },
 
-    // 11. Sponsorship
-    sponsorship: { label: 'SPONSORSHIP', short: 'SPONSOR' },
-    sponsor: { label: 'SPONSORSHIP', short: 'SPONSOR' },
+    // 11. Delegate
+    sponsorship: { label: 'DELEGATE', short: 'DELEGATE' },
+    sponsor: { label: 'DELEGATE', short: 'DELEGATE' },
+    delegate: { label: 'DELEGATE', short: 'DELEGATE' },
 };
 
 function SingleLanyardCard({ ticket, templatePath, isBulk }) {

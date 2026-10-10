@@ -175,17 +175,24 @@ const CATEGORY_MAP = {
         border: '#fde68a',
     },
 
-    // 11. Sponsorship
+    // 11. Delegate
     sponsorship: {
-        label: 'SPONSORSHIP',
-        shortLabel: 'SPONSORSHIP',
+        label: 'DELEGATE',
+        shortLabel: 'DELEGATE',
         bg: '#ecfdf5',
         color: '#065f46',
         border: '#a7f3d0',
     },
     sponsor: {
-        label: 'SPONSORSHIP',
-        shortLabel: 'SPONSORSHIP',
+        label: 'DELEGATE',
+        shortLabel: 'DELEGATE',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
+    delegate: {
+        label: 'DELEGATE',
+        shortLabel: 'DELEGATE',
         bg: '#ecfdf5',
         color: '#065f46',
         border: '#a7f3d0',

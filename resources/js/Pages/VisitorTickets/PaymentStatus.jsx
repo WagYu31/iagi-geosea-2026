@@ -50,8 +50,9 @@ const CATEGORY_MAP = {
     committee: { label: 'Committee', shortLabel: 'COMMITTEE', badge: 'COMMITTEE', bg: '#eff6ff', color: '#1e40af', border: '#bfdbfe' },
     student_volunteer: { label: 'Student Volunteer', shortLabel: 'VOLUNTEER', badge: 'STUDENT VOLUNTEER', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
     board: { label: 'Board', shortLabel: 'BOARD', badge: 'BOARD', bg: '#fef3c7', color: '#b45309', border: '#fde68a' },
-    sponsorship: { label: 'Sponsorship', shortLabel: 'SPONSOR', badge: 'SPONSORSHIP', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
-    sponsor: { label: 'Sponsorship', shortLabel: 'SPONSOR', badge: 'SPONSORSHIP', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
+    sponsorship: { label: 'Delegate', shortLabel: 'DELEGATE', badge: 'DELEGATE', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
+    sponsor: { label: 'Delegate', shortLabel: 'DELEGATE', badge: 'DELEGATE', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
+    delegate: { label: 'Delegate', shortLabel: 'DELEGATE', badge: 'DELEGATE', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', shortLabel: 'PRO (MEMBER)', badge: 'PROFESSIONAL (MEMBER)', bg: '#dcfce7', color: '#15803d', border: '#86efac' },
