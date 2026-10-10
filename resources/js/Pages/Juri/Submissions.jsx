@@ -36,8 +36,40 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import CircularProgress from '@mui/material/CircularProgress';
+import GroupIcon from '@mui/icons-material/Group';
+
+// Error Boundary to prevent any modal rendering issue from breaking the entire page
+class ModalErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, errorInfo) {
+        console.error("Modal Render Error:", error, errorInfo);
+    }
+    render() {
+        if (this.state.hasError) {
+            return (
+                <Box sx={{ p: 4, textAlign: 'center' }}>
+                    <Typography variant="h6" color="error" gutterBottom sx={{ fontWeight: 800 }}>
+                        Terjadi kendala saat menampilkan preview dokumen
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                        {String(this.state.error?.message || 'Unknown error')}
+                    </Typography>
+                    <Button variant="outlined" size="small" onClick={() => this.setState({ hasError: false })}>
+                        Coba Lagi
+                    </Button>
+                </Box>
+            );
+        }
+        return this.props.children;
+    }
+}
 
 // Helpers for file handling & document previews
 const getFileUrl = (filePath) => {
@@ -83,16 +115,21 @@ const getKeywordsList = (submission) => {
 
 // ── UNIVERSAL IN-APP DOCUMENT VIEWER COMPONENT ──
 // Allows viewing PDF, DOCX, DOC, PPTX, and images directly in-browser without download
-function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDark, c }) {
+function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
+    const theme = useTheme();
+    const c = theme.palette.custom || {};
+    const isDark = theme.palette.mode === 'dark';
     const [viewerType, setViewerType] = useState('office'); // 'office' | 'google'
     const [iframeLoading, setIframeLoading] = useState(true);
 
     const isPdf = isPdfFile(fileUrl);
-    const isDocx = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.docx'));
-    const isDoc = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.doc'));
-    const isPpt = Boolean(fileUrl && /\.(pptx?|ppsx?)$/i.test(fileUrl));
+    const isDocx = Boolean(fileUrl && String(fileUrl).toLowerCase().endsWith('.docx'));
+    const isDoc = Boolean(fileUrl && String(fileUrl).toLowerCase().endsWith('.doc'));
+    const isPpt = Boolean(fileUrl && /\.(pptx?|ppsx?)$/i.test(String(fileUrl)));
     const isImage = isImgFile(fileUrl);
     const isOfficeDoc = isDocx || isDoc || isPpt;
+
+    const safeFileName = fileName || (fileUrl ? String(fileUrl).split('/').pop() : 'Document');
 
     // Absolute URL for external cloud viewers (Office Online / Google Docs)
     const absoluteUrl = useMemo(() => {
@@ -120,7 +157,7 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
                 p: 1.2,
                 borderRadius: '12px',
                 bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
-                border: `1px solid ${c.cardBorder}`,
+                border: `1px solid ${c.cardBorder || '#e2e8f0'}`,
                 flexWrap: 'wrap',
                 gap: 1,
             }}>
@@ -143,7 +180,7 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
                         whiteSpace: 'nowrap',
                         maxWidth: { xs: 200, sm: 350 },
                     }}>
-                        {fileName || fileUrl.split('/').pop()}
+                        {safeFileName}
                     </Typography>
                 </Box>
 
@@ -371,22 +408,27 @@ export default function JuriSubmissions({ scores = [] }) {
         activeTab: 'abstract', // 'abstract', 'paper', 'slides'
         submission: null,
         rubricType: 'oral',
+        submissionId: null,
     });
 
-    const openPreview = (tab, submission, rubricType = 'oral') => {
+    const openPreview = (tab, submission, rubricType = 'oral', submissionId = null) => {
+        const sub = submission || {};
+        const subId = submissionId || sub.id || sub.submission_id;
+
         // Fallback tab if requested tab has no content
         let initialTab = tab;
-        if (tab === 'paper' && !submission.full_paper_file) {
-            initialTab = submission.abstract || submission.abstract_file ? 'abstract' : 'slides';
-        } else if (tab === 'slides' && !submission.layouting_file) {
-            initialTab = submission.abstract || submission.abstract_file ? 'abstract' : 'paper';
+        if (tab === 'paper' && !sub.full_paper_file) {
+            initialTab = sub.abstract || sub.abstract_file ? 'abstract' : (sub.layouting_file ? 'slides' : 'abstract');
+        } else if (tab === 'slides' && !sub.layouting_file) {
+            initialTab = sub.abstract || sub.abstract_file ? 'abstract' : (sub.full_paper_file ? 'paper' : 'abstract');
         }
 
         setPreviewModal({
             open: true,
             activeTab: initialTab,
-            submission,
-            rubricType,
+            submission: sub,
+            rubricType: rubricType || 'oral',
+            submissionId: subId,
         });
     };
 
@@ -990,7 +1032,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('abstract', sub, score.rubric_type)}
+                                                                             onClick={() => openPreview('abstract', sub, score.rubric_type, score.submission_id)}
                                                                              startIcon={<MenuBookIcon sx={{ fontSize: '14px !important', color: '#059669' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1047,7 +1089,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('paper', sub, score.rubric_type)}
+                                                                             onClick={() => openPreview('paper', sub, score.rubric_type, score.submission_id)}
                                                                              startIcon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#dc2626' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1106,7 +1148,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('slides', sub, score.rubric_type)}
+                                                                             onClick={() => openPreview('slides', sub, score.rubric_type, score.submission_id)}
                                                                              startIcon={isOral ? <CoPresentIcon sx={{ fontSize: '14px !important', color: '#0284c7' }} /> : <WallpaperIcon sx={{ fontSize: '14px !important', color: '#9333ea' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1348,6 +1390,7 @@ export default function JuriSubmissions({ scores = [] }) {
                         }
                     }}
                 >
+                    <ModalErrorBoundary>
                     {previewModal.submission && (() => {
                         const mSub = previewModal.submission;
                         const isModalOral = (previewModal.rubricType || '').toLowerCase() === 'oral';
@@ -1359,6 +1402,10 @@ export default function JuriSubmissions({ scores = [] }) {
                         const hasAbstractContent = Boolean(mSub.abstract || mSub.abstract_file);
                         const hasPaperContent = Boolean(mSub.full_paper_file);
                         const hasSlidesContent = Boolean(mSub.layouting_file);
+                        const validTabs = ['abstract'];
+                        if (hasPaperContent) validTabs.push('paper');
+                        if (hasSlidesContent) validTabs.push('slides');
+                        const currentTab = validTabs.includes(previewModal.activeTab) ? previewModal.activeTab : 'abstract';
 
                         return (
                             <>
@@ -1456,7 +1503,7 @@ export default function JuriSubmissions({ scores = [] }) {
 
                                     {/* Multi-Tab Navigation */}
                                     <Tabs
-                                        value={previewModal.activeTab}
+                                        value={currentTab}
                                         onChange={(e, newTab) => setPreviewModal(prev => ({ ...prev, activeTab: newTab }))}
                                         sx={{
                                             mt: 2,
@@ -1510,7 +1557,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                 {/* Dialog Body */}
                                 <DialogContent sx={{ p: { xs: 1.8, sm: 3 }, flex: 1, overflowY: 'auto' }}>
                                     {/* ── TAB 1: ABSTRACT READER ── */}
-                                    {previewModal.activeTab === 'abstract' && (
+                                    {currentTab === 'abstract' && (
                                         <Box sx={{ maxWidth: 900, mx: 'auto', py: 1 }}>
                                             {/* Sub-theme and Co-authors Banner */}
                                             <Box sx={{
@@ -1520,8 +1567,12 @@ export default function JuriSubmissions({ scores = [] }) {
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                                                 border: `1px solid ${c.cardBorder}`,
                                             }}>
-                                                <Grid container spacing={2}>
-                                                    <Grid size={{ xs: 12, sm: 6 }}>
+                                                <Box sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                                                    gap: 2,
+                                                }}>
+                                                    <Box>
                                                         <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.66rem', display: 'block', mb: 0.3 }}>
                                                             Scientific Theme / Category
                                                         </Typography>
@@ -1533,9 +1584,9 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                 {mSub.paper_theme}
                                                             </Typography>
                                                         )}
-                                                    </Grid>
+                                                    </Box>
 
-                                                    <Grid size={{ xs: 12, sm: 6 }}>
+                                                    <Box>
                                                         <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.66rem', display: 'block', mb: 0.3 }}>
                                                             Primary Author & Affiliation
                                                         </Typography>
@@ -1545,8 +1596,8 @@ export default function JuriSubmissions({ scores = [] }) {
                                                         <Typography variant="caption" sx={{ color: c.textSecondary, display: 'block', mt: 0.2 }}>
                                                             {mAffiliation}
                                                         </Typography>
-                                                    </Grid>
-                                                </Grid>
+                                                    </Box>
+                                                </Box>
 
                                                 {/* Co-Authors List if any */}
                                                 {mCoAuthors.length > 0 && (
@@ -1727,10 +1778,10 @@ export default function JuriSubmissions({ scores = [] }) {
                                     )}
 
                                     {/* ── TAB 2: FULL PAPER MANUSCRIPT VIEWER ── */}
-                                    {previewModal.activeTab === 'paper' && mSub.full_paper_file && (
+                                    {currentTab === 'paper' && mSub.full_paper_file && (
                                         <UniversalDocumentViewer
                                             fileUrl={getFileUrl(mSub.full_paper_file)}
-                                            fileName={mSub.full_paper_file.split('/').pop()}
+                                            fileName={mSub.full_paper_file ? String(mSub.full_paper_file).split('/').pop() : 'Full Paper'}
                                             rubricType={previewModal.rubricType}
                                             isDark={isDark}
                                             c={c}
@@ -1738,10 +1789,10 @@ export default function JuriSubmissions({ scores = [] }) {
                                     )}
 
                                     {/* ── TAB 3: SLIDES / POSTER VIEWER ── */}
-                                    {previewModal.activeTab === 'slides' && mSub.layouting_file && (
+                                    {currentTab === 'slides' && mSub.layouting_file && (
                                         <UniversalDocumentViewer
                                             fileUrl={getFileUrl(mSub.layouting_file)}
-                                            fileName={mSub.layouting_file.split('/').pop()}
+                                            fileName={mSub.layouting_file ? String(mSub.layouting_file).split('/').pop() : 'Presentation File'}
                                             rubricType={previewModal.rubricType}
                                             isDark={isDark}
                                             c={c}
@@ -1775,7 +1826,7 @@ export default function JuriSubmissions({ scores = [] }) {
 
                                     <Button
                                         component={Link}
-                                        href={route('juri.submissions.view', mSub.id)}
+                                        href={(previewModal.submissionId || mSub?.id || mSub?.submission_id) ? route('juri.submissions.view', previewModal.submissionId || mSub?.id || mSub?.submission_id) : '#'}
                                         variant="contained"
                                         size="small"
                                         endIcon={<ArrowForwardIcon sx={{ fontSize: 15 }} />}
@@ -1802,6 +1853,7 @@ export default function JuriSubmissions({ scores = [] }) {
                             </>
                         );
                     })()}
+                    </ModalErrorBoundary>
                 </Dialog>
             </Box>
         </SidebarLayout>
