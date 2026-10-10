@@ -1037,14 +1037,154 @@ class AdminController extends Controller
         return back()->with('success', 'Profile updated successfully');
     }
 
-    public function scores()
+    public function scores(Request $request)
     {
-        $submissions = Submission::with(['user:id,name,email', 'reviews:id,submission_id,reviewer_id,originality_score,relevance_score,clarity_score,methodology_score,overall_score,comments', 'reviews.reviewer:id,name'])
-            ->latest()
-            ->paginate(25);
+        $query = Submission::with([
+            'user:id,name,email,affiliation',
+            'reviews:id,submission_id,reviewer_id,originality_score,relevance_score,clarity_score,methodology_score,overall_score,comments,recommendation,comments_phase2,recommendation_phase2,created_at,reviewed_file',
+            'reviews.reviewer:id,name,email,affiliation'
+        ]);
+
+        // Global stats (computed across entire database)
+        $totalSubmissions = Submission::count();
+        $withScoresCount = Submission::whereHas('reviews', function($rq) {
+            $rq->whereNotNull('overall_score');
+        })->count();
+        $pendingReviewCount = max(0, $totalSubmissions - $withScoresCount);
+        $totalReviewsCompleted = Review::whereNotNull('overall_score')->count();
+        $conferenceAvgScore = Review::whereNotNull('overall_score')
+            ->selectRaw('AVG((COALESCE(originality_score,0)+COALESCE(relevance_score,0)+COALESCE(clarity_score,0)+COALESCE(methodology_score,0)+COALESCE(overall_score,0))/5.0) as avg_score')
+            ->value('avg_score');
+        $multiReviewerCount = Submission::has('reviews', '>=', 2)->count();
+        $unassignedCount = Submission::doesntHave('reviews')->count();
+
+        // Server-side search
+        if ($search = $request->get('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('submission_code', 'like', "%{$search}%")
+                  ->orWhere('topic', 'like', "%{$search}%")
+                  ->orWhere('paper_theme', 'like', "%{$search}%")
+                  ->orWhere('author_full_name', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Server-side status filter
+        if ($status = $request->get('status')) {
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+        }
+
+        // Server-side topic filter
+        if ($topic = $request->get('topic')) {
+            if ($topic !== 'all') {
+                $query->where(function($q) use ($topic) {
+                    $q->where('topic', $topic)->orWhere('paper_theme', $topic);
+                });
+            }
+        }
+
+        // Server-side scoring status
+        if ($scoringStatus = $request->get('scoring_status')) {
+            if ($scoringStatus === 'scored') {
+                $query->whereHas('reviews', function($rq) {
+                    $rq->whereNotNull('overall_score');
+                });
+            } elseif ($scoringStatus === 'pending') {
+                $query->whereDoesntHave('reviews', function($rq) {
+                    $rq->whereNotNull('overall_score');
+                });
+            } elseif ($scoringStatus === 'multi_reviewer') {
+                $query->has('reviews', '>=', 2);
+            } elseif ($scoringStatus === 'unassigned') {
+                $query->doesntHave('reviews');
+            }
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'highest');
+        $avgScoreSubquery = '(SELECT AVG((COALESCE(originality_score,0)+COALESCE(relevance_score,0)+COALESCE(clarity_score,0)+COALESCE(methodology_score,0)+COALESCE(overall_score,0))/5.0) FROM reviews WHERE reviews.submission_id = submissions.id AND reviews.overall_score IS NOT NULL)';
+        
+        if ($sort === 'lowest') {
+            $query->orderByRaw("CASE WHEN {$avgScoreSubquery} IS NULL THEN 1 ELSE 0 END, {$avgScoreSubquery} ASC, id DESC");
+        } elseif ($sort === 'latest') {
+            $query->latest();
+        } elseif ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'title_asc') {
+            $query->orderBy('title', 'asc');
+        } else { // default 'highest'
+            $query->orderByRaw("CASE WHEN {$avgScoreSubquery} IS NULL THEN 1 ELSE 0 END, {$avgScoreSubquery} DESC, id DESC");
+        }
+
+        // Check for full export request (all or filtered)
+        if ($request->get('export') === 'all_scores') {
+            $allSubmissions = Submission::with([
+                'user:id,name,email,affiliation',
+                'reviews:id,submission_id,reviewer_id,originality_score,relevance_score,clarity_score,methodology_score,overall_score,comments,recommendation,comments_phase2,recommendation_phase2,created_at,reviewed_file',
+                'reviews.reviewer:id,name,email,affiliation'
+            ])->get();
+
+            return response()->json([
+                'submissions' => $allSubmissions,
+            ]);
+        } elseif ($request->get('export') === 'filtered') {
+            $filteredSubmissions = $query->get();
+
+            return response()->json([
+                'submissions' => $filteredSubmissions,
+            ]);
+        }
+
+        $perPage = (int) $request->get('per_page', 25);
+        if ($perPage < 5 || $perPage > 250) {
+            $perPage = 25;
+        }
+
+        $submissions = $query->paginate($perPage)->withQueryString();
+
+        // Topics list for dropdown
+        $topics = Submission::select('topic')
+            ->whereNotNull('topic')
+            ->where('topic', '!=', '')
+            ->distinct()
+            ->pluck('topic')
+            ->merge(
+                Submission::select('paper_theme')
+                    ->whereNotNull('paper_theme')
+                    ->where('paper_theme', '!=', '')
+                    ->distinct()
+                    ->pluck('paper_theme')
+            )
+            ->unique()
+            ->filter()
+            ->values();
 
         return Inertia::render('Admin/Scores', [
             'submissions' => $submissions,
+            'topics' => $topics,
+            'stats' => [
+                'total' => $totalSubmissions,
+                'with_scores' => $withScoresCount,
+                'pending' => $pendingReviewCount,
+                'completed_reviews' => $totalReviewsCompleted,
+                'conference_avg' => $conferenceAvgScore ? round((float)$conferenceAvgScore, 2) : 0,
+                'multi_reviewer' => $multiReviewerCount,
+                'unassigned' => $unassignedCount,
+            ],
+            'filters' => [
+                'search' => $request->get('search', ''),
+                'status' => $request->get('status', 'all'),
+                'topic' => $request->get('topic', 'all'),
+                'scoring_status' => $request->get('scoring_status', 'all'),
+                'sort' => $sort,
+                'per_page' => $perPage,
+            ],
         ]);
     }
 
