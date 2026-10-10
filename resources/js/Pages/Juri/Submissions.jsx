@@ -33,8 +33,503 @@ import CoPresentIcon from '@mui/icons-material/CoPresent';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import GroupIcon from '@mui/icons-material/Group';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import PrintIcon from '@mui/icons-material/Print';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import LanguageIcon from '@mui/icons-material/Language';
+import CircularProgress from '@mui/material/CircularProgress';
+import mammoth from 'mammoth/mammoth.browser.js';
+
+// Helpers for file handling & document previews
+const getFileUrl = (filePath) => {
+    if (!filePath) return '';
+    if (filePath.startsWith('http://') || filePath.startsWith('https://')) return filePath;
+    return `/storage/${filePath.replace(/^\/+/, '')}`;
+};
+
+const isPdfFile = (filePath) => {
+    if (!filePath) return false;
+    return filePath.toLowerCase().endsWith('.pdf');
+};
+
+const isImgFile = (filePath) => {
+    if (!filePath) return false;
+    return /\.(png|jpe?g|webp|gif|svg)$/i.test(filePath);
+};
+
+const getCoAuthorsList = (submission) => {
+    if (!submission) return [];
+    const list = [];
+    for (let i = 1; i <= 5; i++) {
+        const name = submission[`co_author_${i}`];
+        const inst = submission[`co_author_${i}_institute`];
+        if (name && name.trim()) {
+            list.push({ name: name.trim(), institute: (inst && inst.trim()) || '' });
+        }
+    }
+    if (list.length === 0 && submission.co_authors) {
+        return [{ name: submission.co_authors, institute: '' }];
+    }
+    return list;
+};
+
+const getKeywordsList = (submission) => {
+    if (!submission?.keywords) return [];
+    if (Array.isArray(submission.keywords)) return submission.keywords;
+    return String(submission.keywords)
+        .split(/[,;]/)
+        .map(k => k.trim())
+        .filter(Boolean);
+};
+
+// ── UNIVERSAL IN-APP DOCUMENT VIEWER COMPONENT ──
+// Allows viewing PDF, DOCX, DOC, PPTX, and images directly in-browser without download
+function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDark, c }) {
+    const [mode, setMode] = useState('auto'); // 'auto', 'mammoth', 'office', 'google'
+    const [docxHtml, setDocxHtml] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [fontSize, setFontSize] = useState(16);
+
+    const isPdf = isPdfFile(fileUrl);
+    const isDocx = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.docx'));
+    const isDoc = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.doc'));
+    const isPpt = Boolean(fileUrl && /\.(pptx?|ppsx?)$/i.test(fileUrl));
+    const isImage = isImgFile(fileUrl);
+    const isOral = (rubricType || '').toLowerCase() === 'oral';
+
+    // Absolute URL for external cloud viewers (Office Online / Google Docs)
+    const absoluteUrl = useMemo(() => {
+        if (!fileUrl) return '';
+        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) return fileUrl;
+        if (typeof window !== 'undefined') {
+            return `${window.location.origin}${fileUrl}`;
+        }
+        return fileUrl;
+    }, [fileUrl]);
+
+    // Parse DOCX with Mammoth directly in browser
+    useEffect(() => {
+        if (!isDocx || !fileUrl) {
+            setDocxHtml('');
+            setLoading(false);
+            return;
+        }
+
+        let isMounted = true;
+        setLoading(true);
+        setError(null);
+
+        fetch(fileUrl)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error ${res.status}: Failed to fetch file`);
+                return res.arrayBuffer();
+            })
+            .then(arrayBuffer => {
+                return mammoth.convertToHtml({ arrayBuffer });
+            })
+            .then(result => {
+                if (isMounted) {
+                    setDocxHtml(result.value || '<p><em>(Empty document)</em></p>');
+                    setLoading(false);
+                }
+            })
+            .catch(err => {
+                console.warn('Docx client parse failed, switching to cloud viewer fallback:', err);
+                if (isMounted) {
+                    setError('Local parsing unavailable. Using Online Office viewer.');
+                    setMode('office');
+                    setLoading(false);
+                }
+            });
+
+        return () => { isMounted = false; };
+    }, [fileUrl, isDocx]);
+
+    // Determine actual active viewer mode
+    const activeMode = useMemo(() => {
+        if (isPdf) return 'pdf';
+        if (isImage) return 'image';
+        if (mode === 'office') return 'office';
+        if (mode === 'google') return 'google';
+        if (mode === 'mammoth') return 'mammoth';
+        if (isDocx && docxHtml) return 'mammoth';
+        if (isDocx && loading) return 'mammoth';
+        if (isDoc || isPpt) return 'office';
+        return 'mammoth';
+    }, [isPdf, isImage, mode, isDocx, docxHtml, loading, isDoc, isPpt]);
+
+    return (
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {/* Action & Control Bar */}
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 1.5,
+                p: 1.2,
+                borderRadius: '12px',
+                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                border: `1px solid ${c.cardBorder}`,
+                flexWrap: 'wrap',
+                gap: 1,
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                    {isPdf ? (
+                        <PictureAsPdfIcon sx={{ color: '#dc2626', fontSize: 20, flexShrink: 0 }} />
+                    ) : isDocx || isDoc ? (
+                        <ArticleIcon sx={{ color: '#2563eb', fontSize: 20, flexShrink: 0 }} />
+                    ) : isPpt ? (
+                        <CoPresentIcon sx={{ color: '#ea580c', fontSize: 20, flexShrink: 0 }} />
+                    ) : (
+                        <InsertDriveFileIcon sx={{ color: '#059669', fontSize: 20, flexShrink: 0 }} />
+                    )}
+                    <Typography variant="body2" sx={{
+                        fontWeight: 800,
+                        color: c.textPrimary,
+                        fontSize: '0.82rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: { xs: 200, sm: 350 },
+                    }}>
+                        {fileName || fileUrl.split('/').pop()}
+                    </Typography>
+                </Box>
+
+                {/* Controls depending on file format */}
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    {/* If DOCX or DOC or PPT, allow switching between In-App Reader and Online Office Viewer */}
+                    {(isDocx || isDoc || isPpt) && (
+                        <Stack direction="row" spacing={0.5} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', p: 0.3, borderRadius: '8px' }}>
+                            {isDocx && (
+                                <Button
+                                    size="small"
+                                    onClick={() => setMode('mammoth')}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.72rem',
+                                        fontWeight: activeMode === 'mammoth' ? 800 : 600,
+                                        py: 0.3,
+                                        px: 1,
+                                        borderRadius: '6px',
+                                        bgcolor: activeMode === 'mammoth' ? (isDark ? '#059669' : '#ffffff') : 'transparent',
+                                        color: activeMode === 'mammoth' ? (isDark ? '#ffffff' : '#059669') : c.textSecondary,
+                                        boxShadow: activeMode === 'mammoth' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                    }}
+                                >
+                                    📄 In-App Reader
+                                </Button>
+                            )}
+                            <Button
+                                size="small"
+                                onClick={() => setMode('office')}
+                                sx={{
+                                    textTransform: 'none',
+                                    fontSize: '0.72rem',
+                                    fontWeight: activeMode === 'office' ? 800 : 600,
+                                    py: 0.3,
+                                    px: 1,
+                                    borderRadius: '6px',
+                                    bgcolor: activeMode === 'office' ? (isDark ? '#2563eb' : '#ffffff') : 'transparent',
+                                    color: activeMode === 'office' ? (isDark ? '#ffffff' : '#2563eb') : c.textSecondary,
+                                    boxShadow: activeMode === 'office' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                }}
+                            >
+                                🌐 Office Online
+                            </Button>
+                            <Button
+                                size="small"
+                                onClick={() => setMode('google')}
+                                sx={{
+                                    textTransform: 'none',
+                                    fontSize: '0.72rem',
+                                    fontWeight: activeMode === 'google' ? 800 : 600,
+                                    py: 0.3,
+                                    px: 1,
+                                    borderRadius: '6px',
+                                    bgcolor: activeMode === 'google' ? (isDark ? '#d97706' : '#ffffff') : 'transparent',
+                                    color: activeMode === 'google' ? (isDark ? '#ffffff' : '#d97706') : c.textSecondary,
+                                    boxShadow: activeMode === 'google' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                }}
+                            >
+                                Google Docs
+                            </Button>
+                        </Stack>
+                    )}
+
+                    {/* Font Size Controls when in Mammoth Reader Mode */}
+                    {activeMode === 'mammoth' && (
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                            <Tooltip title="Decrease font size" arrow>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
+                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
+                                >
+                                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 800 }}>A-</Typography>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Increase font size" arrow>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => setFontSize(prev => Math.min(26, prev + 2))}
+                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
+                                >
+                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 800 }}>A+</Typography>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Reset font size" arrow>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => setFontSize(16)}
+                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
+                                >
+                                    <RestartAltIcon sx={{ fontSize: 14 }} />
+                                </IconButton>
+                            </Tooltip>
+                        </Stack>
+                    )}
+
+                    {/* Direct Download & Open in Tab buttons */}
+                    <Button
+                        component="a"
+                        href={fileUrl}
+                        download
+                        target="_blank"
+                        variant="outlined"
+                        size="small"
+                        startIcon={<DownloadIcon sx={{ fontSize: 13 }} />}
+                        sx={{
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            borderRadius: '8px',
+                            borderColor: c.cardBorder,
+                            color: c.textSecondary,
+                            fontSize: '0.72rem',
+                            py: 0.4,
+                            px: 1,
+                        }}
+                    >
+                        Download
+                    </Button>
+                    <Button
+                        component="a"
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="text"
+                        size="small"
+                        endIcon={<OpenInNewIcon sx={{ fontSize: 13 }} />}
+                        sx={{
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            color: c.textSecondary,
+                            fontSize: '0.72rem',
+                            py: 0.4,
+                            px: 1,
+                        }}
+                    >
+                        Open Tab
+                    </Button>
+                </Stack>
+            </Box>
+
+            {/* Viewer Display Body */}
+            {activeMode === 'pdf' && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '68vh',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                }}>
+                    <iframe
+                        src={`${fileUrl}#toolbar=1`}
+                        title="PDF Document Viewer"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
+                    />
+                </Box>
+            )}
+
+            {activeMode === 'mammoth' && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '68vh',
+                    maxHeight: '72vh',
+                    overflowY: 'auto',
+                    borderRadius: '12px',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#0b1324' : '#f1f5f9',
+                    p: { xs: 1.5, sm: 3 },
+                }}>
+                    {loading ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '45vh', gap: 2 }}>
+                            <CircularProgress size={36} sx={{ color: '#059669' }} />
+                            <Typography variant="body2" sx={{ color: c.textSecondary, fontWeight: 700 }}>
+                                Preparing and formatting manuscript for in-browser reading...
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Box sx={{
+                            maxWidth: 880,
+                            mx: 'auto',
+                            bgcolor: '#ffffff',
+                            color: '#1e293b',
+                            p: { xs: 2.5, sm: 4.5, md: 6 },
+                            borderRadius: '16px',
+                            boxShadow: '0 8px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)',
+                            fontSize: `${fontSize}px`,
+                            lineHeight: 1.85,
+                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                            '& h1': {
+                                fontSize: '1.75em',
+                                fontWeight: 800,
+                                mt: 2,
+                                mb: 1,
+                                color: '#0f172a',
+                                borderBottom: '2px solid #e2e8f0',
+                                pb: 0.5,
+                            },
+                            '& h2': {
+                                fontSize: '1.38em',
+                                fontWeight: 800,
+                                mt: 2,
+                                mb: 0.8,
+                                color: '#0f172a',
+                            },
+                            '& h3': {
+                                fontSize: '1.18em',
+                                fontWeight: 700,
+                                mt: 1.8,
+                                mb: 0.6,
+                                color: '#1e293b',
+                            },
+                            '& p': {
+                                mb: 1.4,
+                                textAlign: 'justify',
+                            },
+                            '& table': {
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                my: 2.5,
+                                fontSize: '0.9em',
+                            },
+                            '& th, & td': {
+                                border: '1px solid #cbd5e1',
+                                p: 1.2,
+                                textAlign: 'left',
+                            },
+                            '& th': {
+                                bgcolor: '#f8fafc',
+                                fontWeight: 800,
+                                color: '#0f172a',
+                            },
+                            '& img': {
+                                maxWidth: '100%',
+                                height: 'auto',
+                                display: 'block',
+                                my: 2,
+                                mx: 'auto',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                            },
+                            '& ul, & ol': {
+                                pl: 3,
+                                mb: 1.5,
+                            },
+                            '& blockquote': {
+                                borderLeft: '4px solid #059669',
+                                pl: 2,
+                                ml: 0,
+                                color: '#475569',
+                                fontStyle: 'italic',
+                                my: 1.5,
+                            },
+                        }}>
+                            <div dangerouslySetInnerHTML={{ __html: docxHtml }} />
+                        </Box>
+                    )}
+                </Box>
+            )}
+
+            {activeMode === 'office' && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '68vh',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                    position: 'relative',
+                }}>
+                    <iframe
+                        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`}
+                        title="Microsoft Office Online Viewer"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
+                    />
+                </Box>
+            )}
+
+            {activeMode === 'google' && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '68vh',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                    position: 'relative',
+                }}>
+                    <iframe
+                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`}
+                        title="Google Docs Viewer"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
+                    />
+                </Box>
+            )}
+
+            {activeMode === 'image' && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '68vh',
+                    p: 2,
+                    borderRadius: '12px',
+                    bgcolor: isDark ? '#000000' : '#f8fafc',
+                    border: `1px solid ${c.cardBorder}`,
+                    textAlign: 'center',
+                    overflow: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    <Box
+                        component="img"
+                        src={fileUrl}
+                        alt="Poster Layout"
+                        sx={{
+                            maxWidth: '100%',
+                            maxHeight: '70vh',
+                            objectFit: 'contain',
+                            borderRadius: '8px',
+                            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                        }}
+                    />
+                </Box>
+            )}
+        </Box>
+    );
+}
 
 export default function JuriSubmissions({ scores = [] }) {
     const theme = useTheme();
@@ -44,47 +539,6 @@ export default function JuriSubmissions({ scores = [] }) {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all'); // all, pending, scored, oral, poster
 
-    // Helpers for file handling & document previews
-    const getFileUrl = (filePath) => {
-        if (!filePath) return '';
-        if (filePath.startsWith('http://') || filePath.startsWith('https://')) return filePath;
-        return `/storage/${filePath.replace(/^\/+/, '')}`;
-    };
-
-    const isPdfFile = (filePath) => {
-        if (!filePath) return false;
-        return filePath.toLowerCase().endsWith('.pdf');
-    };
-
-    const isImgFile = (filePath) => {
-        if (!filePath) return false;
-        return /\.(png|jpe?g|webp|gif|svg)$/i.test(filePath);
-    };
-
-    const getCoAuthorsList = (submission) => {
-        if (!submission) return [];
-        const list = [];
-        for (let i = 1; i <= 5; i++) {
-            const name = submission[`co_author_${i}`];
-            const inst = submission[`co_author_${i}_institute`];
-            if (name && name.trim()) {
-                list.push({ name: name.trim(), institute: (inst && inst.trim()) || '' });
-            }
-        }
-        if (list.length === 0 && submission.co_authors) {
-            return [{ name: submission.co_authors, institute: '' }];
-        }
-        return list;
-    };
-
-    const getKeywordsList = (submission) => {
-        if (!submission?.keywords) return [];
-        if (Array.isArray(submission.keywords)) return submission.keywords;
-        return String(submission.keywords)
-            .split(/[,;]/)
-            .map(k => k.trim())
-            .filter(Boolean);
-    };
 
     // Modal state for previewing abstract & presentation files
     const [previewModal, setPreviewModal] = useState({
@@ -1447,270 +1901,28 @@ export default function JuriSubmissions({ scores = [] }) {
                                         </Box>
                                     )}
 
-                                    {/* ── TAB 2: FULL PAPER PDF VIEWER ── */}
-                                    {previewModal.activeTab === 'paper' && (
-                                        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                            {/* Action bar above viewer */}
-                                            <Box sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                                mb: 1.5,
-                                                p: 1.2,
-                                                borderRadius: '12px',
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
-                                                border: `1px solid ${c.cardBorder}`,
-                                                flexWrap: 'wrap',
-                                                gap: 1,
-                                            }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <PictureAsPdfIcon sx={{ color: '#dc2626', fontSize: 20 }} />
-                                                    <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.82rem' }}>
-                                                        {mSub.full_paper_file.split('/').pop()}
-                                                    </Typography>
-                                                </Box>
-
-                                                <Stack direction="row" spacing={1}>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.full_paper_file)}
-                                                        download
-                                                        target="_blank"
-                                                        variant="contained"
-                                                        size="small"
-                                                        startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            fontWeight: 800,
-                                                            borderRadius: '8px',
-                                                            bgcolor: '#dc2626',
-                                                            color: '#ffffff',
-                                                            fontSize: '0.75rem',
-                                                            '&:hover': { bgcolor: '#b91c1c' },
-                                                        }}
-                                                    >
-                                                        Download PDF
-                                                    </Button>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.full_paper_file)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        variant="outlined"
-                                                        size="small"
-                                                        endIcon={<OpenInNewIcon sx={{ fontSize: 14 }} />}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            fontWeight: 700,
-                                                            borderRadius: '8px',
-                                                            borderColor: c.cardBorder,
-                                                            color: c.textPrimary,
-                                                            fontSize: '0.75rem',
-                                                        }}
-                                                    >
-                                                        Open in New Tab
-                                                    </Button>
-                                                </Stack>
-                                            </Box>
-
-                                            {/* PDF Reader Iframe */}
-                                            {isPdfFile(mSub.full_paper_file) ? (
-                                                <Box sx={{
-                                                    flex: 1,
-                                                    minHeight: '68vh',
-                                                    borderRadius: '12px',
-                                                    overflow: 'hidden',
-                                                    border: `1px solid ${c.cardBorder}`,
-                                                    bgcolor: isDark ? '#111827' : '#f1f5f9',
-                                                }}>
-                                                    <iframe
-                                                        src={`${getFileUrl(mSub.full_paper_file)}#toolbar=1`}
-                                                        title="Full Paper Manuscript PDF"
-                                                        width="100%"
-                                                        height="100%"
-                                                        style={{
-                                                            border: 'none',
-                                                            minHeight: '68vh',
-                                                            display: 'block',
-                                                        }}
-                                                    />
-                                                </Box>
-                                            ) : (
-                                                <Box sx={{
-                                                    p: 6,
-                                                    textAlign: 'center',
-                                                    borderRadius: '14px',
-                                                    border: `1.5px dashed ${c.cardBorder}`,
-                                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                                }}>
-                                                    <InsertDriveFileIcon sx={{ fontSize: 52, color: '#dc2626', mb: 1.5 }} />
-                                                    <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, mb: 0.5 }}>
-                                                        Document File Ready for Download
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: c.textSecondary, mb: 2.5, maxWidth: 500, mx: 'auto' }}>
-                                                        This manuscript is saved in non-PDF format ({mSub.full_paper_file.split('.').pop()?.toUpperCase()}). Click below to download and view the document on your computer.
-                                                    </Typography>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.full_paper_file)}
-                                                        download
-                                                        target="_blank"
-                                                        variant="contained"
-                                                        startIcon={<DownloadIcon />}
-                                                        sx={{ textTransform: 'none', borderRadius: '10px', fontWeight: 800, bgcolor: '#dc2626' }}
-                                                    >
-                                                        Download Manuscript
-                                                    </Button>
-                                                </Box>
-                                            )}
-                                        </Box>
+                                    {/* ── TAB 2: FULL PAPER MANUSCRIPT VIEWER ── */}
+                                    {previewModal.activeTab === 'paper' && mSub.full_paper_file && (
+                                        <UniversalDocumentViewer
+                                            fileUrl={getFileUrl(mSub.full_paper_file)}
+                                            fileName={mSub.full_paper_file.split('/').pop()}
+                                            rubricType={previewModal.rubricType}
+                                            isDark={isDark}
+                                            c={c}
+                                        />
                                     )}
 
                                     {/* ── TAB 3: SLIDES / POSTER VIEWER ── */}
-                                    {previewModal.activeTab === 'slides' && (
-                                        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                            {/* Action bar */}
-                                            <Box sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                                mb: 1.5,
-                                                p: 1.2,
-                                                borderRadius: '12px',
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
-                                                border: `1px solid ${c.cardBorder}`,
-                                                flexWrap: 'wrap',
-                                                gap: 1,
-                                            }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    {isModalOral ? <CoPresentIcon sx={{ color: '#0284c7', fontSize: 20 }} /> : <WallpaperIcon sx={{ color: '#9333ea', fontSize: 20 }} />}
-                                                    <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.82rem' }}>
-                                                        {mSub.layouting_file.split('/').pop()}
-                                                    </Typography>
-                                                </Box>
-
-                                                <Stack direction="row" spacing={1}>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.layouting_file)}
-                                                        download
-                                                        target="_blank"
-                                                        variant="contained"
-                                                        size="small"
-                                                        startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            fontWeight: 800,
-                                                            borderRadius: '8px',
-                                                            bgcolor: isModalOral ? '#0284c7' : '#9333ea',
-                                                            color: '#ffffff',
-                                                            fontSize: '0.75rem',
-                                                            '&:hover': { bgcolor: isModalOral ? '#0369a1' : '#7e22ce' },
-                                                        }}
-                                                    >
-                                                        Download File
-                                                    </Button>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.layouting_file)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        variant="outlined"
-                                                        size="small"
-                                                        endIcon={<OpenInNewIcon sx={{ fontSize: 14 }} />}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            fontWeight: 700,
-                                                            borderRadius: '8px',
-                                                            borderColor: c.cardBorder,
-                                                            color: c.textPrimary,
-                                                            fontSize: '0.75rem',
-                                                        }}
-                                                    >
-                                                        Open in New Tab
-                                                    </Button>
-                                                </Stack>
-                                            </Box>
-
-                                            {/* Content Viewer (PDF, Image, or Fallback) */}
-                                            {isPdfFile(mSub.layouting_file) ? (
-                                                <Box sx={{
-                                                    flex: 1,
-                                                    minHeight: '68vh',
-                                                    borderRadius: '12px',
-                                                    overflow: 'hidden',
-                                                    border: `1px solid ${c.cardBorder}`,
-                                                    bgcolor: isDark ? '#111827' : '#f1f5f9',
-                                                }}>
-                                                    <iframe
-                                                        src={`${getFileUrl(mSub.layouting_file)}#toolbar=1`}
-                                                        title="Slides or Poster PDF"
-                                                        width="100%"
-                                                        height="100%"
-                                                        style={{
-                                                            border: 'none',
-                                                            minHeight: '68vh',
-                                                            display: 'block',
-                                                        }}
-                                                    />
-                                                </Box>
-                                            ) : isImgFile(mSub.layouting_file) ? (
-                                                <Box sx={{
-                                                    p: 2,
-                                                    borderRadius: '12px',
-                                                    bgcolor: isDark ? '#000000' : '#f8fafc',
-                                                    border: `1px solid ${c.cardBorder}`,
-                                                    textAlign: 'center',
-                                                    overflow: 'auto',
-                                                }}>
-                                                    <Box
-                                                        component="img"
-                                                        src={getFileUrl(mSub.layouting_file)}
-                                                        alt="Poster Layout"
-                                                        sx={{
-                                                            maxWidth: '100%',
-                                                            maxHeight: '70vh',
-                                                            objectFit: 'contain',
-                                                            borderRadius: '8px',
-                                                            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
-                                                        }}
-                                                    />
-                                                </Box>
-                                            ) : (
-                                                <Box sx={{
-                                                    p: 6,
-                                                    textAlign: 'center',
-                                                    borderRadius: '14px',
-                                                    border: `1.5px dashed ${c.cardBorder}`,
-                                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                                }}>
-                                                    {isModalOral ? <CoPresentIcon sx={{ fontSize: 52, color: '#0284c7', mb: 1.5 }} /> : <WallpaperIcon sx={{ fontSize: 52, color: '#9333ea', mb: 1.5 }} />}
-                                                    <Typography variant="h6" sx={{ fontWeight: 800, color: c.textPrimary, mb: 0.5 }}>
-                                                        {isModalOral ? 'Presentation Slide File' : 'Poster Layout File'}
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: c.textSecondary, mb: 2.5, maxWidth: 500, mx: 'auto' }}>
-                                                        File format ({mSub.layouting_file.split('.').pop()?.toUpperCase()}). Click below to download and view the presentation slides or poster.
-                                                    </Typography>
-                                                    <Button
-                                                        component="a"
-                                                        href={getFileUrl(mSub.layouting_file)}
-                                                        download
-                                                        target="_blank"
-                                                        variant="contained"
-                                                        startIcon={<DownloadIcon />}
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            borderRadius: '10px',
-                                                            fontWeight: 800,
-                                                            bgcolor: isModalOral ? '#0284c7' : '#9333ea',
-                                                        }}
-                                                    >
-                                                        Download Asset
-                                                    </Button>
-                                                </Box>
-                                            )}
-                                        </Box>
+                                    {previewModal.activeTab === 'slides' && mSub.layouting_file && (
+                                        <UniversalDocumentViewer
+                                            fileUrl={getFileUrl(mSub.layouting_file)}
+                                            fileName={mSub.layouting_file.split('/').pop()}
+                                            rubricType={previewModal.rubricType}
+                                            isDark={isDark}
+                                            c={c}
+                                        />
                                     )}
+
                                 </DialogContent>
 
                                 {/* Dialog Footer */}
