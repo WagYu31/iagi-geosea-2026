@@ -37,11 +37,16 @@ class PresentationScore extends Model
         'manuscript_writing',
         // Meta
         'weighted_final_score',
+        'is_draft',
+        'is_nominated_best',
+        'nomination_category',
         'juri_notes',
     ];
 
     protected $casts = [
         'weighted_final_score' => 'decimal:2',
+        'is_draft'             => 'boolean',
+        'is_nominated_best'    => 'boolean',
     ];
 
     // ── Relationships ──
@@ -126,6 +131,7 @@ class PresentationScore extends Model
         // Only save if all required fields are filled
         if ($allFilled) {
             $this->weighted_final_score = round($score, 2);
+            $this->is_draft = false;
             $this->save();
         }
 

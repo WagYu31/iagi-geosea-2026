@@ -42,6 +42,8 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import JudgesPanelMonitor from '@/Components/Juri/JudgesPanelMonitor';
+import RubricBreakdownCard from '@/Components/Juri/RubricBreakdownCard';
 
 // Error Boundary to prevent any modal rendering issue from breaking the entire page
 class ModalErrorBoundary extends React.Component {
@@ -582,7 +584,7 @@ function UniversalDocumentViewer({
     );
 }
 
-export default function JuriSubmissions({ scores = [] }) {
+export default function JuriSubmissions({ scores = [], currentJuriId = null }) {
     const theme = useTheme();
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
@@ -635,8 +637,9 @@ export default function JuriSubmissions({ scores = [] }) {
 
     // Derived statistics
     const totalCount = scores.length;
-    const scoredCount = scores.filter(s => s.weighted_final_score !== null && s.weighted_final_score !== undefined).length;
-    const pendingCount = totalCount - scoredCount;
+    const scoredCount = scores.filter(s => s.weighted_final_score !== null && s.weighted_final_score !== undefined && !s.is_draft).length;
+    const draftCount = scores.filter(s => Boolean(s.is_draft)).length;
+    const pendingCount = totalCount - scoredCount - draftCount;
     const oralCount = scores.filter(s => (s.rubric_type || '').toLowerCase() === 'oral').length;
     const posterCount = scores.filter(s => (s.rubric_type || '').toLowerCase() === 'poster').length;
 
@@ -644,7 +647,7 @@ export default function JuriSubmissions({ scores = [] }) {
 
     // Average Score
     const averageScore = useMemo(() => {
-        const scored = scores.filter(s => s.weighted_final_score !== null);
+        const scored = scores.filter(s => s.weighted_final_score !== null && !s.is_draft);
         if (scored.length === 0) return null;
         const sum = scored.reduce((acc, curr) => acc + parseFloat(curr.weighted_final_score || 0), 0);
         return (sum / scored.length).toFixed(2);
@@ -663,7 +666,8 @@ export default function JuriSubmissions({ scores = [] }) {
     // Filter Logic
     const filteredScores = useMemo(() => {
         return scores.filter((score) => {
-            const isScored = score.weighted_final_score !== null && score.weighted_final_score !== undefined;
+            const isDraft = Boolean(score.is_draft);
+            const isScored = score.weighted_final_score !== null && score.weighted_final_score !== undefined && !isDraft;
             const rubric = (score.rubric_type || '').toLowerCase();
             const title = (score.submission?.title || '').toLowerCase();
             const author = (score.submission?.user?.name || score.submission?.author_full_name || '').toLowerCase();
@@ -671,7 +675,8 @@ export default function JuriSubmissions({ scores = [] }) {
             const affiliation = (score.submission?.institute_organization || score.submission?.affiliation || '').toLowerCase();
 
             // Tab Filter
-            if (filter === 'pending' && isScored) return false;
+            if (filter === 'pending' && (isScored || isDraft)) return false;
+            if (filter === 'draft' && !isDraft) return false;
             if (filter === 'scored' && !isScored) return false;
             if (filter === 'oral' && rubric !== 'oral') return false;
             if (filter === 'poster' && rubric !== 'poster') return false;
@@ -886,6 +891,7 @@ export default function JuriSubmissions({ scores = [] }) {
                             {[
                                 { key: 'all', label: `All (${totalCount})` },
                                 { key: 'pending', label: `Pending (${pendingCount})` },
+                                ...(draftCount > 0 ? [{ key: 'draft', label: `Draft (${draftCount})` }] : []),
                                 { key: 'scored', label: `Scored (${scoredCount})` },
                                 { key: 'oral', label: `Oral (${oralCount})` },
                                 { key: 'poster', label: `Poster (${posterCount})` },
@@ -957,7 +963,9 @@ export default function JuriSubmissions({ scores = [] }) {
                     <Grid container spacing={2.5}>
                         {filteredScores.map((score) => {
                             const sub = score.submission || {};
-                            const isScored = score.weighted_final_score !== null && score.weighted_final_score !== undefined;
+                            const isDraft = Boolean(score.is_draft);
+                            const isScored = score.weighted_final_score !== null && score.weighted_final_score !== undefined && !isDraft;
+                            const isNominated = Boolean(score.is_nominated_best);
                             const isOral = (score.rubric_type || '').toLowerCase() === 'oral';
                             const tier = isScored ? getInterpretation(score.weighted_final_score) : null;
                             const presenterName = sub.author_full_name || sub.user?.name || 'Author Not Provided';
@@ -971,7 +979,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                         elevation={0}
                                         sx={{
                                             borderRadius: '20px',
-                                            border: `1.5px solid ${isScored ? (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0') : (isDark ? 'rgba(245, 158, 11, 0.4)' : '#fde68a')}`,
+                                            border: `1.5px solid ${isScored ? (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0') : isDraft ? (isDark ? 'rgba(245, 158, 11, 0.4)' : '#fde68a') : (isDark ? 'rgba(255, 255, 255, 0.06)' : '#e2e8f0')}`,
                                             bgcolor: c.cardBg,
                                             height: '100%',
                                             display: 'flex',
@@ -981,7 +989,9 @@ export default function JuriSubmissions({ scores = [] }) {
                                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                             boxShadow: isScored
                                                 ? (isDark ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 18px rgba(0,0,0,0.02)')
-                                                : (isDark ? '0 4px 20px rgba(245, 158, 11, 0.1)' : '0 4px 18px rgba(245, 158, 11, 0.05)'),
+                                                : isDraft
+                                                    ? (isDark ? '0 4px 20px rgba(245, 158, 11, 0.1)' : '0 4px 18px rgba(245, 158, 11, 0.05)')
+                                                    : (isDark ? '0 4px 20px rgba(0,0,0,0.15)' : '0 4px 18px rgba(0,0,0,0.02)'),
                                             '&:hover': {
                                                 borderColor: isOral ? '#0284c7' : '#9333ea',
                                                 transform: 'translateY(-3px)',
@@ -1041,20 +1051,36 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                 label={subTheme}
                                                                 size="small"
                                                                 sx={{
-                                                                    height: 22,
-                                                                    fontSize: '0.66rem',
-                                                                    fontWeight: 600,
-                                                                    borderRadius: '6px',
-                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
-                                                                    color: c.textSecondary,
-                                                                    maxWidth: { xs: 150, sm: 180 },
-                                                                    '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </Stack>
+                                                                height: 22,
+                                                                fontSize: '0.66rem',
+                                                                fontWeight: 600,
+                                                                borderRadius: '6px',
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                                                color: c.textSecondary,
+                                                                maxWidth: { xs: 150, sm: 180 },
+                                                                '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Stack>
 
-                                                    {/* Status Badge */}
+                                                {/* Status Badge */}
+                                                <Stack direction="row" spacing={0.6} alignItems="center" flexWrap="wrap">
+                                                    {isNominated && (
+                                                        <Chip
+                                                            label="🏆 NOMINASI"
+                                                            size="small"
+                                                            sx={{
+                                                                height: 22,
+                                                                fontSize: '0.62rem',
+                                                                fontWeight: 900,
+                                                                bgcolor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7',
+                                                                color: '#b45309',
+                                                                border: '1px solid rgba(245, 158, 11, 0.4)',
+                                                                borderRadius: '6px',
+                                                            }}
+                                                        />
+                                                    )}
                                                     {isScored ? (
                                                         <Box sx={{
                                                             display: 'inline-flex',
@@ -1072,7 +1098,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                             <TaskAltIcon sx={{ fontSize: 13 }} />
                                                             SCORED
                                                         </Box>
-                                                    ) : (
+                                                    ) : isDraft ? (
                                                         <Box sx={{
                                                             display: 'inline-flex',
                                                             alignItems: 'center',
@@ -1087,10 +1113,28 @@ export default function JuriSubmissions({ scores = [] }) {
                                                             fontWeight: 800,
                                                         }}>
                                                             <HourglassEmptyRoundedIcon sx={{ fontSize: 12 }} />
+                                                            DRAFT
+                                                        </Box>
+                                                    ) : (
+                                                        <Box sx={{
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: 0.5,
+                                                            px: 1,
+                                                            py: 0.3,
+                                                            borderRadius: '6px',
+                                                            bgcolor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9',
+                                                            color: c.textSecondary,
+                                                            border: `1px solid ${c.cardBorder}`,
+                                                            fontSize: '0.7rem',
+                                                            fontWeight: 800,
+                                                        }}>
+                                                            <HourglassEmptyRoundedIcon sx={{ fontSize: 12 }} />
                                                             PENDING
                                                         </Box>
                                                     )}
-                                                </Box>
+                                                </Stack>
+                                            </Box>
 
                                                 {/* Title */}
                                                 <Typography
@@ -1441,6 +1485,20 @@ export default function JuriSubmissions({ scores = [] }) {
                                                  })()}
                                              </Box>
 
+                                                {/* Dewan Juri Panel Monitor (Pantau Rekan Juri) */}
+                                                <JudgesPanelMonitor
+                                                    presentationScores={sub.presentation_scores || sub.presentationScores || []}
+                                                    currentJuriId={currentJuriId || score.juri_id}
+                                                />
+
+                                                {/* Breakdown Rubrik Penilaian (Juri yang sudah menilai atau ada nilai draft) */}
+                                                {(isScored || isDraft) && (
+                                                    <RubricBreakdownCard
+                                                        score={score}
+                                                        rubricType={score.rubric_type}
+                                                    />
+                                                )}
+
                                              <Divider sx={{ my: 1.5, opacity: 0.6 }} />
 
                                             {/* Bottom Score & Action Bar */}
@@ -1498,6 +1556,27 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                 )}
                                                             </Stack>
                                                         </Box>
+                                                    ) : isDraft ? (
+                                                        <Box>
+                                                            <Typography variant="caption" sx={{
+                                                                color: '#d97706',
+                                                                fontSize: '0.68rem',
+                                                                fontWeight: 800,
+                                                                textTransform: 'uppercase',
+                                                                letterSpacing: '0.04em',
+                                                                display: 'block',
+                                                            }}>
+                                                                Status Penilaian
+                                                            </Typography>
+                                                            <Typography variant="body2" sx={{
+                                                                fontWeight: 800,
+                                                                color: '#d97706',
+                                                                fontSize: '0.84rem',
+                                                                mt: 0.2,
+                                                            }}>
+                                                                Draft Tersimpan 📝
+                                                            </Typography>
+                                                        </Box>
                                                     ) : (
                                                         <Box>
                                                             <Typography variant="caption" sx={{
@@ -1545,6 +1624,14 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                 color: '#059669',
                                                                 bgcolor: isDark ? 'rgba(5, 150, 105, 0.1)' : '#f0fdf4',
                                                             }
+                                                        } : isDraft ? {
+                                                            background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                                                            color: '#ffffff',
+                                                            boxShadow: '0 4px 14px rgba(217, 119, 6, 0.3)',
+                                                            '&:hover': {
+                                                                background: 'linear-gradient(135deg, #b45309 0%, #92400e 100%)',
+                                                                transform: 'translateY(-1px)',
+                                                            },
                                                         } : {
                                                             background: 'linear-gradient(135deg, #094d42 0%, #059669 100%)',
                                                             color: '#ffffff',
@@ -1557,7 +1644,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                         }),
                                                     }}
                                                 >
-                                                    {isScored ? 'Edit Evaluation' : 'Evaluate Now'}
+                                                    {isScored ? 'Edit Evaluation' : isDraft ? 'Lanjutkan Menilai' : 'Evaluate Now'}
                                                 </Button>
                                             </Box>
                                         </CardContent>

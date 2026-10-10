@@ -16,6 +16,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import DownloadIcon from '@mui/icons-material/Download';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const COLOR_THEME = {
     primary: '#1b2a4a',
@@ -132,7 +133,22 @@ function JuriScoreRow({ score, isOral, isDark, bdr }) {
                         </Typography>
                     </Box>
                 </Stack>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    {score.is_nominated_best && (
+                        <Chip
+                            icon={<EmojiEventsIcon sx={{ fontSize: '13px !important', color: '#b45309 !important' }} />}
+                            label={score.nomination_category || 'Nominasi'}
+                            size="small"
+                            sx={{
+                                height: 22,
+                                fontSize: '0.62rem',
+                                fontWeight: 800,
+                                bgcolor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7',
+                                color: '#b45309',
+                                border: '1px solid #f59e0b',
+                            }}
+                        />
+                    )}
                     <Box sx={{ textAlign: 'right' }}>
                         {hasScored ? (
                             <>
@@ -149,6 +165,12 @@ function JuriScoreRow({ score, isOral, isDark, bdr }) {
                                     {getInterpretation(parseFloat(score.weighted_final_score)).label}
                                 </Typography>
                             </>
+                        ) : score.is_draft ? (
+                            <Chip label="Draft" size="small" sx={{
+                                bgcolor: isDark ? 'rgba(245,158,11,0.15)' : '#fffbeb',
+                                color: '#d97706', fontWeight: 700, height: 20, fontSize: '0.62rem',
+                                border: '1px solid rgba(245,158,11,0.3)',
+                            }} />
                         ) : (
                             <Chip label="Pending" size="small" sx={{
                                 bgcolor: isDark ? 'rgba(234,88,12,0.12)' : '#fff7ed',
@@ -182,6 +204,8 @@ function SubmissionRow({ submission, isDark, c, bdr }) {
         ? (scoredScores.reduce((sum, s) => sum + parseFloat(s.weighted_final_score), 0) / scoredScores.length).toFixed(2)
         : null;
     const interp = avgScore ? getInterpretation(parseFloat(avgScore)) : null;
+    const hasNomination = scores.some(s => s.is_nominated_best);
+    const nominationCategory = scores.find(s => s.is_nominated_best)?.nomination_category || 'Nominasi Juara';
     const isOral = submission.category_submission?.includes('Oral');
 
     return (
@@ -192,14 +216,31 @@ function SubmissionRow({ submission, isDark, c, bdr }) {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, color: c.textPrimary, maxWidth: 300, borderBottom: `1px solid ${bdr}` }}>
-                    <Typography sx={{
-                        fontWeight: 700, fontSize: '0.85rem', color: '#1b2a4a',
-                        overflow: 'hidden', textOverflow: 'ellipsis',
-                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    }}>
-                        {submission.title}
-                    </Typography>
+                <TableCell sx={{ fontWeight: 600, color: c.textPrimary, maxWidth: 320, borderBottom: `1px solid ${bdr}` }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+                        <Typography sx={{
+                            fontWeight: 700, fontSize: '0.85rem', color: '#1b2a4a',
+                            overflow: 'hidden', textOverflow: 'ellipsis',
+                            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                        }}>
+                            {submission.title}
+                        </Typography>
+                        {hasNomination && (
+                            <Chip
+                                icon={<EmojiEventsIcon sx={{ fontSize: '12px !important', color: '#b45309 !important' }} />}
+                                label={nominationCategory}
+                                size="small"
+                                sx={{
+                                    height: 18,
+                                    fontSize: '0.58rem',
+                                    fontWeight: 800,
+                                    bgcolor: '#fef3c7',
+                                    color: '#b45309',
+                                    border: '1px solid #f59e0b',
+                                }}
+                            />
+                        )}
+                    </Box>
                     <Typography sx={{ color: '#64748b', fontSize: '0.72rem', mt: 0.25 }}>
                         {submission.user?.name || 'Unknown'}
                     </Typography>
@@ -281,6 +322,7 @@ export default function PresentationScores({ submissions }) {
         if (filter === 'all') return matchesSearch;
         if (filter === 'oral') return matchesSearch && sub.category_submission?.toLowerCase().includes('oral');
         if (filter === 'poster') return matchesSearch && !sub.category_submission?.toLowerCase().includes('oral');
+        if (filter === 'nominated') return matchesSearch && sub.presentation_scores?.some(s => s.is_nominated_best);
         return matchesSearch;
     });
 
@@ -450,6 +492,7 @@ export default function PresentationScores({ submissions }) {
                         <ToggleButton value="all">All</ToggleButton>
                         <ToggleButton value="oral">Oral</ToggleButton>
                         <ToggleButton value="poster">Poster</ToggleButton>
+                        <ToggleButton value="nominated">🏆 Nominasi</ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
 
