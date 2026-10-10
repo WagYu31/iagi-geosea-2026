@@ -15,49 +15,49 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 
-// 9 Official Lanyard Badge SVG Designs
+// 9 Official Lanyard Badge Designs (High-Res 790x1253 PNG for fast, reliable, zero-latency printing)
 export const BADGE_TEMPLATES = {
     // 1. Participant
-    iagi_member_professional: '/images/badges/Participant.svg',
-    non_iagi_member_professional: '/images/badges/Participant.svg',
-    iagi_member_expatriate: '/images/badges/Participant.svg',
-    non_iagi_member_expatriate: '/images/badges/Participant.svg',
-    student_undergraduate: '/images/badges/Participant.svg',
+    iagi_member_professional: '/images/badges/Participant.png',
+    non_iagi_member_professional: '/images/badges/Participant.png',
+    iagi_member_expatriate: '/images/badges/Participant.png',
+    non_iagi_member_expatriate: '/images/badges/Participant.png',
+    student_undergraduate: '/images/badges/Participant.png',
 
     // 2. Visitor
-    non_exclusive: '/images/badges/Visitor.svg',
+    non_exclusive: '/images/badges/Visitor.png',
 
     // 3. VIP
-    vip: '/images/badges/VIP.svg',
-    exclusive: '/images/badges/VIP.svg',
+    vip: '/images/badges/VIP.png',
+    exclusive: '/images/badges/VIP.png',
 
     // 4. Keynote Speaker
-    speaker: '/images/badges/Speaker.svg',
-    keynote_speech: '/images/badges/Speaker.svg',
-    keynote_speaker: '/images/badges/Speaker.svg',
+    speaker: '/images/badges/Speaker.png',
+    keynote_speech: '/images/badges/Speaker.png',
+    keynote_speaker: '/images/badges/Speaker.png',
 
     // 5. Panelist
-    panelist: '/images/badges/Panelist.svg',
+    panelist: '/images/badges/Panelist.png',
 
     // 6. Moderator
-    moderator: '/images/badges/Moderator.svg',
+    moderator: '/images/badges/Moderator.png',
 
     // 7. Exhibition
-    exhibition: '/images/badges/Exhibitor.svg',
+    exhibition: '/images/badges/Exhibitor.png',
 
     // 8. Committee
-    committee: '/images/badges/Committee.svg',
+    committee: '/images/badges/Committee.png',
 
     // 9. Student Volunteer
-    student_volunteer: '/images/badges/Student_Volunteer.svg',
+    student_volunteer: '/images/badges/Student_Volunteer.png',
 
     // 10. Board
-    board: '/images/badges/Board.svg',
+    board: '/images/badges/Board.png',
 
     // 11. Delegate
-    sponsorship: '/images/badges/Sponsorship.svg',
-    sponsor: '/images/badges/Sponsorship.svg',
-    delegate: '/images/badges/Sponsorship.svg',
+    sponsorship: '/images/badges/Sponsorship.png',
+    sponsor: '/images/badges/Sponsorship.png',
+    delegate: '/images/badges/Sponsorship.png',
 };
 
 const CATEGORY_MAP = {
@@ -107,8 +107,15 @@ const CATEGORY_MAP = {
 function SingleLanyardCard({ ticket, templatePath, isBulk }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
-    const bgImage = templatePath || ticket.templatePath || BADGE_TEMPLATES[visitorType] || '/images/badges/Participant.svg';
-    const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.svg'));
+    let rawBg = templatePath || ticket.templatePath || BADGE_TEMPLATES[visitorType] || '/images/badges/Participant.png';
+
+    // Prefer high-res PNG (5x lighter & instant rendering vs 4.4MB SVG)
+    if (rawBg && rawBg.endsWith('.svg')) {
+        rawBg = rawBg.replace(/\.svg$/i, '.png');
+    }
+    const bgImage = rawBg;
+
+    const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.'));
 
     const nameLength = (ticket.visitor_name || '').length;
     const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.22rem' : '1.4rem';
@@ -127,10 +134,6 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                 boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)',
                 position: 'relative',
                 overflow: 'hidden',
-                backgroundImage: `url('${bgImage}')`,
-                backgroundSize: '100% 100%',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
                 flexShrink: 0,
                 '@media print': {
                     boxShadow: 'none !important',
@@ -145,6 +148,24 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                 },
             }}
         >
+            {/* Real DOM Image Element - ensures print preview ALWAYS prints background even if "Background Graphics" is unchecked */}
+            <img
+                src={bgImage}
+                alt="Badge Background"
+                className="badge-bg-img"
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'fill',
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                    display: 'block',
+                }}
+            />
+
             {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% - BLACK FONT FOR VISITOR, WHITE FOR OTHERS) */}
             <Box
                 sx={{
@@ -244,48 +265,87 @@ export default function PrintBadge({
         ? `Print ${count} Lanyard Badges - 55th PIT IAGI & GEOSEA 2026`
         : `Print Badge: ${badgeList[0]?.visitor_name || 'Visitor'} - ${singleCat.label} - 55th PIT IAGI & GEOSEA 2026`;
 
+    const [imagesReady, setImagesReady] = useState(false);
+    const [progressPercent, setProgressPercent] = useState(0);
+
     useEffect(() => {
-        // Collect all distinct background image URLs
+        // Collect all distinct background image URLs (prefer .png for fast, reliable, lightweight loading)
         const urls = new Set();
         badgeList.forEach(t => {
-            const path = templatePath || t.templatePath || BADGE_TEMPLATES[t.visitor_type] || '/images/badges/Participant.svg';
+            let path = templatePath || t.templatePath || BADGE_TEMPLATES[t.visitor_type] || '/images/badges/Participant.png';
+            if (path && path.endsWith('.svg')) {
+                path = path.replace(/\.svg$/i, '.png');
+            }
             urls.add(path);
         });
 
+        let isCancelled = false;
         let printed = false;
+
         const triggerPrint = () => {
-            if (printed) return;
+            if (printed || isCancelled) return;
             printed = true;
-            window.print();
+            setImagesReady(true);
+            setProgressPercent(100);
+
+            // Wait 350ms to guarantee browser layout & paint has committed to the frame
+            setTimeout(() => {
+                if (!isCancelled) {
+                    window.print();
+                }
+            }, 350);
         };
 
-        // Preload all background images
-        let loaded = 0;
         const total = urls.size;
         if (total === 0) {
             triggerPrint();
             return;
         }
 
+        let loadedCount = 0;
+        const markOneLoaded = () => {
+            loadedCount++;
+            setProgressPercent(Math.round((loadedCount / total) * 100));
+            if (loadedCount >= total) {
+                // Ensure custom typography fonts are also loaded
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(triggerPrint).catch(triggerPrint);
+                } else {
+                    triggerPrint();
+                }
+            }
+        };
+
         urls.forEach(url => {
             const img = new Image();
             img.src = url;
-            img.onload = () => {
-                loaded++;
-                if (loaded >= total) {
-                    setTimeout(triggerPrint, 300);
+
+            const onComplete = () => {
+                if (img.decode) {
+                    img.decode().then(markOneLoaded).catch(markOneLoaded);
+                } else {
+                    markOneLoaded();
                 }
             };
-            img.onerror = () => {
-                loaded++;
-                if (loaded >= total) {
-                    setTimeout(triggerPrint, 300);
-                }
-            };
+
+            if (img.complete && img.naturalWidth > 0) {
+                onComplete();
+            } else {
+                img.onload = onComplete;
+                img.onerror = () => {
+                    console.warn('Badge image failed to load, proceeding:', url);
+                    markOneLoaded();
+                };
+            }
         });
 
-        const fallbackTimer = setTimeout(triggerPrint, 800);
-        return () => clearTimeout(fallbackTimer);
+        // Safety fallback timer: 6 seconds (never triggers prematurely on slow networks)
+        const fallbackTimer = setTimeout(triggerPrint, 6000);
+
+        return () => {
+            isCancelled = true;
+            clearTimeout(fallbackTimer);
+        };
     }, []);
 
     return (
@@ -316,6 +376,11 @@ export default function PrintBadge({
                             size: portrait;
                             margin: 0mm;
                         }
+                        *, *::before, *::after {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                            color-adjust: exact !important;
+                        }
                         html, body {
                             background: #ffffff !important;
                             -webkit-print-color-adjust: exact !important;
@@ -331,7 +396,20 @@ export default function PrintBadge({
                             page-break-inside: avoid !important;
                             break-inside: avoid !important;
                             display: block !important;
+                            position: relative !important;
                             margin: 0 auto !important;
+                        }
+                        .badge-bg-img {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                            position: absolute !important;
+                            top: 0 !important;
+                            left: 0 !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            object-fit: fill !important;
+                            display: block !important;
+                            z-index: 1 !important;
                         }
                         .badge-page:last-of-type {
                             page-break-after: auto !important;
@@ -340,6 +418,38 @@ export default function PrintBadge({
                     }
                 `}
             </style>
+
+            {/* Loading Indicator Banner (Only shown while images are downloading) */}
+            {!imagesReady && (
+                <Box
+                    sx={{
+                        width: '100%',
+                        maxWidth: '1200px',
+                        mb: 2,
+                        p: 1.5,
+                        px: 2.5,
+                        borderRadius: '12px',
+                        bgcolor: '#0284c7',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        boxShadow: '0 4px 12px rgba(2,132,199,0.3)',
+                        '@media print': { display: 'none !important' },
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <CircularProgress size={20} sx={{ color: '#ffffff' }} />
+                        <Typography variant="body2" sx={{ fontWeight: 800 }}>
+                            Memuat gambar badge resolusi tinggi ({progressPercent}%)... Dialog cetak akan otomatis terbuka setelah gambar siap.
+                        </Typography>
+                    </Box>
+                    <Typography variant="caption" sx={{ opacity: 0.9, fontWeight: 700 }}>
+                        Mohon tunggu sebentar
+                    </Typography>
+                </Box>
+            )}
 
             {/* Top Action Bar (hidden when printing) */}
             <Box
@@ -366,19 +476,25 @@ export default function PrintBadge({
                         🖨️ Lanyard Badge Printing
                     </Typography>
                     <Chip
-                        label={`${count} ${count > 1 ? 'Badges' : 'Badge'} Ready`}
+                        label={imagesReady ? `${count} ${count > 1 ? 'Badges' : 'Badge'} Ready` : `Memuat (${progressPercent}%)`}
                         size="small"
-                        sx={{ bgcolor: '#10b981', color: '#ffffff', fontWeight: 900, fontSize: '0.72rem' }}
+                        sx={{
+                            bgcolor: imagesReady ? '#10b981' : '#f59e0b',
+                            color: '#ffffff',
+                            fontWeight: 900,
+                            fontSize: '0.72rem',
+                        }}
                     />
                 </Box>
 
                 <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
                     <Button
                         variant="contained"
-                        startIcon={<PrintIcon />}
+                        startIcon={imagesReady ? <PrintIcon /> : <CircularProgress size={16} sx={{ color: '#fff' }} />}
                         onClick={() => window.print()}
+                        disabled={!imagesReady}
                         sx={{
-                            bgcolor: '#10b981',
+                            bgcolor: imagesReady ? '#10b981' : '#64748b',
                             color: '#ffffff',
                             fontWeight: 900,
                             fontSize: '0.88rem',
@@ -386,12 +502,14 @@ export default function PrintBadge({
                             textTransform: 'none',
                             px: 3,
                             py: 0.9,
-                            boxShadow: '0 4px 0 #047857, 0 8px 20px rgba(16,185,129,0.3)',
-                            '&:hover': { bgcolor: '#059669', transform: 'translateY(-1px)' },
+                            boxShadow: imagesReady ? '0 4px 0 #047857, 0 8px 20px rgba(16,185,129,0.3)' : 'none',
+                            '&:hover': { bgcolor: imagesReady ? '#059669' : '#64748b', transform: imagesReady ? 'translateY(-1px)' : 'none' },
                             '&:active': { transform: 'translateY(1px)', boxShadow: '0 2px 0 #047857' },
                         }}
                     >
-                        Print {count > 1 ? `All ${count} Badges` : 'Badge'}
+                        {imagesReady
+                            ? (count > 1 ? `Print All ${count} Badges` : 'Print Badge')
+                            : `Memuat Template (${progressPercent}%)...`}
                     </Button>
 
                     <Button

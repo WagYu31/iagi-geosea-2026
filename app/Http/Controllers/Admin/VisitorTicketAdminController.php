@@ -549,31 +549,31 @@ class VisitorTicketAdminController extends Controller
     public static function getBadgeTemplateForType($type)
     {
         $map = [
-            'vip' => '/images/badges/VIP.svg',
-            'speaker' => '/images/badges/Speaker.svg',
-            'keynote_speech' => '/images/badges/Speaker.svg',
-            'keynote_speaker' => '/images/badges/Speaker.svg',
-            'panelist' => '/images/badges/Panelist.svg',
-            'moderator' => '/images/badges/Moderator.svg',
-            'exhibition' => '/images/badges/Exhibitor.svg',
-            'committee' => '/images/badges/Committee.svg',
-            'student_volunteer' => '/images/badges/Student_Volunteer.svg',
-            'board' => '/images/badges/Board.svg',
-            'sponsorship' => '/images/badges/Sponsorship.svg',
-            'sponsor' => '/images/badges/Sponsorship.svg',
-            'delegate' => '/images/badges/Sponsorship.svg',
-            'iagi_member_professional' => '/images/badges/Participant.svg',
-            'non_iagi_member_professional' => '/images/badges/Participant.svg',
-            'iagi_member_expatriate' => '/images/badges/Participant.svg',
-            'non_iagi_member_expatriate' => '/images/badges/Participant.svg',
-            'student_undergraduate' => '/images/badges/Participant.svg',
-            'student_postgraduate' => '/images/badges/Participant.svg',
-            'general_ticket' => '/images/badges/Participant.svg',
-            'exclusive' => '/images/badges/VIP.svg',
-            'non_exclusive' => '/images/badges/Visitor.svg',
+            'vip' => '/images/badges/VIP.png',
+            'speaker' => '/images/badges/Speaker.png',
+            'keynote_speech' => '/images/badges/Speaker.png',
+            'keynote_speaker' => '/images/badges/Speaker.png',
+            'panelist' => '/images/badges/Panelist.png',
+            'moderator' => '/images/badges/Moderator.png',
+            'exhibition' => '/images/badges/Exhibitor.png',
+            'committee' => '/images/badges/Committee.png',
+            'student_volunteer' => '/images/badges/Student_Volunteer.png',
+            'board' => '/images/badges/Board.png',
+            'sponsorship' => '/images/badges/Sponsorship.png',
+            'sponsor' => '/images/badges/Sponsorship.png',
+            'delegate' => '/images/badges/Sponsorship.png',
+            'iagi_member_professional' => '/images/badges/Participant.png',
+            'non_iagi_member_professional' => '/images/badges/Participant.png',
+            'iagi_member_expatriate' => '/images/badges/Participant.png',
+            'non_iagi_member_expatriate' => '/images/badges/Participant.png',
+            'student_undergraduate' => '/images/badges/Participant.png',
+            'student_postgraduate' => '/images/badges/Participant.png',
+            'general_ticket' => '/images/badges/Participant.png',
+            'exclusive' => '/images/badges/VIP.png',
+            'non_exclusive' => '/images/badges/Visitor.png',
         ];
 
-        return $map[$type] ?? '/images/badges/Participant.svg';
+        return $map[$type] ?? '/images/badges/Participant.png';
     }
 
     /**
