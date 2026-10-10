@@ -28,6 +28,8 @@ import SchoolIcon from '@mui/icons-material/School';
 import EmailIcon from '@mui/icons-material/Email';
 import BusinessIcon from '@mui/icons-material/Business';
 import TuneIcon from '@mui/icons-material/Tune';
+import MicIcon from '@mui/icons-material/Mic';
+import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import axios from 'axios';
 
 /* ────────────────────────────────────────────────────────────
@@ -135,6 +137,7 @@ export default function AdminScores({
 
     // Search and filter states initialized from props
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
+    const [presentationFilter, setPresentationFilter] = useState(filters.presentation || 'all');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [topicFilter, setTopicFilter] = useState(filters.topic || 'all');
     const [scoringStatusFilter, setScoringStatusFilter] = useState(filters.scoring_status || 'all');
@@ -169,6 +172,7 @@ export default function AdminScores({
     const applyFilters = (override = {}) => {
         const queryParams = {
             search: override.search !== undefined ? override.search : searchQuery,
+            presentation: override.presentation !== undefined ? override.presentation : presentationFilter,
             status: override.status !== undefined ? override.status : statusFilter,
             topic: override.topic !== undefined ? override.topic : topicFilter,
             scoring_status: override.scoring_status !== undefined ? override.scoring_status : scoringStatusFilter,
@@ -196,6 +200,7 @@ export default function AdminScores({
 
     const handleResetFilters = () => {
         setSearchQuery('');
+        setPresentationFilter('all');
         setStatusFilter('all');
         setTopicFilter('all');
         setScoringStatusFilter('all');
@@ -219,6 +224,7 @@ export default function AdminScores({
     // Active filters count
     const activeFiltersCount = [
         searchQuery ? 1 : 0,
+        presentationFilter !== 'all' ? 1 : 0,
         statusFilter !== 'all' ? 1 : 0,
         topicFilter !== 'all' ? 1 : 0,
         scoringStatusFilter !== 'all' ? 1 : 0,
@@ -253,6 +259,7 @@ export default function AdminScores({
             const params = {
                 export: type === 'all' ? 'all_scores' : 'filtered',
                 search: searchQuery,
+                presentation: presentationFilter,
                 status: statusFilter,
                 topic: topicFilter,
                 scoring_status: scoringStatusFilter,
@@ -595,7 +602,7 @@ export default function AdminScores({
                                 {
                                     label: 'Total Submissions',
                                     val: stats.total || 0,
-                                    sub: `${stats.unassigned || 0} unassigned`,
+                                    sub: `${stats.oral_count || 0} Oral • ${stats.poster_count || 0} Poster`,
                                     color: '#67e8f9',
                                 },
                                 {
@@ -667,13 +674,77 @@ export default function AdminScores({
                     boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.2)' : '0 6px 20px rgba(0,0,0,0.03)',
                 }}>
                     <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
+                        {/* Quick Presentation Segmented Tabs (Oral / Poster / All) */}
+                        <Box sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            gap: 1,
+                            mb: 2.2,
+                        }}>
+                            {[
+                                { id: 'all', label: 'All Submissions', icon: null, count: stats.total || 0 },
+                                { id: 'oral', label: 'Oral Presentations', icon: <MicIcon sx={{ fontSize: 16 }} />, count: stats.oral_count || 0 },
+                                { id: 'poster', label: 'Poster Presentations', icon: <WallpaperIcon sx={{ fontSize: 16 }} />, count: stats.poster_count || 0 },
+                            ].map((tab) => {
+                                const isActive = presentationFilter === tab.id;
+                                return (
+                                    <Button
+                                        key={tab.id}
+                                        onClick={() => {
+                                            setPresentationFilter(tab.id);
+                                            applyFilters({ presentation: tab.id });
+                                        }}
+                                        startIcon={tab.icon}
+                                        sx={{
+                                            borderRadius: '12px',
+                                            px: { xs: 1.5, sm: 2 },
+                                            py: 0.8,
+                                            fontWeight: isActive ? 800 : 600,
+                                            fontSize: '0.82rem',
+                                            textTransform: 'none',
+                                            bgcolor: isActive
+                                                ? (isDark ? 'rgba(16, 185, 129, 0.22)' : '#ecfdf5')
+                                                : (isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc'),
+                                            color: isActive
+                                                ? (isDark ? '#34d399' : '#059669')
+                                                : c.textMuted,
+                                            border: `1px solid ${isActive ? (isDark ? 'rgba(52, 211, 153, 0.45)' : '#a7f3d0') : c.cardBorder}`,
+                                            boxShadow: isActive ? '0 4px 12px rgba(16, 185, 129, 0.15)' : 'none',
+                                            '&:hover': {
+                                                bgcolor: isActive
+                                                    ? (isDark ? 'rgba(16, 185, 129, 0.28)' : '#d1fae5')
+                                                    : (isDark ? 'rgba(255,255,255,0.08)' : '#f1f5f9'),
+                                            },
+                                        }}
+                                    >
+                                        {tab.label}
+                                        <Chip
+                                            size="small"
+                                            label={tab.count}
+                                            sx={{
+                                                ml: 1,
+                                                height: 20,
+                                                fontSize: '0.7rem',
+                                                fontWeight: 800,
+                                                bgcolor: isActive
+                                                    ? (isDark ? 'rgba(16, 185, 129, 0.35)' : '#10b981')
+                                                    : (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'),
+                                                color: isActive ? '#ffffff' : c.textPrimary,
+                                            }}
+                                        />
+                                    </Button>
+                                );
+                            })}
+                        </Box>
+
                         {/* Search & Select Row */}
                         <Box sx={{
                             display: 'grid',
                             gridTemplateColumns: {
                                 xs: '1fr',
                                 sm: '1fr 1fr',
-                                md: '2.5fr 1.3fr 1.5fr 1.3fr 1.4fr',
+                                md: '2.4fr 1.2fr 1.2fr 1.4fr 1.2fr 1.3fr',
                             },
                             gap: 1.5,
                             alignItems: 'center',
@@ -701,6 +772,24 @@ export default function AdminScores({
                                 }}
                                 sx={{ ...inputControlSx, '& input': { color: c.textPrimary, fontSize: '0.85rem' } }}
                             />
+
+                            {/* Presentation Filter Dropdown */}
+                            <FormControl size="small" sx={inputControlSx}>
+                                <InputLabel sx={{ color: c.textMuted, fontSize: '0.82rem' }}>Presentation</InputLabel>
+                                <Select
+                                    value={presentationFilter}
+                                    label="Presentation"
+                                    onChange={(e) => {
+                                        setPresentationFilter(e.target.value);
+                                        applyFilters({ presentation: e.target.value });
+                                    }}
+                                    sx={{ color: c.textPrimary, fontSize: '0.82rem' }}
+                                >
+                                    <MenuItem value="all">All Types</MenuItem>
+                                    <MenuItem value="oral">🎤 Oral</MenuItem>
+                                    <MenuItem value="poster">🖼️ Poster</MenuItem>
+                                </Select>
+                            </FormControl>
 
                             {/* Scoring Status Filter */}
                             <FormControl size="small" sx={inputControlSx}>
@@ -807,6 +896,17 @@ export default function AdminScores({
                                         size="small"
                                         label={`Search: "${searchQuery}"`}
                                         onDelete={() => setSearchQuery('')}
+                                        sx={{ borderRadius: '8px', fontSize: '0.72rem', bgcolor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5', color: '#059669' }}
+                                    />
+                                )}
+                                {presentationFilter !== 'all' && (
+                                    <Chip
+                                        size="small"
+                                        label={`Type: ${presentationFilter === 'oral' ? 'Oral Presentation' : 'Poster Presentation'}`}
+                                        onDelete={() => {
+                                            setPresentationFilter('all');
+                                            applyFilters({ presentation: 'all' });
+                                        }}
                                         sx={{ borderRadius: '8px', fontSize: '0.72rem', bgcolor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5', color: '#059669' }}
                                     />
                                 )}

@@ -1080,6 +1080,25 @@ class AdminController extends Controller
             }
         }
 
+        // Server-side presentation filter (Oral / Poster)
+        if ($presentation = $request->get('presentation')) {
+            if ($presentation !== 'all') {
+                if ($presentation === 'oral') {
+                    $query->where(function($q) {
+                        $q->where('presentation_preference', 'like', '%Oral%')
+                          ->orWhere('category_submission', 'like', '%Oral%');
+                    });
+                } elseif ($presentation === 'poster') {
+                    $query->where(function($q) {
+                        $q->where('presentation_preference', 'like', '%Poster%')
+                          ->orWhere('category_submission', 'like', '%Poster%');
+                    });
+                } else {
+                    $query->where('presentation_preference', $presentation);
+                }
+            }
+        }
+
         // Server-side topic filter
         if ($topic = $request->get('topic')) {
             if ($topic !== 'all') {
@@ -1165,6 +1184,16 @@ class AdminController extends Controller
             ->filter()
             ->values();
 
+        $oralCount = Submission::where(function($q) {
+            $q->where('presentation_preference', 'like', '%Oral%')
+              ->orWhere('category_submission', 'like', '%Oral%');
+        })->count();
+
+        $posterCount = Submission::where(function($q) {
+            $q->where('presentation_preference', 'like', '%Poster%')
+              ->orWhere('category_submission', 'like', '%Poster%');
+        })->count();
+
         return Inertia::render('Admin/Scores', [
             'submissions' => $submissions,
             'topics' => $topics,
@@ -1176,10 +1205,13 @@ class AdminController extends Controller
                 'conference_avg' => $conferenceAvgScore ? round((float)$conferenceAvgScore, 2) : 0,
                 'multi_reviewer' => $multiReviewerCount,
                 'unassigned' => $unassignedCount,
+                'oral_count' => $oralCount,
+                'poster_count' => $posterCount,
             ],
             'filters' => [
                 'search' => $request->get('search', ''),
                 'status' => $request->get('status', 'all'),
+                'presentation' => $request->get('presentation', 'all'),
                 'topic' => $request->get('topic', 'all'),
                 'scoring_status' => $request->get('scoring_status', 'all'),
                 'sort' => $sort,
