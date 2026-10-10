@@ -38,6 +38,10 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import CircularProgress from '@mui/material/CircularProgress';
 import GroupIcon from '@mui/icons-material/Group';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 // Error Boundary to prevent any modal rendering issue from breaking the entire page
 class ModalErrorBoundary extends React.Component {
@@ -115,12 +119,19 @@ const getKeywordsList = (submission) => {
 
 // ── UNIVERSAL IN-APP DOCUMENT VIEWER COMPONENT ──
 // Allows viewing PDF, DOCX, DOC, PPTX, and images directly in-browser without download
-function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
+function UniversalDocumentViewer({
+    fileUrl,
+    fileName,
+    rubricType = 'oral',
+    docTitle = 'Document Preview',
+    isFullscreen = false,
+}) {
     const theme = useTheme();
     const c = theme.palette.custom || {};
     const isDark = theme.palette.mode === 'dark';
     const [viewerType, setViewerType] = useState('office'); // 'office' | 'google'
     const [iframeLoading, setIframeLoading] = useState(true);
+    const [reloadKey, setReloadKey] = useState(0);
 
     const isPdf = isPdfFile(fileUrl);
     const isDocx = Boolean(fileUrl && String(fileUrl).toLowerCase().endsWith('.docx'));
@@ -130,6 +141,16 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
     const isOfficeDoc = isDocx || isDoc || isPpt;
 
     const safeFileName = fileName || (fileUrl ? String(fileUrl).split('/').pop() : 'Document');
+
+    // Format badge and styling
+    const formatInfo = useMemo(() => {
+        if (isPdf) return { label: 'PDF Document', ext: 'PDF', color: '#dc2626', bg: isDark ? 'rgba(220, 38, 38, 0.15)' : '#fef2f2', border: isDark ? 'rgba(220, 38, 38, 0.3)' : '#fca5a5' };
+        if (isDocx) return { label: 'Word Document', ext: 'DOCX', color: '#2563eb', bg: isDark ? 'rgba(37, 99, 235, 0.15)' : '#eff6ff', border: isDark ? 'rgba(37, 99, 235, 0.3)' : '#93c5fd' };
+        if (isDoc) return { label: 'Word Document', ext: 'DOC', color: '#2563eb', bg: isDark ? 'rgba(37, 99, 235, 0.15)' : '#eff6ff', border: isDark ? 'rgba(37, 99, 235, 0.3)' : '#93c5fd' };
+        if (isPpt) return { label: 'Slides Presentation', ext: 'PPTX', color: '#ea580c', bg: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', border: isDark ? 'rgba(234, 88, 12, 0.3)' : '#fdba74' };
+        if (isImage) return { label: 'Graphic Poster', ext: 'IMG', color: '#059669', bg: isDark ? 'rgba(5, 150, 105, 0.15)' : '#ecfdf5', border: isDark ? 'rgba(5, 150, 105, 0.3)' : '#86efac' };
+        return { label: 'Document', ext: 'FILE', color: '#64748b', bg: isDark ? 'rgba(100, 116, 139, 0.15)' : '#f8fafc', border: isDark ? 'rgba(100, 116, 139, 0.3)' : '#cbd5e1' };
+    }, [isPdf, isDocx, isDoc, isPpt, isImage, isDark]);
 
     // Absolute URL for external cloud viewers (Office Online / Google Docs)
     const absoluteUrl = useMemo(() => {
@@ -141,10 +162,15 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
         return fileUrl;
     }, [fileUrl]);
 
-    // Reset loading state when viewer mode or file changes
+    // Reset loading state when viewer mode, file, or reloadKey changes
     useEffect(() => {
         setIframeLoading(true);
-    }, [fileUrl, viewerType]);
+    }, [fileUrl, viewerType, reloadKey]);
+
+    const handleReload = () => {
+        setIframeLoading(true);
+        setReloadKey(prev => prev + 1);
+    };
 
     return (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -154,119 +180,220 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 mb: 1.5,
-                p: 1.2,
-                borderRadius: '12px',
-                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                p: { xs: 1.2, sm: 1.4 },
+                borderRadius: '14px',
+                background: isDark
+                    ? 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)'
+                    : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
                 border: `1px solid ${c.cardBorder || '#e2e8f0'}`,
+                boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.25)' : '0 2px 8px rgba(0,0,0,0.04)',
                 flexWrap: 'wrap',
-                gap: 1,
+                gap: 1.5,
             }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-                    {isPdf ? (
-                        <PictureAsPdfIcon sx={{ color: '#dc2626', fontSize: 20, flexShrink: 0 }} />
-                    ) : isDocx || isDoc ? (
-                        <ArticleIcon sx={{ color: '#2563eb', fontSize: 20, flexShrink: 0 }} />
-                    ) : isPpt ? (
-                        <CoPresentIcon sx={{ color: '#ea580c', fontSize: 20, flexShrink: 0 }} />
-                    ) : (
-                        <InsertDriveFileIcon sx={{ color: '#059669', fontSize: 20, flexShrink: 0 }} />
-                    )}
-                    <Typography variant="body2" sx={{
-                        fontWeight: 800,
-                        color: c.textPrimary,
-                        fontSize: '0.82rem',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        maxWidth: { xs: 200, sm: 350 },
+                {/* Left: Document Info */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, minWidth: 0 }}>
+                    <Box sx={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: formatInfo.bg,
+                        border: `1px solid ${formatInfo.border}`,
+                        color: formatInfo.color,
+                        flexShrink: 0,
                     }}>
-                        {safeFileName}
-                    </Typography>
+                        {isPdf ? (
+                            <PictureAsPdfIcon sx={{ fontSize: 20 }} />
+                        ) : isDocx || isDoc ? (
+                            <ArticleIcon sx={{ fontSize: 20 }} />
+                        ) : isPpt ? (
+                            <CoPresentIcon sx={{ fontSize: 20 }} />
+                        ) : isImage ? (
+                            <WallpaperIcon sx={{ fontSize: 20 }} />
+                        ) : (
+                            <InsertDriveFileIcon sx={{ fontSize: 20 }} />
+                        )}
+                    </Box>
+
+                    <Box sx={{ minWidth: 0 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+                            <Typography variant="body2" sx={{
+                                fontWeight: 800,
+                                color: c.textPrimary,
+                                fontSize: '0.86rem',
+                                lineHeight: 1.2,
+                            }}>
+                                {docTitle}
+                            </Typography>
+                            <Chip
+                                label={formatInfo.ext}
+                                size="small"
+                                sx={{
+                                    height: 18,
+                                    fontSize: '0.62rem',
+                                    fontWeight: 800,
+                                    letterSpacing: '0.04em',
+                                    borderRadius: '5px',
+                                    bgcolor: formatInfo.bg,
+                                    color: formatInfo.color,
+                                    border: `1px solid ${formatInfo.border}`,
+                                }}
+                            />
+                        </Box>
+                        <Tooltip title={safeFileName} arrow>
+                            <Typography variant="caption" sx={{
+                                color: c.textSecondary,
+                                fontSize: '0.72rem',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                display: 'block',
+                                maxWidth: { xs: 200, sm: 300, md: 400 },
+                                mt: 0.2,
+                            }}>
+                                {safeFileName}
+                            </Typography>
+                        </Tooltip>
+                    </Box>
                 </Box>
 
-                {/* Controls depending on file format */}
+                {/* Right: Controls & Actions */}
                 <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                    {/* If DOCX, DOC, or PPT: allow switching between Office Online and Google Docs */}
+                    {/* Switcher for Office/Word/PPT */}
                     {isOfficeDoc && (
-                        <Stack direction="row" spacing={0.5} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', p: 0.3, borderRadius: '8px' }}>
-                            <Button
-                                size="small"
-                                onClick={() => setViewerType('office')}
-                                sx={{
-                                    textTransform: 'none',
-                                    fontSize: '0.72rem',
-                                    fontWeight: viewerType === 'office' ? 800 : 600,
-                                    py: 0.3,
-                                    px: 1,
-                                    borderRadius: '6px',
-                                    bgcolor: viewerType === 'office' ? (isDark ? '#2563eb' : '#ffffff') : 'transparent',
-                                    color: viewerType === 'office' ? (isDark ? '#ffffff' : '#2563eb') : c.textSecondary,
-                                    boxShadow: viewerType === 'office' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                                }}
-                            >
-                                🌐 Office Online
-                            </Button>
-                            <Button
-                                size="small"
-                                onClick={() => setViewerType('google')}
-                                sx={{
-                                    textTransform: 'none',
-                                    fontSize: '0.72rem',
-                                    fontWeight: viewerType === 'google' ? 800 : 600,
-                                    py: 0.3,
-                                    px: 1,
-                                    borderRadius: '6px',
-                                    bgcolor: viewerType === 'google' ? (isDark ? '#d97706' : '#ffffff') : 'transparent',
-                                    color: viewerType === 'google' ? (isDark ? '#ffffff' : '#d97706') : c.textSecondary,
-                                    boxShadow: viewerType === 'google' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                                }}
-                            >
-                                📑 Google Docs
-                            </Button>
-                        </Stack>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            p: '3px',
+                            borderRadius: '10px',
+                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#cbd5e1'}`,
+                            gap: '3px',
+                        }}>
+                            <Tooltip title="Tampilan Word/PowerPoint resmi dengan format halaman akurat" arrow>
+                                <Button
+                                    size="small"
+                                    onClick={() => setViewerType('office')}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.74rem',
+                                        fontWeight: viewerType === 'office' ? 800 : 600,
+                                        py: 0.35,
+                                        px: 1.2,
+                                        borderRadius: '7px',
+                                        bgcolor: viewerType === 'office' ? (isDark ? '#2563eb' : '#ffffff') : 'transparent',
+                                        color: viewerType === 'office' ? (isDark ? '#ffffff' : '#1e40af') : c.textSecondary,
+                                        boxShadow: viewerType === 'office' ? '0 2px 6px rgba(0,0,0,0.12)' : 'none',
+                                        transition: 'all 0.18s ease',
+                                    }}
+                                >
+                                    🌐 Office Online
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Alternatif cepat jika Office Online lambat memuat" arrow>
+                                <Button
+                                    size="small"
+                                    onClick={() => setViewerType('google')}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.74rem',
+                                        fontWeight: viewerType === 'google' ? 800 : 600,
+                                        py: 0.35,
+                                        px: 1.2,
+                                        borderRadius: '7px',
+                                        bgcolor: viewerType === 'google' ? (isDark ? '#d97706' : '#ffffff') : 'transparent',
+                                        color: viewerType === 'google' ? (isDark ? '#ffffff' : '#b45309') : c.textSecondary,
+                                        boxShadow: viewerType === 'google' ? '0 2px 6px rgba(0,0,0,0.12)' : 'none',
+                                        transition: 'all 0.18s ease',
+                                    }}
+                                >
+                                    📑 Google Docs
+                                </Button>
+                            </Tooltip>
+                        </Box>
                     )}
 
-                    {/* Direct Download & Open in Tab buttons */}
-                    <Button
-                        component="a"
-                        href={fileUrl}
-                        download
-                        target="_blank"
-                        variant="outlined"
-                        size="small"
-                        startIcon={<DownloadIcon sx={{ fontSize: 13 }} />}
-                        sx={{
-                            textTransform: 'none',
-                            fontWeight: 700,
-                            borderRadius: '8px',
-                            borderColor: c.cardBorder,
-                            color: c.textSecondary,
-                            fontSize: '0.72rem',
-                            py: 0.4,
-                            px: 1,
-                        }}
-                    >
-                        Download
-                    </Button>
-                    <Button
-                        component="a"
-                        href={fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variant="text"
-                        size="small"
-                        endIcon={<OpenInNewIcon sx={{ fontSize: 13 }} />}
-                        sx={{
-                            textTransform: 'none',
-                            fontWeight: 700,
-                            color: c.textSecondary,
-                            fontSize: '0.72rem',
-                            py: 0.4,
-                            px: 1,
-                        }}
-                    >
-                        Open Tab
-                    </Button>
+                    {/* Reload Button */}
+                    <Tooltip title="Muat ulang dokumen" arrow>
+                        <IconButton
+                            size="small"
+                            onClick={handleReload}
+                            sx={{
+                                border: `1px solid ${c.cardBorder || '#e2e8f0'}`,
+                                borderRadius: '9px',
+                                p: 0.65,
+                                color: c.textSecondary,
+                                '&:hover': {
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                                    color: c.textPrimary,
+                                }
+                            }}
+                        >
+                            <RefreshIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                    </Tooltip>
+
+                    {/* Open in Tab */}
+                    <Tooltip title="Buka berkas di tab browser terpisah" arrow>
+                        <Button
+                            component="a"
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="outlined"
+                            size="small"
+                            endIcon={<OpenInNewIcon sx={{ fontSize: 13 }} />}
+                            sx={{
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                borderRadius: '9px',
+                                borderColor: c.cardBorder,
+                                color: c.textSecondary,
+                                fontSize: '0.74rem',
+                                py: 0.4,
+                                px: 1.2,
+                                '&:hover': {
+                                    borderColor: '#059669',
+                                    color: '#059669',
+                                    bgcolor: isDark ? 'rgba(5, 150, 105, 0.1)' : '#f0fdf4',
+                                }
+                            }}
+                        >
+                            Tab Baru
+                        </Button>
+                    </Tooltip>
+
+                    {/* Download */}
+                    <Tooltip title="Unduh file dokumen asli" arrow>
+                        <Button
+                            component="a"
+                            href={fileUrl}
+                            download
+                            target="_blank"
+                            variant="outlined"
+                            size="small"
+                            startIcon={<DownloadIcon sx={{ fontSize: 13 }} />}
+                            sx={{
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                borderRadius: '9px',
+                                borderColor: c.cardBorder,
+                                color: c.textSecondary,
+                                fontSize: '0.74rem',
+                                py: 0.4,
+                                px: 1.2,
+                                '&:hover': {
+                                    borderColor: '#0284c7',
+                                    color: '#0284c7',
+                                    bgcolor: isDark ? 'rgba(2, 132, 199, 0.1)' : '#f0f9ff',
+                                }
+                            }}
+                        >
+                            Download
+                        </Button>
+                    </Tooltip>
                 </Stack>
             </Box>
 
@@ -274,18 +401,21 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
             {isPdf && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '70vh',
-                    borderRadius: '12px',
+                    minHeight: isFullscreen ? 'calc(100vh - 240px)' : '70vh',
+                    height: isFullscreen ? 'calc(100vh - 240px)' : '72vh',
+                    borderRadius: '16px',
                     overflow: 'hidden',
-                    border: `1px solid ${c.cardBorder}`,
+                    border: `1.5px solid ${c.cardBorder || '#e2e8f0'}`,
+                    boxShadow: isDark ? '0 10px 40px rgba(0,0,0,0.5)' : '0 8px 30px rgba(0,0,0,0.06)',
                     bgcolor: isDark ? '#111827' : '#f1f5f9',
                 }}>
                     <iframe
+                        key={`pdf-${reloadKey}`}
                         src={`${fileUrl}#toolbar=1`}
                         title="PDF Document Viewer"
                         width="100%"
                         height="100%"
-                        style={{ border: 'none', minHeight: '70vh', display: 'block' }}
+                        style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                     />
                 </Box>
             )}
@@ -293,11 +423,12 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
             {isImage && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '70vh',
+                    minHeight: isFullscreen ? 'calc(100vh - 240px)' : '70vh',
+                    height: isFullscreen ? 'calc(100vh - 240px)' : '72vh',
                     p: 2,
-                    borderRadius: '12px',
-                    bgcolor: isDark ? '#000000' : '#f8fafc',
-                    border: `1px solid ${c.cardBorder}`,
+                    borderRadius: '16px',
+                    bgcolor: isDark ? '#090d16' : '#f8fafc',
+                    border: `1.5px solid ${c.cardBorder || '#e2e8f0'}`,
                     textAlign: 'center',
                     overflow: 'auto',
                     display: 'flex',
@@ -310,10 +441,10 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
                         alt="Poster / File Preview"
                         sx={{
                             maxWidth: '100%',
-                            maxHeight: '70vh',
+                            maxHeight: isFullscreen ? 'calc(100vh - 260px)' : '68vh',
                             objectFit: 'contain',
-                            borderRadius: '8px',
-                            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                            borderRadius: '10px',
+                            boxShadow: '0 12px 35px rgba(0,0,0,0.2)',
                         }}
                     />
                 </Box>
@@ -322,11 +453,13 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
             {isOfficeDoc && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '72vh',
-                    borderRadius: '12px',
+                    minHeight: isFullscreen ? 'calc(100vh - 240px)' : '72vh',
+                    height: isFullscreen ? 'calc(100vh - 240px)' : '74vh',
+                    borderRadius: '16px',
                     overflow: 'hidden',
-                    border: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                    border: `1.5px solid ${c.cardBorder || '#e2e8f0'}`,
+                    boxShadow: isDark ? '0 10px 40px rgba(0,0,0,0.5)' : '0 8px 30px rgba(0,0,0,0.06)',
+                    bgcolor: isDark ? '#1e293b' : '#334155',
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
@@ -335,28 +468,65 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
                         <Box sx={{
                             position: 'absolute',
                             inset: 0,
-                            zIndex: 2,
+                            zIndex: 3,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            bgcolor: isDark ? 'rgba(15, 23, 42, 0.88)' : 'rgba(255, 255, 255, 0.88)',
-                            backdropFilter: 'blur(4px)',
+                            bgcolor: isDark ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.92)',
+                            backdropFilter: 'blur(8px)',
                             gap: 1.5,
                             p: 3,
                             textAlign: 'center',
                         }}>
-                            <CircularProgress size={36} sx={{ color: viewerType === 'office' ? '#2563eb' : '#d97706' }} />
-                            <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary }}>
+                            <Box sx={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: '16px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                bgcolor: formatInfo.bg,
+                                border: `2px solid ${formatInfo.border}`,
+                                color: formatInfo.color,
+                                mb: 1,
+                                boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+                            }}>
+                                {isDocx || isDoc ? <ArticleIcon sx={{ fontSize: 30 }} /> : <CoPresentIcon sx={{ fontSize: 30 }} />}
+                            </Box>
+                            <Typography variant="body1" sx={{ fontWeight: 800, color: c.textPrimary }}>
                                 Memuat dokumen {isDocx ? 'Word (.docx)' : isPpt ? 'PowerPoint (.pptx)' : ''} di layar...
                             </Typography>
-                            <Typography variant="caption" sx={{ color: c.textSecondary, maxWidth: 420 }}>
-                                Menghubungkan ke {viewerType === 'office' ? 'Microsoft Office Online' : 'Google Docs Viewer'} agar dokumen dapat dibaca langsung tanpa perlu diunduh.
+                            <Typography variant="caption" sx={{ color: c.textSecondary, maxWidth: 440, lineHeight: 1.5 }}>
+                                Menghubungkan ke <strong>{viewerType === 'office' ? 'Microsoft Office Online' : 'Google Docs Viewer'}</strong> agar dokumen dapat dibaca langsung oleh Juri tanpa perlu diunduh.
                             </Typography>
+                            <Box sx={{ width: 220, my: 1 }}>
+                                <LinearProgress sx={{
+                                    borderRadius: '4px',
+                                    height: 5,
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
+                                    '& .MuiLinearProgress-bar': {
+                                        bgcolor: viewerType === 'office' ? '#2563eb' : '#d97706',
+                                    }
+                                }} />
+                            </Box>
+                            <Button
+                                size="small"
+                                variant="text"
+                                onClick={() => setViewerType(prev => prev === 'office' ? 'google' : 'office')}
+                                sx={{
+                                    textTransform: 'none',
+                                    fontSize: '0.74rem',
+                                    color: c.textSecondary,
+                                    textDecoration: 'underline',
+                                }}
+                            >
+                                Loading lama? Klik di sini untuk beralih ke {viewerType === 'office' ? 'Google Docs Viewer' : 'Microsoft Office Online'}
+                            </Button>
                         </Box>
                     )}
                     <iframe
-                        key={`${viewerType}-${fileUrl}`}
+                        key={`${viewerType}-${fileUrl}-${reloadKey}`}
                         src={
                             viewerType === 'office'
                                 ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`
@@ -366,7 +536,7 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
                         width="100%"
                         height="100%"
                         onLoad={() => setIframeLoading(false)}
-                        style={{ border: 'none', flex: 1, minHeight: '72vh', display: 'block' }}
+                        style={{ border: 'none', flex: 1, width: '100%', height: '100%', display: 'block' }}
                     />
                 </Box>
             )}
@@ -374,10 +544,11 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
             {!isPdf && !isImage && !isOfficeDoc && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '70vh',
-                    borderRadius: '12px',
+                    minHeight: isFullscreen ? 'calc(100vh - 240px)' : '70vh',
+                    height: isFullscreen ? 'calc(100vh - 240px)' : '72vh',
+                    borderRadius: '16px',
                     overflow: 'hidden',
-                    border: `1px solid ${c.cardBorder}`,
+                    border: `1.5px solid ${c.cardBorder || '#e2e8f0'}`,
                     bgcolor: isDark ? '#111827' : '#f1f5f9',
                 }}>
                     <iframe
@@ -385,10 +556,28 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral' }) {
                         title="Document Viewer"
                         width="100%"
                         height="100%"
-                        style={{ border: 'none', minHeight: '70vh', display: 'block' }}
+                        style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                     />
                 </Box>
             )}
+
+            {/* Bottom Juri Notice & Helper */}
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                mt: 1.2,
+                px: 1.5,
+                py: 0.8,
+                borderRadius: '10px',
+                bgcolor: isDark ? 'rgba(5, 150, 105, 0.08)' : '#f0fdf4',
+                border: `1px solid ${isDark ? 'rgba(5, 150, 105, 0.2)' : '#bbf7d0'}`,
+            }}>
+                <AutoAwesomeIcon sx={{ fontSize: 16, color: '#059669', flexShrink: 0 }} />
+                <Typography variant="caption" sx={{ color: isDark ? '#6ee7b7' : '#15803d', fontSize: '0.74rem', fontWeight: 600 }}>
+                    <strong>Petunjuk Juri:</strong> Dokumen dapat di-scroll dan dibaca per halaman langsung di layar. Gunakan tombol <strong>Layar Penuh</strong> di sudut kanan atas untuk tampilan membaca maksimal.
+                </Typography>
+            </Box>
         </Box>
     );
 }
@@ -409,9 +598,11 @@ export default function JuriSubmissions({ scores = [] }) {
         submission: null,
         rubricType: 'oral',
         submissionId: null,
+        score: null,
+        isFullscreen: false,
     });
 
-    const openPreview = (tab, submission, rubricType = 'oral', submissionId = null) => {
+    const openPreview = (tab, submission, rubricType = 'oral', submissionId = null, score = null) => {
         const sub = submission || {};
         const subId = submissionId || sub.id || sub.submission_id;
 
@@ -429,11 +620,17 @@ export default function JuriSubmissions({ scores = [] }) {
             submission: sub,
             rubricType: rubricType || 'oral',
             submissionId: subId,
+            score: score || null,
+            isFullscreen: false,
         });
     };
 
     const closePreview = () => {
-        setPreviewModal(prev => ({ ...prev, open: false }));
+        setPreviewModal(prev => ({ ...prev, open: false, isFullscreen: false }));
+    };
+
+    const toggleFullscreen = () => {
+        setPreviewModal(prev => ({ ...prev, isFullscreen: !prev.isFullscreen }));
     };
 
     // Derived statistics
@@ -1032,7 +1229,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('abstract', sub, score.rubric_type, score.submission_id)}
+                                                                             onClick={() => openPreview('abstract', sub, score.rubric_type, score.submission_id, score)}
                                                                              startIcon={<MenuBookIcon sx={{ fontSize: '14px !important', color: '#059669' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1089,7 +1286,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('paper', sub, score.rubric_type, score.submission_id)}
+                                                                             onClick={() => openPreview('paper', sub, score.rubric_type, score.submission_id, score)}
                                                                              startIcon={<PictureAsPdfIcon sx={{ fontSize: '14px !important', color: '#dc2626' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1148,7 +1345,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                                                      }}>
                                                                          <Button
                                                                              size="small"
-                                                                             onClick={() => openPreview('slides', sub, score.rubric_type, score.submission_id)}
+                                                                             onClick={() => openPreview('slides', sub, score.rubric_type, score.submission_id, score)}
                                                                              startIcon={isOral ? <CoPresentIcon sx={{ fontSize: '14px !important', color: '#0284c7' }} /> : <WallpaperIcon sx={{ fontSize: '14px !important', color: '#9333ea' }} />}
                                                                              sx={{
                                                                                  textTransform: 'none',
@@ -1375,24 +1572,29 @@ export default function JuriSubmissions({ scores = [] }) {
                 <Dialog
                     open={previewModal.open}
                     onClose={closePreview}
-                    maxWidth="lg"
+                    fullScreen={previewModal.isFullscreen}
+                    maxWidth={previewModal.isFullscreen ? false : "xl"}
                     fullWidth
                     PaperProps={{
                         sx: {
-                            borderRadius: '20px',
-                            bgcolor: c.cardBg,
-                            border: `1.5px solid ${c.cardBorder}`,
-                            boxShadow: isDark ? '0 25px 60px rgba(0,0,0,0.6)' : '0 20px 50px rgba(0,0,0,0.15)',
+                            borderRadius: previewModal.isFullscreen ? 0 : '22px',
+                            bgcolor: isDark ? '#0f172a' : '#ffffff',
+                            border: previewModal.isFullscreen ? 'none' : `1.5px solid ${c.cardBorder || '#e2e8f0'}`,
+                            boxShadow: isDark ? '0 25px 70px rgba(0,0,0,0.7)' : '0 20px 60px rgba(0,0,0,0.18)',
                             overflow: 'hidden',
-                            maxHeight: '92vh',
+                            maxHeight: previewModal.isFullscreen ? '100vh' : '94vh',
+                            height: previewModal.isFullscreen ? '100vh' : 'auto',
+                            m: previewModal.isFullscreen ? 0 : { xs: 1, sm: 2 },
                             display: 'flex',
                             flexDirection: 'column',
+                            position: 'relative',
                         }
                     }}
                 >
                     <ModalErrorBoundary>
                     {previewModal.submission && (() => {
                         const mSub = previewModal.submission;
+                        const mScore = previewModal.score;
                         const isModalOral = (previewModal.rubricType || '').toLowerCase() === 'oral';
                         const mPresenter = mSub.author_full_name || mSub.user?.name || 'Author';
                         const mCode = mSub.submission_code || `SUB-${mSub.id}`;
@@ -1406,156 +1608,341 @@ export default function JuriSubmissions({ scores = [] }) {
                         if (hasPaperContent) validTabs.push('paper');
                         if (hasSlidesContent) validTabs.push('slides');
                         const currentTab = validTabs.includes(previewModal.activeTab) ? previewModal.activeTab : 'abstract';
+                        const isScored = mScore && mScore.weighted_final_score !== null && mScore.weighted_final_score !== undefined;
+                        const scoreTier = isScored ? getInterpretation(mScore.weighted_final_score) : null;
 
                         return (
                             <>
+                                {/* Top Gradient Accent Bar */}
+                                <Box sx={{
+                                    height: 4,
+                                    width: '100%',
+                                    background: 'linear-gradient(90deg, #059669 0%, #0284c7 50%, #9333ea 100%)',
+                                    flexShrink: 0,
+                                }} />
+
                                 {/* Dialog Header */}
                                 <DialogTitle sx={{
-                                    p: { xs: 2, sm: 2.8 },
-                                    pb: { xs: 1.5, sm: 2 },
+                                    p: { xs: 2, sm: 2.6 },
+                                    pb: { xs: 1.6, sm: 2 },
                                     borderBottom: `1px solid ${c.cardBorder}`,
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
                                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                                            {/* Badges */}
-                                            <Stack direction="row" spacing={0.8} alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
+                                            {/* Top Badges */}
+                                            <Stack direction="row" spacing={0.8} alignItems="center" flexWrap="wrap" sx={{ mb: 1.2 }}>
+                                                {/* Presentation Type */}
                                                 <Chip
                                                     icon={isModalOral ? <MicIcon sx={{ fontSize: '13px !important' }} /> : <WallpaperIcon sx={{ fontSize: '13px !important' }} />}
                                                     label={isModalOral ? 'ORAL PRESENTATION' : 'POSTER PRESENTATION'}
                                                     size="small"
                                                     sx={{
-                                                        height: 22,
-                                                        fontSize: '0.66rem',
+                                                        height: 24,
+                                                        fontSize: '0.68rem',
                                                         fontWeight: 800,
                                                         letterSpacing: '0.04em',
-                                                        borderRadius: '6px',
+                                                        borderRadius: '7px',
                                                         bgcolor: isModalOral
-                                                            ? (isDark ? 'rgba(2, 132, 199, 0.18)' : '#e0f2fe')
-                                                            : (isDark ? 'rgba(147, 51, 234, 0.18)' : '#f3e8ff'),
+                                                            ? (isDark ? 'rgba(2, 132, 199, 0.2)' : '#e0f2fe')
+                                                            : (isDark ? 'rgba(147, 51, 234, 0.2)' : '#f3e8ff'),
                                                         color: isModalOral ? '#0284c7' : '#9333ea',
                                                         border: `1px solid ${isModalOral ? '#7dd3fc' : '#d8b4fe'}`,
                                                     }}
                                                 />
+
+                                                {/* Code Badge */}
                                                 <Chip
                                                     label={mCode}
                                                     size="small"
                                                     sx={{
-                                                        height: 22,
-                                                        fontSize: '0.66rem',
+                                                        height: 24,
+                                                        fontSize: '0.68rem',
                                                         fontFamily: 'monospace',
                                                         fontWeight: 800,
-                                                        borderRadius: '6px',
+                                                        borderRadius: '7px',
                                                         bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
-                                                        color: c.textSecondary,
+                                                        color: c.textPrimary,
+                                                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
                                                     }}
                                                 />
+
+                                                {/* Sub-theme */}
                                                 {mSub.paper_sub_theme && (
                                                     <Chip
                                                         label={mSub.paper_sub_theme}
                                                         size="small"
                                                         sx={{
-                                                            height: 22,
-                                                            fontSize: '0.66rem',
+                                                            height: 24,
+                                                            fontSize: '0.68rem',
                                                             fontWeight: 600,
-                                                            borderRadius: '6px',
+                                                            borderRadius: '7px',
                                                             bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                                                             color: c.textSecondary,
+                                                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                                        }}
+                                                    />
+                                                )}
+
+                                                {/* Scored Status Badge */}
+                                                {isScored ? (
+                                                    <Chip
+                                                        icon={<StarIcon sx={{ fontSize: '13px !important', color: '#d97706 !important' }} />}
+                                                        label={`Nilai: ${Number(mScore.weighted_final_score).toFixed(2)}/10 (${scoreTier?.tier || 'Rated'})`}
+                                                        size="small"
+                                                        sx={{
+                                                            height: 24,
+                                                            fontSize: '0.68rem',
+                                                            fontWeight: 800,
+                                                            borderRadius: '7px',
+                                                            bgcolor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+                                                            color: isDark ? '#fbbf24' : '#b45309',
+                                                            border: '1px solid #fde68a',
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Chip
+                                                        icon={<HourglassEmptyRoundedIcon sx={{ fontSize: '12px !important' }} />}
+                                                        label="Belum Dinilai"
+                                                        size="small"
+                                                        sx={{
+                                                            height: 24,
+                                                            fontSize: '0.68rem',
+                                                            fontWeight: 700,
+                                                            borderRadius: '7px',
+                                                            bgcolor: isDark ? 'rgba(14, 165, 233, 0.15)' : '#f0f9ff',
+                                                            color: '#0284c7',
+                                                            border: '1px solid #bae6fd',
                                                         }}
                                                     />
                                                 )}
                                             </Stack>
 
                                             {/* Presentation Title */}
-                                            <Typography variant="h6" sx={{
-                                                fontSize: { xs: '1.05rem', sm: '1.25rem' },
+                                            <Typography variant="h5" sx={{
+                                                fontSize: { xs: '1.15rem', sm: '1.35rem' },
                                                 fontWeight: 800,
                                                 color: c.textPrimary,
                                                 lineHeight: 1.35,
-                                                letterSpacing: '-0.015em',
-                                                mb: 0.8,
+                                                letterSpacing: '-0.02em',
+                                                mb: 1,
                                             }}>
                                                 {mSub.title || 'Untitled Scientific Presentation'}
                                             </Typography>
 
                                             {/* Presenter & Affiliation */}
-                                            <Typography variant="body2" sx={{ color: c.textSecondary, fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Box component="span" sx={{ fontWeight: 700, color: c.textPrimary }}>{mPresenter}</Box>
-                                                <span>•</span>
-                                                <Box component="span">{mAffiliation}</Box>
-                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
+                                                <Avatar sx={{
+                                                    width: 26,
+                                                    height: 26,
+                                                    fontSize: '0.72rem',
+                                                    fontWeight: 800,
+                                                    bgcolor: '#059669',
+                                                    color: '#ffffff',
+                                                }}>
+                                                    {(mPresenter || 'A').charAt(0).toUpperCase()}
+                                                </Avatar>
+                                                <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                                    {mPresenter}
+                                                </Typography>
+                                                {mAffiliation && (
+                                                    <>
+                                                        <Typography variant="caption" sx={{ color: c.textSecondary }}>•</Typography>
+                                                        <Typography variant="body2" sx={{ color: c.textSecondary, fontSize: '0.82rem' }}>
+                                                            {mAffiliation}
+                                                        </Typography>
+                                                    </>
+                                                )}
+                                                {mCoAuthors.length > 0 && (
+                                                    <Chip
+                                                        icon={<GroupIcon sx={{ fontSize: '12px !important' }} />}
+                                                        label={`+${mCoAuthors.length} Co-Author`}
+                                                        size="small"
+                                                        sx={{
+                                                            height: 20,
+                                                            fontSize: '0.64rem',
+                                                            fontWeight: 700,
+                                                            borderRadius: '5px',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                            color: c.textSecondary,
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
                                         </Box>
 
-                                        {/* Close Button */}
-                                        <IconButton
-                                            onClick={closePreview}
-                                            size="small"
-                                            sx={{
-                                                color: c.textSecondary,
-                                                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0',
-                                                borderRadius: '10px',
-                                                '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1' },
-                                            }}
-                                        >
-                                            <CloseIcon sx={{ fontSize: 18 }} />
-                                        </IconButton>
+                                        {/* Action Buttons (Fullscreen & Close) */}
+                                        <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
+                                            <Tooltip title={previewModal.isFullscreen ? "Keluar Layar Penuh" : "Maksimalkan Layar Penuh"} arrow>
+                                                <IconButton
+                                                    onClick={toggleFullscreen}
+                                                    size="small"
+                                                    sx={{
+                                                        color: c.textSecondary,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                        borderRadius: '10px',
+                                                        p: 0.8,
+                                                        '&:hover': {
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.12)' : '#e2e8f0',
+                                                            color: c.textPrimary,
+                                                        },
+                                                    }}
+                                                >
+                                                    {previewModal.isFullscreen ? <FullscreenExitIcon sx={{ fontSize: 20 }} /> : <FullscreenIcon sx={{ fontSize: 20 }} />}
+                                                </IconButton>
+                                            </Tooltip>
+
+                                            <Tooltip title="Tutup (Esc)" arrow>
+                                                <IconButton
+                                                    onClick={closePreview}
+                                                    size="small"
+                                                    sx={{
+                                                        color: c.textSecondary,
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                        borderRadius: '10px',
+                                                        p: 0.8,
+                                                        '&:hover': {
+                                                            bgcolor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
+                                                            color: '#dc2626',
+                                                        },
+                                                    }}
+                                                >
+                                                    <CloseIcon sx={{ fontSize: 20 }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Stack>
                                     </Box>
 
-                                    {/* Multi-Tab Navigation */}
-                                    <Tabs
-                                        value={currentTab}
-                                        onChange={(e, newTab) => setPreviewModal(prev => ({ ...prev, activeTab: newTab }))}
-                                        sx={{
-                                            mt: 2,
-                                            minHeight: 38,
-                                            '& .MuiTab-root': {
+                                    {/* Segmented Control Navigation Tabs */}
+                                    <Box sx={{
+                                        mt: 2.2,
+                                        p: '4px',
+                                        borderRadius: '14px',
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9',
+                                        display: 'inline-flex',
+                                        border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                        flexWrap: 'wrap',
+                                        gap: '4px',
+                                    }}>
+                                        <Button
+                                            onClick={() => setPreviewModal(prev => ({ ...prev, activeTab: 'abstract' }))}
+                                            startIcon={<MenuBookIcon sx={{ fontSize: 16 }} />}
+                                            sx={{
                                                 textTransform: 'none',
-                                                fontWeight: 700,
+                                                fontWeight: currentTab === 'abstract' ? 800 : 600,
                                                 fontSize: '0.82rem',
-                                                minHeight: 38,
-                                                py: 0.8,
+                                                py: 0.7,
                                                 px: { xs: 1.5, sm: 2.2 },
-                                                borderRadius: '10px 10px 0 0',
-                                                mr: 1,
-                                                color: c.textSecondary,
-                                                '&.Mui-selected': {
-                                                    color: isDark ? '#34d399' : '#059669',
-                                                },
-                                            },
-                                            '& .MuiTabs-indicator': {
-                                                backgroundColor: isDark ? '#34d399' : '#059669',
-                                                height: 3,
-                                                borderRadius: '3px 3px 0 0',
-                                            }
-                                        }}
-                                    >
-                                        <Tab
-                                            value="abstract"
-                                            label="Scientific Abstract"
-                                            icon={<MenuBookIcon sx={{ fontSize: 17 }} />}
-                                            iconPosition="start"
-                                        />
+                                                borderRadius: '10px',
+                                                bgcolor: currentTab === 'abstract'
+                                                    ? (isDark ? '#059669' : '#ffffff')
+                                                    : 'transparent',
+                                                color: currentTab === 'abstract'
+                                                    ? (isDark ? '#ffffff' : '#059669')
+                                                    : c.textSecondary,
+                                                boxShadow: currentTab === 'abstract'
+                                                    ? (isDark ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.08)')
+                                                    : 'none',
+                                                transition: 'all 0.18s ease',
+                                            }}
+                                        >
+                                            Scientific Abstract
+                                        </Button>
+
                                         {hasPaperContent && (
-                                            <Tab
-                                                value="paper"
-                                                label="Full Paper Manuscript"
-                                                icon={<PictureAsPdfIcon sx={{ fontSize: 17 }} />}
-                                                iconPosition="start"
-                                            />
+                                            <Button
+                                                onClick={() => setPreviewModal(prev => ({ ...prev, activeTab: 'paper' }))}
+                                                startIcon={<ArticleIcon sx={{ fontSize: 16 }} />}
+                                                endIcon={
+                                                    <Chip
+                                                        label={String(mSub.full_paper_file || '').toLowerCase().endsWith('.docx') ? 'DOCX' : 'PDF'}
+                                                        size="small"
+                                                        sx={{
+                                                            height: 18,
+                                                            fontSize: '0.62rem',
+                                                            fontWeight: 800,
+                                                            borderRadius: '4px',
+                                                            bgcolor: currentTab === 'paper'
+                                                                ? (isDark ? 'rgba(255,255,255,0.25)' : '#e0f2fe')
+                                                                : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                            color: currentTab === 'paper'
+                                                                ? (isDark ? '#ffffff' : '#0284c7')
+                                                                : c.textSecondary,
+                                                        }}
+                                                    />
+                                                }
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    fontWeight: currentTab === 'paper' ? 800 : 600,
+                                                    fontSize: '0.82rem',
+                                                    py: 0.7,
+                                                    px: { xs: 1.5, sm: 2.2 },
+                                                    borderRadius: '10px',
+                                                    bgcolor: currentTab === 'paper'
+                                                        ? (isDark ? '#059669' : '#ffffff')
+                                                        : 'transparent',
+                                                    color: currentTab === 'paper'
+                                                        ? (isDark ? '#ffffff' : '#059669')
+                                                        : c.textSecondary,
+                                                    boxShadow: currentTab === 'paper'
+                                                        ? (isDark ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.08)')
+                                                        : 'none',
+                                                    transition: 'all 0.18s ease',
+                                                }}
+                                            >
+                                                Full Paper Manuscript
+                                            </Button>
                                         )}
+
                                         {hasSlidesContent && (
-                                            <Tab
-                                                value="slides"
-                                                label={isModalOral ? 'Presentation Slides' : 'Poster Layout'}
-                                                icon={isModalOral ? <CoPresentIcon sx={{ fontSize: 17 }} /> : <WallpaperIcon sx={{ fontSize: 17 }} />}
-                                                iconPosition="start"
-                                            />
+                                            <Button
+                                                onClick={() => setPreviewModal(prev => ({ ...prev, activeTab: 'slides' }))}
+                                                startIcon={isModalOral ? <CoPresentIcon sx={{ fontSize: 16 }} /> : <WallpaperIcon sx={{ fontSize: 16 }} />}
+                                                endIcon={
+                                                    <Chip
+                                                        label={isModalOral ? 'PPTX' : 'POSTER'}
+                                                        size="small"
+                                                        sx={{
+                                                            height: 18,
+                                                            fontSize: '0.62rem',
+                                                            fontWeight: 800,
+                                                            borderRadius: '4px',
+                                                            bgcolor: currentTab === 'slides'
+                                                                ? (isDark ? 'rgba(255,255,255,0.25)' : '#fef3c7')
+                                                                : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                            color: currentTab === 'slides'
+                                                                ? (isDark ? '#ffffff' : '#b45309')
+                                                                : c.textSecondary,
+                                                        }}
+                                                    />
+                                                }
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    fontWeight: currentTab === 'slides' ? 800 : 600,
+                                                    fontSize: '0.82rem',
+                                                    py: 0.7,
+                                                    px: { xs: 1.5, sm: 2.2 },
+                                                    borderRadius: '10px',
+                                                    bgcolor: currentTab === 'slides'
+                                                        ? (isDark ? '#059669' : '#ffffff')
+                                                        : 'transparent',
+                                                    color: currentTab === 'slides'
+                                                        ? (isDark ? '#ffffff' : '#059669')
+                                                        : c.textSecondary,
+                                                    boxShadow: currentTab === 'slides'
+                                                        ? (isDark ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.08)')
+                                                        : 'none',
+                                                    transition: 'all 0.18s ease',
+                                                }}
+                                            >
+                                                {isModalOral ? 'Presentation Slides' : 'Poster Layout'}
+                                            </Button>
                                         )}
-                                    </Tabs>
+                                    </Box>
                                 </DialogTitle>
 
                                 {/* Dialog Body */}
-                                <DialogContent sx={{ p: { xs: 1.8, sm: 3 }, flex: 1, overflowY: 'auto' }}>
+                                <DialogContent sx={{ p: { xs: 1.8, sm: 2.8 }, flex: 1, overflowY: 'auto' }}>
                                     {/* ── TAB 1: ABSTRACT READER ── */}
                                     {currentTab === 'abstract' && (
                                         <Box sx={{ maxWidth: 900, mx: 'auto', py: 1 }}>
@@ -1563,7 +1950,7 @@ export default function JuriSubmissions({ scores = [] }) {
                                             <Box sx={{
                                                 p: 2,
                                                 mb: 2.5,
-                                                borderRadius: '14px',
+                                                borderRadius: '16px',
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
                                                 border: `1px solid ${c.cardBorder}`,
                                             }}>
@@ -1783,8 +2170,8 @@ export default function JuriSubmissions({ scores = [] }) {
                                             fileUrl={getFileUrl(mSub.full_paper_file)}
                                             fileName={mSub.full_paper_file ? String(mSub.full_paper_file).split('/').pop() : 'Full Paper'}
                                             rubricType={previewModal.rubricType}
-                                            isDark={isDark}
-                                            c={c}
+                                            docTitle="Full Paper Manuscript"
+                                            isFullscreen={previewModal.isFullscreen}
                                         />
                                     )}
 
@@ -1792,10 +2179,10 @@ export default function JuriSubmissions({ scores = [] }) {
                                     {currentTab === 'slides' && mSub.layouting_file && (
                                         <UniversalDocumentViewer
                                             fileUrl={getFileUrl(mSub.layouting_file)}
-                                            fileName={mSub.layouting_file ? String(mSub.layouting_file).split('/').pop() : 'Presentation File'}
+                                            fileName={mSub.layouting_file ? String(mSub.layouting_file).split('/').pop() : (isModalOral ? 'Presentation Slides' : 'Poster Layout')}
                                             rubricType={previewModal.rubricType}
-                                            isDark={isDark}
-                                            c={c}
+                                            docTitle={isModalOral ? 'Presentation Slides (.pptx)' : 'Poster Layout Design'}
+                                            isFullscreen={previewModal.isFullscreen}
                                         />
                                     )}
 
@@ -1803,51 +2190,70 @@ export default function JuriSubmissions({ scores = [] }) {
 
                                 {/* Dialog Footer */}
                                 <DialogActions sx={{
-                                    p: { xs: 1.5, sm: 2 },
+                                    p: { xs: 1.8, sm: 2.2 },
                                     borderTop: `1px solid ${c.cardBorder}`,
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                    display: 'flex',
+                                    alignItems: 'center',
                                     justifyContent: 'space-between',
+                                    flexWrap: 'wrap',
+                                    gap: 1.5,
                                 }}>
-                                    <Button
-                                        onClick={closePreview}
-                                        variant="outlined"
-                                        size="small"
-                                        sx={{
-                                            textTransform: 'none',
-                                            fontWeight: 700,
-                                            borderRadius: '10px',
-                                            borderColor: c.cardBorder,
-                                            color: c.textSecondary,
-                                            px: 2,
-                                        }}
-                                    >
-                                        Close
-                                    </Button>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Button
+                                            onClick={closePreview}
+                                            variant="outlined"
+                                            size="small"
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontWeight: 700,
+                                                borderRadius: '10px',
+                                                borderColor: c.cardBorder,
+                                                color: c.textSecondary,
+                                                px: 2.2,
+                                                py: 0.8,
+                                                fontSize: '0.82rem',
+                                                '&:hover': {
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                    borderColor: isDark ? 'rgba(255,255,255,0.2)' : '#cbd5e1',
+                                                }
+                                            }}
+                                        >
+                                            Tutup Preview
+                                        </Button>
+
+                                        {isScored && (
+                                            <Typography variant="caption" sx={{ color: c.textSecondary, fontWeight: 700, display: { xs: 'none', sm: 'inline-block' } }}>
+                                                Nilai Anda: <strong style={{ color: '#059669' }}>{Number(mScore.weighted_final_score).toFixed(2)}/10</strong> ({scoreTier?.tier || 'Evaluated'})
+                                            </Typography>
+                                        )}
+                                    </Box>
 
                                     <Button
                                         component={Link}
                                         href={(previewModal.submissionId || mSub?.id || mSub?.submission_id) ? route('juri.submissions.view', previewModal.submissionId || mSub?.id || mSub?.submission_id) : '#'}
                                         variant="contained"
                                         size="small"
-                                        endIcon={<ArrowForwardIcon sx={{ fontSize: 15 }} />}
+                                        startIcon={<GavelIcon sx={{ fontSize: 16 }} />}
+                                        endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
                                         sx={{
                                             textTransform: 'none',
                                             fontWeight: 800,
                                             borderRadius: '10px',
-                                            px: 2.5,
-                                            py: 0.8,
-                                            fontSize: '0.82rem',
+                                            px: 3,
+                                            py: 0.9,
+                                            fontSize: '0.85rem',
                                             background: 'linear-gradient(135deg, #094d42 0%, #059669 100%)',
                                             color: '#ffffff',
-                                            boxShadow: '0 4px 14px rgba(9, 77, 66, 0.3)',
+                                            boxShadow: '0 4px 16px rgba(9, 77, 66, 0.35)',
                                             '&:hover': {
                                                 background: 'linear-gradient(135deg, #063830 0%, #047857 100%)',
                                                 transform: 'translateY(-1px)',
-                                                boxShadow: '0 6px 18px rgba(9, 77, 66, 0.4)',
+                                                boxShadow: '0 6px 22px rgba(9, 77, 66, 0.45)',
                                             },
                                         }}
                                     >
-                                        Proceed to Evaluation
+                                        {isScored ? 'Buka & Edit Rubrik Penilaian' : 'Beri Nilai Presentasi Ini'}
                                     </Button>
                                 </DialogActions>
                             </>
