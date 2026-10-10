@@ -31,8 +31,9 @@ export const BADGE_TEMPLATES = {
     vip: '/images/badges/VIP.svg',
     exclusive: '/images/badges/VIP.svg',
 
-    // 4. Speaker
+    // 4. Keynote Speech
     speaker: '/images/badges/Speaker.svg',
+    keynote_speech: '/images/badges/Speaker.svg',
 
     // 5. Panelist
     panelist: '/images/badges/Panelist.svg',
