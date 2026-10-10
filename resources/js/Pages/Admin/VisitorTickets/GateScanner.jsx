@@ -98,10 +98,17 @@ const CATEGORY_MAP = {
         border: '#fde68a',
     },
 
-    // 4. Speaker
+    // 4. Keynote Speech
     speaker: {
-        label: 'SPEAKER',
-        shortLabel: 'SPEAKER',
+        label: 'KEYNOTE SPEECH',
+        shortLabel: 'KEYNOTE SPEECH',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
+    },
+    keynote_speech: {
+        label: 'KEYNOTE SPEECH',
+        shortLabel: 'KEYNOTE SPEECH',
         bg: '#fdf2f8',
         color: '#9d174d',
         border: '#fbcfe8',

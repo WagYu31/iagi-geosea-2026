@@ -551,6 +551,7 @@ class VisitorTicketAdminController extends Controller
         $map = [
             'vip' => '/images/badges/VIP.svg',
             'speaker' => '/images/badges/Speaker.svg',
+            'keynote_speech' => '/images/badges/Speaker.svg',
             'panelist' => '/images/badges/Panelist.svg',
             'moderator' => '/images/badges/Moderator.svg',
             'exhibition' => '/images/badges/Exhibitor.svg',

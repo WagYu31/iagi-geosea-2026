@@ -72,8 +72,9 @@ const CATEGORY_MAP = {
     vip: { label: 'VIP', short: 'VIP' },
     exclusive: { label: 'VIP', short: 'VIP' },
 
-    // 4. Speaker
-    speaker: { label: 'SPEAKER', short: 'SPEAKER' },
+    // 4. Keynote Speech
+    speaker: { label: 'KEYNOTE SPEECH', short: 'KEYNOTE SPEECH' },
+    keynote_speech: { label: 'KEYNOTE SPEECH', short: 'KEYNOTE SPEECH' },
 
     // 5. Panelist
     panelist: { label: 'PANELIST', short: 'PANELIST' },

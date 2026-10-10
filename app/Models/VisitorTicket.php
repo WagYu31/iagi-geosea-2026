@@ -74,6 +74,7 @@ class VisitorTicket extends Model
         $prefixMap = [
             'vip' => 'TKT-VIP',
             'speaker' => 'TKT-SPK',
+            'keynote_speech' => 'TKT-SPK',
             'panelist' => 'TKT-PNL',
             'moderator' => 'TKT-MOD',
             'exhibition' => 'TKT-EXH',
@@ -122,7 +123,8 @@ class VisitorTicket extends Model
             // 3-11. Roles & Invitations
             'vip' => 'VIP',
             'exclusive' => 'VIP',
-            'speaker' => 'Speaker',
+            'speaker' => 'Keynote Speech',
+            'keynote_speech' => 'Keynote Speech',
             'panelist' => 'Panelist',
             'moderator' => 'Moderator',
             'exhibition' => 'Exhibition',

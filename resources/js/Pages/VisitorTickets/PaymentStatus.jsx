@@ -41,7 +41,8 @@ import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 const CATEGORY_MAP = {
     // Roles & Invitations
     vip: { label: 'VIP', shortLabel: 'VIP', badge: 'VIP', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
-    speaker: { label: 'Speaker', shortLabel: 'SPEAKER', badge: 'SPEAKER', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
+    speaker: { label: 'Keynote Speech', shortLabel: 'KEYNOTE SPEECH', badge: 'KEYNOTE SPEECH', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
+    keynote_speech: { label: 'Keynote Speech', shortLabel: 'KEYNOTE SPEECH', badge: 'KEYNOTE SPEECH', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
     panelist: { label: 'Panelist', shortLabel: 'PANELIST', badge: 'PANELIST', bg: '#f5f3ff', color: '#5b21b6', border: '#ddd6fe' },
     moderator: { label: 'Moderator', shortLabel: 'MODERATOR', badge: 'MODERATOR', bg: '#ecfeff', color: '#155e75', border: '#a5f3fc' },
     exhibition: { label: 'Exhibition', shortLabel: 'EXHIBITION', badge: 'EXHIBITION', bg: '#fff7ed', color: '#9a3412', border: '#fed7aa' },

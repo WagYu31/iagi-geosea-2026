@@ -28,7 +28,8 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 const CATEGORY_MAP = {
     // Roles & Invitations
     vip: { label: 'VIP', badge: 'VIP' },
-    speaker: { label: 'Speaker', badge: 'SPEAKER' },
+    speaker: { label: 'Keynote Speech', badge: 'KEYNOTE SPEECH' },
+    keynote_speech: { label: 'Keynote Speech', badge: 'KEYNOTE SPEECH' },
     panelist: { label: 'Panelist', badge: 'PANELIST' },
     moderator: { label: 'Moderator', badge: 'MODERATOR' },
     exhibition: { label: 'Exhibition', badge: 'EXHIBITION' },
