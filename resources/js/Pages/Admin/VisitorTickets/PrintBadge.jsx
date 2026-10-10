@@ -31,9 +31,10 @@ export const BADGE_TEMPLATES = {
     vip: '/images/badges/VIP.svg',
     exclusive: '/images/badges/VIP.svg',
 
-    // 4. Keynote Speech
+    // 4. Keynote Speaker
     speaker: '/images/badges/Speaker.svg',
     keynote_speech: '/images/badges/Speaker.svg',
+    keynote_speaker: '/images/badges/Speaker.svg',
 
     // 5. Panelist
     panelist: '/images/badges/Panelist.svg',
@@ -73,9 +74,10 @@ const CATEGORY_MAP = {
     vip: { label: 'VIP', short: 'VIP' },
     exclusive: { label: 'VIP', short: 'VIP' },
 
-    // 4. Keynote Speech
-    speaker: { label: 'KEYNOTE SPEECH', short: 'KEYNOTE SPEECH' },
-    keynote_speech: { label: 'KEYNOTE SPEECH', short: 'KEYNOTE SPEECH' },
+    // 4. Keynote Speaker
+    speaker: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
+    keynote_speech: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
+    keynote_speaker: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
 
     // 5. Panelist
     panelist: { label: 'PANELIST', short: 'PANELIST' },

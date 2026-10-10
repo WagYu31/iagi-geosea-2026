@@ -130,17 +130,24 @@ const CATEGORY_META = {
         border: '#fde68a',
     },
 
-    // 4. Keynote Speech
+    // 4. Keynote Speaker
     speaker: {
-        label: 'Keynote Speech',
-        shortLabel: 'KEYNOTE SPEECH',
+        label: 'Keynote Speaker',
+        shortLabel: 'KEYNOTE SPEAKER',
         bg: '#fdf2f8',
         color: '#9d174d',
         border: '#fbcfe8',
     },
     keynote_speech: {
-        label: 'Keynote Speech',
-        shortLabel: 'KEYNOTE SPEECH',
+        label: 'Keynote Speaker',
+        shortLabel: 'KEYNOTE SPEAKER',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
+    },
+    keynote_speaker: {
+        label: 'Keynote Speaker',
+        shortLabel: 'KEYNOTE SPEAKER',
         bg: '#fdf2f8',
         color: '#9d174d',
         border: '#fbcfe8',
@@ -1276,7 +1283,7 @@ export default function VisitorTicketsIndex({
                                     ROLES & INVITATIONS (3 - 11)
                                 </ListSubheader>
                                 <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
-                                <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Keynote Speech</MenuItem>
+                                <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Keynote Speaker</MenuItem>
                                 <MenuItem value="panelist" sx={{ fontSize: '0.82rem' }}>5. 👥 Panelist</MenuItem>
                                 <MenuItem value="moderator" sx={{ fontSize: '0.82rem' }}>6. 🎯 Moderator</MenuItem>
                                 <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
@@ -2369,7 +2376,7 @@ export default function VisitorTicketsIndex({
                                         ROLES & INVITATIONS (3 - 11)
                                     </ListSubheader>
                                     <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">4. 🎤 Keynote Speech (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
                                     <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
                                     <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
                                     <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
@@ -2441,7 +2448,7 @@ export default function VisitorTicketsIndex({
                                         ROLES & INVITATIONS (3 - 11)
                                     </ListSubheader>
                                     <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">4. 🎤 Keynote Speech (Invited / Free)</MenuItem>
+                                    <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
                                     <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
                                     <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
                                     <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>

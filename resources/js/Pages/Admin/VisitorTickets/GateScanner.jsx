@@ -98,17 +98,24 @@ const CATEGORY_MAP = {
         border: '#fde68a',
     },
 
-    // 4. Keynote Speech
+    // 4. Keynote Speaker
     speaker: {
-        label: 'KEYNOTE SPEECH',
-        shortLabel: 'KEYNOTE SPEECH',
+        label: 'KEYNOTE SPEAKER',
+        shortLabel: 'KEYNOTE SPEAKER',
         bg: '#fdf2f8',
         color: '#9d174d',
         border: '#fbcfe8',
     },
     keynote_speech: {
-        label: 'KEYNOTE SPEECH',
-        shortLabel: 'KEYNOTE SPEECH',
+        label: 'KEYNOTE SPEAKER',
+        shortLabel: 'KEYNOTE SPEAKER',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
+    },
+    keynote_speaker: {
+        label: 'KEYNOTE SPEAKER',
+        shortLabel: 'KEYNOTE SPEAKER',
         bg: '#fdf2f8',
         color: '#9d174d',
         border: '#fbcfe8',
