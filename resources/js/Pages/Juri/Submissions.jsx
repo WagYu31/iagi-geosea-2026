@@ -37,11 +37,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import PrintIcon from '@mui/icons-material/Print';
-import TextFieldsIcon from '@mui/icons-material/TextFields';
-import LanguageIcon from '@mui/icons-material/Language';
 import CircularProgress from '@mui/material/CircularProgress';
-import mammoth from 'mammoth/mammoth.browser.js';
 
 // Helpers for file handling & document previews
 const getFileUrl = (filePath) => {
@@ -88,18 +84,15 @@ const getKeywordsList = (submission) => {
 // ── UNIVERSAL IN-APP DOCUMENT VIEWER COMPONENT ──
 // Allows viewing PDF, DOCX, DOC, PPTX, and images directly in-browser without download
 function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDark, c }) {
-    const [mode, setMode] = useState('auto'); // 'auto', 'mammoth', 'office', 'google'
-    const [docxHtml, setDocxHtml] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [fontSize, setFontSize] = useState(16);
+    const [viewerType, setViewerType] = useState('office'); // 'office' | 'google'
+    const [iframeLoading, setIframeLoading] = useState(true);
 
     const isPdf = isPdfFile(fileUrl);
     const isDocx = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.docx'));
     const isDoc = Boolean(fileUrl && fileUrl.toLowerCase().endsWith('.doc'));
     const isPpt = Boolean(fileUrl && /\.(pptx?|ppsx?)$/i.test(fileUrl));
     const isImage = isImgFile(fileUrl);
-    const isOral = (rubricType || '').toLowerCase() === 'oral';
+    const isOfficeDoc = isDocx || isDoc || isPpt;
 
     // Absolute URL for external cloud viewers (Office Online / Google Docs)
     const absoluteUrl = useMemo(() => {
@@ -111,56 +104,10 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
         return fileUrl;
     }, [fileUrl]);
 
-    // Parse DOCX with Mammoth directly in browser
+    // Reset loading state when viewer mode or file changes
     useEffect(() => {
-        if (!isDocx || !fileUrl) {
-            setDocxHtml('');
-            setLoading(false);
-            return;
-        }
-
-        let isMounted = true;
-        setLoading(true);
-        setError(null);
-
-        fetch(fileUrl)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP error ${res.status}: Failed to fetch file`);
-                return res.arrayBuffer();
-            })
-            .then(arrayBuffer => {
-                return mammoth.convertToHtml({ arrayBuffer });
-            })
-            .then(result => {
-                if (isMounted) {
-                    setDocxHtml(result.value || '<p><em>(Empty document)</em></p>');
-                    setLoading(false);
-                }
-            })
-            .catch(err => {
-                console.warn('Docx client parse failed, switching to cloud viewer fallback:', err);
-                if (isMounted) {
-                    setError('Local parsing unavailable. Using Online Office viewer.');
-                    setMode('office');
-                    setLoading(false);
-                }
-            });
-
-        return () => { isMounted = false; };
-    }, [fileUrl, isDocx]);
-
-    // Determine actual active viewer mode
-    const activeMode = useMemo(() => {
-        if (isPdf) return 'pdf';
-        if (isImage) return 'image';
-        if (mode === 'office') return 'office';
-        if (mode === 'google') return 'google';
-        if (mode === 'mammoth') return 'mammoth';
-        if (isDocx && docxHtml) return 'mammoth';
-        if (isDocx && loading) return 'mammoth';
-        if (isDoc || isPpt) return 'office';
-        return 'mammoth';
-    }, [isPdf, isImage, mode, isDocx, docxHtml, loading, isDoc, isPpt]);
+        setIframeLoading(true);
+    }, [fileUrl, viewerType]);
 
     return (
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -202,95 +149,43 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
 
                 {/* Controls depending on file format */}
                 <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                    {/* If DOCX or DOC or PPT, allow switching between In-App Reader and Online Office Viewer */}
-                    {(isDocx || isDoc || isPpt) && (
+                    {/* If DOCX, DOC, or PPT: allow switching between Office Online and Google Docs */}
+                    {isOfficeDoc && (
                         <Stack direction="row" spacing={0.5} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', p: 0.3, borderRadius: '8px' }}>
-                            {isDocx && (
-                                <Button
-                                    size="small"
-                                    onClick={() => setMode('mammoth')}
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontSize: '0.72rem',
-                                        fontWeight: activeMode === 'mammoth' ? 800 : 600,
-                                        py: 0.3,
-                                        px: 1,
-                                        borderRadius: '6px',
-                                        bgcolor: activeMode === 'mammoth' ? (isDark ? '#059669' : '#ffffff') : 'transparent',
-                                        color: activeMode === 'mammoth' ? (isDark ? '#ffffff' : '#059669') : c.textSecondary,
-                                        boxShadow: activeMode === 'mammoth' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                                    }}
-                                >
-                                    📄 In-App Reader
-                                </Button>
-                            )}
                             <Button
                                 size="small"
-                                onClick={() => setMode('office')}
+                                onClick={() => setViewerType('office')}
                                 sx={{
                                     textTransform: 'none',
                                     fontSize: '0.72rem',
-                                    fontWeight: activeMode === 'office' ? 800 : 600,
+                                    fontWeight: viewerType === 'office' ? 800 : 600,
                                     py: 0.3,
                                     px: 1,
                                     borderRadius: '6px',
-                                    bgcolor: activeMode === 'office' ? (isDark ? '#2563eb' : '#ffffff') : 'transparent',
-                                    color: activeMode === 'office' ? (isDark ? '#ffffff' : '#2563eb') : c.textSecondary,
-                                    boxShadow: activeMode === 'office' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                    bgcolor: viewerType === 'office' ? (isDark ? '#2563eb' : '#ffffff') : 'transparent',
+                                    color: viewerType === 'office' ? (isDark ? '#ffffff' : '#2563eb') : c.textSecondary,
+                                    boxShadow: viewerType === 'office' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                                 }}
                             >
                                 🌐 Office Online
                             </Button>
                             <Button
                                 size="small"
-                                onClick={() => setMode('google')}
+                                onClick={() => setViewerType('google')}
                                 sx={{
                                     textTransform: 'none',
                                     fontSize: '0.72rem',
-                                    fontWeight: activeMode === 'google' ? 800 : 600,
+                                    fontWeight: viewerType === 'google' ? 800 : 600,
                                     py: 0.3,
                                     px: 1,
                                     borderRadius: '6px',
-                                    bgcolor: activeMode === 'google' ? (isDark ? '#d97706' : '#ffffff') : 'transparent',
-                                    color: activeMode === 'google' ? (isDark ? '#ffffff' : '#d97706') : c.textSecondary,
-                                    boxShadow: activeMode === 'google' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                    bgcolor: viewerType === 'google' ? (isDark ? '#d97706' : '#ffffff') : 'transparent',
+                                    color: viewerType === 'google' ? (isDark ? '#ffffff' : '#d97706') : c.textSecondary,
+                                    boxShadow: viewerType === 'google' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                                 }}
                             >
-                                Google Docs
+                                📑 Google Docs
                             </Button>
-                        </Stack>
-                    )}
-
-                    {/* Font Size Controls when in Mammoth Reader Mode */}
-                    {activeMode === 'mammoth' && (
-                        <Stack direction="row" spacing={0.5} alignItems="center">
-                            <Tooltip title="Decrease font size" arrow>
-                                <IconButton
-                                    size="small"
-                                    onClick={() => setFontSize(prev => Math.max(12, prev - 2))}
-                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
-                                >
-                                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 800 }}>A-</Typography>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Increase font size" arrow>
-                                <IconButton
-                                    size="small"
-                                    onClick={() => setFontSize(prev => Math.min(26, prev + 2))}
-                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
-                                >
-                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 800 }}>A+</Typography>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Reset font size" arrow>
-                                <IconButton
-                                    size="small"
-                                    onClick={() => setFontSize(16)}
-                                    sx={{ p: 0.4, border: `1px solid ${c.cardBorder}`, borderRadius: '6px' }}
-                                >
-                                    <RestartAltIcon sx={{ fontSize: 14 }} />
-                                </IconButton>
-                            </Tooltip>
                         </Stack>
                     )}
 
@@ -339,10 +234,10 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
             </Box>
 
             {/* Viewer Display Body */}
-            {activeMode === 'pdf' && (
+            {isPdf && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '68vh',
+                    minHeight: '70vh',
                     borderRadius: '12px',
                     overflow: 'hidden',
                     border: `1px solid ${c.cardBorder}`,
@@ -353,156 +248,15 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
                         title="PDF Document Viewer"
                         width="100%"
                         height="100%"
-                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
+                        style={{ border: 'none', minHeight: '70vh', display: 'block' }}
                     />
                 </Box>
             )}
 
-            {activeMode === 'mammoth' && (
+            {isImage && (
                 <Box sx={{
                     flex: 1,
-                    minHeight: '68vh',
-                    maxHeight: '72vh',
-                    overflowY: 'auto',
-                    borderRadius: '12px',
-                    border: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? '#0b1324' : '#f1f5f9',
-                    p: { xs: 1.5, sm: 3 },
-                }}>
-                    {loading ? (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '45vh', gap: 2 }}>
-                            <CircularProgress size={36} sx={{ color: '#059669' }} />
-                            <Typography variant="body2" sx={{ color: c.textSecondary, fontWeight: 700 }}>
-                                Preparing and formatting manuscript for in-browser reading...
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <Box sx={{
-                            maxWidth: 880,
-                            mx: 'auto',
-                            bgcolor: '#ffffff',
-                            color: '#1e293b',
-                            p: { xs: 2.5, sm: 4.5, md: 6 },
-                            borderRadius: '16px',
-                            boxShadow: '0 8px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)',
-                            fontSize: `${fontSize}px`,
-                            lineHeight: 1.85,
-                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                            '& h1': {
-                                fontSize: '1.75em',
-                                fontWeight: 800,
-                                mt: 2,
-                                mb: 1,
-                                color: '#0f172a',
-                                borderBottom: '2px solid #e2e8f0',
-                                pb: 0.5,
-                            },
-                            '& h2': {
-                                fontSize: '1.38em',
-                                fontWeight: 800,
-                                mt: 2,
-                                mb: 0.8,
-                                color: '#0f172a',
-                            },
-                            '& h3': {
-                                fontSize: '1.18em',
-                                fontWeight: 700,
-                                mt: 1.8,
-                                mb: 0.6,
-                                color: '#1e293b',
-                            },
-                            '& p': {
-                                mb: 1.4,
-                                textAlign: 'justify',
-                            },
-                            '& table': {
-                                width: '100%',
-                                borderCollapse: 'collapse',
-                                my: 2.5,
-                                fontSize: '0.9em',
-                            },
-                            '& th, & td': {
-                                border: '1px solid #cbd5e1',
-                                p: 1.2,
-                                textAlign: 'left',
-                            },
-                            '& th': {
-                                bgcolor: '#f8fafc',
-                                fontWeight: 800,
-                                color: '#0f172a',
-                            },
-                            '& img': {
-                                maxWidth: '100%',
-                                height: 'auto',
-                                display: 'block',
-                                my: 2,
-                                mx: 'auto',
-                                borderRadius: '8px',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-                            },
-                            '& ul, & ol': {
-                                pl: 3,
-                                mb: 1.5,
-                            },
-                            '& blockquote': {
-                                borderLeft: '4px solid #059669',
-                                pl: 2,
-                                ml: 0,
-                                color: '#475569',
-                                fontStyle: 'italic',
-                                my: 1.5,
-                            },
-                        }}>
-                            <div dangerouslySetInnerHTML={{ __html: docxHtml }} />
-                        </Box>
-                    )}
-                </Box>
-            )}
-
-            {activeMode === 'office' && (
-                <Box sx={{
-                    flex: 1,
-                    minHeight: '68vh',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? '#111827' : '#f1f5f9',
-                    position: 'relative',
-                }}>
-                    <iframe
-                        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`}
-                        title="Microsoft Office Online Viewer"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
-                    />
-                </Box>
-            )}
-
-            {activeMode === 'google' && (
-                <Box sx={{
-                    flex: 1,
-                    minHeight: '68vh',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: `1px solid ${c.cardBorder}`,
-                    bgcolor: isDark ? '#111827' : '#f1f5f9',
-                    position: 'relative',
-                }}>
-                    <iframe
-                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`}
-                        title="Google Docs Viewer"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 'none', minHeight: '68vh', display: 'block' }}
-                    />
-                </Box>
-            )}
-
-            {activeMode === 'image' && (
-                <Box sx={{
-                    flex: 1,
-                    minHeight: '68vh',
+                    minHeight: '70vh',
                     p: 2,
                     borderRadius: '12px',
                     bgcolor: isDark ? '#000000' : '#f8fafc',
@@ -516,7 +270,7 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
                     <Box
                         component="img"
                         src={fileUrl}
-                        alt="Poster Layout"
+                        alt="Poster / File Preview"
                         sx={{
                             maxWidth: '100%',
                             maxHeight: '70vh',
@@ -524,6 +278,77 @@ function UniversalDocumentViewer({ fileUrl, fileName, rubricType = 'oral', isDar
                             borderRadius: '8px',
                             boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                         }}
+                    />
+                </Box>
+            )}
+
+            {isOfficeDoc && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '72vh',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}>
+                    {iframeLoading && (
+                        <Box sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            zIndex: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: isDark ? 'rgba(15, 23, 42, 0.88)' : 'rgba(255, 255, 255, 0.88)',
+                            backdropFilter: 'blur(4px)',
+                            gap: 1.5,
+                            p: 3,
+                            textAlign: 'center',
+                        }}>
+                            <CircularProgress size={36} sx={{ color: viewerType === 'office' ? '#2563eb' : '#d97706' }} />
+                            <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary }}>
+                                Memuat dokumen {isDocx ? 'Word (.docx)' : isPpt ? 'PowerPoint (.pptx)' : ''} di layar...
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: c.textSecondary, maxWidth: 420 }}>
+                                Menghubungkan ke {viewerType === 'office' ? 'Microsoft Office Online' : 'Google Docs Viewer'} agar dokumen dapat dibaca langsung tanpa perlu diunduh.
+                            </Typography>
+                        </Box>
+                    )}
+                    <iframe
+                        key={`${viewerType}-${fileUrl}`}
+                        src={
+                            viewerType === 'office'
+                                ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`
+                                : `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`
+                        }
+                        title={viewerType === 'office' ? 'Microsoft Office Online Viewer' : 'Google Docs Viewer'}
+                        width="100%"
+                        height="100%"
+                        onLoad={() => setIframeLoading(false)}
+                        style={{ border: 'none', flex: 1, minHeight: '72vh', display: 'block' }}
+                    />
+                </Box>
+            )}
+
+            {!isPdf && !isImage && !isOfficeDoc && (
+                <Box sx={{
+                    flex: 1,
+                    minHeight: '70vh',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: `1px solid ${c.cardBorder}`,
+                    bgcolor: isDark ? '#111827' : '#f1f5f9',
+                }}>
+                    <iframe
+                        src={fileUrl}
+                        title="Document Viewer"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 'none', minHeight: '70vh', display: 'block' }}
                     />
                 </Box>
             )}
