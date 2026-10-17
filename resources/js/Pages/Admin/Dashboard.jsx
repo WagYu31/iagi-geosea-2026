@@ -157,11 +157,15 @@ export default function AdminDashboard({
     const statusPieItems = useMemo(() => {
         return [
             { id: 'accepted', label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981' },
-            { id: 'under_review', label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7' },
-            { id: 'revision_required_phase1', label: 'Revision P1', value: statusCounts.revision_required_phase1 || 0, color: '#f59e0b' },
-            { id: 'revision_required_phase2', label: 'Revision P2', value: statusCounts.revision_required_phase2 || 0, color: '#ea580c' },
-            { id: 'pending', label: 'Pending', value: statusCounts.pending || 0, color: '#64748b' },
             { id: 'rejected', label: 'Rejected', value: statusCounts.rejected || 0, color: '#ef4444' },
+            { id: 'under_review', label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7' },
+            { id: 'pending', label: 'Pending', value: statusCounts.pending || 0, color: '#64748b' },
+            ...(statusCounts.revision_required_phase1 > 0 ? [
+                { id: 'revision_required_phase1', label: 'Revision P1', value: statusCounts.revision_required_phase1, color: '#f59e0b' }
+            ] : []),
+            ...(statusCounts.revision_required_phase2 > 0 ? [
+                { id: 'revision_required_phase2', label: 'Revision P2', value: statusCounts.revision_required_phase2, color: '#ea580c' }
+            ] : []),
             ...(statusCounts.deletion_requested > 0 ? [
                 { id: 'deletion_requested', label: 'Delete Req.', value: statusCounts.deletion_requested, color: '#94a3b8' }
             ] : []),
@@ -1061,7 +1065,8 @@ export default function AdminDashboard({
                                 justifyContent: 'space-between',
                             }}
                         >
-                            <Box sx={{ p: { xs: 2.5, sm: 3 }, pb: 0 }}>
+                            <Box sx={{ p: { xs: 2.5, sm: 3 }, pb: 2 }}>
+                                {/* Header */}
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, mb: 2 }}>
                                     <Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -1137,13 +1142,21 @@ export default function AdminDashboard({
                                     </Box>
                                 </Box>
 
-                                {/* 4 Status Key Metric Summaries (matching the exact 4-box layout of the left card) */}
-                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, pt: 1, pb: 1.5, borderTop: `1px solid ${c.cardBorder}`, borderBottom: `1px solid ${c.cardBorder}` }}>
+                                {/* 4 Key Status Metric Cards (Accepted, In Review, Rejected, Pending) */}
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: 1.25,
+                                    pt: 1.25,
+                                    pb: 1.5,
+                                    borderTop: `1px solid ${c.cardBorder}`,
+                                    borderBottom: `1px solid ${c.cardBorder}`,
+                                }}>
                                     {[
-                                        { label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981', status: 'accepted' },
-                                        { label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7', status: 'under_review' },
-                                        { label: 'Revision', value: (statusCounts.revision_required_phase1 || 0) + (statusCounts.revision_required_phase2 || 0), color: '#f59e0b', status: 'revision_required_phase1' },
-                                        { label: 'Pending', value: statusCounts.pending || 0, color: '#64748b', status: 'pending' },
+                                        { label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5', border: isDark ? 'rgba(16,185,129,0.25)' : '#a7f3d0', status: 'accepted' },
+                                        { label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7', bg: isDark ? 'rgba(2,132,199,0.12)' : '#f0f9ff', border: isDark ? 'rgba(2,132,199,0.25)' : '#bae6fd', status: 'under_review' },
+                                        { label: 'Rejected', value: statusCounts.rejected || 0, color: '#ef4444', bg: isDark ? 'rgba(239,68,68,0.12)' : '#fef2f2', border: isDark ? 'rgba(239,68,68,0.25)' : '#fecaca', status: 'rejected' },
+                                        { label: 'Pending', value: statusCounts.pending || 0, color: '#64748b', bg: isDark ? 'rgba(100,116,139,0.12)' : '#f8fafc', border: isDark ? 'rgba(100,116,139,0.25)' : '#e2e8f0', status: 'pending' },
                                     ].map((m) => (
                                         <Box
                                             key={m.label}
@@ -1152,89 +1165,186 @@ export default function AdminDashboard({
                                             sx={{
                                                 textAlign: 'center',
                                                 textDecoration: 'none',
-                                                py: 0.25,
-                                                borderRadius: '8px',
+                                                py: 0.75,
+                                                px: 0.5,
+                                                borderRadius: '10px',
+                                                bgcolor: m.bg,
+                                                border: `1px solid ${m.border}`,
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': {
-                                                    bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
-                                                    transform: 'translateY(-1px)',
+                                                    transform: 'translateY(-2px)',
+                                                    boxShadow: `0 4px 12px ${m.color}22`,
                                                 },
                                             }}
                                         >
-                                            <Typography sx={{ fontSize: '0.675rem', fontWeight: 600, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: m.color, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                                                 {m.label}
                                             </Typography>
-                                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: m.color, lineHeight: 1.2 }}>
+                                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 900, color: m.color, lineHeight: 1.15, mt: 0.25 }}>
                                                 {m.value.toLocaleString()}
                                             </Typography>
                                         </Box>
                                     ))}
                                 </Box>
-                            </Box>
 
-                            {/* Donut / Pie Chart */}
-                            <Box sx={{ width: '100%', height: 260, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1, py: 1 }}>
-                                {activeStatusPieData.length > 0 ? (
-                                    <Box sx={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <PieChart
-                                            series={[{
-                                                data: activeStatusPieData,
-                                                innerRadius: 52,
-                                                outerRadius: 88,
-                                                paddingAngle: 3,
-                                                cornerRadius: 5,
-                                                cx: 115,
-                                                highlightScope: { fade: 'global', highlight: 'item' },
-                                                faded: { innerRadius: 48, additionalRadius: -4, opacity: 0.4 },
-                                                valueFormatter: (item) => `${item.value} paper${item.value > 1 ? 's' : ''} (${totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : 0}%)`,
-                                            }]}
-                                            height={240}
-                                            slotProps={{
-                                                legend: {
-                                                    direction: 'column',
-                                                    position: { vertical: 'middle', horizontal: 'right' },
-                                                    padding: 0,
-                                                    itemMarkWidth: 10,
-                                                    itemMarkHeight: 10,
-                                                    markGap: 8,
-                                                    itemGap: 6,
-                                                    labelStyle: {
-                                                        fontSize: 11.5,
-                                                        fontWeight: 600,
-                                                        fill: isDark ? '#d1d5db' : '#334155',
-                                                    },
-                                                },
-                                            }}
-                                            sx={{
-                                                '& .MuiPieArc-root': {
-                                                    stroke: isDark ? '#1e293b' : '#ffffff',
-                                                    strokeWidth: 2,
-                                                },
-                                            }}
-                                        />
-                                        {/* Center Donut Label */}
-                                        <Box sx={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: 115,
-                                            transform: 'translate(-50%, -50%)',
-                                            textAlign: 'center',
-                                            pointerEvents: 'none',
-                                        }}>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.25rem', color: c.textPrimary, lineHeight: 1 }}>
-                                                {totalStatusCount}
-                                            </Typography>
-                                            <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                Papers
-                                            </Typography>
+                                {/* Side-by-Side Donut & Detailed Status Breakdown Rows */}
+                                <Grid container spacing={2.5} sx={{ alignItems: 'center', mt: 1 }}>
+                                    {/* Left Column: Centered Donut Chart with Inner Metric & Acceptance Badge */}
+                                    <Grid size={{ xs: 12, sm: 5 }}>
+                                        <Box sx={{ position: 'relative', width: '100%', height: 210, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {activeStatusPieData.length > 0 ? (
+                                                <>
+                                                    <PieChart
+                                                        series={[{
+                                                            data: activeStatusPieData,
+                                                            innerRadius: 58,
+                                                            outerRadius: 88,
+                                                            paddingAngle: 3,
+                                                            cornerRadius: 5,
+                                                            highlightScope: { fade: 'global', highlight: 'item' },
+                                                            faded: { innerRadius: 54, additionalRadius: -3, opacity: 0.35 },
+                                                            valueFormatter: (item) => `${item.value} paper${item.value > 1 ? 's' : ''} (${totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : 0}%)`,
+                                                        }]}
+                                                        height={210}
+                                                        slotProps={{
+                                                            legend: { hidden: true },
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiPieArc-root': {
+                                                                stroke: isDark ? '#1e293b' : '#ffffff',
+                                                                strokeWidth: 2.5,
+                                                            },
+                                                        }}
+                                                    />
+                                                    {/* Center Donut Hole Content */}
+                                                    <Box sx={{
+                                                        position: 'absolute',
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        transform: 'translate(-50%, -50%)',
+                                                        textAlign: 'center',
+                                                        pointerEvents: 'none',
+                                                    }}>
+                                                        <Typography sx={{ fontWeight: 900, fontSize: '1.45rem', color: c.textPrimary, lineHeight: 1 }}>
+                                                            {totalStatusCount}
+                                                        </Typography>
+                                                        <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', mt: 0.25 }}>
+                                                            Papers
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            ) : (
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 1 }}>
+                                                    <PieChartRoundedIcon sx={{ fontSize: 40, color: c.textMuted, opacity: 0.4 }} />
+                                                    <Typography sx={{ color: c.textMuted, fontSize: '0.8rem' }}>No submission status data</Typography>
+                                                </Box>
+                                            )}
                                         </Box>
-                                    </Box>
-                                ) : (
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 1 }}>
-                                        <PieChartRoundedIcon sx={{ fontSize: 40, color: c.textMuted, opacity: 0.4 }} />
-                                        <Typography sx={{ color: c.textMuted, fontSize: '0.8rem' }}>No submission status data available</Typography>
-                                    </Box>
-                                )}
+
+                                        {/* Acceptance Rate pill under Donut */}
+                                        {totalStatusCount > 0 && (
+                                            <Box sx={{ textAlign: 'center', mt: 0.5 }}>
+                                                <Chip
+                                                    size="small"
+                                                    icon={<CheckCircleRoundedIcon sx={{ fontSize: '14px !important' }} />}
+                                                    label={`Acceptance: ${((statusCounts.accepted / totalStatusCount) * 100).toFixed(1)}%`}
+                                                    sx={{
+                                                        fontWeight: 700,
+                                                        fontSize: '0.72rem',
+                                                        bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                        color: '#059669',
+                                                        border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
+                                                        height: 24,
+                                                    }}
+                                                />
+                                            </Box>
+                                        )}
+                                    </Grid>
+
+                                    {/* Right Column: Detailed Status Breakdown Rows with Progress Bars */}
+                                    <Grid size={{ xs: 12, sm: 7 }}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.9 }}>
+                                            {statusPieItems.map((item) => {
+                                                const pct = totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : '0';
+                                                return (
+                                                    <Box
+                                                        key={item.id}
+                                                        component={Link}
+                                                        href={route('admin.submissions', { status: item.id })}
+                                                        sx={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between',
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                            borderRadius: '10px',
+                                                            textDecoration: 'none',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                                            border: `1px solid ${c.cardBorder}`,
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            '&:hover': {
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+                                                                borderColor: item.color,
+                                                                boxShadow: `0 2px 8px ${item.color}18`,
+                                                                transform: 'translateX(3px)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        {/* Color Dot & Status Label */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 90 }}>
+                                                            <Box sx={{
+                                                                width: 9,
+                                                                height: 9,
+                                                                borderRadius: '50%',
+                                                                bgcolor: item.color,
+                                                                boxShadow: `0 0 6px ${item.color}88`,
+                                                                flexShrink: 0,
+                                                            }} />
+                                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: c.textPrimary }}>
+                                                                {item.label}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Mini Progress Bar */}
+                                                        <Box sx={{ flex: 1, mx: 1.5, display: { xs: 'none', sm: 'block' } }}>
+                                                            <LinearProgress
+                                                                variant="determinate"
+                                                                value={Number(pct)}
+                                                                sx={{
+                                                                    height: 6,
+                                                                    borderRadius: 3,
+                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                                                                    '& .MuiLinearProgress-bar': {
+                                                                        bgcolor: item.color,
+                                                                        borderRadius: 3,
+                                                                    },
+                                                                }}
+                                                            />
+                                                        </Box>
+
+                                                        {/* Count and Percentage Badge */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: c.textPrimary }}>
+                                                                {item.value.toLocaleString()}
+                                                            </Typography>
+                                                            <Typography sx={{
+                                                                fontSize: '0.68rem',
+                                                                fontWeight: 700,
+                                                                color: c.textMuted,
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
+                                                                px: 0.75,
+                                                                py: 0.2,
+                                                                borderRadius: '5px',
+                                                            }}>
+                                                                {pct}%
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                );
+                                            })}
+                                        </Box>
+                                    </Grid>
+                                </Grid>
                             </Box>
                         </Card>
                     </Grid>
