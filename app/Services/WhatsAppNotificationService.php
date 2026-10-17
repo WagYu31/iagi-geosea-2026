@@ -7,19 +7,20 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppNotificationService
 {
-    protected $apiKey;
-    protected $baseUrl;
+    protected $token;
+    protected $provider;
 
     public function __construct()
     {
-        $this->apiKey = env('FLOWKIRIM_API_KEY', 'ea0eaebe96e43a3fd9ea82583192b0ab9c0720b18f8b40c0253da3f18bfe391a');
-        $this->baseUrl = 'https://api.flowkirim.com';
+        // Support FONNTE_TOKEN (priority), WHATSAPP_TOKEN, or FLOWKIRIM_API_KEY
+        $this->token = env('FONNTE_TOKEN') ?: (env('WHATSAPP_TOKEN') ?: env('FLOWKIRIM_API_KEY'));
+        $this->provider = env('WHATSAPP_PROVIDER', 'fonnte');
     }
 
     /**
      * Send WhatsApp notification
      *
-     * @param string $phoneNumber Phone number with country code (e.g., 628212226504)
+     * @param string $phoneNumber Phone number with country code (e.g., 6285771593522)
      * @param string $message Message to send
      * @return bool
      */
@@ -36,9 +37,10 @@ class WhatsAppNotificationService
                 $phoneNumber = '62' . $phoneNumber;
             }
 
-            // Manual mode: Log message for admin to send manually
-            if (env('WHATSAPP_MANUAL_MODE', true)) {
-                Log::info('WhatsApp notification (MANUAL MODE)', [
+            // Manual mode: Log message if explicitly set to manual mode AND no token provided
+            $isManual = env('WHATSAPP_MANUAL_MODE', false);
+            if ($isManual && empty($this->token)) {
+                Log::info('WhatsApp notification (MANUAL MODE - No Token configured)', [
                     'phone' => $phoneNumber,
                     'message' => $message,
                     'whatsapp_url' => "https://wa.me/{$phoneNumber}?text=" . urlencode($message),
@@ -47,29 +49,53 @@ class WhatsAppNotificationService
                 return true;
             }
 
-            // Send message via FlowKirim API (production mode)
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/v1/send-message', [
-                'phone' => $phoneNumber,
-                'message' => $message,
-            ]);
+            // 1. Send via Fonnte API (Primary Gateway)
+            if (!empty($this->token) && ($this->provider === 'fonnte' || empty($this->provider))) {
+                $response = Http::withHeaders([
+                    'Authorization' => $this->token,
+                ])->asForm()->post('https://api.fonnte.com/send', [
+                    'target' => $phoneNumber,
+                    'message' => $message,
+                    'countryCode' => '62',
+                ]);
 
-            if ($response->successful()) {
-                Log::info('WhatsApp notification sent successfully', [
-                    'phone' => $phoneNumber,
-                    'response' => $response->json()
-                ]);
-                return true;
-            } else {
-                Log::error('Failed to send WhatsApp notification', [
-                    'phone' => $phoneNumber,
-                    'status' => $response->status(),
-                    'response' => $response->body()
-                ]);
-                return false;
+                if ($response->successful()) {
+                    Log::info('WhatsApp notification sent successfully via Fonnte', [
+                        'phone' => $phoneNumber,
+                        'response' => $response->json(),
+                    ]);
+                    return true;
+                } else {
+                    Log::error('Failed to send WhatsApp notification via Fonnte', [
+                        'phone' => $phoneNumber,
+                        'status' => $response->status(),
+                        'response' => $response->body(),
+                    ]);
+                    return false;
+                }
             }
+
+            // 2. Fallback to FlowKirim if configured
+            if (!empty($this->token) && $this->provider === 'flowkirim') {
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $this->token,
+                    'Content-Type' => 'application/json',
+                ])->post('https://api.flowkirim.com/v1/messages', [
+                    'to' => $phoneNumber,
+                    'message' => $message,
+                ]);
+
+                if ($response->successful()) {
+                    Log::info('WhatsApp notification sent successfully via FlowKirim', [
+                        'phone' => $phoneNumber,
+                        'response' => $response->json()
+                    ]);
+                    return true;
+                }
+            }
+
+            Log::warning('WhatsApp notification skipped: No active token found in FONNTE_TOKEN.', ['phone' => $phoneNumber]);
+            return false;
         } catch (\Exception $e) {
             Log::error('Exception while sending WhatsApp notification', [
                 'phone' => $phoneNumber,
