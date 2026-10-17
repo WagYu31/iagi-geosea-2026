@@ -14,12 +14,11 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SecurityIcon from '@mui/icons-material/Security';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import LoginIcon from '@mui/icons-material/Login';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { motion } from 'motion/react';
 
-export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status, devOtp, isManualMode }) {
+export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status }) {
     const [timeLeft, setTimeLeft] = useState(remainingSeconds);
     const [resendCooldown, setResendCooldown] = useState(45);
     const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
@@ -108,15 +107,7 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status,
         }
     };
 
-    const handleFillDevOtp = () => {
-        if (!devOtp) return;
-        const chars = String(devOtp).trim().slice(0, 6).split('');
-        const newDigits = ['', '', '', '', '', ''];
-        chars.forEach((c, i) => {
-            if (i < 6) newDigits[i] = c;
-        });
-        setOtpDigits(newDigits);
-    };
+
 
     const handleResend = (e) => {
         e.preventDefault();
@@ -292,68 +283,6 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status,
                     </Alert>
                 )}
 
-                {/* Developer / Manual Mode Hint Box */}
-                {isManualMode && devOtp && (
-                    <Box
-                        sx={{
-                            mb: 3,
-                            p: 1.8,
-                            borderRadius: '16px',
-                            background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
-                            border: '1.5px dashed #86efac',
-                            textAlign: 'center',
-                            position: 'relative',
-                        }}
-                    >
-                        <Typography
-                            sx={{
-                                fontSize: '0.72rem',
-                                color: '#166534',
-                                fontWeight: 700,
-                                letterSpacing: '0.06em',
-                                textTransform: 'uppercase',
-                                mb: 0.5,
-                            }}
-                        >
-                            🛠️ Simulasi OTP (Mode Development / Manual)
-                        </Typography>
-                        <Typography
-                            sx={{
-                                fontSize: { xs: '1.35rem', sm: '1.5rem' },
-                                fontWeight: 900,
-                                color: '#15803d',
-                                letterSpacing: '0.35em',
-                                fontFamily: "'Outfit', monospace",
-                                mb: 1,
-                            }}
-                        >
-                            {devOtp}
-                        </Typography>
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={handleFillDevOtp}
-                            startIcon={<AutoAwesomeIcon sx={{ fontSize: 15 }} />}
-                            sx={{
-                                textTransform: 'none',
-                                fontSize: '0.75rem',
-                                fontWeight: 700,
-                                py: 0.4,
-                                px: 1.8,
-                                borderRadius: '9999px',
-                                color: '#15803d',
-                                borderColor: '#86efac',
-                                bgcolor: '#ffffff',
-                                '&:hover': {
-                                    bgcolor: '#dcfce7',
-                                    borderColor: '#4ade80',
-                                },
-                            }}
-                        >
-                            Klik untuk Isi Otomatis
-                        </Button>
-                    </Box>
-                )}
 
                 {/* 6-Digit Segmented OTP Input Form */}
                 <form
