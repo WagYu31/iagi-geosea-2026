@@ -34,6 +34,7 @@ export default function Login({ status, canResetPassword }) {
         email: '',
         password: '',
         remember: false,
+        auth_challenge: '',
     });
 
     const [showPassword, setShowPassword] = useState(false);
@@ -744,6 +745,17 @@ export default function Login({ status, canResetPassword }) {
                         )}
 
                         <form onSubmit={submit}>
+                            {/* Honeypot field for anti-bot / anti-crawler protection (invisible to genuine users) */}
+                            <input
+                                type="text"
+                                name="auth_challenge"
+                                value={data.auth_challenge}
+                                onChange={(e) => setData('auth_challenge', e.target.value)}
+                                style={{ display: 'none', position: 'absolute', opacity: 0, height: 0, width: 0, zIndex: -1 }}
+                                tabIndex={-1}
+                                autoComplete="off"
+                            />
+
                             {/* Email Field with Clean Above-Label */}
                             <Box sx={{ mb: 2.2 }}>
                                 <Typography

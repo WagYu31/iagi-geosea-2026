@@ -116,4 +116,24 @@ class WhatsAppNotificationService
 
         return $this->sendMessage($user->whatsapp, $message);
     }
+
+    /**
+     * Send Two-Factor Authentication OTP code via WhatsApp
+     *
+     * @param string $phoneNumber
+     * @param string $otp
+     * @return bool
+     */
+    public function sendOtp($phoneNumber, $otp)
+    {
+        $message = "🔐 *KODE VERIFIKASI KEAMANAN (OTP)*\n"
+            . "*55th PIT IAGI - GEOSEA XIX 2026*\n\n"
+            . "Kode OTP Login Portal Anda adalah:\n"
+            . "*{$otp}*\n\n"
+            . "⏱️ *Berlaku:* 5 Menit\n"
+            . "⚠️ *PENTING:* Jangan berikan kode ini kepada siapa pun demi keamanan akun Anda.\n\n"
+            . "Jika Anda tidak sedang mencoba masuk, abaikan pesan ini atau segera hubungi Super Admin.";
+
+        return $this->sendMessage($phoneNumber, $message);
+    }
 }

@@ -39,6 +39,14 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
+        // Honeypot anti-bot protection: If hidden honeypot field is filled, reject immediately
+        if (!empty($this->input('auth_challenge'))) {
+            RateLimiter::hit($this->throttleKey(), 300);
+            throw ValidationException::withMessages([
+                'email' => 'Automated access denied.',
+            ]);
+        }
+
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {

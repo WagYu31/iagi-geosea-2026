@@ -23,6 +23,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
+        // Enforce strong password policy across registration and reset passwords
+        \Illuminate\Validation\Rules\Password::defaults(function () {
+            return \Illuminate\Validation\Rules\Password::min(8)
+                ->letters()
+                ->numbers();
+        });
+
         // Auto-apply SMTP settings from database
         try {
             $emailSettings = EmailSetting::getActive();

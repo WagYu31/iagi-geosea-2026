@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\TwoFactorOtpController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,19 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+    // Two-Factor Authentication (WhatsApp OTP)
+    Route::get('verify-otp', [TwoFactorOtpController::class, 'show'])
+        ->name('2fa.verify');
+
+    Route::post('verify-otp', [TwoFactorOtpController::class, 'verify'])
+        ->name('2fa.submit');
+
+    Route::post('resend-otp', [TwoFactorOtpController::class, 'resend'])
+        ->name('2fa.resend');
+
+    Route::post('cancel-otp', [TwoFactorOtpController::class, 'cancel'])
+        ->name('2fa.cancel');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

@@ -31,14 +31,34 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
-        // Redirect based on user role
         $user = Auth::user();
 
-        if (strtolower($user->role) === 'admin') {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+        // 2FA WhatsApp Enforcement for Admin
+        if ($user && strtolower($user->role) === 'admin') {
+            Auth::guard('web')->logout();
+
+            $otp = (string) random_int(100000, 999999);
+            $phone = $user->whatsapp ?: env('ADMIN_WHATSAPP', '628212226504');
+
+            $request->session()->put('auth_2fa', [
+                'user_id' => $user->id,
+                'otp_hash' => \Illuminate\Support\Facades\Hash::make($otp),
+                'expires_at' => now()->addMinutes(5)->timestamp,
+                'last_sent_at' => now()->timestamp,
+                'phone' => $phone,
+                'remember' => $request->boolean('remember'),
+                'dev_otp' => (config('app.debug') || env('WHATSAPP_MANUAL_MODE', true)) ? $otp : null,
+            ]);
+
+            // Dispatch OTP via WhatsApp
+            if (!empty($phone)) {
+                app(\App\Services\WhatsAppNotificationService::class)->sendOtp($phone, $otp);
+            }
+
+            return redirect()->route('2fa.verify');
         }
+
+        $request->session()->regenerate();
 
         if (strtolower($user->role) === 'reviewer') {
             return redirect()->intended(route('reviewer.dashboard', absolute: false));
