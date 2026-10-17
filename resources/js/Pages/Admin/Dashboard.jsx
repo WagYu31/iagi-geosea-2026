@@ -1188,28 +1188,29 @@ export default function AdminDashboard({
                                 </Box>
 
                                 {/* Side-by-Side Donut & Detailed Status Breakdown Rows */}
-                                <Grid container spacing={2.5} sx={{ alignItems: 'center', mt: 1 }}>
+                                <Grid container spacing={2} sx={{ alignItems: 'center', mt: 0.5 }}>
                                     {/* Left Column: Centered Donut Chart with Inner Metric & Acceptance Badge */}
-                                    <Grid size={{ xs: 12, sm: 5 }}>
-                                        <Box sx={{ position: 'relative', width: '100%', height: 210, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Grid size={{ xs: 12, sm: 4.5, md: 4.5 }}>
+                                        <Box sx={{ position: 'relative', width: '100%', height: 190, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             {activeStatusPieData.length > 0 ? (
                                                 <>
                                                     <PieChart
+                                                        hideLegend={true}
+                                                        slots={{ legend: () => null }}
                                                         series={[{
                                                             data: activeStatusPieData,
-                                                            innerRadius: 58,
-                                                            outerRadius: 88,
+                                                            innerRadius: 50,
+                                                            outerRadius: 76,
                                                             paddingAngle: 3,
                                                             cornerRadius: 5,
                                                             highlightScope: { fade: 'global', highlight: 'item' },
-                                                            faded: { innerRadius: 54, additionalRadius: -3, opacity: 0.35 },
+                                                            faded: { innerRadius: 46, additionalRadius: -3, opacity: 0.35 },
                                                             valueFormatter: (item) => `${item.value} paper${item.value > 1 ? 's' : ''} (${totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : 0}%)`,
                                                         }]}
-                                                        height={210}
-                                                        slotProps={{
-                                                            legend: { hidden: true },
-                                                        }}
+                                                        margin={{ top: 5, bottom: 5, left: 5, right: 5 }}
+                                                        height={190}
                                                         sx={{
+                                                            '& .MuiChartsLegend-root': { display: 'none !important' },
                                                             '& .MuiPieArc-root': {
                                                                 stroke: isDark ? '#1e293b' : '#ffffff',
                                                                 strokeWidth: 2.5,
@@ -1225,10 +1226,10 @@ export default function AdminDashboard({
                                                         textAlign: 'center',
                                                         pointerEvents: 'none',
                                                     }}>
-                                                        <Typography sx={{ fontWeight: 900, fontSize: '1.45rem', color: c.textPrimary, lineHeight: 1 }}>
+                                                        <Typography sx={{ fontWeight: 900, fontSize: '1.35rem', color: c.textPrimary, lineHeight: 1 }}>
                                                             {totalStatusCount}
                                                         </Typography>
-                                                        <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', mt: 0.25 }}>
+                                                        <Typography sx={{ fontSize: '0.625rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', mt: 0.25 }}>
                                                             Papers
                                                         </Typography>
                                                     </Box>
@@ -1262,7 +1263,7 @@ export default function AdminDashboard({
                                     </Grid>
 
                                     {/* Right Column: Detailed Status Breakdown Rows with Progress Bars */}
-                                    <Grid size={{ xs: 12, sm: 7 }}>
+                                    <Grid size={{ xs: 12, sm: 7.5, md: 7.5 }}>
                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.9 }}>
                                             {statusPieItems.map((item) => {
                                                 const pct = totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : '0';
