@@ -38,7 +38,21 @@ class AuthenticatedSessionController extends Controller
             Auth::guard('web')->logout();
 
             $otp = (string) random_int(100000, 999999);
-            $phone = $user->whatsapp ?: env('ADMIN_WHATSAPP', '628212226504');
+
+            // Prioritize user's saved WhatsApp, fallback to ADMIN_WHATSAPP env or correct default '085771593522'
+            $configuredAdminPhone = env('ADMIN_WHATSAPP', '085771593522');
+            $phone = $user->whatsapp;
+
+            // If empty or still carrying the old test number, update to the correct admin WhatsApp
+            if (empty($phone) || in_array($phone, ['628212226504', '08212226504', '+628212226504', '8212226504'])) {
+                $phone = $configuredAdminPhone;
+                try {
+                    $user->whatsapp = $phone;
+                    $user->save();
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Unable to update admin phone in database: ' . $e->getMessage());
+                }
+            }
 
             $request->session()->put('auth_2fa', [
                 'user_id' => $user->id,

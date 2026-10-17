@@ -178,13 +178,13 @@ class TwoFactorOtpController extends Controller
     }
 
     /**
-     * Helper to mask phone number for security (e.g., 08212226504 -> +62 821-****-*504)
+     * Helper to mask phone number for security (e.g., 085771593522 -> +62 857-••••-3522)
      */
     private function maskPhoneNumber(string $phone): string
     {
         $cleaned = preg_replace('/[^0-9]/', '', $phone);
         if (empty($cleaned)) {
-            return 'WhatsApp Admin Terdaftar';
+            $cleaned = preg_replace('/[^0-9]/', '', env('ADMIN_WHATSAPP', '085771593522'));
         }
 
         // Ensure 62 prefix
@@ -197,9 +197,10 @@ class TwoFactorOtpController extends Controller
             return '+' . $cleaned;
         }
 
-        $prefix = substr($cleaned, 0, 5); // e.g. 62821
-        $suffix = substr($cleaned, -3);    // e.g. 504
-        $maskedLength = max(3, $length - 8);
+        // For Indonesian numbers e.g. 6285771593522 -> prefix: +62 857, suffix: 3522
+        $prefix = substr($cleaned, 0, 5); // 62857
+        $suffix = substr($cleaned, -4);    // 3522
+        $maskedLength = max(4, $length - 9);
 
         return '+' . substr($prefix, 0, 2) . ' ' . substr($prefix, 2) . '-' . str_repeat('•', $maskedLength) . '-' . $suffix;
     }
