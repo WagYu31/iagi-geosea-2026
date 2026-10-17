@@ -104,19 +104,20 @@ export default function Highlights({ settings }) {
                     </Typography>
                 </Box>
 
-                {/* 21st.dev Style Pinned Interactive Timeline Board (Gambar 2) */}
+                {/* 21st.dev Style Pinned Interactive Timeline Board (Horizontal White Mode) */}
                 <Box
-                    className="dark w-full"
+                    className="w-full"
                     sx={{
-                        borderRadius: { xs: '20px', md: '32px' },
+                        borderRadius: { xs: '20px', md: '28px' },
                         overflow: 'hidden',
-                        boxShadow: '0 25px 80px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-                        bgcolor: '#090d14',
+                        boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)',
+                        border: '1px solid rgba(226, 232, 240, 0.9)',
+                        bgcolor: '#ffffff',
                     }}
                 >
                     <HowItWorks
                         features={timelineFeatures}
-                        className="bg-[#090d14] text-neutral-100"
+                        className="bg-white text-slate-800"
                     />
                 </Box>
             </Container>

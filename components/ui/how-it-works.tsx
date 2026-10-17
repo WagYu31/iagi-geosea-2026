@@ -7,7 +7,9 @@ interface CardProps {
   number: string;
   title: string;
   description: string;
-  colorTheme?: "orange" | "blue" | "purple";
+  date?: string;
+  status?: string;
+  colorTheme?: "orange" | "blue" | "purple" | "emerald";
   className?: string;
   rotate?: string;
   colors?: {
@@ -35,52 +37,72 @@ const Card = ({
   number,
   title,
   description,
+  date,
+  status,
   colorTheme = "blue",
-  className,
-  rotate,
+  className = "",
+  rotate = "",
   colors: customColors,
 }: CardProps) => {
   const defaultBgColors = {
-    orange: "bg-orange-50 dark:bg-orange-500/10",
-    blue: "bg-blue-50 dark:bg-blue-500/10",
-    purple: "bg-purple-50 dark:bg-purple-500/10",
+    orange: "bg-orange-50/90 border-orange-200/80",
+    blue: "bg-sky-50/90 border-sky-200/80",
+    purple: "bg-purple-50/90 border-purple-200/80",
+    emerald: "bg-emerald-50/90 border-emerald-200/80",
   };
   const defaultTextColors = {
-    orange: "text-orange-500 dark:text-orange-400",
-    blue: "text-blue-600 dark:text-blue-400",
-    purple: "text-purple-600 dark:text-purple-400",
+    orange: "text-orange-500",
+    blue: "text-sky-600",
+    purple: "text-purple-600",
+    emerald: "text-emerald-600",
   };
   const defaultBorderColors = {
-    orange: "border-orange-100 dark:border-orange-500/20",
-    blue: "border-blue-100 dark:border-blue-500/20",
-    purple: "border-purple-100 dark:border-purple-500/20",
+    orange: "border-orange-200/90",
+    blue: "border-sky-200/90",
+    purple: "border-purple-200/90",
+    emerald: "border-emerald-200/90",
   };
 
-  const bgColor = customColors?.bg || defaultBgColors[colorTheme];
-  const textColor = customColors?.text || defaultTextColors[colorTheme];
-  const borderColor = customColors?.border || defaultBorderColors[colorTheme];
+  const bgColor = customColors?.bg || defaultBgColors[colorTheme] || defaultBgColors.blue;
+  const textColor = customColors?.text || defaultTextColors[colorTheme] || defaultTextColors.blue;
+  const borderColor = customColors?.border || defaultBorderColors[colorTheme] || defaultBorderColors.blue;
 
   return (
     <div
-      className={`relative w-full md:w-[280px] transition-transform duration-300 hover:z-30 hover:scale-105 ${rotate} ${className}`}
+      className={`transition-transform duration-300 hover:z-30 hover:scale-105 hover:rotate-0 ${rotate} ${className}`}
     >
-      <div className="bg-white dark:bg-neutral-900 p-2 rounded-[25px] shadow-[0px_10px_20px_0px_#D3D3D3] dark:shadow-none border border-neutral-100 dark:border-neutral-800">
-        <Pin className={`w-8 h-8 ${textColor} z-20 mb-6 mx-auto`} />
+      <div className="bg-white p-2.5 rounded-[22px] shadow-[0_10px_25px_-5px_rgba(0,0,0,0.08),0_4px_10px_-2px_rgba(0,0,0,0.04)] border border-slate-200/90 relative backdrop-blur-sm">
+        {/* Active Now Pill Badge */}
+        {status === "active" && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+            Active Now
+          </div>
+        )}
+
+        <Pin className={`w-7 h-7 ${textColor} z-20 mb-3 mx-auto drop-shadow-sm`} />
         <div
-          className={`${bgColor} border ${borderColor} rounded-[15px] p-[15px] h-full flex flex-col relative overflow-hidden`}
+          className={`${bgColor} border ${borderColor} rounded-[16px] p-3.5 h-full flex flex-col relative overflow-hidden`}
         >
-          <span
-            className={`${textColor} text-4xl font-handwriting mb-5`}
-            style={{
-              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-            }}
-          >
-            {number}
-          </span>
-          <h3 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-100 leading-none mb-[10px]">
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`${textColor} text-3xl font-handwriting select-none`}
+              style={{
+                fontFamily: '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
+              }}
+            >
+              {number}
+            </span>
+            {date && (
+              <span className="text-[10px] font-bold tracking-tight text-slate-600 bg-white/95 px-2 py-0.5 rounded-md border border-slate-200/80 shadow-xs">
+                {date}
+              </span>
+            )}
+          </div>
+          <h3 className="text-[15px] font-bold text-slate-800 leading-snug mb-1.5">
             {title}
           </h3>
-          <p className="text-neutral-500 dark:text-neutral-400 text-sm/5 tracking-tight">
+          <p className="text-slate-600 text-xs leading-relaxed">
             {description}
           </p>
         </div>
@@ -92,7 +114,9 @@ const Card = ({
 export interface Step {
   title: string;
   description: string;
-  colorTheme?: "orange" | "blue" | "purple";
+  date?: string;
+  status?: string;
+  colorTheme?: "orange" | "blue" | "purple" | "emerald";
   colors?: {
     bg: string;
     text: string;
@@ -109,134 +133,116 @@ export interface HowItWorksProps {
   features?: Step[];
   className?: string;
   stepPositions?: StepPosition[];
+  orientation?: "horizontal" | "vertical";
 }
 
-const DEFAULT_CARD_POSITIONS: StepPosition[] = [
-  { className: "md:absolute md:top-0 md:left-[15%]", rotate: "rotate-8" },
-  {
-    className: "md:absolute md:top-[120px] md:right-[15%]",
-    rotate: "-rotate-8",
-  },
-  { className: "md:absolute md:top-[450px] md:left-[15%]", rotate: "rotate-8" },
-  {
-    className: "md:absolute md:top-[570px] md:right-[10%]",
-    rotate: "-rotate-8",
-  },
-  { className: "md:absolute md:top-[850px] md:left-[15%]", rotate: "rotate-8" },
+// 5 Horizontal Staggered Positions (Landscape Left-to-Right wave)
+const DEFAULT_HORIZONTAL_POSITIONS: StepPosition[] = [
+  { className: "absolute top-[25px] left-[10px] w-[225px]", rotate: "-rotate-3" },
+  { className: "absolute top-[135px] left-[245px] w-[225px]", rotate: "rotate-3" },
+  { className: "absolute top-[25px] left-[480px] w-[225px]", rotate: "-rotate-3" },
+  { className: "absolute top-[135px] left-[715px] w-[225px]", rotate: "rotate-3" },
+  { className: "absolute top-[25px] left-[950px] w-[225px]", rotate: "-rotate-2" },
 ];
 
 export default function HowItWorks({
   features,
-  className,
+  className = "",
   stepPositions,
 }: HowItWorksProps) {
   const defaultFeatures: Step[] = [
     {
-      title: "Create Account",
-      description:
-        "Sign up in minutes. Enter your details and verify your email to get started.",
+      title: "Abstract Submission",
+      description: "Opening of research abstract submission for oral and poster presentation tracks.",
+      date: "Feb 9, 2026",
+      status: "active",
       colorTheme: "orange",
     },
     {
-      title: "Verify Identity",
-      description:
-        "Complete your profile verification to ensure secure transactions and compliance.",
+      title: "Abstract Deadline",
+      description: "Final submission deadline for research abstracts and peer-review process.",
+      date: "Mar 21, 2026",
+      status: "active",
       colorTheme: "blue",
     },
     {
-      title: "Select Plan",
-      description:
-        "Choose from a variety of investment plans tailored to your financial goals.",
+      title: "Acceptance Announcement",
+      description: "Official notification and announcement of accepted research papers.",
+      date: "May 07, 2026",
+      status: "upcoming",
       colorTheme: "purple",
     },
     {
-      title: "Analyze & Invest",
-      description:
-        "Review returns and make your first investment with confidence.",
+      title: "Full Manuscript Deadline",
+      description: "Deadline for submitting full manuscripts for indexed conference proceedings.",
+      date: "Aug 07, 2026",
+      status: "upcoming",
       colorTheme: "orange",
     },
     {
-      title: "Track Growth",
-      description:
-        "Monitor your portfolio in real-time and watch your wealth grow over time.",
+      title: "Main Event Conference",
+      description: "The 55th PIT IAGI & GEOSEA XIX Annual Scientific Convention & Exhibition.",
+      date: "Nov 3, 2026",
+      status: "upcoming",
       colorTheme: "blue",
     },
   ];
 
   const data = features && features.length > 0 ? features : defaultFeatures;
-  const positions = stepPositions || DEFAULT_CARD_POSITIONS;
+  const positions = stepPositions || DEFAULT_HORIZONTAL_POSITIONS;
 
-  let height = 1130;
-  if (data.length === 1) height = 400;
-  else if (data.length === 2) height = 450;
-  else if (data.length === 3) height = 800;
-  else if (data.length === 4) height = 900;
-  else height = 1130;
+  const totalWidth = 1185;
+  const totalHeight = 450;
 
   return (
     <LazyMotion features={domAnimation}>
-      <div
-        className={`bg-white dark:bg-black max-md:pt-10 max-md:pb-25 md:py-20 px-8 relative ${className}`}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.08] dark:opacity-[0.15]"
-          style={{
-            backgroundImage: "linear-gradient(#000 1px, transparent 1px)",
-            backgroundSize: "100% 32px",
-            marginTop: "4px",
-          }}
-        ></div>
-        <div
-          className="absolute inset-0 pointer-events-none opacity-0 dark:opacity-[0.1]"
-          style={{
-            backgroundImage: "linear-gradient(#fff 1px, transparent 1px)",
-            backgroundSize: "100% 32px",
-            marginTop: "4px",
-          }}
-        ></div>
-        <div className="from-background pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r"></div>
-        <div className="from-background pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l"></div>
+      <div className={`w-full bg-white relative py-4 px-2 ${className}`}>
+        {/* Mobile Swipe Hint */}
+        <div className="flex lg:hidden items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mb-3 select-none">
+          <span>👉</span> Geser ke samping untuk melihat timeline lengkap
+        </div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
+        {/* Scrollable Container on small screens, centered on desktop */}
+        <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-200">
           <div
-            className="relative w-full max-w-[1000px] mx-auto flex flex-col space-y-8 md:space-y-0 md:block h-auto md:h-[var(--md-height)]"
-            style={{ "--md-height": `${height}px` } as React.CSSProperties}
+            className="relative mx-auto"
+            style={{ width: `${totalWidth}px`, height: `${totalHeight}px` }}
           >
+            {/* Subtle lined paper pattern background */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.05]"
+              style={{
+                backgroundImage: "linear-gradient(#0f172a 1px, transparent 1px)",
+                backgroundSize: "100% 30px",
+                marginTop: "4px",
+              }}
+            ></div>
+
+            {/* Animated Connecting Horizontal Sine-Wave Loop Line */}
             {data.length > 1 && (
               <svg
-                className="absolute top-0 left-0 w-full h-full pointer-events-none hidden md:block z-0"
-                viewBox={`0 0 1000 ${height}`}
+                className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
+                viewBox={`0 0 ${totalWidth} ${totalHeight}`}
                 preserveAspectRatio="none"
               >
                 {(() => {
-                  const pathD = data.reduce((acc, _, index) => {
-                    if (index >= data.length - 1) return acc;
-                    if (index === 0)
-                      return "M 290 150 C 500 150, 550 270, 710 270"; // 1 -> 2
-                    if (index === 1)
-                      return acc + " C 850 270, 500 350, 290 450"; // 2 -> 3
-                    if (index === 2)
-                      return acc + " C 290 600, 550 720, 750 720"; // 3 -> 4
-                    if (index === 3)
-                      return acc + " C 950 720, 500 800, 290 850"; // 4 -> 5
-                    return acc;
-                  }, "");
+                  // Connects the 5 pins along an undulating horizontal wave
+                  const pathD =
+                    "M 122.5 49 C 230 49, 250 159, 357.5 159 C 465 159, 485 49, 592.5 49 C 700 49, 720 159, 827.5 159 C 935 159, 955 49, 1062.5 49";
                   return (
                     <m.path
                       d={pathD}
-                      stroke="currentColor"
-                      className="text-neutral-300 dark:text-neutral-700"
-                      strokeWidth="2"
+                      stroke="#cbd5e1"
+                      strokeWidth="2.5"
                       strokeDasharray="8 6"
                       fill="none"
                       strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
                       initial={{ strokeDashoffset: 0 }}
                       animate={{
-                        strokeDashoffset: -140, // Multiple of 14 (8+6) for seamless loop
+                        strokeDashoffset: -140, // seamless loop
                       }}
                       transition={{
-                        duration: 3,
+                        duration: 3.5,
                         repeat: Infinity,
                         ease: "linear",
                       }}
@@ -246,6 +252,7 @@ export default function HowItWorks({
               </svg>
             )}
 
+            {/* Pinned Post-It Cards (Landscape Ke Samping) */}
             {data.map((step, index) => {
               const position = positions[index % positions.length];
 
@@ -255,6 +262,8 @@ export default function HowItWorks({
                   number={`0${index + 1}`}
                   title={step.title}
                   description={step.description}
+                  date={step.date}
+                  status={step.status}
                   colorTheme={step.colorTheme || "blue"}
                   colors={step.colors}
                   rotate={position.rotate}
