@@ -160,58 +160,60 @@ export default function Pricing({ settings = {} }) {
                 }}
             >
                 {/* Header */}
-                <Box sx={{ maxWidth: '700px', textAlign: 'center' }}>
-                    <Box
-                        sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            bgcolor: 'rgba(13, 148, 136, 0.1)',
-                            borderRadius: '50px',
-                            px: 2.5,
-                            py: 0.7,
-                            mb: 2,
-                            border: '1px solid rgba(13, 148, 136, 0.2)',
-                        }}
-                    >
-                        <FolderDown className="w-4 h-4 text-teal-600" />
-                        <Typography
-                            variant="overline"
+                <ScrollReveal variant="fadeUp" duration={700}>
+                    <Box sx={{ maxWidth: '700px', textAlign: 'center', mx: 'auto' }}>
+                        <Box
                             sx={{
-                                color: '#0d9488',
-                                fontWeight: 800,
-                                letterSpacing: '0.15em',
-                                fontSize: '0.75rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                bgcolor: 'rgba(13, 148, 136, 0.1)',
+                                borderRadius: '50px',
+                                px: 2.5,
+                                py: 0.7,
+                                mb: 2,
+                                border: '1px solid rgba(13, 148, 136, 0.2)',
                             }}
                         >
-                            DOWNLOADS & GUIDELINES
+                            <FolderDown className="w-4 h-4 text-teal-600" />
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#0d9488',
+                                    fontWeight: 800,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                }}
+                            >
+                                DOWNLOADS & GUIDELINES
+                            </Typography>
+                        </Box>
+
+                        <Typography
+                            component="h2"
+                            variant="h3"
+                            gutterBottom
+                            sx={{
+                                fontWeight: 900,
+                                color: '#0f172a',
+                                fontSize: { xs: '2rem', md: '2.5rem' },
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            {settings.resources_title || 'Conference Resources'}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                color: '#64748b',
+                                fontSize: { xs: '0.95rem', md: '1.05rem' },
+                                lineHeight: 1.6,
+                            }}
+                        >
+                            {settings.resources_description || 'Download important documents, templates, and guidelines for the 55th PIT IAGI - GEOSEA XIX 2026.'}
                         </Typography>
                     </Box>
-
-                    <Typography
-                        component="h2"
-                        variant="h3"
-                        gutterBottom
-                        sx={{
-                            fontWeight: 900,
-                            color: '#0f172a',
-                            fontSize: { xs: '2rem', md: '2.5rem' },
-                            letterSpacing: '-0.02em',
-                        }}
-                    >
-                        {settings.resources_title || 'Conference Resources'}
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            color: '#64748b',
-                            fontSize: { xs: '0.95rem', md: '1.05rem' },
-                            lineHeight: 1.6,
-                        }}
-                    >
-                        {settings.resources_description || 'Download important documents, templates, and guidelines for the 55th PIT IAGI - GEOSEA XIX 2026.'}
-                    </Typography>
-                </Box>
+                </ScrollReveal>
 
                 {/* Symmetrical Modern Resource Hub Grid */}
                 <div className={`grid ${getGridCols()} gap-5 sm:gap-6 w-full`}>

@@ -15,23 +15,24 @@ import Box from '@mui/material/Box';
  */
 
 const variants = {
-    fadeUp: (d) => ({ opacity: 0, transform: `translateY(${d}px)` }),
-    fadeDown: (d) => ({ opacity: 0, transform: `translateY(-${d}px)` }),
-    fadeLeft: (d) => ({ opacity: 0, transform: `translateX(${d}px)` }),
-    fadeRight: (d) => ({ opacity: 0, transform: `translateX(-${d}px)` }),
-    zoomIn: () => ({ opacity: 0, transform: 'scale(0.85)' }),
+    fadeUp: (d) => ({ opacity: 0, transform: `translate3d(0, ${d}px, 0)` }),
+    fadeDown: (d) => ({ opacity: 0, transform: `translate3d(0, -${d}px, 0)` }),
+    fadeLeft: (d) => ({ opacity: 0, transform: `translate3d(${d}px, 0, 0)` }),
+    fadeRight: (d) => ({ opacity: 0, transform: `translate3d(-${d}px, 0, 0)` }),
+    scaleIn: (d) => ({ opacity: 0, transform: `scale(0.92) translate3d(0, ${d || 16}px, 0)` }),
+    zoomIn: () => ({ opacity: 0, transform: 'scale(0.88)' }),
     fade: () => ({ opacity: 0 }),
 };
 
-const visibleStyle = { opacity: 1, transform: 'translate(0) scale(1)' };
+const visibleStyle = { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' };
 
 export default function ScrollReveal({
     children,
     variant = 'fadeUp',
     delay = 0,
-    duration = 800,
-    distance = 60,
-    threshold = 0.15,
+    duration = 650,
+    distance = 36,
+    threshold = 0.1,
     once = true,
     sx = {},
     ...rest
@@ -52,7 +53,7 @@ export default function ScrollReveal({
                     setIsVisible(false);
                 }
             },
-            { threshold, rootMargin: '0px 0px -40px 0px' }
+            { threshold, rootMargin: '0px 0px -50px 0px' }
         );
 
         observer.observe(el);

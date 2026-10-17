@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import PublicIcon from '@mui/icons-material/Public';
+import ScrollReveal from './ScrollReveal';
+import SpotlightCard from './SpotlightCard';
 
 // Country flag emojis for visual flair
 const countryFlags = {
@@ -49,62 +51,96 @@ export default function LogoCollection({ settings }) {
         >
 
 
+            {/* Soft Ambient Light Blob (GetLayers Relay Style - Bright Theme) */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '-15%',
+                    left: '20%',
+                    width: '600px',
+                    height: '400px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, rgba(77, 212, 172, 0.04) 50%, transparent 70%)',
+                    filter: 'blur(50px)',
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                }}
+            />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '-10%',
+                    right: '15%',
+                    width: '500px',
+                    height: '350px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(77, 212, 172, 0.07) 0%, transparent 70%)',
+                    filter: 'blur(60px)',
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                }}
+            />
+
             <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                 {/* Section Header */}
-                <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 6 } }}>
-                    <Box
-                        sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            bgcolor: alpha('#0d9488', 0.1),
-                            borderRadius: '50px',
-                            px: 3,
-                            py: 0.8,
-                            mb: 2.5,
-                        }}
-                    >
-                        <PublicIcon sx={{ color: '#0d9488', fontSize: 18 }} />
-                        <Typography
-                            variant="overline"
+                <ScrollReveal variant="fadeUp" duration={700}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 6 } }}>
+                        <Box
                             sx={{
-                                color: '#0d9488',
-                                fontWeight: 700,
-                                letterSpacing: '0.15em',
-                                fontSize: '0.75rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                bgcolor: alpha('#0d9488', 0.1),
+                                borderRadius: '50px',
+                                px: 3,
+                                py: 0.8,
+                                mb: 2.5,
+                                border: '1px solid rgba(13, 148, 136, 0.18)',
                             }}
                         >
-                            {afgeoText.section_label || 'OUR NETWORK'}
+                            <PublicIcon sx={{ color: '#0d9488', fontSize: 18 }} />
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#0d9488',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                }}
+                            >
+                                {afgeoText.section_label || 'OUR NETWORK'}
+                            </Typography>
+                        </Box>
+
+                        <Typography
+                            component="h2"
+                            variant="h3"
+                            sx={{
+                                fontWeight: 800,
+                                mb: 2,
+                                color: '#111827',
+                                fontSize: { xs: '2rem', md: '2.75rem' },
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            {afgeoText.title || 'AFGEO Member'}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                color: '#6b7280',
+                                maxWidth: '650px',
+                                mx: 'auto',
+                                fontSize: { xs: '0.95rem', md: '1.05rem' },
+                                lineHeight: 1.7,
+                            }}
+                        >
+                            {afgeoText.subtitle || 'Association of Federation of Geoscientists of East and Southeast Asia'}
                         </Typography>
                     </Box>
+                </ScrollReveal>
 
-                    <Typography
-                        component="h2"
-                        variant="h3"
-                        sx={{
-                            fontWeight: 800,
-                            mb: 2,
-                            color: '#111827',
-                            fontSize: { xs: '2rem', md: '2.75rem' },
-                        }}
-                    >
-                        {afgeoText.title || 'AFGEO Member'}
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            color: '#6b7280',
-                            maxWidth: '650px',
-                            mx: 'auto',
-                            fontSize: { xs: '0.95rem', md: '1.05rem' },
-                            lineHeight: 1.7,
-                        }}
-                    >
-                        {afgeoText.subtitle || 'Association of Federation of Geoscientists of East and Southeast Asia'}
-                    </Typography>
-                </Box>
-
-                {/* Members Grid */}
+                {/* Members Grid with Interactive Spotlight Cards */}
                 <Box
                     sx={{
                         display: 'grid',
@@ -119,133 +155,140 @@ export default function LogoCollection({ settings }) {
                     }}
                 >
                     {members.map((member, index) => (
-                        <Box
+                        <ScrollReveal
                             key={index}
-                            sx={{
-                                bgcolor: '#ffffff',
-                                borderRadius: '16px',
-                                border: '1px solid',
-                                borderColor: alpha('#0d9488', 0.12),
-                                p: { xs: 2.5, md: 3 },
-                                textAlign: 'center',
-                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                cursor: 'default',
-                                '&:hover': {
-                                    transform: 'translateY(-6px) scale(1.02)',
-                                    bgcolor: '#ffffff',
-                                    borderColor: '#0d9488',
-                                    boxShadow: `0 20px 40px ${alpha('#0d9488', 0.12)}`,
-                                },
-                            }}
+                            variant="fadeUp"
+                            delay={index * 60}
+                            duration={600}
                         >
-                            {/* Logo Circle */}
-                            <Box
+                            <SpotlightCard
+                                spotlightColor="rgba(13, 148, 136, 0.14)"
                                 sx={{
-                                    width: { xs: 80, md: 96 },
-                                    height: { xs: 80, md: 96 },
-                                    borderRadius: '50%',
-                                    bgcolor: '#ffffff',
+                                    p: { xs: 2.5, md: 3 },
+                                    textAlign: 'center',
+                                    height: '100%',
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    mx: 'auto',
-                                    mb: 2,
-                                    overflow: 'hidden',
-                                    boxShadow: `0 4px 16px ${alpha('#0d9488', 0.1)}`,
-                                    transition: 'transform 0.3s ease',
-                                    '&:hover': {
-                                        transform: 'rotate(5deg) scale(1.05)',
-                                    },
                                 }}
                             >
-                                {member.logo ? (
-                                    <Box
-                                        component="img"
-                                        src={member.logo}
-                                        alt={member.name}
-                                        loading="lazy"
-                                        decoding="async"
-                                        width={80}
-                                        height={80}
-                                        sx={{
-                                            width: '90%',
-                                            height: '90%',
-                                            objectFit: 'contain',
-                                        }}
-                                    />
-                                ) : (
-                                    <Typography
-                                        sx={{
-                                            fontWeight: 800,
-                                            color: '#094d42',
-                                            fontSize: { xs: '0.85rem', md: '0.95rem' },
-                                        }}
-                                    >
-                                        {member.name}
-                                    </Typography>
-                                )}
-                            </Box>
-
-                            {/* Member Name */}
-                            <Typography
-                                component="h3"
-                                variant="subtitle2"
-                                sx={{
-                                    fontWeight: 700,
-                                    color: '#111827',
-                                    fontSize: { xs: '0.85rem', md: '0.95rem' },
-                                    mb: 0.5,
-                                }}
-                            >
-                                {member.name}
-                            </Typography>
-
-                            {/* Country with flag */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                <Typography sx={{ fontSize: '1rem', lineHeight: 1 }}>
-                                    {countryFlags[member.country] || '🌏'}
-                                </Typography>
-                                <Typography
-                                    variant="caption"
+                                {/* Logo Circle */}
+                                <Box
                                     sx={{
-                                        color: '#6b7280',
-                                        fontWeight: 500,
-                                        fontSize: '0.8rem',
+                                        width: { xs: 80, md: 96 },
+                                        height: { xs: 80, md: 96 },
+                                        borderRadius: '50%',
+                                        bgcolor: '#ffffff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        mx: 'auto',
+                                        mb: 2,
+                                        overflow: 'hidden',
+                                        boxShadow: `0 4px 16px ${alpha('#0d9488', 0.1)}`,
+                                        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                                        '&:hover': {
+                                            transform: 'rotate(5deg) scale(1.08)',
+                                        },
                                     }}
                                 >
-                                    {member.country}
+                                    {member.logo ? (
+                                        <Box
+                                            component="img"
+                                            src={member.logo}
+                                            alt={member.name}
+                                            loading="lazy"
+                                            decoding="async"
+                                            width={80}
+                                            height={80}
+                                            sx={{
+                                                width: '90%',
+                                                height: '90%',
+                                                objectFit: 'contain',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 800,
+                                                color: '#094d42',
+                                                fontSize: { xs: '0.85rem', md: '0.95rem' },
+                                            }}
+                                        >
+                                            {member.name}
+                                        </Typography>
+                                    )}
+                                </Box>
+
+                                {/* Member Name */}
+                                <Typography
+                                    component="h3"
+                                    variant="subtitle2"
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: '#111827',
+                                        fontSize: { xs: '0.85rem', md: '0.95rem' },
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    {member.name}
                                 </Typography>
-                            </Box>
-                        </Box>
+
+                                {/* Country with flag */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                                    <Typography sx={{ fontSize: '1rem', lineHeight: 1 }}>
+                                        {countryFlags[member.country] || '🌏'}
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: '#6b7280',
+                                            fontWeight: 500,
+                                            fontSize: '0.8rem',
+                                        }}
+                                    >
+                                        {member.country}
+                                    </Typography>
+                                </Box>
+                            </SpotlightCard>
+                        </ScrollReveal>
                     ))}
                 </Box>
 
                 {/* Member count badge */}
-                <Box sx={{ textAlign: 'center', mt: { xs: 4, md: 5 } }}>
-                    <Box
-                        sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            bgcolor: alpha('#0d9488', 0.08),
-                            borderRadius: '50px',
-                            px: 3,
-                            py: 1,
-                            border: `1px solid ${alpha('#0d9488', 0.15)}`,
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
+                <ScrollReveal variant="fadeUp" delay={Math.min(members.length * 50, 400)}>
+                    <Box sx={{ textAlign: 'center', mt: { xs: 4, md: 5 } }}>
+                        <Box
                             sx={{
-                                color: '#094d42',
-                                fontWeight: 600,
-                                fontSize: '0.85rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                bgcolor: alpha('#0d9488', 0.08),
+                                borderRadius: '50px',
+                                px: 3,
+                                py: 1,
+                                border: `1px solid ${alpha('#0d9488', 0.15)}`,
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    bgcolor: alpha('#0d9488', 0.12),
+                                    transform: 'scale(1.03)',
+                                },
                             }}
                         >
-                            🌍 {members.length} Member Countries
-                        </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: '#094d42',
+                                    fontWeight: 600,
+                                    fontSize: '0.85rem',
+                                }}
+                            >
+                                🌍 {members.length} Member Countries
+                            </Typography>
+                        </Box>
                     </Box>
-                </Box>
+                </ScrollReveal>
             </Container>
         </Box>
     );

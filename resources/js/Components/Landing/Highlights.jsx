@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HowItWorks from '@/Components/ui/how-it-works';
+import ScrollReveal from './ScrollReveal';
 
 export default function Highlights({ settings }) {
     const timeline = settings?.timeline && settings.timeline.length > 0
@@ -46,9 +47,27 @@ export default function Highlights({ settings }) {
             id="timeline"
             sx={{
                 py: { xs: 8, sm: 12 },
+                position: 'relative',
+                overflow: 'hidden',
                 background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0fdfa 100%)',
             }}
         >
+            {/* Subtle ambient glow in background */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '25%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '700px',
+                    height: '400px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(13, 148, 136, 0.05) 0%, transparent 70%)',
+                    filter: 'blur(60px)',
+                    pointerEvents: 'none',
+                }}
+            />
+
             <Container
                 maxWidth="xl"
                 sx={{
@@ -57,70 +76,76 @@ export default function Highlights({ settings }) {
                     alignItems: 'center',
                     gap: { xs: 4, sm: 6 },
                     px: { xs: 2, sm: 3, md: 4 },
+                    position: 'relative',
+                    zIndex: 1,
                 }}
             >
                 {/* Header */}
-                <Box sx={{ textAlign: 'center', maxWidth: '650px' }}>
-                    <Box
-                        sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            bgcolor: alpha('#0d9488', 0.1),
-                            borderRadius: '50px',
-                            px: 2.5,
-                            py: 0.7,
-                            mb: 2,
-                            border: '1px solid rgba(13, 148, 136, 0.2)',
-                        }}
-                    >
-                        <AccessTimeIcon sx={{ color: '#0d9488', fontSize: 18 }} />
-                        <Typography
-                            variant="overline"
+                <ScrollReveal variant="fadeUp" duration={700}>
+                    <Box sx={{ textAlign: 'center', maxWidth: '650px' }}>
+                        <Box
                             sx={{
-                                color: '#0d9488',
-                                fontWeight: 800,
-                                letterSpacing: '0.15em',
-                                fontSize: '0.75rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                bgcolor: alpha('#0d9488', 0.1),
+                                borderRadius: '50px',
+                                px: 2.5,
+                                py: 0.7,
+                                mb: 2,
+                                border: '1px solid rgba(13, 148, 136, 0.2)',
                             }}
                         >
-                            ROADMAP
+                            <AccessTimeIcon sx={{ color: '#0d9488', fontSize: 18 }} />
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#0d9488',
+                                    fontWeight: 800,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                }}
+                            >
+                                ROADMAP
+                            </Typography>
+                        </Box>
+                        <Typography
+                            component="h2"
+                            variant="h3"
+                            gutterBottom
+                            sx={{
+                                fontWeight: 900,
+                                color: '#0f172a',
+                                fontSize: { xs: '2rem', md: '2.6rem' },
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            Event Timeline
+                        </Typography>
+                        <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic', fontSize: '1rem' }}>
+                            "Time is the canvas upon which we build the future of geology."
                         </Typography>
                     </Box>
-                    <Typography
-                        component="h2"
-                        variant="h3"
-                        gutterBottom
-                        sx={{
-                            fontWeight: 900,
-                            color: '#0f172a',
-                            fontSize: { xs: '2rem', md: '2.6rem' },
-                            letterSpacing: '-0.02em',
-                        }}
-                    >
-                        Event Timeline
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic', fontSize: '1rem' }}>
-                        "Time is the canvas upon which we build the future of geology."
-                    </Typography>
-                </Box>
+                </ScrollReveal>
 
                 {/* 21st.dev Style Pinned Interactive Timeline Board (Horizontal White Mode) */}
-                <Box
-                    className="w-full"
-                    sx={{
-                        borderRadius: { xs: '20px', md: '28px' },
-                        boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)',
-                        border: '1px solid rgba(226, 232, 240, 0.9)',
-                        bgcolor: '#ffffff',
-                        p: { xs: 1, sm: 1.5, md: 2 },
-                    }}
-                >
-                    <HowItWorks
-                        features={timelineFeatures}
-                        className="bg-white text-slate-800"
-                    />
-                </Box>
+                <ScrollReveal variant="fadeUp" delay={150} duration={800} className="w-full">
+                    <Box
+                        className="w-full"
+                        sx={{
+                            borderRadius: { xs: '20px', md: '28px' },
+                            boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)',
+                            border: '1px solid rgba(226, 232, 240, 0.9)',
+                            bgcolor: '#ffffff',
+                            p: { xs: 1, sm: 1.5, md: 2 },
+                        }}
+                    >
+                        <HowItWorks
+                            features={timelineFeatures}
+                            className="bg-white text-slate-800"
+                        />
+                    </Box>
+                </ScrollReveal>
             </Container>
         </Box>
     );

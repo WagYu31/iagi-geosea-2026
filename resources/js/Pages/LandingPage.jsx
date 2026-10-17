@@ -68,33 +68,19 @@ export default function LandingPage({ auth, serverSettings }) {
             <Box sx={{ bgcolor: 'background.default' }}>
                 <Hero settings={settings} auth={auth} />
 
-                <ScrollReveal variant="fadeUp" duration={900}>
-                    <LogoCollection settings={settings} />
-                </ScrollReveal>
+                <LogoCollection settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
-                    <Features settings={settings} />
-                </ScrollReveal>
+                <Features settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900}>
-                    <Highlights settings={settings} />
-                </ScrollReveal>
+                <Highlights settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
-                    <Pricing settings={settings} />
-                </ScrollReveal>
+                <Pricing settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900}>
-                    <Testimonials settings={settings} />
-                </ScrollReveal>
+                <Testimonials settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900} delay={100}>
-                    <FAQ settings={settings} />
-                </ScrollReveal>
+                <FAQ settings={settings} />
 
-                <ScrollReveal variant="fadeUp" duration={900}>
-                    <Footer settings={settings} auth={auth} />
-                </ScrollReveal>
+                <Footer settings={settings} auth={auth} />
             </Box>
         </ThemeProvider>
     );

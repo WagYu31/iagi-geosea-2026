@@ -12,6 +12,7 @@ import MuiLink from '@mui/material/Link';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SponsorSpotlight from './SponsorSpotlight';
+import ScrollReveal from './ScrollReveal';
 
 const SocialIcon = ({ type }) => {
     const icons = {
@@ -83,76 +84,79 @@ export default function Footer({ settings, auth }) {
             {settings.partners && settings.partners.length > 0 && (
                 <Box id="partners" sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(180deg, #f0fdf9 0%, #ecfdf5 50%, #e8f5f0 100%)' }}>
                     <Container maxWidth="lg">
-                        <Typography
-                            variant="overline"
-                            sx={{
-                                color: '#0d7a6a',
-                                fontWeight: 700,
-                                letterSpacing: '0.15em',
-                                fontSize: '0.75rem',
-                                display: 'block',
-                                textAlign: 'center',
-                                mb: 1,
-                            }}
-                        >
-                            OUR PARTNERS
-                        </Typography>
-                        <Typography
-                            component="h2"
-                            variant="h5"
-                            align="center"
-                            sx={{
-                                fontWeight: 800,
-                                mb: { xs: 3, md: 5 },
-                                color: 'text.primary',
-                                fontSize: { xs: '1.5rem', md: '2rem' },
-                                letterSpacing: '0.02em',
-                            }}
-                        >
-                            Event Partners
-                        </Typography>
+                        <ScrollReveal variant="fadeUp" duration={700}>
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#0d7a6a',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                    display: 'block',
+                                    textAlign: 'center',
+                                    mb: 1,
+                                }}
+                            >
+                                OUR PARTNERS
+                            </Typography>
+                            <Typography
+                                component="h2"
+                                variant="h5"
+                                align="center"
+                                sx={{
+                                    fontWeight: 800,
+                                    mb: { xs: 3, md: 5 },
+                                    color: 'text.primary',
+                                    fontSize: { xs: '1.5rem', md: '2rem' },
+                                    letterSpacing: '0.02em',
+                                }}
+                            >
+                                Event Partners
+                            </Typography>
+                        </ScrollReveal>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 4 }}>
                             {settings.partners.map((partner, index) => (
-                                <Box
-                                    key={index}
-                                    component="a"
-                                    href={partner.url || '#'}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`Visit partner website: ${partner.name || 'Partner'}`}
-                                    sx={{
-                                        display: 'block',
-                                        maxWidth: 400,
-                                        width: '100%',
-                                        borderRadius: '20px',
-                                        overflow: 'hidden',
-                                        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                                        transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                                        border: '3px solid transparent',
-                                        textDecoration: 'none',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px) scale(1.02)',
-                                            boxShadow: '0 20px 60px rgba(13, 122, 106, 0.25)',
-                                            borderColor: '#0d7a6a',
-                                        },
-                                    }}
-                                >
-                                    {partner.poster && (
-                                        <Box
-                                            component="img"
-                                            src={partner.poster}
-                                            alt={partner.name || 'Partner Poster'}
-                                            loading="lazy"
-                                            decoding="async"
-                                            sx={{
-                                                width: '100%',
-                                                height: 'auto',
-                                                display: 'block',
-                                            }}
-                                        />
-                                    )}
-                                </Box>
+                                <ScrollReveal key={index} variant="fadeUp" delay={index * 100} duration={600}>
+                                    <Box
+                                        component="a"
+                                        href={partner.url || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`Visit partner website: ${partner.name || 'Partner'}`}
+                                        sx={{
+                                            display: 'block',
+                                            maxWidth: 400,
+                                            width: '100%',
+                                            borderRadius: '20px',
+                                            overflow: 'hidden',
+                                            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                            transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                                            border: '3px solid transparent',
+                                            textDecoration: 'none',
+                                            '&:hover': {
+                                                transform: 'translateY(-8px) scale(1.02)',
+                                                boxShadow: '0 20px 60px rgba(13, 122, 106, 0.25)',
+                                                borderColor: '#0d7a6a',
+                                            },
+                                        }}
+                                    >
+                                        {partner.poster && (
+                                            <Box
+                                                component="img"
+                                                src={partner.poster}
+                                                alt={partner.name || 'Partner Poster'}
+                                                loading="lazy"
+                                                decoding="async"
+                                                sx={{
+                                                    width: '100%',
+                                                    height: 'auto',
+                                                    display: 'block',
+                                                }}
+                                            />
+                                        )}
+                                    </Box>
+                                </ScrollReveal>
                             ))}
                         </Box>
 
@@ -184,36 +188,37 @@ export default function Footer({ settings, auth }) {
             >
                 <Container maxWidth="lg">
                     {/* ── Venue & Map Row ── */}
-                    <Box sx={{ mb: { xs: 5, md: 6 } }}>
-                        <Typography
-                            variant="overline"
-                            sx={{
-                                color: '#4dd4ac',
-                                fontWeight: 700,
-                                letterSpacing: '0.15em',
-                                fontSize: '0.75rem',
-                                display: 'block',
-                                mb: 1,
-                                textAlign: 'center',
-                            }}
-                        >
-                            VENUE & LOCATION
-                        </Typography>
-                        <Typography
-                            component="h2"
-                            variant="h4"
-                            align="center"
-                            sx={{
-                                fontWeight: 800,
-                                mb: { xs: 3, md: 4 },
-                                fontSize: { xs: '1.5rem', md: '2rem' },
-                                color: 'white',
-                            }}
-                        >
-                            {contact.venue_name || 'Conference Venue'}
-                        </Typography>
+                    <ScrollReveal variant="fadeUp" duration={700}>
+                        <Box sx={{ mb: { xs: 5, md: 6 } }}>
+                            <Typography
+                                variant="overline"
+                                sx={{
+                                    color: '#4dd4ac',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    fontSize: '0.75rem',
+                                    display: 'block',
+                                    mb: 1,
+                                    textAlign: 'center',
+                                }}
+                            >
+                                VENUE & LOCATION
+                            </Typography>
+                            <Typography
+                                component="h2"
+                                variant="h4"
+                                align="center"
+                                sx={{
+                                    fontWeight: 800,
+                                    mb: { xs: 3, md: 4 },
+                                    fontSize: { xs: '1.5rem', md: '2rem' },
+                                    color: 'white',
+                                }}
+                            >
+                                {contact.venue_name || 'Conference Venue'}
+                            </Typography>
 
-                        <Grid container spacing={3}>
+                            <Grid container spacing={3}>
                             {/* Contact Info Card */}
                             <Grid size={{ xs: 12, md: 4 }}>
                                 <Paper
@@ -327,6 +332,7 @@ export default function Footer({ settings, auth }) {
                             </Grid>
                         </Grid>
                     </Box>
+                    </ScrollReveal>
 
                     {/* ── Divider ── */}
                     <Divider sx={{ borderColor: 'rgba(77, 212, 172, 0.15)', mb: { xs: 4, md: 5 } }} />

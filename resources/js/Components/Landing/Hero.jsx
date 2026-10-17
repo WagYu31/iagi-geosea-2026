@@ -47,6 +47,36 @@ const pulseGlow = keyframes`
     50%      { opacity: 0.6; }
 `;
 
+const livingMountain = keyframes`
+    0%   { transform: scale(1.0) translate3d(0, 0, 0); }
+    50%  { transform: scale(1.06) translate3d(-10px, -6px, 0); }
+    100% { transform: scale(1.0) translate3d(0, 0, 0); }
+`;
+
+const auroraWave1 = keyframes`
+    0%   { transform: translate3d(-8%, 0, 0) rotate(0deg) scale(1); opacity: 0.45; }
+    50%  { transform: translate3d(6%, -15px, 0) rotate(2deg) scale(1.08); opacity: 0.8; }
+    100% { transform: translate3d(-8%, 0, 0) rotate(0deg) scale(1); opacity: 0.45; }
+`;
+
+const auroraWave2 = keyframes`
+    0%   { transform: translate3d(10%, 10px, 0) rotate(-2deg) scale(1.04); opacity: 0.35; }
+    50%  { transform: translate3d(-8%, -10px, 0) rotate(1.5deg) scale(0.96); opacity: 0.7; }
+    100% { transform: translate3d(10%, 10px, 0) rotate(-2deg) scale(1.04); opacity: 0.35; }
+`;
+
+const mistDrift1 = keyframes`
+    0%   { transform: translate3d(-20%, 0, 0); }
+    50%  { transform: translate3d(15%, -10px, 0); }
+    100% { transform: translate3d(-20%, 0, 0); }
+`;
+
+const mistDrift2 = keyframes`
+    0%   { transform: translate3d(18%, 0, 0); }
+    50%  { transform: translate3d(-15%, 8px, 0); }
+    100% { transform: translate3d(18%, 0, 0); }
+`;
+
 // Floating particle component
 function FloatingParticle({ size, top, left, delay, duration, variant = 1 }) {
     const animations = [float1, float2, float3];
@@ -162,12 +192,24 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
 
 export default function Hero({ settings, auth }) {
     const [videoMounted, setVideoMounted] = useState(false);
+    const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
     const heroText = settings.hero_text || {};
 
     useEffect(() => {
         const timer = setTimeout(() => setVideoMounted(true), 300);
         return () => clearTimeout(timer);
     }, []);
+
+    const handleMouseMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        setMouseOffset({ x, y });
+    };
+
+    const handleMouseLeave = () => {
+        setMouseOffset({ x: 0, y: 0 });
+    };
 
     // Split title into words for staggered animation
     const titleLine1 = heroText.title_line1 || 'PIT IAGI';
@@ -176,6 +218,8 @@ export default function Hero({ settings, auth }) {
     return (
         <Box
             id="hero"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
             sx={{
                 width: '100%',
                 position: 'relative',
@@ -184,53 +228,169 @@ export default function Hero({ settings, auth }) {
                     'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(13, 122, 106, 0.15), transparent)',
             }}
         >
-            {/* Instant Baseline Poster Image for 100 LCP / FCP */}
+            {/* Living Background Mountain Layer with Ken-Burns Breathing and Multi-plane Parallax */}
             <Box
-                component="img"
-                src={settings.hero_background?.type === 'image' && settings.hero_background?.url ? settings.hero_background.url : '/about-background.webp'}
-                alt="Hero Background"
-                fetchPriority="high"
-                decoding="async"
                 sx={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    top: '-6%',
+                    left: '-6%',
+                    width: '112%',
+                    height: '112%',
                     zIndex: 0,
+                    pointerEvents: 'none',
+                    transform: `translate3d(${mouseOffset.x * -14}px, ${mouseOffset.y * -10}px, 0)`,
+                    transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
+                    willChange: 'transform',
+                }}
+            >
+                {/* Baseline High-Res Mountain Image from Gambar 1 with Living Breathing Ken Burns Zoom & 3D Depth */}
+                <Box
+                    component="img"
+                    src={settings.hero_background?.type === 'image' && settings.hero_background?.url ? settings.hero_background.url : '/about-background.webp'}
+                    alt="Hero Background Mount Merapi"
+                    fetchPriority="high"
+                    decoding="async"
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        animation: `${livingMountain} 24s ease-in-out infinite`,
+                        transformOrigin: 'center 40%',
+                        willChange: 'transform',
+                    }}
+                />
+
+                {/* Optional Custom Background Video (only if explicitly set in admin settings) */}
+                {videoMounted && settings.hero_background?.type === 'video' && settings.hero_background?.url && (
+                    <Box
+                        component="video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        sx={{
+                            display: { xs: 'none', md: 'block' },
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            zIndex: 0,
+                            animation: `${fadeIn} 0.8s ease-in both, ${livingMountain} 24s ease-in-out infinite`,
+                        }}
+                    >
+                        <source src={settings.hero_background.url} type="video/mp4" />
+                    </Box>
+                )}
+            </Box>
+
+            {/* Drifting Volcanic Mountain Clouds/Mist Layer 1 */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '25%',
+                    left: '-15%',
+                    width: '135%',
+                    height: '240px',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                    opacity: 0.35,
+                    filter: 'blur(28px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 40%, rgba(204, 251, 241, 0.35) 70%, transparent 100%)',
+                    animation: `${mistDrift1} 24s ease-in-out infinite`,
                 }}
             />
 
-            {/* Desktop Background Video (mounts after initial paint for 0ms TBT) */}
-            {videoMounted && settings.hero_background?.type !== 'image' && (
-                <Box
-                    component="video"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    sx={{
-                        display: { xs: 'none', md: 'block' },
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) translateZ(0)',
-                        minWidth: '100%',
-                        minHeight: '100%',
-                        width: 'auto',
-                        height: 'auto',
-                        objectFit: 'cover',
-                        zIndex: 0,
-                        animation: `${fadeIn} 0.8s ease-in both`,
-                    }}
-                >
-                    <source src={settings.hero_background?.url || '/hero-background1.mp4'} type="video/mp4" />
-                </Box>
-            )}
+            {/* Drifting Volcanic Mountain Clouds/Mist Layer 2 */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '18%',
+                    left: '-10%',
+                    width: '130%',
+                    height: '190px',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                    opacity: 0.28,
+                    filter: 'blur(32px)',
+                    background: 'linear-gradient(90deg, transparent 0%, rgba(240, 253, 250, 0.45) 30%, rgba(255, 255, 255, 0.35) 60%, transparent 100%)',
+                    animation: `${mistDrift2} 28s ease-in-out infinite 3s`,
+                }}
+            />
 
-            {/* Animated Gradient Overlay */}
+            {/* Relay-style Flowing Luminous Aurora Wave across the Mountain */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '8%',
+                    left: '-20%',
+                    width: '140%',
+                    height: '80%',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                    opacity: 0.85,
+                    transform: `translate3d(${mouseOffset.x * 20}px, ${mouseOffset.y * 14}px, 0)`,
+                    transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+                    filter: 'blur(35px)',
+                    animation: `${auroraWave1} 16s ease-in-out infinite`,
+                    background: 'radial-gradient(ellipse 65% 45% at 50% 35%, rgba(77, 212, 172, 0.35), rgba(13, 148, 136, 0.2) 50%, transparent 75%)',
+                }}
+            />
+
+            {/* Flowing Organic Light Spline Ribbon (GetLayers Relay Style - Bright Theme) */}
+            <Box
+                component="svg"
+                viewBox="0 0 1440 600"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                sx={{
+                    position: 'absolute',
+                    top: '12%',
+                    left: 0,
+                    width: '100%',
+                    height: '75%',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                    opacity: 0.65,
+                    transform: `translate3d(${mouseOffset.x * 12}px, ${mouseOffset.y * 8}px, 0)`,
+                    transition: 'transform 0.4s ease-out',
+                    animation: `${auroraWave1} 22s ease-in-out infinite`,
+                }}
+            >
+                <path
+                    d="M -120 280 C 280 80, 580 400, 960 170 C 1280 30, 1480 200, 1620 280"
+                    stroke="url(#relayBeamGradient)"
+                    strokeWidth="36"
+                    strokeLinecap="round"
+                    style={{ filter: 'blur(26px)' }}
+                />
+                <path
+                    d="M -120 280 C 280 80, 580 400, 960 170 C 1280 30, 1480 200, 1620 280"
+                    stroke="url(#relayBeamGradientCore)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    style={{ filter: 'blur(6px)' }}
+                />
+                <defs>
+                    <linearGradient id="relayBeamGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#4dd4ac" stopOpacity="0" />
+                        <stop offset="25%" stopColor="#2dd4bf" stopOpacity="0.8" />
+                        <stop offset="60%" stopColor="#10b981" stopOpacity="0.85" />
+                        <stop offset="85%" stopColor="#f59e0b" stopOpacity="0.65" />
+                        <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
+                    </linearGradient>
+                    <linearGradient id="relayBeamGradientCore" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                        <stop offset="30%" stopColor="#ffffff" stopOpacity="0.9" />
+                        <stop offset="65%" stopColor="#a7f3d0" stopOpacity="0.85" />
+                        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                    </linearGradient>
+                </defs>
+            </Box>
+
+            {/* Clean Bright Atmospheric Gradient Overlay */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -238,7 +398,7 @@ export default function Hero({ settings, auth }) {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'linear-gradient(180deg, rgba(9, 77, 66, 0.20) 0%, rgba(9, 77, 66, 0.20) 100%)',
+                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(9, 77, 66, 0.16) 70%, rgba(9, 77, 66, 0.3) 100%)',
                     zIndex: 1,
                 }}
             />
@@ -281,6 +441,9 @@ export default function Hero({ settings, auth }) {
                     pb: { xs: 10, sm: 14, md: 18 },
                     position: 'relative',
                     zIndex: 2,
+                    transform: `translate3d(${mouseOffset.x * 6}px, ${mouseOffset.y * 4}px, 0)`,
+                    transition: 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+                    willChange: 'transform',
                 }}
             >
                 {/* Logo — fade in */}

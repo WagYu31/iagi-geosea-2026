@@ -30,49 +30,70 @@ export default function Testimonials({ settings }) {
             id="speakers"
             sx={{
                 py: { xs: 8, sm: 12 },
+                position: 'relative',
+                overflow: 'hidden',
                 background: 'linear-gradient(180deg, #ffffff 0%, #f5fdf9 50%, #eef9f5 100%)',
             }}
         >
-            <Container maxWidth="lg">
+            {/* Ambient Background Glow */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '20%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '600px',
+                    height: '400px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 70%)',
+                    filter: 'blur(50px)',
+                    pointerEvents: 'none',
+                }}
+            />
+
+            <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                 {/* Section Header */}
-                <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
-                    <Typography
-                        variant="overline"
-                        sx={{
-                            color: '#0d9488',
-                            fontWeight: 700,
-                            letterSpacing: '0.15em',
-                            fontSize: '0.8rem',
-                            display: 'block',
-                            mb: 1,
-                        }}
-                    >
-                        VISIONARIES
-                    </Typography>
-                    <Typography
-                        component="h2"
-                        variant="h3"
-                        sx={{
-                            fontWeight: 800,
-                            color: 'text.primary',
-                            fontSize: { xs: '2rem', md: '2.8rem' },
-                            mb: 2,
-                        }}
-                    >
-                        Keynote Speakers
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            color: 'text.secondary',
-                            maxWidth: '600px',
-                            mx: 'auto',
-                            fontSize: { xs: '1rem', md: '1.1rem' },
-                        }}
-                    >
-                        {settings.keynote_speakers_description || 'Distinguished experts bridging the gap between geological science and practical sustainability.'}
-                    </Typography>
-                </Box>
+                <ScrollReveal variant="fadeUp" duration={700}>
+                    <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
+                        <Typography
+                            variant="overline"
+                            sx={{
+                                color: '#0d9488',
+                                fontWeight: 700,
+                                letterSpacing: '0.15em',
+                                fontSize: '0.8rem',
+                                display: 'block',
+                                mb: 1,
+                            }}
+                        >
+                            VISIONARIES
+                        </Typography>
+                        <Typography
+                            component="h2"
+                            variant="h3"
+                            sx={{
+                                fontWeight: 800,
+                                color: 'text.primary',
+                                fontSize: { xs: '2rem', md: '2.8rem' },
+                                letterSpacing: '-0.02em',
+                                mb: 2,
+                            }}
+                        >
+                            Keynote Speakers
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                color: 'text.secondary',
+                                maxWidth: '600px',
+                                mx: 'auto',
+                                fontSize: { xs: '1rem', md: '1.1rem' },
+                            }}
+                        >
+                            {settings.keynote_speakers_description || 'Distinguished experts bridging the gap between geological science and practical sustainability.'}
+                        </Typography>
+                    </Box>
+                </ScrollReveal>
 
                 {speakers.length === 0 ? null : (
                     /* Speaker Cards — horizontal scroll on mobile, wrap on desktop */
