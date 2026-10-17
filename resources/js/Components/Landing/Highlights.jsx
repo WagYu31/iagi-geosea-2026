@@ -1,46 +1,56 @@
 import React from 'react';
-import { alpha, keyframes } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ScrollReveal from './ScrollReveal';
-
-// Gradient background shift
-const gradientShift = keyframes`
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-`;
+import HowItWorks from '@/Components/ui/how-it-works';
 
 export default function Highlights({ settings }) {
-    const timeline = settings.timeline && settings.timeline.length > 0
+    const timeline = settings?.timeline && settings.timeline.length > 0
         ? settings.timeline
         : [
-            { title: 'Registration Opens', date: 'January 18, 2026', status: 'completed' },
-            { title: 'Abstract Submission', date: 'February 28, 2026', status: 'active' },
-            { title: 'Early Bird Deadline', date: 'April 30, 2026', status: 'upcoming' },
-            { title: 'Final Registration', date: 'June 30, 2026', status: 'upcoming' },
-            { title: 'Conference Date', date: 'August 15-17, 2026', status: 'upcoming' },
+            { title: 'Abstract Submission', date: 'February 9, 2026', status: 'active', description: 'Opening of research abstract submission for oral and poster presentation tracks.' },
+            { title: 'Abstract Deadline', date: 'March 21, 2026', status: 'active', description: 'Final submission deadline for research abstracts and peer-review process.' },
+            { title: 'Abstract Acceptance Announcement', date: 'May 07, 2026', status: 'upcoming', description: 'Official notification and announcement of accepted research papers and presentations.' },
+            { title: 'Full Manuscript Submission Deadline', date: 'Agustus 07, 2026', status: 'upcoming', description: 'Deadline for submitting full manuscripts for indexed conference proceedings.' },
+            { title: 'Main Event Conference', date: 'November 3, 2026', status: 'upcoming', description: 'The 55th PIT IAGI & GEOSEA XIX Annual Scientific Convention & Exhibition.' },
         ];
 
-    const getIcon = (status) => {
-        if (status === 'completed') return <CheckCircleIcon sx={{ fontSize: 28, color: '#ffffff' }} />;
-        if (status === 'active') return <AccessTimeIcon sx={{ fontSize: 28, color: '#ffffff' }} />;
-        return <RadioButtonUncheckedIcon sx={{ fontSize: 28, color: '#9ca3af' }} />;
-    };
+    // Color theme mapping for the 5 pinned steps (Orange -> Blue -> Purple -> Orange -> Blue)
+    const colorThemes = ['orange', 'blue', 'purple', 'orange', 'blue'];
+
+    const timelineFeatures = timeline.map((item, index) => {
+        let desc = item.description;
+        if (!desc) {
+            if (item.status === 'active') {
+                desc = 'Active milestone. Submission and registration open for authors and delegates.';
+            } else if (item.status === 'completed') {
+                desc = 'Milestone successfully completed.';
+            } else {
+                desc = 'Scheduled milestone for 55th PIT IAGI - GEOSEA XIX 2026.';
+            }
+        }
+
+        return {
+            title: item.title,
+            description: desc,
+            date: item.date,
+            status: item.status,
+            colorTheme: colorThemes[index % colorThemes.length],
+        };
+    });
 
     return (
         <Box
             id="timeline"
             sx={{
                 py: { xs: 8, sm: 12 },
-                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdfa 50%, #ffffff 100%)',
+                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0fdfa 100%)',
             }}
         >
             <Container
+                maxWidth="lg"
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -49,7 +59,7 @@ export default function Highlights({ settings }) {
                 }}
             >
                 {/* Header */}
-                <Box sx={{ textAlign: 'center', maxWidth: '600px' }}>
+                <Box sx={{ textAlign: 'center', maxWidth: '650px' }}>
                     <Box
                         sx={{
                             display: 'inline-flex',
@@ -60,6 +70,7 @@ export default function Highlights({ settings }) {
                             px: 2.5,
                             py: 0.7,
                             mb: 2,
+                            border: '1px solid rgba(13, 148, 136, 0.2)',
                         }}
                     >
                         <AccessTimeIcon sx={{ color: '#0d9488', fontSize: 18 }} />
@@ -67,7 +78,7 @@ export default function Highlights({ settings }) {
                             variant="overline"
                             sx={{
                                 color: '#0d9488',
-                                fontWeight: 700,
+                                fontWeight: 800,
                                 letterSpacing: '0.15em',
                                 fontSize: '0.75rem',
                             }}
@@ -80,177 +91,33 @@ export default function Highlights({ settings }) {
                         variant="h3"
                         gutterBottom
                         sx={{
-                            fontWeight: 800,
-                            color: '#111827',
-                            fontSize: { xs: '2rem', md: '2.5rem' },
+                            fontWeight: 900,
+                            color: '#0f172a',
+                            fontSize: { xs: '2rem', md: '2.6rem' },
+                            letterSpacing: '-0.02em',
                         }}
                     >
                         Event Timeline
                     </Typography>
-                    <Typography variant="body1" sx={{ color: '#6b7280', fontStyle: 'italic' }}>
+                    <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic', fontSize: '1rem' }}>
                         "Time is the canvas upon which we build the future of geology."
                     </Typography>
                 </Box>
 
-                {/* Timeline Cards */}
+                {/* 21st.dev Style Pinned Interactive Timeline Board (Gambar 2) */}
                 <Box
+                    className="dark w-full"
                     sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            sm: 'repeat(2, 1fr)',
-                            md: 'repeat(3, 1fr)',
-                            lg: `repeat(${Math.min(timeline.length, 5)}, 1fr)`,
-                        },
-                        gap: 2.5,
-                        width: '100%',
-                        maxWidth: '1100px',
+                        borderRadius: { xs: '20px', md: '32px' },
+                        overflow: 'hidden',
+                        boxShadow: '0 25px 80px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                        bgcolor: '#090d14',
                     }}
                 >
-                    {timeline.map((item, index) => (
-                        <ScrollReveal key={index} variant="fadeUp" delay={index * 120} duration={700}>
-                            <Box
-                                key={index}
-                                sx={{
-                                    p: 3,
-                                    textAlign: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    borderRadius: '20px',
-                                    border: '1px solid',
-                                    borderColor: item.status === 'active'
-                                        ? '#0d9488'
-                                        : alpha('#0d9488', 0.12),
-                                    borderWidth: item.status === 'active' ? 2 : 1,
-                                    bgcolor: item.status === 'active'
-                                        ? alpha('#0d9488', 0.04)
-                                        : '#ffffff',
-                                    position: 'relative',
-                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    overflow: 'hidden',
-                                    boxShadow: item.status === 'active'
-                                        ? `0 8px 24px ${alpha('#0d9488', 0.15)}`
-                                        : '0 2px 8px rgba(0,0,0,0.04)',
-                                    '&::before': {
-                                        content: '""',
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: '-100%',
-                                        width: '100%',
-                                        height: '100%',
-                                        background: 'linear-gradient(90deg, transparent, rgba(13, 148, 136, 0.06), transparent)',
-                                        transition: 'left 0.6s ease',
-                                    },
-                                    '&:hover': {
-                                        transform: 'translateY(-6px)',
-                                        borderColor: '#0d9488',
-                                        boxShadow: `0 12px 32px ${alpha('#0d9488', 0.18)}`,
-                                        '&::before': {
-                                            left: '100%',
-                                        },
-                                    },
-                                }}
-                            >
-                                {/* Active badge */}
-                                {item.status === 'active' && (
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            top: -14,
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
-                                            color: 'white',
-                                            px: 2,
-                                            py: 0.5,
-                                            borderRadius: '20px',
-                                            fontSize: '0.65rem',
-                                            fontWeight: 700,
-                                            letterSpacing: '0.5px',
-                                            boxShadow: '0 4px 12px rgba(13, 122, 106, 0.3)',
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        ACTIVE NOW
-                                    </Box>
-                                )}
-
-                                {/* Icon */}
-                                <Box
-                                    sx={{
-                                        width: 52,
-                                        height: 52,
-                                        borderRadius: '14px',
-                                        background: item.status === 'completed'
-                                            ? 'linear-gradient(135deg, #10b981 0%, #0d7a6a 100%)'
-                                            : item.status === 'active'
-                                                ? 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)'
-                                                : '#f3f4f6',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        mb: 2,
-                                        boxShadow: item.status !== 'upcoming'
-                                            ? `0 6px 16px ${alpha('#0d9488', 0.25)}`
-                                            : 'none',
-                                    }}
-                                >
-                                    {getIcon(item.status)}
-                                </Box>
-
-                                <Typography
-                                    component="h3"
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 700,
-                                        fontSize: '0.95rem',
-                                        color: item.status === 'active' ? '#094d42' : '#111827',
-                                        mb: 1,
-                                        minHeight: '2.8em',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        lineHeight: 1.3,
-                                    }}
-                                >
-                                    {item.title}
-                                </Typography>
-
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: item.status === 'active' ? '#0d9488' : '#6b7280',
-                                        fontWeight: item.status === 'active' ? 600 : 400,
-                                        fontSize: '0.85rem',
-                                    }}
-                                >
-                                    {item.date}
-                                </Typography>
-
-                                {/* Progress bar */}
-                                <Box
-                                    sx={{
-                                        mt: 2,
-                                        width: '100%',
-                                        height: 3,
-                                        bgcolor: alpha('#0d9488', 0.1),
-                                        borderRadius: 2,
-                                        overflow: 'hidden',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: item.status === 'completed' ? '100%' : item.status === 'active' ? '50%' : '0%',
-                                            height: '100%',
-                                            background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 100%)',
-                                            borderRadius: 2,
-                                            transition: 'width 0.5s ease',
-                                        }}
-                                    />
-                                </Box>
-                            </Box>
-                        </ScrollReveal>
-                    ))}
+                    <HowItWorks
+                        features={timelineFeatures}
+                        className="bg-[#090d14] text-neutral-100"
+                    />
                 </Box>
             </Container>
         </Box>
