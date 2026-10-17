@@ -32,7 +32,7 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import PublicIcon from '@mui/icons-material/Public';
-import VerifiedIcon from '@mui/icons-material/Verified';
+import SparklesIcon from '@mui/icons-material/AutoAwesome';
 
 export default function Register() {
     const { flash } = usePage().props;
@@ -60,12 +60,12 @@ export default function Register() {
     const tealPrimary = '#0d9488';
     const tealDark = '#094d42';
 
-    // Premium clean input styling - labels placed ABOVE input, avoiding MUI legend notches
-    const textFieldSx = {
+    // 21st.dev Clean Input Styling - Labels placed cleanly ABOVE inputs
+    const modernInputSx = {
         '& .MuiOutlinedInput-root': {
-            borderRadius: '10px',
+            borderRadius: '12px',
             backgroundColor: '#f8fafc',
-            transition: 'all 0.2s ease',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             fontSize: '0.88rem',
             '& fieldset': {
                 borderColor: '#e2e8f0',
@@ -80,7 +80,7 @@ export default function Register() {
                     borderColor: tealPrimary,
                     borderWidth: '1.5px',
                 },
-                boxShadow: '0 0 0 3px rgba(13, 148, 136, 0.12)',
+                boxShadow: '0 0 0 3.5px rgba(13, 148, 136, 0.15)',
             },
             '&.Mui-error fieldset': {
                 borderColor: '#ef4444',
@@ -89,7 +89,7 @@ export default function Register() {
         '& .MuiFormHelperText-root': {
             mx: 0.5,
             mt: 0.5,
-            fontSize: '0.75rem',
+            fontSize: '0.76rem',
             fontWeight: 500,
         },
     };
@@ -126,44 +126,61 @@ export default function Register() {
                     width: '100%',
                     borderRadius: { xs: '20px', md: '24px' },
                     overflow: 'hidden',
-                    boxShadow: '0 25px 80px rgba(0, 0, 0, 0.4)',
-                    border: '1.5px solid rgba(255, 255, 255, 0.16)',
+                    boxShadow: '0 30px 90px -20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 50px -10px rgba(20, 184, 166, 0.2)',
+                    border: '1.5px solid rgba(255, 255, 255, 0.2)',
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     alignItems: 'stretch',
                 }}
             >
                 {/* ======================================================== */}
-                {/* LEFT PANEL: 39% Width - Conference Identity & Author Hub */}
+                {/* LEFT PANEL: 38% Width - Atmospheric Conference Hub       */}
                 {/* ======================================================== */}
                 <Box
                     sx={{
-                        width: { xs: '100%', md: '39%' },
-                        p: { xs: 3.5, sm: 4, lg: 4.8 },
-                        background: 'linear-gradient(165deg, #094d42 0%, #06372f 50%, #022620 100%)',
+                        width: { xs: '100%', md: '38%' },
+                        p: { xs: 3.5, sm: 4, lg: 4.5 },
+                        background: 'linear-gradient(165deg, #031914 0%, #06372f 50%, #021a15 100%)',
                         borderRight: { md: '1px solid rgba(77, 212, 172, 0.16)' },
                         borderBottom: { xs: '1px solid rgba(77, 212, 172, 0.16)', md: 'none' },
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         position: 'relative',
+                        overflow: 'hidden',
                         color: '#ffffff',
                     }}
                 >
-                    <Box>
+                    {/* Subtle Radial Mesh Behind Left Panel */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '-20%',
+                            left: '-20%',
+                            width: '350px',
+                            height: '350px',
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(20, 184, 166, 0.25) 0%, transparent 70%)',
+                            filter: 'blur(50px)',
+                            pointerEvents: 'none',
+                        }}
+                    />
+
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
                         {/* Conference Emblem & Title */}
                         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
                             <Box
                                 sx={{
-                                    width: 52,
-                                    height: 52,
-                                    borderRadius: '14px',
+                                    width: 56,
+                                    height: 56,
+                                    borderRadius: '16px',
                                     bgcolor: '#ffffff',
-                                    p: 0.8,
+                                    p: 0.9,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                                    boxShadow: '0 0 25px rgba(20, 184, 166, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4)',
+                                    border: '1.5px solid rgba(52, 211, 153, 0.4)',
                                     flexShrink: 0,
                                 }}
                             >
@@ -179,25 +196,38 @@ export default function Register() {
                                 />
                             </Box>
                             <Box>
-                                <Typography
-                                    variant="caption"
+                                <Box
                                     sx={{
-                                        color: '#34d399',
-                                        fontWeight: 800,
-                                        letterSpacing: '0.12em',
-                                        textTransform: 'uppercase',
-                                        fontSize: '0.68rem',
-                                        display: 'block',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 0.6,
+                                        px: 1,
+                                        py: 0.25,
+                                        borderRadius: '6px',
+                                        bgcolor: 'rgba(52, 211, 153, 0.15)',
+                                        border: '1px solid rgba(52, 211, 153, 0.3)',
+                                        mb: 0.5,
                                     }}
                                 >
-                                    Annual Convention & Exhibition
-                                </Typography>
+                                    <SparklesIcon sx={{ fontSize: 11, color: '#34d399' }} />
+                                    <Typography
+                                        sx={{
+                                            color: '#6ee7b7',
+                                            fontWeight: 800,
+                                            letterSpacing: '0.08em',
+                                            textTransform: 'uppercase',
+                                            fontSize: '0.64rem',
+                                        }}
+                                    >
+                                        Annual Convention & Exhibition
+                                    </Typography>
+                                </Box>
                                 <Typography
                                     variant="h6"
                                     sx={{
                                         fontWeight: 900,
                                         lineHeight: 1.2,
-                                        fontSize: { xs: '1.1rem', sm: '1.22rem' },
+                                        fontSize: { xs: '1.15rem', sm: '1.25rem' },
                                         color: '#ffffff',
                                     }}
                                 >
@@ -210,7 +240,7 @@ export default function Register() {
                         <Typography
                             variant="body2"
                             sx={{
-                                color: 'rgba(255, 255, 255, 0.88)',
+                                color: 'rgba(255, 255, 255, 0.9)',
                                 fontSize: '0.86rem',
                                 lineHeight: 1.55,
                                 mb: 3.5,
@@ -238,30 +268,38 @@ export default function Register() {
                             Author & Delegate Privileges
                         </Typography>
 
-                        <Stack spacing={2}>
+                        <Stack spacing={1.8}>
+                            {/* Privilege 1 */}
                             <Box
                                 sx={{
                                     p: 1.8,
                                     borderRadius: '14px',
                                     bgcolor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    backdropFilter: 'blur(10px)',
                                     display: 'flex',
-                                    gap: 1.5,
+                                    gap: 1.6,
                                     alignItems: 'flex-start',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'all 0.25s ease',
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                        borderColor: 'rgba(52, 211, 153, 0.25)',
+                                        bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                        borderColor: 'rgba(52, 211, 153, 0.35)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                                     },
                                 }}
                             >
                                 <Box
                                     sx={{
-                                        p: 0.8,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: 'rgba(16, 185, 129, 0.2)',
+                                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                        border: '1px solid rgba(52, 211, 153, 0.3)',
                                         color: '#34d399',
                                         display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         flexShrink: 0,
                                     }}
                                 >
@@ -277,29 +315,37 @@ export default function Register() {
                                 </Box>
                             </Box>
 
+                            {/* Privilege 2 */}
                             <Box
                                 sx={{
                                     p: 1.8,
                                     borderRadius: '14px',
                                     bgcolor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    backdropFilter: 'blur(10px)',
                                     display: 'flex',
-                                    gap: 1.5,
+                                    gap: 1.6,
                                     alignItems: 'flex-start',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'all 0.25s ease',
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                        borderColor: 'rgba(52, 211, 153, 0.25)',
+                                        bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                        borderColor: 'rgba(52, 211, 153, 0.35)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                                     },
                                 }}
                             >
                                 <Box
                                     sx={{
-                                        p: 0.8,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: 'rgba(16, 185, 129, 0.2)',
+                                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                        border: '1px solid rgba(52, 211, 153, 0.3)',
                                         color: '#34d399',
                                         display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         flexShrink: 0,
                                     }}
                                 >
@@ -315,29 +361,37 @@ export default function Register() {
                                 </Box>
                             </Box>
 
+                            {/* Privilege 3 */}
                             <Box
                                 sx={{
                                     p: 1.8,
                                     borderRadius: '14px',
                                     bgcolor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    backdropFilter: 'blur(10px)',
                                     display: 'flex',
-                                    gap: 1.5,
+                                    gap: 1.6,
                                     alignItems: 'flex-start',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'all 0.25s ease',
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                        borderColor: 'rgba(52, 211, 153, 0.25)',
+                                        bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                        borderColor: 'rgba(52, 211, 153, 0.35)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                                     },
                                 }}
                             >
                                 <Box
                                     sx={{
-                                        p: 0.8,
+                                        width: 38,
+                                        height: 38,
                                         borderRadius: '10px',
-                                        bgcolor: 'rgba(16, 185, 129, 0.2)',
+                                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                        border: '1px solid rgba(52, 211, 153, 0.3)',
                                         color: '#34d399',
                                         display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         flexShrink: 0,
                                     }}
                                 >
@@ -356,10 +410,10 @@ export default function Register() {
                     </Box>
 
                     {/* Bottom Organizer Signature */}
-                    <Box sx={{ mt: 4, pt: 2.5, borderTop: '1px solid rgba(255, 255, 255, 0.12)' }}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <VerifiedIcon sx={{ color: '#34d399', fontSize: 18 }} />
-                            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.82)', fontWeight: 600, fontSize: '0.78rem' }}>
+                    <Box sx={{ mt: 4, pt: 2.5, borderTop: '1px solid rgba(255, 255, 255, 0.12)', position: 'relative', zIndex: 1 }}>
+                        <Stack direction="row" spacing={1.2} alignItems="center">
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#34d399', boxShadow: '0 0 10px #34d399' }} />
+                            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600, fontSize: '0.78rem' }}>
                                 Organized by Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
                             </Typography>
                         </Stack>
@@ -367,11 +421,11 @@ export default function Register() {
                 </Box>
 
                 {/* ======================================================== */}
-                {/* RIGHT PANEL: 61% Width - Clean, Modern Registration Form  */}
+                {/* RIGHT PANEL: 62% Width - Clean, Modern Registration Form  */}
                 {/* ======================================================== */}
                 <Box
                     sx={{
-                        width: { xs: '100%', md: '61%' },
+                        width: { xs: '100%', md: '62%' },
                         p: { xs: 3.5, sm: 4, lg: 4.8 },
                         bgcolor: '#ffffff',
                         display: 'flex',
@@ -500,7 +554,7 @@ export default function Register() {
                                             ),
                                         },
                                     }}
-                                    sx={textFieldSx}
+                                    sx={modernInputSx}
                                 />
                             </Box>
 
@@ -540,6 +594,10 @@ export default function Register() {
                                                             onClick={() => setShowPassword(!showPassword)}
                                                             edge="end"
                                                             size="small"
+                                                            sx={{
+                                                                color: '#94a3b8',
+                                                                '&:hover': { color: tealPrimary },
+                                                            }}
                                                         >
                                                             {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
                                                         </IconButton>
@@ -547,7 +605,7 @@ export default function Register() {
                                                 ),
                                             },
                                         }}
-                                        sx={textFieldSx}
+                                        sx={modernInputSx}
                                     />
                                 </Box>
                                 <Box>
@@ -584,6 +642,10 @@ export default function Register() {
                                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                             edge="end"
                                                             size="small"
+                                                            sx={{
+                                                                color: '#94a3b8',
+                                                                '&:hover': { color: tealPrimary },
+                                                            }}
                                                         >
                                                             {showConfirmPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
                                                         </IconButton>
@@ -591,7 +653,7 @@ export default function Register() {
                                                 ),
                                             },
                                         }}
-                                        sx={textFieldSx}
+                                        sx={modernInputSx}
                                     />
                                 </Box>
                             </Box>
@@ -647,7 +709,7 @@ export default function Register() {
                                                 ),
                                             },
                                         }}
-                                        sx={textFieldSx}
+                                        sx={modernInputSx}
                                     />
                                 </Box>
                                 <Box>
@@ -679,7 +741,7 @@ export default function Register() {
                                                 ),
                                             },
                                         }}
-                                        sx={textFieldSx}
+                                        sx={modernInputSx}
                                     />
                                 </Box>
                             </Box>
@@ -713,7 +775,7 @@ export default function Register() {
                                             ),
                                         },
                                     }}
-                                    sx={textFieldSx}
+                                    sx={modernInputSx}
                                 />
                             </Box>
                         </Box>
@@ -746,22 +808,22 @@ export default function Register() {
                                             key={cat.id}
                                             onClick={() => setData('category', cat.id)}
                                             sx={{
-                                                p: 1.5,
-                                                borderRadius: '10px',
+                                                p: 1.6,
+                                                borderRadius: '12px',
                                                 border: isSelected ? '2px solid #0d9488' : '1.5px solid #e2e8f0',
                                                 bgcolor: isSelected ? '#f0fdf4' : '#ffffff',
-                                                boxShadow: isSelected ? '0 4px 14px rgba(13, 148, 136, 0.14)' : 'none',
+                                                boxShadow: isSelected ? '0 6px 20px rgba(13, 148, 136, 0.16)' : 'none',
                                                 cursor: 'pointer',
-                                                transition: 'all 0.18s ease',
+                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 position: 'relative',
                                                 '&:hover': {
                                                     borderColor: isSelected ? '#0d9488' : '#cbd5e1',
                                                     bgcolor: isSelected ? '#f0fdf4' : '#f8fafc',
-                                                    transform: 'translateY(-1.5px)',
-                                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                                                    transform: 'translateY(-2px)',
+                                                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.06)',
                                                 },
                                                 '&:active': {
-                                                    transform: 'translateY(1px)',
+                                                    transform: 'translateY(0)',
                                                 },
                                             }}
                                         >
@@ -771,7 +833,7 @@ export default function Register() {
                                                         position: 'absolute',
                                                         top: 8,
                                                         right: 8,
-                                                        fontSize: 16,
+                                                        fontSize: 17,
                                                         color: tealPrimary,
                                                     }}
                                                 />
@@ -779,7 +841,7 @@ export default function Register() {
                                             <Stack direction="row" spacing={0.8} alignItems="center" sx={{ mb: 0.4 }}>
                                                 <IconComponent
                                                     sx={{
-                                                        fontSize: 18,
+                                                        fontSize: 19,
                                                         color: isSelected ? tealPrimary : '#64748b',
                                                     }}
                                                 />
@@ -787,7 +849,7 @@ export default function Register() {
                                                     variant="subtitle2"
                                                     sx={{
                                                         fontWeight: 700,
-                                                        fontSize: '0.84rem',
+                                                        fontSize: '0.86rem',
                                                         color: isSelected ? '#064e3b' : '#1e293b',
                                                     }}
                                                 >
@@ -799,7 +861,7 @@ export default function Register() {
                                                 sx={{
                                                     color: isSelected ? tealDark : '#64748b',
                                                     fontWeight: 500,
-                                                    fontSize: '0.72rem',
+                                                    fontSize: '0.73rem',
                                                     display: 'block',
                                                     lineHeight: 1.3,
                                                 }}
@@ -827,24 +889,24 @@ export default function Register() {
                                 processing ? (
                                     <CircularProgress size={18} sx={{ color: 'white' }} />
                                 ) : (
-                                    <PersonAddOutlinedIcon />
+                                    <PersonAddOutlinedIcon sx={{ fontSize: 19 }} />
                                 )
                             }
                             sx={{
-                                py: 1.3,
-                                borderRadius: '10px',
+                                py: 1.4,
+                                borderRadius: '12px',
                                 textTransform: 'none',
                                 fontWeight: 700,
-                                fontSize: '0.94rem',
+                                fontSize: '0.95rem',
                                 background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #059669 100%)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                boxShadow: '0 4px 16px rgba(9, 77, 66, 0.3)',
+                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -5px rgba(9, 77, 66, 0.45)',
                                 color: '#ffffff',
-                                transition: 'all 0.15s ease',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                                 '&:hover': {
                                     background: 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)',
-                                    transform: 'translateY(-1.5px)',
-                                    boxShadow: '0 6px 20px rgba(9, 77, 66, 0.4)',
+                                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 28px -4px rgba(9, 77, 66, 0.55)',
+                                    transform: 'translateY(-2px)',
                                 },
                                 '&:active': {
                                     transform: 'translateY(1px) scale(0.99)',
@@ -859,8 +921,8 @@ export default function Register() {
                         </Button>
 
                         {/* DIVIDER */}
-                        <Divider sx={{ my: 2.2 }}>
-                            <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', px: 1.2, fontWeight: 600 }}>
+                        <Divider sx={{ my: 2.6 }}>
+                            <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', px: 1.2, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                                 ALREADY REGISTERED?
                             </Typography>
                         </Divider>
@@ -871,21 +933,24 @@ export default function Register() {
                             href={route('login')}
                             fullWidth
                             variant="outlined"
-                            startIcon={<LoginIcon />}
+                            startIcon={<LoginIcon sx={{ fontSize: 18 }} />}
                             sx={{
-                                py: 1,
-                                borderRadius: '10px',
+                                py: 1.2,
+                                borderRadius: '12px',
                                 textTransform: 'none',
                                 fontWeight: 700,
-                                fontSize: '0.85rem',
+                                fontSize: '0.88rem',
                                 color: tealDark,
                                 borderColor: '#e2e8f0',
                                 borderWidth: '1.5px',
                                 background: '#ffffff',
+                                transition: 'all 0.2s ease',
                                 '&:hover': {
                                     borderColor: tealPrimary,
                                     borderWidth: '1.5px',
-                                    bgcolor: alpha(tealPrimary, 0.04),
+                                    bgcolor: alpha(tealPrimary, 0.05),
+                                    transform: 'translateY(-1.5px)',
+                                    boxShadow: '0 4px 12px rgba(13, 148, 136, 0.08)',
                                 },
                                 '&:active': {
                                     transform: 'translateY(1px)',

@@ -1,5 +1,5 @@
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import SendIcon from '@mui/icons-material/Send';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { alpha } from '@mui/material/styles';
 
 export default function ForgotPassword({ status }) {
@@ -22,49 +23,88 @@ export default function ForgotPassword({ status }) {
         post(route('password.email'));
     };
 
-    const teal = '#0d9488';
-    const tealDark = '#0d7a6a';
-    const tealLight = '#1abc9c';
+    const tealPrimary = '#0d9488';
+    const tealDark = '#094d42';
+
+    // 21st.dev Clean Input Styling - Labels placed cleanly ABOVE inputs
+    const modernInputSx = {
+        '& .MuiOutlinedInput-root': {
+            borderRadius: '12px',
+            backgroundColor: '#f8fafc',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            fontSize: '0.9rem',
+            '& fieldset': {
+                borderColor: '#e2e8f0',
+                borderWidth: '1.5px',
+            },
+            '&:hover fieldset': {
+                borderColor: '#cbd5e1',
+            },
+            '&.Mui-focused': {
+                backgroundColor: '#ffffff',
+                '& fieldset': {
+                    borderColor: tealPrimary,
+                    borderWidth: '1.5px',
+                },
+                boxShadow: '0 0 0 3.5px rgba(13, 148, 136, 0.15)',
+            },
+            '&.Mui-error fieldset': {
+                borderColor: '#ef4444',
+            },
+        },
+        '& .MuiFormHelperText-root': {
+            mx: 0.5,
+            mt: 0.6,
+            fontSize: '0.78rem',
+            fontWeight: 500,
+        },
+    };
 
     return (
         <GuestLayout>
-            <Head title="Forgot Password" />
+            <Head title="Reset Password - 55th PIT IAGI - GEOSEA XIX 2026" />
 
-            {/* Header */}
-            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+            {/* Header with 21st.dev Badge & Icon */}
+            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 3.5 } }}>
                 <Box
                     sx={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 56,
-                        height: 56,
+                        width: 54,
+                        height: 54,
                         borderRadius: '16px',
-                        background: `linear-gradient(135deg, ${alpha(teal, 0.1)}, ${alpha(tealLight, 0.15)})`,
+                        background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(52, 211, 153, 0.2) 100%)',
+                        border: '1px solid rgba(13, 148, 136, 0.25)',
+                        boxShadow: '0 4px 16px rgba(13, 148, 136, 0.15)',
                         mb: 2,
                     }}
                 >
-                    <LockResetIcon sx={{ fontSize: 28, color: teal }} />
+                    <LockResetIcon sx={{ fontSize: 26, color: tealPrimary }} />
                 </Box>
+
                 <Typography
                     variant="h5"
+                    component="h1"
                     sx={{
-                        fontWeight: 800,
-                        color: '#111827',
-                        fontSize: { xs: '1.4rem', sm: '1.6rem' },
-                        mb: 1,
+                        fontWeight: 900,
+                        color: '#0f172a',
+                        fontSize: { xs: '1.45rem', sm: '1.75rem' },
+                        letterSpacing: '-0.025em',
+                        lineHeight: 1.25,
+                        mb: 0.6,
                     }}
                 >
                     Reset Password
                 </Typography>
                 <Typography
                     sx={{
-                        color: '#6b7280',
-                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                        color: '#64748b',
+                        fontSize: '0.88rem',
                         lineHeight: 1.5,
                     }}
                 >
-                    Enter your email address and we'll send you a password reset link.
+                    Enter your account email and we'll send you a secure link to reset your password.
                 </Typography>
             </Box>
 
@@ -75,10 +115,11 @@ export default function ForgotPassword({ status }) {
                     sx={{
                         mb: 3,
                         borderRadius: '12px',
-                        bgcolor: alpha(teal, 0.08),
+                        bgcolor: alpha(tealPrimary, 0.08),
                         color: tealDark,
-                        '& .MuiAlert-icon': { color: teal },
-                        border: `1px solid ${alpha(teal, 0.2)}`,
+                        fontWeight: 500,
+                        '& .MuiAlert-icon': { color: tealPrimary },
+                        border: `1px solid ${alpha(tealPrimary, 0.25)}`,
                     }}
                 >
                     {status}
@@ -86,44 +127,48 @@ export default function ForgotPassword({ status }) {
             )}
 
             <form onSubmit={submit}>
-                <TextField
-                    id="email"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                    autoComplete="email"
-                    autoFocus
-                    slotProps={{
-                        input: {
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <EmailOutlinedIcon sx={{ color: '#9ca3af', fontSize: 20 }} />
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                    sx={{
-                        mb: 3,
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '12px',
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: teal,
+                {/* Email Field with Clean Above-Label */}
+                <Box sx={{ mb: 3 }}>
+                    <Typography
+                        component="label"
+                        htmlFor="email"
+                        sx={{
+                            display: 'block',
+                            fontSize: '0.82rem',
+                            fontWeight: 600,
+                            color: '#334155',
+                            mb: 0.6,
+                            letterSpacing: '0.01em',
+                        }}
+                    >
+                        Email Address <Box component="span" sx={{ color: '#ef4444' }}>*</Box>
+                    </Typography>
+                    <TextField
+                        id="email"
+                        type="email"
+                        fullWidth
+                        placeholder="you@institution.edu"
+                        value={data.email}
+                        onChange={(e) => setData('email', e.target.value)}
+                        error={!!errors.email}
+                        helperText={errors.email}
+                        autoComplete="email"
+                        autoFocus
+                        required
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailOutlinedIcon sx={{ color: '#94a3b8', fontSize: 19 }} />
+                                    </InputAdornment>
+                                ),
                             },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: teal,
-                                borderWidth: '2px',
-                            },
-                        },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                            color: tealDark,
-                        },
-                    }}
-                />
+                        }}
+                        sx={modernInputSx}
+                    />
+                </Box>
 
+                {/* Primary CTA Button */}
                 <Button
                     type="submit"
                     fullWidth
@@ -133,35 +178,58 @@ export default function ForgotPassword({ status }) {
                         processing ? (
                             <CircularProgress size={18} sx={{ color: 'white' }} />
                         ) : (
-                            <SendIcon />
+                            <SendIcon sx={{ fontSize: 18 }} />
                         )
                     }
                     sx={{
-                        py: 1.5,
-                        borderRadius: '50px',
-                        textTransform: 'uppercase',
+                        py: 1.4,
+                        borderRadius: '12px',
+                        textTransform: 'none',
                         fontWeight: 700,
-                        fontSize: { xs: '0.85rem', sm: '0.9rem' },
-                        letterSpacing: '0.08em',
-                        bgcolor: tealLight,
-                        boxShadow: `0 6px 24px ${alpha(tealLight, 0.4)}`,
+                        fontSize: '0.95rem',
+                        letterSpacing: '0.01em',
+                        background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #059669 100%)',
+                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -5px rgba(9, 77, 66, 0.45)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: '#ffffff',
+                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
-                            bgcolor: tealDark,
-                            boxShadow: `0 8px 32px ${alpha(tealDark, 0.5)}`,
+                            background: 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)',
+                            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 28px -4px rgba(9, 77, 66, 0.55)',
                             transform: 'translateY(-2px)',
                         },
                         '&:active': {
-                            transform: 'translateY(0)',
+                            transform: 'translateY(1px) scale(0.99)',
                         },
-                        transition: 'all 0.3s ease',
                         '&.Mui-disabled': {
-                            bgcolor: '#d1d5db',
-                            color: 'white',
+                            background: '#94a3b8',
+                            color: '#ffffff',
                         },
                     }}
                 >
-                    {processing ? 'Sending...' : 'Email Password Reset Link'}
+                    {processing ? 'Sending Link...' : 'Email Password Reset Link'}
                 </Button>
+
+                {/* Back to Sign In Link */}
+                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                    <Button
+                        component={Link}
+                        href={route('login')}
+                        startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
+                        sx={{
+                            color: tealDark,
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            textTransform: 'none',
+                            '&:hover': {
+                                color: tealPrimary,
+                                bgcolor: alpha(tealPrimary, 0.05),
+                            },
+                        }}
+                    >
+                        Return to Sign In
+                    </Button>
+                </Box>
             </form>
         </GuestLayout>
     );

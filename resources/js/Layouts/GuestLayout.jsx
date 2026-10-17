@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import { alpha } from '@mui/material/styles';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Button from '@mui/material/Button';
+import SparklesIcon from '@mui/icons-material/AutoAwesome';
 
 export default function GuestLayout({ children, maxWidth = 'sm', wide = false }) {
     return (
@@ -18,12 +19,12 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                 justifyContent: 'center',
                 position: 'relative',
                 overflow: 'hidden',
-                background: 'linear-gradient(135deg, #094d42 0%, #0a3d35 40%, #062e28 100%)',
+                background: 'linear-gradient(145deg, #031410 0%, #06231c 35%, #051d18 70%, #020d0a 100%)',
                 px: { xs: 2, sm: 3 },
                 py: { xs: 3, sm: 5 },
             }}
         >
-            {/* Animated Background Pattern */}
+            {/* 21st.dev Style Atmospheric Mesh Grid Background */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -31,54 +32,68 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    opacity: 0.06,
-                    backgroundImage: `radial-gradient(circle at 20% 50%, #1abc9c 1px, transparent 1px),
-                                      radial-gradient(circle at 80% 20%, #1abc9c 1px, transparent 1px),
-                                      radial-gradient(circle at 40% 80%, #1abc9c 1px, transparent 1px)`,
-                    backgroundSize: '100px 100px, 150px 150px, 120px 120px',
-                    animation: 'float 20s ease-in-out infinite',
-                    '@keyframes float': {
-                        '0%, 100%': { transform: 'translateY(0)' },
-                        '50%': { transform: 'translateY(-20px)' },
-                    },
+                    backgroundImage: `radial-gradient(rgba(45, 212, 191, 0.14) 1.2px, transparent 1.2px)`,
+                    backgroundSize: '28px 28px',
+                    maskImage: 'radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 90%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at 50% 50%, black 40%, transparent 90%)',
+                    pointerEvents: 'none',
                 }}
             />
 
-            {/* Top Accent Bar */}
+            {/* Aurora Top Radial Spotlight */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '-15%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '900px',
+                    height: '500px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(ellipse at center, rgba(20, 184, 166, 0.22) 0%, rgba(13, 148, 136, 0.08) 45%, transparent 75%)',
+                    filter: 'blur(70px)',
+                    pointerEvents: 'none',
+                }}
+            />
+
+            {/* Ambient Corner Orbs */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    bottom: '-15%',
+                    left: '-10%',
+                    width: '550px',
+                    height: '550px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 65%)',
+                    filter: 'blur(80px)',
+                    pointerEvents: 'none',
+                }}
+            />
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '25%',
+                    right: '-12%',
+                    width: '450px',
+                    height: '450px',
+                    borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(45, 212, 191, 0.1) 0%, transparent 65%)',
+                    filter: 'blur(70px)',
+                    pointerEvents: 'none',
+                }}
+            />
+
+            {/* Top Laser Accent Beam */}
             <Box
                 sx={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '4px',
-                    background: 'linear-gradient(90deg, #0d7a6a, #1abc9c, #4dd4ac, #1abc9c, #0d7a6a)',
-                }}
-            />
-
-            {/* Decorative Glow */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '-30%',
-                    right: '-20%',
-                    width: '500px',
-                    height: '500px',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(26, 188, 156, 0.12) 0%, transparent 70%)',
-                    filter: 'blur(60px)',
-                }}
-            />
-            <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: '-20%',
-                    left: '-15%',
-                    width: '400px',
-                    height: '400px',
-                    borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(13, 122, 106, 0.15) 0%, transparent 70%)',
-                    filter: 'blur(50px)',
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent 0%, #0d9488 20%, #34d399 50%, #0d9488 80%, transparent 100%)',
+                    opacity: 0.9,
                 }}
             />
 
@@ -86,10 +101,10 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                 maxWidth={false}
                 sx={{
                     position: 'relative',
-                    zIndex: 1,
+                    zIndex: 2,
                     width: '100%',
-                    maxWidth: wide ? { xs: '100%', sm: '640px', md: '1060px', lg: '1140px' } : '550px',
-                    px: { xs: 1.5, sm: 2.5, md: 3 },
+                    maxWidth: wide ? { xs: '100%', sm: '640px', md: '1060px', lg: '1160px' } : '490px',
+                    px: { xs: 1, sm: 2.5, md: 3 },
                     py: { xs: 2, md: 3 },
                     my: 'auto',
                 }}
@@ -98,96 +113,124 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                     children
                 ) : (
                     <>
-                        {/* Logo & Branding */}
-                        <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+                        {/* Logo & Branding Header */}
+                        <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 3.5 } }}>
                             <Link href="/" style={{ textDecoration: 'none' }}>
+                                {/* Floating Logo Medallion with Subtle Glow */}
                                 <Box
                                     sx={{
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        width: { xs: 72, sm: 88, md: 100 },
-                                        height: { xs: 72, sm: 88, md: 100 },
-                                        borderRadius: '50%',
-                                        bgcolor: 'white',
-                                        mb: 2.5,
-                                        overflow: 'hidden',
-                                        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-                                        transition: 'transform 0.3s ease',
+                                        width: { xs: 78, sm: 88 },
+                                        height: { xs: 78, sm: 88 },
+                                        borderRadius: '22px',
+                                        bgcolor: '#ffffff',
+                                        mb: 2,
+                                        p: 1.2,
+                                        border: '1.5px solid rgba(52, 211, 153, 0.45)',
+                                        boxShadow: '0 0 35px rgba(20, 184, 166, 0.35), 0 12px 30px rgba(0, 0, 0, 0.45)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
-                                            transform: 'scale(1.05)',
+                                            transform: 'translateY(-2px) scale(1.04)',
+                                            boxShadow: '0 0 45px rgba(52, 211, 153, 0.5), 0 16px 36px rgba(0, 0, 0, 0.55)',
                                         },
                                     }}
                                 >
                                     <Box
                                         component="img"
                                         src="/favicon.webp"
-                                        alt="PIT IAGI - GEOSEA 2026 Logo"
+                                        alt="55th PIT IAGI - GEOSEA XIX 2026 Logo"
                                         width={75}
                                         height={75}
                                         fetchPriority="high"
                                         decoding="async"
                                         sx={{
-                                            width: '75%',
-                                            height: '75%',
+                                            width: '100%',
+                                            height: '100%',
                                             objectFit: 'contain',
                                         }}
                                     />
                                 </Box>
 
+                                {/* Modern Pill Badge */}
+                                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                                    <Box
+                                        sx={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: 0.8,
+                                            px: 1.4,
+                                            py: 0.4,
+                                            borderRadius: '9999px',
+                                            background: 'rgba(20, 184, 166, 0.12)',
+                                            border: '1px solid rgba(52, 211, 153, 0.25)',
+                                            backdropFilter: 'blur(10px)',
+                                        }}
+                                    >
+                                        <SparklesIcon sx={{ fontSize: 13, color: '#34d399' }} />
+                                        <Typography
+                                            sx={{
+                                                color: '#6ee7b7',
+                                                fontWeight: 700,
+                                                fontSize: '0.68rem',
+                                                letterSpacing: '0.08em',
+                                                textTransform: 'uppercase',
+                                            }}
+                                        >
+                                            Annual Scientific Convention
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
                                 <Typography
                                     variant="h4"
                                     sx={{
-                                        fontWeight: 800,
-                                        color: '#4dd4ac',
-                                        fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.2rem' },
-                                        letterSpacing: '0.02em',
-                                        mb: 0.5,
-                                        textShadow: '0 2px 12px rgba(77, 212, 172, 0.3)',
+                                        fontWeight: 900,
+                                        color: '#ffffff',
+                                        fontSize: { xs: '1.45rem', sm: '1.75rem', md: '1.95rem' },
+                                        letterSpacing: '-0.02em',
+                                        lineHeight: 1.25,
+                                        mb: 0.4,
                                     }}
                                 >
-                                    55ᵀᴴ PIT IAGI-GEOSEA{' '}
-                                    <Box component="span" sx={{ color: '#1abc9c' }}>
-                                        XIX 2026
+                                    55ᵀᴴ PIT IAGI ·{' '}
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #34d399 0%, #10b981 50%, #2dd4bf 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                        }}
+                                    >
+                                        GEOSEA XIX 2026
                                     </Box>
-                                </Typography>
-
-                                <Typography
-                                    sx={{
-                                        color: alpha('#ffffff', 0.6),
-                                        fontWeight: 600,
-                                        letterSpacing: '0.15em',
-                                        fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                                        textTransform: 'uppercase',
-                                    }}
-                                >
-                                    Annual Convention
                                 </Typography>
                             </Link>
                         </Box>
 
-                        {/* Main Card */}
+                        {/* Modern 21st.dev Style Elevated Card */}
                         <Paper
                             elevation={0}
                             sx={{
                                 borderRadius: { xs: '20px', sm: '24px' },
-                                p: { xs: 3, sm: 4, md: 5 },
-                                bgcolor: 'white',
-                                boxShadow: '0 24px 80px rgba(0,0,0,0.25)',
-                                border: `1px solid ${alpha('#ffffff', 0.1)}`,
+                                p: { xs: 3, sm: 4, md: 4.5 },
+                                bgcolor: '#ffffff',
+                                boxShadow: '0 25px 70px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 50px -10px rgba(20, 184, 166, 0.18)',
+                                border: '1px solid rgba(255, 255, 255, 0.25)',
                                 position: 'relative',
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* Card top accent */}
+                            {/* Card Top Laser Accent */}
                             <Box
                                 sx={{
                                     position: 'absolute',
                                     top: 0,
                                     left: 0,
                                     right: 0,
-                                    height: '3px',
-                                    background: 'linear-gradient(90deg, #0d9488, #1abc9c, #4dd4ac)',
+                                    height: '3.5px',
+                                    background: 'linear-gradient(90deg, #0d9488 0%, #10b981 50%, #34d399 100%)',
                                 }}
                             />
                             {children}
@@ -195,21 +238,35 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                     </>
                 )}
 
-                {/* Back to Home */}
-                <Box sx={{ textAlign: 'center', mt: { xs: 2.5, sm: 3.5 } }}>
+                {/* Back to Home Pill Button (21st.dev Glass Style) */}
+                <Box sx={{ textAlign: 'center', mt: { xs: 3, sm: 3.5 } }}>
                     <Button
                         component={Link}
                         href="/"
-                        startIcon={<ArrowBackIcon />}
+                        startIcon={<ArrowBackIcon sx={{ fontSize: 17 }} />}
                         sx={{
-                            color: alpha('#ffffff', 0.75),
+                            color: '#e2e8f0',
                             fontWeight: 600,
-                            fontSize: '0.85rem',
+                            fontSize: '0.82rem',
                             textTransform: 'none',
-                            letterSpacing: '0.02em',
+                            letterSpacing: '0.01em',
+                            px: 2.4,
+                            py: 0.9,
+                            borderRadius: '9999px',
+                            background: 'rgba(255, 255, 255, 0.06)',
+                            backdropFilter: 'blur(16px)',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.25)',
+                            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': {
-                                color: '#4dd4ac',
-                                bgcolor: 'transparent',
+                                color: '#ffffff',
+                                background: 'rgba(255, 255, 255, 0.12)',
+                                borderColor: 'rgba(52, 211, 153, 0.4)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 24px rgba(20, 184, 166, 0.25)',
+                            },
+                            '&:active': {
+                                transform: 'translateY(0)',
                             },
                         }}
                     >
