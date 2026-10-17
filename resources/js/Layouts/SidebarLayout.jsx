@@ -274,9 +274,9 @@ function SidebarLayout({ children }) {
       {/* ─── Brand Header ─── */}
       <Box
         component={motion.div}
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.65, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         sx={{
           px: isCollapsed ? 1 : 2.5,
           py: isCollapsed ? 2 : 3,
@@ -413,9 +413,9 @@ function SidebarLayout({ children }) {
             <ListItem
               key={item.text}
               component={motion.li}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -24 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.35, delay: 0.05 + idx * 0.02, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.55, delay: 0.14 + idx * 0.035, ease: [0.22, 1, 0.36, 1] }}
               disablePadding
               sx={{ mb: 0.4, listStyle: 'none' }}
             >
@@ -432,7 +432,7 @@ function SidebarLayout({ children }) {
         component={motion.div}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
         sx={{ px: isCollapsed ? 0.75 : 1.5, pb: 1, position: 'relative', zIndex: 1 }}
       >
         {isCollapsed ? (
@@ -519,7 +519,7 @@ function SidebarLayout({ children }) {
           component={motion.div}
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.7, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
           sx={{ minHeight: { xs: 56, sm: 60 } }}
         >
           <IconButton
@@ -656,9 +656,9 @@ function SidebarLayout({ children }) {
           variant="permanent"
           PaperProps={{
             component: motion.div,
-            initial: { opacity: 0, x: -60 },
+            initial: { opacity: 0, x: -70 },
             animate: { opacity: 1, x: 0 },
-            transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
           }}
           sx={{
             display: { xs: 'none', md: 'block' },

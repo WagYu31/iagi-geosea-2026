@@ -56,7 +56,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { motion } from 'motion/react';
 
 // ── ELEGANT REALTIME COUNT-UP ANIMATION COMPONENT ──
-function AnimatedNumber({ value, format = 'number', prefix = '', suffix = '', duration = 1100, delay = 0 }) {
+function AnimatedNumber({ value, format = 'number', prefix = '', suffix = '', duration = 1400, delay = 0 }) {
     const numericValue = useMemo(() => {
         if (typeof value === 'number') return isNaN(value) ? 0 : value;
         const parsed = parseFloat(String(value).replace(/[^0-9.-]+/g, ''));
@@ -80,8 +80,8 @@ function AnimatedNumber({ value, format = 'number', prefix = '', suffix = '', du
             const step = (timestamp) => {
                 if (!startTime) startTime = timestamp;
                 const progress = Math.min((timestamp - startTime) / duration, 1);
-                // Ease out expo: 1 - Math.pow(2, -10 * progress)
-                const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                // Silk-smooth cubic ease out: starts with momentum and glides to a stop
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
                 const current = startVal + (endVal - startVal) * easeProgress;
                 setCurrentVal(current);
 
@@ -140,7 +140,7 @@ function AnimatedProgressBar({
     borderRadius = 3,
     bg = null,
     delay = 0.1,
-    duration = 0.9,
+    duration = 1.3,
     sx = {}
 }) {
     const isDark = useTheme().palette.mode === 'dark';
@@ -152,7 +152,7 @@ function AnimatedProgressBar({
             <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${clampedVal}%` }}
-                transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
                 style={{
                     height: '100%',
                     borderRadius,
@@ -522,7 +522,7 @@ export default function AdminDashboard({
                 <motion.div
                     initial={{ opacity: 0, y: 35 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 >
                 <Box sx={{
                     display: 'flex',
@@ -619,7 +619,7 @@ export default function AdminDashboard({
                                         border: '1px solid rgba(217, 119, 6, 0.3)',
                                     }}
                                 >
-                                    <AnimatedNumber value={payStats.totalPendingCount} delay={0.25} />
+                                    <AnimatedNumber value={payStats.totalPendingCount} delay={0.42} />
                                 </Box>
                             )}
                         </Button>
@@ -717,7 +717,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.30, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -810,8 +810,9 @@ export default function AdminDashboard({
                                     lineHeight: 1.15,
                                     mt: 1,
                                     mb: 1.5,
+                                fontFamily: '"Outfit", "Inter", sans-serif',
                                 }}>
-                                    <AnimatedNumber value={payStats.totalRevenue} format="currency" delay={0.32} />
+                                    <AnimatedNumber value={payStats.totalRevenue} format="currency" delay={0.52} />
                                 </Typography>
 
                                 {/* Breakdown Sub-Row */}
@@ -827,18 +828,18 @@ export default function AdminDashboard({
                                 }}>
                                     <Box>
                                         <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
-                                            Papers (<AnimatedNumber value={payStats.paperPaidCount} delay={0.36} />)
+                                            Papers (<AnimatedNumber value={payStats.paperPaidCount} delay={0.56} />)
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                            <AnimatedNumber value={payStats.paperRevenue} format="currency" delay={0.36} />
+                                            <AnimatedNumber value={payStats.paperRevenue} format="currency" delay={0.56} />
                                         </Typography>
                                     </Box>
                                     <Box>
                                         <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
-                                            Tickets (<AnimatedNumber value={payStats.visitorPaidCount} delay={0.40} />)
+                                            Tickets (<AnimatedNumber value={payStats.visitorPaidCount} delay={0.60} />)
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                            <AnimatedNumber value={payStats.visitorRevenue} format="currency" delay={0.40} />
+                                            <AnimatedNumber value={payStats.visitorRevenue} format="currency" delay={0.60} />
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -876,7 +877,7 @@ export default function AdminDashboard({
                                     {payStats.totalPendingCount > 0 ? (
                                         <>
                                             <WarningAmberRoundedIcon sx={{ fontSize: 15 }} />
-                                            <span><strong><AnimatedNumber value={payStats.totalPendingCount} delay={0.42} /></strong> Pending Audit</span>
+                                            <span><strong><AnimatedNumber value={payStats.totalPendingCount} delay={0.64} /></strong> Pending Audit</span>
                                         </>
                                     ) : (
                                         <>
@@ -898,7 +899,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 0.60, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -963,7 +964,7 @@ export default function AdminDashboard({
                                             </Typography>
                                             <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#0d7a6a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                                 <Box component="span" sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#0d7a6a' }} />
-                                                <AnimatedNumber value={submissionsPerTopic.length} delay={0.40} /> Sub-Themes
+                                                <AnimatedNumber value={submissionsPerTopic.length} delay={0.64} /> Sub-Themes
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -992,17 +993,17 @@ export default function AdminDashboard({
                                     mt: 1,
                                     mb: 1.5,
                                 }}>
-                                    <AnimatedNumber value={totalSubmissions} delay={0.40} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Submissions</span>
+                                    <AnimatedNumber value={totalSubmissions} delay={0.64} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Submissions</span>
                                 </Typography>
 
                                 {/* Acceptance / Breakdown Progress Bar */}
                                 <Box sx={{ mb: 1.5 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
                                         <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#10b981' }}>
-                                            <AnimatedNumber value={acceptedSubmissions} delay={0.44} /> Accepted (<AnimatedNumber value={totalSubmissions > 0 ? (acceptedSubmissions / totalSubmissions) * 100 : 0} format="decimal" suffix="%" delay={0.46} />)
+                                            <AnimatedNumber value={acceptedSubmissions} delay={0.68} /> Accepted (<AnimatedNumber value={totalSubmissions > 0 ? (acceptedSubmissions / totalSubmissions) * 100 : 0} format="decimal" suffix="%" delay={0.72} />)
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: c.textMuted }}>
-                                            <AnimatedNumber value={rejectedSubmissions} delay={0.44} /> Rejected
+                                            <AnimatedNumber value={rejectedSubmissions} delay={0.68} /> Rejected
                                         </Typography>
                                     </Box>
                                     <AnimatedProgressBar
@@ -1010,7 +1011,7 @@ export default function AdminDashboard({
                                         color="linear-gradient(90deg, #0d7a6a 0%, #10b981 100%)"
                                         height={7}
                                         borderRadius={4}
-                                        delay={0.46}
+                                        delay={0.72}
                                     />
                                 </Box>
                             </Box>
@@ -1033,7 +1034,7 @@ export default function AdminDashboard({
                                 }}
                             >
                                 <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: c.textMuted }}>
-                                    <AnimatedNumber value={totalOral} delay={0.48} /> Oral • <AnimatedNumber value={totalPoster} delay={0.48} /> Poster
+                                    <AnimatedNumber value={totalOral} delay={0.76} /> Oral • <AnimatedNumber value={totalPoster} delay={0.76} /> Poster
                                 </Typography>
                                 <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#0d7a6a' }}>
                                     Manage Papers →
@@ -1048,7 +1049,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.46, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 0.72, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -1142,17 +1143,17 @@ export default function AdminDashboard({
                                     mt: 1,
                                     mb: 1.5,
                                 }}>
-                                    <AnimatedNumber value={ticketStats.totalVisitors} delay={0.48} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Tickets</span>
+                                    <AnimatedNumber value={ticketStats.totalVisitors} delay={0.76} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Tickets</span>
                                 </Typography>
 
                                 {/* Venue Attendance Progress Bar */}
                                 <Box sx={{ mb: 1.5 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
                                         <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#0284c7' }}>
-                                            <AnimatedNumber value={ticketStats.checkedInCount} delay={0.52} /> Checked In (<AnimatedNumber value={ticketStats.checkInRate} format="decimal" suffix="%" delay={0.54} />)
+                                            <AnimatedNumber value={ticketStats.checkedInCount} delay={0.80} /> Checked In (<AnimatedNumber value={ticketStats.checkInRate} format="decimal" suffix="%" delay={0.84} />)
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: c.textMuted }}>
-                                            <AnimatedNumber value={ticketStats.notCheckedInCount} delay={0.52} /> Remaining
+                                            <AnimatedNumber value={ticketStats.notCheckedInCount} delay={0.80} /> Remaining
                                         </Typography>
                                     </Box>
                                     <AnimatedProgressBar
@@ -1160,7 +1161,7 @@ export default function AdminDashboard({
                                         color="linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)"
                                         height={7}
                                         borderRadius={4}
-                                        delay={0.54}
+                                        delay={0.84}
                                     />
                                 </Box>
                             </Box>
@@ -1199,7 +1200,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.54, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 0.84, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -1293,7 +1294,7 @@ export default function AdminDashboard({
                                     mt: 1,
                                     mb: 1.5,
                                 }}>
-                                    <AnimatedNumber value={totalUsers} delay={0.56} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Authors</span>
+                                    <AnimatedNumber value={totalUsers} delay={0.88} /> <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Authors</span>
                                 </Typography>
 
                                 {/* Sub-Metric Breakdown */}
@@ -1312,7 +1313,7 @@ export default function AdminDashboard({
                                             Students
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                            <AnimatedNumber value={studentCount} delay={0.60} />
+                                            <AnimatedNumber value={studentCount} delay={0.92} />
                                         </Typography>
                                     </Box>
                                     <Box>
@@ -1320,7 +1321,7 @@ export default function AdminDashboard({
                                             Professionals
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                            <AnimatedNumber value={professionalCount} delay={0.60} />
+                                            <AnimatedNumber value={professionalCount} delay={0.92} />
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -1353,7 +1354,7 @@ export default function AdminDashboard({
                                 }}>
                                     {pendingReviews > 0 ? (
                                         <>
-                                            ⚠️ <strong><AnimatedNumber value={pendingReviews} delay={0.62} /></strong> In Editorial Review
+                                             ⚠️ <strong><AnimatedNumber value={pendingReviews} delay={0.96} /></strong> In Editorial Review
                                         </>
                                     ) : '✓ Pipeline Clear'}
                                 </Typography>
@@ -1370,7 +1371,7 @@ export default function AdminDashboard({
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.85, delay: 0.96, ease: [0.22, 1, 0.36, 1] }}
                 >
                 <Card
                     elevation={0}
@@ -1471,7 +1472,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 45 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.70, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 1.08, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -1606,7 +1607,7 @@ export default function AdminDashboard({
                                                 lineHeight: 1.2,
                                                 mt: 0.25,
                                             }}>
-                                                <AnimatedNumber value={m.value} delay={0.72} />
+                                                <AnimatedNumber value={m.value} delay={1.14} />
                                             </Typography>
                                         </Box>
                                     ))}
@@ -1620,7 +1621,7 @@ export default function AdminDashboard({
                                         key={visitorPeriod}
                                         initial={{ opacity: 0, scale: 0.98 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.45, ease: 'easeOut' }}
+                                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                                         style={{ width: '100%', height: '100%' }}
                                     >
                                         <LineChart
@@ -1677,7 +1678,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 45 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.78, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.85, delay: 1.20, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -1721,7 +1722,7 @@ export default function AdminDashboard({
                                                     animation: 'pulseDot 2s infinite',
                                                 }} />
                                                 <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                    <AnimatedNumber value={totalStatusCount || totalSubmissions} delay={0.80} /> Papers
+                                                    <AnimatedNumber value={totalStatusCount || totalSubmissions} delay={1.24} /> Papers
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -1837,7 +1838,7 @@ export default function AdminDashboard({
                                                 lineHeight: 1.15,
                                                 mt: 0.25,
                                             }}>
-                                                <AnimatedNumber value={m.value} delay={0.82} />
+                                                <AnimatedNumber value={m.value} delay={1.26} />
                                             </Typography>
                                         </Box>
                                     ))}
@@ -1853,7 +1854,7 @@ export default function AdminDashboard({
                                                     key={subLastUpdated.getTime()}
                                                     initial={{ opacity: 0, scale: 0.9 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                                                    transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
                                                     style={{ width: '100%', height: 190, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}
                                                 >
                                                     <PieChart
@@ -1896,7 +1897,7 @@ export default function AdminDashboard({
                                                             color: c.textPrimary,
                                                             lineHeight: 1,
                                                         }}>
-                                                            <AnimatedNumber value={totalStatusCount} delay={0.82} />
+                                                            <AnimatedNumber value={totalStatusCount} delay={1.26} />
                                                         </Typography>
                                                         <Typography sx={{ fontSize: '0.625rem', color: c.textMuted, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', mt: 0.25 }}>
                                                             Papers
@@ -1924,7 +1925,7 @@ export default function AdminDashboard({
                                                                 value={totalStatusCount > 0 ? (statusCounts.accepted / totalStatusCount) * 100 : 0}
                                                                 format="decimal"
                                                                 suffix="%"
-                                                                delay={0.84}
+                                                                delay={1.28}
                                                             />
                                                         </span>
                                                     }
@@ -1992,7 +1993,7 @@ export default function AdminDashboard({
                                                                 color={item.color}
                                                                 height={5}
                                                                 borderRadius={3}
-                                                                delay={0.82 + idx * 0.04}
+                                                                delay={1.26 + idx * 0.04}
                                                             />
                                                         </Box>
 
@@ -2004,7 +2005,7 @@ export default function AdminDashboard({
                                                                 color: c.textPrimary,
                                                                 fontVariantNumeric: 'tabular-nums',
                                                             }}>
-                                                                <AnimatedNumber value={item.value} delay={0.82} />
+                                                                <AnimatedNumber value={item.value} delay={1.26} />
                                                             </Typography>
                                                             <Typography sx={{
                                                                 fontSize: '0.68rem',
@@ -2016,7 +2017,7 @@ export default function AdminDashboard({
                                                                 borderRadius: '5px',
                                                                 fontVariantNumeric: 'tabular-nums',
                                                             }}>
-                                                                <AnimatedNumber value={Number(pct)} format="decimal" suffix="%" delay={0.3} />
+                                                                <AnimatedNumber value={Number(pct)} format="decimal" suffix="%" delay={1.28} />
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -2036,7 +2037,7 @@ export default function AdminDashboard({
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, delay: 0.86, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.9, delay: 1.34, ease: [0.22, 1, 0.36, 1] }}
                     >
                     <Card
                         elevation={0}
@@ -2342,7 +2343,7 @@ export default function AdminDashboard({
                                         key={`${chartType}-${chartOrientation}-${topicLimit}-${categoryFilter}`}
                                         initial={{ opacity: 0, scale: 0.98 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.45, ease: 'easeOut' }}
+                                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                                         style={{ width: '100%', height: '100%' }}
                                     >
                                     {displayTopics.length === 0 ? (
@@ -2610,7 +2611,7 @@ export default function AdminDashboard({
                                                 letterSpacing: '-0.02em',
                                                 lineHeight: 1,
                                             }}>
-                                                <AnimatedNumber value={submissionsPerTopic.reduce((sum, item) => sum + item.count, 0)} delay={0.90} />
+                                                <AnimatedNumber value={submissionsPerTopic.reduce((sum, item) => sum + item.count, 0)} delay={1.42} />
                                             </Typography>
                                             <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, fontWeight: 500 }}>
                                                 total registered
@@ -2661,7 +2662,7 @@ export default function AdminDashboard({
                                                     py: 0.2,
                                                     borderRadius: '6px',
                                                 }}>
-                                                    <AnimatedNumber value={submissionsPerTopic[0].count} delay={0.90} /> papers
+                                                    <AnimatedNumber value={submissionsPerTopic[0].count} delay={1.42} /> papers
                                                 </Typography>
                                             </Box>
                                             <Typography sx={{
@@ -2695,7 +2696,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.55, delay: 0.94, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.9, delay: 1.48, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -2729,7 +2730,7 @@ export default function AdminDashboard({
                                         border: `1px solid ${c.cardBorder}`,
                                     }}>
                                         <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.725rem', fontWeight: 700, color: c.textSecondary }}>
-                                            <AnimatedNumber value={totalParticipantsCategorized} delay={0.96} /> Verified
+                                            <AnimatedNumber value={totalParticipantsCategorized} delay={1.52} /> Verified
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -2751,10 +2752,10 @@ export default function AdminDashboard({
                                             </Box>
                                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
                                                 <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                                    <AnimatedNumber value={studentCount} delay={0.96} />
+                                                    <AnimatedNumber value={studentCount} delay={1.54} />
                                                 </Typography>
                                                 <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
-                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (studentCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={0.98} />)
+                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (studentCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={1.56} />)
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -2763,7 +2764,7 @@ export default function AdminDashboard({
                                             color="#0891b2"
                                             height={5}
                                             borderRadius={3}
-                                            delay={0.96}
+                                            delay={1.54}
                                         />
                                     </Box>
 
@@ -2778,10 +2779,10 @@ export default function AdminDashboard({
                                             </Box>
                                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
                                                 <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                                    <AnimatedNumber value={professionalCount} delay={0.98} />
+                                                    <AnimatedNumber value={professionalCount} delay={1.56} />
                                                 </Typography>
                                                 <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
-                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (professionalCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={1.00} />)
+                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (professionalCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={1.58} />)
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -2790,7 +2791,7 @@ export default function AdminDashboard({
                                             color="#ea580c"
                                             height={5}
                                             borderRadius={3}
-                                            delay={0.98}
+                                            delay={1.56}
                                         />
                                     </Box>
 
@@ -2805,10 +2806,10 @@ export default function AdminDashboard({
                                             </Box>
                                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
                                                 <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                                    <AnimatedNumber value={internationalCount} delay={1.00} />
+                                                    <AnimatedNumber value={internationalCount} delay={1.58} />
                                                 </Typography>
                                                 <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
-                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (internationalCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={1.02} />)
+                                                    (<AnimatedNumber value={totalParticipantsCategorized > 0 ? (internationalCount / totalParticipantsCategorized) * 100 : 0} format="percent" delay={1.60} />)
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -2817,7 +2818,7 @@ export default function AdminDashboard({
                                             color="#7c3aed"
                                             height={5}
                                             borderRadius={3}
-                                            delay={1.00}
+                                            delay={1.58}
                                         />
                                     </Box>
                                 </Stack>
@@ -2859,10 +2860,10 @@ export default function AdminDashboard({
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
                                             <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.4rem', color: c.textPrimary, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                                                <AnimatedNumber value={totalOral} delay={1.02} />
+                                                <AnimatedNumber value={totalOral} delay={1.62} />
                                             </Typography>
                                             <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: '#0d7a6a' }}>
-                                                <AnimatedNumber value={totalPresentations > 0 ? (totalOral / totalPresentations) * 100 : 0} format="percent" delay={1.04} />
+                                                <AnimatedNumber value={totalPresentations > 0 ? (totalOral / totalPresentations) * 100 : 0} format="percent" delay={1.64} />
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -2896,10 +2897,10 @@ export default function AdminDashboard({
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
                                             <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.4rem', color: c.textPrimary, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                                                <AnimatedNumber value={totalPoster} delay={1.02} />
+                                                <AnimatedNumber value={totalPoster} delay={1.62} />
                                             </Typography>
                                             <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: '#6366f1' }}>
-                                                <AnimatedNumber value={totalPresentations > 0 ? (totalPoster / totalPresentations) * 100 : 0} format="percent" delay={1.04} />
+                                                <AnimatedNumber value={totalPresentations > 0 ? (totalPoster / totalPresentations) * 100 : 0} format="percent" delay={1.64} />
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -2914,7 +2915,7 @@ export default function AdminDashboard({
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.55, delay: 1.02, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.9, delay: 1.62, ease: [0.22, 1, 0.36, 1] }}
                             style={{ height: '100%' }}
                         >
                         <Card
@@ -2969,9 +2970,9 @@ export default function AdminDashboard({
                                             return (
                                                 <motion.div
                                                     key={sub.id || idx}
-                                                    initial={{ opacity: 0, x: -10 }}
+                                                    initial={{ opacity: 0, x: -12 }}
                                                     animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ duration: 0.3, delay: 1.06 + 0.04 * idx, ease: [0.16, 1, 0.3, 1] }}
+                                                    transition={{ duration: 0.5, delay: 1.68 + 0.05 * idx, ease: [0.22, 1, 0.36, 1] }}
                                                 >
                                                 <Box
                                                     component={Link}
