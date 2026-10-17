@@ -23,7 +23,7 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    // Two-Factor Authentication (WhatsApp OTP)
+    // Two-Factor Authentication (WhatsApp & Email OTP)
     Route::get('verify-otp', [TwoFactorOtpController::class, 'show'])
         ->name('2fa.verify');
 
@@ -32,6 +32,12 @@ Route::middleware('guest')->group(function () {
 
     Route::post('resend-otp', [TwoFactorOtpController::class, 'resend'])
         ->name('2fa.resend');
+
+    Route::post('send-email-otp', [TwoFactorOtpController::class, 'sendEmailOtp'])
+        ->name('2fa.send-email');
+
+    Route::post('send-whatsapp-otp', [TwoFactorOtpController::class, 'sendWhatsAppOtp'])
+        ->name('2fa.send-whatsapp');
 
     Route::post('cancel-otp', [TwoFactorOtpController::class, 'cancel'])
         ->name('2fa.cancel');

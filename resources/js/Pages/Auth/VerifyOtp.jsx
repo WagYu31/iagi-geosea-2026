@@ -7,18 +7,18 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReplayIcon from '@mui/icons-material/Replay';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import SecurityIcon from '@mui/icons-material/Security';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
 import LoginIcon from '@mui/icons-material/Login';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
-export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status }) {
+export default function VerifyOtp({ maskedPhone, maskedEmail, channel = 'whatsapp', remainingSeconds = 300, status }) {
     const [timeLeft, setTimeLeft] = useState(remainingSeconds);
     const [resendCooldown, setResendCooldown] = useState(45);
     const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
@@ -29,11 +29,14 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
     });
 
     const { post: postResend, processing: resending } = useForm();
+    const { post: postEmail, processing: sendingEmail } = useForm();
+    const { post: postWhatsApp, processing: sendingWhatsApp } = useForm();
     const { post: postCancel } = useForm();
 
     const tealPrimary = '#0d9488';
     const emeraldPrimary = '#10b981';
     const tealDark = '#065f46';
+    const isEmail = channel === 'email';
 
     // Countdown for OTP expiration
     useEffect(() => {
@@ -52,6 +55,11 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
         }, 1000);
         return () => clearInterval(timer);
     }, [resendCooldown]);
+
+    // Reset countdown on new remainingSeconds from server
+    useEffect(() => {
+        setTimeLeft(remainingSeconds);
+    }, [remainingSeconds]);
 
     // Sync digits with form data.otp and auto submit
     useEffect(() => {
@@ -107,7 +115,33 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
         }
     };
 
+    const handleSwitchToEmail = (e) => {
+        e.preventDefault();
+        if (sendingEmail) return;
 
+        postEmail(route('2fa.send-email'), {
+            onSuccess: () => {
+                setOtpDigits(['', '', '', '', '', '']);
+                setResendCooldown(45);
+                setTimeLeft(300);
+                inputRefs.current[0]?.focus();
+            },
+        });
+    };
+
+    const handleSwitchToWhatsApp = (e) => {
+        e.preventDefault();
+        if (sendingWhatsApp) return;
+
+        postWhatsApp(route('2fa.send-whatsapp'), {
+            onSuccess: () => {
+                setOtpDigits(['', '', '', '', '', '']);
+                setResendCooldown(45);
+                setTimeLeft(300);
+                inputRefs.current[0]?.focus();
+            },
+        });
+    };
 
     const handleResend = (e) => {
         e.preventDefault();
@@ -145,7 +179,7 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 sx={{ textAlign: 'center' }}
             >
-                {/* Modern WhatsApp & Security Icon Medallion */}
+                {/* Modern Medallion: WhatsApp or Email */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                     <Box
                         component={motion.div}
@@ -155,16 +189,26 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                             width: 72,
                             height: 72,
                             borderRadius: '22px',
-                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            background: isEmail
+                                ? 'linear-gradient(135deg, #0d9488 0%, #0284c7 100%)'
+                                : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                             border: '2px solid rgba(255, 255, 255, 0.9)',
-                            boxShadow: '0 12px 28px -4px rgba(16, 185, 129, 0.42), 0 0 0 1px rgba(16, 185, 129, 0.25)',
+                            boxShadow: isEmail
+                                ? '0 12px 28px -4px rgba(13, 148, 136, 0.42), 0 0 0 1px rgba(13, 148, 136, 0.25)'
+                                : '0 12px 28px -4px rgba(16, 185, 129, 0.42), 0 0 0 1px rgba(16, 185, 129, 0.25)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             position: 'relative',
+                            transition: 'all 0.4s ease',
                         }}
                     >
-                        <WhatsAppIcon sx={{ fontSize: 38, color: '#ffffff' }} />
+                        {isEmail ? (
+                            <EmailOutlinedIcon sx={{ fontSize: 38, color: '#ffffff' }} />
+                        ) : (
+                            <WhatsAppIcon sx={{ fontSize: 38, color: '#ffffff' }} />
+                        )}
+
                         <Box
                             sx={{
                                 position: 'absolute',
@@ -209,11 +253,13 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                         mb: 2,
                     }}
                 >
-                    Untuk keamanan maksimal akun Admin, kami telah mengirimkan 6 digit kode OTP rahasia ke nomor WhatsApp Anda:
+                    {isEmail
+                        ? 'Untuk keamanan akun Admin, kode OTP 6-digit telah dikirimkan ke Email Anda:'
+                        : 'Untuk keamanan akun Admin, kode OTP 6-digit telah dikirimkan ke WhatsApp Anda:'}
                 </Typography>
 
-                {/* Verified Masked Phone Pill Badge */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2.8 }}>
+                {/* Verified Target Pill Badge */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                     <Box
                         sx={{
                             display: 'inline-flex',
@@ -222,31 +268,37 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                             px: 2.2,
                             py: 0.8,
                             borderRadius: '9999px',
-                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%)',
-                            border: '1.5px solid rgba(16, 185, 129, 0.25)',
-                            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.08)',
+                            background: isEmail
+                                ? 'linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(2, 132, 199, 0.06) 100%)'
+                                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(13, 148, 136, 0.06) 100%)',
+                            border: isEmail
+                                ? '1.5px solid rgba(13, 148, 136, 0.28)'
+                                : '1.5px solid rgba(16, 185, 129, 0.28)',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
                         }}
                     >
-                        {/* Pulsing Emerald Dot */}
+                        {/* Pulsing Dot */}
                         <Box
                             sx={{
                                 width: 8,
                                 height: 8,
                                 borderRadius: '50%',
-                                bgcolor: '#10b981',
-                                boxShadow: '0 0 0 2px rgba(16, 185, 129, 0.25)',
+                                bgcolor: isEmail ? '#0d9488' : '#10b981',
+                                boxShadow: isEmail
+                                    ? '0 0 0 2px rgba(13, 148, 136, 0.25)'
+                                    : '0 0 0 2px rgba(16, 185, 129, 0.25)',
                             }}
                         />
                         <Typography
                             sx={{
                                 fontWeight: 700,
-                                fontSize: { xs: '0.9rem', sm: '0.95rem' },
-                                color: '#065f46',
-                                letterSpacing: '0.04em',
+                                fontSize: { xs: '0.88rem', sm: '0.94rem' },
+                                color: isEmail ? '#0f766e' : '#065f46',
+                                letterSpacing: '0.03em',
                                 fontFamily: "'Outfit', 'Inter', monospace",
                             }}
                         >
-                            {maskedPhone || '+62 857-••••-3522'}
+                            {isEmail ? (maskedEmail || 'Email Terdaftar') : (maskedPhone || '+62 857-••••-3522')}
                         </Typography>
                     </Box>
                 </Box>
@@ -283,7 +335,6 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                     </Alert>
                 )}
 
-
                 {/* 6-Digit Segmented OTP Input Form */}
                 <form
                     onSubmit={(e) => {
@@ -300,6 +351,7 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                             alignItems: 'center',
                             gap: { xs: 0.8, sm: 1.3 },
                             mb: 2.5,
+                            mt: 1,
                         }}
                     >
                         {otpDigits.map((digit, index) => (
@@ -351,7 +403,7 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 0.8,
-                            mb: 3,
+                            mb: 2.5,
                             color: timeLeft > 60 ? '#64748b' : '#ef4444',
                             fontSize: '0.84rem',
                             fontWeight: 600,
@@ -411,12 +463,94 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                     </Button>
                 </form>
 
+                {/* Alternative Channel Option Card (Email / WhatsApp Switcher) */}
+                <Box
+                    sx={{
+                        mt: 2.8,
+                        p: 1.8,
+                        borderRadius: '14px',
+                        bgcolor: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        textAlign: 'center',
+                    }}
+                >
+                    <Typography sx={{ fontSize: '0.8rem', color: '#64748b', mb: 1, fontWeight: 500 }}>
+                        {isEmail
+                            ? 'Ingin menerima kode verifikasi via WhatsApp?'
+                            : 'Tidak menerima kode di WhatsApp atau WA sedang offline?'}
+                    </Typography>
+
+                    {isEmail ? (
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={handleSwitchToWhatsApp}
+                            disabled={sendingWhatsApp}
+                            startIcon={
+                                sendingWhatsApp ? (
+                                    <CircularProgress size={14} sx={{ color: '#10b981' }} />
+                                ) : (
+                                    <WhatsAppIcon sx={{ fontSize: 17, color: '#10b981' }} />
+                                )
+                            }
+                            sx={{
+                                textTransform: 'none',
+                                borderRadius: '10px',
+                                fontWeight: 700,
+                                fontSize: '0.82rem',
+                                color: '#065f46',
+                                borderColor: 'rgba(16, 185, 129, 0.4)',
+                                bgcolor: '#ffffff',
+                                px: 2,
+                                py: 0.6,
+                                '&:hover': {
+                                    bgcolor: 'rgba(16, 185, 129, 0.08)',
+                                    borderColor: '#10b981',
+                                },
+                            }}
+                        >
+                            {sendingWhatsApp ? 'Mengirim ke WhatsApp...' : `Kirim Kode via WhatsApp (${maskedPhone || 'WhatsApp'})`}
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={handleSwitchToEmail}
+                            disabled={sendingEmail}
+                            startIcon={
+                                sendingEmail ? (
+                                    <CircularProgress size={14} sx={{ color: tealPrimary }} />
+                                ) : (
+                                    <EmailOutlinedIcon sx={{ fontSize: 17, color: tealPrimary }} />
+                                )
+                            }
+                            sx={{
+                                textTransform: 'none',
+                                borderRadius: '10px',
+                                fontWeight: 700,
+                                fontSize: '0.82rem',
+                                color: '#0f766e',
+                                borderColor: 'rgba(13, 148, 136, 0.4)',
+                                bgcolor: '#ffffff',
+                                px: 2,
+                                py: 0.6,
+                                '&:hover': {
+                                    bgcolor: 'rgba(13, 148, 136, 0.08)',
+                                    borderColor: '#0d9488',
+                                },
+                            }}
+                        >
+                            {sendingEmail ? 'Mengirim ke Email...' : `Kirim Kode Verifikasi via Email (${maskedEmail || 'Email'})`}
+                        </Button>
+                    )}
+                </Box>
+
                 {/* Resend & Cancel Actions */}
                 <Stack
                     direction="row"
                     alignItems="center"
                     justifyContent="center"
-                    sx={{ mt: 3, pt: 1 }}
+                    sx={{ mt: 2.5, pt: 0.5 }}
                 >
                     <Button
                         onClick={handleResend}
@@ -440,10 +574,10 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                             '&:disabled': { color: '#94a3b8' },
                         }}
                     >
-                        {resendCooldown > 0 ? `Kirim Ulang (${resendCooldown}s)` : 'Kirim Ulang OTP'}
+                        {resendCooldown > 0 ? `Kirim Ulang (${resendCooldown}s)` : `Kirim Ulang ${isEmail ? 'Email' : 'OTP'}`}
                     </Button>
 
-                    {/* Clean Vertical Divider (Exact 1px width, no flex stretch) */}
+                    {/* Clean Vertical Divider */}
                     <Box
                         sx={{
                             width: '1px',
@@ -478,7 +612,7 @@ export default function VerifyOtp({ maskedPhone, remainingSeconds = 300, status 
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 0.6,
-                        mt: 3.2,
+                        mt: 3,
                         pt: 2,
                         borderTop: '1px solid #f1f5f9',
                         width: '100%',

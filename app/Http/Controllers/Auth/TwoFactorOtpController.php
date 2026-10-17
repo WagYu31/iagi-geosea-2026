@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TwoFactorOtpMail;
 use App\Models\User;
 use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\RedirectResponse;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -18,7 +20,7 @@ use Inertia\Response;
 class TwoFactorOtpController extends Controller
 {
     /**
-     * Display the 2FA WhatsApp OTP verification view.
+     * Display the 2FA OTP verification view (WhatsApp / Email).
      */
     public function show(Request $request): Response|RedirectResponse
     {
@@ -28,20 +30,27 @@ class TwoFactorOtpController extends Controller
             return redirect()->route('login');
         }
 
+        $user = User::find($twoFactorData['user_id']);
         $phone = $twoFactorData['phone'] ?? '';
         $maskedPhone = $this->maskPhoneNumber($phone);
+        $email = $user ? $user->email : '';
+        $maskedEmail = $this->maskEmail($email);
+        $channel = $twoFactorData['channel'] ?? 'whatsapp';
+
         $expiresAt = $twoFactorData['expires_at'] ?? now()->timestamp;
         $remainingSeconds = max(0, $expiresAt - now()->timestamp);
 
         return Inertia::render('Auth/VerifyOtp', [
             'maskedPhone' => $maskedPhone,
+            'maskedEmail' => $maskedEmail,
+            'channel' => $channel,
             'remainingSeconds' => $remainingSeconds,
             'status' => session('status'),
         ]);
     }
 
     /**
-     * Verify the 6-digit WhatsApp OTP code and log the user in.
+     * Verify the 6-digit OTP code (accepts code from either WhatsApp or Email) and log the user in.
      */
     public function verify(Request $request): RedirectResponse
     {
@@ -81,7 +90,7 @@ class TwoFactorOtpController extends Controller
             RateLimiter::hit($throttleKey, 180);
 
             throw ValidationException::withMessages([
-                'otp' => 'Kode OTP yang Anda masukkan salah. Silakan periksa pesan WhatsApp Anda.',
+                'otp' => 'Kode OTP yang Anda masukkan salah. Silakan periksa pesan Anda.',
             ]);
         }
 
@@ -102,10 +111,11 @@ class TwoFactorOtpController extends Controller
         $request->session()->forget('auth_2fa');
         $request->session()->regenerate();
 
-        Log::info('2FA WhatsApp Login successful', [
+        Log::info('2FA Login successful', [
             'user_id' => $user->id,
             'email' => $user->email,
             'role' => $user->role,
+            'channel' => $twoFactorData['channel'] ?? 'whatsapp',
             'ip' => $request->ip(),
         ]);
 
@@ -122,7 +132,71 @@ class TwoFactorOtpController extends Controller
     }
 
     /**
-     * Resend a fresh OTP via WhatsApp.
+     * Switch delivery channel to Email and send fresh OTP.
+     */
+    public function sendEmailOtp(Request $request): RedirectResponse
+    {
+        $twoFactorData = $request->session()->get('auth_2fa');
+
+        if (!$twoFactorData || empty($twoFactorData['user_id'])) {
+            return redirect()->route('login');
+        }
+
+        $user = User::find($twoFactorData['user_id']);
+        if (!$user || empty($user->email)) {
+            return back()->withErrors(['otp' => 'Email admin tidak ditemukan pada akun ini.']);
+        }
+
+        // Generate fresh 6-digit cryptographic OTP
+        $newOtp = (string) random_int(100000, 999999);
+        $twoFactorData['otp_hash'] = Hash::make($newOtp);
+        $twoFactorData['expires_at'] = now()->addMinutes(5)->timestamp;
+        $twoFactorData['last_sent_at'] = now()->timestamp;
+        $twoFactorData['channel'] = 'email';
+
+        $request->session()->put('auth_2fa', $twoFactorData);
+
+        try {
+            Mail::to($user->email)->send(new TwoFactorOtpMail($newOtp, $user));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send 2FA OTP Email: ' . $e->getMessage());
+            return back()->withErrors([
+                'otp' => 'Gagal mengirim email verifikasi: ' . $e->getMessage(),
+            ]);
+        }
+
+        return back()->with('status', 'Kode OTP telah berhasil dikirimkan ke Email Anda (' . $this->maskEmail($user->email) . '). Silakan cek inbox atau folder spam.');
+    }
+
+    /**
+     * Switch delivery channel to WhatsApp and send fresh OTP.
+     */
+    public function sendWhatsAppOtp(Request $request, WhatsAppNotificationService $whatsappService): RedirectResponse
+    {
+        $twoFactorData = $request->session()->get('auth_2fa');
+
+        if (!$twoFactorData || empty($twoFactorData['user_id'])) {
+            return redirect()->route('login');
+        }
+
+        $newOtp = (string) random_int(100000, 999999);
+        $phone = $twoFactorData['phone'] ?? env('ADMIN_WHATSAPP', '085771593522');
+        $twoFactorData['otp_hash'] = Hash::make($newOtp);
+        $twoFactorData['expires_at'] = now()->addMinutes(5)->timestamp;
+        $twoFactorData['last_sent_at'] = now()->timestamp;
+        $twoFactorData['channel'] = 'whatsapp';
+
+        $request->session()->put('auth_2fa', $twoFactorData);
+
+        if (!empty($phone)) {
+            $whatsappService->sendOtp($phone, $newOtp);
+        }
+
+        return back()->with('status', 'Kode OTP telah berhasil dikirimkan ke WhatsApp Anda (' . $this->maskPhoneNumber($phone) . ').');
+    }
+
+    /**
+     * Resend fresh OTP via the currently active channel (WhatsApp or Email).
      */
     public function resend(Request $request, WhatsAppNotificationService $whatsappService): RedirectResponse
     {
@@ -143,23 +217,13 @@ class TwoFactorOtpController extends Controller
             ]);
         }
 
-        // Generate fresh 6-digit cryptographic OTP
-        $newOtp = (string) random_int(100000, 999999);
-        $phone = $twoFactorData['phone'] ?? '';
+        $channel = $twoFactorData['channel'] ?? 'whatsapp';
 
-        // Update session
-        $twoFactorData['otp_hash'] = Hash::make($newOtp);
-        $twoFactorData['expires_at'] = now()->addMinutes(5)->timestamp;
-        $twoFactorData['last_sent_at'] = now()->timestamp;
-
-        $request->session()->put('auth_2fa', $twoFactorData);
-
-        // Send via WhatsApp
-        if (!empty($phone)) {
-            $whatsappService->sendOtp($phone, $newOtp);
+        if ($channel === 'email') {
+            return $this->sendEmailOtp($request);
         }
 
-        return back()->with('status', 'Kode OTP baru telah berhasil dikirimkan ke WhatsApp Anda.');
+        return $this->sendWhatsAppOtp($request, $whatsappService);
     }
 
     /**
@@ -197,5 +261,26 @@ class TwoFactorOtpController extends Controller
         $maskedLength = max(4, $length - 9);
 
         return '+' . substr($prefix, 0, 2) . ' ' . substr($prefix, 2) . '-' . str_repeat('•', $maskedLength) . '-' . $suffix;
+    }
+
+    /**
+     * Helper to mask email address for security (e.g., admin@pitiagi.cloud -> ad•••n@pitiagi.cloud)
+     */
+    private function maskEmail(string $email): string
+    {
+        if (empty($email) || !str_contains($email, '@')) {
+            return 'Email Admin Terdaftar';
+        }
+
+        [$username, $domain] = explode('@', $email, 2);
+        $userLen = strlen($username);
+
+        if ($userLen <= 2) {
+            $maskedUser = $username . '•••';
+        } else {
+            $maskedUser = substr($username, 0, 2) . str_repeat('•', min(4, max(2, $userLen - 3))) . substr($username, -1);
+        }
+
+        return $maskedUser . '@' . $domain;
     }
 }
