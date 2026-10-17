@@ -121,8 +121,12 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                                 >
                                     <Box
                                         component="img"
-                                        src="/favicon.ico"
-                                        alt="Logo"
+                                        src="/favicon.webp"
+                                        alt="PIT IAGI - GEOSEA 2026 Logo"
+                                        width={75}
+                                        height={75}
+                                        fetchPriority="high"
+                                        decoding="async"
                                         sx={{
                                             width: '75%',
                                             height: '75%',

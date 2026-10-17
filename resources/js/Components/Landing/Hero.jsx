@@ -187,7 +187,7 @@ export default function Hero({ settings, auth }) {
             {/* Instant Baseline Poster Image for 100 LCP / FCP */}
             <Box
                 component="img"
-                src={settings.hero_background?.type === 'image' && settings.hero_background?.url ? settings.hero_background.url : '/about-background.jpg'}
+                src={settings.hero_background?.type === 'image' && settings.hero_background?.url ? settings.hero_background.url : '/about-background.webp'}
                 alt="Hero Background"
                 fetchPriority="high"
                 decoding="async"

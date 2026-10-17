@@ -169,8 +169,12 @@ export default function Register() {
                             >
                                 <Box
                                     component="img"
-                                    src="/favicon.ico"
+                                    src="/favicon.webp"
                                     alt="PIT IAGI Logo"
+                                    width={48}
+                                    height={48}
+                                    fetchPriority="high"
+                                    decoding="async"
                                     sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                 />
                             </Box>

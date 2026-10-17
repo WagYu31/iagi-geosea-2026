@@ -78,7 +78,7 @@ export default function AppAppBar({ auth }) {
                         >
                             <Box
                                 component="img"
-                                src="/favicon.ico"
+                                src="/favicon.webp"
                                 alt="Logo"
                                 width={32}
                                 height={32}

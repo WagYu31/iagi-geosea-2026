@@ -28,5 +28,17 @@ export default defineConfig({
     ],
     build: {
         chunkSizeWarningLimit: 1500,
+        cssCodeSplit: true,
+        minify: 'esbuild',
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-react': ['react', 'react-dom'],
+                    'vendor-inertia': ['@inertiajs/react', 'axios'],
+                    'vendor-mui-core': ['@mui/material', '@emotion/react', '@emotion/styled'],
+                    'vendor-mui-icons': ['@mui/icons-material'],
+                },
+            },
+        },
     },
 });
