@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -271,15 +272,21 @@ function SidebarLayout({ children }) {
       }} />
 
       {/* ─── Brand Header ─── */}
-      <Box sx={{
-        px: isCollapsed ? 1 : 2.5,
-        py: isCollapsed ? 2 : 3,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: isCollapsed ? 'center' : 'flex-start',
-        gap: 1.5,
-        position: 'relative', zIndex: 1,
-      }}>
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+        sx={{
+          px: isCollapsed ? 1 : 2.5,
+          py: isCollapsed ? 2 : 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isCollapsed ? 'center' : 'flex-start',
+          gap: 1.5,
+          position: 'relative', zIndex: 1,
+        }}
+      >
         <Box
           component="img" src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png" alt="IAGI-GEOSEA"
           sx={{
@@ -310,7 +317,7 @@ function SidebarLayout({ children }) {
 
       {/* ─── Menu Items ─── */}
       <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1, position: 'relative', zIndex: 1 }} aria-label="Navigation menu">
-        {menuItems.map((item) => {
+        {menuItems.map((item, idx) => {
           const active = isActive(item.href);
           const outlineIcon = outlineIconMap[item.text] || item.icon;
           const isProtectedMenu = item.text === 'Visitor Tickets';
@@ -403,7 +410,15 @@ function SidebarLayout({ children }) {
           );
 
           return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 0.4 }}>
+            <ListItem
+              key={item.text}
+              component={motion.li}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.35, delay: 0.05 + idx * 0.02, ease: [0.16, 1, 0.3, 1] }}
+              disablePadding
+              sx={{ mb: 0.4, listStyle: 'none' }}
+            >
               {isCollapsed ? (
                 <Tooltip title={item.text} placement="right" arrow>{button}</Tooltip>
               ) : button}
@@ -413,7 +428,13 @@ function SidebarLayout({ children }) {
       </List>
 
       {/* ─── Logout (frosted glass container) ─── */}
-      <Box sx={{ px: isCollapsed ? 0.75 : 1.5, pb: 1, position: 'relative', zIndex: 1 }}>
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        sx={{ px: isCollapsed ? 0.75 : 1.5, pb: 1, position: 'relative', zIndex: 1 }}
+      >
         {isCollapsed ? (
           <Tooltip title="Logout" placement="right" arrow>
             <ListItemButton
@@ -494,7 +515,13 @@ function SidebarLayout({ children }) {
           transition: 'all 0.3s ease',
         }}
       >
-        <Toolbar sx={{ minHeight: { xs: 56, sm: 60 } }}>
+        <Toolbar
+          component={motion.div}
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          sx={{ minHeight: { xs: 56, sm: 60 } }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -627,6 +654,12 @@ function SidebarLayout({ children }) {
         {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
+          PaperProps={{
+            component: motion.div,
+            initial: { opacity: 0, x: -60 },
+            animate: { opacity: 1, x: 0 },
+            transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+          }}
           sx={{
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': {
