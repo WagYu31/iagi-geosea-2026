@@ -124,6 +124,25 @@ class AdminController extends Controller
                 'count' => (int) $item->count,
             ]);
 
+        // Cache submission status counts for 60 seconds
+        $submissionStatusCounts = cache()->remember('admin_submission_status_counts', 60, function() {
+            $raw = Submission::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
+
+            return [
+                'pending' => (int) ($raw['pending'] ?? 0),
+                'under_review' => (int) ($raw['under_review'] ?? 0),
+                'revision_required_phase1' => (int) ($raw['revision_required_phase1'] ?? 0),
+                'revision_required_phase2' => (int) ($raw['revision_required_phase2'] ?? 0),
+                'accepted' => (int) ($raw['accepted'] ?? 0),
+                'rejected' => (int) ($raw['rejected'] ?? 0),
+                'deletion_requested' => (int) ($raw['deletion_requested'] ?? 0),
+                'all' => array_sum($raw),
+            ];
+        });
+
         return Inertia::render('Admin/Dashboard', [
             'analytics' => $analytics,
             'recentSubmissions' => $recentSubmissions,
@@ -133,6 +152,7 @@ class AdminController extends Controller
             'submissionsPerTopicByParticipant' => $submissionsPerTopicByParticipant,
             'visitorAnalytics' => $visitorAnalytics,
             'dailyVisitors' => $dailyVisitors,
+            'submissionStatusCounts' => $submissionStatusCounts,
         ]);
     }
 
@@ -192,51 +212,25 @@ class AdminController extends Controller
 
     public function submissionAnalytics(Request $request)
     {
-        $period = $request->get('period', '30d');
+        $raw = Submission::selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
 
-        $stats = [
-            'today' => Submission::whereDate('created_at', today())->count(),
-            'last7days' => Submission::where('created_at', '>=', now()->subDays(7))->count(),
-            'last30days' => Submission::where('created_at', '>=', now()->subDays(30))->count(),
-            'total' => Submission::count(),
+        $statusCounts = [
+            'pending' => (int) ($raw['pending'] ?? 0),
+            'under_review' => (int) ($raw['under_review'] ?? 0),
+            'revision_required_phase1' => (int) ($raw['revision_required_phase1'] ?? 0),
+            'revision_required_phase2' => (int) ($raw['revision_required_phase2'] ?? 0),
+            'accepted' => (int) ($raw['accepted'] ?? 0),
+            'rejected' => (int) ($raw['rejected'] ?? 0),
+            'deletion_requested' => (int) ($raw['deletion_requested'] ?? 0),
+            'all' => array_sum($raw),
         ];
 
-        if ($period === 'today') {
-            $chartData = Submission::whereDate('created_at', today())
-                ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
-                ->groupBy('hour')
-                ->orderBy('hour')
-                ->get()
-                ->map(fn($item) => [
-                    'label' => str_pad($item->hour, 2, '0', STR_PAD_LEFT) . ':00',
-                    'count' => (int) $item->count,
-                ]);
-        } elseif ($period === '7d') {
-            $chartData = Submission::where('created_at', '>=', now()->subDays(7))
-                ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get()
-                ->map(fn($item) => [
-                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
-                    'count' => (int) $item->count,
-                ]);
-        } else {
-            $chartData = Submission::where('created_at', '>=', now()->subDays(30))
-                ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get()
-                ->map(fn($item) => [
-                    'label' => \Carbon\Carbon::parse($item->date)->format('M d'),
-                    'count' => (int) $item->count,
-                ]);
-        }
-
         return response()->json([
-            'stats' => $stats,
-            'chartData' => $chartData,
-            'period' => $period,
+            'statusCounts' => $statusCounts,
+            'total' => array_sum($raw),
         ]);
     }
 

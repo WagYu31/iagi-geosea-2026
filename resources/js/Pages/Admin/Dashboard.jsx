@@ -45,8 +45,10 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ViewWeekRoundedIcon from '@mui/icons-material/ViewWeekRounded';
 import TableRowsRoundedIcon from '@mui/icons-material/TableRowsRounded';
+import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { LineChart } from '@mui/x-charts/LineChart';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 export default function AdminDashboard({
     analytics,
@@ -56,7 +58,8 @@ export default function AdminDashboard({
     participantStats = {},
     submissionsPerTopicByParticipant = [],
     visitorAnalytics = {},
-    dailyVisitors = []
+    dailyVisitors = [],
+    submissionStatusCounts = {},
 }) {
     const { auth } = usePage().props;
     const theme = useTheme();
@@ -110,17 +113,24 @@ export default function AdminDashboard({
         setVisitorPeriod(period);
     };
 
-    // Submission analytics state with auto-refresh
-    const [subPeriod, setSubPeriod] = useState('30d');
-    const [subStats, setSubStats] = useState({ today: 0, last7days: 0, last30days: 0, total: analytics?.totalSubmissions || 0 });
-    const [subChartData, setSubChartData] = useState([]);
+    // Submission status state with initial fallback & live auto-refresh
+    const [statusCounts, setStatusCounts] = useState(() => ({
+        pending: submissionStatusCounts?.pending ?? analytics?.pendingReviews ?? 0,
+        under_review: submissionStatusCounts?.under_review ?? 0,
+        revision_required_phase1: submissionStatusCounts?.revision_required_phase1 ?? 0,
+        revision_required_phase2: submissionStatusCounts?.revision_required_phase2 ?? 0,
+        accepted: submissionStatusCounts?.accepted ?? analytics?.acceptedSubmissions ?? 0,
+        rejected: submissionStatusCounts?.rejected ?? analytics?.rejectedSubmissions ?? 0,
+        deletion_requested: submissionStatusCounts?.deletion_requested ?? 0,
+        all: submissionStatusCounts?.all ?? analytics?.totalSubmissions ?? 0,
+    }));
     const [subLastUpdated, setSubLastUpdated] = useState(new Date());
     const [isSubRefreshing, setIsSubRefreshing] = useState(false);
     const subRefreshTimerRef = useRef(null);
 
-    const fetchSubData = useCallback((period) => {
+    const fetchSubStatusData = useCallback(() => {
         setIsSubRefreshing(true);
-        fetch(`/admin/submission-analytics?period=${period}`, {
+        fetch('/admin/submission-analytics', {
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
         })
@@ -129,8 +139,9 @@ export default function AdminDashboard({
                 return res.json();
             })
             .then(data => {
-                if (data?.stats) setSubStats(data.stats);
-                setSubChartData(data?.chartData || []);
+                if (data?.statusCounts) {
+                    setStatusCounts(data.statusCounts);
+                }
                 setSubLastUpdated(new Date());
                 setIsSubRefreshing(false);
             })
@@ -138,14 +149,32 @@ export default function AdminDashboard({
     }, []);
 
     useEffect(() => {
-        fetchSubData(subPeriod);
-        subRefreshTimerRef.current = setInterval(() => fetchSubData(subPeriod), 60000);
+        fetchSubStatusData();
+        subRefreshTimerRef.current = setInterval(fetchSubStatusData, 60000);
         return () => clearInterval(subRefreshTimerRef.current);
-    }, [subPeriod, fetchSubData]);
+    }, [fetchSubStatusData]);
 
-    const handleSubPeriodChange = (period) => {
-        setSubPeriod(period);
-    };
+    const statusPieItems = useMemo(() => {
+        return [
+            { id: 'accepted', label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981' },
+            { id: 'under_review', label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7' },
+            { id: 'revision_required_phase1', label: 'Revision P1', value: statusCounts.revision_required_phase1 || 0, color: '#f59e0b' },
+            { id: 'revision_required_phase2', label: 'Revision P2', value: statusCounts.revision_required_phase2 || 0, color: '#ea580c' },
+            { id: 'pending', label: 'Pending', value: statusCounts.pending || 0, color: '#64748b' },
+            { id: 'rejected', label: 'Rejected', value: statusCounts.rejected || 0, color: '#ef4444' },
+            ...(statusCounts.deletion_requested > 0 ? [
+                { id: 'deletion_requested', label: 'Delete Req.', value: statusCounts.deletion_requested, color: '#94a3b8' }
+            ] : []),
+        ];
+    }, [statusCounts]);
+
+    const activeStatusPieData = useMemo(() => {
+        return statusPieItems.filter(item => item.value > 0);
+    }, [statusPieItems]);
+
+    const totalStatusCount = useMemo(() => {
+        return statusPieItems.reduce((acc, curr) => acc + curr.value, 0);
+    }, [statusPieItems]);
 
     const totalSubmissions = analytics?.totalSubmissions || 0;
     const pendingReviews = analytics?.pendingReviews || 0;
@@ -1016,7 +1045,7 @@ export default function AdminDashboard({
                         </Card>
                     </Grid>
 
-                    {/* 2. Paper Submissions Analytics Card */}
+                    {/* 2. Paper Submissions Status Pie Chart Card */}
                     <Grid size={{ xs: 12, lg: 6 }}>
                         <Card
                             elevation={0}
@@ -1037,79 +1066,101 @@ export default function AdminDashboard({
                                     <Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <Typography sx={{ fontWeight: 800, fontSize: '1.025rem', color: c.textPrimary }}>
-                                                Submissions Velocity
+                                                Status Submission
                                             </Typography>
                                             <Box sx={{
                                                 display: 'flex', alignItems: 'center', gap: 0.5,
                                                 px: 0.85, py: 0.2,
-                                                bgcolor: isDark ? 'rgba(14,165,233,0.15)' : '#f0f9ff',
+                                                bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
                                                 borderRadius: '6px',
-                                                border: `1px solid ${isDark ? 'rgba(14,165,233,0.3)' : '#bae6fd'}`,
+                                                border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
                                             }}>
                                                 <Box sx={{
                                                     width: 6, height: 6, borderRadius: '50%',
-                                                    bgcolor: '#0ea5e9',
+                                                    bgcolor: '#10b981',
                                                     animation: 'pulseDot 2s infinite',
                                                 }} />
-                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase' }}>
-                                                    Live
+                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>
+                                                    {totalStatusCount || totalSubmissions} Papers
                                                 </Typography>
                                             </Box>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, mt: 0.25 }}>
-                                            Paper submissions timeline • Updated {subLastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                            Paper status breakdown • Updated {subLastUpdated.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                                         </Typography>
                                     </Box>
 
-                                    {/* Period Toggle */}
-                                    <Box sx={{
-                                        display: 'flex',
-                                        border: `1px solid ${c.cardBorder}`,
-                                        borderRadius: '8px',
-                                        bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
-                                        p: 0.3,
-                                    }}>
-                                        {[
-                                            { key: 'today', label: 'Today' },
-                                            { key: '7d', label: '7D' },
-                                            { key: '30d', label: '30D' },
-                                        ].map((tab) => (
-                                            <Button
-                                                key={tab.key}
+                                    {/* Action buttons */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Tooltip title="Refresh Status Submission">
+                                            <IconButton
                                                 size="small"
-                                                onClick={() => handleSubPeriodChange(tab.key)}
+                                                onClick={fetchSubStatusData}
+                                                disabled={isSubRefreshing}
                                                 sx={{
-                                                    px: 1.5, py: 0.35,
-                                                    fontSize: '0.725rem',
-                                                    fontWeight: 700,
-                                                    textTransform: 'none',
-                                                    minWidth: 'auto',
-                                                    borderRadius: '6px',
-                                                    ...(subPeriod === tab.key ? {
-                                                        bgcolor: '#0284c7',
-                                                        color: '#ffffff',
-                                                        '&:hover': { bgcolor: '#0369a1' }
-                                                    } : {
-                                                        color: c.textMuted,
-                                                        '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' },
-                                                    }),
+                                                    p: 0.6,
+                                                    borderRadius: '8px',
+                                                    border: `1px solid ${c.cardBorder}`,
+                                                    bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
+                                                    color: c.textMuted,
+                                                    '&:hover': { color: '#0d7a6a', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' },
                                                 }}
                                             >
-                                                {tab.label}
-                                            </Button>
-                                        ))}
+                                                <RefreshRoundedIcon sx={{ fontSize: 16, animation: isSubRefreshing ? 'spin 1s linear infinite' : 'none' }} />
+                                            </IconButton>
+                                        </Tooltip>
+
+                                        <Button
+                                            component={Link}
+                                            href={route('admin.submissions')}
+                                            size="small"
+                                            endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 14 }} />}
+                                            sx={{
+                                                px: 1.5,
+                                                py: 0.45,
+                                                fontSize: '0.75rem',
+                                                fontWeight: 700,
+                                                textTransform: 'none',
+                                                borderRadius: '8px',
+                                                border: `1px solid ${c.cardBorder}`,
+                                                bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
+                                                color: c.textPrimary,
+                                                '&:hover': {
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                    borderColor: '#0d7a6a',
+                                                    color: '#0d7a6a',
+                                                },
+                                            }}
+                                        >
+                                            Kelola
+                                        </Button>
                                     </Box>
                                 </Box>
 
-                                {/* Metric summaries */}
+                                {/* 4 Status Key Metric Summaries (matching the exact 4-box layout of the left card) */}
                                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, pt: 1, pb: 1.5, borderTop: `1px solid ${c.cardBorder}`, borderBottom: `1px solid ${c.cardBorder}` }}>
                                     {[
-                                        { label: 'Today', value: subStats.today || 0, color: '#0284c7' },
-                                        { label: '7 Days', value: subStats.last7days || 0, color: '#ea580c' },
-                                        { label: '30 Days', value: subStats.last30days || 0, color: '#10b981' },
-                                        { label: 'Total', value: subStats.total || 0, color: '#7c3aed' },
+                                        { label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981', status: 'accepted' },
+                                        { label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7', status: 'under_review' },
+                                        { label: 'Revision', value: (statusCounts.revision_required_phase1 || 0) + (statusCounts.revision_required_phase2 || 0), color: '#f59e0b', status: 'revision_required_phase1' },
+                                        { label: 'Pending', value: statusCounts.pending || 0, color: '#64748b', status: 'pending' },
                                     ].map((m) => (
-                                        <Box key={m.label} sx={{ textAlign: 'center' }}>
+                                        <Box
+                                            key={m.label}
+                                            component={Link}
+                                            href={route('admin.submissions', { status: m.status })}
+                                            sx={{
+                                                textAlign: 'center',
+                                                textDecoration: 'none',
+                                                py: 0.25,
+                                                borderRadius: '8px',
+                                                transition: 'all 0.2s ease',
+                                                '&:hover': {
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+                                                    transform: 'translateY(-1px)',
+                                                },
+                                            }}
+                                        >
                                             <Typography sx={{ fontSize: '0.675rem', fontWeight: 600, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                                                 {m.label}
                                             </Typography>
@@ -1121,50 +1172,67 @@ export default function AdminDashboard({
                                 </Box>
                             </Box>
 
-                            {/* Chart */}
-                            <Box sx={{ width: '100%', height: 260, px: 1, py: 1 }}>
-                                {subChartData.length > 0 ? (
-                                    <LineChart
-                                        xAxis={[{
-                                            data: subChartData.map((_, i) => i),
-                                            scaleType: 'point',
-                                            valueFormatter: (idx) => subChartData[idx]?.label || '',
-                                            tickLabelStyle: { fontSize: 10, fill: isDark ? '#9ca3af' : '#64748b' },
-                                        }]}
-                                        yAxis={[{
-                                            tickMinStep: 1,
-                                            tickLabelStyle: { fontSize: 10, fill: isDark ? '#9ca3af' : '#64748b' },
-                                        }]}
-                                        series={[{
-                                            data: subChartData.map(d => d.count),
-                                            color: '#0284c7',
-                                            area: true,
-                                            curve: 'catmullRom',
-                                            showMark: subChartData.length <= 15,
-                                            valueFormatter: (v) => `${v} papers`,
-                                        }]}
-                                        grid={{ horizontal: true }}
-                                        margin={{ top: 15, bottom: 30, left: 40, right: 15 }}
-                                        slotProps={{ legend: { hidden: true } }}
-                                        sx={{
-                                            '& .MuiChartsAxis-line': { stroke: c.cardBorder },
-                                            '& .MuiChartsGrid-line': { stroke: isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9' },
-                                            '& .MuiAreaElement-root': {
-                                                fill: 'url(#materioSubGradient)',
-                                            },
-                                            '& .MuiLineElement-root': { strokeWidth: 2.5 },
-                                        }}
-                                    >
-                                        <defs>
-                                            <linearGradient id="materioSubGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#0284c7" stopOpacity={0.25} />
-                                                <stop offset="100%" stopColor="#0284c7" stopOpacity={0.01} />
-                                            </linearGradient>
-                                        </defs>
-                                    </LineChart>
+                            {/* Donut / Pie Chart */}
+                            <Box sx={{ width: '100%', height: 260, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1, py: 1 }}>
+                                {activeStatusPieData.length > 0 ? (
+                                    <Box sx={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <PieChart
+                                            series={[{
+                                                data: activeStatusPieData,
+                                                innerRadius: 52,
+                                                outerRadius: 88,
+                                                paddingAngle: 3,
+                                                cornerRadius: 5,
+                                                cx: 115,
+                                                highlightScope: { fade: 'global', highlight: 'item' },
+                                                faded: { innerRadius: 48, additionalRadius: -4, opacity: 0.4 },
+                                                valueFormatter: (item) => `${item.value} paper${item.value > 1 ? 's' : ''} (${totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : 0}%)`,
+                                            }]}
+                                            height={240}
+                                            slotProps={{
+                                                legend: {
+                                                    direction: 'column',
+                                                    position: { vertical: 'middle', horizontal: 'right' },
+                                                    padding: 0,
+                                                    itemMarkWidth: 10,
+                                                    itemMarkHeight: 10,
+                                                    markGap: 8,
+                                                    itemGap: 6,
+                                                    labelStyle: {
+                                                        fontSize: 11.5,
+                                                        fontWeight: 600,
+                                                        fill: isDark ? '#d1d5db' : '#334155',
+                                                    },
+                                                },
+                                            }}
+                                            sx={{
+                                                '& .MuiPieArc-root': {
+                                                    stroke: isDark ? '#1e293b' : '#ffffff',
+                                                    strokeWidth: 2,
+                                                },
+                                            }}
+                                        />
+                                        {/* Center Donut Label */}
+                                        <Box sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: 115,
+                                            transform: 'translate(-50%, -50%)',
+                                            textAlign: 'center',
+                                            pointerEvents: 'none',
+                                        }}>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.25rem', color: c.textPrimary, lineHeight: 1 }}>
+                                                {totalStatusCount}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.65rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                Papers
+                                            </Typography>
+                                        </Box>
+                                    </Box>
                                 ) : (
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column' }}>
-                                        <Typography sx={{ color: c.textMuted, fontSize: '0.8rem' }}>No submission data for this period</Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 1 }}>
+                                        <PieChartRoundedIcon sx={{ fontSize: 40, color: c.textMuted, opacity: 0.4 }} />
+                                        <Typography sx={{ color: c.textMuted, fontSize: '0.8rem' }}>No submission status data available</Typography>
                                     </Box>
                                 )}
                             </Box>
