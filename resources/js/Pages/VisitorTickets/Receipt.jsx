@@ -118,7 +118,35 @@ export default function Receipt({
     const pDate = new Date(payment.created_at || Date.now());
     const romanMonth = romanMonths[pDate.getMonth()] || 'IX';
     const pYear = pDate.getFullYear() || 2026;
+    const pNum = String(payment.id || 1).padStart(3, '0');
     const receiptNumber = payment.receipt_no || `Receipt No. ${pNum}/PIT-IAGI/PY-R/${romanMonth}/${pYear}`;
+
+    const bankLines = React.useMemo(() => {
+        if (!bankInfo || typeof bankInfo !== 'string') {
+            return [
+                { label: 'Bank', val: 'Mandiri' },
+                { label: 'Account No', val: '1030099991461' },
+                { label: 'Account Holder', val: 'IAGI' },
+            ];
+        }
+        const lines = bankInfo.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length === 0) {
+            return [
+                { label: 'Bank', val: 'Mandiri' },
+                { label: 'Account No', val: '1030099991461' },
+                { label: 'Account Holder', val: 'IAGI' },
+            ];
+        }
+        return lines.map(line => {
+            const colonIdx = line.indexOf(':');
+            if (colonIdx !== -1) {
+                const label = line.substring(0, colonIdx).replace(/\.$/, '').trim();
+                const val = line.substring(colonIdx + 1).trim();
+                return { label, val };
+            }
+            return { label: '', val: line };
+        });
+    }, [bankInfo]);
 
     const handlePrint = () => {
         window.print();
@@ -432,10 +460,75 @@ export default function Receipt({
                                             </>
                                         )}
                                         <TableRow sx={{ bgcolor: '#ecfdf5' }}>
-                                            <TableCell colSpan={4} align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.88rem', py: 1 }}>
+                                            <TableCell
+                                                colSpan={3}
+                                                sx={{
+                                                    py: 1.2,
+                                                    px: { xs: 1.5, sm: 2 },
+                                                    verticalAlign: 'middle',
+                                                    textAlign: 'left',
+                                                    '@media print': { py: '4px !important', px: '8px !important' },
+                                                }}
+                                            >
+                                                <Box sx={{ textAlign: 'left' }}>
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 900,
+                                                            color: '#0f172a',
+                                                            fontSize: '0.72rem',
+                                                            letterSpacing: '0.04em',
+                                                            textTransform: 'uppercase',
+                                                            mb: 0.2,
+                                                            '@media print': { fontSize: '0.66rem !important', mb: '1px !important' },
+                                                        }}
+                                                    >
+                                                        BANK ACCOUNT
+                                                    </Typography>
+                                                    <Typography
+                                                        component="div"
+                                                        sx={{
+                                                            fontSize: '0.73rem',
+                                                            color: '#1e293b',
+                                                            lineHeight: 1.4,
+                                                            fontWeight: 600,
+                                                            '@media print': { fontSize: '0.66rem !important', lineHeight: '1.25 !important' },
+                                                        }}
+                                                    >
+                                                        {bankLines.map((b, i) => (
+                                                            <div key={i}>
+                                                                <span style={{ fontWeight: 600 }}>{b.label ? `${b.label} : ` : ''}</span>
+                                                                <span style={{ fontWeight: 600 }}>{b.val}</span>
+                                                            </div>
+                                                        ))}
+                                                    </Typography>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell
+                                                align="right"
+                                                sx={{
+                                                    fontWeight: 900,
+                                                    color: '#094d42',
+                                                    fontSize: '0.88rem',
+                                                    py: 1,
+                                                    verticalAlign: 'middle',
+                                                    whiteSpace: 'nowrap',
+                                                    '@media print': { py: '4px !important', fontSize: '0.82rem !important' },
+                                                }}
+                                            >
                                                 TOTAL PAYMENT:
                                             </TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 900, color: '#094d42', fontSize: '0.98rem', py: 1 }}>
+                                            <TableCell
+                                                align="right"
+                                                sx={{
+                                                    fontWeight: 900,
+                                                    color: '#094d42',
+                                                    fontSize: '0.98rem',
+                                                    py: 1,
+                                                    verticalAlign: 'middle',
+                                                    whiteSpace: 'nowrap',
+                                                    '@media print': { py: '4px !important', fontSize: '0.90rem !important' },
+                                                }}
+                                            >
                                                 IDR {totalAmount.toLocaleString('id-ID')}
                                             </TableCell>
                                         </TableRow>
