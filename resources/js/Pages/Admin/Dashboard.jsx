@@ -330,13 +330,43 @@ export default function AdminDashboard({
 
     const getStatusChip = (status) => {
         const map = {
-            'pending': { bg: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fffbeb', color: '#d97706', border: '#fde68a', label: 'Pending' },
-            'under_review': { bg: isDark ? 'rgba(59, 130, 246, 0.15)' : '#eff6ff', color: '#2563eb', border: '#bfdbfe', label: 'In Review' },
-            'accepted': { bg: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5', color: '#059669', border: '#a7f3d0', label: 'Accepted' },
-            'rejected': { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fef2f2', color: '#dc2626', border: '#fecaca', label: 'Rejected' },
-            'declined': { bg: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fef2f2', color: '#dc2626', border: '#fecaca', label: 'Declined' },
+            'pending': { 
+                bg: isDark ? 'rgba(245, 158, 11, 0.12)' : 'rgba(245, 158, 11, 0.08)', 
+                color: '#d97706', 
+                border: isDark ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.25)', 
+                label: 'Pending' 
+            },
+            'under_review': { 
+                bg: isDark ? 'rgba(37, 99, 235, 0.12)' : 'rgba(37, 99, 235, 0.08)', 
+                color: '#2563eb', 
+                border: isDark ? 'rgba(37, 99, 235, 0.3)' : 'rgba(37, 99, 235, 0.25)', 
+                label: 'In Review' 
+            },
+            'accepted': { 
+                bg: isDark ? 'rgba(16, 185, 129, 0.12)' : 'rgba(16, 185, 129, 0.08)', 
+                color: '#059669', 
+                border: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.25)', 
+                label: 'Accepted' 
+            },
+            'rejected': { 
+                bg: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)', 
+                color: '#dc2626', 
+                border: isDark ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.25)', 
+                label: 'Rejected' 
+            },
+            'declined': { 
+                bg: isDark ? 'rgba(239, 68, 68, 0.12)' : 'rgba(239, 68, 68, 0.08)', 
+                color: '#dc2626', 
+                border: isDark ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.25)', 
+                label: 'Declined' 
+            },
         };
-        return map[status] || { bg: isDark ? 'rgba(107, 114, 128, 0.15)' : '#f1f5f9', color: '#64748b', border: '#e2e8f0', label: status };
+        return map[status] || { 
+            bg: isDark ? 'rgba(107, 114, 128, 0.12)' : 'rgba(107, 114, 128, 0.08)', 
+            color: '#64748b', 
+            border: isDark ? 'rgba(107, 114, 128, 0.25)' : 'rgba(107, 114, 128, 0.2)', 
+            label: status 
+        };
     };
 
     const toggleSx = (selectedColor) => ({
@@ -440,37 +470,43 @@ export default function AdminDashboard({
                             variant="outlined"
                             startIcon={<PaymentRoundedIcon sx={{ fontSize: 18 }} />}
                             sx={{
-                                borderColor: isDark ? 'rgba(234, 88, 12, 0.4)' : '#fed7aa',
-                                color: isDark ? '#fb923c' : '#c2410c',
-                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.1)' : '#fff7ed',
-                                px: 2,
-                                py: 0.85,
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.12)',
+                                color: c.textPrimary,
+                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#ffffff',
+                                px: 1.75,
+                                py: 0.75,
                                 borderRadius: '10px',
                                 textTransform: 'none',
-                                fontWeight: 700,
-                                fontSize: '0.825rem',
+                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                boxShadow: isDark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
                                 '&:hover': {
-                                    bgcolor: isDark ? 'rgba(234, 88, 12, 0.2)' : '#ffedd5',
-                                    borderColor: '#ea580c',
+                                    bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f8fafc',
+                                    borderColor: '#d97706',
+                                    color: '#d97706',
                                     transform: 'translateY(-1px)',
                                 },
                                 transition: 'all 0.2s ease',
                             }}
                         >
-                            Manage Payments
+                            Payments
                             {payStats.totalPendingCount > 0 && (
-                                <Chip
-                                    label={payStats.totalPendingCount}
-                                    size="small"
+                                <Box
+                                    component="span"
                                     sx={{
-                                        ml: 0.75,
-                                        height: 18,
-                                        fontSize: '0.65rem',
+                                        ml: 1,
+                                        px: 0.75,
+                                        py: 0.15,
+                                        borderRadius: '999px',
+                                        bgcolor: isDark ? 'rgba(217, 119, 6, 0.25)' : '#fef3c7',
+                                        color: '#d97706',
+                                        fontSize: '0.675rem',
                                         fontWeight: 800,
-                                        bgcolor: '#ea580c',
-                                        color: '#ffffff',
+                                        border: '1px solid rgba(217, 119, 6, 0.3)',
                                     }}
-                                />
+                                >
+                                    {payStats.totalPendingCount}
+                                </Box>
                             )}
                         </Button>
 
@@ -478,20 +514,22 @@ export default function AdminDashboard({
                             component={Link}
                             href={route('admin.visitorTickets')}
                             variant="outlined"
-                            startIcon={<ConfirmationNumberRoundedIcon sx={{ fontSize: 18 }} />}
+                            startIcon={<ConfirmationNumberRoundedIcon sx={{ fontSize: 18, color: '#0284c7' }} />}
                             sx={{
-                                borderColor: isDark ? 'rgba(2, 132, 199, 0.4)' : '#bae6fd',
-                                color: isDark ? '#38bdf8' : '#0369a1',
-                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.1)' : '#f0f9ff',
-                                px: 2,
-                                py: 0.85,
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.12)',
+                                color: c.textPrimary,
+                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#ffffff',
+                                px: 1.75,
+                                py: 0.75,
                                 borderRadius: '10px',
                                 textTransform: 'none',
-                                fontWeight: 700,
-                                fontSize: '0.825rem',
+                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                boxShadow: isDark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
                                 '&:hover': {
-                                    bgcolor: isDark ? 'rgba(2, 132, 199, 0.2)' : '#e0f2fe',
+                                    bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f8fafc',
                                     borderColor: '#0284c7',
+                                    color: '#0284c7',
                                     transform: 'translateY(-1px)',
                                 },
                                 transition: 'all 0.2s ease',
@@ -502,17 +540,47 @@ export default function AdminDashboard({
 
                         <Button
                             component={Link}
+                            href={route('admin.gateScanner')}
+                            variant="outlined"
+                            startIcon={<QrCodeScannerRoundedIcon sx={{ fontSize: 18, color: '#10b981' }} />}
+                            sx={{
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.12)',
+                                color: c.textPrimary,
+                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#ffffff',
+                                px: 1.75,
+                                py: 0.75,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                boxShadow: isDark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
+                                '&:hover': {
+                                    bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f8fafc',
+                                    borderColor: '#10b981',
+                                    color: '#10b981',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Gate Scanner
+                        </Button>
+
+                        <Button
+                            component={Link}
                             href={route('admin.submissions')}
                             variant="contained"
-                            startIcon={<AssignmentRoundedIcon sx={{ fontSize: 18 }} />}
+                            startIcon={<ArticleRoundedIcon sx={{ fontSize: 18 }} />}
                             sx={{
-                                background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #10b981 100%)',
+                                background: 'linear-gradient(135deg, #064e3b 0%, #0d7a6a 100%)',
+                                color: '#ffffff',
                                 px: 2.2,
-                                py: 0.85,
+                                py: 0.75,
                                 borderRadius: '10px',
                                 textTransform: 'none',
                                 fontWeight: 700,
                                 fontSize: '0.825rem',
+                                border: '1px solid rgba(16, 185, 129, 0.3)',
                                 boxShadow: '0 4px 14px rgba(13, 122, 106, 0.25)',
                                 '&:hover': {
                                     background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
@@ -527,9 +595,10 @@ export default function AdminDashboard({
                     </Box>
                 </Box>
 
-                {/* ── ROW 1: Conference Statistics Overview Banner ── */}
-                <Grid container spacing={3} sx={{ mb: 3.5 }}>
-                    <Grid size={{ xs: 12 }}>
+                {/* ── 4-PILLAR MASTER KPI COMMAND GRID (Executive $50M Tier) ── */}
+                <Grid container spacing={2.5} sx={{ mb: 3 }}>
+                    {/* PILLAR 1: GROSS CONFERENCE REVENUE */}
+                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                         <Card
                             elevation={0}
                             sx={{
@@ -537,454 +606,173 @@ export default function AdminDashboard({
                                 borderRadius: '16px',
                                 border: `1px solid ${c.cardBorder}`,
                                 bgcolor: c.cardBg,
-                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                                p: 2.5,
+                                position: 'relative',
+                                overflow: 'hidden',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                            }}
-                        >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 }, '&:last-child': { pb: { xs: 2.5, sm: 3 } } }}>
-                                {/* Header */}
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                                    <Box>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: 800,
-                                                fontSize: '1.05rem',
-                                                color: c.textPrimary,
-                                                letterSpacing: '-0.01em',
-                                            }}
-                                        >
-                                            Conference Statistics Overview
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem', mt: 0.25 }}>
-                                            Real-time key metrics across paper submissions & registration
-                                        </Typography>
-                                    </Box>
-                                    <Chip
-                                        icon={<Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981', ml: 1, mr: -0.5 }} />}
-                                        label="Live Sync"
-                                        size="small"
-                                        sx={{
-                                            bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
-                                            color: isDark ? '#34d399' : '#059669',
-                                            border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
-                                            fontWeight: 700,
-                                            fontSize: '0.675rem',
-                                            borderRadius: '6px',
-                                            height: 22,
-                                        }}
-                                    />
-                                </Box>
-
-                                {/* 4 Stat Items Grid */}
-                                <Grid container spacing={2.5}>
-                                    {/* 1. Total Submissions */}
-                                    <Grid size={{ xs: 6, sm: 3 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <Avatar
-                                                variant="rounded"
-                                                sx={{
-                                                    width: 44,
-                                                    height: 44,
-                                                    borderRadius: '12px',
-                                                    bgcolor: isDark ? 'rgba(13,122,106,0.18)' : '#ecfdf5',
-                                                    color: '#0d7a6a',
-                                                    border: `1px solid ${isDark ? 'rgba(13,122,106,0.3)' : '#a7f3d0'}`,
-                                                }}
-                                            >
-                                                <ArticleRoundedIcon sx={{ fontSize: 24 }} />
-                                            </Avatar>
-                                            <Box>
-                                                <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.25rem', sm: '1.45rem' }, color: c.textPrimary, lineHeight: 1.15 }}>
-                                                    {totalSubmissions}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
-                                                    Submissions
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-
-                                    {/* 2. Registered Authors */}
-                                    <Grid size={{ xs: 6, sm: 3 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <Avatar
-                                                variant="rounded"
-                                                sx={{
-                                                    width: 44,
-                                                    height: 44,
-                                                    borderRadius: '12px',
-                                                    bgcolor: isDark ? 'rgba(124,58,237,0.18)' : '#f5f3ff',
-                                                    color: '#7c3aed',
-                                                    border: `1px solid ${isDark ? 'rgba(124,58,237,0.3)' : '#ddd6fe'}`,
-                                                }}
-                                            >
-                                                <PeopleRoundedIcon sx={{ fontSize: 24 }} />
-                                            </Avatar>
-                                            <Box>
-                                                <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.25rem', sm: '1.45rem' }, color: c.textPrimary, lineHeight: 1.15 }}>
-                                                    {totalUsers}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
-                                                    Authors
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-
-                                    {/* 3. Verified Payments */}
-                                    <Grid size={{ xs: 6, sm: 3 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <Avatar
-                                                variant="rounded"
-                                                sx={{
-                                                    width: 44,
-                                                    height: 44,
-                                                    borderRadius: '12px',
-                                                    bgcolor: isDark ? 'rgba(16,185,129,0.18)' : '#ecfdf5',
-                                                    color: '#10b981',
-                                                    border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
-                                                }}
-                                            >
-                                                <PaymentRoundedIcon sx={{ fontSize: 24 }} />
-                                            </Avatar>
-                                            <Box>
-                                                <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.25rem', sm: '1.45rem' }, color: c.textPrimary, lineHeight: 1.15 }}>
-                                                    {verifiedPayments}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
-                                                    Verified Pay
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-
-                                    {/* 4. Pending Reviews */}
-                                    <Grid size={{ xs: 6, sm: 3 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                            <Avatar
-                                                variant="rounded"
-                                                sx={{
-                                                    width: 44,
-                                                    height: 44,
-                                                    borderRadius: '12px',
-                                                    bgcolor: isDark ? 'rgba(245,158,11,0.18)' : '#fffbeb',
-                                                    color: '#f59e0b',
-                                                    border: `1px solid ${isDark ? 'rgba(245,158,11,0.3)' : '#fde68a'}`,
-                                                }}
-                                            >
-                                                <PendingActionsRoundedIcon sx={{ fontSize: 24 }} />
-                                            </Avatar>
-                                            <Box>
-                                                <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.25rem', sm: '1.45rem' }, color: c.textPrimary, lineHeight: 1.15 }}>
-                                                    {pendingReviews}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
-                                                    Pending Review
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-
-                                {/* Additional mini status row */}
-                                <Box sx={{ 
-                                    mt: 3, 
-                                    p: 1.75, 
-                                    borderRadius: '12px', 
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                    border: `1px solid ${c.cardBorder}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    flexWrap: 'wrap',
-                                    gap: 1.5,
-                                }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <CheckCircleRoundedIcon sx={{ fontSize: 16, color: '#10b981' }} />
-                                        <Typography sx={{ fontSize: '0.78rem', color: c.textPrimary, fontWeight: 600 }}>
-                                            <strong>{acceptedSubmissions}</strong> Accepted papers published
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Typography sx={{ fontSize: '0.78rem', color: c.textMuted }}>
-                                            Rejection rate: <strong>{totalSubmissions > 0 ? ((rejectedSubmissions / totalSubmissions) * 100).toFixed(1) : 0}%</strong>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-
-                {/* ── ROW 2: Materio Pending Payments Alert Banner (if any) ── */}
-                {pendingPayments > 0 && (
-                    <Card
-                        elevation={0}
-                        sx={{
-                            mb: 3.5,
-                            borderRadius: '16px',
-                            border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.4)' : '#fed7aa'}`,
-                            bgcolor: isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb',
-                            boxShadow: '0 4px 14px rgba(245, 158, 11, 0.08)',
-                        }}
-                    >
-                        <CardContent sx={{ p: { xs: 2, sm: 2.5 }, '&:last-child': { pb: { xs: 2, sm: 2.5 } } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Avatar
-                                        sx={{
-                                            bgcolor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7',
-                                            color: '#d97706',
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: '12px',
-                                            border: '1px solid rgba(245, 158, 11, 0.3)',
-                                        }}
-                                        variant="rounded"
-                                    >
-                                        <WarningAmberRoundedIcon sx={{ fontSize: 24 }} />
-                                    </Avatar>
-                                    <Box>
-                                        <Typography sx={{ fontWeight: 800, color: '#d97706', fontSize: '0.95rem' }}>
-                                            Pending Payment Verifications Required
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
-                                            <strong>{pendingPayments}</strong> payment receipt{pendingPayments > 1 ? 's are' : ' is'} waiting for admin manual verification.
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Button
-                                    component={Link}
-                                    href={route('admin.payments')}
-                                    variant="contained"
-                                    size="small"
-                                    endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
-                                    sx={{
-                                        bgcolor: '#d97706',
-                                        '&:hover': {
-                                            bgcolor: '#b45309',
-                                            transform: 'translateY(-1px)',
-                                        },
-                                        borderRadius: '8px',
-                                        px: 2.5,
-                                        py: 0.9,
-                                        fontWeight: 700,
-                                        textTransform: 'none',
-                                        fontSize: '0.8rem',
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
-                                    }}
-                                >
-                                    Review Now
-                                </Button>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                )}
-
-                {/* ── ROW: Operational Hub - Manage Payments & Visitor Tickets Monitoring ── */}
-                <Grid container spacing={3} sx={{ mb: 3.5 }}>
-                    {/* CARD 1: Manage Payments & Revenue Monitor */}
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Card
-                            elevation={0}
-                            sx={{
-                                height: '100%',
-                                borderRadius: '16px',
-                                border: `1px solid ${c.cardBorder}`,
-                                bgcolor: c.cardBg,
-                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                transition: 'all 0.3s ease',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
                                 '&:hover': {
                                     transform: 'translateY(-2px)',
-                                    boxShadow: isDark ? '0 8px 25px rgba(0,0,0,0.4)' : '0 8px 25px rgba(234, 88, 12, 0.08)',
+                                    borderColor: isDark ? 'rgba(217, 119, 6, 0.4)' : '#fde68a',
+                                    boxShadow: isDark ? '0 12px 28px rgba(0,0,0,0.4)' : '0 12px 28px rgba(217, 119, 6, 0.08)',
                                 },
                             }}
                         >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+                            {/* Top Accent Strip */}
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #10b981 100%)',
+                            }} />
+
+                            <Box>
                                 {/* Header */}
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
                                         <Avatar
                                             variant="rounded"
                                             sx={{
-                                                width: 46,
-                                                height: 46,
-                                                borderRadius: '12px',
-                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.18)' : '#fff7ed',
-                                                color: '#ea580c',
-                                                border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.35)' : '#ffedd5'}`,
+                                                width: 36,
+                                                height: 36,
+                                                borderRadius: '10px',
+                                                bgcolor: isDark ? 'rgba(217, 119, 6, 0.15)' : '#fffbeb',
+                                                color: '#d97706',
+                                                border: `1px solid ${isDark ? 'rgba(217, 119, 6, 0.3)' : '#fde68a'}`,
                                             }}
                                         >
-                                            <AccountBalanceWalletRoundedIcon sx={{ fontSize: 26 }} />
+                                            <AccountBalanceWalletRoundedIcon sx={{ fontSize: 20 }} />
                                         </Avatar>
                                         <Box>
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    fontWeight: 800,
-                                                    fontSize: '1.05rem',
-                                                    color: c.textPrimary,
-                                                    lineHeight: 1.2,
-                                                }}
-                                            >
-                                                Manage Payments & Financials
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: '0.68rem',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.07em',
+                                                color: c.textMuted,
+                                            }}>
+                                                Conference Revenue
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem', mt: 0.25 }}>
-                                                Paper author registrations & visitor ticket payments
+                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                <Box component="span" sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#10b981' }} />
+                                                Verified Gross
                                             </Typography>
                                         </Box>
                                     </Box>
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         href={route('admin.payments')}
                                         size="small"
-                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
                                         sx={{
-                                            textTransform: 'none',
-                                            fontWeight: 700,
-                                            fontSize: '0.78rem',
-                                            color: '#ea580c',
-                                            bgcolor: isDark ? 'rgba(234, 88, 12, 0.12)' : '#fff7ed',
-                                            border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.3)' : '#fed7aa'}`,
-                                            borderRadius: '8px',
-                                            px: 1.5,
-                                            py: 0.5,
-                                            '&:hover': {
-                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.22)' : '#ffedd5',
-                                            },
+                                            color: c.textMuted,
+                                            '&:hover': { color: '#d97706', bgcolor: isDark ? 'rgba(217, 119, 6, 0.15)' : '#fffbeb' },
                                         }}
                                     >
-                                        Buka Payments
-                                    </Button>
+                                        <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+                                    </IconButton>
                                 </Box>
 
-                                {/* Total Revenue Highlight */}
-                                <Box sx={{ 
-                                    p: 2, 
-                                    borderRadius: '12px', 
-                                    bgcolor: isDark ? 'rgba(234, 88, 12, 0.08)' : '#fffaf5',
-                                    border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.2)' : '#ffedd5'}`,
-                                    mb: 2.5,
+                                {/* Primary Metric Number */}
+                                <Typography sx={{
+                                    fontFamily: '"Outfit", "Inter", sans-serif',
+                                    fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.025em',
+                                    color: c.textPrimary,
+                                    fontVariantNumeric: 'tabular-nums',
+                                    lineHeight: 1.15,
+                                    mt: 1,
+                                    mb: 1.5,
                                 }}>
-                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.7rem' }}>
-                                        Total Revenue Terverifikasi
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 0.5, flexWrap: 'wrap' }}>
-                                        <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.45rem', sm: '1.75rem' }, color: isDark ? '#fb923c' : '#c2410c', lineHeight: 1 }}>
-                                            {formatIDR(payStats.totalRevenue)}
-                                        </Typography>
-                                        <Chip
-                                            label="Live Revenue"
-                                            size="small"
-                                            sx={{
-                                                height: 20,
-                                                fontSize: '0.65rem',
-                                                fontWeight: 800,
-                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.25)' : '#fed7aa',
-                                                color: isDark ? '#fdba74' : '#9a3412',
-                                            }}
-                                        />
-                                    </Box>
-                                </Box>
+                                    {formatIDR(payStats.totalRevenue)}
+                                </Typography>
 
-                                {/* 2 Sub-metric blocks */}
-                                <Grid container spacing={2} sx={{ mb: 2 }}>
-                                    {/* Paper Submissions Revenue */}
-                                    <Grid size={{ xs: 6 }}>
-                                        <Box sx={{ 
-                                            p: 1.75, 
-                                            borderRadius: '10px', 
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                            border: `1px solid ${c.cardBorder}`,
-                                        }}>
-                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
-                                                📄 Paper Submissions
-                                            </Typography>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
-                                                {formatIDR(payStats.paperRevenue)}
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
-                                                {formatNumber(payStats.paperPaidCount)} Paid Papers
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-
-                                    {/* Visitor Tickets Revenue */}
-                                    <Grid size={{ xs: 6 }}>
-                                        <Box sx={{ 
-                                            p: 1.75, 
-                                            borderRadius: '10px', 
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                            border: `1px solid ${c.cardBorder}`,
-                                        }}>
-                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
-                                                🎟️ Visitor Tickets
-                                            </Typography>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
-                                                {formatIDR(payStats.visitorRevenue)}
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: '#0284c7', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
-                                                {formatNumber(payStats.visitorPaidCount)} Tiket Terbit
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-
-                                {/* Action / Notice row */}
-                                <Box sx={{ 
-                                    p: 1.5, 
-                                    borderRadius: '10px', 
-                                    bgcolor: payStats.totalPendingCount > 0 
-                                        ? (isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb')
-                                        : (isDark ? 'rgba(16, 185, 129, 0.1)' : '#ecfdf5'),
-                                    border: `1px solid ${payStats.totalPendingCount > 0 
-                                        ? (isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a')
-                                        : (isDark ? 'rgba(16, 185, 129, 0.25)' : '#a7f3d0')}`,
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'space-between',
-                                    flexWrap: 'wrap',
+                                {/* Breakdown Sub-Row */}
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
                                     gap: 1,
+                                    p: 1.2,
+                                    borderRadius: '10px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    mb: 1.5,
                                 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        {payStats.totalPendingCount > 0 ? (
-                                            <WarningAmberRoundedIcon sx={{ fontSize: 18, color: '#d97706' }} />
-                                        ) : (
-                                            <CheckCircleRoundedIcon sx={{ fontSize: 18, color: '#10b981' }} />
-                                        )}
-                                        <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: payStats.totalPendingCount > 0 ? '#b45309' : '#047857' }}>
-                                            {payStats.totalPendingCount > 0 
-                                                ? `${payStats.totalPendingCount} pembayaran menunggu verifikasi manual`
-                                                : 'Semua bukti pembayaran sudah terverifikasi'}
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
+                                            Papers ({payStats.paperPaidCount})
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                            {formatIDR(payStats.paperRevenue)}
                                         </Typography>
                                     </Box>
-                                    {payStats.visitorDebtCount > 0 && (
-                                        <Chip
-                                            label={`${payStats.visitorDebtCount} Piutang Tiket`}
-                                            size="small"
-                                            sx={{
-                                                height: 20,
-                                                fontSize: '0.675rem',
-                                                fontWeight: 700,
-                                                bgcolor: isDark ? 'rgba(239, 68, 68, 0.2)' : '#fee2e2',
-                                                color: '#b91c1c',
-                                            }}
-                                        />
-                                    )}
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
+                                            Tickets ({payStats.visitorPaidCount})
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                            {formatIDR(payStats.visitorRevenue)}
+                                        </Typography>
+                                    </Box>
                                 </Box>
-                            </CardContent>
+                            </Box>
+
+                            {/* Bottom Status / Quick Link */}
+                            <Box
+                                component={Link}
+                                href={route('admin.payments')}
+                                sx={{
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    p: 1,
+                                    borderRadius: '8px',
+                                    bgcolor: payStats.totalPendingCount > 0
+                                        ? (isDark ? 'rgba(217, 119, 6, 0.14)' : '#fffbeb')
+                                        : (isDark ? 'rgba(16, 185, 129, 0.1)' : '#ecfdf5'),
+                                    border: `1px solid ${payStats.totalPendingCount > 0
+                                        ? (isDark ? 'rgba(217, 119, 6, 0.3)' : '#fde68a')
+                                        : (isDark ? 'rgba(16, 185, 129, 0.25)' : '#a7f3d0')}`,
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': { opacity: 0.85 },
+                                }}
+                            >
+                                <Typography sx={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 700,
+                                    color: payStats.totalPendingCount > 0 ? '#d97706' : '#059669',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.75,
+                                }}>
+                                    {payStats.totalPendingCount > 0 ? (
+                                        <>
+                                            <WarningAmberRoundedIcon sx={{ fontSize: 15 }} />
+                                            <span><strong>{payStats.totalPendingCount}</strong> Pending Audit</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CheckCircleRoundedIcon sx={{ fontSize: 15 }} />
+                                            <span>100% Reconciled</span>
+                                        </>
+                                    )}
+                                </Typography>
+                                <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: payStats.totalPendingCount > 0 ? '#b45309' : '#047857' }}>
+                                    Review →
+                                </Typography>
+                            </Box>
                         </Card>
                     </Grid>
 
-                    {/* CARD 2: Visitor Tickets & Gate Access Monitor */}
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    {/* PILLAR 2: SCIENTIFIC PAPERS & SUBMISSIONS */}
+                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                         <Card
                             elevation={0}
                             sx={{
@@ -992,294 +780,547 @@ export default function AdminDashboard({
                                 borderRadius: '16px',
                                 border: `1px solid ${c.cardBorder}`,
                                 bgcolor: c.cardBg,
-                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                                p: 2.5,
+                                position: 'relative',
+                                overflow: 'hidden',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                transition: 'all 0.3s ease',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
                                 '&:hover': {
-                                    boxShadow: isDark ? '0 8px 25px rgba(0,0,0,0.4)' : '0 8px 25px rgba(2, 132, 199, 0.08)',
+                                    transform: 'translateY(-2px)',
+                                    borderColor: isDark ? 'rgba(13, 122, 106, 0.4)' : '#a7f3d0',
+                                    boxShadow: isDark ? '0 12px 28px rgba(0,0,0,0.4)' : '0 12px 28px rgba(13, 122, 106, 0.08)',
                                 },
                             }}
                         >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+                            {/* Top Accent Strip */}
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #094d42 0%, #0d7a6a 50%, #10b981 100%)',
+                            }} />
+
+                            <Box>
                                 {/* Header */}
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
                                         <Avatar
                                             variant="rounded"
                                             sx={{
-                                                width: 46,
-                                                height: 46,
-                                                borderRadius: '12px',
-                                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.18)' : '#f0f9ff',
-                                                color: '#0284c7',
-                                                border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.35)' : '#e0f2fe'}`,
+                                                width: 36,
+                                                height: 36,
+                                                borderRadius: '10px',
+                                                bgcolor: isDark ? 'rgba(13, 122, 106, 0.15)' : '#ecfdf5',
+                                                color: '#0d7a6a',
+                                                border: `1px solid ${isDark ? 'rgba(13, 122, 106, 0.3)' : '#a7f3d0'}`,
                                             }}
                                         >
-                                            <ConfirmationNumberRoundedIcon sx={{ fontSize: 26 }} />
+                                            <ArticleRoundedIcon sx={{ fontSize: 20 }} />
                                         </Avatar>
                                         <Box>
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    fontWeight: 800,
-                                                    fontSize: '1.05rem',
-                                                    color: c.textPrimary,
-                                                    lineHeight: 1.2,
-                                                }}
-                                            >
-                                                Visitor Tickets & Gate Access
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: '0.68rem',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.07em',
+                                                color: c.textMuted,
+                                            }}>
+                                                Scientific Papers
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem', mt: 0.25 }}>
-                                                Public registration, attendee quota & venue check-in
+                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#0d7a6a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                <Box component="span" sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#0d7a6a' }} />
+                                                {submissionsPerTopic.length} Sub-Themes
                                             </Typography>
                                         </Box>
                                     </Box>
-                                    <Button
+                                    <IconButton
+                                        component={Link}
+                                        href={route('admin.submissions')}
+                                        size="small"
+                                        sx={{
+                                            color: c.textMuted,
+                                            '&:hover': { color: '#0d7a6a', bgcolor: isDark ? 'rgba(13, 122, 106, 0.15)' : '#ecfdf5' },
+                                        }}
+                                    >
+                                        <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+                                    </IconButton>
+                                </Box>
+
+                                {/* Primary Metric Number */}
+                                <Typography sx={{
+                                    fontFamily: '"Outfit", "Inter", sans-serif',
+                                    fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.025em',
+                                    color: c.textPrimary,
+                                    fontVariantNumeric: 'tabular-nums',
+                                    lineHeight: 1.15,
+                                    mt: 1,
+                                    mb: 1.5,
+                                }}>
+                                    {formatNumber(totalSubmissions)} <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Submissions</span>
+                                </Typography>
+
+                                {/* Acceptance / Breakdown Progress Bar */}
+                                <Box sx={{ mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#10b981' }}>
+                                            {acceptedSubmissions} Accepted ({totalSubmissions > 0 ? ((acceptedSubmissions / totalSubmissions) * 100).toFixed(1) : 0}%)
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: c.textMuted }}>
+                                            {rejectedSubmissions} Rejected
+                                        </Typography>
+                                    </Box>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={totalSubmissions > 0 ? (acceptedSubmissions / totalSubmissions) * 100 : 0}
+                                        sx={{
+                                            height: 7,
+                                            borderRadius: 4,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                                            '& .MuiLinearProgress-bar': {
+                                                borderRadius: 4,
+                                                background: 'linear-gradient(90deg, #0d7a6a 0%, #10b981 100%)',
+                                            },
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+
+                            {/* Bottom Status / Quick Link */}
+                            <Box
+                                component={Link}
+                                href={route('admin.submissions')}
+                                sx={{
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    p: 1,
+                                    borderRadius: '8px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': { borderColor: '#0d7a6a', bgcolor: isDark ? 'rgba(13, 122, 106, 0.1)' : '#ecfdf5' },
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: c.textMuted }}>
+                                    {totalOral} Oral • {totalPoster} Poster
+                                </Typography>
+                                <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#0d7a6a' }}>
+                                    Manage Papers →
+                                </Typography>
+                            </Box>
+                        </Card>
+                    </Grid>
+
+                    {/* PILLAR 3: DELEGATE PASSES & VENUE ATTENDANCE */}
+                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                height: '100%',
+                                borderRadius: '16px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: c.cardBg,
+                                p: 2.5,
+                                position: 'relative',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
+                                '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    borderColor: isDark ? 'rgba(2, 132, 199, 0.4)' : '#bae6fd',
+                                    boxShadow: isDark ? '0 12px 28px rgba(0,0,0,0.4)' : '0 12px 28px rgba(2, 132, 199, 0.08)',
+                                },
+                            }}
+                        >
+                            {/* Top Accent Strip */}
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #818cf8 100%)',
+                            }} />
+
+                            <Box>
+                                {/* Header */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                                        <Avatar
+                                            variant="rounded"
+                                            sx={{
+                                                width: 36,
+                                                height: 36,
+                                                borderRadius: '10px',
+                                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.15)' : '#f0f9ff',
+                                                color: '#0284c7',
+                                                border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.3)' : '#bae6fd'}`,
+                                            }}
+                                        >
+                                            <ConfirmationNumberRoundedIcon sx={{ fontSize: 20 }} />
+                                        </Avatar>
+                                        <Box>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: '0.68rem',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.07em',
+                                                color: c.textMuted,
+                                            }}>
+                                                Delegate Passes
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                <Box component="span" sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#0284c7' }} />
+                                                Venue Access
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <IconButton
                                         component={Link}
                                         href={route('admin.visitorTickets')}
                                         size="small"
-                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
                                         sx={{
-                                            textTransform: 'none',
-                                            fontWeight: 700,
-                                            fontSize: '0.78rem',
-                                            color: '#0284c7',
-                                            bgcolor: isDark ? 'rgba(2, 132, 199, 0.12)' : '#f0f9ff',
-                                            border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.3)' : '#bae6fd'}`,
-                                            borderRadius: '8px',
-                                            px: 1.5,
-                                            py: 0.5,
-                                            '&:hover': {
-                                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.22)' : '#e0f2fe',
-                                            },
+                                            color: c.textMuted,
+                                            '&:hover': { color: '#0284c7', bgcolor: isDark ? 'rgba(2, 132, 199, 0.15)' : '#f0f9ff' },
                                         }}
                                     >
-                                        Buka Tiket
-                                    </Button>
+                                        <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+                                    </IconButton>
                                 </Box>
 
-                                {/* Total Visitors Highlight & Check-in Progress */}
-                                <Box sx={{ 
-                                    p: 2, 
-                                    borderRadius: '12px', 
-                                    bgcolor: isDark ? 'rgba(2, 132, 199, 0.08)' : '#f0f9ff',
-                                    border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.2)' : '#e0f2fe'}`,
-                                    mb: 2.5,
+                                {/* Primary Metric Number */}
+                                <Typography sx={{
+                                    fontFamily: '"Outfit", "Inter", sans-serif',
+                                    fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.025em',
+                                    color: c.textPrimary,
+                                    fontVariantNumeric: 'tabular-nums',
+                                    lineHeight: 1.15,
+                                    mt: 1,
+                                    mb: 1.5,
                                 }}>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                                        <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.7rem' }}>
-                                            Kehadiran di Venue (Check-In)
+                                    {formatNumber(ticketStats.totalVisitors)} <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Tickets</span>
+                                </Typography>
+
+                                {/* Venue Attendance Progress Bar */}
+                                <Box sx={{ mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#0284c7' }}>
+                                            {ticketStats.checkedInCount} Checked In ({ticketStats.checkInRate}%)
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284c7' }}>
-                                            {ticketStats.checkedInCount} / {ticketStats.totalVisitors} ({ticketStats.checkInRate}%)
+                                        <Typography sx={{ fontSize: '0.68rem', fontWeight: 600, color: c.textMuted }}>
+                                            {ticketStats.notCheckedInCount} Remaining
                                         </Typography>
                                     </Box>
-
                                     <LinearProgress
                                         variant="determinate"
                                         value={Math.min(100, ticketStats.checkInRate)}
                                         sx={{
-                                            height: 9,
-                                            borderRadius: 5,
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
-                                            mb: 1.25,
+                                            height: 7,
+                                            borderRadius: 4,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
                                             '& .MuiLinearProgress-bar': {
-                                                borderRadius: 5,
-                                                background: 'linear-gradient(90deg, #0284c7 0%, #10b981 100%)',
+                                                borderRadius: 4,
+                                                background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)',
                                             },
                                         }}
                                     />
-
-                                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, flexWrap: 'wrap' }}>
-                                        <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.45rem', sm: '1.75rem' }, color: isDark ? '#38bdf8' : '#0369a1', lineHeight: 1 }}>
-                                            {formatNumber(ticketStats.totalVisitors)} Tiket
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
-                                            Total pendaftar pengunjung conference
-                                        </Typography>
-                                    </Box>
                                 </Box>
+                            </Box>
 
-                                {/* 2 Sub-metric blocks */}
-                                <Grid container spacing={2} sx={{ mb: 2 }}>
-                                    {/* Exclusive Pass */}
-                                    <Grid size={{ xs: 6 }}>
-                                        <Box sx={{ 
-                                            p: 1.75, 
-                                            borderRadius: '10px', 
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                            border: `1px solid ${c.cardBorder}`,
-                                        }}>
-                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
-                                                ⭐ Exclusive Pass
-                                            </Typography>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
-                                                {formatNumber(ticketStats.exclusiveCount)} Tiket
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: '#8b5cf6', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
-                                                Akses Penuh Seminar
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-
-                                    {/* Non-Exclusive / General */}
-                                    <Grid size={{ xs: 6 }}>
-                                        <Box sx={{ 
-                                            p: 1.75, 
-                                            borderRadius: '10px', 
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                            border: `1px solid ${c.cardBorder}`,
-                                        }}>
-                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
-                                                🎫 Standard / Exhibition
-                                            </Typography>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
-                                                {formatNumber(ticketStats.nonExclusiveCount)} Tiket
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: '#0d7a6a', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
-                                                Visitor / General Hall
-                                            </Typography>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-
-                                {/* Action / Scanner link row */}
-                                <Box sx={{ 
-                                    p: 1.25, 
-                                    borderRadius: '10px', 
+                            {/* Bottom Status / Gate Scanner Trigger */}
+                            <Box
+                                component={Link}
+                                href={route('admin.gateScanner')}
+                                sx={{
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    p: 1,
+                                    borderRadius: '8px',
                                     bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
                                     border: `1px solid ${c.cardBorder}`,
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'space-between',
-                                    flexWrap: 'wrap',
-                                    gap: 1,
-                                }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <HowToRegRoundedIcon sx={{ fontSize: 18, color: '#0284c7' }} />
-                                        <Typography sx={{ fontSize: '0.76rem', color: c.textMuted }}>
-                                            <strong>{ticketStats.notCheckedInCount}</strong> belum check-in
-                                        </Typography>
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': { borderColor: '#0284c7', bgcolor: isDark ? 'rgba(2, 132, 199, 0.1)' : '#f0f9ff' },
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: c.textMuted, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                    <QrCodeScannerRoundedIcon sx={{ fontSize: 14, color: '#0284c7' }} />
+                                    Gate Scanner
+                                </Typography>
+                                <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#0284c7' }}>
+                                    Open Scanner →
+                                </Typography>
+                            </Box>
+                        </Card>
+                    </Grid>
+
+                    {/* PILLAR 4: AUTHORS & EDITORIAL BACKLOG */}
+                    <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                height: '100%',
+                                borderRadius: '16px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: c.cardBg,
+                                p: 2.5,
+                                position: 'relative',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
+                                '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    borderColor: isDark ? 'rgba(124, 58, 237, 0.4)' : '#ddd6fe',
+                                    boxShadow: isDark ? '0 12px 28px rgba(0,0,0,0.4)' : '0 12px 28px rgba(124, 58, 237, 0.08)',
+                                },
+                            }}
+                        >
+                            {/* Top Accent Strip */}
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%)',
+                            }} />
+
+                            <Box>
+                                {/* Header */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                                        <Avatar
+                                            variant="rounded"
+                                            sx={{
+                                                width: 36,
+                                                height: 36,
+                                                borderRadius: '10px',
+                                                bgcolor: isDark ? 'rgba(124, 58, 237, 0.15)' : '#f5f3ff',
+                                                color: '#7c3aed',
+                                                border: `1px solid ${isDark ? 'rgba(124, 58, 237, 0.3)' : '#ddd6fe'}`,
+                                            }}
+                                        >
+                                            <PeopleRoundedIcon sx={{ fontSize: 20 }} />
+                                        </Avatar>
+                                        <Box>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: '0.68rem',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.07em',
+                                                color: c.textMuted,
+                                            }}>
+                                                Authors & Community
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ fontSize: '0.7rem', color: '#7c3aed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                <Box component="span" sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#7c3aed' }} />
+                                                Registered Talent
+                                            </Typography>
+                                        </Box>
                                     </Box>
-                                    <Button
+                                    <IconButton
                                         component={Link}
-                                        href={route('admin.gateScanner')}
+                                        href={route('admin.users')}
                                         size="small"
-                                        variant="outlined"
-                                        startIcon={<QrCodeScannerRoundedIcon sx={{ fontSize: 16 }} />}
                                         sx={{
-                                            borderRadius: '8px',
-                                            textTransform: 'none',
-                                            fontWeight: 700,
-                                            fontSize: '0.75rem',
-                                            borderColor: isDark ? 'rgba(16, 185, 129, 0.4)' : '#a7f3d0',
-                                            color: isDark ? '#34d399' : '#059669',
-                                            py: 0.35,
-                                            px: 1.25,
-                                            '&:hover': {
-                                                borderColor: '#10b981',
-                                                bgcolor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
-                                            },
+                                            color: c.textMuted,
+                                            '&:hover': { color: '#7c3aed', bgcolor: isDark ? 'rgba(124, 58, 237, 0.15)' : '#f5f3ff' },
                                         }}
                                     >
-                                        Gate Scanner
-                                    </Button>
+                                        <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+                                    </IconButton>
                                 </Box>
-                            </CardContent>
+
+                                {/* Primary Metric Number */}
+                                <Typography sx={{
+                                    fontFamily: '"Outfit", "Inter", sans-serif',
+                                    fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                                    fontWeight: 800,
+                                    letterSpacing: '-0.025em',
+                                    color: c.textPrimary,
+                                    fontVariantNumeric: 'tabular-nums',
+                                    lineHeight: 1.15,
+                                    mt: 1,
+                                    mb: 1.5,
+                                }}>
+                                    {formatNumber(totalUsers)} <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}>Authors</span>
+                                </Typography>
+
+                                {/* Sub-Metric Breakdown */}
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: 1,
+                                    p: 1.2,
+                                    borderRadius: '10px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    mb: 1.5,
+                                }}>
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
+                                            Students
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                            {studentCount}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
+                                            Professionals
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                            {professionalCount}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+
+                            {/* Bottom Status / Editorial Link */}
+                            <Box
+                                component={Link}
+                                href={route('admin.submissions')}
+                                sx={{
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    p: 1,
+                                    borderRadius: '8px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    transition: 'all 0.2s ease',
+                                    '&:hover': { borderColor: '#7c3aed', bgcolor: isDark ? 'rgba(124, 58, 237, 0.1)' : '#f5f3ff' },
+                                }}
+                            >
+                                <Typography sx={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 700,
+                                    color: pendingReviews > 0 ? '#d97706' : '#7c3aed',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.5,
+                                }}>
+                                    {pendingReviews > 0 ? `⚠️ ${pendingReviews} In Editorial Review` : '✓ Pipeline Clear'}
+                                </Typography>
+                                <Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: '#7c3aed' }}>
+                                    Review Flow →
+                                </Typography>
+                            </Box>
                         </Card>
                     </Grid>
                 </Grid>
 
-                {/* ── ROW: Materio Quick Actions Shortcuts Grid ── */}
+                {/* ── EXECUTIVE ACTION DOCK (Compact Linear / macOS Command Deck) ── */}
                 <Card
                     elevation={0}
                     sx={{
-                        borderRadius: '16px',
+                        borderRadius: '14px',
                         border: `1px solid ${c.cardBorder}`,
                         bgcolor: c.cardBg,
-                        mb: 3.5,
-                        boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                        mb: 3,
+                        p: { xs: 1.5, sm: 1.75 },
+                        boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04)',
                     }}
                 >
-                    <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-                            <Box>
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 800,
-                                        fontSize: '1rem',
-                                        color: c.textPrimary,
-                                        letterSpacing: '-0.01em',
-                                    }}
-                                >
-                                    Quick Management Shortcuts
-                                </Typography>
-                                <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem' }}>
-                                    Fast-track access to conference modules and controls
-                                </Typography>
-                            </Box>
-                        </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
+                        mb: 1.25,
+                    }}>
+                        <Typography sx={{
+                            fontFamily: '"Outfit", "Inter", sans-serif',
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            color: c.textMuted,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                        }}>
+                            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#0d7a6a' }} />
+                            Executive Quick Action Dock
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontSize: '0.7rem', color: c.textMuted }}>
+                            Direct access to core conference management modules
+                        </Typography>
+                    </Box>
 
-                        <Grid container spacing={2}>
-                            {quickActions.map((action, idx) => (
-                                <Grid size={{ xs: 6, sm: 4, md: 3, lg: 1.5 }} key={idx}>
-                                    <Button
-                                        component={Link}
-                                        href={action.href}
-                                        fullWidth
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            gap: 1.25,
-                                            py: { xs: 2, sm: 2.25 },
-                                            px: 1.25,
-                                            borderRadius: '12px',
-                                            textTransform: 'none',
-                                            border: `1px solid ${c.cardBorder}`,
-                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
-                                            color: c.textPrimary,
-                                            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            '&:hover': {
-                                                borderColor: action.color,
-                                                bgcolor: action.bgColor,
-                                                transform: 'translateY(-3px)',
-                                                boxShadow: `0 8px 18px ${action.color}18`,
-                                            },
-                                        }}
-                                    >
-                                        <Avatar
-                                            sx={{
-                                                width: 42,
-                                                height: 42,
-                                                borderRadius: '10px',
-                                                bgcolor: action.bgColor,
-                                                color: action.color,
-                                                border: `1px solid ${action.color}25`,
-                                            }}
-                                            variant="rounded"
-                                        >
-                                            {React.cloneElement(action.icon, { sx: { fontSize: 22 } })}
-                                        </Avatar>
-                                        <Typography
-                                            sx={{
-                                                fontWeight: 700,
-                                                fontSize: { xs: '0.725rem', sm: '0.78rem' },
-                                                color: c.textPrimary,
-                                                textAlign: 'center',
-                                                lineHeight: 1.3,
-                                            }}
-                                        >
-                                            {action.label}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </CardContent>
+                    <Box sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: 'repeat(2, 1fr)',
+                            sm: 'repeat(4, 1fr)',
+                            md: 'repeat(8, 1fr)',
+                        },
+                        gap: 1,
+                    }}>
+                        {quickActions.map((action, idx) => (
+                            <Button
+                                key={idx}
+                                component={Link}
+                                href={action.href}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 1,
+                                    py: 1,
+                                    px: 1.25,
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                    color: c.textPrimary,
+                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    '&:hover': {
+                                        borderColor: action.color,
+                                        bgcolor: action.bgColor,
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: `0 4px 12px ${action.color}15`,
+                                    },
+                                }}
+                            >
+                                <Box sx={{ color: action.color, display: 'flex', alignItems: 'center' }}>
+                                    {React.cloneElement(action.icon, { sx: { fontSize: 18 } })}
+                                </Box>
+                                <Typography sx={{
+                                    fontWeight: 700,
+                                    fontSize: '0.74rem',
+                                    color: c.textPrimary,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}>
+                                    {action.label}
+                                </Typography>
+                            </Button>
+                        ))}
+                    </Box>
                 </Card>
 
                 {/* ── ROW 4: Side-by-Side Analytics Cards (Website Visitors & Paper Submissions) ── */}
@@ -1304,27 +1345,33 @@ export default function AdminDashboard({
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, mb: 2 }}>
                                     <Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.025rem', color: c.textPrimary }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontWeight: 800,
+                                                fontSize: '1.05rem',
+                                                color: c.textPrimary,
+                                                letterSpacing: '-0.015em',
+                                            }}>
                                                 Website Traffic
                                             </Typography>
                                             <Box sx={{
                                                 display: 'flex', alignItems: 'center', gap: 0.5,
                                                 px: 0.85, py: 0.2,
-                                                bgcolor: isDark ? 'rgba(34,197,94,0.15)' : '#f0fdf4',
-                                                borderRadius: '6px',
-                                                border: `1px solid ${isDark ? 'rgba(34,197,94,0.3)' : '#bbf7d0'}`,
+                                                bgcolor: isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5',
+                                                borderRadius: '999px',
+                                                border: `1px solid ${isDark ? 'rgba(16,185,129,0.25)' : '#a7f3d0'}`,
                                             }}>
                                                 <Box sx={{
                                                     width: 6, height: 6, borderRadius: '50%',
-                                                    bgcolor: '#22c55e',
+                                                    bgcolor: '#10b981',
                                                     animation: 'pulseDot 2s infinite',
                                                     '@keyframes pulseDot': {
                                                         '0%, 100%': { opacity: 1, transform: 'scale(1)' },
                                                         '50%': { opacity: 0.4, transform: 'scale(1.2)' },
                                                     },
                                                 }} />
-                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase' }}>
-                                                    Live
+                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                    Live Stream
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -1333,13 +1380,15 @@ export default function AdminDashboard({
                                         </Typography>
                                     </Box>
 
-                                    {/* Period Toggle */}
+                                    {/* Segmented Period Switcher (Apple / Linear Pill) */}
                                     <Box sx={{
-                                        display: 'flex',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f1f5f9',
                                         border: `1px solid ${c.cardBorder}`,
-                                        borderRadius: '8px',
-                                        bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
-                                        p: 0.3,
+                                        borderRadius: '9999px',
+                                        p: '3px',
+                                        gap: 0.5,
                                     }}>
                                         {[
                                             { key: 'today', label: 'Today' },
@@ -1350,20 +1399,27 @@ export default function AdminDashboard({
                                                 key={tab.key}
                                                 size="small"
                                                 onClick={() => handlePeriodChange(tab.key)}
+                                                disableElevation
                                                 sx={{
-                                                    px: 1.5, py: 0.35,
+                                                    px: 1.6,
+                                                    py: 0.4,
                                                     fontSize: '0.725rem',
                                                     fontWeight: 700,
                                                     textTransform: 'none',
                                                     minWidth: 'auto',
-                                                    borderRadius: '6px',
+                                                    borderRadius: '9999px',
+                                                    transition: 'all 0.2s ease',
                                                     ...(visitorPeriod === tab.key ? {
                                                         bgcolor: '#0d7a6a',
                                                         color: '#ffffff',
-                                                        '&:hover': { bgcolor: '#094d42' }
+                                                        boxShadow: '0 2px 6px rgba(13,122,106,0.3)',
+                                                        '&:hover': { bgcolor: '#094d42' },
                                                     } : {
                                                         color: c.textMuted,
-                                                        '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' },
+                                                        '&:hover': {
+                                                            color: c.textPrimary,
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
+                                                        },
                                                     }),
                                                 }}
                                             >
@@ -1373,19 +1429,36 @@ export default function AdminDashboard({
                                     </Box>
                                 </Box>
 
-                                {/* Metric summaries */}
-                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, pt: 1, pb: 1.5, borderTop: `1px solid ${c.cardBorder}`, borderBottom: `1px solid ${c.cardBorder}` }}>
+                                {/* Metric summaries in Outfit Font */}
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: 1,
+                                    pt: 1.25,
+                                    pb: 1.5,
+                                    borderTop: `1px solid ${c.cardBorder}`,
+                                    borderBottom: `1px solid ${c.cardBorder}`,
+                                }}>
                                     {[
                                         { label: 'Today', value: liveStats.today || 0, color: '#0d7a6a' },
-                                        { label: '7 Days', value: liveStats.last7days || 0, color: '#0891b2' },
+                                        { label: '7 Days', value: liveStats.last7days || 0, color: '#0284c7' },
                                         { label: '30 Days', value: liveStats.last30days || 0, color: '#2563eb' },
                                         { label: 'All Time', value: liveStats.total || 0, color: '#7c3aed' },
                                     ].map((m) => (
                                         <Box key={m.label} sx={{ textAlign: 'center' }}>
-                                            <Typography sx={{ fontSize: '0.675rem', fontWeight: 600, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                                                 {m.label}
                                             </Typography>
-                                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: m.color, lineHeight: 1.2 }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: { xs: '1.15rem', sm: '1.35rem' },
+                                                fontWeight: 800,
+                                                letterSpacing: '-0.02em',
+                                                color: c.textPrimary,
+                                                fontVariantNumeric: 'tabular-nums',
+                                                lineHeight: 1.2,
+                                                mt: 0.25,
+                                            }}>
                                                 {m.value.toLocaleString()}
                                             </Typography>
                                         </Box>
@@ -1393,7 +1466,7 @@ export default function AdminDashboard({
                                 </Box>
                             </Box>
 
-                            {/* Chart */}
+                            {/* Spline Area Chart */}
                             <Box sx={{ width: '100%', height: 260, px: 1, py: 1 }}>
                                 {liveChartData.length > 0 ? (
                                     <LineChart
@@ -1429,8 +1502,8 @@ export default function AdminDashboard({
                                     >
                                         <defs>
                                             <linearGradient id="materioVisitorGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#0d7a6a" stopOpacity={0.25} />
-                                                <stop offset="100%" stopColor="#0d7a6a" stopOpacity={0.01} />
+                                                <stop offset="0%" stopColor="#0d7a6a" stopOpacity={0.22} />
+                                                <stop offset="100%" stopColor="#0d7a6a" stopOpacity={0.0} />
                                             </linearGradient>
                                         </defs>
                                     </LineChart>
@@ -1453,7 +1526,7 @@ export default function AdminDashboard({
                                 border: `1px solid ${c.cardBorder}`,
                                 bgcolor: c.cardBg,
                                 overflow: 'hidden',
-                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                                boxShadow: isDark ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
@@ -1464,22 +1537,28 @@ export default function AdminDashboard({
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, mb: 2 }}>
                                     <Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontWeight: 800, fontSize: '1.025rem', color: c.textPrimary }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontWeight: 800,
+                                                fontSize: '1.05rem',
+                                                color: c.textPrimary,
+                                                letterSpacing: '-0.015em',
+                                            }}>
                                                 Status Submission
                                             </Typography>
                                             <Box sx={{
                                                 display: 'flex', alignItems: 'center', gap: 0.5,
                                                 px: 0.85, py: 0.2,
-                                                bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
-                                                borderRadius: '6px',
-                                                border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
+                                                bgcolor: isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5',
+                                                borderRadius: '999px',
+                                                border: `1px solid ${isDark ? 'rgba(16,185,129,0.25)' : '#a7f3d0'}`,
                                             }}>
                                                 <Box sx={{
                                                     width: 6, height: 6, borderRadius: '50%',
                                                     bgcolor: '#10b981',
                                                     animation: 'pulseDot 2s infinite',
                                                 }} />
-                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>
+                                                <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                                                     {totalStatusCount || totalSubmissions} Papers
                                                 </Typography>
                                             </Box>
@@ -1547,10 +1626,10 @@ export default function AdminDashboard({
                                     borderBottom: `1px solid ${c.cardBorder}`,
                                 }}>
                                     {[
-                                        { label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981', bg: isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5', border: isDark ? 'rgba(16,185,129,0.25)' : '#a7f3d0', status: 'accepted' },
-                                        { label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7', bg: isDark ? 'rgba(2,132,199,0.12)' : '#f0f9ff', border: isDark ? 'rgba(2,132,199,0.25)' : '#bae6fd', status: 'under_review' },
-                                        { label: 'Rejected', value: statusCounts.rejected || 0, color: '#ef4444', bg: isDark ? 'rgba(239,68,68,0.12)' : '#fef2f2', border: isDark ? 'rgba(239,68,68,0.25)' : '#fecaca', status: 'rejected' },
-                                        { label: 'Pending', value: statusCounts.pending || 0, color: '#64748b', bg: isDark ? 'rgba(100,116,139,0.12)' : '#f8fafc', border: isDark ? 'rgba(100,116,139,0.25)' : '#e2e8f0', status: 'pending' },
+                                        { label: 'Accepted', value: statusCounts.accepted || 0, color: '#10b981', status: 'accepted' },
+                                        { label: 'In Review', value: statusCounts.under_review || 0, color: '#0284c7', status: 'under_review' },
+                                        { label: 'Rejected', value: statusCounts.rejected || 0, color: '#ef4444', status: 'rejected' },
+                                        { label: 'Pending', value: statusCounts.pending || 0, color: '#64748b', status: 'pending' },
                                     ].map((m) => (
                                         <Box
                                             key={m.label}
@@ -1559,22 +1638,43 @@ export default function AdminDashboard({
                                             sx={{
                                                 textAlign: 'center',
                                                 textDecoration: 'none',
-                                                py: 0.75,
-                                                px: 0.5,
+                                                py: 0.85,
+                                                px: 0.75,
                                                 borderRadius: '10px',
-                                                bgcolor: m.bg,
-                                                border: `1px solid ${m.border}`,
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                                border: `1px solid ${c.cardBorder}`,
+                                                position: 'relative',
+                                                overflow: 'hidden',
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': {
                                                     transform: 'translateY(-2px)',
-                                                    boxShadow: `0 4px 12px ${m.color}22`,
+                                                    borderColor: m.color,
+                                                    boxShadow: `0 4px 12px ${m.color}15`,
                                                 },
                                             }}
                                         >
-                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, color: m.color, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                {m.label}
-                                            </Typography>
-                                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 900, color: m.color, lineHeight: 1.15, mt: 0.25 }}>
+                                            {/* Micro-accent top dot */}
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: 0.5,
+                                            }}>
+                                                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: m.color }} />
+                                                <Typography sx={{ fontSize: '0.625rem', fontWeight: 800, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                                    {m.label}
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontSize: { xs: '1.15rem', sm: '1.35rem' },
+                                                fontWeight: 800,
+                                                letterSpacing: '-0.02em',
+                                                color: c.textPrimary,
+                                                fontVariantNumeric: 'tabular-nums',
+                                                lineHeight: 1.15,
+                                                mt: 0.25,
+                                            }}>
                                                 {m.value.toLocaleString()}
                                             </Typography>
                                         </Box>
@@ -1593,12 +1693,12 @@ export default function AdminDashboard({
                                                         slots={{ legend: () => null }}
                                                         series={[{
                                                             data: activeStatusPieData,
-                                                            innerRadius: 50,
+                                                            innerRadius: 52,
                                                             outerRadius: 76,
                                                             paddingAngle: 3,
                                                             cornerRadius: 5,
                                                             highlightScope: { fade: 'global', highlight: 'item' },
-                                                            faded: { innerRadius: 46, additionalRadius: -3, opacity: 0.35 },
+                                                            faded: { innerRadius: 48, additionalRadius: -3, opacity: 0.35 },
                                                             valueFormatter: (item) => `${item.value} paper${item.value > 1 ? 's' : ''} (${totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : 0}%)`,
                                                         }]}
                                                         margin={{ top: 5, bottom: 5, left: 5, right: 5 }}
@@ -1606,7 +1706,7 @@ export default function AdminDashboard({
                                                         sx={{
                                                             '& .MuiChartsLegend-root': { display: 'none !important' },
                                                             '& .MuiPieArc-root': {
-                                                                stroke: isDark ? '#1e293b' : '#ffffff',
+                                                                stroke: isDark ? '#1a1d27' : '#ffffff',
                                                                 strokeWidth: 2.5,
                                                             },
                                                         }}
@@ -1620,10 +1720,17 @@ export default function AdminDashboard({
                                                         textAlign: 'center',
                                                         pointerEvents: 'none',
                                                     }}>
-                                                        <Typography sx={{ fontWeight: 900, fontSize: '1.35rem', color: c.textPrimary, lineHeight: 1 }}>
+                                                        <Typography sx={{
+                                                            fontFamily: '"Outfit", "Inter", sans-serif',
+                                                            fontWeight: 900,
+                                                            fontSize: '1.5rem',
+                                                            letterSpacing: '-0.03em',
+                                                            color: c.textPrimary,
+                                                            lineHeight: 1,
+                                                        }}>
                                                             {totalStatusCount}
                                                         </Typography>
-                                                        <Typography sx={{ fontSize: '0.625rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', mt: 0.25 }}>
+                                                        <Typography sx={{ fontSize: '0.625rem', color: c.textMuted, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', mt: 0.25 }}>
                                                             Papers
                                                         </Typography>
                                                     </Box>
@@ -1641,14 +1748,14 @@ export default function AdminDashboard({
                                             <Box sx={{ textAlign: 'center', mt: 0.5 }}>
                                                 <Chip
                                                     size="small"
-                                                    icon={<CheckCircleRoundedIcon sx={{ fontSize: '14px !important' }} />}
+                                                    icon={<CheckCircleRoundedIcon sx={{ fontSize: '14px !important', color: '#059669 !important' }} />}
                                                     label={`Acceptance: ${((statusCounts.accepted / totalStatusCount) * 100).toFixed(1)}%`}
                                                     sx={{
                                                         fontWeight: 700,
                                                         fontSize: '0.72rem',
-                                                        bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                        bgcolor: isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5',
                                                         color: '#059669',
-                                                        border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : '#a7f3d0'}`,
+                                                        border: `1px solid ${isDark ? 'rgba(16,185,129,0.25)' : '#a7f3d0'}`,
                                                         height: 24,
                                                     }}
                                                 />
@@ -1658,7 +1765,7 @@ export default function AdminDashboard({
 
                                     {/* Right Column: Detailed Status Breakdown Rows with Progress Bars */}
                                     <Grid size={{ xs: 12, sm: 7.5, md: 7.5 }}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.9 }}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.85 }}>
                                             {statusPieItems.map((item) => {
                                                 const pct = totalStatusCount > 0 ? ((item.value / totalStatusCount) * 100).toFixed(1) : '0';
                                                 return (
@@ -1671,16 +1778,16 @@ export default function AdminDashboard({
                                                             alignItems: 'center',
                                                             justifyContent: 'space-between',
                                                             px: 1.5,
-                                                            py: 0.75,
-                                                            borderRadius: '10px',
+                                                            py: 0.7,
+                                                            borderRadius: '8px',
                                                             textDecoration: 'none',
-                                                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
                                                             border: `1px solid ${c.cardBorder}`,
                                                             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
-                                                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
                                                                 borderColor: item.color,
-                                                                boxShadow: `0 2px 8px ${item.color}18`,
+                                                                boxShadow: `0 2px 8px ${item.color}15`,
                                                                 transform: 'translateX(3px)',
                                                             },
                                                         }}
@@ -1688,11 +1795,11 @@ export default function AdminDashboard({
                                                         {/* Color Dot & Status Label */}
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 90 }}>
                                                             <Box sx={{
-                                                                width: 9,
-                                                                height: 9,
+                                                                width: 8,
+                                                                height: 8,
                                                                 borderRadius: '50%',
                                                                 bgcolor: item.color,
-                                                                boxShadow: `0 0 6px ${item.color}88`,
+                                                                boxShadow: `0 0 6px ${item.color}66`,
                                                                 flexShrink: 0,
                                                             }} />
                                                             <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: c.textPrimary }}>
@@ -1706,7 +1813,7 @@ export default function AdminDashboard({
                                                                 variant="determinate"
                                                                 value={Number(pct)}
                                                                 sx={{
-                                                                    height: 6,
+                                                                    height: 5,
                                                                     borderRadius: 3,
                                                                     bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0',
                                                                     '& .MuiLinearProgress-bar': {
@@ -1719,7 +1826,12 @@ export default function AdminDashboard({
 
                                                         {/* Count and Percentage Badge */}
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: c.textPrimary }}>
+                                                            <Typography sx={{
+                                                                fontSize: '0.82rem',
+                                                                fontWeight: 800,
+                                                                color: c.textPrimary,
+                                                                fontVariantNumeric: 'tabular-nums',
+                                                            }}>
                                                                 {item.value.toLocaleString()}
                                                             </Typography>
                                                             <Typography sx={{
@@ -1728,8 +1840,9 @@ export default function AdminDashboard({
                                                                 color: c.textMuted,
                                                                 bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9',
                                                                 px: 0.75,
-                                                                py: 0.2,
+                                                                py: 0.15,
                                                                 borderRadius: '5px',
+                                                                fontVariantNumeric: 'tabular-nums',
                                                             }}>
                                                                 {pct}%
                                                             </Typography>
@@ -2238,59 +2351,147 @@ export default function AdminDashboard({
                             </Box>
 
                             {/* Stats Summary + Top Topic */}
-                            <Grid container spacing={2.5} sx={{ mt: 1.5 }}>
-                                <Grid size={{ xs: 6, sm: 4 }}>
+                            <Grid container spacing={2} sx={{ mt: 1.5 }}>
+                                <Grid size={{ xs: 12, sm: 4 }}>
                                     <Box sx={{
                                         p: 2,
-                                        bgcolor: isDark ? 'rgba(13, 122, 106, 0.1)' : '#ecfdf5',
+                                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.02)' : '#ffffff',
                                         borderRadius: '12px',
-                                        border: `1px solid ${isDark ? 'rgba(13, 122, 106, 0.25)' : '#a7f3d0'}`,
-                                        textAlign: 'center',
+                                        border: `1px solid ${c.cardBorder}`,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-between',
+                                        height: '100%',
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            borderColor: isDark ? 'rgba(13, 122, 106, 0.4)' : '#a7f3d0',
+                                            transform: 'translateY(-1px)',
+                                        }
                                     }}>
-                                        <Typography sx={{ fontWeight: 800, fontSize: '1.5rem', color: '#0d7a6a' }}>
-                                            {submissionsPerTopic.length}
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, fontWeight: 600 }}>
-                                            Active Topics
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#0d7a6a' }} />
+                                            <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                                Active Scientific Topics
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontWeight: 800,
+                                                fontSize: '1.65rem',
+                                                color: c.textPrimary,
+                                                fontVariantNumeric: 'tabular-nums',
+                                                letterSpacing: '-0.02em',
+                                                lineHeight: 1,
+                                            }}>
+                                                {submissionsPerTopic.length}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, fontWeight: 500 }}>
+                                                categorized tracks
+                                            </Typography>
+                                        </Box>
                                     </Box>
                                 </Grid>
-                                <Grid size={{ xs: 6, sm: 4 }}>
+                                <Grid size={{ xs: 12, sm: 4 }}>
                                     <Box sx={{
                                         p: 2,
-                                        bgcolor: isDark ? 'rgba(37, 99, 235, 0.1)' : '#eff6ff',
+                                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.02)' : '#ffffff',
                                         borderRadius: '12px',
-                                        border: `1px solid ${isDark ? 'rgba(37, 99, 235, 0.25)' : '#bfdbfe'}`,
-                                        textAlign: 'center',
+                                        border: `1px solid ${c.cardBorder}`,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-between',
+                                        height: '100%',
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            borderColor: isDark ? 'rgba(37, 99, 235, 0.4)' : '#bfdbfe',
+                                            transform: 'translateY(-1px)',
+                                        }
                                     }}>
-                                        <Typography sx={{ fontWeight: 800, fontSize: '1.5rem', color: '#2563eb' }}>
-                                            {submissionsPerTopic.reduce((sum, item) => sum + item.count, 0)}
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, fontWeight: 600 }}>
-                                            Cumulative Papers
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#2563eb' }} />
+                                            <Typography sx={{ fontSize: '0.7rem', color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                                Cumulative Papers
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontWeight: 800,
+                                                fontSize: '1.65rem',
+                                                color: c.textPrimary,
+                                                fontVariantNumeric: 'tabular-nums',
+                                                letterSpacing: '-0.02em',
+                                                lineHeight: 1,
+                                            }}>
+                                                {submissionsPerTopic.reduce((sum, item) => sum + item.count, 0)}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.75rem', color: c.textMuted, fontWeight: 500 }}>
+                                                total registered
+                                            </Typography>
+                                        </Box>
                                     </Box>
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4 }}>
                                     {submissionsPerTopic.length > 0 && (
                                         <Box sx={{
                                             p: 2,
-                                            bgcolor: isDark ? 'rgba(245, 158, 11, 0.1)' : '#fffbeb',
+                                            bgcolor: isDark ? 'rgba(255, 255, 255, 0.02)' : '#ffffff',
                                             borderRadius: '12px',
-                                            border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.25)' : '#fde68a'}`,
-                                            textAlign: 'center',
+                                            border: `1px solid ${c.cardBorder}`,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between',
+                                            height: '100%',
+                                            transition: 'all 0.2s ease',
+                                            '&:hover': {
+                                                borderColor: isDark ? 'rgba(245, 158, 11, 0.4)' : '#fde68a',
+                                                transform: 'translateY(-1px)',
+                                            }
                                         }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mb: 0.5 }}>
-                                                <EmojiEventsRoundedIcon sx={{ color: '#f59e0b', fontSize: 18 }} />
-                                                <Typography sx={{ fontSize: '0.7rem', color: '#d97706', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                                    Most Popular Sub-Theme
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75 }}>
+                                                <Box sx={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: 0.5,
+                                                    px: 0.9,
+                                                    py: 0.2,
+                                                    borderRadius: '6px',
+                                                    bgcolor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+                                                    color: '#b45309',
+                                                }}>
+                                                    <EmojiEventsRoundedIcon sx={{ fontSize: 13 }} />
+                                                    <Typography sx={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                        Most Popular Sub-Theme
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{
+                                                    fontFamily: '"Outfit", "Inter", sans-serif',
+                                                    fontWeight: 800,
+                                                    fontSize: '0.8rem',
+                                                    color: '#0d7a6a',
+                                                    bgcolor: isDark ? 'rgba(13, 122, 106, 0.15)' : '#ecfdf5',
+                                                    px: 0.8,
+                                                    py: 0.2,
+                                                    borderRadius: '6px',
+                                                }}>
+                                                    {submissionsPerTopic[0].count} papers
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontWeight: 700, fontSize: '0.825rem', color: c.textPrimary, lineHeight: 1.3 }}>
+                                            <Typography sx={{
+                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                fontWeight: 700,
+                                                fontSize: '0.875rem',
+                                                color: c.textPrimary,
+                                                lineHeight: 1.3,
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                            }}>
                                                 {submissionsPerTopic[0].topic}
                                             </Typography>
-                                            <Typography sx={{ fontSize: '0.725rem', color: c.textMuted, mt: 0.25 }}>
-                                                <strong>{submissionsPerTopic[0].count}</strong> papers registered
+                                            <Typography sx={{ fontSize: '0.72rem', color: c.textMuted, mt: 0.25 }}>
+                                                #1 highest scientific submission density
                                             </Typography>
                                         </Box>
                                     )}
@@ -2320,41 +2521,55 @@ export default function AdminDashboard({
                             <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                                     <Box>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.025rem', color: c.textPrimary }}>
+                                        <Typography variant="h6" sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, letterSpacing: '-0.01em' }}>
                                             Category & Format Ratio
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem' }}>
-                                            Participant demographic & presentation breakdown
+                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.775rem' }}>
+                                            Demographic distribution & session presentation formats
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{
+                                        px: 1,
+                                        py: 0.35,
+                                        borderRadius: '8px',
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+                                        border: `1px solid ${c.cardBorder}`,
+                                    }}>
+                                        <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.725rem', fontWeight: 700, color: c.textSecondary }}>
+                                            {totalParticipantsCategorized} Verified
                                         </Typography>
                                     </Box>
                                 </Box>
 
                                 {/* Participant Category Progress */}
-                                <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1.5 }}>
+                                <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', mb: 1.75 }}>
                                     Participant Category Breakdown
                                 </Typography>
 
                                 <Stack spacing={2} sx={{ mb: 3 }}>
                                     {/* Student */}
                                     <Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Avatar variant="rounded" sx={{ width: 24, height: 24, borderRadius: '6px', bgcolor: isDark ? 'rgba(8, 145, 178, 0.15)' : '#ecfeff', color: '#0891b2' }}>
-                                                    <SchoolRoundedIcon sx={{ fontSize: 14 }} />
-                                                </Avatar>
+                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#0891b2' }} />
                                                 <Typography sx={{ fontSize: '0.825rem', fontWeight: 600, color: c.textPrimary }}>
                                                     Student
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontSize: '0.825rem', fontWeight: 700, color: c.textPrimary }}>
-                                                {studentCount} ({Math.round((studentCount / totalParticipantsCategorized) * 100)}%)
-                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                                <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                                    {studentCount}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
+                                                    ({Math.round((studentCount / totalParticipantsCategorized) * 100)}%)
+                                                </Typography>
+                                            </Box>
                                         </Box>
                                         <LinearProgress
                                             variant="determinate"
                                             value={(studentCount / totalParticipantsCategorized) * 100}
                                             sx={{
-                                                height: 6,
+                                                height: 5,
                                                 borderRadius: 3,
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
                                                 '& .MuiLinearProgress-bar': { bgcolor: '#0891b2', borderRadius: 3 },
@@ -2364,24 +2579,27 @@ export default function AdminDashboard({
 
                                     {/* Professional */}
                                     <Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Avatar variant="rounded" sx={{ width: 24, height: 24, borderRadius: '6px', bgcolor: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed', color: '#ea580c' }}>
-                                                    <WorkRoundedIcon sx={{ fontSize: 14 }} />
-                                                </Avatar>
+                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#ea580c' }} />
                                                 <Typography sx={{ fontSize: '0.825rem', fontWeight: 600, color: c.textPrimary }}>
                                                     Professional
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontSize: '0.825rem', fontWeight: 700, color: c.textPrimary }}>
-                                                {professionalCount} ({Math.round((professionalCount / totalParticipantsCategorized) * 100)}%)
-                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                                <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                                    {professionalCount}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
+                                                    ({Math.round((professionalCount / totalParticipantsCategorized) * 100)}%)
+                                                </Typography>
+                                            </Box>
                                         </Box>
                                         <LinearProgress
                                             variant="determinate"
                                             value={(professionalCount / totalParticipantsCategorized) * 100}
                                             sx={{
-                                                height: 6,
+                                                height: 5,
                                                 borderRadius: 3,
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
                                                 '& .MuiLinearProgress-bar': { bgcolor: '#ea580c', borderRadius: 3 },
@@ -2391,24 +2609,27 @@ export default function AdminDashboard({
 
                                     {/* International Delegate */}
                                     <Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Avatar variant="rounded" sx={{ width: 24, height: 24, borderRadius: '6px', bgcolor: isDark ? 'rgba(124, 58, 237, 0.15)' : '#f5f3ff', color: '#7c3aed' }}>
-                                                    <PublicRoundedIcon sx={{ fontSize: 14 }} />
-                                                </Avatar>
+                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#7c3aed' }} />
                                                 <Typography sx={{ fontSize: '0.825rem', fontWeight: 600, color: c.textPrimary }}>
                                                     International Delegate
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontSize: '0.825rem', fontWeight: 700, color: c.textPrimary }}>
-                                                {internationalCount} ({Math.round((internationalCount / totalParticipantsCategorized) * 100)}%)
-                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                                <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontSize: '0.875rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+                                                    {internationalCount}
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.725rem', fontWeight: 600, color: c.textMuted }}>
+                                                    ({Math.round((internationalCount / totalParticipantsCategorized) * 100)}%)
+                                                </Typography>
+                                            </Box>
                                         </Box>
                                         <LinearProgress
                                             variant="determinate"
                                             value={(internationalCount / totalParticipantsCategorized) * 100}
                                             sx={{
-                                                height: 6,
+                                                height: 5,
                                                 borderRadius: 3,
                                                 bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
                                                 '& .MuiLinearProgress-bar': { bgcolor: '#7c3aed', borderRadius: 3 },
@@ -2420,33 +2641,83 @@ export default function AdminDashboard({
                                 <Divider sx={{ my: 2.5, borderColor: c.cardBorder }} />
 
                                 {/* Presentation Format */}
-                                <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1.5 }}>
+                                <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', mb: 1.5 }}>
                                     Presentation Format Ratio
                                 </Typography>
 
                                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                                    <Box sx={{ p: 1.75, borderRadius: '12px', bgcolor: isDark ? 'rgba(37,99,235,0.1)' : '#eff6ff', border: `1px solid ${isDark ? 'rgba(37,99,235,0.25)' : '#bfdbfe'}` }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                            <MicRoundedIcon sx={{ fontSize: 18, color: '#2563eb' }} />
-                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb' }}>
+                                    <Box sx={{
+                                        p: 2,
+                                        borderRadius: '12px',
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                        border: `1px solid ${c.cardBorder}`,
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            borderColor: isDark ? 'rgba(13, 122, 106, 0.4)' : '#a7f3d0',
+                                        }
+                                    }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                                            <Box sx={{
+                                                width: 26,
+                                                height: 26,
+                                                borderRadius: '7px',
+                                                bgcolor: isDark ? 'rgba(13, 122, 106, 0.15)' : '#ecfdf5',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: '#0d7a6a',
+                                            }}>
+                                                <MicRoundedIcon sx={{ fontSize: 16 }} />
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: c.textPrimary }}>
                                                 Oral Presentation
                                             </Typography>
                                         </Box>
-                                        <Typography sx={{ fontWeight: 800, fontSize: '1.25rem', color: c.textPrimary }}>
-                                            {totalOral} <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>({Math.round((totalOral / totalPresentations) * 100)}%)</span>
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                                            <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.4rem', color: c.textPrimary, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                                                {totalOral}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: '#0d7a6a' }}>
+                                                {Math.round((totalOral / totalPresentations) * 100)}%
+                                            </Typography>
+                                        </Box>
                                     </Box>
 
-                                    <Box sx={{ p: 1.75, borderRadius: '12px', bgcolor: isDark ? 'rgba(124,58,237,0.1)' : '#f5f3ff', border: `1px solid ${isDark ? 'rgba(124,58,237,0.25)' : '#ddd6fe'}` }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                            <ViewCompactRoundedIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
-                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: '#7c3aed' }}>
+                                    <Box sx={{
+                                        p: 2,
+                                        borderRadius: '12px',
+                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                        border: `1px solid ${c.cardBorder}`,
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            borderColor: isDark ? 'rgba(99, 102, 241, 0.4)' : '#c7d2fe',
+                                        }
+                                    }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                                            <Box sx={{
+                                                width: 26,
+                                                height: 26,
+                                                borderRadius: '7px',
+                                                bgcolor: isDark ? 'rgba(99, 102, 241, 0.15)' : '#e0e7ff',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: '#6366f1',
+                                            }}>
+                                                <ViewCompactRoundedIcon sx={{ fontSize: 16 }} />
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: c.textPrimary }}>
                                                 Poster Presentation
                                             </Typography>
                                         </Box>
-                                        <Typography sx={{ fontWeight: 800, fontSize: '1.25rem', color: c.textPrimary }}>
-                                            {totalPoster} <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>({Math.round((totalPoster / totalPresentations) * 100)}%)</span>
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                                            <Typography sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.4rem', color: c.textPrimary, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                                                {totalPoster}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: '#6366f1' }}>
+                                                {Math.round((totalPoster / totalPresentations) * 100)}%
+                                            </Typography>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </CardContent>
@@ -2468,10 +2739,10 @@ export default function AdminDashboard({
                             <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                     <Box>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.025rem', color: c.textPrimary }}>
+                                        <Typography variant="h6" sx={{ fontFamily: '"Outfit", "Inter", sans-serif', fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, letterSpacing: '-0.01em' }}>
                                             Recent Submissions
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem' }}>
+                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.775rem' }}>
                                             Latest paper registrations waiting for editorial flow
                                         </Typography>
                                     </Box>
@@ -2479,15 +2750,20 @@ export default function AdminDashboard({
                                         component={Link}
                                         href={route('admin.submissions')}
                                         size="small"
-                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
+                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 15 }} />}
                                         sx={{
                                             textTransform: 'none',
                                             fontWeight: 700,
-                                            fontSize: '0.8rem',
+                                            fontSize: '0.775rem',
                                             color: '#0d7a6a',
+                                            px: 1.5,
+                                            py: 0.4,
                                             borderRadius: '8px',
+                                            border: `1px solid ${c.cardBorder}`,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
                                             '&:hover': {
                                                 bgcolor: isDark ? 'rgba(13, 122, 106, 0.15)' : '#ecfdf5',
+                                                borderColor: '#0d7a6a',
                                             },
                                         }}
                                     >
@@ -2524,12 +2800,13 @@ export default function AdminDashboard({
                                                         sx={{
                                                             background: 'linear-gradient(135deg, #0d7a6a, #10b981)',
                                                             color: '#ffffff',
-                                                            width: 40,
-                                                            height: 40,
+                                                            width: 38,
+                                                            height: 38,
                                                             borderRadius: '10px',
                                                             flexShrink: 0,
                                                             fontWeight: 800,
                                                             fontSize: '0.85rem',
+                                                            fontFamily: '"Outfit", sans-serif',
                                                         }}
                                                     >
                                                         {(sub.user?.name || 'A').charAt(0).toUpperCase()}
@@ -2538,7 +2815,8 @@ export default function AdminDashboard({
                                                         <Typography
                                                             variant="body2"
                                                             sx={{
-                                                                fontWeight: 700,
+                                                                fontFamily: '"Outfit", "Inter", sans-serif',
+                                                                fontWeight: 600,
                                                                 color: c.textPrimary,
                                                                 fontSize: '0.85rem',
                                                                 overflow: 'hidden',
@@ -2561,8 +2839,9 @@ export default function AdminDashboard({
                                                             border: `1px solid ${status.border}`,
                                                             fontWeight: 700,
                                                             fontSize: '0.7rem',
+                                                            fontFamily: '"Outfit", "Inter", sans-serif',
                                                             height: 24,
-                                                            borderRadius: '8px',
+                                                            borderRadius: '6px',
                                                             flexShrink: 0,
                                                         }}
                                                     />
