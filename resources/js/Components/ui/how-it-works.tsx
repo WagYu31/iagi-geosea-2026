@@ -12,6 +12,7 @@ interface CardProps {
   colorTheme?: "orange" | "blue" | "purple" | "emerald";
   className?: string;
   rotate?: string;
+  style?: React.CSSProperties;
   colors?: {
     bg: string;
     text: string;
@@ -42,6 +43,7 @@ const Card = ({
   colorTheme = "blue",
   className = "",
   rotate = "",
+  style,
   colors: customColors,
 }: CardProps) => {
   const defaultBgColors = {
@@ -69,40 +71,43 @@ const Card = ({
 
   return (
     <div
-      className={`transition-transform duration-300 hover:z-30 hover:scale-105 hover:rotate-0 ${rotate} ${className}`}
+      style={style}
+      className={`transition-all duration-300 hover:z-30 hover:scale-105 hover:rotate-0 ${rotate} ${className}`}
     >
-      <div className="bg-white p-2.5 rounded-[22px] shadow-[0_10px_25px_-5px_rgba(0,0,0,0.08),0_4px_10px_-2px_rgba(0,0,0,0.04)] border border-slate-200/90 relative backdrop-blur-sm">
+      <div className="bg-white p-2 sm:p-2.5 rounded-[20px] shadow-[0_8px_20px_-4px_rgba(0,0,0,0.08),0_2px_6px_-1px_rgba(0,0,0,0.04)] border border-slate-200/90 relative backdrop-blur-sm h-full flex flex-col">
         {/* Active Now Pill Badge */}
         {status === "active" && (
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-1.5">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-30 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 sm:px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             Active Now
           </div>
         )}
 
-        <Pin className={`w-7 h-7 ${textColor} z-20 mb-3 mx-auto drop-shadow-sm`} />
+        <Pin className={`w-6 h-6 sm:w-7 sm:h-7 ${textColor} z-20 mb-2 sm:mb-2.5 mx-auto drop-shadow-sm shrink-0`} />
         <div
-          className={`${bgColor} border ${borderColor} rounded-[16px] p-3.5 h-full flex flex-col relative overflow-hidden`}
+          className={`${bgColor} border ${borderColor} rounded-[14px] p-2.5 sm:p-3 flex-1 flex flex-col justify-between overflow-hidden`}
         >
-          <div className="flex items-center justify-between mb-2">
-            <span
-              className={`${textColor} text-3xl font-handwriting select-none`}
-              style={{
-                fontFamily: '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
-              }}
-            >
-              {number}
-            </span>
-            {date && (
-              <span className="text-[10px] font-bold tracking-tight text-slate-600 bg-white/95 px-2 py-0.5 rounded-md border border-slate-200/80 shadow-xs">
-                {date}
+          <div>
+            <div className="flex items-center justify-between gap-1 mb-1.5">
+              <span
+                className={`${textColor} text-2xl sm:text-3xl font-handwriting select-none leading-none`}
+                style={{
+                  fontFamily: '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
+                }}
+              >
+                {number}
               </span>
-            )}
+              {date && (
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-tight text-slate-700 bg-white/95 px-1.5 sm:px-2 py-0.5 rounded-md border border-slate-200/80 shadow-xs whitespace-nowrap">
+                  {date}
+                </span>
+              )}
+            </div>
+            <h3 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-snug mb-1">
+              {title}
+            </h3>
           </div>
-          <h3 className="text-[15px] font-bold text-slate-800 leading-snug mb-1.5">
-            {title}
-          </h3>
-          <p className="text-slate-600 text-xs leading-relaxed">
+          <p className="text-slate-600 text-[11px] leading-relaxed line-clamp-3">
             {description}
           </p>
         </div>
@@ -127,22 +132,42 @@ export interface Step {
 export interface StepPosition {
   className?: string;
   rotate?: string;
+  style?: React.CSSProperties;
 }
 
 export interface HowItWorksProps {
   features?: Step[];
   className?: string;
   stepPositions?: StepPosition[];
-  orientation?: "horizontal" | "vertical";
 }
 
-// 5 Horizontal Staggered Positions (Landscape Left-to-Right wave)
-const DEFAULT_HORIZONTAL_POSITIONS: StepPosition[] = [
-  { className: "absolute top-[25px] left-[10px] w-[225px]", rotate: "-rotate-3" },
-  { className: "absolute top-[135px] left-[245px] w-[225px]", rotate: "rotate-3" },
-  { className: "absolute top-[25px] left-[480px] w-[225px]", rotate: "-rotate-3" },
-  { className: "absolute top-[135px] left-[715px] w-[225px]", rotate: "rotate-3" },
-  { className: "absolute top-[25px] left-[950px] w-[225px]", rotate: "-rotate-2" },
+// Responsive percentage-based positions: fits 100% width cleanly on desktop without clipping Card 05
+const RESPONSIVE_HORIZONTAL_POSITIONS: StepPosition[] = [
+  {
+    className: "absolute top-[18px]",
+    rotate: "-rotate-3",
+    style: { left: "1%", width: "18%" },
+  },
+  {
+    className: "absolute top-[125px]",
+    rotate: "rotate-3",
+    style: { left: "21%", width: "18%" },
+  },
+  {
+    className: "absolute top-[18px]",
+    rotate: "-rotate-3",
+    style: { left: "41%", width: "18%" },
+  },
+  {
+    className: "absolute top-[125px]",
+    rotate: "rotate-3",
+    style: { left: "61%", width: "18%" },
+  },
+  {
+    className: "absolute top-[18px]",
+    rotate: "-rotate-2",
+    style: { left: "81%", width: "18%" },
+  },
 ];
 
 export default function HowItWorks({
@@ -189,24 +214,23 @@ export default function HowItWorks({
   ];
 
   const data = features && features.length > 0 ? features : defaultFeatures;
-  const positions = stepPositions || DEFAULT_HORIZONTAL_POSITIONS;
+  const positions = stepPositions || RESPONSIVE_HORIZONTAL_POSITIONS;
 
-  const totalWidth = 1185;
-  const totalHeight = 450;
+  const totalHeight = 440;
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className={`w-full bg-white relative py-4 px-2 ${className}`}>
+      <div className={`w-full bg-white relative py-2 sm:py-4 px-1 sm:px-2 ${className}`}>
         {/* Mobile Swipe Hint */}
         <div className="flex lg:hidden items-center justify-center gap-1.5 text-xs text-slate-500 font-medium mb-3 select-none">
           <span>👉</span> Geser ke samping untuk melihat timeline lengkap
         </div>
 
-        {/* Scrollable Container on small screens, centered on desktop */}
+        {/* Scrollable Container on small screens (<1024px), fully fluid on desktop (>=1024px) */}
         <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-200">
           <div
-            className="relative mx-auto"
-            style={{ width: `${totalWidth}px`, height: `${totalHeight}px` }}
+            className="relative mx-auto min-w-[960px] lg:min-w-0 w-full"
+            style={{ height: `${totalHeight}px` }}
           >
             {/* Subtle lined paper pattern background */}
             <div
@@ -222,13 +246,13 @@ export default function HowItWorks({
             {data.length > 1 && (
               <svg
                 className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
-                viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+                viewBox="0 0 1000 420"
                 preserveAspectRatio="none"
               >
                 {(() => {
-                  // Connects the 5 pins along an undulating horizontal wave
+                  // Connects the 5 pins at (100, 42) -> (300, 149) -> (500, 42) -> (700, 149) -> (900, 42)
                   const pathD =
-                    "M 122.5 49 C 230 49, 250 159, 357.5 159 C 465 159, 485 49, 592.5 49 C 700 49, 720 159, 827.5 159 C 935 159, 955 49, 1062.5 49";
+                    "M 100 42 C 185 42, 215 149, 300 149 C 385 149, 415 42, 500 42 C 585 42, 615 149, 700 149 C 785 149, 815 42, 900 42";
                   return (
                     <m.path
                       d={pathD}
@@ -268,6 +292,7 @@ export default function HowItWorks({
                   colors={step.colors}
                   rotate={position.rotate}
                   className={position.className}
+                  style={position.style}
                 />
               );
             })}

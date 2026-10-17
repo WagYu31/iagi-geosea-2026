@@ -50,12 +50,13 @@ export default function Highlights({ settings }) {
             }}
         >
             <Container
-                maxWidth="lg"
+                maxWidth="xl"
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: { xs: 4, sm: 6 },
+                    px: { xs: 2, sm: 3, md: 4 },
                 }}
             >
                 {/* Header */}
@@ -109,10 +110,10 @@ export default function Highlights({ settings }) {
                     className="w-full"
                     sx={{
                         borderRadius: { xs: '20px', md: '28px' },
-                        overflow: 'hidden',
                         boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)',
                         border: '1px solid rgba(226, 232, 240, 0.9)',
                         bgcolor: '#ffffff',
+                        p: { xs: 1, sm: 1.5, md: 2 },
                     }}
                 >
                     <HowItWorks
