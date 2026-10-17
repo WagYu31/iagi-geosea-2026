@@ -5,7 +5,7 @@ export default function ApplicationLogo(props) {
         <Link href="/" style={{ textDecoration: 'none' }}>
             <img
                 {...props}
-                src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png"
+                src="/images/iagi-logo.webp"
                 alt="IAGI-GEOSEA Logo"
                 style={{ cursor: 'pointer', ...props.style }}
             />
