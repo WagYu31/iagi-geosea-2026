@@ -66,8 +66,6 @@ export default function AdminDashboard({
     const c = theme.palette.custom;
     const isDark = theme.palette.mode === 'dark';
 
-    const adminName = auth?.user?.name ? auth.user.name.split(' ')[0] : 'Admin';
-
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [participantFilter, setParticipantFilter] = useState('all');
 
@@ -407,142 +405,9 @@ export default function AdminDashboard({
                     </Box>
                 </Box>
 
-                {/* ── ROW 1: Materio Iconic Trophy Card (4 cols) + Materio Statistics Card (8 cols) ── */}
+                {/* ── ROW 1: Conference Statistics Overview Banner ── */}
                 <Grid container spacing={3} sx={{ mb: 3.5 }}>
-                    {/* Materio Trophy Card */}
-                    <Grid size={{ xs: 12, md: 5, lg: 4 }}>
-                        <Card
-                            elevation={0}
-                            sx={{
-                                height: '100%',
-                                borderRadius: '16px',
-                                border: `1px solid ${c.cardBorder}`,
-                                bgcolor: c.cardBg,
-                                position: 'relative',
-                                overflow: 'hidden',
-                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: `0 8px 25px ${isDark ? 'rgba(0,0,0,0.4)' : 'rgba(13,122,106,0.12)'}`,
-                                },
-                            }}
-                        >
-                            <CardContent sx={{ p: { xs: 2.5, sm: 3 }, position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: 800,
-                                                fontSize: '1.1rem',
-                                                color: c.textPrimary,
-                                                letterSpacing: '-0.01em',
-                                            }}
-                                        >
-                                            Welcome, {adminName}! 🎉
-                                        </Typography>
-                                        <Chip
-                                            label="MILESTONE"
-                                            size="small"
-                                            sx={{
-                                                bgcolor: isDark ? 'rgba(13,122,106,0.2)' : '#ecfdf5',
-                                                color: '#0d7a6a',
-                                                border: `1px solid ${isDark ? 'rgba(13,122,106,0.35)' : '#a7f3d0'}`,
-                                                fontWeight: 800,
-                                                fontSize: '0.65rem',
-                                                borderRadius: '6px',
-                                                height: 20,
-                                            }}
-                                        />
-                                    </Box>
-                                    <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.825rem', lineHeight: 1.5, mb: 2, pr: { sm: 10, md: 0, lg: 8 } }}>
-                                        Outstanding participation progress! <strong>{verifiedPayments}</strong> payments verified with active submissions across all categories.
-                                    </Typography>
-                                    
-                                    <Box sx={{ mb: 2.5 }}>
-                                        <Typography
-                                            sx={{
-                                                fontWeight: 800,
-                                                fontSize: { xs: '1.65rem', sm: '1.85rem' },
-                                                color: '#0d7a6a',
-                                                lineHeight: 1.1,
-                                                letterSpacing: '-0.02em',
-                                            }}
-                                        >
-                                            {totalSubmissions} Papers
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem', fontWeight: 600 }}>
-                                            Total registered research submissions
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Box sx={{ pt: 1 }}>
-                                    <Button
-                                        component={Link}
-                                        href={route('admin.submissions')}
-                                        variant="contained"
-                                        size="small"
-                                        sx={{
-                                            borderRadius: '8px',
-                                            textTransform: 'none',
-                                            fontWeight: 700,
-                                            fontSize: '0.8rem',
-                                            color: '#ffffff',
-                                            background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
-                                            boxShadow: '0 4px 12px rgba(13,122,106,0.25)',
-                                            '&:hover': {
-                                                background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
-                                            },
-                                            px: 2.5,
-                                            py: 0.8,
-                                        }}
-                                    >
-                                        View Submissions
-                                    </Button>
-                                </Box>
-
-                                {/* Decorative Materio Trophy Vector Graphic */}
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        right: { xs: 15, sm: 20 },
-                                        bottom: { xs: 10, sm: 15 },
-                                        pointerEvents: 'none',
-                                        zIndex: 1,
-                                        opacity: { xs: 0.25, sm: 0.95 },
-                                        filter: 'drop-shadow(0 4px 14px rgba(245, 158, 11, 0.25))',
-                                    }}
-                                >
-                                    <svg width="105" height="105" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="50" cy="50" r="45" fill="url(#trophyBgGlow)" />
-                                        <path d="M30 25H70V45C70 56.0457 61.0457 65 50 65C38.9543 65 30 56.0457 30 45V25Z" fill="url(#trophyGold)" />
-                                        <path d="M30 30H20C17.2386 30 15 32.2386 15 35V38C15 44.6274 20.3726 50 27 50H30.5" stroke="#F59E0B" strokeWidth="4" strokeLinecap="round" />
-                                        <path d="M70 30H80C82.7614 30 85 32.2386 85 35V38C85 44.6274 79.6274 50 73 50H69.5" stroke="#F59E0B" strokeWidth="4" strokeLinecap="round" />
-                                        <path d="M46 65H54V76H46V65Z" fill="#D97706" />
-                                        <path d="M36 76H64C66.2091 76 68 77.7909 68 80V82C68 82.5523 67.5523 83 67 83H33C32.4477 83 32 82.5523 32 82V80C32 77.7909 33.7909 76 36 76Z" fill="#B45309" />
-                                        <circle cx="50" cy="42" r="9" fill="#FEF3C7" />
-                                        <polygon points="50,36 52.3,40.7 57.5,41.4 53.7,45.1 54.6,50.2 50,47.8 45.4,50.2 46.3,45.1 42.5,41.4 47.7,40.7" fill="#F59E0B" />
-                                        <defs>
-                                            <radialGradient id="trophyBgGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(50 50) rotate(90) scale(45)">
-                                                <stop stopColor="#FDE68A" stopOpacity="0.4" />
-                                                <stop offset="1" stopColor="#F59E0B" stopOpacity="0" />
-                                            </radialGradient>
-                                            <linearGradient id="trophyGold" x1="30" y1="25" x2="70" y2="65" gradientUnits="userSpaceOnUse">
-                                                <stop stopColor="#FDE68A" />
-                                                <stop offset="0.5" stopColor="#F59E0B" />
-                                                <stop offset="1" stopColor="#D97706" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Materio Statistics Card */}
-                    <Grid size={{ xs: 12, md: 7, lg: 8 }}>
+                    <Grid size={{ xs: 12 }}>
                         <Card
                             elevation={0}
                             sx={{
