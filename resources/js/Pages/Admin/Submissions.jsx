@@ -53,6 +53,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import GavelIcon from '@mui/icons-material/Gavel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import FolderZipIcon from '@mui/icons-material/FolderZip';
+import ClearIcon from '@mui/icons-material/Clear';
+import SchoolIcon from '@mui/icons-material/School';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const themeSubThemes = {
     'Fundamental & Digital Geoscience': [
@@ -138,6 +141,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
     const [localSubmissions, setLocalSubmissions] = useState(paginatedData);
     const [assignJuriDialog, setAssignJuriDialog] = useState({ open: false, submission: null });
     const [selectedJuris, setSelectedJuris] = useState([]);
+    const [juriSearch, setJuriSearch] = useState('');
 
     // Sync with server props when they update
     React.useEffect(() => {
@@ -335,6 +339,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
     const handleAssignJuri = (submission) => {
         setAssignJuriDialog({ open: true, submission });
         setSelectedJuris([]);
+        setJuriSearch('');
     };
 
     const handleAddJuri = (juriId) => {
@@ -359,6 +364,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                 onSuccess: () => {
                     setAssignJuriDialog({ open: false, submission: null });
                     setSelectedJuris([]);
+                    setJuriSearch('');
                 },
             });
         }
@@ -1886,15 +1892,41 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                         <>
                             <Box sx={{
                                 mb: 2.5, mt: 1, p: 2,
-                                bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#f9fafb',
-                                borderRadius: '10px', border: `1px solid ${c.cardBorder}`,
+                                bgcolor: isDark ? 'rgba(0,0,0,0.18)' : '#f8fafc',
+                                borderRadius: '12px', border: `1px solid ${c.cardBorder}`,
                             }}>
-                                <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                    Submission
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, mt: 0.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.8, flexWrap: 'wrap', gap: 0.8 }}>
+                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                        Naskah yang Dinilai
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                                        {assignJuriDialog.submission.submission_code && (
+                                            <Chip
+                                                label={assignJuriDialog.submission.submission_code}
+                                                size="small"
+                                                sx={{ height: 20, fontSize: '0.62rem', fontWeight: 800, fontFamily: 'monospace', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e5e7eb' }}
+                                            />
+                                        )}
+                                        <Chip
+                                            label={assignJuriDialog.submission.category_submission?.includes('Oral') ? 'ORAL' : 'POSTER'}
+                                            size="small"
+                                            sx={{
+                                                height: 20, fontSize: '0.62rem', fontWeight: 800,
+                                                bgcolor: assignJuriDialog.submission.category_submission?.includes('Oral') ? 'rgba(2, 132, 199, 0.15)' : 'rgba(147, 51, 234, 0.15)',
+                                                color: assignJuriDialog.submission.category_submission?.includes('Oral') ? '#0284c7' : '#9333ea',
+                                            }}
+                                        />
+                                    </Box>
+                                </Box>
+                                <Typography variant="body2" sx={{ fontWeight: 700, color: c.textPrimary, lineHeight: 1.4 }}>
                                     {assignJuriDialog.submission.title}
                                 </Typography>
+                                {(assignJuriDialog.submission.author_full_name || assignJuriDialog.submission.user?.name) && (
+                                    <Typography variant="caption" sx={{ color: c.textMuted, display: 'block', mt: 0.5 }}>
+                                        Presenter: <strong>{assignJuriDialog.submission.author_full_name || assignJuriDialog.submission.user?.name}</strong>
+                                        {assignJuriDialog.submission.institute_organization && ` • ${assignJuriDialog.submission.institute_organization}`}
+                                    </Typography>
+                                )}
                             </Box>
 
                             {/* Currently Assigned Juris */}
@@ -1967,55 +1999,211 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                                 </Box>
                             )}
 
-                            {/* Available Juris */}
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 1, display: 'block' }}>
-                                Available Juris
-                            </Typography>
+                            {/* Available Juris with Search Bar */}
                             {(() => {
                                 const assignedIds = (assignJuriDialog.submission.presentation_scores || []).map(ps => ps.juri_id);
                                 const available = juris.filter(j => !assignedIds.includes(j.id) && !selectedJuris.includes(j.id));
-                                return available.length === 0 ? (
-                                    <Typography variant="body2" sx={{ color: c.textSecondary, textAlign: 'center', py: 2 }}>
-                                        No available juris
-                                    </Typography>
-                                ) : (
-                                    <Stack spacing={0.75}>
-                                        {available.map((juri) => (
-                                            <Box
-                                                key={juri.id}
-                                                onClick={() => handleAddJuri(juri.id)}
+                                const filteredJuris = available.filter(j => {
+                                    if (!juriSearch.trim()) return true;
+                                    const q = juriSearch.toLowerCase().trim();
+                                    const name = (juri.name || '').toLowerCase();
+                                    const email = (juri.email || '').toLowerCase();
+                                    const affiliation = (juri.affiliation || '').toLowerCase();
+                                    return name.includes(q) || email.includes(q) || affiliation.includes(q);
+                                });
+
+                                const currentCount = (assignJuriDialog.submission.presentation_scores?.length || 0) + selectedJuris.length;
+                                const isMaxReached = currentCount >= 5;
+
+                                return (
+                                    <Box sx={{ mb: 1 }}>
+                                        {/* Header Row */}
+                                        <Box sx={{ mb: 1.2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: c.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                                Daftar Juri Tersedia
+                                            </Typography>
+                                            <Chip
+                                                label={juriSearch ? `${filteredJuris.length} dari ${available.length} juri` : `${available.length} juri tersedia`}
+                                                size="small"
                                                 sx={{
-                                                    display: 'flex', alignItems: 'center', gap: 1.5,
-                                                    p: 1.5, borderRadius: '10px',
-                                                    border: `1px solid ${c.cardBorder}`,
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s ease',
-                                                    '&:hover': {
-                                                        bgcolor: isDark ? 'rgba(217,119,6,0.06)' : '#fffbeb',
+                                                    height: 22,
+                                                    fontSize: '0.68rem',
+                                                    fontWeight: 700,
+                                                    bgcolor: isDark ? 'rgba(217, 119, 6, 0.15)' : '#fffbeb',
+                                                    color: '#d97706',
+                                                    border: '1px solid rgba(217, 119, 6, 0.3)',
+                                                }}
+                                            />
+                                        </Box>
+
+                                        {/* Search Input Bar */}
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            placeholder="Cari nama juri, email, atau instansi (UGM, Pertamina, Arutmin)..."
+                                            value={juriSearch}
+                                            onChange={(e) => setJuriSearch(e.target.value)}
+                                            autoComplete="off"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <SearchIcon sx={{ color: '#d97706', fontSize: 20 }} />
+                                                    </InputAdornment>
+                                                ),
+                                                endAdornment: juriSearch ? (
+                                                    <InputAdornment position="end">
+                                                        <IconButton size="small" onClick={() => setJuriSearch('')} sx={{ p: 0.5 }}>
+                                                            <ClearIcon sx={{ fontSize: 16 }} />
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                ) : null,
+                                            }}
+                                            sx={{
+                                                mb: 2,
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: '12px',
+                                                    bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#ffffff',
+                                                    fontSize: '0.86rem',
+                                                    '& fieldset': {
+                                                        borderColor: juriSearch ? '#d97706' : (c.cardBorder || '#e5e7eb'),
+                                                        borderWidth: juriSearch ? '1.5px' : '1px',
+                                                    },
+                                                    '&:hover fieldset': {
                                                         borderColor: '#d97706',
                                                     },
-                                                }}
-                                            >
-                                                <Avatar sx={{ width: 32, height: 32, bgcolor: isDark ? 'rgba(217,119,6,0.15)' : '#fef3c7', color: '#d97706', fontSize: '0.8rem', fontWeight: 700 }}>
-                                                    {(juri.name || 'J').charAt(0)}
-                                                </Avatar>
-                                                <Box sx={{ flex: 1 }}>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, fontSize: '0.85rem' }}>
-                                                        {juri.name}
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.75rem' }}>
-                                                        {juri.email}
-                                                    </Typography>
-                                                    {juri.affiliation && (
-                                                        <Typography variant="caption" sx={{ color: '#d97706', fontSize: '0.7rem', display: 'block' }}>
-                                                            {juri.affiliation}
-                                                        </Typography>
-                                                    )}
-                                                </Box>
-                                                <PersonAddIcon sx={{ color: '#d97706', fontSize: 20 }} />
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: '#d97706',
+                                                        borderWidth: 2,
+                                                    },
+                                                },
+                                            }}
+                                        />
+
+                                        {/* Max Limit Warning */}
+                                        {isMaxReached && (
+                                            <Alert severity="info" sx={{ mb: 1.5, borderRadius: '10px', fontSize: '0.75rem', py: 0.2 }}>
+                                                Maksimal 5 juri per naskah telah tercapai.
+                                            </Alert>
+                                        )}
+
+                                        {/* List Content */}
+                                        {available.length === 0 ? (
+                                            <Box sx={{
+                                                py: 3, px: 2, textAlign: 'center',
+                                                borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb',
+                                                border: `1px dashed ${c.cardBorder || '#e5e7eb'}`,
+                                            }}>
+                                                <CheckCircleIcon sx={{ fontSize: 36, color: '#16a34a', mb: 1, opacity: 0.8 }} />
+                                                <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary }}>
+                                                    Semua juri telah ditugaskan
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: c.textMuted }}>
+                                                    Tidak ada juri lain yang tersisa untuk ditugaskan pada naskah ini.
+                                                </Typography>
                                             </Box>
-                                        ))}
-                                    </Stack>
+                                        ) : filteredJuris.length === 0 ? (
+                                            <Box sx={{
+                                                py: 3, px: 2, textAlign: 'center',
+                                                borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f9fafb',
+                                                border: `1px dashed ${c.cardBorder || '#e5e7eb'}`,
+                                            }}>
+                                                <SearchIcon sx={{ fontSize: 36, color: c.textMuted, mb: 1, opacity: 0.5 }} />
+                                                <Typography variant="body2" sx={{ fontWeight: 600, color: c.textPrimary, mb: 0.5 }}>
+                                                    Juri tidak ditemukan
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: c.textMuted, display: 'block', mb: 1.5 }}>
+                                                    Tidak ada juri yang cocok dengan kata kunci "<strong>{juriSearch}</strong>"
+                                                </Typography>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    onClick={() => setJuriSearch('')}
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: 700,
+                                                        borderRadius: '8px',
+                                                        borderColor: '#d97706',
+                                                        color: '#d97706',
+                                                    }}
+                                                >
+                                                    Hapus Filter Pencarian
+                                                </Button>
+                                            </Box>
+                                        ) : (
+                                            <Stack spacing={1}>
+                                                {filteredJuris.map((juri) => (
+                                                    <Box
+                                                        key={juri.id}
+                                                        onClick={() => !isMaxReached && handleAddJuri(juri.id)}
+                                                        sx={{
+                                                            display: 'flex', alignItems: 'center', gap: 1.5,
+                                                            p: 1.5, borderRadius: '12px',
+                                                            border: `1px solid ${c.cardBorder}`,
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                                            cursor: isMaxReached ? 'not-allowed' : 'pointer',
+                                                            opacity: isMaxReached ? 0.6 : 1,
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            '&:hover': isMaxReached ? {} : {
+                                                                bgcolor: isDark ? 'rgba(217,119,6,0.08)' : '#fffbeb',
+                                                                borderColor: '#d97706',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: isDark ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(217,119,6,0.1)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        <Avatar sx={{
+                                                            width: 38, height: 38,
+                                                            bgcolor: isDark ? 'rgba(217,119,6,0.18)' : '#fef3c7',
+                                                            color: '#d97706',
+                                                            fontSize: '0.9rem',
+                                                            fontWeight: 800,
+                                                            border: '1.5px solid rgba(217,119,6,0.3)',
+                                                        }}>
+                                                            {(juri.name || 'J').charAt(0).toUpperCase()}
+                                                        </Avatar>
+                                                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: c.textPrimary, fontSize: '0.88rem' }}>
+                                                                    {juri.name}
+                                                                </Typography>
+                                                                {juri.affiliation && (
+                                                                    <Chip
+                                                                        icon={<SchoolIcon sx={{ fontSize: '12px !important', color: '#d97706 !important' }} />}
+                                                                        label={juri.affiliation}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 18,
+                                                                            fontSize: '0.62rem',
+                                                                            fontWeight: 700,
+                                                                            bgcolor: isDark ? 'rgba(217,119,6,0.12)' : '#fef3c7',
+                                                                            color: '#b45309',
+                                                                            border: '1px solid rgba(217,119,6,0.25)',
+                                                                            borderRadius: '6px',
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </Box>
+                                                            <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.74rem', display: 'block', mt: 0.2 }}>
+                                                                {juri.email}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{
+                                                            width: 32, height: 32,
+                                                            borderRadius: '8px',
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            bgcolor: isDark ? 'rgba(217,119,6,0.12)' : '#fff7ed',
+                                                            color: '#d97706',
+                                                            border: '1px solid rgba(217,119,6,0.2)',
+                                                            transition: 'all 0.15s ease',
+                                                        }}>
+                                                            <PersonAddIcon sx={{ fontSize: 18 }} />
+                                                        </Box>
+                                                    </Box>
+                                                ))}
+                                            </Stack>
+                                        )}
+                                    </Box>
                                 );
                             })()}
                         </>
