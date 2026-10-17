@@ -42,6 +42,9 @@ import MicRoundedIcon from '@mui/icons-material/MicRounded';
 import ViewCompactRoundedIcon from '@mui/icons-material/ViewCompactRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
+import ViewWeekRoundedIcon from '@mui/icons-material/ViewWeekRounded';
+import TableRowsRoundedIcon from '@mui/icons-material/TableRowsRounded';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { LineChart } from '@mui/x-charts/LineChart';
 
@@ -64,6 +67,11 @@ export default function AdminDashboard({
 
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [participantFilter, setParticipantFilter] = useState('all');
+
+    // Topic chart customizer state (Chart type, orientation, and limit)
+    const [chartType, setChartType] = useState('bar'); // 'area' | 'bar'
+    const [chartOrientation, setChartOrientation] = useState('landscape'); // 'landscape' | 'horizontal'
+    const [topicLimit, setTopicLimit] = useState(15); // 10 | 15 | 'all'
 
     // Visitor analytics state with auto-refresh
     const [visitorPeriod, setVisitorPeriod] = useState('30d');
@@ -223,6 +231,15 @@ export default function AdminDashboard({
 
         return filtered;
     }, [submissionsPerTopic, submissionsPerTopicByParticipant, categoryFilter, participantFilter]);
+
+    // Apply topic limit for landscape display
+    const displayTopics = useMemo(() => {
+        let data = filteredSubmissionsPerTopic;
+        if (topicLimit !== 'all') {
+            data = data.slice(0, Number(topicLimit));
+        }
+        return data;
+    }, [filteredSubmissionsPerTopic, topicLimit]);
 
     const getStatusChip = (status) => {
         const map = {
@@ -1168,151 +1185,483 @@ export default function AdminDashboard({
                         }}
                     >
                         <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
-                            {/* Chart Header */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5, flexWrap: 'wrap', gap: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                    <Avatar
-                                        sx={{
-                                            bgcolor: isDark ? 'rgba(13, 122, 106, 0.18)' : '#ecfdf5',
-                                            color: '#0d7a6a',
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: '12px',
-                                            border: `1px solid ${isDark ? 'rgba(13, 122, 106, 0.3)' : '#a7f3d0'}`,
-                                        }}
-                                        variant="rounded"
-                                    >
-                                        <BarChartRoundedIcon sx={{ fontSize: 24 }} />
-                                    </Avatar>
-                                    <Box>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, mb: 0.25 }}>
-                                            Submissions per Scientific Topic
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
-                                            Distribution by technical sub-theme and presentation format
-                                        </Typography>
+                            {/* Chart Header & Toggles */}
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2.5 }}>
+                                {/* Top Controls Row */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Avatar
+                                            sx={{
+                                                bgcolor: isDark ? 'rgba(13, 122, 106, 0.18)' : '#ecfdf5',
+                                                color: '#0d7a6a',
+                                                width: 44,
+                                                height: 44,
+                                                borderRadius: '12px',
+                                                border: `1px solid ${isDark ? 'rgba(13, 122, 106, 0.3)' : '#a7f3d0'}`,
+                                            }}
+                                            variant="rounded"
+                                        >
+                                            {chartType === 'area' ? (
+                                                <ShowChartRoundedIcon sx={{ fontSize: 24 }} />
+                                            ) : (
+                                                <BarChartRoundedIcon sx={{ fontSize: 24 }} />
+                                            )}
+                                        </Avatar>
+                                        <Box>
+                                            <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, mb: 0.25 }}>
+                                                Submissions per Scientific Topic
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.8rem' }}>
+                                                Distribution by technical sub-theme and presentation format
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* TIPE GRAFIK & ORIENTASI TOGGLE (Materio Style Pill) */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                                        {/* Tipe Grafik Toggle */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, color: isDark ? '#94a3b8' : '#8896a6', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                                TIPE GRAFIK:
+                                            </Typography>
+                                            <Box sx={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#eef2f6',
+                                                border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#dce3eb'}`,
+                                                borderRadius: '9999px',
+                                                p: '3px',
+                                                gap: 0.5,
+                                            }}>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setChartType('area')}
+                                                    disableElevation
+                                                    sx={{
+                                                        borderRadius: '9999px',
+                                                        px: 2,
+                                                        py: 0.5,
+                                                        textTransform: 'none',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.82rem',
+                                                        lineHeight: 1.4,
+                                                        color: chartType === 'area' ? '#ffffff' : (isDark ? '#cbd5e1' : '#334155'),
+                                                        bgcolor: chartType === 'area' ? '#0d7a6a' : 'transparent',
+                                                        boxShadow: chartType === 'area' ? '0 2px 6px rgba(13,122,106,0.35)' : 'none',
+                                                        transition: 'all 0.2s ease',
+                                                        '&:hover': {
+                                                            bgcolor: chartType === 'area' ? '#094d42' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                        },
+                                                    }}
+                                                >
+                                                    Area / Garis
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setChartType('bar')}
+                                                    disableElevation
+                                                    sx={{
+                                                        borderRadius: '9999px',
+                                                        px: 2,
+                                                        py: 0.5,
+                                                        textTransform: 'none',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.82rem',
+                                                        lineHeight: 1.4,
+                                                        color: chartType === 'bar' ? '#ffffff' : (isDark ? '#cbd5e1' : '#334155'),
+                                                        bgcolor: chartType === 'bar' ? '#0d7a6a' : 'transparent',
+                                                        boxShadow: chartType === 'bar' ? '0 2px 6px rgba(13,122,106,0.35)' : 'none',
+                                                        transition: 'all 0.2s ease',
+                                                        '&:hover': {
+                                                            bgcolor: chartType === 'bar' ? '#094d42' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                        },
+                                                    }}
+                                                >
+                                                    Batang (Bar)
+                                                </Button>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Orientasi (for Bar Chart) */}
+                                        {chartType === 'bar' && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                                                <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, color: isDark ? '#94a3b8' : '#8896a6', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                                    ORIENTASI:
+                                                </Typography>
+                                                <Box sx={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#eef2f6',
+                                                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#dce3eb'}`,
+                                                    borderRadius: '9999px',
+                                                    p: '3px',
+                                                    gap: 0.5,
+                                                }}>
+                                                    <Button
+                                                        size="small"
+                                                        onClick={() => setChartOrientation('landscape')}
+                                                        disableElevation
+                                                        sx={{
+                                                            borderRadius: '9999px',
+                                                            px: 1.75,
+                                                            py: 0.5,
+                                                            textTransform: 'none',
+                                                            fontWeight: 700,
+                                                            fontSize: '0.8rem',
+                                                            lineHeight: 1.4,
+                                                            color: chartOrientation === 'landscape' ? '#ffffff' : (isDark ? '#cbd5e1' : '#334155'),
+                                                            bgcolor: chartOrientation === 'landscape' ? '#0d7a6a' : 'transparent',
+                                                            boxShadow: chartOrientation === 'landscape' ? '0 2px 6px rgba(13,122,106,0.35)' : 'none',
+                                                            transition: 'all 0.2s ease',
+                                                            '&:hover': {
+                                                                bgcolor: chartOrientation === 'landscape' ? '#094d42' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                            },
+                                                        }}
+                                                    >
+                                                        Landscape
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        onClick={() => setChartOrientation('horizontal')}
+                                                        disableElevation
+                                                        sx={{
+                                                            borderRadius: '9999px',
+                                                            px: 1.75,
+                                                            py: 0.5,
+                                                            textTransform: 'none',
+                                                            fontWeight: 700,
+                                                            fontSize: '0.8rem',
+                                                            lineHeight: 1.4,
+                                                            color: chartOrientation === 'horizontal' ? '#ffffff' : (isDark ? '#cbd5e1' : '#334155'),
+                                                            bgcolor: chartOrientation === 'horizontal' ? '#0d7a6a' : 'transparent',
+                                                            boxShadow: chartOrientation === 'horizontal' ? '0 2px 6px rgba(13,122,106,0.35)' : 'none',
+                                                            transition: 'all 0.2s ease',
+                                                            '&:hover': {
+                                                                bgcolor: chartOrientation === 'horizontal' ? '#094d42' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'),
+                                                            },
+                                                        }}
+                                                    >
+                                                        Horizontal
+                                                    </Button>
+                                                </Box>
+                                            </Box>
+                                        )}
                                     </Box>
                                 </Box>
 
-                                {/* Filters */}
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                                    <ToggleButtonGroup
-                                        value={categoryFilter}
-                                        exclusive
-                                        onChange={(_, v) => v !== null && setCategoryFilter(v)}
-                                        size="small"
-                                        sx={{ 
-                                            bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', 
-                                            borderRadius: '10px', 
-                                            border: `1px solid ${c.cardBorder}`, 
-                                            p: 0.3,
-                                            '& .MuiToggleButton-root': { border: 'none' } 
-                                        }}
-                                    >
-                                        <ToggleButton value="all" sx={toggleSx('#0d7a6a')}>
-                                            <FilterListRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> All
-                                        </ToggleButton>
-                                        <ToggleButton value="oral_presentation" sx={toggleSx('#2563eb')}>
-                                            <MicRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Oral
-                                        </ToggleButton>
-                                        <ToggleButton value="poster_presentation" sx={toggleSx('#7c3aed')}>
-                                            <ViewCompactRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Poster
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
+                                {/* Second Controls Row: Presentation, Participant, and Limit filters */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, pt: 1, borderTop: `1px solid ${c.cardBorder}` }}>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.25 }}>
+                                        {/* Oral / Poster filter */}
+                                        <ToggleButtonGroup
+                                            value={categoryFilter}
+                                            exclusive
+                                            onChange={(_, v) => v !== null && setCategoryFilter(v)}
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', 
+                                                borderRadius: '10px', 
+                                                border: `1px solid ${c.cardBorder}`, 
+                                                p: 0.3,
+                                                '& .MuiToggleButton-root': { border: 'none' } 
+                                            }}
+                                        >
+                                            <ToggleButton value="all" sx={toggleSx('#0d7a6a')}>
+                                                <FilterListRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> All
+                                            </ToggleButton>
+                                            <ToggleButton value="oral_presentation" sx={toggleSx('#2563eb')}>
+                                                <MicRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Oral
+                                            </ToggleButton>
+                                            <ToggleButton value="poster_presentation" sx={toggleSx('#7c3aed')}>
+                                                <ViewCompactRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Poster
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
 
-                                    <ToggleButtonGroup
-                                        value={participantFilter}
-                                        exclusive
-                                        onChange={(_, v) => v !== null && setParticipantFilter(v)}
-                                        size="small"
-                                        sx={{ 
-                                            bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', 
-                                            borderRadius: '10px', 
-                                            border: `1px solid ${c.cardBorder}`, 
-                                            p: 0.3,
-                                            '& .MuiToggleButton-root': { border: 'none' } 
-                                        }}
-                                    >
-                                        <ToggleButton value="all" sx={toggleSx('#0d7a6a')}>
-                                            All
-                                        </ToggleButton>
-                                        <ToggleButton value="student_count" sx={toggleSx('#0891b2')}>
-                                            <SchoolRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Student
-                                        </ToggleButton>
-                                        <ToggleButton value="professional_count" sx={toggleSx('#ea580c')}>
-                                            <WorkRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Pro
-                                        </ToggleButton>
-                                        <ToggleButton value="international_count" sx={toggleSx('#7c3aed')}>
-                                            <PublicRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Int'l
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
+                                        {/* Participant Category filter */}
+                                        <ToggleButtonGroup
+                                            value={participantFilter}
+                                            exclusive
+                                            onChange={(_, v) => v !== null && setParticipantFilter(v)}
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc', 
+                                                borderRadius: '10px', 
+                                                border: `1px solid ${c.cardBorder}`, 
+                                                p: 0.3,
+                                                '& .MuiToggleButton-root': { border: 'none' } 
+                                            }}
+                                        >
+                                            <ToggleButton value="all" sx={toggleSx('#0d7a6a')}>
+                                                All
+                                            </ToggleButton>
+                                            <ToggleButton value="student_count" sx={toggleSx('#0891b2')}>
+                                                <SchoolRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Student
+                                            </ToggleButton>
+                                            <ToggleButton value="professional_count" sx={toggleSx('#ea580c')}>
+                                                <WorkRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Pro
+                                            </ToggleButton>
+                                            <ToggleButton value="international_count" sx={toggleSx('#7c3aed')}>
+                                                <PublicRoundedIcon sx={{ mr: 0.5, fontSize: 15 }} /> Int'l
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </Box>
+
+                                    {/* Topic Limit Selector */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography sx={{ fontSize: '0.725rem', fontWeight: 700, color: c.textMuted }}>
+                                            TAMPILKAN:
+                                        </Typography>
+                                        <Box sx={{
+                                            display: 'inline-flex',
+                                            bgcolor: isDark ? 'rgba(0,0,0,0.2)' : '#f8fafc',
+                                            border: `1px solid ${c.cardBorder}`,
+                                            borderRadius: '8px',
+                                            p: 0.25,
+                                        }}>
+                                            {[
+                                                { val: 10, label: 'Top 10' },
+                                                { val: 15, label: 'Top 15' },
+                                                { val: 'all', label: `Semua (${filteredSubmissionsPerTopic.length})` },
+                                            ].map((lim) => (
+                                                <Button
+                                                    key={lim.val}
+                                                    size="small"
+                                                    onClick={() => setTopicLimit(lim.val)}
+                                                    sx={{
+                                                        px: 1.25,
+                                                        py: 0.3,
+                                                        fontSize: '0.725rem',
+                                                        fontWeight: 700,
+                                                        textTransform: 'none',
+                                                        minWidth: 'auto',
+                                                        borderRadius: '6px',
+                                                        ...(topicLimit === lim.val ? {
+                                                            bgcolor: '#0d7a6a',
+                                                            color: '#ffffff',
+                                                            '&:hover': { bgcolor: '#094d42' }
+                                                        } : {
+                                                            color: c.textMuted,
+                                                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' },
+                                                        }),
+                                                    }}
+                                                >
+                                                    {lim.label}
+                                                </Button>
+                                            ))}
+                                        </Box>
+                                    </Box>
                                 </Box>
                             </Box>
 
-                            {/* Horizontal Bar Chart */}
+                            {/* Chart Display Container */}
                             <Box sx={{
                                 width: '100%',
-                                height: Math.max(420, filteredSubmissionsPerTopic.length * 68),
                                 bgcolor: isDark ? 'rgba(0,0,0,0.15)' : '#ffffff',
                                 borderRadius: '14px',
                                 p: { xs: 1, sm: 2 },
                                 border: `1px solid ${c.cardBorder}`,
+                                overflowX: (chartType === 'area' || (chartType === 'bar' && chartOrientation === 'landscape')) && topicLimit === 'all' && displayTopics.length > 15 ? 'auto' : 'visible',
+                                ...(chartType === 'bar' && chartOrientation === 'horizontal' ? {
+                                    maxHeight: 520,
+                                    overflowY: 'auto',
+                                } : {}),
                             }}>
-                                <BarChart
-                                    dataset={filteredSubmissionsPerTopic}
-                                    layout="horizontal"
-                                    yAxis={[{
-                                        scaleType: 'band',
-                                        dataKey: 'topic',
-                                        tickLabelStyle: {
-                                            fontSize: 12,
-                                            fontWeight: 600,
-                                            fill: isDark ? '#d1d5db' : '#1f2937',
-                                            textAnchor: 'end',
-                                        },
-                                    }]}
-                                    xAxis={[{
-                                        tickLabelStyle: {
-                                            fontSize: 11,
-                                            fontWeight: 500,
-                                            fill: isDark ? '#9ca3af' : '#6b7280',
-                                        },
-                                    }]}
-                                    series={[
-                                        {
-                                            dataKey: 'count',
-                                            label: categoryFilter === 'all' ? 'Total Papers' :
-                                                categoryFilter === 'oral_presentation' ? 'Oral Presentations' : 'Poster Presentations',
-                                            color: categoryFilter === 'all' ? '#0d7a6a' :
-                                                categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed',
-                                            valueFormatter: (value) => `${value} paper${value > 1 ? 's' : ''}`,
-                                        },
-                                    ]}
-                                    margin={{ top: 25, bottom: 45, left: 160, right: 50 }}
-                                    grid={{ horizontal: true }}
-                                    slotProps={{
-                                        legend: {
-                                            direction: 'row',
-                                            position: { vertical: 'top', horizontal: 'right' },
-                                            padding: 0,
-                                            itemMarkWidth: 10,
-                                            itemMarkHeight: 10,
-                                            markGap: 6,
-                                            itemGap: 12,
-                                            labelStyle: {
-                                                fontSize: 12,
-                                                fontWeight: 700,
-                                                fill: isDark ? '#d1d5db' : '#1f2937',
-                                            },
-                                        },
-                                        bar: { rx: 6, ry: 6 },
-                                    }}
-                                    sx={{
-                                        '& .MuiChartsAxis-tickLabel': { fill: isDark ? '#d1d5db' : '#1f2937', fontWeight: 600 },
-                                        '& .MuiChartsAxis-line': { stroke: c.cardBorder, strokeWidth: 1 },
-                                        '& .MuiChartsGrid-line': { stroke: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', strokeDasharray: '4 4' },
-                                    }}
-                                />
+                                <Box sx={{
+                                    minWidth: (chartType === 'area' || (chartType === 'bar' && chartOrientation === 'landscape')) && topicLimit === 'all' && displayTopics.length > 15 
+                                        ? Math.max(900, displayTopics.length * 48) 
+                                        : '100%',
+                                    height: chartType === 'bar' && chartOrientation === 'horizontal' 
+                                        ? Math.max(380, displayTopics.length * 40)
+                                        : 420,
+                                }}>
+                                    {displayTopics.length === 0 ? (
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column' }}>
+                                            <Typography sx={{ color: c.textMuted, fontSize: '0.85rem' }}>No topic submissions matching current filter</Typography>
+                                        </Box>
+                                    ) : chartType === 'area' ? (
+                                        /* ── Line / Area Chart (Landscape) ── */
+                                        <LineChart
+                                            xAxis={[{
+                                                data: displayTopics.map((_, i) => i),
+                                                scaleType: 'point',
+                                                valueFormatter: (idx) => displayTopics[idx]?.topic || '',
+                                                tickLabelStyle: {
+                                                    angle: -30,
+                                                    textAnchor: 'end',
+                                                    fontSize: 11,
+                                                    fontWeight: 600,
+                                                    fill: isDark ? '#d1d5db' : '#334155',
+                                                },
+                                            }]}
+                                            yAxis={[{
+                                                tickMinStep: 1,
+                                                tickLabelStyle: {
+                                                    fontSize: 11,
+                                                    fontWeight: 600,
+                                                    fill: isDark ? '#9ca3af' : '#64748b',
+                                                },
+                                            }]}
+                                            series={[{
+                                                data: displayTopics.map(d => d.count),
+                                                label: categoryFilter === 'all' ? 'Total Papers' :
+                                                    categoryFilter === 'oral_presentation' ? 'Oral Presentations' : 'Poster Presentations',
+                                                color: categoryFilter === 'all' ? '#0d7a6a' :
+                                                    categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed',
+                                                area: true,
+                                                curve: 'catmullRom',
+                                                showMark: true,
+                                                valueFormatter: (value) => `${value} paper${value > 1 ? 's' : ''}`,
+                                            }]}
+                                            margin={{ top: 25, bottom: 95, left: 55, right: 30 }}
+                                            grid={{ horizontal: true, vertical: true }}
+                                            slotProps={{
+                                                legend: {
+                                                    direction: 'row',
+                                                    position: { vertical: 'top', horizontal: 'right' },
+                                                    padding: 0,
+                                                    itemMarkWidth: 10,
+                                                    itemMarkHeight: 10,
+                                                    markGap: 6,
+                                                    itemGap: 12,
+                                                    labelStyle: {
+                                                        fontSize: 12,
+                                                        fontWeight: 700,
+                                                        fill: isDark ? '#d1d5db' : '#1f2937',
+                                                    },
+                                                },
+                                            }}
+                                            sx={{
+                                                '& .MuiChartsAxis-tickLabel': { fill: isDark ? '#d1d5db' : '#334155', fontWeight: 600 },
+                                                '& .MuiChartsAxis-line': { stroke: c.cardBorder, strokeWidth: 1 },
+                                                '& .MuiChartsGrid-line': { stroke: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', strokeDasharray: '4 4' },
+                                                '& .MuiAreaElement-root': {
+                                                    fill: 'url(#dashboardTopicLineGradient)',
+                                                    opacity: 1,
+                                                },
+                                                '& .MuiLineElement-root': { strokeWidth: 3 },
+                                                '& .MuiMarkElement-root': { strokeWidth: 2, r: 4, fill: isDark ? '#1a1d27' : '#ffffff' },
+                                            }}
+                                        >
+                                            <defs>
+                                                <linearGradient id="dashboardTopicLineGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor={categoryFilter === 'all' ? '#0d7a6a' : categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed'} stopOpacity={0.35} />
+                                                    <stop offset="100%" stopColor={categoryFilter === 'all' ? '#0d7a6a' : categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed'} stopOpacity={0.02} />
+                                                </linearGradient>
+                                            </defs>
+                                        </LineChart>
+                                    ) : chartOrientation === 'landscape' ? (
+                                        /* ── Bar Chart Landscape (Vertical Columns) ── */
+                                        <BarChart
+                                            dataset={displayTopics}
+                                            xAxis={[{
+                                                scaleType: 'band',
+                                                dataKey: 'topic',
+                                                tickLabelStyle: {
+                                                    angle: -30,
+                                                    textAnchor: 'end',
+                                                    fontSize: 11,
+                                                    fontWeight: 600,
+                                                    fill: isDark ? '#d1d5db' : '#334155',
+                                                },
+                                            }]}
+                                            yAxis={[{
+                                                tickMinStep: 1,
+                                                tickLabelStyle: {
+                                                    fontSize: 11,
+                                                    fontWeight: 600,
+                                                    fill: isDark ? '#9ca3af' : '#64748b',
+                                                },
+                                            }]}
+                                            series={[{
+                                                dataKey: 'count',
+                                                label: categoryFilter === 'all' ? 'Total Papers' :
+                                                    categoryFilter === 'oral_presentation' ? 'Oral Presentations' : 'Poster Presentations',
+                                                color: categoryFilter === 'all' ? '#0d7a6a' :
+                                                    categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed',
+                                                valueFormatter: (value) => `${value} paper${value > 1 ? 's' : ''}`,
+                                            }]}
+                                            margin={{ top: 25, bottom: 95, left: 55, right: 30 }}
+                                            grid={{ horizontal: true }}
+                                            slotProps={{
+                                                legend: {
+                                                    direction: 'row',
+                                                    position: { vertical: 'top', horizontal: 'right' },
+                                                    padding: 0,
+                                                    itemMarkWidth: 10,
+                                                    itemMarkHeight: 10,
+                                                    markGap: 6,
+                                                    itemGap: 12,
+                                                    labelStyle: {
+                                                        fontSize: 12,
+                                                        fontWeight: 700,
+                                                        fill: isDark ? '#d1d5db' : '#1f2937',
+                                                    },
+                                                },
+                                                bar: { rx: 6, ry: 6 },
+                                            }}
+                                            sx={{
+                                                '& .MuiChartsAxis-tickLabel': { fill: isDark ? '#d1d5db' : '#334155', fontWeight: 600 },
+                                                '& .MuiChartsAxis-line': { stroke: c.cardBorder, strokeWidth: 1 },
+                                                '& .MuiChartsGrid-line': { stroke: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', strokeDasharray: '4 4' },
+                                            }}
+                                        />
+                                    ) : (
+                                        /* ── Bar Chart Horizontal (Horizontal Bars) ── */
+                                        <BarChart
+                                            dataset={displayTopics}
+                                            layout="horizontal"
+                                            yAxis={[{
+                                                scaleType: 'band',
+                                                dataKey: 'topic',
+                                                tickLabelStyle: {
+                                                    fontSize: 12,
+                                                    fontWeight: 600,
+                                                    fill: isDark ? '#d1d5db' : '#1f2937',
+                                                    textAnchor: 'end',
+                                                },
+                                            }]}
+                                            xAxis={[{
+                                                tickLabelStyle: {
+                                                    fontSize: 11,
+                                                    fontWeight: 500,
+                                                    fill: isDark ? '#9ca3af' : '#6b7280',
+                                                },
+                                            }]}
+                                            series={[{
+                                                dataKey: 'count',
+                                                label: categoryFilter === 'all' ? 'Total Papers' :
+                                                    categoryFilter === 'oral_presentation' ? 'Oral Presentations' : 'Poster Presentations',
+                                                color: categoryFilter === 'all' ? '#0d7a6a' :
+                                                    categoryFilter === 'oral_presentation' ? '#2563eb' : '#7c3aed',
+                                                valueFormatter: (value) => `${value} paper${value > 1 ? 's' : ''}`,
+                                            }]}
+                                            margin={{ top: 25, bottom: 45, left: 160, right: 40 }}
+                                            grid={{ horizontal: true }}
+                                            slotProps={{
+                                                legend: {
+                                                    direction: 'row',
+                                                    position: { vertical: 'top', horizontal: 'right' },
+                                                    padding: 0,
+                                                    itemMarkWidth: 10,
+                                                    itemMarkHeight: 10,
+                                                    markGap: 6,
+                                                    itemGap: 12,
+                                                    labelStyle: {
+                                                        fontSize: 12,
+                                                        fontWeight: 700,
+                                                        fill: isDark ? '#d1d5db' : '#1f2937',
+                                                    },
+                                                },
+                                                bar: { rx: 6, ry: 6 },
+                                            }}
+                                            sx={{
+                                                '& .MuiChartsAxis-tickLabel': { fill: isDark ? '#d1d5db' : '#1f2937', fontWeight: 600 },
+                                                '& .MuiChartsAxis-line': { stroke: c.cardBorder, strokeWidth: 1 },
+                                                '& .MuiChartsGrid-line': { stroke: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', strokeDasharray: '4 4' },
+                                            }}
+                                        />
+                                    )}
+                                </Box>
                             </Box>
 
                             {/* Stats Summary + Top Topic */}
