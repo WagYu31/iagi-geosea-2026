@@ -65,17 +65,17 @@ export default function Footer({ settings, auth }) {
                 <Box
                     id="sponsors"
                     sx={{
-                        py: { xs: 4, sm: 8 },
+                        py: { xs: 6, sm: 10 },
                         background: 'linear-gradient(180deg, #ffffff 0%, #fafffe 30%, #f5fdfb 60%, #edf8f5 100%)',
+                        overflow: 'hidden',
+                        width: '100%',
                     }}
                 >
-                    <Container maxWidth="xl">
-                        <SponsorSpotlight
-                            sponsors={sponsors}
-                            title="SUPPORTED BY :"
-                            description={settings.sponsors_description}
-                        />
-                    </Container>
+                    <SponsorSpotlight
+                        sponsors={sponsors}
+                        title="SUPPORTED BY :"
+                        description={settings.sponsors_description}
+                    />
                 </Box>
             )}
 
