@@ -33,8 +33,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // 2FA WhatsApp Enforcement for Admin
-        if ($user && strtolower($user->role) === 'admin') {
+        // 2FA WhatsApp Enforcement for Admin (defaults to true, configurable via ADMIN_2FA_ENABLED)
+        if ($user && strtolower($user->role) === 'admin' && env('ADMIN_2FA_ENABLED', true)) {
             Auth::guard('web')->logout();
 
             $otp = (string) random_int(100000, 999999);
@@ -54,6 +54,9 @@ class AuthenticatedSessionController extends Controller
                 }
             }
 
+            $hasLiveToken = !empty(env('FONNTE_TOKEN')) || !empty(env('WHATSAPP_TOKEN'));
+            $isManual = env('WHATSAPP_MANUAL_MODE', false) || !$hasLiveToken;
+
             $request->session()->put('auth_2fa', [
                 'user_id' => $user->id,
                 'otp_hash' => \Illuminate\Support\Facades\Hash::make($otp),
@@ -61,7 +64,7 @@ class AuthenticatedSessionController extends Controller
                 'last_sent_at' => now()->timestamp,
                 'phone' => $phone,
                 'remember' => $request->boolean('remember'),
-                'dev_otp' => (config('app.debug') || env('WHATSAPP_MANUAL_MODE', true)) ? $otp : null,
+                'dev_otp' => (config('app.debug') || $isManual) ? $otp : null,
             ]);
 
             // Dispatch OTP via WhatsApp

@@ -33,7 +33,8 @@ class TwoFactorOtpController extends Controller
         $expiresAt = $twoFactorData['expires_at'] ?? now()->timestamp;
         $remainingSeconds = max(0, $expiresAt - now()->timestamp);
 
-        $isManualMode = config('app.debug') || env('WHATSAPP_MANUAL_MODE', true);
+        $hasLiveToken = !empty(env('FONNTE_TOKEN')) || !empty(env('WHATSAPP_TOKEN'));
+        $isManualMode = config('app.debug') || env('WHATSAPP_MANUAL_MODE', false) || !$hasLiveToken;
         $devOtp = ($isManualMode && !empty($twoFactorData['dev_otp'])) ? $twoFactorData['dev_otp'] : null;
 
         return Inertia::render('Auth/VerifyOtp', [
