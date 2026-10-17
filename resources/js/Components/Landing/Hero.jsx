@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { motion } from 'motion/react';
 
 // Keyframe animations
 const fadeInUp = keyframes`
@@ -129,45 +130,87 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
         return () => clearInterval(interval);
     }, [targetDateStr]);
 
+    const timeUnits = [
+        { value: countdown.days, label: 'Days' },
+        { value: countdown.hours, label: 'Hours' },
+        { value: countdown.minutes, label: 'Minutes' },
+        { value: countdown.seconds, label: 'Seconds' },
+    ];
+
     return (
         <Box
             sx={{
                 display: 'flex',
-                gap: { xs: 2, sm: 3 },
-                mt: 5,
-                animation: `${fadeInUpAnim} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.6s both`,
-                transform: 'translateZ(0)',
-                willChange: 'transform, opacity',
+                gap: { xs: 1.5, sm: 2.5, md: 3 },
+                mt: { xs: 4, sm: 5 },
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                position: 'relative',
+                zIndex: 2,
             }}
         >
-            {[
-                { value: countdown.days, label: 'Days' },
-                { value: countdown.hours, label: 'Hours' },
-                { value: countdown.minutes, label: 'Minutes' },
-                { value: countdown.seconds, label: 'Seconds' },
-            ].map((item) => (
+            {timeUnits.map((item, index) => (
                 <Box
                     key={item.label}
+                    component={motion.div}
+                    initial={{ opacity: 0, y: 35, scale: 0.88 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{
+                        duration: 0.75,
+                        delay: 1.6 + index * 0.09,
+                        ease: [0.16, 1, 0.3, 1],
+                    }}
+                    whileHover={{
+                        y: -8,
+                        scale: 1.07,
+                        boxShadow: '0 20px 40px rgba(13, 148, 136, 0.45), 0 0 25px rgba(77, 212, 172, 0.35)',
+                        borderColor: 'rgba(77, 212, 172, 0.7)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.24)',
+                        transition: { duration: 0.25 },
+                    }}
                     sx={{
                         textAlign: 'center',
-                        px: { xs: 1.5, sm: 2.5 },
-                        py: { xs: 1.5, sm: 2 },
-                        borderRadius: '16px',
+                        px: { xs: 1.8, sm: 2.8, md: 3.2 },
+                        py: { xs: 1.6, sm: 2.2 },
+                        borderRadius: '20px',
                         bgcolor: 'rgba(255, 255, 255, 0.15)',
-                        backdropFilter: 'blur(10px)',
-                        WebkitBackdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        minWidth: { xs: 60, sm: 80 },
-                        transform: 'translateZ(0)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        border: '1.5px solid rgba(255, 255, 255, 0.28)',
+                        minWidth: { xs: 72, sm: 90, md: 105 },
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+                        cursor: 'default',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transition: 'border-color 0.25s ease, background-color 0.25s ease',
                     }}
                 >
-                    <Typography
+                    {/* Top ambient glowing accent line */}
+                    <Box
                         sx={{
-                            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                            fontWeight: 800,
-                            color: 'white',
+                            position: 'absolute',
+                            top: 0,
+                            left: '20%',
+                            right: '20%',
+                            height: '2px',
+                            background: 'linear-gradient(90deg, transparent, rgba(77, 212, 172, 0.9), transparent)',
+                        }}
+                    />
+
+                    <Typography
+                        component={motion.div}
+                        key={item.value}
+                        initial={{ opacity: 0.6, y: -2 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        sx={{
+                            fontSize: { xs: '1.65rem', sm: '2.2rem', md: '2.75rem' },
+                            fontWeight: 900,
+                            color: '#ffffff',
                             lineHeight: 1,
                             fontFamily: '"Inter", "Segoe UI", sans-serif',
+                            letterSpacing: '-0.02em',
+                            textShadow: '0 2px 14px rgba(0,0,0,0.35)',
                         }}
                     >
                         {String(item.value).padStart(2, '0')}
@@ -175,11 +218,14 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
                     <Typography
                         variant="caption"
                         sx={{
-                            color: 'rgba(255,255,255,0.85)',
-                            fontWeight: 600,
-                            fontSize: { xs: '0.6rem', sm: '0.75rem' },
-                            letterSpacing: '0.1em',
+                            color: '#a7f3d0',
+                            fontWeight: 700,
+                            fontSize: { xs: '0.65rem', sm: '0.78rem' },
+                            letterSpacing: '0.14em',
                             textTransform: 'uppercase',
+                            display: 'block',
+                            mt: 0.7,
+                            textShadow: '0 1px 6px rgba(0,0,0,0.3)',
                         }}
                     >
                         {item.label}
@@ -212,8 +258,8 @@ export default function Hero({ settings, auth }) {
     };
 
     // Split title into words for staggered animation
-    const titleLine1 = heroText.title_line1 || 'PIT IAGI';
-    const titleLine2 = heroText.title_line2 || 'GEOSEA XIX 2026';
+    const titleLine1 = heroText.title_line1 || '55ᵀᴴ IAGI Annual Scientific Meeting 2026';
+    const titleLine2 = heroText.title_line2 || 'GEOSEA XIX Convention & Exhibition';
 
     return (
         <Box
@@ -446,37 +492,88 @@ export default function Hero({ settings, auth }) {
                     willChange: 'transform',
                 }}
             >
-                {/* Logo — fade in */}
+                {/* Logo — Animated Scale, Levitation & Radiant Aura Pulse */}
                 {settings.hero_logo?.url && (
                     <Box
+                        component={motion.div}
+                        initial={{ opacity: 0, scale: 0.5, y: -30 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
                         sx={{
-                            width: { xs: 100, sm: 130, md: 160 },
-                            height: { xs: 100, sm: 130, md: 160 },
-                            borderRadius: '50%',
-                            bgcolor: 'white',
-                            overflow: 'hidden',
-                            mb: 3,
-                            filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.3))',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            animation: `${fadeIn} 1s ease-out 0.2s both`,
+                            position: 'relative',
+                            mb: { xs: 2.5, sm: 3 },
                         }}
                     >
+                        {/* Aura Pulsing Glow */}
                         <Box
-                            component="img"
-                            src={settings.hero_logo.url}
-                            alt="Conference Logo"
-                            fetchPriority="high"
-                            decoding="async"
-                            width={160}
-                            height={160}
+                            component={motion.div}
+                            animate={{
+                                scale: [1, 1.25, 1],
+                                opacity: [0.45, 0.1, 0.45],
+                            }}
+                            transition={{
+                                duration: 3.6,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
                             sx={{
-                                width: '110%',
-                                height: '110%',
-                                objectFit: 'cover',
+                                position: 'absolute',
+                                inset: -12,
+                                borderRadius: '50%',
+                                background: 'radial-gradient(circle, rgba(77, 212, 172, 0.6) 0%, rgba(13, 148, 136, 0.15) 50%, transparent 75%)',
+                                zIndex: 0,
+                                pointerEvents: 'none',
                             }}
                         />
+
+                        {/* Floating Levitation Container */}
+                        <Box
+                            component={motion.div}
+                            animate={{
+                                y: [0, -8, 0],
+                            }}
+                            transition={{
+                                duration: 4.8,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                            whileHover={{
+                                scale: 1.08,
+                                rotate: [0, -2, 2, 0],
+                                transition: { duration: 0.35 },
+                            }}
+                            sx={{
+                                width: { xs: 110, sm: 135, md: 165 },
+                                height: { xs: 110, sm: 135, md: 165 },
+                                borderRadius: '50%',
+                                bgcolor: '#ffffff',
+                                overflow: 'hidden',
+                                filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.35))',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '3px solid rgba(255, 255, 255, 0.95)',
+                                boxShadow: '0 0 30px rgba(77, 212, 172, 0.45)',
+                                position: 'relative',
+                                zIndex: 1,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src={settings.hero_logo.url}
+                                alt="Conference Logo"
+                                fetchPriority="high"
+                                decoding="async"
+                                width={165}
+                                height={165}
+                                sx={{
+                                    width: '108%',
+                                    height: '108%',
+                                    objectFit: 'cover',
+                                }}
+                            />
+                        </Box>
                     </Box>
                 )}
 
@@ -488,40 +585,54 @@ export default function Hero({ settings, auth }) {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+                        fontSize: 'clamp(2.4rem, 7.5vw, 4.4rem)',
                         fontWeight: 800,
                         color: 'white',
                         textAlign: 'center',
                         letterSpacing: '-0.02em',
-                        textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                        textShadow: '0 4px 20px rgba(0,0,0,0.35)',
                     }}
                 >
-                    <Box component="span" sx={{ lineHeight: 1.1, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em' }}>
+                    <Box component="span" sx={{ lineHeight: 1.15, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em' }}>
                         {titleLine1.split(' ').map((word, i) => (
                             <Box
                                 key={i}
-                                component="span"
+                                component={motion.span}
+                                initial={{ opacity: 0, y: 35, filter: 'blur(8px)' }}
+                                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                                transition={{
+                                    duration: 0.8,
+                                    delay: 0.42 + i * 0.07,
+                                    ease: [0.16, 1, 0.3, 1],
+                                }}
                                 sx={{
                                     display: 'inline-block',
-                                    animation: `${fadeInUp} 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.12}s both`,
+                                    textShadow: '0 4px 24px rgba(0,0,0,0.4)',
                                 }}
                             >
                                 {word}
                             </Box>
                         ))}
                     </Box>
-                    <Box component="span" sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em' }}>
+                    <Box component="span" sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.3em', mt: 0.6 }}>
                         {titleLine2.split(' ').map((word, i) => (
                             <Box
                                 key={i}
-                                component="span"
+                                component={motion.span}
+                                initial={{ opacity: 0, y: 35, filter: 'blur(8px)', scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                                transition={{
+                                    duration: 0.85,
+                                    delay: 0.72 + i * 0.08,
+                                    ease: [0.16, 1, 0.3, 1],
+                                }}
                                 sx={{
                                     display: 'inline-block',
-                                    fontSize: 'clamp(1.8rem, 5vw, 3.2rem)',
-                                    fontWeight: 700,
+                                    fontSize: 'clamp(1.75rem, 4.8vw, 3.1rem)',
+                                    fontWeight: 800,
                                     color: '#4dd4ac',
-                                    textShadow: '0 2px 12px rgba(77, 212, 172, 0.4)',
-                                    animation: `${fadeInUp} 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.6 + i * 0.12}s both`,
+                                    textShadow: '0 2px 20px rgba(77, 212, 172, 0.55), 0 0 35px rgba(13, 148, 136, 0.3)',
+                                    letterSpacing: '-0.01em',
                                 }}
                             >
                                 {word}
@@ -530,111 +641,139 @@ export default function Hero({ settings, auth }) {
                     </Box>
                 </Typography>
 
-                {/* Theme — fade in */}
+                {/* Conference Theme Card — Glassmorphic Reveal with Ambient Shimmer */}
                 <Box
+                    component={motion.div}
+                    initial={{ opacity: 0, y: 40, scale: 0.94 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{
+                        duration: 0.9,
+                        delay: 0.98,
+                        ease: [0.16, 1, 0.3, 1],
+                    }}
+                    whileHover={{
+                        y: -5,
+                        scale: 1.015,
+                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35), 0 0 30px rgba(77, 212, 172, 0.35)',
+                        borderColor: 'rgba(77, 212, 172, 0.6)',
+                        transition: { duration: 0.35 },
+                    }}
                     sx={{
-                        mt: 3,
-                        px: 3,
-                        py: 1.5,
+                        mt: 3.5,
+                        px: { xs: 3, sm: 4.5 },
+                        py: { xs: 2, sm: 2.2 },
                         borderRadius: '40px',
-                        bgcolor: alpha('#ffffff', 0.15),
-                        backdropFilter: 'blur(16px)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1s both`,
+                        bgcolor: 'rgba(255, 255, 255, 0.16)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                        border: '1.5px solid rgba(255, 255, 255, 0.28)',
+                        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        cursor: 'default',
+                        maxWidth: '860px',
+                        textAlign: 'center',
                     }}
                 >
-                    <Typography
-                        variant="overline"
-                        sx={{
-                            display: 'block',
-                            fontSize: '1.1rem',
-                            fontWeight: 700,
-                            letterSpacing: '0.2em',
-                            color: 'rgba(255,255,255,0.9)',
-                            mb: 0.5,
-                            textAlign: 'center',
+                    {/* Shimmer light reflection sweep */}
+                    <Box
+                        component={motion.div}
+                        initial={{ x: '-150%' }}
+                        animate={{ x: '250%' }}
+                        transition={{
+                            duration: 2.8,
+                            repeat: Infinity,
+                            repeatDelay: 4,
+                            ease: 'easeInOut',
                         }}
-                    >
-                        {heroText.theme_label || 'CONFERENCE THEME'}
-                    </Typography>
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            bottom: 0,
+                            width: '80px',
+                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)',
+                            transform: 'skewX(-25deg)',
+                            pointerEvents: 'none',
+                        }}
+                    />
+
+                    {/* Badge with Sparkles */}
+                    <Stack direction="row" spacing={1.2} alignItems="center" justifyContent="center" sx={{ mb: 0.8 }}>
+                        <Box
+                            component={motion.div}
+                            animate={{ rotate: [0, 180, 360], scale: [1, 1.25, 1] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                            sx={{
+                                width: 7,
+                                height: 7,
+                                borderRadius: '50%',
+                                bgcolor: '#4dd4ac',
+                                boxShadow: '0 0 10px #4dd4ac',
+                            }}
+                        />
+                        <Typography
+                            variant="overline"
+                            sx={{
+                                display: 'block',
+                                fontSize: { xs: '0.82rem', sm: '0.94rem' },
+                                fontWeight: 800,
+                                letterSpacing: '0.22em',
+                                color: '#a7f3d0',
+                                textTransform: 'uppercase',
+                                textShadow: '0 0 12px rgba(167, 243, 208, 0.4)',
+                            }}
+                        >
+                            {heroText.theme_label || 'CONFERENCE THEME'}
+                        </Typography>
+                        <Box
+                            component={motion.div}
+                            animate={{ rotate: [360, 180, 0], scale: [1, 1.25, 1] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                            sx={{
+                                width: 7,
+                                height: 7,
+                                borderRadius: '50%',
+                                bgcolor: '#4dd4ac',
+                                boxShadow: '0 0 10px #4dd4ac',
+                            }}
+                        />
+                    </Stack>
+
                     <Typography
                         sx={{
-                            fontSize: { xs: '0.85rem', sm: '1rem', md: '1.1rem' },
+                            fontSize: { xs: '0.9rem', sm: '1.02rem', md: '1.12rem' },
                             fontWeight: 500,
-                            color: 'white',
-                            textAlign: 'center',
+                            color: '#ffffff',
                             fontStyle: 'italic',
+                            lineHeight: 1.5,
+                            textShadow: '0 2px 10px rgba(0,0,0,0.3)',
                         }}
                     >
-                        {heroText.theme_text || 'Advancing Geological Sciences for Sustainable Development'}
+                        "{heroText.theme_text || 'Harmonizing Georesources, Geohazard, and Heritage Conservation to Promote Sustainable Development'}"
                     </Typography>
                 </Box>
 
-                {/* CTA Buttons — fade in */}
+                {/* CTA Buttons — Staggered Entrance with Rich Hover Physics */}
                 <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     spacing={2}
+                    component={motion.div}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     sx={{
                         mt: 4,
-                        animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both`,
                     }}
                 >
                     {auth?.user ? (
-                        <Button
-                            component={Link}
-                            href="/dashboard"
-                            variant="contained"
-                            size="large"
-                            sx={{
-                                background: 'linear-gradient(135deg, #4dd4ac 0%, #0d9488 100%)',
-                                color: '#094d42',
-                                fontWeight: 700,
-                                textTransform: 'none',
-                                borderRadius: '12px',
-                                px: 4,
-                                py: 1.5,
-                                fontSize: '1rem',
-                                boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
-                                '&:hover': {
-                                    background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 8px 24px rgba(77, 212, 172, 0.5)',
-                                },
-                                transition: 'all 0.3s ease',
-                            }}
+                        <Box
+                            component={motion.div}
+                            whileHover={{ y: -3, scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
                         >
-                            Go to Dashboard
-                        </Button>
-                    ) : (
-                        <>
                             <Button
                                 component={Link}
-                                href="/tickets"
-                                variant="contained"
-                                size="large"
-                                sx={{
-                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                    color: '#ffffff',
-                                    fontWeight: 800,
-                                    textTransform: 'none',
-                                    borderRadius: '12px',
-                                    px: 3.5,
-                                    py: 1.5,
-                                    fontSize: '1rem',
-                                    boxShadow: '0 4px 20px rgba(16, 185, 129, 0.45)',
-                                    '&:hover': {
-                                        background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 25px rgba(16, 185, 129, 0.55)',
-                                    },
-                                    transition: 'all 0.3s ease',
-                                }}
-                            >
-                                Conference Registration
-                            </Button>
-                            <Button
-                                component={Link}
-                                href="/register"
+                                href="/dashboard"
                                 variant="contained"
                                 size="large"
                                 sx={{
@@ -643,87 +782,199 @@ export default function Hero({ settings, auth }) {
                                     fontWeight: 700,
                                     textTransform: 'none',
                                     borderRadius: '12px',
-                                    px: 3.5,
+                                    px: 4,
                                     py: 1.5,
                                     fontSize: '1rem',
-                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
-                                    cursor: 'pointer',
                                     '&:hover': {
                                         background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
-                                        transform: 'translateY(-2px)',
                                         boxShadow: '0 8px 24px rgba(77, 212, 172, 0.5)',
                                     },
                                     transition: 'all 0.3s ease',
                                 }}
                             >
-                                Author Registration
+                                Go to Dashboard
                             </Button>
-                            <Button
-                                component={Link}
-                                href="/login"
-                                variant="outlined"
-                                size="large"
-                                sx={{
-                                    borderColor: 'rgba(255,255,255,0.5)',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    textTransform: 'none',
-                                    borderRadius: '12px',
-                                    px: 3.5,
-                                    py: 1.5,
-                                    fontSize: '1rem',
-                                    '&:hover': {
-                                        borderColor: 'white',
-                                        bgcolor: alpha('#ffffff', 0.1),
-                                    },
-                                }}
+                        </Box>
+                    ) : (
+                        <>
+                            <Box
+                                component={motion.div}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 1.24, ease: [0.16, 1, 0.3, 1] }}
+                                whileHover={{ y: -3, scale: 1.03 }}
+                                whileTap={{ scale: 0.97 }}
                             >
-                                Sign In
-                            </Button>
+                                <Button
+                                    component={Link}
+                                    href="/tickets"
+                                    variant="contained"
+                                    size="large"
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        color: '#ffffff',
+                                        fontWeight: 800,
+                                        textTransform: 'none',
+                                        borderRadius: '12px',
+                                        px: 3.5,
+                                        py: 1.5,
+                                        fontSize: '1rem',
+                                        boxShadow: '0 4px 20px rgba(16, 185, 129, 0.45)',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
+                                            boxShadow: '0 8px 25px rgba(16, 185, 129, 0.55)',
+                                        },
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    Conference Registration
+                                </Button>
+                            </Box>
+                            <Box
+                                component={motion.div}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 1.3, ease: [0.16, 1, 0.3, 1] }}
+                                whileHover={{ y: -3, scale: 1.03 }}
+                                whileTap={{ scale: 0.97 }}
+                            >
+                                <Button
+                                    component={Link}
+                                    href="/register"
+                                    variant="contained"
+                                    size="large"
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #4dd4ac 0%, #0d9488 100%)',
+                                        color: '#094d42',
+                                        fontWeight: 700,
+                                        textTransform: 'none',
+                                        borderRadius: '12px',
+                                        px: 3.5,
+                                        py: 1.5,
+                                        fontSize: '1rem',
+                                        whiteSpace: 'nowrap',
+                                        boxShadow: '0 4px 16px rgba(77, 212, 172, 0.4)',
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #6ee7b7 0%, #14b8a6 100%)',
+                                            boxShadow: '0 8px 24px rgba(77, 212, 172, 0.5)',
+                                        },
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    Author Registration
+                                </Button>
+                            </Box>
+                            <Box
+                                component={motion.div}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 1.36, ease: [0.16, 1, 0.3, 1] }}
+                                whileHover={{ y: -3, scale: 1.03 }}
+                                whileTap={{ scale: 0.97 }}
+                            >
+                                <Button
+                                    component={Link}
+                                    href="/login"
+                                    variant="outlined"
+                                    size="large"
+                                    sx={{
+                                        borderColor: 'rgba(255,255,255,0.6)',
+                                        color: 'white',
+                                        fontWeight: 600,
+                                        textTransform: 'none',
+                                        borderRadius: '12px',
+                                        px: 3.5,
+                                        py: 1.5,
+                                        fontSize: '1rem',
+                                        bgcolor: 'rgba(255,255,255,0.06)',
+                                        backdropFilter: 'blur(8px)',
+                                        '&:hover': {
+                                            borderColor: 'white',
+                                            bgcolor: 'rgba(255,255,255,0.18)',
+                                            boxShadow: '0 4px 16px rgba(255,255,255,0.2)',
+                                        },
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    Sign In
+                                </Button>
+                            </Box>
                         </>
                     )}
                 </Stack>
 
-                {/* Secondary Hero Logos — fade in */}
+                {/* Secondary Hero Logos — Pill Card with Staggered Interactive Floating Badges */}
                 {settings.hero_logos_secondary && settings.hero_logos_secondary.length > 0 && (
                     <Box
+                        component={motion.div}
+                        initial={{ opacity: 0, y: 35, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                            duration: 0.85,
+                            delay: 1.38,
+                            ease: [0.16, 1, 0.3, 1],
+                        }}
+                        whileHover={{
+                            boxShadow: '0 16px 45px rgba(0, 0, 0, 0.3), 0 0 30px rgba(77, 212, 172, 0.25)',
+                            borderColor: 'rgba(77, 212, 172, 0.45)',
+                        }}
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexWrap: 'wrap',
-                            gap: { xs: 1.5, sm: 2 },
-                            mt: 4,
-                            px: { xs: 2, sm: 4 },
-                            py: 1.5,
-                            borderRadius: '50px',
-                            bgcolor: 'rgba(255, 255, 255, 0.15)',
-                            backdropFilter: 'blur(10px)',
-                            WebkitBackdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            animation: `${fadeInUp} 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both`,
-                            transform: 'translateZ(0)',
+                            gap: { xs: 1.2, sm: 1.6, md: 1.8 },
+                            mt: 4.5,
+                            px: { xs: 2.2, sm: 3.5 },
+                            py: 1.6,
+                            borderRadius: '60px',
+                            bgcolor: 'rgba(255, 255, 255, 0.16)',
+                            backdropFilter: 'blur(16px)',
+                            WebkitBackdropFilter: 'blur(16px)',
+                            border: '1.5px solid rgba(255, 255, 255, 0.28)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                            position: 'relative',
+                            transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
                         }}
                     >
                         {settings.hero_logos_secondary.map((logo, index) => (
                             <Box
                                 key={index}
+                                component={motion.div}
+                                initial={{ opacity: 0, scale: 0.2, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.55,
+                                    delay: 1.45 + index * 0.05,
+                                    ease: [0.16, 1, 0.3, 1],
+                                }}
+                                whileHover={{
+                                    scale: 1.24,
+                                    y: -6,
+                                    rotate: [0, -3, 3, 0],
+                                    boxShadow: '0 12px 25px rgba(77, 212, 172, 0.55), 0 0 18px rgba(255, 255, 255, 0.85)',
+                                    borderColor: '#4dd4ac',
+                                    zIndex: 10,
+                                    transition: { duration: 0.25 },
+                                }}
+                                whileTap={{ scale: 0.95 }}
                                 sx={{
-                                    width: { xs: 48, sm: 56, md: 64 },
-                                    height: { xs: 48, sm: 56, md: 64 },
+                                    width: { xs: 46, sm: 54, md: 62 },
+                                    height: { xs: 46, sm: 54, md: 62 },
                                     borderRadius: '50%',
-                                    bgcolor: 'white',
+                                    bgcolor: '#ffffff',
                                     overflow: 'hidden',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                                    border: '2px solid rgba(255,255,255,0.6)',
-                                    transition: 'transform 0.25s ease',
-                                    '&:hover': {
-                                        transform: 'scale(1.08)',
-                                    },
+                                    boxShadow: '0 4px 16px rgba(0,0,0,0.22)',
+                                    border: '2.5px solid rgba(255, 255, 255, 0.9)',
+                                    cursor: 'pointer',
+                                    position: 'relative',
+                                    flexShrink: 0,
+                                    transition: 'border-color 0.25s ease',
                                 }}
                             >
                                 <Box
@@ -735,9 +986,10 @@ export default function Hero({ settings, auth }) {
                                     width={56}
                                     height={56}
                                     sx={{
-                                        width: '85%',
-                                        height: '85%',
+                                        width: '84%',
+                                        height: '84%',
                                         objectFit: 'contain',
+                                        transition: 'transform 0.25s ease',
                                     }}
                                 />
                             </Box>

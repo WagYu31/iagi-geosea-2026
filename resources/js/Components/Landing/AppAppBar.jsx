@@ -13,6 +13,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { motion } from 'motion/react';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     display: 'flex',
@@ -63,7 +64,13 @@ export default function AppAppBar({ auth }) {
             }}
         >
             <Container maxWidth="xl" sx={{ maxWidth: '1360px !important' }}>
-                <StyledToolbar variant="dense" disableGutters>
+                <Box
+                    component={motion.div}
+                    initial={{ y: -36, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                >
+                    <StyledToolbar variant="dense" disableGutters>
                     {/* Logo */}
                     <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
                         <Box
@@ -328,6 +335,7 @@ export default function AppAppBar({ auth }) {
                         </Drawer>
                     </Box>
                 </StyledToolbar>
+                </Box>
             </Container>
         </AppBar>
     );
