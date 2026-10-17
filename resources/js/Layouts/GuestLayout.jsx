@@ -8,7 +8,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Button from '@mui/material/Button';
 import SparklesIcon from '@mui/icons-material/AutoAwesome';
 
-export default function GuestLayout({ children, maxWidth = 'sm', wide = false }) {
+export default function GuestLayout({ children, maxWidth = 'sm', wide = false, containerMaxWidth }) {
     return (
         <Box
             sx={{
@@ -103,7 +103,7 @@ export default function GuestLayout({ children, maxWidth = 'sm', wide = false })
                     position: 'relative',
                     zIndex: 2,
                     width: '100%',
-                    maxWidth: wide ? { xs: '100%', sm: '640px', md: '1060px', lg: '1160px' } : '490px',
+                    maxWidth: containerMaxWidth || (wide ? { xs: '100%', sm: '640px', md: '1060px', lg: '1160px' } : '490px'),
                     px: { xs: 1, sm: 2.5, md: 3 },
                     py: { xs: 2, md: 3 },
                     my: 'auto',

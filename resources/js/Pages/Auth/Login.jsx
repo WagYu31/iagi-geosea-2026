@@ -12,6 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import Alert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -19,7 +21,12 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import SparklesIcon from '@mui/icons-material/AutoAwesome';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import { alpha } from '@mui/material/styles';
+import { motion } from 'motion/react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -40,7 +47,7 @@ export default function Login({ status, canResetPassword }) {
     const tealPrimary = '#0d9488';
     const tealDark = '#094d42';
 
-    // 21st.dev Clean Input Styling - Labels placed cleanly ABOVE inputs
+    // Clean Input Styling - Labels placed cleanly ABOVE inputs
     const modernInputSx = {
         '& .MuiOutlinedInput-root': {
             borderRadius: '12px',
@@ -75,301 +82,665 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout wide={true} containerMaxWidth={{ xs: '100%', sm: '580px', md: '960px', lg: '1020px' }}>
             <Head title="Sign In - 55th PIT IAGI - GEOSEA XIX 2026" />
 
-            {/* Header with 21st.dev Badge & Icon */}
-            <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 3.5 } }}>
+            {/* UNIFIED 2-BOX MASTER CARD: Side-by-Side on Desktop */}
+            <Paper
+                component={motion.div}
+                initial={{ opacity: 0, y: 24, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                elevation={0}
+                sx={{
+                    width: '100%',
+                    borderRadius: { xs: '20px', md: '24px' },
+                    overflow: 'hidden',
+                    boxShadow: '0 30px 90px -20px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 50px -10px rgba(20, 184, 166, 0.25)',
+                    border: '1.5px solid rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    alignItems: 'stretch',
+                }}
+            >
+                {/* ======================================================== */}
+                {/* KOTAK KIRI: 44% Width - Professional Conference Branding  */}
+                {/* ======================================================== */}
                 <Box
                     sx={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 54,
-                        height: 54,
-                        borderRadius: '16px',
-                        background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(52, 211, 153, 0.2) 100%)',
-                        border: '1px solid rgba(13, 148, 136, 0.25)',
-                        boxShadow: '0 4px 16px rgba(13, 148, 136, 0.15)',
-                        mb: 2,
+                        width: { xs: '100%', md: '44%' },
+                        p: { xs: 3, sm: 4, lg: 4.5 },
+                        background: 'linear-gradient(165deg, #021a15 0%, #06372f 45%, #031e19 100%)',
+                        borderRight: { md: '1px solid rgba(77, 212, 172, 0.16)' },
+                        borderBottom: { xs: '1px solid rgba(77, 212, 172, 0.16)', md: 'none' },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        color: '#ffffff',
                     }}
                 >
-                    <LoginIcon sx={{ fontSize: 26, color: tealPrimary }} />
-                </Box>
-
-                <Typography
-                    variant="h5"
-                    component="h1"
-                    sx={{
-                        fontWeight: 900,
-                        color: '#0f172a',
-                        fontSize: { xs: '1.5rem', sm: '1.8rem' },
-                        letterSpacing: '-0.025em',
-                        lineHeight: 1.25,
-                        mb: 0.6,
-                    }}
-                >
-                    Welcome Back
-                </Typography>
-                <Typography
-                    sx={{
-                        color: '#64748b',
-                        fontSize: '0.88rem',
-                        fontWeight: 400,
-                    }}
-                >
-                    Sign in to access your author & delegate dashboard
-                </Typography>
-            </Box>
-
-            {/* Status Message */}
-            {status && (
-                <Alert
-                    severity="success"
-                    sx={{
-                        mb: 3,
-                        borderRadius: '12px',
-                        bgcolor: alpha(tealPrimary, 0.08),
-                        color: tealDark,
-                        fontWeight: 500,
-                        '& .MuiAlert-icon': { color: tealPrimary },
-                        border: `1px solid ${alpha(tealPrimary, 0.25)}`,
-                    }}
-                >
-                    {status}
-                </Alert>
-            )}
-
-            <form onSubmit={submit}>
-                {/* Email Field with Clean Above-Label */}
-                <Box sx={{ mb: 2.2 }}>
-                    <Typography
-                        component="label"
-                        htmlFor="email"
+                    {/* Top Laser Strip on Left Box */}
+                    <Box
                         sx={{
-                            display: 'block',
-                            fontSize: '0.82rem',
-                            fontWeight: 600,
-                            color: '#334155',
-                            mb: 0.6,
-                            letterSpacing: '0.01em',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '3.5px',
+                            background: 'linear-gradient(90deg, #10b981 0%, #34d399 50%, #2dd4bf 100%)',
                         }}
-                    >
-                        Email Address <Box component="span" sx={{ color: '#ef4444' }}>*</Box>
-                    </Typography>
-                    <TextField
-                        id="email"
-                        type="email"
-                        fullWidth
-                        placeholder="you@institution.edu"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        error={!!errors.email}
-                        helperText={errors.email}
-                        autoComplete="username"
-                        autoFocus
-                        required
-                        slotProps={{
-                            input: {
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <EmailOutlinedIcon sx={{ color: '#94a3b8', fontSize: 19 }} />
-                                    </InputAdornment>
-                                ),
-                            },
-                        }}
-                        sx={modernInputSx}
                     />
-                </Box>
 
-                {/* Password Field with Clean Above-Label */}
-                <Box sx={{ mb: 1.6 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
-                        <Typography
-                            component="label"
-                            htmlFor="password"
-                            sx={{
-                                fontSize: '0.82rem',
-                                fontWeight: 600,
-                                color: '#334155',
-                                letterSpacing: '0.01em',
-                            }}
-                        >
-                            Password <Box component="span" sx={{ color: '#ef4444' }}>*</Box>
-                        </Typography>
-                        {canResetPassword && (
-                            <Link
-                                href={route('password.request')}
-                                style={{
-                                    color: tealPrimary,
-                                    fontSize: '0.8rem',
-                                    fontWeight: 600,
-                                    textDecoration: 'none',
-                                    transition: 'color 0.15s ease',
+                    {/* Subtle Radial Glow Behind Left Panel */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '-20%',
+                            left: '-20%',
+                            width: '380px',
+                            height: '380px',
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(20, 184, 166, 0.28) 0%, transparent 70%)',
+                            filter: 'blur(55px)',
+                            pointerEvents: 'none',
+                        }}
+                    />
+
+                    {/* Top Content */}
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        {/* Emblem Medallion & Event Title */}
+                        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2.5 }}>
+                            <Box
+                                sx={{
+                                    width: { xs: 52, sm: 60 },
+                                    height: { xs: 52, sm: 60 },
+                                    borderRadius: '16px',
+                                    bgcolor: '#ffffff',
+                                    p: 0.85,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 0 25px rgba(20, 184, 166, 0.4), 0 8px 24px rgba(0, 0, 0, 0.45)',
+                                    border: '1.5px solid rgba(52, 211, 153, 0.45)',
+                                    flexShrink: 0,
+                                    transition: 'transform 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'scale(1.04)',
+                                    },
                                 }}
                             >
-                                Forgot password?
-                            </Link>
-                        )}
-                    </Box>
-                    <TextField
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        fullWidth
-                        placeholder="Enter your password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        error={!!errors.password}
-                        helperText={errors.password}
-                        autoComplete="current-password"
-                        required
-                        slotProps={{
-                            input: {
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <LockOutlinedIcon sx={{ color: '#94a3b8', fontSize: 19 }} />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            edge="end"
-                                            size="small"
-                                            sx={{
-                                                color: '#94a3b8',
-                                                '&:hover': { color: tealPrimary },
-                                            }}
-                                        >
-                                            {showPassword ? (
-                                                <VisibilityOffIcon sx={{ fontSize: 19 }} />
-                                            ) : (
-                                                <VisibilityIcon sx={{ fontSize: 19 }} />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            },
-                        }}
-                        sx={modernInputSx}
-                    />
-                </Box>
+                                <Box
+                                    component="img"
+                                    src="/favicon.webp"
+                                    alt="PIT IAGI - GEOSEA Logo"
+                                    width={48}
+                                    height={48}
+                                    fetchPriority="high"
+                                    decoding="async"
+                                    sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                />
+                            </Box>
+                            <Box>
+                                <Box
+                                    sx={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 0.6,
+                                        px: 1,
+                                        py: 0.3,
+                                        borderRadius: '9999px',
+                                        bgcolor: 'rgba(52, 211, 153, 0.15)',
+                                        border: '1px solid rgba(52, 211, 153, 0.3)',
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    <SparklesIcon sx={{ fontSize: 11, color: '#34d399' }} />
+                                    <Typography
+                                        sx={{
+                                            color: '#6ee7b7',
+                                            fontWeight: 800,
+                                            letterSpacing: '0.08em',
+                                            textTransform: 'uppercase',
+                                            fontSize: '0.62rem',
+                                        }}
+                                    >
+                                        Annual Convention
+                                    </Typography>
+                                </Box>
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        fontWeight: 900,
+                                        lineHeight: 1.2,
+                                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                                        color: '#ffffff',
+                                        letterSpacing: '-0.015em',
+                                    }}
+                                >
+                                    55ᵀᴴ PIT IAGI ·{' '}
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #34d399 0%, #10b981 50%, #2dd4bf 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                        }}
+                                    >
+                                        GEOSEA XIX 2026
+                                    </Box>
+                                </Typography>
+                            </Box>
+                        </Stack>
 
-                {/* Remember Me Checkbox */}
-                <Box sx={{ mb: 2.8 }}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={data.remember}
-                                onChange={(e) => setData('remember', e.target.checked)}
+                        {/* Theme Motto Quote */}
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: 'rgba(255, 255, 255, 0.92)',
+                                fontSize: '0.85rem',
+                                lineHeight: 1.5,
+                                mb: 3,
+                                fontStyle: 'italic',
+                                borderLeft: '3px solid #34d399',
+                                pl: 1.6,
+                            }}
+                        >
+                            “Harmony of Geoscience and Technology for Sustainable Future”
+                        </Typography>
+
+                        {/* Professional Credentials / Features */}
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            <Typography
+                                variant="caption"
                                 sx={{
-                                    color: '#cbd5e1',
-                                    '&.Mui-checked': { color: tealPrimary },
-                                    padding: '4px 6px',
+                                    color: '#6ee7b7',
+                                    fontWeight: 800,
+                                    letterSpacing: '0.1em',
+                                    textTransform: 'uppercase',
+                                    fontSize: '0.7rem',
+                                    display: 'block',
+                                    mb: 1.8,
                                 }}
-                                size="small"
-                            />
-                        }
-                        label={
-                            <Typography sx={{ fontSize: '0.84rem', color: '#64748b', fontWeight: 500 }}>
-                                Keep me signed in on this device
+                            >
+                                Conference Portal Gateway
                             </Typography>
-                        }
-                    />
-                </Box>
 
-                {/* 21st.dev Style Signature Primary CTA Button */}
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    disabled={processing}
-                    startIcon={
-                        processing ? (
-                            <CircularProgress size={18} sx={{ color: 'white' }} />
-                        ) : (
-                            <LoginIcon sx={{ fontSize: 19 }} />
-                        )
-                    }
-                    sx={{
-                        py: 1.4,
-                        borderRadius: '12px',
-                        textTransform: 'none',
-                        fontWeight: 700,
-                        fontSize: '0.95rem',
-                        letterSpacing: '0.01em',
-                        background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #059669 100%)',
-                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -5px rgba(9, 77, 66, 0.45)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        color: '#ffffff',
-                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                        '&:hover': {
-                            background: 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)',
-                            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 28px -4px rgba(9, 77, 66, 0.55)',
-                            transform: 'translateY(-2px)',
-                        },
-                        '&:active': {
-                            transform: 'translateY(1px) scale(0.99)',
-                        },
-                        '&.Mui-disabled': {
-                            background: '#94a3b8',
-                            color: '#ffffff',
-                        },
-                    }}
-                >
-                    {processing ? 'Signing in...' : 'Sign In to Account'}
-                </Button>
+                            <Stack spacing={1.5}>
+                                {/* Feature 1: Paper Submissions */}
+                                <Box
+                                    sx={{
+                                        p: 1.6,
+                                        borderRadius: '12px',
+                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        backdropFilter: 'blur(10px)',
+                                        display: 'flex',
+                                        gap: 1.4,
+                                        alignItems: 'center',
+                                        transition: 'all 0.25s ease',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                            borderColor: 'rgba(52, 211, 153, 0.35)',
+                                            transform: 'translateX(3px)',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 36,
+                                            height: 36,
+                                            borderRadius: '10px',
+                                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                            border: '1px solid rgba(52, 211, 153, 0.3)',
+                                            color: '#34d399',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <ArticleOutlinedIcon sx={{ fontSize: 18 }} />
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.82rem', color: '#ffffff' }}>
+                                            Scientific Papers & Proceedings
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.72)', fontSize: '0.72rem', display: 'block' }}>
+                                            Oral & poster editorial tracking and peer review workflow.
+                                        </Typography>
+                                    </Box>
+                                </Box>
 
-                {/* Divider */}
-                <Divider sx={{ my: 2.8 }}>
-                    <Typography
+                                {/* Feature 2: ASEAN Regional Network */}
+                                <Box
+                                    sx={{
+                                        p: 1.6,
+                                        borderRadius: '12px',
+                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        backdropFilter: 'blur(10px)',
+                                        display: 'flex',
+                                        gap: 1.4,
+                                        alignItems: 'center',
+                                        transition: 'all 0.25s ease',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                            borderColor: 'rgba(52, 211, 153, 0.35)',
+                                            transform: 'translateX(3px)',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 36,
+                                            height: 36,
+                                            borderRadius: '10px',
+                                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                            border: '1px solid rgba(52, 211, 153, 0.3)',
+                                            color: '#34d399',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <GroupsOutlinedIcon sx={{ fontSize: 18 }} />
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.82rem', color: '#ffffff' }}>
+                                            Regional Geoscience Community
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.72)', fontSize: '0.72rem', display: 'block' }}>
+                                            Connect with 1,500+ ASEAN geoscientists and leaders.
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* Feature 3: Official Badges & Certificates */}
+                                <Box
+                                    sx={{
+                                        p: 1.6,
+                                        borderRadius: '12px',
+                                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        backdropFilter: 'blur(10px)',
+                                        display: 'flex',
+                                        gap: 1.4,
+                                        alignItems: 'center',
+                                        transition: 'all 0.25s ease',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.09)',
+                                            borderColor: 'rgba(52, 211, 153, 0.35)',
+                                            transform: 'translateX(3px)',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: 36,
+                                            height: 36,
+                                            borderRadius: '10px',
+                                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 100%)',
+                                            border: '1px solid rgba(52, 211, 153, 0.3)',
+                                            color: '#34d399',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <VerifiedUserOutlinedIcon sx={{ fontSize: 18 }} />
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.82rem', color: '#ffffff' }}>
+                                            Delegate QR Badges & Certificates
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.72)', fontSize: '0.72rem', display: 'block' }}>
+                                            Instant check-in and accredited participation certificates.
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Stack>
+                        </Box>
+                    </Box>
+
+                    {/* Bottom Organizer Signature */}
+                    <Box
                         sx={{
-                            color: '#94a3b8',
-                            fontSize: '0.72rem',
-                            px: 1.4,
-                            fontWeight: 600,
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
+                            mt: 3.5,
+                            pt: 2.2,
+                            borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+                            position: 'relative',
+                            zIndex: 1,
                         }}
                     >
-                        NEW TO PIT IAGI - GEOSEA?
-                    </Typography>
-                </Divider>
+                        <Stack direction="row" spacing={1.2} alignItems="center">
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#34d399', boxShadow: '0 0 10px #34d399' }} />
+                            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.85)', fontWeight: 600, fontSize: '0.76rem' }}>
+                                Organized by Ikatan Ahli Geologi Indonesia (IAGI) & GEOSEA
+                            </Typography>
+                        </Stack>
+                    </Box>
+                </Box>
 
-                {/* Secondary Register Button */}
-                <Button
-                    component={Link}
-                    href={route('register')}
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<PersonAddOutlinedIcon sx={{ fontSize: 19 }} />}
+                {/* ======================================================== */}
+                {/* KOTAK KANAN: 56% Width - Clean & Secure Sign In Form      */}
+                {/* ======================================================== */}
+                <Box
                     sx={{
-                        py: 1.25,
-                        borderRadius: '12px',
-                        textTransform: 'none',
-                        fontWeight: 700,
-                        fontSize: '0.88rem',
-                        color: tealDark,
-                        borderColor: '#e2e8f0',
-                        borderWidth: '1.5px',
-                        background: '#ffffff',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                            borderColor: tealPrimary,
-                            borderWidth: '1.5px',
-                            bgcolor: alpha(tealPrimary, 0.05),
-                            transform: 'translateY(-1.5px)',
-                            boxShadow: '0 4px 12px rgba(13, 148, 136, 0.08)',
-                        },
-                        '&:active': {
-                            transform: 'translateY(1px)',
-                        },
+                        width: { xs: '100%', md: '56%' },
+                        p: { xs: 3, sm: 4, lg: 4.5 },
+                        bgcolor: '#ffffff',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        position: 'relative',
                     }}
                 >
-                    Create Author / Delegate Account
-                </Button>
-            </form>
+                    {/* Header with Login Icon Badge */}
+                    <Box sx={{ mb: 3 }}>
+                        <Box
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 48,
+                                height: 48,
+                                borderRadius: '14px',
+                                background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.12) 0%, rgba(52, 211, 153, 0.2) 100%)',
+                                border: '1px solid rgba(13, 148, 136, 0.25)',
+                                boxShadow: '0 4px 16px rgba(13, 148, 136, 0.12)',
+                                mb: 1.5,
+                            }}
+                        >
+                            <LoginIcon sx={{ fontSize: 24, color: tealPrimary }} />
+                        </Box>
+
+                        <Typography
+                            variant="h5"
+                            component="h1"
+                            sx={{
+                                fontWeight: 900,
+                                color: '#0f172a',
+                                fontSize: { xs: '1.45rem', sm: '1.7rem' },
+                                letterSpacing: '-0.025em',
+                                lineHeight: 1.25,
+                                mb: 0.5,
+                            }}
+                        >
+                            Welcome Back
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: '#64748b',
+                                fontSize: '0.86rem',
+                                fontWeight: 400,
+                            }}
+                        >
+                            Sign in to access your author & delegate dashboard
+                        </Typography>
+                    </Box>
+
+                    {/* Status Message */}
+                    {status && (
+                        <Alert
+                            severity="success"
+                            sx={{
+                                mb: 2.5,
+                                borderRadius: '12px',
+                                bgcolor: alpha(tealPrimary, 0.08),
+                                color: tealDark,
+                                fontWeight: 500,
+                                '& .MuiAlert-icon': { color: tealPrimary },
+                                border: `1px solid ${alpha(tealPrimary, 0.25)}`,
+                            }}
+                        >
+                            {status}
+                        </Alert>
+                    )}
+
+                    <form onSubmit={submit}>
+                        {/* Email Field with Clean Above-Label */}
+                        <Box sx={{ mb: 2.2 }}>
+                            <Typography
+                                component="label"
+                                htmlFor="email"
+                                sx={{
+                                    display: 'block',
+                                    fontSize: '0.82rem',
+                                    fontWeight: 600,
+                                    color: '#334155',
+                                    mb: 0.6,
+                                    letterSpacing: '0.01em',
+                                }}
+                            >
+                                Email Address <Box component="span" sx={{ color: '#ef4444' }}>*</Box>
+                            </Typography>
+                            <TextField
+                                id="email"
+                                type="email"
+                                fullWidth
+                                placeholder="you@institution.edu"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                error={!!errors.email}
+                                helperText={errors.email}
+                                autoComplete="username"
+                                autoFocus
+                                required
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <EmailOutlinedIcon sx={{ color: '#94a3b8', fontSize: 19 }} />
+                                            </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                                sx={modernInputSx}
+                            />
+                        </Box>
+
+                        {/* Password Field with Clean Above-Label */}
+                        <Box sx={{ mb: 1.6 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
+                                <Typography
+                                    component="label"
+                                    htmlFor="password"
+                                    sx={{
+                                        fontSize: '0.82rem',
+                                        fontWeight: 600,
+                                        color: '#334155',
+                                        letterSpacing: '0.01em',
+                                    }}
+                                >
+                                    Password <Box component="span" sx={{ color: '#ef4444' }}>*</Box>
+                                </Typography>
+                                {canResetPassword && (
+                                    <Link
+                                        href={route('password.request')}
+                                        style={{
+                                            color: tealPrimary,
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600,
+                                            textDecoration: 'none',
+                                            transition: 'color 0.15s ease',
+                                        }}
+                                    >
+                                        Forgot password?
+                                    </Link>
+                                )}
+                            </Box>
+                            <TextField
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                fullWidth
+                                placeholder="Enter your password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                error={!!errors.password}
+                                helperText={errors.password}
+                                autoComplete="current-password"
+                                required
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <LockOutlinedIcon sx={{ color: '#94a3b8', fontSize: 19 }} />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    edge="end"
+                                                    size="small"
+                                                    sx={{
+                                                        color: '#94a3b8',
+                                                        '&:hover': { color: tealPrimary },
+                                                    }}
+                                                >
+                                                    {showPassword ? (
+                                                        <VisibilityOffIcon sx={{ fontSize: 19 }} />
+                                                    ) : (
+                                                        <VisibilityIcon sx={{ fontSize: 19 }} />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                                sx={modernInputSx}
+                            />
+                        </Box>
+
+                        {/* Remember Me Checkbox */}
+                        <Box sx={{ mb: 2.6 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={data.remember}
+                                        onChange={(e) => setData('remember', e.target.checked)}
+                                        sx={{
+                                            color: '#cbd5e1',
+                                            '&.Mui-checked': { color: tealPrimary },
+                                            padding: '4px 6px',
+                                        }}
+                                        size="small"
+                                    />
+                                }
+                                label={
+                                    <Typography sx={{ fontSize: '0.84rem', color: '#64748b', fontWeight: 500 }}>
+                                        Keep me signed in on this device
+                                    </Typography>
+                                }
+                            />
+                        </Box>
+
+                        {/* Signature Primary CTA Button */}
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            disabled={processing}
+                            startIcon={
+                                processing ? (
+                                    <CircularProgress size={18} sx={{ color: 'white' }} />
+                                ) : (
+                                    <LoginIcon sx={{ fontSize: 19 }} />
+                                )
+                            }
+                            sx={{
+                                py: 1.35,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.94rem',
+                                letterSpacing: '0.01em',
+                                background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #059669 100%)',
+                                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -5px rgba(9, 77, 66, 0.45)',
+                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                color: '#ffffff',
+                                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #0d7a6a 0%, #059669 100%)',
+                                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 28px -4px rgba(9, 77, 66, 0.55)',
+                                    transform: 'translateY(-2px)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(1px) scale(0.99)',
+                                },
+                                '&.Mui-disabled': {
+                                    background: '#94a3b8',
+                                    color: '#ffffff',
+                                },
+                            }}
+                        >
+                            {processing ? 'Signing in...' : 'Sign In to Account'}
+                        </Button>
+
+                        {/* Divider */}
+                        <Divider sx={{ my: 2.6 }}>
+                            <Typography
+                                sx={{
+                                    color: '#94a3b8',
+                                    fontSize: '0.7rem',
+                                    px: 1.2,
+                                    fontWeight: 600,
+                                    letterSpacing: '0.08em',
+                                    textTransform: 'uppercase',
+                                }}
+                            >
+                                NEW TO PIT IAGI - GEOSEA?
+                            </Typography>
+                        </Divider>
+
+                        {/* Secondary Register Button */}
+                        <Button
+                            component={Link}
+                            href={route('register')}
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<PersonAddOutlinedIcon sx={{ fontSize: 19 }} />}
+                            sx={{
+                                py: 1.2,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.88rem',
+                                color: tealDark,
+                                borderColor: '#e2e8f0',
+                                borderWidth: '1.5px',
+                                background: '#ffffff',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    borderColor: tealPrimary,
+                                    borderWidth: '1.5px',
+                                    bgcolor: alpha(tealPrimary, 0.05),
+                                    transform: 'translateY(-1.5px)',
+                                    boxShadow: '0 4px 12px rgba(13, 148, 136, 0.08)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(1px)',
+                                },
+                            }}
+                        >
+                            Create Author / Delegate Account
+                        </Button>
+
+                        {/* Security Assurance Footer */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.7, mt: 2.2 }}>
+                            <ShieldOutlinedIcon sx={{ fontSize: 14, color: '#94a3b8' }} />
+                            <Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 500 }}>
+                                Official SSL Encrypted Conference Portal
+                            </Typography>
+                        </Box>
+                    </form>
+                </Box>
+            </Paper>
         </GuestLayout>
     );
 }
