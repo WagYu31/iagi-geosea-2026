@@ -11,6 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import MuiLink from '@mui/material/Link';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import SponsorSpotlight from './SponsorSpotlight';
 
 const SocialIcon = ({ type }) => {
     const icons = {
@@ -59,114 +60,21 @@ export default function Footer({ settings, auth }) {
 
     return (
         <>
-            {/* Sponsors Section */}
+            {/* Sponsors Section - 3D Carousel Spotlight (GetLayers.ai style) */}
             {sponsors.length > 0 && (
-                <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(180deg, #ffffff 0%, #fafffe 30%, #f5fdfb 60%, #edf8f5 100%)' }}>
-                    <Container maxWidth="lg">
-                        <Typography
-                            component="h2"
-                            variant="h5"
-                            align="center"
-                            sx={{
-                                fontWeight: 800,
-                                mb: 2,
-                                color: 'text.primary',
-                                fontSize: { xs: '1.5rem', md: '2rem' },
-                                letterSpacing: '0.05em',
-                            }}
-                        >
-                            SUPPORTED BY :
-                        </Typography>
-                        {settings.sponsors_description && settings.sponsors_description.trim() !== '' && (
-                            <Typography
-                                variant="body1"
-                                align="center"
-                                sx={{ mb: { xs: 3, md: 5 }, color: '#0d7a6a', fontStyle: 'italic', maxWidth: 600, mx: 'auto' }}
-                            >
-                                {settings.sponsors_description}
-                            </Typography>
-                        )}
-
-                        {/* Marquee */}
-                        <Box
-                            sx={{
-                                position: 'relative',
-                                width: '100vw',
-                                ml: 'calc(-50vw + 50%)',
-                                overflow: 'hidden',
-                                '&::before, &::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    top: 0,
-                                    bottom: 0,
-                                    width: '60px',
-                                    zIndex: 2,
-                                    pointerEvents: 'none',
-                                },
-                                '&::before': {
-                                    left: 0,
-                                    background: 'linear-gradient(to right, rgba(255,255,255,0.5) 0%, transparent 100%)',
-                                },
-                                '&::after': {
-                                    right: 0,
-                                    background: 'linear-gradient(to left, rgba(255,255,255,0.5) 0%, transparent 100%)',
-                                },
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: 4,
-                                    animation: 'marquee 40s linear infinite',
-                                    '&:hover': { animationPlayState: 'paused' },
-                                    '@keyframes marquee': {
-                                        '0%': { transform: 'translateX(0)' },
-                                        '100%': { transform: `translateX(-${sponsors.length * 312}px)` },
-                                    },
-                                }}
-                            >
-                                {duplicatedSponsors.map((sponsor, index) => (
-                                    <Paper
-                                        key={index}
-                                        elevation={1}
-                                        sx={{
-                                            p: 3,
-                                            minWidth: { xs: 220, sm: 260, md: 280 },
-                                            height: { xs: 140, sm: 150, md: 160 },
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            transition: 'all 0.3s ease',
-                                            cursor: 'pointer',
-                                            bgcolor: 'white',
-                                            borderRadius: '20px',
-                                            border: '1px solid rgba(0,0,0,0.06)',
-                                            flexShrink: 0,
-                                            boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
-                                            '&:hover': {
-                                                transform: 'translateY(-6px)',
-                                                boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
-                                            },
-                                        }}
-                                    >
-                                        {sponsor.logo ? (
-                                            <Box
-                                                component="img"
-                                                src={sponsor.logo}
-                                                alt={sponsor.name ? `Supported by ${sponsor.name}` : 'Sponsor'}
-                                                loading="lazy"
-                                                decoding="async"
-                                                sx={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                                            />
-                                        ) : (
-                                            <Typography sx={{ color: '#6b7280', fontWeight: 500, fontSize: '0.9rem' }}>
-                                                {sponsor.name || 'Sponsor'}
-                                            </Typography>
-                                        )}
-                                    </Paper>
-                                ))}
-                            </Box>
-                        </Box>
+                <Box
+                    id="sponsors"
+                    sx={{
+                        py: { xs: 4, sm: 8 },
+                        background: 'linear-gradient(180deg, #ffffff 0%, #fafffe 30%, #f5fdfb 60%, #edf8f5 100%)',
+                    }}
+                >
+                    <Container maxWidth="xl">
+                        <SponsorSpotlight
+                            sponsors={sponsors}
+                            title="SUPPORTED BY :"
+                            description={settings.sponsors_description}
+                        />
                     </Container>
                 </Box>
             )}
