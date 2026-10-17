@@ -1057,7 +1057,7 @@ class AdminController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'whatsapp' => 'nullable|string|max:20',
+            'whatsapp' => 'nullable|string|max:25',
             'affiliation' => 'nullable|string|max:255',
             'category' => 'nullable|string|in:Student,Professional,International Delegate',
             'password' => 'nullable|string|min:8',
@@ -1273,6 +1273,9 @@ class AdminController extends Controller
             'password' => 'required|string|min:8',
             'role' => 'required|in:Author,Admin,Reviewer,Juri',
             'affiliation' => $request->role === 'Reviewer' ? 'required|string|max:255' : 'nullable|string|max:255',
+            'whatsapp' => $request->role === 'Admin' ? 'required|string|max:25' : 'nullable|string|max:25',
+        ], [
+            'whatsapp.required' => 'Nomor WhatsApp / Telepon wajib diisi khusus akun Admin (untuk verifikasi 2FA OTP).',
         ]);
 
         $user = User::create([
@@ -1281,6 +1284,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'affiliation' => $request->affiliation,
+            'whatsapp' => $request->whatsapp,
             'email_verified_at' => now(), // Auto-verify admin-created users
         ]);
 

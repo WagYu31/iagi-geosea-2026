@@ -28,7 +28,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
     const [deleteDialog, setDeleteDialog] = useState({ open: false, user: null });
     const [roleDialog, setRoleDialog] = useState({ open: false, user: null, newRole: null });
     const [editDialog, setEditDialog] = useState({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' });
-    const [createDialog, setCreateDialog] = useState({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '', showPassword: false, showConfirmPassword: false });
+    const [createDialog, setCreateDialog] = useState({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', whatsapp: '', error: '', showPassword: false, showConfirmPassword: false });
     const [loading, setLoading] = useState(null);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -77,26 +77,28 @@ export default function AdminUsers({ users = {}, filters = {} }) {
     const handleProfileUpdate = () => {
         const { user, name, email, whatsapp, affiliation, category, password, confirmPassword } = editDialog;
         if (!name || !email) { setEditDialog({ ...editDialog, error: 'Name and email are required' }); return; }
+        if (user?.role === 'Admin' && !whatsapp?.trim()) { setEditDialog({ ...editDialog, error: 'Nomor WhatsApp / Telepon wajib diisi untuk akun Admin (untuk OTP 2FA).' }); return; }
         if (password && password.length < 8) { setEditDialog({ ...editDialog, error: 'Password must be at least 8 characters' }); return; }
         if (password && password !== confirmPassword) { setEditDialog({ ...editDialog, error: 'Passwords do not match' }); return; }
         setLoading(user.id);
         router.patch(route('admin.users.updateProfile', user.id), { name, email, whatsapp: whatsapp || null, affiliation: affiliation || null, category: category || null, password: password || null }, {
             preserveScroll: true,
             onSuccess: () => { setLoading(null); setEditDialog({ open: false, user: null, name: '', email: '', whatsapp: '', affiliation: '', category: '', password: '', confirmPassword: '', error: '' }); setSnackbar({ open: true, message: `Updated profile for ${name}`, severity: 'success' }); },
-            onError: (errors) => { setLoading(null); setEditDialog({ ...editDialog, error: errors.email || errors.name || errors.password || 'Failed to update profile.' }); }
+            onError: (errors) => { setLoading(null); setEditDialog({ ...editDialog, error: errors.email || errors.whatsapp || errors.name || errors.password || 'Failed to update profile.' }); }
         });
     };
     const handleCreateUser = () => {
-        const { name, email, password, confirmPassword, role, affiliation } = createDialog;
+        const { name, email, password, confirmPassword, role, affiliation, whatsapp } = createDialog;
         if (!name || !email || !password || !confirmPassword || !role) { setCreateDialog({ ...createDialog, error: 'All fields are required' }); return; }
+        if (role === 'Admin' && !whatsapp?.trim()) { setCreateDialog({ ...createDialog, error: 'Nomor WhatsApp / Telepon wajib diisi khusus untuk akun Admin (untuk pengiriman OTP 2FA).' }); return; }
         if (role === 'Reviewer' && !affiliation?.trim()) { setCreateDialog({ ...createDialog, error: 'Affiliation/Institution is required for Reviewer accounts' }); return; }
         if (password.length < 8) { setCreateDialog({ ...createDialog, error: 'Password must be at least 8 characters' }); return; }
         if (password !== confirmPassword) { setCreateDialog({ ...createDialog, error: 'Passwords do not match' }); return; }
         setLoading('creating');
-        router.post(route('admin.users.create'), { name, email, password, role, affiliation }, {
+        router.post(route('admin.users.create'), { name, email, password, role, affiliation, whatsapp: whatsapp || null }, {
             preserveScroll: true,
-            onSuccess: () => { setLoading(null); setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '' }); setSnackbar({ open: true, message: `Created user ${name}`, severity: 'success' }); },
-            onError: (errors) => { setLoading(null); setCreateDialog({ ...createDialog, error: errors.email || errors.affiliation || errors.password || 'Failed to create user.' }); }
+            onSuccess: () => { setLoading(null); setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', whatsapp: '', error: '', showPassword: false, showConfirmPassword: false }); setSnackbar({ open: true, message: `Created user ${name}`, severity: 'success' }); },
+            onError: (errors) => { setLoading(null); setCreateDialog({ ...createDialog, error: errors.email || errors.whatsapp || errors.affiliation || errors.password || 'Failed to create user.' }); }
         });
     };
     const handleToggleVerification = (user) => {
@@ -340,6 +342,11 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                     <Alert severity="warning" sx={{ borderRadius: '10px', mb: 2 }}>
                         {roleDialog.newRole === 'Admin' ? <><strong>Warning:</strong> This user will receive full admin access.</> : <><strong>Warning:</strong> Admin privileges will be revoked.</>}
                     </Alert>
+                    {roleDialog.newRole === 'Admin' && !roleDialog.user?.whatsapp && (
+                        <Alert severity="info" sx={{ borderRadius: '10px', mb: 2 }}>
+                            <strong>Catatan OTP 2FA:</strong> Akun ini belum memiliki nomor WhatsApp/Telepon. Setelah mengubah role menjadi Admin, segera edit profil akun ini untuk mengisi nomor WhatsApp agar dapat login verifikasi OTP 2FA.
+                        </Alert>
+                    )}
                 </DialogContent>
                 <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}` }}>
                     <Button onClick={() => setRoleDialog({ open: false, user: null, newRole: null })} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
@@ -375,8 +382,16 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                 <DialogContent sx={{ pt: 2.5 }}>
                     {editDialog.error && <Alert severity="error" sx={{ borderRadius: '10px', mb: 2, mt: 1 }}>{editDialog.error}</Alert>}
                     <TextField fullWidth label="Full Name" value={editDialog.name} onChange={(e) => setEditDialog({ ...editDialog, name: e.target.value, error: '' })} sx={{ mb: 2, mt: 1, ...inputSx }} required />
-                    <TextField fullWidth label="Email" type="email" value={editDialog.email} onChange={(e) => setEditDialog({ ...editDialog, email: e.target.value, error: '' })} sx={{ mb: 2, ...inputSx }} required />
-                    <TextField fullWidth label="WhatsApp" value={editDialog.whatsapp} onChange={(e) => setEditDialog({ ...editDialog, whatsapp: e.target.value })} sx={{ mb: 2, ...inputSx }} placeholder="e.g. 08123456789" />
+                    <TextField
+                        fullWidth
+                        label={editDialog.user?.role === 'Admin' ? 'Nomor WhatsApp / Telepon *' : 'WhatsApp'}
+                        value={editDialog.whatsapp}
+                        onChange={(e) => setEditDialog({ ...editDialog, whatsapp: e.target.value, error: '' })}
+                        sx={{ mb: 2, ...inputSx }}
+                        placeholder="Contoh: 085771593522"
+                        required={editDialog.user?.role === 'Admin'}
+                        helperText={editDialog.user?.role === 'Admin' ? 'Wajib untuk Admin: nomor ini digunakan untuk verifikasi login OTP 2FA.' : 'Nomor WhatsApp aktif'}
+                    />
                     <TextField fullWidth label="Affiliation/Institution" value={editDialog.affiliation} onChange={(e) => setEditDialog({ ...editDialog, affiliation: e.target.value })} sx={{ mb: 2, ...inputSx }} />
                     <FormControl fullWidth sx={{ mb: 2, ...inputSx }}>
                         <InputLabel>Category</InputLabel>
@@ -400,7 +415,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
             </Dialog>
 
             {/* Create User Dialog */}
-            <Dialog open={createDialog.open} onClose={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', error: '' })} maxWidth="sm" fullWidth PaperProps={dialogPaper}>
+            <Dialog open={createDialog.open} onClose={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', whatsapp: '', error: '', showPassword: false, showConfirmPassword: false })} maxWidth="sm" fullWidth PaperProps={dialogPaper}>
                 <DialogTitle sx={{ fontWeight: 700, color: c.textPrimary, borderBottom: `1px solid ${c.cardBorder}`, pb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Avatar variant="rounded" sx={{ bgcolor: isDark ? 'rgba(26,188,156,0.12)' : '#ecfdf5', width: 40, height: 40, borderRadius: '10px' }}>
@@ -426,12 +441,24 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                             <MenuItem value="Admin">Admin</MenuItem>
                         </Select>
                     </FormControl>
+                    {createDialog.role === 'Admin' && (
+                        <TextField
+                            fullWidth
+                            label="Nomor Telepon / WhatsApp *"
+                            value={createDialog.whatsapp}
+                            onChange={(e) => setCreateDialog({ ...createDialog, whatsapp: e.target.value, error: '' })}
+                            sx={{ mt: 2, ...inputSx }}
+                            placeholder="Contoh: 085771593522"
+                            required
+                            helperText="Khusus Admin: Wajib diisi untuk pengiriman kode verifikasi OTP 2FA WhatsApp saat login."
+                        />
+                    )}
                     {createDialog.role === 'Reviewer' && (
                         <TextField fullWidth label="Affiliation/Institution" value={createDialog.affiliation} onChange={(e) => setCreateDialog({ ...createDialog, affiliation: e.target.value, error: '' })} sx={{ mt: 2, ...inputSx }} required helperText="Required for Reviewer accounts" />
                     )}
                 </DialogContent>
                 <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${c.cardBorder}` }}>
-                    <Button onClick={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', error: '' })} disabled={loading === 'creating'} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
+                    <Button onClick={() => setCreateDialog({ open: false, name: '', email: '', password: '', confirmPassword: '', role: 'Author', affiliation: '', whatsapp: '', error: '', showPassword: false, showConfirmPassword: false })} disabled={loading === 'creating'} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: c.textMuted }}>Cancel</Button>
                     <Button onClick={handleCreateUser} variant="contained" disabled={loading === 'creating'} sx={tealBtn}>{loading === 'creating' ? 'Creating...' : 'Create User'}</Button>
                 </DialogActions>
             </Dialog>
