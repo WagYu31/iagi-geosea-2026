@@ -46,6 +46,10 @@ import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ViewWeekRoundedIcon from '@mui/icons-material/ViewWeekRounded';
 import TableRowsRoundedIcon from '@mui/icons-material/TableRowsRounded';
 import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
+import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
+import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
+import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded';
+import HowToRegRoundedIcon from '@mui/icons-material/HowToRegRounded';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -60,6 +64,8 @@ export default function AdminDashboard({
     visitorAnalytics = {},
     dailyVisitors = [],
     submissionStatusCounts = {},
+    paymentAnalytics = {},
+    visitorTicketAnalytics = {},
 }) {
     const { auth } = usePage().props;
     const theme = useTheme();
@@ -185,6 +191,42 @@ export default function AdminDashboard({
     const rejectedSubmissions = analytics?.rejectedSubmissions || 0;
     const totalUsers = analytics?.totalUsers || 0;
 
+    // Helper formatters
+    const formatIDR = (val) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            maximumFractionDigits: 0,
+        }).format(Number(val) || 0);
+    };
+
+    const formatNumber = (val) => {
+        return new Intl.NumberFormat('id-ID').format(Number(val) || 0);
+    };
+
+    // Normalized stats for Payments & Visitor Tickets
+    const payStats = {
+        totalRevenue: paymentAnalytics?.totalRevenue || 0,
+        paperRevenue: paymentAnalytics?.paperRevenue || 0,
+        paperPaidCount: paymentAnalytics?.paperPaidCount || analytics?.verifiedPayments || 0,
+        paperPendingCount: paymentAnalytics?.paperPendingCount ?? pendingPayments ?? 0,
+        visitorRevenue: paymentAnalytics?.visitorRevenue || 0,
+        visitorPaidCount: paymentAnalytics?.visitorPaidCount || 0,
+        visitorPendingCount: paymentAnalytics?.visitorPendingCount || 0,
+        visitorDebtCount: paymentAnalytics?.visitorDebtCount || 0,
+        totalPendingCount: (paymentAnalytics?.totalPendingCount ?? pendingPayments) || 0,
+    };
+
+    const ticketStats = {
+        totalVisitors: visitorTicketAnalytics?.totalVisitors || 0,
+        checkedInCount: visitorTicketAnalytics?.checkedInCount || 0,
+        notCheckedInCount: visitorTicketAnalytics?.notCheckedInCount || 0,
+        exclusiveCount: visitorTicketAnalytics?.exclusiveCount || 0,
+        nonExclusiveCount: visitorTicketAnalytics?.nonExclusiveCount || 0,
+        pendingCount: visitorTicketAnalytics?.pendingCount || 0,
+        checkInRate: visitorTicketAnalytics?.checkInRate || 0,
+    };
+
     const today = new Date();
     const formattedDate = today.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -222,6 +264,20 @@ export default function AdminDashboard({
             icon: <PaymentRoundedIcon />,
             color: '#ea580c',
             bgColor: isDark ? 'rgba(234, 88, 12, 0.15)' : '#fff7ed',
+        },
+        {
+            label: 'Visitor Tickets',
+            href: route('admin.visitorTickets'),
+            icon: <ConfirmationNumberRoundedIcon />,
+            color: '#0284c7',
+            bgColor: isDark ? 'rgba(2, 132, 199, 0.15)' : '#f0f9ff',
+        },
+        {
+            label: 'Gate Scanner',
+            href: route('admin.gateScanner'),
+            icon: <QrCodeScannerRoundedIcon />,
+            color: '#10b981',
+            bgColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
         },
         {
             label: 'Manage Users',
@@ -377,7 +433,73 @@ export default function AdminDashboard({
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Button
+                            component={Link}
+                            href={route('admin.payments')}
+                            variant="outlined"
+                            startIcon={<PaymentRoundedIcon sx={{ fontSize: 18 }} />}
+                            sx={{
+                                borderColor: isDark ? 'rgba(234, 88, 12, 0.4)' : '#fed7aa',
+                                color: isDark ? '#fb923c' : '#c2410c',
+                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.1)' : '#fff7ed',
+                                px: 2,
+                                py: 0.85,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.825rem',
+                                '&:hover': {
+                                    bgcolor: isDark ? 'rgba(234, 88, 12, 0.2)' : '#ffedd5',
+                                    borderColor: '#ea580c',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Manage Payments
+                            {payStats.totalPendingCount > 0 && (
+                                <Chip
+                                    label={payStats.totalPendingCount}
+                                    size="small"
+                                    sx={{
+                                        ml: 0.75,
+                                        height: 18,
+                                        fontSize: '0.65rem',
+                                        fontWeight: 800,
+                                        bgcolor: '#ea580c',
+                                        color: '#ffffff',
+                                    }}
+                                />
+                            )}
+                        </Button>
+
+                        <Button
+                            component={Link}
+                            href={route('admin.visitorTickets')}
+                            variant="outlined"
+                            startIcon={<ConfirmationNumberRoundedIcon sx={{ fontSize: 18 }} />}
+                            sx={{
+                                borderColor: isDark ? 'rgba(2, 132, 199, 0.4)' : '#bae6fd',
+                                color: isDark ? '#38bdf8' : '#0369a1',
+                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.1)' : '#f0f9ff',
+                                px: 2,
+                                py: 0.85,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '0.825rem',
+                                '&:hover': {
+                                    bgcolor: isDark ? 'rgba(2, 132, 199, 0.2)' : '#e0f2fe',
+                                    borderColor: '#0284c7',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Visitor Tickets
+                        </Button>
+
                         <Button
                             component={Link}
                             href={route('admin.submissions')}
@@ -385,12 +507,12 @@ export default function AdminDashboard({
                             startIcon={<AssignmentRoundedIcon sx={{ fontSize: 18 }} />}
                             sx={{
                                 background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #10b981 100%)',
-                                px: 2.75,
-                                py: 1,
+                                px: 2.2,
+                                py: 0.85,
                                 borderRadius: '10px',
                                 textTransform: 'none',
                                 fontWeight: 700,
-                                fontSize: '0.85rem',
+                                fontSize: '0.825rem',
                                 boxShadow: '0 4px 14px rgba(13, 122, 106, 0.25)',
                                 '&:hover': {
                                     background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
@@ -663,7 +785,414 @@ export default function AdminDashboard({
                     </Card>
                 )}
 
-                {/* ── ROW 3: Materio Quick Actions Shortcuts Grid ── */}
+                {/* ── ROW: Operational Hub - Manage Payments & Visitor Tickets Monitoring ── */}
+                <Grid container spacing={3} sx={{ mb: 3.5 }}>
+                    {/* CARD 1: Manage Payments & Revenue Monitor */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                height: '100%',
+                                borderRadius: '16px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: c.cardBg,
+                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: isDark ? '0 8px 25px rgba(0,0,0,0.4)' : '0 8px 25px rgba(234, 88, 12, 0.08)',
+                                },
+                            }}
+                        >
+                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+                                {/* Header */}
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75 }}>
+                                        <Avatar
+                                            variant="rounded"
+                                            sx={{
+                                                width: 46,
+                                                height: 46,
+                                                borderRadius: '12px',
+                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.18)' : '#fff7ed',
+                                                color: '#ea580c',
+                                                border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.35)' : '#ffedd5'}`,
+                                            }}
+                                        >
+                                            <AccountBalanceWalletRoundedIcon sx={{ fontSize: 26 }} />
+                                        </Avatar>
+                                        <Box>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    fontSize: '1.05rem',
+                                                    color: c.textPrimary,
+                                                    lineHeight: 1.2,
+                                                }}
+                                            >
+                                                Manage Payments & Financials
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem', mt: 0.25 }}>
+                                                Paper author registrations & visitor ticket payments
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Button
+                                        component={Link}
+                                        href={route('admin.payments')}
+                                        size="small"
+                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '0.78rem',
+                                            color: '#ea580c',
+                                            bgcolor: isDark ? 'rgba(234, 88, 12, 0.12)' : '#fff7ed',
+                                            border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.3)' : '#fed7aa'}`,
+                                            borderRadius: '8px',
+                                            px: 1.5,
+                                            py: 0.5,
+                                            '&:hover': {
+                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.22)' : '#ffedd5',
+                                            },
+                                        }}
+                                    >
+                                        Buka Payments
+                                    </Button>
+                                </Box>
+
+                                {/* Total Revenue Highlight */}
+                                <Box sx={{ 
+                                    p: 2, 
+                                    borderRadius: '12px', 
+                                    bgcolor: isDark ? 'rgba(234, 88, 12, 0.08)' : '#fffaf5',
+                                    border: `1px solid ${isDark ? 'rgba(234, 88, 12, 0.2)' : '#ffedd5'}`,
+                                    mb: 2.5,
+                                }}>
+                                    <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.7rem' }}>
+                                        Total Revenue Terverifikasi
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.45rem', sm: '1.75rem' }, color: isDark ? '#fb923c' : '#c2410c', lineHeight: 1 }}>
+                                            {formatIDR(payStats.totalRevenue)}
+                                        </Typography>
+                                        <Chip
+                                            label="Live Revenue"
+                                            size="small"
+                                            sx={{
+                                                height: 20,
+                                                fontSize: '0.65rem',
+                                                fontWeight: 800,
+                                                bgcolor: isDark ? 'rgba(234, 88, 12, 0.25)' : '#fed7aa',
+                                                color: isDark ? '#fdba74' : '#9a3412',
+                                            }}
+                                        />
+                                    </Box>
+                                </Box>
+
+                                {/* 2 Sub-metric blocks */}
+                                <Grid container spacing={2} sx={{ mb: 2 }}>
+                                    {/* Paper Submissions Revenue */}
+                                    <Grid size={{ xs: 6 }}>
+                                        <Box sx={{ 
+                                            p: 1.75, 
+                                            borderRadius: '10px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                            border: `1px solid ${c.cardBorder}`,
+                                        }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
+                                                📄 Paper Submissions
+                                            </Typography>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
+                                                {formatIDR(payStats.paperRevenue)}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
+                                                {formatNumber(payStats.paperPaidCount)} Paid Papers
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+                                    {/* Visitor Tickets Revenue */}
+                                    <Grid size={{ xs: 6 }}>
+                                        <Box sx={{ 
+                                            p: 1.75, 
+                                            borderRadius: '10px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                            border: `1px solid ${c.cardBorder}`,
+                                        }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
+                                                🎟️ Visitor Tickets
+                                            </Typography>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
+                                                {formatIDR(payStats.visitorRevenue)}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#0284c7', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
+                                                {formatNumber(payStats.visitorPaidCount)} Tiket Terbit
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+
+                                {/* Action / Notice row */}
+                                <Box sx={{ 
+                                    p: 1.5, 
+                                    borderRadius: '10px', 
+                                    bgcolor: payStats.totalPendingCount > 0 
+                                        ? (isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb')
+                                        : (isDark ? 'rgba(16, 185, 129, 0.1)' : '#ecfdf5'),
+                                    border: `1px solid ${payStats.totalPendingCount > 0 
+                                        ? (isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a')
+                                        : (isDark ? 'rgba(16, 185, 129, 0.25)' : '#a7f3d0')}`,
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'space-between',
+                                    flexWrap: 'wrap',
+                                    gap: 1,
+                                }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        {payStats.totalPendingCount > 0 ? (
+                                            <WarningAmberRoundedIcon sx={{ fontSize: 18, color: '#d97706' }} />
+                                        ) : (
+                                            <CheckCircleRoundedIcon sx={{ fontSize: 18, color: '#10b981' }} />
+                                        )}
+                                        <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: payStats.totalPendingCount > 0 ? '#b45309' : '#047857' }}>
+                                            {payStats.totalPendingCount > 0 
+                                                ? `${payStats.totalPendingCount} pembayaran menunggu verifikasi manual`
+                                                : 'Semua bukti pembayaran sudah terverifikasi'}
+                                        </Typography>
+                                    </Box>
+                                    {payStats.visitorDebtCount > 0 && (
+                                        <Chip
+                                            label={`${payStats.visitorDebtCount} Piutang Tiket`}
+                                            size="small"
+                                            sx={{
+                                                height: 20,
+                                                fontSize: '0.675rem',
+                                                fontWeight: 700,
+                                                bgcolor: isDark ? 'rgba(239, 68, 68, 0.2)' : '#fee2e2',
+                                                color: '#b91c1c',
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    {/* CARD 2: Visitor Tickets & Gate Access Monitor */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Card
+                            elevation={0}
+                            sx={{
+                                height: '100%',
+                                borderRadius: '16px',
+                                border: `1px solid ${c.cardBorder}`,
+                                bgcolor: c.cardBg,
+                                boxShadow: isDark ? 'none' : '0 4px 20px -2px rgba(0,0,0,0.05)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    boxShadow: isDark ? '0 8px 25px rgba(0,0,0,0.4)' : '0 8px 25px rgba(2, 132, 199, 0.08)',
+                                },
+                            }}
+                        >
+                            <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
+                                {/* Header */}
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75 }}>
+                                        <Avatar
+                                            variant="rounded"
+                                            sx={{
+                                                width: 46,
+                                                height: 46,
+                                                borderRadius: '12px',
+                                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.18)' : '#f0f9ff',
+                                                color: '#0284c7',
+                                                border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.35)' : '#e0f2fe'}`,
+                                            }}
+                                        >
+                                            <ConfirmationNumberRoundedIcon sx={{ fontSize: 26 }} />
+                                        </Avatar>
+                                        <Box>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    fontSize: '1.05rem',
+                                                    color: c.textPrimary,
+                                                    lineHeight: 1.2,
+                                                }}
+                                            >
+                                                Visitor Tickets & Gate Access
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: c.textMuted, fontSize: '0.78rem', mt: 0.25 }}>
+                                                Public registration, attendee quota & venue check-in
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Button
+                                        component={Link}
+                                        href={route('admin.visitorTickets')}
+                                        size="small"
+                                        endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '0.78rem',
+                                            color: '#0284c7',
+                                            bgcolor: isDark ? 'rgba(2, 132, 199, 0.12)' : '#f0f9ff',
+                                            border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.3)' : '#bae6fd'}`,
+                                            borderRadius: '8px',
+                                            px: 1.5,
+                                            py: 0.5,
+                                            '&:hover': {
+                                                bgcolor: isDark ? 'rgba(2, 132, 199, 0.22)' : '#e0f2fe',
+                                            },
+                                        }}
+                                    >
+                                        Buka Tiket
+                                    </Button>
+                                </Box>
+
+                                {/* Total Visitors Highlight & Check-in Progress */}
+                                <Box sx={{ 
+                                    p: 2, 
+                                    borderRadius: '12px', 
+                                    bgcolor: isDark ? 'rgba(2, 132, 199, 0.08)' : '#f0f9ff',
+                                    border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.2)' : '#e0f2fe'}`,
+                                    mb: 2.5,
+                                }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                                        <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.7rem' }}>
+                                            Kehadiran di Venue (Check-In)
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284c7' }}>
+                                            {ticketStats.checkedInCount} / {ticketStats.totalVisitors} ({ticketStats.checkInRate}%)
+                                        </Typography>
+                                    </Box>
+
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={Math.min(100, ticketStats.checkInRate)}
+                                        sx={{
+                                            height: 9,
+                                            borderRadius: 5,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0',
+                                            mb: 1.25,
+                                            '& .MuiLinearProgress-bar': {
+                                                borderRadius: 5,
+                                                background: 'linear-gradient(90deg, #0284c7 0%, #10b981 100%)',
+                                            },
+                                        }}
+                                    />
+
+                                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, flexWrap: 'wrap' }}>
+                                        <Typography sx={{ fontWeight: 800, fontSize: { xs: '1.45rem', sm: '1.75rem' }, color: isDark ? '#38bdf8' : '#0369a1', lineHeight: 1 }}>
+                                            {formatNumber(ticketStats.totalVisitors)} Tiket
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.75rem' }}>
+                                            Total pendaftar pengunjung conference
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* 2 Sub-metric blocks */}
+                                <Grid container spacing={2} sx={{ mb: 2 }}>
+                                    {/* Exclusive Pass */}
+                                    <Grid size={{ xs: 6 }}>
+                                        <Box sx={{ 
+                                            p: 1.75, 
+                                            borderRadius: '10px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                            border: `1px solid ${c.cardBorder}`,
+                                        }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
+                                                ⭐ Exclusive Pass
+                                            </Typography>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
+                                                {formatNumber(ticketStats.exclusiveCount)} Tiket
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#8b5cf6', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
+                                                Akses Penuh Seminar
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+
+                                    {/* Non-Exclusive / General */}
+                                    <Grid size={{ xs: 6 }}>
+                                        <Box sx={{ 
+                                            p: 1.75, 
+                                            borderRadius: '10px', 
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                            border: `1px solid ${c.cardBorder}`,
+                                        }}>
+                                            <Typography variant="caption" sx={{ color: c.textMuted, fontWeight: 600, fontSize: '0.725rem', display: 'block', mb: 0.5 }}>
+                                                🎫 Standard / Exhibition
+                                            </Typography>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: c.textPrimary, lineHeight: 1.2 }}>
+                                                {formatNumber(ticketStats.nonExclusiveCount)} Tiket
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#0d7a6a', fontWeight: 700, fontSize: '0.72rem', display: 'block', mt: 0.25 }}>
+                                                Visitor / General Hall
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+
+                                {/* Action / Scanner link row */}
+                                <Box sx={{ 
+                                    p: 1.25, 
+                                    borderRadius: '10px', 
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                    border: `1px solid ${c.cardBorder}`,
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'space-between',
+                                    flexWrap: 'wrap',
+                                    gap: 1,
+                                }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <HowToRegRoundedIcon sx={{ fontSize: 18, color: '#0284c7' }} />
+                                        <Typography sx={{ fontSize: '0.76rem', color: c.textMuted }}>
+                                            <strong>{ticketStats.notCheckedInCount}</strong> belum check-in
+                                        </Typography>
+                                    </Box>
+                                    <Button
+                                        component={Link}
+                                        href={route('admin.gateScanner')}
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<QrCodeScannerRoundedIcon sx={{ fontSize: 16 }} />}
+                                        sx={{
+                                            borderRadius: '8px',
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '0.75rem',
+                                            borderColor: isDark ? 'rgba(16, 185, 129, 0.4)' : '#a7f3d0',
+                                            color: isDark ? '#34d399' : '#059669',
+                                            py: 0.35,
+                                            px: 1.25,
+                                            '&:hover': {
+                                                borderColor: '#10b981',
+                                                bgcolor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
+                                            },
+                                        }}
+                                    >
+                                        Gate Scanner
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+
+                {/* ── ROW: Materio Quick Actions Shortcuts Grid ── */}
                 <Card
                     elevation={0}
                     sx={{
@@ -696,7 +1225,7 @@ export default function AdminDashboard({
 
                         <Grid container spacing={2}>
                             {quickActions.map((action, idx) => (
-                                <Grid size={{ xs: 6, sm: 4, md: 2 }} key={idx}>
+                                <Grid size={{ xs: 6, sm: 4, md: 3, lg: 1.5 }} key={idx}>
                                     <Button
                                         component={Link}
                                         href={action.href}

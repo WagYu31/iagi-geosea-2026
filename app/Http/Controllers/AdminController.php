@@ -10,6 +10,8 @@ use App\Models\PageVisit;
 use App\Models\EmailSetting;
 use App\Models\Certificate;
 use App\Models\PresentationScore;
+use App\Models\VisitorTicket;
+use App\Models\VisitorPayment;
 use App\Mail\SubmissionStatusChanged;
 use App\Mail\PaymentConfirmation;
 use App\Services\WhatsAppNotificationService;
@@ -143,6 +145,53 @@ class AdminController extends Controller
             ];
         });
 
+        // Payment analytics (Paper submissions + Visitor tickets)
+        $paymentAnalytics = cache()->remember('admin_dashboard_payment_analytics', 60, function() {
+            $paperPaid = Payment::where(function ($q) {
+                $q->where('status', 'paid')->orWhere('verified', true);
+            });
+            $paperRevenue = (float) (clone $paperPaid)->sum('amount');
+            $paperPaidCount = (clone $paperPaid)->count();
+            $paperPendingCount = Payment::where('verified', false)->count();
+
+            $visitorRevenue = (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount');
+            $visitorPaidCount = VisitorTicket::where('status', 'active')->count();
+            $visitorPendingCount = VisitorPayment::where('status', 'pending')->count();
+            $visitorDebtCount = VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_debt', true))->count();
+
+            return [
+                'totalRevenue' => $paperRevenue + $visitorRevenue,
+                'paperRevenue' => $paperRevenue,
+                'paperPaidCount' => $paperPaidCount,
+                'paperPendingCount' => $paperPendingCount,
+                'visitorRevenue' => $visitorRevenue,
+                'visitorPaidCount' => $visitorPaidCount,
+                'visitorPendingCount' => $visitorPendingCount,
+                'visitorDebtCount' => $visitorDebtCount,
+                'totalPendingCount' => $paperPendingCount + $visitorPendingCount,
+            ];
+        });
+
+        // Visitor Tickets analytics
+        $visitorTicketAnalytics = cache()->remember('admin_dashboard_visitor_ticket_analytics', 60, function() {
+            $totalVisitors = VisitorTicket::count();
+            $checkedInCount = VisitorTicket::where('checked_in', true)->count();
+            $exclusiveCount = VisitorTicket::where('visitor_type', 'exclusive')->count();
+            $nonExclusiveCount = VisitorTicket::whereIn('visitor_type', ['non_exclusive', 'visitor'])->count();
+            $pendingCount = VisitorTicket::where('status', 'pending')->count();
+            $checkInRate = $totalVisitors > 0 ? round(($checkedInCount / $totalVisitors) * 100, 1) : 0;
+
+            return [
+                'totalVisitors' => $totalVisitors,
+                'checkedInCount' => $checkedInCount,
+                'notCheckedInCount' => max(0, $totalVisitors - $checkedInCount),
+                'exclusiveCount' => $exclusiveCount,
+                'nonExclusiveCount' => $nonExclusiveCount,
+                'pendingCount' => $pendingCount,
+                'checkInRate' => $checkInRate,
+            ];
+        });
+
         return Inertia::render('Admin/Dashboard', [
             'analytics' => $analytics,
             'recentSubmissions' => $recentSubmissions,
@@ -153,6 +202,8 @@ class AdminController extends Controller
             'visitorAnalytics' => $visitorAnalytics,
             'dailyVisitors' => $dailyVisitors,
             'submissionStatusCounts' => $submissionStatusCounts,
+            'paymentAnalytics' => $paymentAnalytics,
+            'visitorTicketAnalytics' => $visitorTicketAnalytics,
         ]);
     }
 
