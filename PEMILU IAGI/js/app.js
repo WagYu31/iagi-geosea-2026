@@ -179,10 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!dptResultsContainer) return;
     if (voters.length === 0) {
       dptResultsContainer.innerHTML = `
-        <div style="text-align:center; padding: 24px; color: var(--text-muted); font-size: 0.85rem;">
-          <div style="font-size: 1.8rem; margin-bottom: 8px;">🔍</div>
-          Tidak ditemukan data anggota yang cocok dengan kata kunci.<br>
-          <span style="font-size: 0.75rem; color: var(--text-subtle);">Pastikan pengetikan Nama atau NPA sudah sesuai.</span>
+        <div style="text-align:center; padding: 28px; color: var(--text-muted); font-size: 0.85rem;">
+          <div style="margin-bottom: 10px;">
+            <svg style="width:36px;height:36px;stroke:var(--gold-text);fill:none;stroke-width:1.5;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          Tidak ditemukan data anggota yang cocok dengan kata kunci pencarian.<br>
+          <span style="font-size: 0.74rem; color: var(--text-subtle); margin-top:4px; display:inline-block;">Pastikan pengetikan Nama lengkap atau NPA sudah sesuai.</span>
         </div>
       `;
       return;
@@ -193,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (v.voted) {
         statusBadge = '<span class="badge-status badge-voted">✓ Sudah Memilih</span>';
       } else if (v.claimed) {
-        statusBadge = '<span class="badge-status badge-claimed">🎫 Sudah Klaim Token</span>';
+        statusBadge = '<span class="badge-status badge-claimed">✓ Token Aktif</span>';
       }
 
       // Mask email for privacy (e.g. ab***@gmail.com)
@@ -209,15 +211,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="dpt-npa">${v.npa}</span>
           </div>
           <div class="dpt-meta">
-            <span>📍 Pengda ${v.pengda || 'Pusat'}</span>
-            <span>✉️ ${maskedEmail}</span>
-            <span>🏷️ ${v.category || 'Anggota'}</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Pengda ${v.pengda || 'Pusat'}</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> ${maskedEmail}</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg> ${v.category || 'Anggota'}</span>
             ${statusBadge}
           </div>
           ${!v.voted ? `
-            <div style="margin-top: 4px; display: flex; justify-content: flex-end;">
-              <button class="btn btn-subtle btn-sm-action" style="width: auto; padding: 5px 12px; font-size: 0.72rem;" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}', '${v.email}')">
-                Klaim Surat Suara ➜
+            <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
+              <button class="btn btn-subtle btn-sm-action" style="width: auto; padding: 6px 14px; font-size: 0.74rem;" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}', '${v.email}')">
+                <span>Klaim Surat Suara</span>
+                <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
               </button>
             </div>
           ` : ''}
@@ -301,8 +304,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (simBtnCopyCode) {
       simBtnCopyCode.onclick = () => {
         navigator.clipboard.writeText(token);
-        simBtnCopyCode.innerText = '✓ Kode Disalin!';
-        setTimeout(() => { simBtnCopyCode.innerText = '📋 Salin Kode'; }, 2000);
+        simBtnCopyCode.innerHTML = `
+          <svg style="width:14px;height:14px;stroke:#10B981;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span style="color:#10B981;font-weight:800;">Kode Disalin!</span>
+        `;
+        setTimeout(() => {
+          simBtnCopyCode.innerHTML = `
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Salin Kode</span>
+          `;
+        }, 2000);
       };
     }
 
@@ -400,7 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="candidate-footer">
           <button type="button" class="btn-detail-link" onclick="event.stopPropagation(); showCandidateDetailModal(${c.id})">
-            ℹ️ Visi, Misi & Profil Lengkap
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Visi, Misi & Gagasan</span>
           </button>
           <div class="vote-radio-btn" id="radio-label-${c.id}">
             Coblos Calon ${c.number}
@@ -605,14 +617,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sealedBanner) sealedBanner.style.display = 'block';
       if (unsealedResults) unsealedResults.style.display = 'none';
       if (btnToggleSeal) {
-        btnToggleSeal.innerText = '🔓 Buka Segel Pleno (Unseal Live Count)';
+        btnToggleSeal.innerHTML = `
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+          <span>Buka Segel Pleno (Unseal Live Count)</span>
+        `;
         btnToggleSeal.className = 'btn btn-gold';
       }
     } else {
       if (sealedBanner) sealedBanner.style.display = 'none';
       if (unsealedResults) unsealedResults.style.display = 'block';
       if (btnToggleSeal) {
-        btnToggleSeal.innerText = '🔒 Pasang Segel Kembali (Lock Vault)';
+        btnToggleSeal.innerHTML = `
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Pasang Segel Kembali (Lock Vault)</span>
+        `;
         btnToggleSeal.className = 'btn btn-outline';
       }
       renderLiveCountCharts(results);

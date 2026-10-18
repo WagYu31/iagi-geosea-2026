@@ -1,12 +1,12 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v1.0.0';
+const CACHE_NAME = 'pemilu-iagi-2026-v2.5.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './css/style.css',
-  './js/data.js',
-  './js/storage.js',
-  './js/app.js',
+  './css/style.css?v=2.5.0',
+  './js/data.js?v=2.5.0',
+  './js/storage.js?v=2.5.0',
+  './js/app.js?v=2.5.0',
   './assets/iagi-logo.png',
   './assets/candidate-1.jpg',
   './assets/candidate-2.jpg',
@@ -16,22 +16,24 @@ const ASSETS_TO_CACHE = [
   './assets/apple-touch-icon.png'
 ];
 
-// Install event: cache core assets
+// Install event: cache core assets and skip waiting immediately
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
-// Activate event: clean up old caches
+// Activate event: purge ALL old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('Purging old PWA cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -40,45 +42,55 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event: Stale-While-Revalidate strategy for app shell
+// Fetch event: Network-First for HTML/Navigation, Stale-while-revalidate for assets
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
-  // If request is for Google Fonts or CDN, use Cache-First with fallback
-  if (url.origin.includes('fonts.googleapis.com') || url.origin.includes('fonts.gstatic.com')) {
+  // Network-first for navigation/HTML documents to ensure immediate freshness
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(async (cache) => {
-        const cachedResponse = await cache.match(event.request);
-        if (cachedResponse) return cachedResponse;
-        try {
-          const networkResponse = await fetch(event.request);
-          cache.put(event.request, networkResponse.clone());
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
           return networkResponse;
-        } catch (e) {
-          return cachedResponse;
-        }
-      })
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // Same-origin assets: Stale-while-revalidate
+  // Network-First for CSS/JS
+  if (url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for images and fonts
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return networkResponse;
-      }).catch(() => cachedResponse);
-
-      return cachedResponse || fetchPromise;
+      });
     })
   );
 });

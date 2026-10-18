@@ -28,8 +28,8 @@ const CANDIDATES = [
     tagline: "IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional",
     photo: "assets/candidate-1.jpg",
     badge: "Kandidat 01",
-    accentColor: "#C5A059",
-    secondaryColor: "#0F766E",
+    accentColor: "#F5BA42",
+    secondaryColor: "#10B981",
     vision: "Mewujudkan IAGI sebagai asosiasi profesi kebumian yang mandiri, berdaya saing global, serta menjadi garda terdepan advokasi kebijakan ketahanan energi dan hilirisasi georesources Indonesia.",
     missions: [
       "Memperkuat kompetensi dan sertifikasi internasional bagi seluruh anggota IAGI lintas generasi.",
@@ -49,8 +49,8 @@ const CANDIDATES = [
     tagline: "Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan",
     photo: "assets/candidate-2.jpg",
     badge: "Kandidat 02",
-    accentColor: "#0F766E",
-    secondaryColor: "#C5A059",
+    accentColor: "#10B981",
+    secondaryColor: "#F5BA42",
     vision: "Menjadikan IAGI sebagai pilar keilmuan geologi terapan yang inklusif, responsif terhadap kebencanaan geologi, dan memberikan kemanfaatan nyata bagi keselamatan dan kemakmuran masyarakat Indonesia.",
     missions: [
       "Memperluas peran strategis ahli geologi dalam penyusunan Rencana Tata Ruang Wilayah (RTRW) dan mitigasi sesar aktif/tsunami.",
