@@ -110,3 +110,8 @@ const INITIAL_DPT = [
   { npa: "IAGI-2023-9890", name: "Galih Wicaksono, S.T.", email: "galih.w@geodrill.com", pengda: "Kalimantan Selatan", category: "Professional", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null },
   { npa: "IAGI-2024-1052", name: "Anisa Putri Maharani, S.T.", email: "anisa.maharani@geoai.id", pengda: "Jawa Barat", category: "Student", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null }
 ];
+
+// Attach explicitly to window for cross-script safety
+window.ELECTION_CONFIG = ELECTION_CONFIG;
+window.CANDIDATES = CANDIDATES;
+window.INITIAL_DPT = INITIAL_DPT;

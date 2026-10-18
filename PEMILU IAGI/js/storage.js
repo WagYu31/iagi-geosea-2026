@@ -51,8 +51,9 @@ class PemiluStorage {
   }
 
   init() {
-    if (!localStorage.getItem(STORAGE_KEYS.DPT)) {
-      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(INITIAL_DPT));
+    const defaultDpt = (typeof window !== 'undefined' && window.INITIAL_DPT) ? window.INITIAL_DPT : (typeof INITIAL_DPT !== 'undefined' ? INITIAL_DPT : []);
+    if (!localStorage.getItem(STORAGE_KEYS.DPT) || JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT) || '[]').length === 0) {
+      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(defaultDpt));
     }
     if (!localStorage.getItem(STORAGE_KEYS.BALLOTS)) {
       // Seed a few anonymous baseline ballots for realistic Pleno preview (e.g. 14 votes)
@@ -179,6 +180,11 @@ class PemiluStorage {
       message: `Surat suara berhasil diklaim! Kode unik telah digenerate dan dikirimkan ke email ${voter.email}.`
     };
   }
+
+  // --- Verification for Voting ---
+  verifyVotingEligibility(npa, token) {
+    const cleanNpa = (npa || '').trim().toUpperCase();
+    const cleanToken = (token || '').trim().toUpperCase();
 
     // Built-in testing account for instant demonstration
     if (cleanNpa === 'IAGI-2024-0001' && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {

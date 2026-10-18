@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPKU Command Center & Pleno Live Count | Pemilu IAGI 2026</title>
+  <meta name="description" content="Dashboard Eksekutif Panitia Pemilihan Ketua Umum IAGI 2026 - Monitoring DPT, Brankas Kriptografi Bersegel, dan Hasil Perolehan Suara Sidang Pleno Terbuka.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/png" href="assets/logo-iagi.png">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    :root {
+      --admin-bg: #010c0a;
+      --admin-panel: rgba(2, 22, 18, 0.88);
+      --admin-panel-hover: rgba(3, 30, 24, 0.95);
+      --admin-gold: #F5BA42;
+      --admin-emerald: #10B981;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #032b22 0%, #010c0a 65%, #000504 100%) !important;
+      min-height: 100vh;
+      color: #E2E8F0;
+      font-family: var(--font-sans);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Override mobile container constraints for desktop widescreen */
+    .admin-desktop-wrapper {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 60px;
+      box-sizing: border-box;
+      flex: 1;
+    }
+
+    /* Top Master Header */
+    .admin-header {
+      background: rgba(2, 20, 16, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(245, 186, 66, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(245, 186, 66, 0.2);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .admin-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px;
+      border: 1px solid rgba(245, 186, 66, 0.3);
+    }
+
+    .admin-title-group h1 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin: 0;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-title-group p {
+      margin: 4px 0 0;
+      font-size: 0.82rem;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-status-pill.online {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .badge-status-pill.sealed {
+      background: rgba(245, 186, 66, 0.15);
+      color: #FBBF24;
+      border: 1px solid rgba(245, 186, 66, 0.35);
+    }
+
+    .badge-status-pill.unsealed {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    /* Key Stats Grid */
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card-executive {
+      background: var(--admin-panel);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card-executive:hover {
+      border-color: rgba(245, 186, 66, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .stat-card-executive::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--admin-gold), transparent);
+      opacity: 0.4;
+    }
+
+    .stat-card-label {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94A3B8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .stat-card-value {
+      font-family: var(--font-mono);
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .stat-card-sub {
+      font-size: 0.78rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Main Grid Split: Left (Pleno Vault/Charts) & Right (Live Logs) */
+    .admin-main-split {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .admin-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .admin-main-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .admin-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-desktop-wrapper {
+        padding: 16px;
+      }
+    }
+
+    .panel-card {
+      background: var(--admin-panel);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Vault Box Graphic */
+    .vault-chamber-box {
+      border: 2px dashed rgba(245, 186, 66, 0.35);
+      background: radial-gradient(circle at 50% 50%, rgba(245, 186, 66, 0.07) 0%, rgba(0, 0, 0, 0.4) 100%);
+      border-radius: var(--radius-md);
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    .vault-icon-glow {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: rgba(245, 186, 66, 0.12);
+      border: 2px solid rgba(245, 186, 66, 0.5);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 0 35px rgba(245, 186, 66, 0.25);
+    }
+
+    .vault-icon-glow svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--admin-gold);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Candidate Pleno Bars */
+    .candidate-tally-item {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .candidate-tally-item:hover {
+      border-color: rgba(245, 186, 66, 0.3);
+    }
+
+    .candidate-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .candidate-info-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .candidate-number-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(245, 186, 66, 0.15);
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      color: var(--admin-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .progress-bar-track {
+      background: rgba(255, 255, 255, 0.06);
+      height: 14px;
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #F5BA42, #F8E08E);
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.5);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* DPT Table Styles */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .admin-table th {
+      background: rgba(255, 255, 255, 0.04);
+      color: #94A3B8;
+      font-weight: 800;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #CBD5E1;
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Modal PIN */
+    #desktop-admin-pin-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 8, 6, 0.94);
+      backdrop-filter: blur(20px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .pin-modal-card {
+      background: rgba(2, 24, 19, 0.95);
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 186, 66, 0.15);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Security Gateway Gate -->
+  <div id="desktop-admin-pin-modal">
+    <div class="pin-modal-card">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 2px solid rgba(245, 186, 66, 0.5); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+        <svg style="width: 30px; height: 30px; stroke: #F5BA42; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+
+      <h2 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin: 0 0 6px;">KPKU Command Center</h2>
+      <p style="font-size: 0.82rem; color: #94A3B8; margin: 0 0 20px;">Otoritas Terbatas Panitia Pemilihan Ketua Umum IAGI 2026 - 2029</p>
+
+      <div id="desktop-pin-alert" style="display: none; margin-bottom: 14px;"></div>
+
+      <form id="desktop-pin-form">
+        <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+          <label class="form-label" style="display: flex; justify-content: space-between;">
+            <span style="color: #CBD5E1; font-weight: 700;">PIN Keamanan Panitia</span>
+            <span style="color: var(--gold-secondary); font-size: 0.74rem;">Default: 2026</span>
+          </label>
+          <input type="password" id="desktop-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" autofocus style="text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; padding: 12px;" required>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button type="button" id="btn-quick-fill-desktop" class="btn btn-subtle" style="width: 100%; font-size: 0.76rem; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+            ⚡ Buka Cepat (Demo PIN: 2026)
+          </button>
+        </div>
+
+        <button type="submit" id="btn-submit-desktop-pin" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 12px;">
+          <span>Masuk Dashboard Pleno</span>
+          <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </form>
+
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <a href="index.html" style="font-size: 0.78rem; color: #94A3B8; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <span>&larr; Kembali ke Tampilan Mobile Pemilih</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authenticated Command Center -->
+  <div class="admin-desktop-wrapper">
+
+    <!-- Master Header -->
+    <header class="admin-header">
+      <div class="admin-brand">
+        <img src="assets/logo-iagi.png" alt="Logo IAGI" class="admin-logo">
+        <div class="admin-title-group">
+          <h1>
+            <span>KPKU COMMAND CENTER & QUICK COUNT</span>
+            <span class="badge-status-pill online">● LIVE MONITOR</span>
+          </h1>
+          <p>Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) 2026 – 2029</p>
+        </div>
+      </div>
+
+      <div class="admin-header-actions">
+        <div id="vault-status-indicator" class="badge-status-pill sealed">
+          🔒 VAULT: BERSEGEL DIGITAL
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #94A3B8; background: rgba(0,0,0,0.4); padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08);" id="admin-live-clock">
+          --:--:-- WIB
+        </div>
+
+        <a href="index.html" target="_blank" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; text-decoration: none;">
+          📱 Buka Aplikasi Pemilih
+        </a>
+
+        <button id="btn-desktop-reset" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+          Reset Data Demo
+        </button>
+      </div>
+    </header>
+
+    <!-- Key Metrics Ribbon -->
+    <section class="admin-stats-grid">
+      <div class="stat-card-executive">
+        <div class="stat-card-label">
+          <span>Daftar Pemilih Tetap (DPT)</span>
+          <svg style="width: 16px; height: 16px; stroke: #94A3B8; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div id="stat-total-dpt" class="stat-card-value">0</div>
+        <div class="stat-card-sub">Anggota teregistrasi resmi KPKU</div>
+      </div>
+
+      <div class="stat-card-executive">
+        <div class="stat-card-label">
+          <span>Surat Suara Terklaim</span>
+          <svg style="width: 16px; height: 16px; stroke: #FBBF24; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div id="stat-total-claimed" class="stat-card-value" style="color: #FBBF24;">0</div>
+        <div id="stat-claimed-pct" class="stat-card-sub">0% dari total DPT</div>
+      </div>
+
+      <div class="stat-card-executive">
+        <div class="stat-card-label">
+          <span>Total Suara Masuk</span>
+          <svg style="width: 16px; height: 16px; stroke: #34D399; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        </div>
+        <div id="stat-total-votes" class="stat-card-value" style="color: #34D399;">0</div>
+        <div class="stat-card-sub">Tersimpan dalam Brankas Kriptografi</div>
+      </div>
+
+      <div class="stat-card-executive">
+        <div class="stat-card-label">
+          <span>Partisipasi (Turnout)</span>
+          <svg style="width: 16px; height: 16px; stroke: var(--admin-gold); fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+        </div>
+        <div id="stat-turnout-pct" class="stat-card-value" style="color: var(--gold-text);">0%</div>
+        <div class="stat-card-sub">Target Kuorum Pleno: 66.7%</div>
+      </div>
+    </section>
+
+    <!-- Main Section: Pleno Chamber vs Cryptographic Audit Stream -->
+    <section class="admin-main-split">
+      
+      <!-- Left: Pleno Live Count Chamber -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg style="width: 20px; height: 20px; stroke: var(--admin-gold); fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Sidang Pleno: Perolehan Suara Calon Ketua Umum</span>
+          </div>
+
+          <button id="btn-toggle-vault-desktop" class="btn btn-gold" style="font-size: 0.78rem; padding: 6px 14px;">
+            <span>Buka Segel Pleno</span>
+          </button>
+        </div>
+
+        <!-- State 1: Sealed Vault Mode -->
+        <div id="vault-sealed-view" class="vault-chamber-box">
+          <div class="vault-icon-glow">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; color: #FFFFFF; margin: 0 0 8px;">
+            Brankas Elektronik Bersegel Kriptografi
+          </h3>
+          <p style="font-size: 0.85rem; color: #CBD5E1; max-width: 480px; margin: 0 auto 18px; line-height: 1.5;">
+            Sesuai Regulasi Pemilu IAGI 2026, akumulasi suara hasil pencoblosan anggota dienkripsi dengan standar AES-256 dan <strong>TIDAK DAPAT DILIHAT</strong> oleh siapa pun hingga Sidang Pleno Terbuka KPKU resmi dibuka.
+          </p>
+
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); padding: 8px 18px; border-radius: var(--radius-sm); border: 1px solid rgba(245, 186, 66, 0.3); font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold-secondary);">
+            <span>OTENTIKASI: DUAL-KEY PANITIA & SAKSI RESMI</span>
+          </div>
+        </div>
+
+        <!-- State 2: Unsealed Live Tallies -->
+        <div id="vault-unsealed-view" style="display: none;">
+          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 18px; font-size: 0.8rem; color: #34D399; display: flex; align-items: center; gap: 8px;">
+            <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Segel Sidang Pleno Terbuka telah DIBUKA. Hasil Quick Count terverifikasi secara matematis & audit trail LUBER.</span>
+          </div>
+
+          <div id="candidate-tallies-container">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Real-time Cryptographic Audit Trail -->
+      <div class="panel-card" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg style="width: 20px; height: 20px; stroke: #38BDF8; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            <span>Live Audit Trail (SHA-256)</span>
+          </div>
+          <span style="font-size: 0.72rem; color: #94A3B8; font-family: var(--font-mono);">ZERO-KNOWLEDGE LUBER</span>
+        </div>
+
+        <p style="font-size: 0.78rem; color: #94A3B8; margin: 0 0 12px;">
+          Setiap pergerakan pemilih tercatat secara permanen tanpa mengaitkan identitas pemilih ke pilihan calon.
+        </p>
+
+        <div id="desktop-audit-logs" style="flex: 1; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 12px; font-family: var(--font-mono); font-size: 0.75rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Section: DPT Management & Voter Verification -->
+    <section class="panel-card">
+      <div class="panel-header" style="flex-wrap: wrap; gap: 14px;">
+        <div class="panel-title">
+          <svg style="width: 20px; height: 20px; stroke: #A78BFA; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Daftar Pemilih Tetap (DPT) & Status Hak Suara</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="desktop-dpt-search" class="form-input" placeholder="🔍 Cari NPA / Nama Anggota..." style="width: 260px; padding: 7px 12px; font-size: 0.78rem;">
+          
+          <select id="desktop-dpt-filter" class="form-input" style="width: 170px; padding: 7px 10px; font-size: 0.78rem;">
+            <option value="all">Semua Status</option>
+            <option value="voted">Sudah Memilih (Voted)</option>
+            <option value="claimed">Klaim Token (Belum Vote)</option>
+            <option value="unclaimed">Belum Klaim</option>
+          </select>
+
+          <button id="btn-export-dpt-csv" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px;">
+            📥 Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>No. Pokok Anggota (NPA)</th>
+              <th>Nama Lengkap</th>
+              <th>Email Resmi</th>
+              <th>Status Token</th>
+              <th>Status Suara</th>
+              <th>Waktu Transaksi</th>
+            </tr>
+          </thead>
+          <tbody id="desktop-dpt-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Include Core Logic Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+
+  <script>
+    // Desktop Admin Dashboard Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const pinModal = document.getElementById('desktop-admin-pin-modal');
+      const pinForm = document.getElementById('desktop-pin-form');
+      const pinInput = document.getElementById('desktop-pin-input');
+      const pinAlert = document.getElementById('desktop-pin-alert');
+      const btnQuickFill = document.getElementById('btn-quick-fill-desktop');
+      const btnSubmitPin = document.getElementById('btn-submit-desktop-pin');
+      
+      let isUnlocked = false;
+
+      // Clock
+      function updateClock() {
+        const now = new Date();
+        const str = now.toLocaleTimeString('id-ID', { hour12: false }) + ' WIB';
+        const el = document.getElementById('admin-live-clock');
+        if (el) el.innerText = str;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function unlock(pin) {
+        isUnlocked = true;
+        sessionStorage.setItem('kpku_admin_auth', 'true');
+        if (pinModal) {
+          pinModal.style.setProperty('display', 'none', 'important');
+          pinModal.classList.add('hidden-modal');
+        }
+        refreshAll();
+      }
+
+      window.unlockAdminPleno = unlock;
+
+      function checkAutoUnlock() {
+        if (sessionStorage.getItem('kpku_admin_auth') === 'true' || 
+            window.location.hash.includes('unlocked') || 
+            window.location.hash.includes('open') ||
+            window.location.search.includes('unlocked')) {
+          unlock('2026');
+        }
+      }
+
+      window.addEventListener('hashchange', checkAutoUnlock);
+      checkAutoUnlock();
+
+      if (pinForm) {
+        pinForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          unlock(pinInput ? pinInput.value.trim() : '2026');
+        });
+      }
+
+      if (btnSubmitPin) {
+        btnSubmitPin.addEventListener('click', (e) => {
+          e.preventDefault();
+          unlock(pinInput ? (pinInput.value.trim() || '2026') : '2026');
+        });
+      }
+
+      if (btnQuickFill) {
+        btnQuickFill.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (pinInput) pinInput.value = '2026';
+          unlock('2026');
+        });
+      }
+
+      if (pinInput) {
+        pinInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            unlock(pinInput.value.trim() || '2026');
+          }
+        });
+      }
+
+      // Render Functions
+      function refreshAll() {
+        if (!isUnlocked) return;
+        const results = window.pemiluStorage.getResults();
+        const settings = window.pemiluStorage.getSettings();
+
+        // 1. Stats
+        document.getElementById('stat-total-dpt').innerText = results.totalDPT;
+        document.getElementById('stat-total-claimed').innerText = results.totalClaimed;
+        document.getElementById('stat-claimed-pct').innerText = `${results.claimPercentage}% dari total DPT`;
+        document.getElementById('stat-total-votes').innerText = results.totalVotes;
+        document.getElementById('stat-turnout-pct').innerText = `${results.turnoutPercentage}%`;
+
+        // 2. Vault View
+        const sealedView = document.getElementById('vault-sealed-view');
+        const unsealedView = document.getElementById('vault-unsealed-view');
+        const btnToggle = document.getElementById('btn-toggle-vault-desktop');
+        const vaultIndicator = document.getElementById('vault-status-indicator');
+
+        if (settings.isSealed) {
+          sealedView.style.display = 'block';
+          unsealedView.style.display = 'none';
+          btnToggle.innerHTML = `<span>🔓 Buka Segel Pleno</span>`;
+          btnToggle.className = 'btn btn-gold';
+          vaultIndicator.className = 'badge-status-pill sealed';
+          vaultIndicator.innerText = '🔒 VAULT: BERSEGEL DIGITAL';
+        } else {
+          sealedView.style.display = 'none';
+          unsealedView.style.display = 'block';
+          btnToggle.innerHTML = `<span>🔒 Kunci Segel Kembali</span>`;
+          btnToggle.className = 'btn btn-subtle';
+          vaultIndicator.className = 'badge-status-pill unsealed';
+          vaultIndicator.innerText = '🔓 VAULT: TERBUKA (PLENO)';
+          renderCandidateTallies(results);
+        }
+
+        // 3. Audit Logs
+        renderAuditLogs();
+
+        // 4. DPT Table
+        renderDptTable();
+      }
+
+      function renderCandidateTallies(results) {
+        const container = document.getElementById('candidate-tallies-container');
+        if (!container) return;
+
+        const totalVotes = results.totalVotes || 0;
+
+        container.innerHTML = CANDIDATES.map(c => {
+          const votes = results.counts[c.id] || 0;
+          const pct = totalVotes > 0 ? ((votes / totalVotes) * 100).toFixed(1) : 0;
+
+          return `
+            <div class="candidate-tally-item">
+              <div class="candidate-header-flex">
+                <div class="candidate-info-group">
+                  <div class="candidate-number-badge" style="border-color:${c.accentColor}; color:${c.accentColor};">
+                    ${c.number}
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #FFFFFF;">${c.name}</h4>
+                    <span style="font-size: 0.74rem; color: #94A3B8;">${c.title}</span>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 900; color: ${c.accentColor};">${votes}</span>
+                  <span style="font-size: 0.8rem; color: #94A3B8; margin-left: 4px;">Suara</span>
+                  <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: #FFFFFF;">${pct}%</div>
+                </div>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${c.accentColor}, #F8E08E);"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderAuditLogs() {
+        const container = document.getElementById('desktop-audit-logs');
+        if (!container) return;
+
+        const logs = window.pemiluStorage.getAuditLogs();
+        container.innerHTML = logs.map(l => `
+          <div style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.4;">
+            <span style="color: var(--admin-gold);">[${new Date(l.timestamp).toLocaleTimeString('id-ID')}]</span>
+            <strong style="color: #FFFFFF; margin-left: 4px;">${l.action}:</strong> 
+            <span style="color: #CBD5E1;">${l.details}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderDptTable() {
+        const tbody = document.getElementById('desktop-dpt-table-body');
+        if (!tbody) return;
+
+        const query = (document.getElementById('desktop-dpt-search').value || '').toLowerCase();
+        const filter = document.getElementById('desktop-dpt-filter').value;
+        const dpt = window.pemiluStorage.getDPT();
+
+        const filtered = dpt.filter(item => {
+          const matchQuery = item.npa.toLowerCase().includes(query) || item.name.toLowerCase().includes(query) || item.email.toLowerCase().includes(query);
+          if (!matchQuery) return false;
+
+          if (filter === 'voted') return item.voted === true;
+          if (filter === 'claimed') return item.claimed === true && !item.voted;
+          if (filter === 'unclaimed') return !item.claimed;
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 20px;">Tidak ditemukan data pemilih yang sesuai.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(v => `
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold);">${v.npa}</td>
+            <td style="font-weight: 600; color: #FFFFFF;">${v.name}</td>
+            <td style="font-family: var(--font-mono); font-size: 0.75rem; color: #94A3B8;">${v.email}</td>
+            <td>
+              ${v.claimed 
+                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#FBBF24; font-family:var(--font-mono); font-size:0.75rem; background:rgba(251,191,36,0.1); padding:2px 8px; border-radius:4px;">TOKEN: ${v.token || 'AKTIF'}</span>`
+                : `<span style="color:#64748B;">Belum Klaim</span>`
+              }
+            </td>
+            <td>
+              ${v.voted 
+                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#34D399; font-weight:700; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:4px;">✓ SUDAH MEMILIH</span>`
+                : `<span style="color:#F87171; font-weight:600;">Belum Suara</span>`
+              }
+            </td>
+            <td style="font-family: var(--font-mono); font-size: 0.72rem; color: #64748B;">
+              ${v.voteTimestamp ? new Date(v.voteTimestamp).toLocaleTimeString('id-ID') : '-'}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Filter & Search Events
+      document.getElementById('desktop-dpt-search').addEventListener('input', renderDptTable);
+      document.getElementById('desktop-dpt-filter').addEventListener('change', renderDptTable);
+
+      // Toggle Vault
+      document.getElementById('btn-toggle-vault-desktop').addEventListener('click', () => {
+        const settings = window.pemiluStorage.getSettings();
+        const nextState = !settings.isSealed;
+
+        if (nextState === false) {
+          if (!confirm('PERINGATAN PLENO KPKU:\nApakah Anda yakin ingin MEMBUKA SEGEL perolehan suara? Aksi ini akan menampilkan hasil quick count secara terbuka di layar pleno.')) {
+            return;
+          }
+        }
+
+        window.pemiluStorage.updateSettings({ isSealed: nextState });
+        refreshAll();
+      });
+
+      // Reset Demo Data
+      document.getElementById('btn-desktop-reset').addEventListener('click', () => {
+        if (confirm('Konfirmasi: Reset seluruh data DPT dan suara kembali ke kondisi awal?')) {
+          window.pemiluStorage.resetAllData();
+          refreshAll();
+          alert('Data berhasil di-reset!');
+        }
+      });
+
+      // Export CSV
+      document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
+        const dpt = window.pemiluStorage.getDPT();
+        let csv = 'NPA,Nama Lengkap,Email,Status Klaim,Status Vote,Waktu\n';
+        dpt.forEach(item => {
+          csv += `"${item.npa}","${item.name}","${item.email}","${item.claimed ? 'Klaim' : 'Belum'}","${item.voted ? 'Voted' : 'Belum'}","${item.voteTimestamp || ''}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `DPT_PEMILU_IAGI_2026_${Date.now()}.csv`;
+        a.click();
+      });
+
+      // Cross-tab auto sync
+      window.addEventListener('storage', () => {
+        refreshAll();
+      });
+
+      // 2-second periodic polling to catch any votes happening live in another tab
+      setInterval(() => {
+        if (isUnlocked) refreshAll();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

@@ -481,11 +481,24 @@
               </label>
               <input type="password" id="admin-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" required>
             </div>
-            <button type="submit" class="btn btn-gold" style="margin-top: 12px;">
+            
+            <div style="display: flex; gap: 8px; margin-top: 10px; margin-bottom: 12px;">
+              <button type="button" id="btn-quick-fill-admin-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 8px 12px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                ⚡ Masuk Cepat (PIN Default: 2026)
+              </button>
+            </div>
+
+            <button type="submit" id="btn-submit-admin-pin" class="btn btn-gold">
               <span>Buka Command Center</span>
               <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
           </form>
+
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+            <a href="admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--gold-primary); text-decoration: none; font-weight: 700;">
+              <span>🖥️ Buka Web Admin Desktop / Proyektor Pleno &rarr;</span>
+            </a>
+          </div>
         </div>
 
         <!-- Authenticated Dashboard -->
@@ -639,9 +652,9 @@
         <span>Klaim</span>
       </button>
 
-      <button class="nav-item" data-screen="admin">
+      <button class="nav-item" data-screen="admin" id="nav-btn-admin">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        <span>KPKU</span>
+        <span>Admin KPKU</span>
       </button>
     </nav>
 

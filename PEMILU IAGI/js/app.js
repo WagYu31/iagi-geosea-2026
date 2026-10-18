@@ -587,22 +587,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let isAdminAuthenticated = false;
 
+  function unlockAdmin(pin) {
+    const settings = window.pemiluStorage.getSettings();
+    if (pin === settings.adminPin) {
+      isAdminAuthenticated = true;
+      if (adminPinGate) adminPinGate.style.display = 'none';
+      if (adminDashboardContent) adminDashboardContent.style.display = 'block';
+      renderAdminDashboard();
+      triggerHaptic('success');
+      return true;
+    } else {
+      showAlert(adminPinAlert, 'PIN Panitia salah! Gunakan PIN default: 2026', 'error');
+      triggerHaptic('error');
+      return false;
+    }
+  }
+
   if (adminPinForm) {
     adminPinForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const pin = document.getElementById('admin-pin-input').value.trim();
-      const settings = window.pemiluStorage.getSettings();
+      unlockAdmin(pin);
+    });
+  }
 
-      if (pin === settings.adminPin) {
-        isAdminAuthenticated = true;
-        adminPinGate.style.display = 'none';
-        adminDashboardContent.style.display = 'block';
-        renderAdminDashboard();
-        triggerHaptic('success');
-      } else {
-        showAlert(adminPinAlert, 'PIN Panitia salah! Gunakan PIN default: 2026', 'error');
-        triggerHaptic('error');
+  const btnSubmitAdminPin = document.getElementById('btn-submit-admin-pin');
+  if (btnSubmitAdminPin) {
+    btnSubmitAdminPin.addEventListener('click', (e) => {
+      const pinInput = document.getElementById('admin-pin-input');
+      const pin = pinInput ? pinInput.value.trim() : '';
+      if (pin) {
+        e.preventDefault();
+        unlockAdmin(pin);
       }
+    });
+  }
+
+  const btnQuickFillAdmin = document.getElementById('btn-quick-fill-admin-pin');
+  if (btnQuickFillAdmin) {
+    btnQuickFillAdmin.addEventListener('click', (e) => {
+      e.preventDefault();
+      const pinInput = document.getElementById('admin-pin-input');
+      if (pinInput) pinInput.value = '2026';
+      unlockAdmin('2026');
     });
   }
 
