@@ -33,30 +33,425 @@
       flex-direction: column;
     }
 
-    /* Override mobile container constraints for desktop widescreen */
-    .admin-desktop-wrapper {
+    /* ================= COMMAND CENTER SIDEBAR LAYOUT ================= */
+    .admin-dashboard-container {
+      display: flex;
+      min-height: 100vh;
       width: 100%;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 24px 28px 60px;
-      box-sizing: border-box;
-      flex: 1;
+      position: relative;
     }
 
-    /* Top Master Header */
-    .admin-header {
-      background: rgba(2, 20, 16, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(245, 186, 66, 0.25);
-      border-radius: var(--radius-lg);
-      padding: 18px 24px;
+    /* Fixed Left Sidebar */
+    .admin-sidebar {
+      width: 290px;
+      background: linear-gradient(180deg, #021712 0%, #010c0a 100%);
+      border-right: 1px solid rgba(245, 186, 66, 0.22);
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 120;
+      box-shadow: 6px 0 32px rgba(0, 0, 0, 0.7);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(245, 186, 66, 0.2) transparent;
+    }
+
+    /* Top Brand */
+    .sidebar-brand-box {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
       align-items: center;
+      gap: 14px;
+    }
+
+    .sidebar-brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 5px;
+      border: 1px solid rgba(245, 186, 66, 0.35);
+      box-shadow: 0 4px 14px rgba(245, 186, 66, 0.15);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand-titles h2 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .sidebar-brand-titles h2 span {
+      color: var(--gold-primary);
+    }
+
+    .sidebar-brand-sub {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #34D399;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 3px;
+    }
+
+    /* Admin Profile Card in Sidebar */
+    .sidebar-admin-profile {
+      margin: 16px 14px;
+      padding: 14px;
+      background: rgba(245, 186, 66, 0.05);
+      border: 1px solid rgba(245, 186, 66, 0.22);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-admin-profile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--gold-gradient);
+    }
+
+    .admin-profile-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-avatar-initials {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #06110D;
+      font-weight: 900;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(245, 186, 66, 0.3);
+      flex-shrink: 0;
+    }
+
+    .admin-info-text {
+      overflow: hidden;
+    }
+
+    .admin-info-name {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 1.2;
+    }
+
+    .admin-info-role {
+      font-size: 0.68rem;
+      color: var(--gold-primary);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .admin-security-pill {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      font-weight: 800;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      padding: 3px 8px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+    }
+
+    /* Sidebar Navigation Menu */
+    .sidebar-nav-container {
+      flex: 1;
+      padding: 4px 12px 16px;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(245, 186, 66, 0.2);
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+    }
+
+    .sidebar-group-title {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #64748B;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 10px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      box-sizing: border-box;
+    }
+
+    .sidebar-nav-link:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(2px);
+    }
+
+    .sidebar-nav-link.active {
+      color: #FFFFFF;
+      background: rgba(245, 186, 66, 0.1);
+      border-color: rgba(245, 186, 66, 0.3);
+      font-weight: 700;
+    }
+
+    .sidebar-link-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-link-icon {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    .sidebar-link-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #CBD5E1;
+    }
+
+    .sidebar-link-badge.badge-gold {
+      background: rgba(245, 186, 66, 0.15);
+      color: var(--gold-text);
+      border: 1px solid rgba(245, 186, 66, 0.3);
+    }
+
+    .sidebar-link-badge.badge-emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6EE7B7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Sidebar Vault Status Box */
+    .sidebar-vault-widget {
+      margin: 0 14px 14px;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-vault-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-vault-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sidebar-vault-sub {
+      font-size: 0.64rem;
+      font-family: var(--font-mono);
+      color: #64748B;
+      line-height: 1.3;
+    }
+
+    /* Sidebar Footer Logout */
+    .sidebar-footer {
+      padding: 16px 14px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-logout-btn {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #FCA5A5;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-logout-btn:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .sidebar-copyright-text {
+      font-size: 0.65rem;
+      color: #475569;
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+
+    /* Main Viewport next to sidebar */
+    .admin-main-viewport {
+      margin-left: 290px;
+      flex: 1;
+      padding: 24px 32px 60px;
+      box-sizing: border-box;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Sleek Topbar in Main Viewport */
+    .admin-topbar {
+      background: rgba(2, 20, 16, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(245, 186, 66, 0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-mobile-sidebar-toggle {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .topbar-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-right-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Mobile Responsive Sidebar */
+    @media (max-width: 1080px) {
+      .admin-sidebar {
+        transform: translateX(-100%);
+      }
+
+      .admin-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .admin-main-viewport {
+        margin-left: 0;
+        padding: 16px 16px 40px;
+      }
+
+      .btn-mobile-sidebar-toggle {
+        display: flex;
+      }
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 110;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
     }
 
     .admin-brand {
@@ -525,50 +920,207 @@
     </div>
   </div>
 
-  <!-- Authenticated Command Center -->
-  <div class="admin-desktop-wrapper">
+  <!-- Mobile Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleAdminSidebar(false)"></div>
 
-    <!-- Master Header -->
-    <header class="admin-header">
-      <div class="admin-brand">
-        <img src="assets/logo-iagi.png" alt="Logo IAGI" class="admin-logo">
-        <div class="admin-title-group">
-          <h1>
-            <span>KPKU COMMAND CENTER & QUICK COUNT</span>
-            <span class="badge-status-pill online">● LIVE MONITOR</span>
-          </h1>
-          <p>Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) 2026 – 2029</p>
+  <div class="admin-dashboard-container">
+
+    <!-- ================= ENTERPRISE COMMAND CENTER SIDEBAR ================= -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      
+      <!-- Top Brand Box -->
+      <div class="sidebar-brand-box">
+        <img src="assets/iagi-logo.png" alt="IAGI Emblem" class="sidebar-brand-logo">
+        <div class="sidebar-brand-titles">
+          <h2>KPKU <span>COMMAND</span></h2>
+          <div class="sidebar-brand-sub">
+            <span class="live-dot" style="width:6px; height:6px; background:#10B981; border-radius:50%; display:inline-block; box-shadow:0 0 8px #10B981;"></span>
+            LIVE PLENO ONLINE
+          </div>
         </div>
       </div>
 
-      <div class="admin-header-actions">
-        <!-- Logged In Admin Profile -->
-        <div id="desktop-admin-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.35); padding: 5px 12px; border-radius: 9999px;">
-          <span style="font-size: 0.85rem;">🛡️</span>
-          <span id="desktop-admin-name" style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra Saputra, M.T. (Ketua KPKU)</span>
+      <!-- Authenticated Admin Profile Card -->
+      <div class="sidebar-admin-profile" id="desktop-admin-profile">
+        <div class="admin-profile-header">
+          <div class="admin-avatar-initials" id="sidebar-admin-avatar">HS</div>
+          <div class="admin-info-text">
+            <div class="admin-info-name" id="desktop-admin-name">Dr. Ir. Hendra Saputra, M.T.</div>
+            <div class="admin-info-role">Ketua Panitia (KPKU)</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+          <span class="admin-security-pill">
+            <svg style="width:10px; height:10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            2FA VERIFIED
+          </span>
+          <span style="font-size:0.65rem; color:#94A3B8; font-family:var(--font-mono);">PIT 55 GEOSEA</span>
+        </div>
+      </div>
+
+      <!-- Navigation Menus -->
+      <div class="sidebar-nav-container">
+        
+        <!-- Group 1: Monitoring Utama -->
+        <div>
+          <div class="sidebar-group-title">Monitoring Utama</div>
+          <ul class="sidebar-nav-list">
+            <li>
+              <a href="#section-metrics" class="sidebar-nav-link active" onclick="highlightSidebar(this)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  <span>Ringkasan Pleno</span>
+                </div>
+                <span class="sidebar-link-badge badge-gold">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#section-pleno" class="sidebar-nav-link" onclick="highlightSidebar(this)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  <span>Sidang Suara Masuk</span>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="#section-audit-trail" class="sidebar-nav-link" onclick="highlightSidebar(this)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                  <span>Live Audit Trail</span>
+                </div>
+                <span class="sidebar-link-badge badge-emerald">SHA-256</span>
+              </a>
+            </li>
+            <li>
+              <a href="#section-dpt-table" class="sidebar-nav-link" onclick="highlightSidebar(this)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <span>Daftar Pemilih (DPT)</span>
+                </div>
+                <span class="sidebar-link-badge" id="sidebar-dpt-count-badge">22</span>
+              </a>
+            </li>
+          </ul>
         </div>
 
-        <div id="vault-status-indicator" class="badge-status-pill sealed">
-          🔒 VAULT: BERSEGEL DIGITAL
+        <!-- Group 2: Aksi & Kontrol Pleno -->
+        <div>
+          <div class="sidebar-group-title">Aksi & Kontrol Sidang</div>
+          <ul class="sidebar-nav-list">
+            <li>
+              <button type="button" class="sidebar-nav-link" onclick="document.getElementById('btn-toggle-vault-desktop').click()">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F5BA42"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  <span>Buka / Kunci Brankas</span>
+                </div>
+                <span style="font-size:0.7rem; color:var(--gold-primary);">⚡</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-link" onclick="document.getElementById('btn-export-dpt-csv').click()">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Unduh Rekap CSV</span>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-link" onclick="refreshAdminData()">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span>Segarkan Data Suara</span>
+                </div>
+              </button>
+            </li>
+          </ul>
         </div>
 
-        <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #94A3B8; background: rgba(0,0,0,0.4); padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08);" id="admin-live-clock">
-          --:--:-- WIB
+        <!-- Group 3: Pintasan Sistem -->
+        <div>
+          <div class="sidebar-group-title">Pintasan Portal</div>
+          <ul class="sidebar-nav-list">
+            <li>
+              <a href="landing.html" class="sidebar-nav-link">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                  <span>Portal Landing Page</span>
+                </div>
+                <span>↗</span>
+              </a>
+            </li>
+            <li>
+              <a href="app.html#vote" target="_blank" class="sidebar-nav-link">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                  <span>Bilik Suara Pemilih</span>
+                </div>
+                <span>↗</span>
+              </a>
+            </li>
+          </ul>
         </div>
 
-        <a href="landing.html" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; text-decoration: none;">
-          🌐 Portal Landing Page
-        </a>
+      </div>
 
-        <a href="app.html#vote" target="_blank" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; text-decoration: none;">
-          📱 Buka Bilik Suara
-        </a>
+      <!-- Cryptographic Vault Status Mini-Widget -->
+      <div class="sidebar-vault-widget">
+        <div class="sidebar-vault-top">
+          <span class="sidebar-vault-label">
+            <svg style="width:13px; height:13px; stroke:#F5BA42; fill:none;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>STATUS BRANKAS</span>
+          </span>
+          <span id="vault-status-indicator" class="badge-status-pill sealed" style="font-size:0.65rem; padding:2px 8px;">
+            🔒 BERSEGEL
+          </span>
+        </div>
+        <div class="sidebar-vault-sub">
+          Protokol: AES-256 + SHA-256 Hash<br>
+          Otoritas: Dual-Key KPKU & Saksi
+        </div>
+      </div>
 
-        <button id="btn-desktop-logout" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
-          🚪 Keluar (Logout)
+      <!-- Logout & Version Footer -->
+      <div class="sidebar-footer">
+        <button id="btn-desktop-logout" class="sidebar-logout-btn">
+          <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>Keluar (Logout Sesi)</span>
         </button>
+        <div class="sidebar-copyright-text">
+          PEMILU IAGI 2026 • v3.2 Enterprise
+        </div>
       </div>
-    </header>
+    </aside>
+
+    <!-- ================= MAIN VIEWPORT ================= -->
+    <main class="admin-main-viewport">
+
+      <!-- Sleek Modern Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="btn-mobile-sidebar-toggle" onclick="toggleAdminSidebar(true)" aria-label="Buka Sidebar">
+            <svg style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div>
+            <h1 class="topbar-title">
+              <span>Sidang Pleno: Quick Count & Command Center</span>
+              <span class="badge-status-pill online">● LIVE MONITOR</span>
+            </h1>
+            <p style="font-size:0.75rem; color:#94A3B8; margin:2px 0 0;">
+              Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia Periode 2026–2029
+            </p>
+          </div>
+        </div>
+
+        <div class="topbar-right-tools">
+          <div style="font-family: var(--font-mono); font-size: 0.82rem; color: #E2E8F0; background: rgba(0,0,0,0.5); padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;" id="admin-live-clock">
+            <span class="live-dot" style="width:6px; height:6px; background:#10B981; border-radius:50%; box-shadow:0 0 8px #10B981;"></span>
+            --:--:-- WIB
+          </div>
+          <button class="btn btn-subtle" onclick="refreshAdminData()" title="Segarkan Data" style="padding: 7px 14px; font-size: 0.78rem;">
+            🔄 Refresh Data
+          </button>
+        </div>
+      </header>
 
     <!-- Key Metrics Ribbon -->
     <section class="admin-stats-grid">
@@ -719,6 +1271,7 @@
       </div>
     </section>
 
+    </main>
   </div>
 
   <!-- Include Core Logic Scripts -->
@@ -906,8 +1459,41 @@
           adminNameEl.innerText = `${admin.name} (${admin.role})`;
         }
 
+        const avatarEl = document.getElementById('sidebar-admin-avatar');
+        if (avatarEl && admin.name) {
+          const cleanName = admin.name.replace(/^(Dr\.|Ir\.|Prof\.|H\.|Eng\.)\s+/gi, '').trim();
+          const parts = cleanName.split(' ');
+          const initials = parts.length >= 2 ? (parts[0][0] + parts[1][0]) : (parts[0] ? parts[0].substring(0, 2) : 'AD');
+          avatarEl.innerText = initials.toUpperCase();
+        }
+
         refreshAll();
       }
+
+      window.toggleAdminSidebar = function(open) {
+        const sb = document.getElementById('admin-sidebar');
+        const ov = document.getElementById('sidebar-overlay');
+        if (!sb) return;
+        if (open) {
+          sb.classList.add('open');
+          if (ov) ov.classList.add('active');
+        } else {
+          sb.classList.remove('open');
+          if (ov) ov.classList.remove('active');
+        }
+      };
+
+      window.highlightSidebar = function(el) {
+        document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+        if (el) el.classList.add('active');
+        if (window.innerWidth <= 1080) {
+          window.toggleAdminSidebar(false);
+        }
+      };
+
+      window.refreshAdminData = function() {
+        refreshAll();
+      };
 
       // Logout
       if (btnLogout) {
@@ -943,6 +1529,9 @@
         document.getElementById('stat-claimed-pct').innerText = `${results.claimPercentage}% dari total DPT`;
         document.getElementById('stat-total-votes').innerText = results.totalVotes;
         document.getElementById('stat-turnout-pct').innerText = `${results.turnoutPercentage}%`;
+
+        const sbBadge = document.getElementById('sidebar-dpt-count-badge');
+        if (sbBadge) sbBadge.innerText = results.totalDPT;
 
         // 2. Vault View
         const sealedView = document.getElementById('vault-sealed-view');
