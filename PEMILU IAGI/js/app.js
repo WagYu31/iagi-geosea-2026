@@ -579,57 +579,186 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerHaptic('light');
   };
 
-  // ================= MODUL 6: KPKU COMMAND CENTER (ADMIN) =================
+  // ================= MODUL 6: KPKU COMMAND CENTER (ADMIN LOGIN & 2FA) =================
   const adminPinGate = document.getElementById('admin-pin-gate');
   const adminDashboardContent = document.getElementById('admin-dashboard-content');
-  const adminPinForm = document.getElementById('form-admin-pin');
-  const adminPinAlert = document.getElementById('admin-pin-alert');
+  const adminLoginAlert = document.getElementById('admin-login-alert');
+  
+  const step1Container = document.getElementById('admin-auth-step-1');
+  const step2Container = document.getElementById('admin-auth-step-2');
+  const formStep1 = document.getElementById('form-admin-login-step1');
+  const formVerifyOtp = document.getElementById('form-verify-otp');
+  const formVerifyPin = document.getElementById('form-verify-pin');
 
+  const tabOtp = document.getElementById('tab-2fa-otp');
+  const tabPin = document.getElementById('tab-2fa-pin');
+  const viewOtp = document.getElementById('view-2fa-otp');
+  const viewPin = document.getElementById('view-2fa-pin');
+  const btnBackStep1 = document.getElementById('btn-back-to-step1');
+
+  let currentPendingAdmin = null;
+  let currentActiveOtp = '842026';
   let isAdminAuthenticated = false;
 
-  function unlockAdmin(pin) {
-    const settings = window.pemiluStorage.getSettings();
-    if (pin === settings.adminPin) {
-      isAdminAuthenticated = true;
-      if (adminPinGate) adminPinGate.style.display = 'none';
-      if (adminDashboardContent) adminDashboardContent.style.display = 'block';
-      renderAdminDashboard();
-      triggerHaptic('success');
-      return true;
-    } else {
-      showAlert(adminPinAlert, 'PIN Panitia salah! Gunakan PIN default: 2026', 'error');
-      triggerHaptic('error');
-      return false;
-    }
-  }
-
-  if (adminPinForm) {
-    adminPinForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const pin = document.getElementById('admin-pin-input').value.trim();
-      unlockAdmin(pin);
-    });
-  }
-
-  const btnSubmitAdminPin = document.getElementById('btn-submit-admin-pin');
-  if (btnSubmitAdminPin) {
-    btnSubmitAdminPin.addEventListener('click', (e) => {
-      const pinInput = document.getElementById('admin-pin-input');
-      const pin = pinInput ? pinInput.value.trim() : '';
-      if (pin) {
-        e.preventDefault();
-        unlockAdmin(pin);
+  // Toggle Password
+  const btnToggleAdminPwd = document.getElementById('btn-toggle-admin-pwd');
+  if (btnToggleAdminPwd) {
+    btnToggleAdminPwd.addEventListener('click', () => {
+      const pwdInput = document.getElementById('admin-password-input');
+      if (pwdInput) {
+        pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
       }
     });
   }
 
-  const btnQuickFillAdmin = document.getElementById('btn-quick-fill-admin-pin');
-  if (btnQuickFillAdmin) {
-    btnQuickFillAdmin.addEventListener('click', (e) => {
+  // Quick fill account
+  const btnQuickFillAccount = document.getElementById('btn-quick-fill-admin-account');
+  if (btnQuickFillAccount) {
+    btnQuickFillAccount.addEventListener('click', () => {
+      const emailInput = document.getElementById('admin-email-input');
+      const pwdInput = document.getElementById('admin-password-input');
+      if (emailInput) emailInput.value = 'admin.kpku@iagi.or.id';
+      if (pwdInput) pwdInput.value = 'admin';
+      triggerHaptic('light');
+    });
+  }
+
+  // Step 1: Submit Email & Password
+  if (formStep1) {
+    formStep1.addEventListener('submit', (e) => {
       e.preventDefault();
-      const pinInput = document.getElementById('admin-pin-input');
+      const email = document.getElementById('admin-email-input').value.trim();
+      const password = document.getElementById('admin-password-input').value.trim();
+
+      const validation = window.pemiluStorage.validateAdminCredentials(email, password);
+      if (!validation.success) {
+        showAlert(adminLoginAlert, validation.error, 'error');
+        triggerHaptic('error');
+        return;
+      }
+
+      currentPendingAdmin = validation.admin;
+      currentActiveOtp = window.pemiluStorage.generateAdminOtp(email) || '842026';
+
+      // Transition to Step 2
+      if (step1Container) step1Container.style.display = 'none';
+      if (step2Container) step2Container.style.display = 'block';
+      if (adminLoginAlert) adminLoginAlert.style.display = 'none';
+
+      const emailLabel = document.getElementById('admin-step2-email-label');
+      if (emailLabel) emailLabel.innerText = `${currentPendingAdmin.name} (${currentPendingAdmin.email})`;
+
+      const otpHint = document.getElementById('demo-otp-hint');
+      if (otpHint) otpHint.innerText = `Kode OTP terkirim: ${currentActiveOtp}`;
+
+      showAlert(adminLoginAlert, `Kode OTP telah dikirim ke ${email}. (Kode Demo: ${currentActiveOtp})`, 'info');
+      triggerHaptic('success');
+    });
+  }
+
+  // Switch 2FA Tabs
+  if (tabOtp && tabPin) {
+    tabOtp.addEventListener('click', () => {
+      tabOtp.className = 'btn btn-gold';
+      tabPin.className = 'btn btn-subtle';
+      if (viewOtp) viewOtp.style.display = 'block';
+      if (viewPin) viewPin.style.display = 'none';
+    });
+
+    tabPin.addEventListener('click', () => {
+      tabPin.className = 'btn btn-gold';
+      tabOtp.className = 'btn btn-subtle';
+      if (viewPin) viewPin.style.display = 'block';
+      if (viewOtp) viewOtp.style.display = 'none';
+    });
+  }
+
+  // Auto fill OTP
+  const btnAutoFillOtp = document.getElementById('btn-auto-fill-otp');
+  if (btnAutoFillOtp) {
+    btnAutoFillOtp.addEventListener('click', () => {
+      const otpInput = document.getElementById('admin-otp-input');
+      if (otpInput) otpInput.value = currentActiveOtp || '842026';
+    });
+  }
+
+  // Auto fill PIN
+  const btnAutoFillPin = document.getElementById('btn-auto-fill-pin');
+  if (btnAutoFillPin) {
+    btnAutoFillPin.addEventListener('click', () => {
+      const pinInput = document.getElementById('admin-2fa-pin-input');
       if (pinInput) pinInput.value = '2026';
-      unlockAdmin('2026');
+    });
+  }
+
+  // Back to Step 1
+  if (btnBackStep1) {
+    btnBackStep1.addEventListener('click', () => {
+      if (step2Container) step2Container.style.display = 'none';
+      if (step1Container) step1Container.style.display = 'block';
+      if (adminLoginAlert) adminLoginAlert.style.display = 'none';
+    });
+  }
+
+  // Step 2A: Verify OTP
+  if (formVerifyOtp) {
+    formVerifyOtp.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const otp = document.getElementById('admin-otp-input').value.trim();
+      const email = currentPendingAdmin ? currentPendingAdmin.email : '';
+
+      const res = window.pemiluStorage.verifyAdminOtp(email, otp);
+      if (res.success) {
+        completeAdminLogin(currentPendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+      } else {
+        showAlert(adminLoginAlert, res.error || 'Kode OTP salah.', 'error');
+        triggerHaptic('error');
+      }
+    });
+  }
+
+  // Step 2B: Verify PIN
+  if (formVerifyPin) {
+    formVerifyPin.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('admin-2fa-pin-input').value.trim();
+      const res = window.pemiluStorage.verifyAdminSecurityPin(pin);
+      if (res.success) {
+        completeAdminLogin(currentPendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+      } else {
+        showAlert(adminLoginAlert, res.error || 'PIN Keamanan salah.', 'error');
+        triggerHaptic('error');
+      }
+    });
+  }
+
+  function completeAdminLogin(admin) {
+    window.pemiluStorage.setAdminSession(admin);
+    isAdminAuthenticated = true;
+    if (adminPinGate) adminPinGate.style.display = 'none';
+    if (adminDashboardContent) adminDashboardContent.style.display = 'block';
+
+    const nameEl = document.getElementById('admin-session-name');
+    const roleEl = document.getElementById('admin-session-role');
+    if (nameEl) nameEl.innerText = admin.name;
+    if (roleEl) roleEl.innerText = `${admin.role} • ${admin.email}`;
+
+    renderAdminDashboard();
+    triggerHaptic('success');
+  }
+
+  // Logout
+  const btnAdminLogout = document.getElementById('btn-admin-logout');
+  if (btnAdminLogout) {
+    btnAdminLogout.addEventListener('click', () => {
+      window.pemiluStorage.logoutAdmin();
+      isAdminAuthenticated = false;
+      if (adminDashboardContent) adminDashboardContent.style.display = 'none';
+      if (adminPinGate) adminPinGate.style.display = 'block';
+      if (step1Container) step1Container.style.display = 'block';
+      if (step2Container) step2Container.style.display = 'none';
+      if (adminLoginAlert) adminLoginAlert.style.display = 'none';
+      triggerHaptic('light');
     });
   }
 

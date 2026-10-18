@@ -394,40 +394,130 @@
 </head>
 <body>
 
-  <!-- Fullscreen Security Gateway Gate -->
+  <!-- Fullscreen Security Gateway Gate (Multi-Factor Admin Auth) -->
   <div id="desktop-admin-pin-modal">
-    <div class="pin-modal-card">
+    <div class="pin-modal-card" style="max-width: 480px;">
+      
+      <!-- Top Emblem -->
       <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 2px solid rgba(245, 186, 66, 0.5); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
         <svg style="width: 30px; height: 30px; stroke: #F5BA42; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
       </div>
 
       <h2 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin: 0 0 6px;">KPKU Command Center</h2>
-      <p style="font-size: 0.82rem; color: #94A3B8; margin: 0 0 20px;">Otoritas Terbatas Panitia Pemilihan Ketua Umum IAGI 2026 - 2029</p>
+      <p style="font-size: 0.82rem; color: #94A3B8; margin: 0 0 18px;">Otoritas Terbatas Panitia Pemilihan Ketua Umum IAGI 2026 - 2029</p>
 
       <div id="desktop-pin-alert" style="display: none; margin-bottom: 14px;"></div>
 
-      <form id="desktop-pin-form">
-        <div class="form-group" style="text-align: left; margin-bottom: 16px;">
-          <label class="form-label" style="display: flex; justify-content: space-between;">
-            <span style="color: #CBD5E1; font-weight: 700;">PIN Keamanan Panitia</span>
-            <span style="color: var(--gold-secondary); font-size: 0.74rem;">Default: 2026</span>
-          </label>
-          <input type="password" id="desktop-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" autofocus style="text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; padding: 12px;" required>
+      <!-- STEP 1: Email & Password Form -->
+      <div id="desktop-auth-step1">
+        <form id="desktop-login-step1-form">
+          <div class="form-group" style="text-align: left; margin-bottom: 12px;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span style="color: #CBD5E1; font-weight: 700;">Email Resmi Panitia / Saksi *</span>
+              <span style="color: var(--gold-secondary); font-size: 0.72rem;">admin.kpku@iagi.or.id</span>
+            </label>
+            <input type="email" id="desktop-email-input" class="form-input" placeholder="admin.kpku@iagi.or.id" required style="padding: 10px 14px;">
+          </div>
+
+          <div class="form-group" style="text-align: left; margin-bottom: 14px;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span style="color: #CBD5E1; font-weight: 700;">Password Akun *</span>
+              <span style="color: var(--gold-secondary); font-size: 0.72rem;">Default: admin</span>
+            </label>
+            <div style="position: relative;">
+              <input type="password" id="desktop-password-input" class="form-input" placeholder="Masukkan password" required style="padding: 10px 14px;">
+              <button type="button" id="btn-toggle-desktop-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer;">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <button type="button" id="btn-quick-fill-desktop" class="btn btn-subtle" style="width: 100%; font-size: 0.76rem; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+              ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
+            </button>
+          </div>
+
+          <button type="submit" id="btn-submit-desktop-step1" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 12px;">
+            <span>Lanjut ke Verifikasi Masuk</span>
+            <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2: Verifikasi Masuk (Email OTP atau PIN) -->
+      <div id="desktop-auth-step2" style="display: none; text-align: left;">
+        <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
+          <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi Masuk (2FA Multi-Factor)</div>
+          <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">admin.kpku@iagi.or.id</div>
         </div>
 
-        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-          <button type="button" id="btn-quick-fill-desktop" class="btn btn-subtle" style="width: 100%; font-size: 0.76rem; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-            ⚡ Buka Cepat (Demo PIN: 2026)
+        <!-- 2FA Selector Tabs -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+          <button type="button" id="desktop-tab-2fa-otp" class="btn btn-gold" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
+            📧 OTP Email
+          </button>
+          <button type="button" id="desktop-tab-2fa-pin" class="btn btn-subtle" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
+            🔒 PIN Keamanan
           </button>
         </div>
 
-        <button type="submit" id="btn-submit-desktop-pin" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 12px;">
-          <span>Masuk Dashboard Pleno</span>
-          <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
-      </form>
+        <!-- View A: OTP Email -->
+        <div id="desktop-view-2fa-otp">
+          <form id="desktop-form-verify-otp">
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Kode Verifikasi OTP 6-Digit</span>
+                <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
+              </label>
+              <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="842026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+            </div>
 
-      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button type="button" id="btn-desktop-auto-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                ⚡ Masukkan OTP Otomatis
+              </button>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 11px; margin-bottom: 10px;">
+              <span>Verifikasi OTP & Masuk Pleno</span>
+              <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- View B: PIN Keamanan -->
+        <div id="desktop-view-2fa-pin" style="display: none;">
+          <form id="desktop-form-verify-pin">
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>PIN Keamanan Panitia (4-Digit)</span>
+                <span class="helper">Default: 2026</span>
+              </label>
+              <input type="password" id="desktop-2fa-pin-input" class="form-input font-mono" placeholder="2026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button type="button" id="btn-desktop-auto-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                ⚡ Masukkan PIN Otomatis (2026)
+              </button>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 11px; margin-bottom: 10px;">
+              <span>Verifikasi PIN & Masuk Pleno</span>
+              <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+          </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 10px;">
+          <button type="button" id="btn-desktop-back-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.78rem; cursor: pointer; text-decoration: underline;">
+            &larr; Ganti Akun / Kembali ke Step 1
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
         <a href="index.html" style="font-size: 0.78rem; color: #94A3B8; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
           <span>&larr; Kembali ke Tampilan Mobile Pemilih</span>
         </a>
@@ -452,6 +542,12 @@
       </div>
 
       <div class="admin-header-actions">
+        <!-- Logged In Admin Profile -->
+        <div id="desktop-admin-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.35); padding: 5px 12px; border-radius: 9999px;">
+          <span style="font-size: 0.85rem;">🛡️</span>
+          <span id="desktop-admin-name" style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra Saputra, M.T. (Ketua KPKU)</span>
+        </div>
+
         <div id="vault-status-indicator" class="badge-status-pill sealed">
           🔒 VAULT: BERSEGEL DIGITAL
         </div>
@@ -464,8 +560,8 @@
           📱 Buka Aplikasi Pemilih
         </a>
 
-        <button id="btn-desktop-reset" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
-          Reset Data Demo
+        <button id="btn-desktop-logout" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+          🚪 Keluar (Logout)
         </button>
       </div>
     </header>
@@ -629,13 +725,29 @@
     // Desktop Admin Dashboard Logic
     document.addEventListener('DOMContentLoaded', () => {
       const pinModal = document.getElementById('desktop-admin-pin-modal');
-      const pinForm = document.getElementById('desktop-pin-form');
-      const pinInput = document.getElementById('desktop-pin-input');
       const pinAlert = document.getElementById('desktop-pin-alert');
-      const btnQuickFill = document.getElementById('btn-quick-fill-desktop');
-      const btnSubmitPin = document.getElementById('btn-submit-desktop-pin');
       
+      const step1Div = document.getElementById('desktop-auth-step1');
+      const step2Div = document.getElementById('desktop-auth-step2');
+      const formStep1 = document.getElementById('desktop-login-step1-form');
+      const formVerifyOtp = document.getElementById('desktop-form-verify-otp');
+      const formVerifyPin = document.getElementById('desktop-form-verify-pin');
+
+      const tabOtp = document.getElementById('desktop-tab-2fa-otp');
+      const tabPin = document.getElementById('desktop-tab-2fa-pin');
+      const viewOtp = document.getElementById('desktop-view-2fa-otp');
+      const viewPin = document.getElementById('desktop-view-2fa-pin');
+
+      const btnTogglePwd = document.getElementById('btn-toggle-desktop-pwd');
+      const btnQuickFill = document.getElementById('btn-quick-fill-desktop');
+      const btnBackStep1 = document.getElementById('btn-desktop-back-step1');
+      const btnAutoOtp = document.getElementById('btn-desktop-auto-otp');
+      const btnAutoPin = document.getElementById('btn-desktop-auto-pin');
+      const btnLogout = document.getElementById('btn-desktop-logout');
+
       let isUnlocked = false;
+      let pendingAdmin = null;
+      let activeOtp = '842026';
 
       // Clock
       function updateClock() {
@@ -647,59 +759,172 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      function unlock(pin) {
+      function showAlert(msg, type = 'error') {
+        if (!pinAlert) return;
+        pinAlert.style.display = 'block';
+        pinAlert.className = `alert-box alert-${type}`;
+        pinAlert.innerText = msg;
+      }
+
+      function hideAlert() {
+        if (pinAlert) pinAlert.style.display = 'none';
+      }
+
+      // Password toggle
+      if (btnTogglePwd) {
+        btnTogglePwd.addEventListener('click', () => {
+          const inp = document.getElementById('desktop-password-input');
+          if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+        });
+      }
+
+      // Quick fill Step 1
+      if (btnQuickFill) {
+        btnQuickFill.addEventListener('click', () => {
+          const em = document.getElementById('desktop-email-input');
+          const pw = document.getElementById('desktop-password-input');
+          if (em) em.value = 'admin.kpku@iagi.or.id';
+          if (pw) pw.value = 'admin';
+        });
+      }
+
+      // Step 1: Submit email & password
+      if (formStep1) {
+        formStep1.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const email = document.getElementById('desktop-email-input').value.trim();
+          const password = document.getElementById('desktop-password-input').value.trim();
+
+          const validation = window.pemiluStorage.validateAdminCredentials(email, password);
+          if (!validation.success) {
+            showAlert(validation.error, 'error');
+            return;
+          }
+
+          pendingAdmin = validation.admin;
+          activeOtp = window.pemiluStorage.generateAdminOtp(email) || '842026';
+
+          // Move to Step 2
+          hideAlert();
+          if (step1Div) step1Div.style.display = 'none';
+          if (step2Div) step2Div.style.display = 'block';
+
+          const emailLbl = document.getElementById('desktop-step2-email-label');
+          if (emailLbl) emailLbl.innerText = `${pendingAdmin.name} (${pendingAdmin.email})`;
+
+          const hint = document.getElementById('desktop-demo-otp-hint');
+          if (hint) hint.innerText = `Kode OTP terkirim: ${activeOtp}`;
+
+          showAlert(`Kode OTP 6-Digit telah dikirim ke ${email}. (Kode Demo: ${activeOtp})`, 'info');
+        });
+      }
+
+      // 2FA Tabs
+      if (tabOtp && tabPin) {
+        tabOtp.addEventListener('click', () => {
+          tabOtp.className = 'btn btn-gold';
+          tabPin.className = 'btn btn-subtle';
+          if (viewOtp) viewOtp.style.display = 'block';
+          if (viewPin) viewPin.style.display = 'none';
+        });
+
+        tabPin.addEventListener('click', () => {
+          tabPin.className = 'btn btn-gold';
+          tabOtp.className = 'btn btn-subtle';
+          if (viewPin) viewPin.style.display = 'block';
+          if (viewOtp) viewOtp.style.display = 'none';
+        });
+      }
+
+      // Auto fill OTP / PIN
+      if (btnAutoOtp) {
+        btnAutoOtp.addEventListener('click', () => {
+          const inp = document.getElementById('desktop-otp-input');
+          if (inp) inp.value = activeOtp || '842026';
+        });
+      }
+
+      if (btnAutoPin) {
+        btnAutoPin.addEventListener('click', () => {
+          const inp = document.getElementById('desktop-2fa-pin-input');
+          if (inp) inp.value = '2026';
+        });
+      }
+
+      // Back to Step 1
+      if (btnBackStep1) {
+        btnBackStep1.addEventListener('click', () => {
+          if (step2Div) step2Div.style.display = 'none';
+          if (step1Div) step1Div.style.display = 'block';
+          hideAlert();
+        });
+      }
+
+      // Step 2A: Verify OTP
+      if (formVerifyOtp) {
+        formVerifyOtp.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const otp = document.getElementById('desktop-otp-input').value.trim();
+          const email = pendingAdmin ? pendingAdmin.email : '';
+
+          const res = window.pemiluStorage.verifyAdminOtp(email, otp);
+          if (res.success) {
+            completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+          } else {
+            showAlert(res.error || 'Kode OTP salah.', 'error');
+          }
+        });
+      }
+
+      // Step 2B: Verify PIN
+      if (formVerifyPin) {
+        formVerifyPin.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const pin = document.getElementById('desktop-2fa-pin-input').value.trim();
+          const res = window.pemiluStorage.verifyAdminSecurityPin(pin);
+          if (res.success) {
+            completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+          } else {
+            showAlert(res.error || 'PIN Keamanan salah.', 'error');
+          }
+        });
+      }
+
+      function completeLogin(admin) {
+        window.pemiluStorage.setAdminSession(admin);
         isUnlocked = true;
-        sessionStorage.setItem('kpku_admin_auth', 'true');
         if (pinModal) {
           pinModal.style.setProperty('display', 'none', 'important');
-          pinModal.classList.add('hidden-modal');
         }
+
+        const adminNameEl = document.getElementById('desktop-admin-name');
+        if (adminNameEl) {
+          adminNameEl.innerText = `${admin.name} (${admin.role})`;
+        }
+
         refreshAll();
       }
 
-      window.unlockAdminPleno = unlock;
-
-      function checkAutoUnlock() {
-        if (sessionStorage.getItem('kpku_admin_auth') === 'true' || 
-            window.location.hash.includes('unlocked') || 
-            window.location.hash.includes('open') ||
-            window.location.search.includes('unlocked')) {
-          unlock('2026');
-        }
-      }
-
-      window.addEventListener('hashchange', checkAutoUnlock);
-      checkAutoUnlock();
-
-      if (pinForm) {
-        pinForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          unlock(pinInput ? pinInput.value.trim() : '2026');
-        });
-      }
-
-      if (btnSubmitPin) {
-        btnSubmitPin.addEventListener('click', (e) => {
-          e.preventDefault();
-          unlock(pinInput ? (pinInput.value.trim() || '2026') : '2026');
-        });
-      }
-
-      if (btnQuickFill) {
-        btnQuickFill.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (pinInput) pinInput.value = '2026';
-          unlock('2026');
-        });
-      }
-
-      if (pinInput) {
-        pinInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            unlock(pinInput.value.trim() || '2026');
+      // Logout
+      if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+          window.pemiluStorage.logoutAdmin();
+          isUnlocked = false;
+          if (pinModal) {
+            pinModal.style.setProperty('display', 'flex', 'important');
           }
+          if (step1Div) step1Div.style.display = 'block';
+          if (step2Div) step2Div.style.display = 'none';
+          hideAlert();
         });
+      }
+
+      // Auto-unlock check if session active or demo hash
+      const activeSession = window.pemiluStorage.getAdminSession();
+      if (activeSession && activeSession.authenticated) {
+        completeLogin(activeSession);
+      } else if (window.location.hash.includes('unlocked') || window.location.search.includes('unlocked')) {
+        completeLogin({ name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
       }
 
       // Render Functions

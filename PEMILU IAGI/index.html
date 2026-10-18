@@ -459,41 +459,132 @@
 
       <!-- ================= SCREEN 6: KPKU COMMAND CENTER (ADMIN) ================= -->
       <section id="screen-admin" class="screen">
-        <!-- PIN Gate -->
+        <!-- 2-Step Multi-Factor Authentication Gateway -->
         <div id="admin-pin-gate" class="card card-gold">
+          
+          <!-- Header Card -->
           <div class="card-header-flex">
             <div class="card-icon-frame">
               <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
             <div>
               <div class="card-title">KPKU Command Center</div>
-              <div style="font-size: 0.74rem; color: #CBD5E1;">Area terbatas khusus Panitia Pemilihan & Saksi Caketum</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Otentikasi Panitia Pemilihan & Saksi Mandat Resmi</div>
             </div>
           </div>
 
-          <div id="admin-pin-alert" style="display: none; margin-top: 12px;"></div>
+          <div id="admin-login-alert" style="display: none; margin-top: 12px;"></div>
 
-          <form id="form-admin-pin" style="margin-top: 14px;">
-            <div class="form-group">
-              <label class="form-label">
-                <span>PIN Keamanan Panitia</span>
-                <span class="helper">PIN Default: 2026</span>
-              </label>
-              <input type="password" id="admin-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" required>
+          <!-- STEP 1: Email & Password -->
+          <div id="admin-auth-step-1">
+            <form id="form-admin-login-step1" style="margin-top: 14px;">
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">
+                  <span>Email Resmi Panitia / Saksi *</span>
+                  <span class="helper">Contoh: admin.kpku@iagi.or.id</span>
+                </label>
+                <input type="email" id="admin-email-input" class="form-input" placeholder="admin.kpku@iagi.or.id" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">
+                  <span>Password Akun *</span>
+                  <span class="helper">Default Demo: admin</span>
+                </label>
+                <div style="position: relative;">
+                  <input type="password" id="admin-password-input" class="form-input" placeholder="Masukkan password" required>
+                  <button type="button" id="btn-toggle-admin-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; font-size: 0.75rem; cursor: pointer;">
+                    👁️
+                  </button>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                <button type="button" id="btn-quick-fill-admin-account" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 8px 12px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                  ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
+                </button>
+              </div>
+
+              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold" style="width: 100%; justify-content: center;">
+                <span>Lanjut ke Verifikasi Masuk</span>
+                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- STEP 2: Verifikasi Masuk (Email OTP atau Password/PIN) -->
+          <div id="admin-auth-step-2" style="display: none; margin-top: 14px;">
+            <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;">
+              <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi Masuk (2FA)</div>
+              <div id="admin-step2-email-label" style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">admin.kpku@iagi.or.id</div>
             </div>
-            
-            <div style="display: flex; gap: 8px; margin-top: 10px; margin-bottom: 12px;">
-              <button type="button" id="btn-quick-fill-admin-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 8px 12px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                ⚡ Masuk Cepat (PIN Default: 2026)
+
+            <!-- 2FA Method Selector Tabs -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+              <button type="button" id="tab-2fa-otp" class="btn btn-gold" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+                📧 OTP Email
+              </button>
+              <button type="button" id="tab-2fa-pin" class="btn btn-subtle" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+                🔒 PIN Keamanan
               </button>
             </div>
 
-            <button type="submit" id="btn-submit-admin-pin" class="btn btn-gold">
-              <span>Buka Command Center</span>
-              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </form>
+            <!-- View A: OTP Email -->
+            <div id="view-2fa-otp">
+              <form id="form-verify-otp">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label">
+                    <span>Kode Verifikasi OTP 6-Digit</span>
+                    <span id="demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
+                  </label>
+                  <input type="text" id="admin-otp-input" class="form-input font-mono" placeholder="Contoh: 842026" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                </div>
 
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                  <button type="button" id="btn-auto-fill-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan OTP Otomatis
+                  </button>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                  <span>Verifikasi OTP & Buka Dashboard</span>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
+            </div>
+
+            <!-- View B: Security PIN -->
+            <div id="view-2fa-pin" style="display: none;">
+              <form id="form-verify-pin">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label">
+                    <span>PIN Keamanan Panitia (4-Digit)</span>
+                    <span class="helper">PIN Default: 2026</span>
+                  </label>
+                  <input type="password" id="admin-2fa-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                  <button type="button" id="btn-auto-fill-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan PIN Otomatis (2026)
+                  </button>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                  <span>Verifikasi PIN & Buka Dashboard</span>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
+            </div>
+
+            <div style="text-align: center; margin-top: 8px;">
+              <button type="button" id="btn-back-to-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.74rem; cursor: pointer; text-decoration: underline;">
+                &larr; Ganti Email / Kembali ke Step 1
+              </button>
+            </div>
+          </div>
+
+          <!-- Link to Desktop Admin -->
           <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
             <a href="admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--gold-primary); text-decoration: none; font-weight: 700;">
               <span>🖥️ Buka Web Admin Desktop / Proyektor Pleno &rarr;</span>
@@ -503,6 +594,23 @@
 
         <!-- Authenticated Dashboard -->
         <div id="admin-dashboard-content" style="display: none;">
+          
+          <!-- Identity Ribbon -->
+          <div style="background: rgba(2, 28, 22, 0.9); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                🛡️
+              </div>
+              <div>
+                <div id="admin-session-name" style="font-size: 0.8rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra Saputra, M.T.</div>
+                <div id="admin-session-role" style="font-size: 0.68rem; color: var(--gold-secondary);">Ketua Komisi Pemilihan Ketua Umum (KPKU)</div>
+              </div>
+            </div>
+            <button id="btn-admin-logout" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); width: auto;">
+              Keluar
+            </button>
+          </div>
+
           <div class="card" style="margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 14px;">
               <div>

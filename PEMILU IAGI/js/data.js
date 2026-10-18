@@ -111,7 +111,30 @@ const INITIAL_DPT = [
   { npa: "IAGI-2024-1052", name: "Anisa Putri Maharani, S.T.", email: "anisa.maharani@geoai.id", pengda: "Jawa Barat", category: "Student", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null }
 ];
 
+// Akun Resmi Panitia & Pengawas KPKU Pemilu IAGI 2026
+const ADMIN_ACCOUNTS = [
+  {
+    id: "adm-01",
+    name: "Dr. Ir. Hendra Saputra, M.T.",
+    title: "Ketua Komisi Pemilihan Ketua Umum (KPKU)",
+    email: "admin.kpku@iagi.or.id",
+    password: "admin",
+    securityPin: "2026",
+    role: "Ketua Panitia"
+  },
+  {
+    id: "adm-02",
+    name: "Sekretariat Panitia & Saksi Pleno",
+    title: "Pengawas Pemilu & Saksi Resmi",
+    email: "panitia@pemiluiagi.id",
+    password: "admin",
+    securityPin: "2026",
+    role: "Pengawas / Saksi"
+  }
+];
+
 // Attach explicitly to window for cross-script safety
 window.ELECTION_CONFIG = ELECTION_CONFIG;
 window.CANDIDATES = CANDIDATES;
 window.INITIAL_DPT = INITIAL_DPT;
+window.ADMIN_ACCOUNTS = ADMIN_ACCOUNTS;
