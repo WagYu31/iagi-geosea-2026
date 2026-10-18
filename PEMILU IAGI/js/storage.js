@@ -180,10 +180,18 @@ class PemiluStorage {
     };
   }
 
-  // --- Bilik Suara Verification ---
-  verifyVotingEligibility(npa, token) {
-    const cleanNpa = (npa || '').trim().toUpperCase();
-    const cleanToken = (token || '').trim().toUpperCase();
+    // Built-in testing account for instant demonstration
+    if (cleanNpa === 'IAGI-2024-0001' && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
+      const dpt = this.getDPT();
+      let demoVoter = dpt.find(v => v.npa === 'IAGI-2024-0001');
+      if (demoVoter) {
+        demoVoter.claimed = true;
+        demoVoter.token = 'IAGI-2026-DEMO-2026';
+        demoVoter.voted = false; // Allow repeatable testing
+        this.saveDPT(dpt);
+        return { valid: true, voter: demoVoter };
+      }
+    }
 
     const voter = this.getVoterByNpa(cleanNpa);
     if (!voter) {
@@ -195,7 +203,7 @@ class PemiluStorage {
     }
 
     if (!voter.claimed || !voter.token) {
-      return { valid: false, error: 'Surat suara untuk NPA ini belum diklaim. Silakan lakukan klaim surat suara terlebih dahulu di menu "Claim Surat Suara".' };
+      return { valid: false, error: 'Surat suara untuk NPA ini belum diklaim. Silakan klik "Klaim di sini" di bawah untuk mendapatkan kode unik.' };
     }
 
     if (voter.token.toUpperCase() !== cleanToken) {

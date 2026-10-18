@@ -348,8 +348,20 @@
             </button>
           </form>
 
-          <div style="margin-top: 16px; text-align: center; font-size: 0.78rem;">
+          <div style="margin-top: 14px; text-align: center; font-size: 0.78rem;">
             <a href="#claim" data-nav="claim" style="color: var(--gold-text); text-decoration: none; font-weight: 700;">Belum punya kode unik? Klaim di sini ➜</a>
+          </div>
+
+          <!-- Demo Quick-Fill Helper Box for Easy Testing -->
+          <div style="margin-top: 14px; background: rgba(245, 186, 66, 0.1); border: 1px dashed rgba(245, 186, 66, 0.4); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <div>
+              <div style="font-size: 0.74rem; font-weight: 800; color: #FDE68A;">Akun Uji Coba Demo:</div>
+              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">NPA: <strong style="color:#FFF;">IAGI-2024-0001</strong></div>
+              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">Token: <strong style="color:#FFF;">IAGI-2026-DEMO-2026</strong></div>
+            </div>
+            <button type="button" id="btn-fill-demo" class="btn btn-gold" style="font-size: 0.70rem; padding: 6px 12px; width: auto; flex-shrink: 0;" onclick="autoFillDemoVote()">
+              <span>Isi Otomatis</span> ⚡
+            </button>
           </div>
         </div>
 
