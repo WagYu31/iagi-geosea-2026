@@ -52,8 +52,8 @@
       <!-- Center: Pill Navigation Dock -->
       <nav class="header-nav-dock" aria-label="Navigasi Utama">
         <a href="#portal" class="nav-pill-link active">Portal</a>
-        <a href="#pilih-akses" class="nav-pill-link">Pilih Akses</a>
         <a href="#caketum" class="nav-pill-link">Caketum 2026</a>
+        <a href="#pilih-akses" class="nav-pill-link">Pilih Akses</a>
         <a href="#katalog" class="nav-pill-link">Katalog Modul <span class="nav-badge-pill">8 Modul</span></a>
         <a href="#keamanan" class="nav-pill-link">Keamanan</a>
       </nav>
@@ -79,12 +79,12 @@
 
   <!-- Mobile Dropdown Navigation Panel -->
   <div class="mobile-nav-panel" id="mobile-nav-panel">
-    <a href="#pilih-akses" class="mobile-nav-link" onclick="closeMobileMenu()">
-      <span>Pilih Akses Masuk (Anggota / Admin)</span>
-      <span>➜</span>
-    </a>
     <a href="#caketum" class="mobile-nav-link" onclick="closeMobileMenu()">
       <span>Profil Calon Ketua Umum (Caketum)</span>
+      <span>➜</span>
+    </a>
+    <a href="#pilih-akses" class="mobile-nav-link" onclick="closeMobileMenu()">
+      <span>Pilih Akses Masuk (Anggota / Admin)</span>
       <span>➜</span>
     </a>
     <a href="#katalog" class="mobile-nav-link" onclick="closeMobileMenu()">
@@ -140,8 +140,122 @@
         </div>
       </div>
 
-      <!-- ================= PRIMARY ACCESS GATES (KUNCI PINTU MASUK ADMIN & ANGGOTA) ================= -->
-      <div class="access-gates-wrapper" id="pilih-akses">
+    </div>
+  </section>
+
+  <!-- ================= CANDIDATES SPOTLIGHT SECTION (GAMBAR 1) ================= -->
+  <section class="candidates-spotlight-section" id="caketum" style="padding-top: 30px;">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>CALON KETUA UMUM IAGI 2026–2029</span>
+        </div>
+        <h2 class="section-title">Profil & Gagasan Calon Pemimpin</h2>
+        <p class="section-desc">
+          Kenali rekam jejak, visi strategis, dan komitmen kedua calon Ketua Umum dalam memajukan profesi kebumian Indonesia.
+        </p>
+      </div>
+
+      <div class="candidates-pair-grid">
+
+        <!-- CANDIDATE 01 -->
+        <article class="candidate-card-showcase">
+          <div class="candidate-photo-header">
+            <img src="assets/candidate-1.jpg" alt="Dr. Ir. H. Muhammad Arifin, M.Sc." loading="lazy">
+            <div class="candidate-photo-overlay"></div>
+            <span class="candidate-num-pill">NO. URUT 01</span>
+          </div>
+          <div class="candidate-details-body">
+            <div>
+              <div class="cand-name">Dr. Ir. H. Muhammad Arifin, M.Sc., IPU</div>
+              <div class="cand-title">Ahli Geologi Eksplorasi Migas & Transisi Energi</div>
+              <p class="cand-tagline" style="margin-top: 10px;">
+                "IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional"
+              </p>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
+                Fokus utama: Kedaulatan energi nusantara, hilirisasi georesources, dan peningkatan sertifikasi global geoscientist Indonesia.
+              </div>
+              <button class="cand-btn-vision" onclick="openCandidateModal(1)" style="width: 100%;">
+                <span>Lihat Visi, Misi & Rekam Jejak</span>
+                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CANDIDATE 02 -->
+        <article class="candidate-card-showcase">
+          <div class="candidate-photo-header">
+            <img src="assets/candidate-2.jpg" alt="Dr. Eng. Andiani, S.T., M.T." loading="lazy">
+            <div class="candidate-photo-overlay"></div>
+            <span class="candidate-num-pill">NO. URUT 02</span>
+          </div>
+          <div class="candidate-details-body">
+            <div>
+              <div class="cand-name">Dr. Eng. Andiani, S.T., M.T.</div>
+              <div class="cand-title">Pakar Geologi Tata Lingkungan & Mitigasi Bencana Geologi</div>
+              <p class="cand-tagline" style="margin-top: 10px;">
+                "Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan"
+              </p>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
+                Fokus utama: Integrasi geologi dalam RTRW kebencanaan, akselerasi kepemimpinan geoscientist muda, dan revitalisasi Pengda se-Indonesia.
+              </div>
+              <button class="cand-btn-vision" onclick="openCandidateModal(2)" style="width: 100%;">
+                <span>Lihat Visi, Misi & Rekam Jejak</span>
+                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= METRICS & TRUST BANNER ================= -->
+  <section class="trust-metrics-section">
+    <div class="container">
+      <div class="metrics-grid-4">
+        <div>
+          <div class="metric-num"><span id="metric-dpt">4.280</span>+</div>
+          <div class="metric-label">DPT Pemilih Sah Terdata</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>100</span>%</div>
+          <div class="metric-label">Enkripsi SHA-256 Zero-Tamper</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>02</span></div>
+          <div class="metric-label">Kandidat Sah Terverifikasi</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>0</span> Detik</div>
+          <div class="metric-label">Sinkronisasi Real-Time Live Pleno</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRIMARY ACCESS GATES (GAMBAR 2) ================= -->
+  <section class="access-gates-section" id="pilih-akses">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>PINTU GERBANG UTAMA · 2 JALUR AKSES RESMI</span>
+        </div>
+        <h2 class="section-title">Bilik Suara & Command Center</h2>
+        <p class="section-desc">
+          Pintu masuk resmi bagi seluruh anggota pemilih terdaftar DPT untuk memberikan suara, serta portal otentikasi terenkripsi bagi panitia sidang pleno KPKU.
+        </p>
+      </div>
+
+      <div class="access-gates-wrapper">
         <div class="gates-grid">
 
           <!-- GATE 1: ANGGOTA / PESERTA PEMILIH -->
@@ -243,105 +357,6 @@
           </article>
 
         </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= METRICS & TRUST BANNER ================= -->
-  <section class="trust-metrics-section">
-    <div class="container">
-      <div class="metrics-grid-4">
-        <div>
-          <div class="metric-num"><span id="metric-dpt">4.280</span>+</div>
-          <div class="metric-label">DPT Pemilih Sah Terdata</div>
-        </div>
-        <div>
-          <div class="metric-num"><span>100</span>%</div>
-          <div class="metric-label">Enkripsi SHA-256 Zero-Tamper</div>
-        </div>
-        <div>
-          <div class="metric-num"><span>02</span></div>
-          <div class="metric-label">Kandidat Sah Terverifikasi</div>
-        </div>
-        <div>
-          <div class="metric-num"><span>0</span> Detik</div>
-          <div class="metric-label">Sinkronisasi Real-Time Live Pleno</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= CANDIDATES SPOTLIGHT SECTION ================= -->
-  <section class="candidates-spotlight-section" id="caketum">
-    <div class="container">
-      <div class="section-head-center">
-        <div class="section-eyebrow">
-          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          <span>CALON KETUA UMUM IAGI 2026–2029</span>
-        </div>
-        <h2 class="section-title">Profil & Gagasan Calon Pemimpin</h2>
-        <p class="section-desc">
-          Kenali rekam jejak, visi strategis, dan komitmen kedua calon Ketua Umum dalam memajukan profesi kebumian Indonesia.
-        </p>
-      </div>
-
-      <div class="candidates-pair-grid">
-
-        <!-- CANDIDATE 01 -->
-        <article class="candidate-card-showcase">
-          <div class="candidate-photo-header">
-            <img src="assets/candidate-1.jpg" alt="Dr. Ir. H. Muhammad Arifin, M.Sc." loading="lazy">
-            <div class="candidate-photo-overlay"></div>
-            <span class="candidate-num-pill">NO. URUT 01</span>
-          </div>
-          <div class="candidate-details-body">
-            <div>
-              <div class="cand-name">Dr. Ir. H. Muhammad Arifin, M.Sc., IPU</div>
-              <div class="cand-title">Ahli Geologi Eksplorasi Migas & Transisi Energi</div>
-              <p class="cand-tagline" style="margin-top: 10px;">
-                "IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional"
-              </p>
-            </div>
-            <div>
-              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
-                Fokus utama: Kedaulatan energi nusantara, hilirisasi georesources, dan peningkatan sertifikasi global geoscientist Indonesia.
-              </div>
-              <button class="cand-btn-vision" onclick="openCandidateModal(1)" style="width: 100%;">
-                <span>Lihat Visi, Misi & Rekam Jejak</span>
-                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- CANDIDATE 02 -->
-        <article class="candidate-card-showcase">
-          <div class="candidate-photo-header">
-            <img src="assets/candidate-2.jpg" alt="Dr. Eng. Andiani, S.T., M.T." loading="lazy">
-            <div class="candidate-photo-overlay"></div>
-            <span class="candidate-num-pill">NO. URUT 02</span>
-          </div>
-          <div class="candidate-details-body">
-            <div>
-              <div class="cand-name">Dr. Eng. Andiani, S.T., M.T.</div>
-              <div class="cand-title">Pakar Geologi Tata Lingkungan & Mitigasi Bencana Geologi</div>
-              <p class="cand-tagline" style="margin-top: 10px;">
-                "Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan"
-              </p>
-            </div>
-            <div>
-              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
-                Fokus utama: Integrasi geologi dalam RTRW kebencanaan, akselerasi kepemimpinan geoscientist muda, dan revitalisasi Pengda se-Indonesia.
-              </div>
-              <button class="cand-btn-vision" onclick="openCandidateModal(2)" style="width: 100%;">
-                <span>Lihat Visi, Misi & Rekam Jejak</span>
-                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
       </div>
     </div>
   </section>

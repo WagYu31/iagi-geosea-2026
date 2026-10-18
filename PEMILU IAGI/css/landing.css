@@ -517,8 +517,14 @@ body {
 /* ==========================================================================
    PRIMARY ACCESS GATES (KUNCI PINTU MASUK ADMIN & ANGGOTA)
    ========================================================================== */
+.access-gates-section {
+  padding: 60px 0 80px 0;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 50%, rgba(245, 186, 66, 0.04), transparent 70%);
+}
+
 .access-gates-wrapper {
-  margin-bottom: 72px;
+  margin-bottom: 0;
 }
 
 .gates-grid {
