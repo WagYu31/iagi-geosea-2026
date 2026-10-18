@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>E-Voting Pemilu IAGI 2026 | Komisi Pemilihan Ketua Umum</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="description" content="Platform Resmi Pemungutan Suara Elektronik (E-Voting) Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026-2029">
+  <meta name="theme-color" content="#021310">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pemilu IAGI">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Taste-Skill Mobile PWA Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=2.6.0">
+</head>
+<body>
+
+  <!-- Mobile App Frame Container -->
+  <div class="app-container">
+
+    <!-- Top Sticky Header -->
+    <header class="app-header">
+      <div class="brand-wrapper" onclick="window.location.hash = 'home'">
+        <div class="brand-logo-frame">
+          <img src="assets/iagi-logo.png" alt="IAGI Logo" class="brand-logo">
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</span>
+          <span class="brand-subtitle">
+            <svg style="width:11px; height:11px; stroke:#10B981; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            KPKU OFFICIAL E-VOTING
+          </span>
+        </div>
+      </div>
+      <div class="header-badges">
+        <a href="landing.html" class="live-badge" style="text-decoration:none; color:var(--gold-primary); border-color:rgba(245,186,66,0.3); display:inline-flex; align-items:center; gap:4px;">
+          <svg style="width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Portal
+        </a>
+        <span class="live-badge">
+          <span class="live-dot"></span>
+          LIVE 2026
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Content Screens Viewport -->
+    <main class="app-main">
+
+      <!-- PWA Install Prompt Banner (Visible on Mobile Browser) -->
+      <div id="pwa-prompt-banner" class="pwa-prompt-banner" style="display: none;">
+        <div class="pwa-prompt-text" style="display:flex; align-items:center; gap:8px;">
+          <svg style="width:16px;height:16px;stroke:#F5BA42;fill:none;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span><strong>Pasang di Layar Utama HP:</strong> Akses pemungutan suara lebih cepat tanpa browser tab.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+          <button id="btn-install-pwa" class="btn-install-pwa">Pasang</button>
+          <button class="btn-close-banner" onclick="document.getElementById('pwa-prompt-banner').style.display='none'">&times;</button>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 1: BERANDA / HOME ================= -->
+      <section id="screen-home" class="screen active">
+        <!-- Master Executive Portal (Integrated Chronometer & Bilik Suara) -->
+        <div class="hero-master-card">
+          <!-- Top Precision Chronometer Strip -->
+          <div class="hero-chronometer-strip">
+            <div class="chrono-badge">
+              <span class="live-dot"></span>
+              <span>LIVE VOTING</span>
+            </div>
+            <div class="chrono-timer">
+              <div class="chrono-unit"><span id="timer-days" class="chrono-num">00</span><span class="chrono-lbl">H</span></div>
+              <span class="chrono-colon">:</span>
+              <div class="chrono-unit"><span id="timer-hours" class="chrono-num">00</span><span class="chrono-lbl">J</span></div>
+              <span class="chrono-colon">:</span>
+              <div class="chrono-unit"><span id="timer-mins" class="chrono-num">00</span><span class="chrono-lbl">M</span></div>
+              <span class="chrono-colon">:</span>
+              <div class="chrono-unit"><span id="timer-secs" class="chrono-num">00</span><span class="chrono-lbl">D</span></div>
+            </div>
+          </div>
+
+          <!-- Hero Body: Bilik Suara Digital -->
+          <div class="hero-portal-content">
+            <div class="presidential-ribbon-sm">
+              <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>E-VOTING RESMI KPKU IAGI 2026</span>
+            </div>
+            <h2 class="hero-portal-title">Bilik Suara Pemilu IAGI</h2>
+            <p class="hero-portal-desc">
+              Tentukan Ketua Umum IAGI Periode 2026–2029 secara Langsung, Bebas, Rahasia, Jujur & Adil.
+            </p>
+            <button class="btn btn-gold btn-hero-vote" onclick="window.location.hash = 'vote'">
+              <span>Masuk ke Bilik Suara</span>
+              <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <!-- Quick Shortcuts Row -->
+          <div class="hero-quick-actions">
+            <button class="quick-action-btn" onclick="window.location.hash = 'dpt'">
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Cek DPT Online</span>
+            </button>
+            <button class="quick-action-btn" onclick="window.location.hash = 'claim'">
+              <svg style="width:14px; height:14px; stroke:#38BDF8; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>Klaim Kode Surat</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Steps Interactive Grid (Compact 2x2) -->
+        <div class="card card-compact" style="margin-top: 12px;">
+          <div class="section-mini-header">
+            <div class="mini-header-title">
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span>Alur Regulasi KPKU</span>
+            </div>
+            <span class="mini-header-tag">4 Langkah</span>
+          </div>
+
+          <div class="steps-grid-2x2">
+            <div class="step-tile" onclick="window.location.hash = 'dpt'">
+              <div class="step-tile-top">
+                <span class="step-num-badge">1</span>
+                <span class="step-tile-action">Buka ➜</span>
+              </div>
+              <div class="step-tile-name">Cek DPT Mandiri</div>
+              <div class="step-tile-sub">Periksa nama & NPA</div>
+            </div>
+
+            <div class="step-tile" onclick="window.location.hash = 'claim'">
+              <div class="step-tile-top">
+                <span class="step-num-badge">2</span>
+                <span class="step-tile-action">Klaim ➜</span>
+              </div>
+              <div class="step-tile-name">Klaim Surat Suara</div>
+              <div class="step-tile-sub">Input NPA & Email</div>
+            </div>
+
+            <div class="step-tile">
+              <div class="step-tile-top">
+                <span class="step-num-badge">3</span>
+                <span class="step-tile-action" style="color:#38BDF8;">Email</span>
+              </div>
+              <div class="step-tile-name">Terima Kode Unik</div>
+              <div class="step-tile-sub">Token kripto 128-bit</div>
+            </div>
+
+            <div class="step-tile" onclick="window.location.hash = 'vote'">
+              <div class="step-tile-top">
+                <span class="step-num-badge">4</span>
+                <span class="step-tile-action" style="color:var(--gold-text);">Coblos ➜</span>
+              </div>
+              <div class="step-tile-name">Bilik Suara LUBER</div>
+              <div class="step-tile-sub">Pilih Caketum & Unduh Bukti</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Candidates Showcase Carousel -->
+        <div class="card card-compact" style="margin-top: 12px;">
+          <div class="section-mini-header">
+            <div class="mini-header-title">
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <span>Calon Ketua Umum IAGI</span>
+            </div>
+            <span class="mini-header-tag">Geser Profil ➜</span>
+          </div>
+
+          <div class="candidate-swipe-track">
+            <!-- Candidate 01 Card -->
+            <div class="candidate-snap-card" onclick="showCandidateDetailModal(1)">
+              <div class="candidate-snap-header">
+                <span class="candidate-tag-pill" style="color:#F5BA42; border-color:rgba(245,186,66,0.4);">NOMOR 01</span>
+                <span class="snap-more-link">Visi & Misi ➜</span>
+              </div>
+              <div class="candidate-snap-body">
+                <img src="assets/candidate-1.jpg" alt="Caketum 01" class="candidate-snap-img" style="border-color:#F5BA42;">
+                <div class="candidate-snap-meta">
+                  <div class="candidate-snap-name">Dr. Ir. H. Muhammad Arifin, M.Sc.</div>
+                  <div class="candidate-snap-title">Eksplorasi Migas & Transisi Energi</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Candidate 02 Card -->
+            <div class="candidate-snap-card" onclick="showCandidateDetailModal(2)">
+              <div class="candidate-snap-header">
+                <span class="candidate-tag-pill" style="color:#10B981; border-color:rgba(16,185,129,0.4);">NOMOR 02</span>
+                <span class="snap-more-link">Visi & Misi ➜</span>
+              </div>
+              <div class="candidate-snap-body">
+                <img src="assets/candidate-2.jpg" alt="Caketum 02" class="candidate-snap-img" style="border-color:#10B981;">
+                <div class="candidate-snap-meta">
+                  <div class="candidate-snap-name">Dr. Eng. Andiani, S.T., M.T.</div>
+                  <div class="candidate-snap-title">Geologi Lingkungan & Kebencanaan</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Candidate 03 Card -->
+            <div class="candidate-snap-card" onclick="showCandidateDetailModal(3)">
+              <div class="candidate-snap-header">
+                <span class="candidate-tag-pill" style="color:#38BDF8; border-color:rgba(56,189,248,0.4);">NOMOR 03</span>
+                <span class="snap-more-link">Visi & Misi ➜</span>
+              </div>
+              <div class="candidate-snap-body">
+                <img src="assets/candidate-3.jpg" alt="Caketum 03" class="candidate-snap-img" style="border-color:#38BDF8;">
+                <div class="candidate-snap-meta">
+                  <div class="candidate-snap-name">Ir. Burhanuddin Harahap, Ph.D.</div>
+                  <div class="candidate-snap-title">Hilirisasi Mineral Kritis & AI Geosains</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helpdesk & Hotline KPKU (Compact Dual Bar) -->
+        <div class="helpdesk-compact-bar" style="margin-top: 12px;">
+          <a href="https://wa.me/628111581461" target="_blank" class="helpdesk-btn">
+            <svg style="width:14px;height:14px;stroke:#10B981;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>WhatsApp Hotline</span>
+          </a>
+          <a href="mailto:iagisekretariat@gmail.com" class="helpdesk-btn">
+            <svg style="width:14px;height:14px;stroke:#38BDF8;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Email Sekretariat</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 2: CEK DPT ONLINE ================= -->
+      <section id="screen-dpt" class="screen">
+        <div class="card">
+          <div class="card-header-flex">
+            <div class="card-icon-frame">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <div>
+              <div class="card-title">Cek DPT Online Mandiri</div>
+              <div style="font-size: 0.74rem; color: #94A3B8;">Verifikasi status hak suara Anda di basis data DPT KPKU</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label">
+              <span>Cari Berdasarkan Nama / NPA</span>
+              <span id="dpt-total-count" class="helper">Memuat DPT...</span>
+            </label>
+            <input type="text" id="dpt-search-input" class="form-input" placeholder="Ketik Nama atau NPA (contoh: IAGI-1998...)">
+          </div>
+
+          <div class="alert alert-info" style="font-size: 0.76rem; margin-top: 10px;">
+            <span>ℹ️</span>
+            <span>Data merujuk pada Daftar Pemilih Tetap (DPT) resmi yang disahkan oleh KPKU IAGI per 25 September 2026.</span>
+          </div>
+
+          <!-- DPT Search Results List Container -->
+          <div id="dpt-results-container"></div>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 3: KLAIM SURAT SUARA ================= -->
+      <section id="screen-claim" class="screen">
+        <div class="card card-gold">
+          <div class="card-header-flex">
+            <div class="card-icon-frame">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </div>
+            <div>
+              <div class="card-title">Formulir Klaim Surat Suara</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Peroleh Link Akses & Token Kriptografi 128-bit resmi</div>
+            </div>
+          </div>
+
+          <div id="claim-alert" style="display: none; margin-top: 12px;"></div>
+
+          <form id="form-claim" style="margin-top: 14px;">
+            <div class="form-group">
+              <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="Contoh: IAGI-1998-0412" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap (sesuai DPT) *</label>
+              <input type="text" id="claim-name" class="form-input" placeholder="Nama lengkap beserta gelar jika ada" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span>Alamat Email Aktif *</span>
+                <span class="helper">Wajib cocok dengan email DPT</span>
+              </label>
+              <input type="email" id="claim-email" class="form-input" placeholder="email.anda@domain.com" required>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="margin-top: 12px;">
+              <span>Klaim Surat Suara Sekarang</span>
+              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+
+          <div style="font-size: 0.74rem; color: #94A3B8; margin-top: 16px; line-height: 1.45; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 14px; display: flex; align-items: flex-start; gap: 8px;">
+            <svg style="width:16px; height:16px; stroke:var(--gold-primary); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span><strong style="color:var(--gold-text);">Keamanan Kriptografi LUBER:</strong> Setiap anggota menerima satu kode unik sekali pakai yang belum terikat pada calon mana pun. Token langsung hangus seketika suara direkam.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
+      <section id="screen-vote" class="screen">
+        
+        <!-- Step 1: Auth Verification Form (Hidden if auto-verified via magic link) -->
+        <div id="vote-auth-card" class="card card-gold">
+          <div class="card-header-flex">
+            <div class="card-icon-frame">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div>
+              <div class="card-title">Verifikasi Akses Bilik Suara</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Masukkan NPA dan Kode Unik untuk membuka kertas suara</div>
+            </div>
+          </div>
+
+          <div id="vote-auth-alert" style="display: none; margin-top: 12px;"></div>
+
+          <form id="form-vote-auth" style="margin-top: 14px;">
+            <div class="form-group">
+              <label class="form-label">Nomor Pokok Anggota (NPA)</label>
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="Contoh: IAGI-1998-0412" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Kode Unik Surat Suara (Token 128-bit)</label>
+              <input type="text" id="vote-token" class="form-input font-mono" placeholder="Contoh: IAGI-2026-X9K2-7LM4" required>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="margin-top: 12px;">
+              <span>Buka Kertas Suara Digital</span>
+              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+
+          <div style="margin-top: 14px; text-align: center; font-size: 0.78rem;">
+            <a href="#claim" data-nav="claim" style="color: var(--gold-text); text-decoration: none; font-weight: 700;">Belum punya kode unik? Klaim di sini ➜</a>
+          </div>
+
+          <!-- Demo Quick-Fill Helper Box for Easy Testing -->
+          <div style="margin-top: 14px; background: rgba(245, 186, 66, 0.1); border: 1px dashed rgba(245, 186, 66, 0.4); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <div>
+              <div style="font-size: 0.74rem; font-weight: 800; color: #FDE68A;">Akun Uji Coba Demo:</div>
+              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">NPA: <strong style="color:#FFF;">IAGI-2024-0001</strong></div>
+              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">Token: <strong style="color:#FFF;">IAGI-2026-DEMO-2026</strong></div>
+            </div>
+            <button type="button" id="btn-fill-demo" class="btn btn-gold" style="font-size: 0.70rem; padding: 6px 12px; width: auto; flex-shrink: 0;" onclick="autoFillDemoVote()">
+              <span>Isi Otomatis</span> ⚡
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Official Digital Ballot (Kertas Suara Digital 3 Caketum) -->
+        <div id="vote-ballot-card" style="display: none;">
+          <div class="card card-emerald" style="margin-bottom: 16px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.7rem; font-weight: 800; color: #6EE7B7; text-transform: uppercase; letter-spacing: 0.05em;">Pemilih Terverifikasi KPKU:</div>
+                <div id="voter-badge-name" style="font-weight: 900; font-size: 1rem; color: #FFFFFF;">-</div>
+                <div id="voter-badge-npa" style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--gold-text); font-weight: 700;">-</div>
+              </div>
+              <div style="background: rgba(16, 185, 129, 0.25); border: 1.5px solid #10B981; color: #A7F3D0; font-size: 0.7rem; font-weight: 900; padding: 5px 12px; border-radius: var(--radius-pill); letter-spacing: 0.05em;">
+                SURAT SUARA AKTIF
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 14px; text-align: center;">
+            <div style="display: inline-block; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-border); padding: 3px 12px; border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 800; color: #FDE68A; margin-bottom: 6px;">
+              SURAT SUARA DIGITAL RESMI
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: var(--text-pure); letter-spacing: -0.01em;">
+              PILIH SALAH SATU CALON KETUA UMUM
+            </h3>
+            <p style="font-size: 0.78rem; color: #94A3B8;">
+              Sentuh kartu kandidat pilihan Anda, lalu tekan tombol konfirmasi di bawah:
+            </p>
+          </div>
+
+          <!-- Dynamic 3 Candidate Cards List -->
+          <div id="candidate-list-container" class="candidate-list"></div>
+
+          <!-- Final Submit Button -->
+          <div style="margin-top: 24px; margin-bottom: 28px;">
+            <button id="btn-submit-vote" class="btn btn-gold" disabled style="box-shadow: 0 10px 35px rgba(0,0,0,0.85); font-size: 0.96rem;">
+              Pilih Salah Satu Calon Ketua Umum
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= SCREEN 5: DIGITAL RECEIPT (TANDA TERIMA) ================= -->
+      <section id="screen-receipt" class="screen">
+        <div class="receipt-box">
+          <div class="receipt-header">
+            <img src="assets/iagi-logo.png" alt="IAGI" class="receipt-logo">
+            <div class="receipt-title">TANDA TERIMA HAK SUARA ELEKTRONIK</div>
+            <div class="receipt-subtitle">Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026</div>
+            <div class="receipt-seal">✓ SUARA RESMI TEREKAM & TERENKRIPSI</div>
+          </div>
+
+          <div class="receipt-row">
+            <span class="label">Nama Anggota:</span>
+            <span id="receipt-name" class="val">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Nomor Pokok Anggota:</span>
+            <span id="receipt-npa" class="val" style="font-family: var(--font-mono); color: #0F766E;">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Waktu Pemungutan:</span>
+            <span id="receipt-date" class="val">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Integritas Kerahasiaan:</span>
+            <span class="val" style="color: #059669;">LUBER-JURDIL (Zero-Knowledge)</span>
+          </div>
+
+          <div class="receipt-hash-box">
+            <div style="font-size: 0.7rem; color: #64748B; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">
+              Cryptographic Receipt Hash (SHA-256)
+            </div>
+            <div id="receipt-hash" class="receipt-hash-val">-</div>
+            <div id="receipt-full-hash" style="font-size: 0.6rem; color: #94A3B8; word-break: break-all; margin-top: 6px; font-family: var(--font-mono);">-</div>
+          </div>
+
+          <div style="text-align: center; font-size: 0.74rem; color: #64748B; line-height: 1.45; margin-top: 12px;">
+            Simpan tanda terima ini sebagai bukti sah penggunaan hak suara Anda pada Pemilu Ketua Umum IAGI 2026. Sesuai asas rahasia, surat suara tidak menyimpan identitas pilihan calon Anda.
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 18px;">
+          <button id="btn-print-receipt" class="btn btn-gold btn-no-print">
+            <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>Cetak / Simpan Bukti</span>
+          </button>
+          <button class="btn btn-outline btn-no-print" onclick="window.location.hash = 'home'">
+            <span>Ke Beranda</span>
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 6: KPKU COMMAND CENTER (ADMIN) ================= -->
+      <section id="screen-admin" class="screen">
+        <!-- 2-Step Multi-Factor Authentication Gateway -->
+        <div id="admin-pin-gate" class="card card-gold">
+          
+          <!-- Header Card -->
+          <div class="card-header-flex">
+            <div class="card-icon-frame">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <div class="card-title">KPKU Command Center</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Otentikasi Panitia Pemilihan & Saksi Mandat Resmi</div>
+            </div>
+          </div>
+
+          <div id="admin-login-alert" style="display: none; margin-top: 12px;"></div>
+
+          <!-- STEP 1: Email & Password -->
+          <div id="admin-auth-step-1">
+            <form id="form-admin-login-step1" style="margin-top: 14px;">
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">
+                  <span>Email Resmi Panitia / Saksi *</span>
+                  <span class="helper">Contoh: admin.kpku@iagi.or.id</span>
+                </label>
+                <input type="email" id="admin-email-input" class="form-input" placeholder="admin.kpku@iagi.or.id" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">
+                  <span>Password Akun *</span>
+                  <span class="helper">Default Demo: admin</span>
+                </label>
+                <div style="position: relative;">
+                  <input type="password" id="admin-password-input" class="form-input" placeholder="Masukkan password" required>
+                  <button type="button" id="btn-toggle-admin-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; font-size: 0.75rem; cursor: pointer;">
+                    👁️
+                  </button>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                <button type="button" id="btn-quick-fill-admin-account" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 8px 12px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                  ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
+                </button>
+              </div>
+
+              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold" style="width: 100%; justify-content: center;">
+                <span>Lanjut ke Verifikasi Masuk</span>
+                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- STEP 2: Verifikasi Masuk (Email OTP atau Password/PIN) -->
+          <div id="admin-auth-step-2" style="display: none; margin-top: 14px;">
+            <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;">
+              <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi Masuk (2FA)</div>
+              <div id="admin-step2-email-label" style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">admin.kpku@iagi.or.id</div>
+            </div>
+
+            <!-- 2FA Method Selector Tabs -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+              <button type="button" id="tab-2fa-otp" class="btn btn-gold" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+                📧 OTP Email
+              </button>
+              <button type="button" id="tab-2fa-pin" class="btn btn-subtle" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+                🔒 PIN Keamanan
+              </button>
+            </div>
+
+            <!-- View A: OTP Email -->
+            <div id="view-2fa-otp">
+              <form id="form-verify-otp">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label">
+                    <span>Kode Verifikasi OTP 6-Digit</span>
+                    <span id="demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
+                  </label>
+                  <input type="text" id="admin-otp-input" class="form-input font-mono" placeholder="Contoh: 842026" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                  <button type="button" id="btn-auto-fill-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan OTP Otomatis
+                  </button>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                  <span>Verifikasi OTP & Buka Dashboard</span>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
+            </div>
+
+            <!-- View B: Security PIN -->
+            <div id="view-2fa-pin" style="display: none;">
+              <form id="form-verify-pin">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label">
+                    <span>PIN Keamanan Panitia (4-Digit)</span>
+                    <span class="helper">PIN Default: 2026</span>
+                  </label>
+                  <input type="password" id="admin-2fa-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                  <button type="button" id="btn-auto-fill-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan PIN Otomatis (2026)
+                  </button>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                  <span>Verifikasi PIN & Buka Dashboard</span>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
+            </div>
+
+            <div style="text-align: center; margin-top: 8px;">
+              <button type="button" id="btn-back-to-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.74rem; cursor: pointer; text-decoration: underline;">
+                &larr; Ganti Email / Kembali ke Step 1
+              </button>
+            </div>
+          </div>
+
+          <!-- Link to Desktop Admin -->
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+            <a href="admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--gold-primary); text-decoration: none; font-weight: 700;">
+              <span>🖥️ Buka Web Admin Desktop / Proyektor Pleno &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Authenticated Dashboard -->
+        <div id="admin-dashboard-content" style="display: none;">
+          
+          <!-- Identity Ribbon -->
+          <div style="background: rgba(2, 28, 22, 0.9); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+                🛡️
+              </div>
+              <div>
+                <div id="admin-session-name" style="font-size: 0.8rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra Saputra, M.T.</div>
+                <div id="admin-session-role" style="font-size: 0.68rem; color: var(--gold-secondary);">Ketua Komisi Pemilihan Ketua Umum (KPKU)</div>
+              </div>
+            </div>
+            <button id="btn-admin-logout" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); width: auto;">
+              Keluar
+            </button>
+          </div>
+
+          <div class="card" style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 14px;">
+              <div>
+                <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--text-pure);">KPKU Live Monitor</h3>
+                <div style="font-size: 0.74rem; color: #94A3B8;">Sistem E-Voting Terakreditasi 2026</div>
+              </div>
+              <button id="btn-reset-demo-data" class="btn btn-subtle" style="width: auto; padding: 5px 12px; font-size: 0.7rem; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                Reset Demo
+              </button>
+            </div>
+
+            <!-- Stats 4-Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TOTAL DPT</div>
+                <div id="admin-stat-dpt" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--text-pure);">0</div>
+              </div>
+              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">SUDAH KLAIM</div>
+                <div id="admin-stat-claimed" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #FBBF24;">0</div>
+              </div>
+              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">SUARA MASUK</div>
+                <div id="admin-stat-voted" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #34D399;">0</div>
+              </div>
+              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TURNOUT %</div>
+                <div id="admin-stat-turnout" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--gold-text);">0%</div>
+              </div>
+            </div>
+
+            <!-- Sealed vs Unsealed Tabulation Box -->
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 800; font-size: 0.88rem; color: var(--text-pure);">Status Segel Perolehan Suara</span>
+                <button id="btn-toggle-seal" class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.74rem;">
+                  Toggle Segel
+                </button>
+              </div>
+
+              <!-- Sealed Banner -->
+              <div id="admin-sealed-banner" style="background: rgba(245, 158, 11, 0.12); border: 1.5px dashed #F59E0B; border-radius: var(--radius-md); padding: 18px; text-align: center;">
+                <div style="margin-bottom: 8px;"><svg style="width:36px;height:36px;stroke:#F59E0B;fill:none;stroke-width:1.8;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                <strong style="color: #FDE68A; font-size: 0.95rem; display: block;">KOTAK SUARA TERSEGEL (SEALED)</strong>
+                <p style="font-size: 0.76rem; color: #94A3B8; margin-top: 4px; line-height: 1.45;">
+                  Sesuai Bab 5 Proposal Regulasi KPKU, tabulasi perolehan calon disembunyikan selama masa pemungutan suara untuk menjaga objektivitas dan independensi pemilih. Buka segel saat Sidang Pleno resmi.
+                </p>
+              </div>
+
+              <!-- Unsealed Live Count Charts -->
+              <div id="admin-unsealed-results" style="display: none;">
+                <div class="chart-bar-container">
+                  <!-- Caketum 1 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #F5BA42;">01. Dr. Ir. H. Muhammad Arifin, M.Sc.</span>
+                      <span id="chart-pct-1" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-1" class="chart-fill" style="width: 0%; background: var(--gold-metallic);"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.74rem; color: #94A3B8;" id="chart-val-1">0 Suara</div>
+                  </div>
+
+                  <!-- Caketum 2 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #10B981;">02. Dr. Eng. Andiani, S.T., M.T.</span>
+                      <span id="chart-pct-2" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-2" class="chart-fill" style="width: 0%; background: var(--emerald-metallic);"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.74rem; color: #94A3B8;" id="chart-val-2">0 Suara</div>
+                  </div>
+
+                  <!-- Caketum 3 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #38BDF8;">03. Ir. Burhanuddin Harahap, Ph.D.</span>
+                      <span id="chart-pct-3" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-3" class="chart-fill" style="width: 0%; background: #38BDF8;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.74rem; color: #94A3B8;" id="chart-val-3">0 Suara</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DPT Management Table in Admin -->
+          <div class="card" style="margin-bottom: 16px;">
+            <div class="card-title" style="font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
+              <svg style="width:16px;height:16px;stroke:var(--gold-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Monitor Status Pemilih (DPT)</span>
+            </div>
+            <div style="overflow-x: auto; max-height: 250px; overflow-y: auto; margin-top: 10px;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 0.72rem; color: #94A3B8; text-transform: uppercase;">
+                    <th style="padding: 8px 6px;">NPA</th>
+                    <th style="padding: 8px 6px;">Nama</th>
+                    <th style="padding: 8px 6px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-dpt-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Immutable Audit Trail -->
+          <div class="card">
+            <div class="card-title" style="font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
+              <svg style="width:16px;height:16px;stroke:var(--emerald-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Log Audit Aktivitas Sistem</span>
+            </div>
+            <div id="admin-audit-logs" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Mobile Navigation Bar (Floating Ergonomic Capsule Dock) -->
+    <nav class="mobile-nav-dock">
+      <button class="nav-item active" data-screen="home">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Beranda</span>
+      </button>
+
+      <button class="nav-item" data-screen="dpt">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Cek DPT</span>
+      </button>
+
+      <button class="nav-item highlight-vote" data-screen="vote">
+        <div class="vote-icon-bubble">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        </div>
+        <span>Bilik Suara</span>
+      </button>
+
+      <button class="nav-item" data-screen="claim">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <span>Klaim</span>
+      </button>
+
+      <button class="nav-item" data-screen="admin" id="nav-btn-admin">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <span>Admin KPKU</span>
+      </button>
+    </nav>
+
+    <!-- ================= MODALS & POP-UPS ================= -->
+
+    <!-- Modal 1: Mandatory Dual-Confirmation Pop-up Window (Mandat Regulasi KPKU) -->
+    <div id="modal-dual-confirm" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">⚠️ Konfirmasi Pilihan Anda</span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+
+        <div style="font-size: 0.92rem; color: #FFFFFF; font-weight: 800; text-align: center; line-height: 1.4;">
+          "Apakah Anda yakin untuk submit pilihan ini?"
+        </div>
+
+        <div class="dual-confirm-box">
+          <img id="confirm-candidate-avatar" src="" alt="Caketum" class="dual-confirm-avatar">
+          <div>
+            <div id="confirm-candidate-number" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 900; color: var(--gold-text);">-</div>
+            <div id="confirm-candidate-name" style="font-size: 1rem; font-weight: 900; color: #FFFFFF; line-height: 1.3;">-</div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.45; background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 12px;">
+          Pilihan yang telah di-submit bersifat <strong>FINAL & PERMANEN</strong>. Kode unik Anda akan langsung dihanguskan dan tidak dapat digunakan kembali.
+        </div>
+
+        <div class="dual-confirm-actions">
+          <button id="btn-confirm-no" class="btn btn-outline" style="border-color: #64748B; color: #94A3B8;">
+            ✕ TIDAK, KEMBALI
+          </button>
+          <button id="btn-confirm-yes" class="btn btn-gold">
+            ✓ YA, SAYA YAKIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 2: Simulated Email Dispatch Sheet (Magic Link & Unique Token) -->
+    <div id="modal-email-sim" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title" style="display:flex;align-items:center;gap:8px;">
+            <svg style="width:18px;height:18px;stroke:var(--gold-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Surat Suara Resmi Terkirim</span>
+          </span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+
+        <div class="email-sim-box">
+          <div style="font-size: 0.72rem; color: #94A3B8; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 10px; line-height: 1.4;">
+            <strong>Kepada:</strong> <span id="sim-email-recipient" style="color:#FFF;">-</span><br>
+            <strong>Pengirim:</strong> KPKU IAGI 2026 &lt;pemilu@iagi.or.id&gt;<br>
+            <strong>Subjek:</strong> Surat Suara Elektronik & Kode Unik Pemilu IAGI 2026
+          </div>
+          <p style="font-size: 0.78rem; color: #E2E8F0; line-height: 1.45;">
+            Yth. Anggota IAGI, permohonan klaim surat suara Anda telah divalidasi oleh KPKU. Gunakan kode unik sekali pakai berikut untuk mengakses bilik suara:
+          </p>
+
+          <div id="sim-email-token" class="email-token-chip">IAGI-2026-XXXX-XXXX</div>
+
+          <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <button id="sim-btn-copy-code" class="btn btn-outline" style="font-size: 0.78rem; padding: 10px; display:flex; align-items:center; gap:6px;">
+              <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="sim-copy-text">Salin Kode</span>
+            </button>
+            <button id="sim-btn-open-vote" class="btn btn-gold" style="font-size: 0.78rem; padding: 10px; display:flex; align-items:center; gap:6px;">
+              <span>Buka di Bilik Suara</span>
+              <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: Candidate Detailed Vision & Mission -->
+    <div id="modal-candidate-detail" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">Profil & Gagasan Calon</span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+        <div id="candidate-detail-content"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js?v=2.6.0"></script>
+  <script src="js/storage.js?v=2.6.0"></script>
+  <script src="js/app.js?v=2.6.0"></script>
+</body>
+</html>

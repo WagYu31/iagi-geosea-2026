@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Portal Resmi Pemilu IAGI 2026 | Komisi Pemilihan Ketua Umum</title>
+  
+  <meta name="description" content="Portal Gerbang Resmi Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026-2029. Akses Bilik Suara Anggota & Command Center Panitia KPKU.">
+  <meta name="theme-color" content="#060606">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Portal Pemilu IAGI">
+  
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- GetLayers Style Landing Page CSS -->
+  <link rel="stylesheet" href="css/landing.css?v=3.0.0">
+</head>
+<body>
+
+  <!-- Ambient Background Mesh & Auras (GetLayers Signature Glow) -->
+  <div class="page-bg-auras" aria-hidden="true">
+    <div class="aura-top"></div>
+    <div class="aura-bottom-right"></div>
+    <div class="aura-bottom-left"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ================= FLOATING PILL NAVIGATION HEADER ================= -->
+  <div class="floating-header-wrapper">
+    <header class="floating-header-pill">
+      <!-- Left: Brand Tile -->
+      <a href="landing.html" class="brand-tile">
+        <div class="brand-icon-frame">
+          <img src="assets/iagi-logo.png" alt="IAGI Emblem">
+        </div>
+        <div class="brand-name">
+          <span class="brand-main-text">PEMILU <span>IAGI</span> 2026</span>
+          <span class="brand-sub-badge">
+            <svg style="width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:3;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            OFFICIAL PORTAL
+          </span>
+        </div>
+      </a>
+
+      <!-- Center: Pill Navigation Dock -->
+      <nav class="header-nav-dock" aria-label="Navigasi Utama">
+        <a href="#portal" class="nav-pill-link active">Portal</a>
+        <a href="#pilih-akses" class="nav-pill-link">Pilih Akses</a>
+        <a href="#caketum" class="nav-pill-link">Caketum 2026</a>
+        <a href="#katalog" class="nav-pill-link">Katalog Modul <span class="nav-badge-pill">8 Modul</span></a>
+        <a href="#keamanan" class="nav-pill-link">Keamanan</a>
+      </nav>
+
+      <!-- Right: Direct CTA Buttons -->
+      <div class="header-actions">
+        <a href="app.html#vote" class="btn-header-member">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>Bilik Suara (Pemilih)</span>
+        </a>
+        <a href="admin.html" class="btn-header-admin">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Admin Pleno (2FA)</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Trigger Button -->
+      <button class="header-burger-btn" id="btn-toggle-mobile-menu" aria-label="Buka Menu">
+        <svg style="width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </header>
+  </div>
+
+  <!-- Mobile Dropdown Navigation Panel -->
+  <div class="mobile-nav-panel" id="mobile-nav-panel">
+    <a href="#pilih-akses" class="mobile-nav-link" onclick="closeMobileMenu()">
+      <span>Pilih Akses Masuk (Anggota / Admin)</span>
+      <span>➜</span>
+    </a>
+    <a href="#caketum" class="mobile-nav-link" onclick="closeMobileMenu()">
+      <span>Profil Calon Ketua Umum (Caketum)</span>
+      <span>➜</span>
+    </a>
+    <a href="#katalog" class="mobile-nav-link" onclick="closeMobileMenu()">
+      <span>Katalog Modul Pemilu PWA</span>
+      <span>➜</span>
+    </a>
+    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+    <a href="app.html#vote" class="btn-header-member" style="justify-content: center; width: 100%; padding: 12px;">
+      <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      <span>Masuk Sebagai Anggota (Bilik Suara)</span>
+    </a>
+    <a href="admin.html" class="btn-header-admin" style="justify-content: center; width: 100%; padding: 12px; margin-top: 6px;">
+      <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>Masuk Sebagai Admin KPKU (2FA)</span>
+    </a>
+  </div>
+
+  <!-- ================= HERO SECTION ================= -->
+  <section class="hero-section" id="portal">
+    <div class="container">
+      
+      <!-- Eyebrow Pill -->
+      <div class="hero-eyebrow">
+        <svg class="spark-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
+        <span>E-VOTING RESMI IAGI 2026 · PHONE-READY WITH ZERO EXTRA WORK</span>
+      </div>
+
+      <!-- Main Headline with Gradient -->
+      <h1 class="hero-title">
+        Portal Pemilihan Ketua Umum <br>
+        <span class="highlight-gold">Ikatan Ahli Geologi Indonesia</span> 2026–2029
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="hero-subtitle">
+        Satu pintu gerbang resmi untuk seluruh peserta pemilih dan panitia pelaksana. Berbasis web responsif mutakhir yang dapat langsung digunakan dari smartphone maupun monitor komputer tanpa instalasi aplikasi tambahan.
+      </p>
+
+      <!-- Live Chronometer Capsule Bar -->
+      <div class="hero-chrono-capsule">
+        <div class="chrono-tag">
+          <span class="live-dot"></span>
+          <span>LIVE COUNTDOWN</span>
+        </div>
+        <div class="chrono-units-wrap">
+          <div class="chrono-item"><span id="landing-days" class="chrono-val">00</span><span class="chrono-lbl">H</span></div>
+          <span class="chrono-sep">:</span>
+          <div class="chrono-item"><span id="landing-hours" class="chrono-val">00</span><span class="chrono-lbl">J</span></div>
+          <span class="chrono-sep">:</span>
+          <div class="chrono-item"><span id="landing-mins" class="chrono-val">00</span><span class="chrono-lbl">M</span></div>
+          <span class="chrono-sep">:</span>
+          <div class="chrono-item"><span id="landing-secs" class="chrono-val">00</span><span class="chrono-lbl">D</span></div>
+        </div>
+      </div>
+
+      <!-- ================= PRIMARY ACCESS GATES (KUNCI PINTU MASUK ADMIN & ANGGOTA) ================= -->
+      <div class="access-gates-wrapper" id="pilih-akses">
+        <div class="gates-grid">
+
+          <!-- GATE 1: ANGGOTA / PESERTA PEMILIH -->
+          <article class="gate-card gate-card-member">
+            <div>
+              <div class="gate-card-header">
+                <div class="gate-icon-bubble">
+                  <svg style="width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                </div>
+                <span class="gate-badge">PESERTA / ANGGOTA PEMILIH</span>
+              </div>
+
+              <h2 class="gate-title">Bilik Suara & Portal Anggota</h2>
+              <p class="gate-desc">
+                Pintu masuk resmi bagi seluruh anggota IAGI terdaftar dalam DPT. Periksa status hak pilih Anda, klaim kode surat suara digital, dan salurkan pilihan Caketum secara Langsung, Bebas, Rahasia, Jujur & Adil.
+              </p>
+
+              <ul class="gate-features-list">
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Pencarian DPT Mandiri Online (Cari via NPA / Nama)</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Klaim Token Surat Suara Otentik & Magic Code</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Bilik Suara Digital dengan Konfirmasi Pilihan Ganda</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Unduh Sertifikat Bukti Pemilihan Bersegel SHA-256</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="gate-actions-row">
+              <a href="app.html#vote" class="btn-gate-primary">
+                <span>Masuk Bilik Suara Pemilih</span>
+                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href="app.html#dpt" class="btn-gate-secondary">
+                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Cek DPT</span>
+              </a>
+              <a href="app.html#claim" class="btn-gate-secondary">
+                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Klaim Token</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- GATE 2: ADMIN & PANITIA KPKU -->
+          <article class="gate-card gate-card-admin">
+            <div>
+              <div class="gate-card-header">
+                <div class="gate-icon-bubble">
+                  <svg style="width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <span class="gate-badge">OTORITAS TERBATAS · 2FA WAJIB</span>
+              </div>
+
+              <h2 class="gate-title">KPKU Command Center Pleno</h2>
+              <p class="gate-desc">
+                Portal otoritas tertutup khusus Panitia Pemilihan Ketua Umum (KPKU) dan Saksi Resmi. Wajib verifikasi berlapis melalui email resmi panitia, password terenkripsi, serta 2-Factor Authentication (OTP Email atau Master Security PIN).
+              </p>
+
+              <ul class="gate-features-list">
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Otentikasi Kredensial & 2FA Verifikasi (OTP Email / Master PIN)</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Widescreen Live Count Pleno untuk Proyektor Sidang PIT 55</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Manajemen DPT & Verifikasi Manual Hak Pilih Khusus</span>
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Audit Trail Kriptografi SHA-256 & Ekspor Berita Acara Pleno</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="gate-actions-row">
+              <a href="admin.html" class="btn-gate-primary">
+                <span>Buka Desktop Command Center</span>
+                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </a>
+              <a href="app.html#admin" class="btn-gate-secondary">
+                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                <span>Mobile Admin PWA</span>
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= METRICS & TRUST BANNER ================= -->
+  <section class="trust-metrics-section">
+    <div class="container">
+      <div class="metrics-grid-4">
+        <div>
+          <div class="metric-num"><span id="metric-dpt">4.280</span>+</div>
+          <div class="metric-label">DPT Pemilih Sah Terdata</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>100</span>%</div>
+          <div class="metric-label">Enkripsi SHA-256 Zero-Tamper</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>02</span></div>
+          <div class="metric-label">Kandidat Sah Terverifikasi</div>
+        </div>
+        <div>
+          <div class="metric-num"><span>0</span> Detik</div>
+          <div class="metric-label">Sinkronisasi Real-Time Live Pleno</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CANDIDATES SPOTLIGHT SECTION ================= -->
+  <section class="candidates-spotlight-section" id="caketum">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>CALON KETUA UMUM IAGI 2026–2029</span>
+        </div>
+        <h2 class="section-title">Profil & Gagasan Calon Pemimpin</h2>
+        <p class="section-desc">
+          Kenali rekam jejak, visi strategis, dan komitmen kedua calon Ketua Umum dalam memajukan profesi kebumian Indonesia.
+        </p>
+      </div>
+
+      <div class="candidates-pair-grid">
+
+        <!-- CANDIDATE 01 -->
+        <article class="candidate-card-showcase">
+          <div class="candidate-photo-header">
+            <img src="assets/candidate-1.jpg" alt="Dr. Ir. H. Muhammad Arifin, M.Sc." loading="lazy">
+            <div class="candidate-photo-overlay"></div>
+            <span class="candidate-num-pill">NO. URUT 01</span>
+          </div>
+          <div class="candidate-details-body">
+            <div>
+              <div class="cand-name">Dr. Ir. H. Muhammad Arifin, M.Sc., IPU</div>
+              <div class="cand-title">Ahli Geologi Eksplorasi Migas & Transisi Energi</div>
+              <p class="cand-tagline" style="margin-top: 10px;">
+                "IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional"
+              </p>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
+                Fokus utama: Kedaulatan energi nusantara, hilirisasi georesources, dan peningkatan sertifikasi global geoscientist Indonesia.
+              </div>
+              <button class="cand-btn-vision" onclick="openCandidateModal(1)" style="width: 100%;">
+                <span>Lihat Visi, Misi & Rekam Jejak</span>
+                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- CANDIDATE 02 -->
+        <article class="candidate-card-showcase">
+          <div class="candidate-photo-header">
+            <img src="assets/candidate-2.jpg" alt="Dr. Eng. Andiani, S.T., M.T." loading="lazy">
+            <div class="candidate-photo-overlay"></div>
+            <span class="candidate-num-pill">NO. URUT 02</span>
+          </div>
+          <div class="candidate-details-body">
+            <div>
+              <div class="cand-name">Dr. Eng. Andiani, S.T., M.T.</div>
+              <div class="cand-title">Pakar Geologi Tata Lingkungan & Mitigasi Bencana Geologi</div>
+              <p class="cand-tagline" style="margin-top: 10px;">
+                "Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan"
+              </p>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 14px;">
+                Fokus utama: Integrasi geologi dalam RTRW kebencanaan, akselerasi kepemimpinan geoscientist muda, dan revitalisasi Pengda se-Indonesia.
+              </div>
+              <button class="cand-btn-vision" onclick="openCandidateModal(2)" style="width: 100%;">
+                <span>Lihat Visi, Misi & Rekam Jejak</span>
+                <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GETLAYERS-STYLE MODULE SHOWCASE SECTION ================= -->
+  <section class="showcase-section" id="katalog">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>KATALOG TEMPLATE & MODUL · PHONE-READY WITH ZERO EXTRA WORK</span>
+        </div>
+        <h2 class="section-title">Eksplorasi Modul Pemilu IAGI</h2>
+        <p class="section-desc">
+          Setiap modul dirancang responsif mengikuti standar ergonomis smartphone ("Phone-ready") dan ketajaman layar resolusi tinggi untuk sidang pleno.
+        </p>
+      </div>
+
+      <!-- Filter Tabs Container (GetLayers lib-tabs) -->
+      <div class="filter-tabs-container">
+        <div class="filter-tabs-pill" role="tablist">
+          <button class="filter-tab-btn active" data-filter="all">Semua Modul (8)</button>
+          <button class="filter-tab-btn" data-filter="vote">Bilik Suara (PWA)</button>
+          <button class="filter-tab-btn" data-filter="admin">Command Center Pleno</button>
+          <button class="filter-tab-btn" data-filter="candidate">Caketum 2026</button>
+          <button class="filter-tab-btn" data-filter="dpt">DPT & Token</button>
+          <button class="filter-tab-btn" data-filter="security">Keamanan SHA-256</button>
+        </div>
+      </div>
+
+      <!-- Facet Filter Chips -->
+      <div class="facet-chips-row">
+        <button class="facet-chip active" data-facet="all">Semua Tag</button>
+        <button class="facet-chip" data-facet="pwa">📱 Phone-Ready PWA <span class="facet-count">5</span></button>
+        <button class="facet-chip" data-facet="widescreen">🖥️ Widescreen Pleno <span class="facet-count">3</span></button>
+        <button class="facet-chip" data-facet="crypto">🔒 Kriptografi SHA-256 <span class="facet-count">4</span></button>
+        <button class="facet-chip" data-facet="live">⚡ Real-Time Sync <span class="facet-count">6</span></button>
+      </div>
+
+      <!-- Template Showcase Grid (8 Interactive Cards) -->
+      <div class="template-grid" id="module-grid">
+
+        <!-- CARD 1: Bilik Suara PWA -->
+        <article class="project-card" data-cat="vote" data-tags="pwa live" onclick="window.location.href='app.html#vote'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(245, 186, 66, 0.18) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F5BA42" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              <div style="font-size: 0.72rem; color: #FDE68A; font-family: var(--font-mono); font-weight: 700;">SURAT SUARA SEKALI PAKAI</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-vote-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">482</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Bilik Suara Digital</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-pwa">Phone-Ready</span>
+              </div>
+              <span class="card-sub-category">Modul Pemilih • Mobile PWA</span>
+            </div>
+            <p class="card-brief-desc">
+              Bilik pencoblosan digital dengan konfirmasi pilihan ganda dan pencegahan double-voting secara realtime.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 2: Command Center Pleno -->
+        <article class="project-card" data-cat="admin" data-tags="widescreen live" onclick="window.location.href='admin.html'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(16, 185, 129, 0.2) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <div style="font-size: 0.72rem; color: #6EE7B7; font-family: var(--font-mono); font-weight: 700;">4K WIDESCREEN PLENO</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-admin-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">356</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Command Center Pleno</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-gold">Live Pleno</span>
+              </div>
+              <span class="card-sub-category">Modul Panitia • Layar Lebar Proyektor</span>
+            </div>
+            <p class="card-brief-desc">
+              Visualisasi persentase perolehan suara live count, donut telemetry, dan audit log pemilu untuk sidang pleno.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 3: Cek DPT Online -->
+        <article class="project-card" data-cat="dpt" data-tags="pwa live" onclick="window.location.href='app.html#dpt'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(56, 189, 248, 0.18) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <div style="font-size: 0.72rem; color: #7DD3FC; font-family: var(--font-mono); font-weight: 700;">4.280 DATA ANGGOTA</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-dpt-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">294</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Pencarian DPT Instan</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-pwa">DPT Resmi</span>
+              </div>
+              <span class="card-sub-category">Pemeriksaan Hak Pilih • Filter Cepat</span>
+            </div>
+            <p class="card-brief-desc">
+              Pencarian mandiri status hak pilih 4.280 anggota berbasis nomor NPA, nama lengkap, dan domisili Pengda.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 4: Klaim Token Surat Suara -->
+        <article class="project-card" data-cat="dpt" data-tags="pwa crypto" onclick="window.location.href='app.html#claim'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(168, 85, 247, 0.18) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#C084FC" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <div style="font-size: 0.72rem; color: #E9D5FF; font-family: var(--font-mono); font-weight: 700;">ONE-TIME TOKEN OTP</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-claim-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">210</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Klaim Token Digital</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-crypto">Kripto Token</span>
+              </div>
+              <span class="card-sub-category">Verifikasi Pemilih • Simulasi Email</span>
+            </div>
+            <p class="card-brief-desc">
+              Penerbitan surat suara elektronik berbasis verifikasi email panitia dengan generator kode unik sekali pakai.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 5: Kandidat 01 -->
+        <article class="project-card" data-cat="candidate" data-tags="live" onclick="openCandidateModal(1)">
+          <div class="card-thumb-frame">
+            <img src="assets/candidate-1.jpg" alt="Caketum 01" loading="lazy">
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-cand-1')" aria-label="Suka Caketum 01">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">512</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Kandidat 01: M. Arifin</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-gold">No. 01</span>
+              </div>
+              <span class="card-sub-category">Kandidat Caketum • Transisi Energi</span>
+            </div>
+            <p class="card-brief-desc">
+              Dr. Ir. H. Muhammad Arifin, M.Sc., IPU — IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 6: Kandidat 02 -->
+        <article class="project-card" data-cat="candidate" data-tags="live" onclick="openCandidateModal(2)">
+          <div class="card-thumb-frame">
+            <img src="assets/candidate-2.jpg" alt="Caketum 02" loading="lazy">
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-cand-2')" aria-label="Suka Caketum 02">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">489</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Kandidat 02: Andiani</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-pwa">No. 02</span>
+              </div>
+              <span class="card-sub-category">Kandidat Caketum • Mitigasi Bencana</span>
+            </div>
+            <p class="card-brief-desc">
+              Dr. Eng. Andiani, S.T., M.T. — Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 7: Audit Trail SHA-256 -->
+        <article class="project-card" data-cat="security" data-tags="crypto widescreen" onclick="window.location.href='admin.html'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(16, 185, 129, 0.2) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <div style="font-size: 0.72rem; color: #A7F3D0; font-family: var(--font-mono); font-weight: 700;">CRYPTOGRAPHIC HASH LEDGER</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-sec-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">178</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Audit Kripto SHA-256</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-crypto">Immutable</span>
+              </div>
+              <span class="card-sub-category">Integritas Suara • Hash Blockchain-Grade</span>
+            </div>
+            <p class="card-brief-desc">
+              Pencatatan setiap suara masuk dengan rantai hash SHA-256 yang mustahil diubah atau dimanipulasi tanpa merusak hash.
+            </p>
+          </div>
+        </article>
+
+        <!-- CARD 8: 2FA MFA Security Gate -->
+        <article class="project-card" data-cat="security" data-tags="crypto widescreen" onclick="window.location.href='admin.html'">
+          <div class="card-thumb-frame">
+            <div class="card-thumb-canvas" style="background: radial-gradient(circle at center, rgba(245, 186, 66, 0.2) 0%, #0c100e 75%);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F5BA42" stroke-width="2"><path d="M21 2l-2 2m-1.5 6.1L19 12l2 2-7 7-2-2-4 4-2-2 4-4-2-2 7-7 1.9 1.5z"></path></svg>
+              <div style="font-size: 0.72rem; color: #FDE68A; font-family: var(--font-mono); font-weight: 700;">2-STEP MULTI-FACTOR AUTH</div>
+            </div>
+            <button class="likes-pill" onclick="event.stopPropagation(); toggleLike(this, 'like-2fa-1')" aria-label="Suka modul ini">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <span class="like-num">224</span>
+            </button>
+          </div>
+          <div class="card-meta-box">
+            <div>
+              <div class="card-title-row">
+                <h3 class="card-title-text">
+                  <span>Verifikasi 2FA Panitia</span>
+                  <svg class="card-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l10-10M17 7H7M17 7v10"/></svg>
+                </h3>
+                <span class="card-tier-badge tier-gold">2FA Wajib</span>
+              </div>
+              <span class="card-sub-category">Keamanan Panitia • Email OTP & PIN</span>
+            </div>
+            <p class="card-brief-desc">
+              Protokol otentikasi bertingkat email panitia, password terenkripsi, serta 2FA OTP / Master Security PIN untuk masuk ke pleno.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECURITY & TRANSPARENCY SECTION ================= -->
+  <section class="candidates-spotlight-section" id="keamanan" style="border-top: 1px solid var(--border-subtle);">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>STANDAR KEAMANAN KPKU IAGI</span>
+        </div>
+        <h2 class="section-title">Integritas Tanpa Kompromi</h2>
+        <p class="section-desc">
+          Setiap suara dilindungi oleh 4 pilar arsitektur keamanan digital terakreditasi untuk menjamin kepastian asas Luber & Jurdil.
+        </p>
+      </div>
+
+      <div class="gates-grid" style="max-width: 1040px; margin: 0 auto;">
+        
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 28px;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--gold-primary);">
+            <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Zero-Knowledge Voting</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+            Identitas pemilih (NPA dan nama) dipisahkan secara kriptografis dari surat suara yang dipilih. Panitia maupun server tidak dapat melihat siapa memilih kandidat mana.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 28px;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--emerald-primary);">
+            <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Audit Trail SHA-256</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+            Setiap transaksi suara menghasilkan tanda terima hash SHA-256 unik. Setiap upaya perubahan rekapitulasi akan langsung terdeteksi oleh sistem checksum.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-tile">
+            <div class="brand-icon-frame">
+              <img src="assets/iagi-logo.png" alt="IAGI Emblem">
+            </div>
+            <div class="brand-name">
+              <span class="brand-main-text">PEMILU <span>IAGI</span> 2026</span>
+              <span class="brand-sub-badge">KPKU OFFICIAL E-VOTING</span>
+            </div>
+          </div>
+          <p>
+            Komisi Pemilihan Ketua Umum (KPKU) Ikatan Ahli Geologi Indonesia Periode 2026–2029. Diselenggarakan secara elektronik dalam rangka Pertemuan Ilmiah Tahunan (PIT) IAGI ke-55 & GEOSEA XIX 2026.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Akses Langsung</h4>
+          <ul class="footer-links">
+            <li><a href="app.html#vote">Bilik Suara Pemilih</a></li>
+            <li><a href="app.html#dpt">Pemeriksaan DPT Online</a></li>
+            <li><a href="app.html#claim">Klaim Token Surat Suara</a></li>
+            <li><a href="admin.html">KPKU Command Center Pleno</a></li>
+            <li><a href="app.html#admin">Mobile Admin PWA</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Bantuan & Helpdesk</h4>
+          <ul class="footer-links">
+            <li><a href="https://wa.me/628111581461" target="_blank">WhatsApp: +62 811-158-1461</a></li>
+            <li><a href="mailto:iagisekretariat@gmail.com">iagisekretariat@gmail.com</a></li>
+            <li><a href="#">Gedung Sekretariat DPP IAGI</a></li>
+            <li><a href="#">Regulasi & Panduan PDF</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 Komisi Pemilihan Ketua Umum (KPKU) IAGI. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+        <div style="display:flex; gap:16px;">
+          <span>v3.0.0 Phone-Ready Edition</span>
+          <span>•</span>
+          <span style="color:var(--emerald-primary);">System Operational: 100%</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= CANDIDATE VISION MODAL ================= -->
+  <div class="modal-overlay" id="modal-candidate">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="closeCandidateModal()">&times;</button>
+      <div id="modal-candidate-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js?v=3.0.0"></script>
+  <script>
+    // Live Countdown
+    function updateLandingCountdown() {
+      const targetDate = new Date("2026-10-25T18:00:00+07:00").getTime();
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('landing-days').textContent = String(days).padStart(2, '0');
+        document.getElementById('landing-hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('landing-mins').textContent = String(mins).padStart(2, '0');
+        document.getElementById('landing-secs').textContent = String(secs).padStart(2, '0');
+      }
+    }
+    setInterval(updateLandingCountdown, 1000);
+    updateLandingCountdown();
+
+    // Mobile Menu Toggle
+    const btnMobileMenu = document.getElementById('btn-toggle-mobile-menu');
+    const mobilePanel = document.getElementById('mobile-nav-panel');
+    if (btnMobileMenu && mobilePanel) {
+      btnMobileMenu.addEventListener('click', () => {
+        mobilePanel.classList.toggle('open');
+      });
+    }
+
+    function closeMobileMenu() {
+      if (mobilePanel) mobilePanel.classList.remove('open');
+    }
+
+    // Filter Tabs (GetLayers lib-tabs)
+    const filterTabs = document.querySelectorAll('.filter-tab-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filterVal = tab.getAttribute('data-filter');
+        projectCards.forEach(card => {
+          if (filterVal === 'all' || card.getAttribute('data-cat') === filterVal) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Facet Chips Filter
+    const facetChips = document.querySelectorAll('.facet-chip');
+    facetChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        facetChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        const facetVal = chip.getAttribute('data-facet');
+        projectCards.forEach(card => {
+          const tags = card.getAttribute('data-tags') || '';
+          if (facetVal === 'all' || tags.includes(facetVal)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Like Counter Toggle
+    function toggleLike(btn, key) {
+      const numSpan = btn.querySelector('.like-num');
+      let current = parseInt(numSpan.textContent, 10) || 0;
+      const isLiked = btn.classList.contains('liked');
+
+      if (isLiked) {
+        btn.classList.remove('liked');
+        numSpan.textContent = current - 1;
+        localStorage.removeItem(key);
+      } else {
+        btn.classList.add('liked');
+        numSpan.textContent = current + 1;
+        localStorage.setItem(key, '1');
+      }
+    }
+
+    // Restore saved likes
+    document.querySelectorAll('.likes-pill').forEach(btn => {
+      const parentCard = btn.closest('.project-card');
+      if (parentCard) {
+        const cat = parentCard.getAttribute('data-cat') || 'mod';
+        const title = parentCard.querySelector('.card-title-text span')?.textContent || 'item';
+        const key = 'like_' + cat + '_' + title.replace(/\s+/g, '_');
+        if (localStorage.getItem(key)) {
+          btn.classList.add('liked');
+        }
+      }
+    });
+
+    // Candidate Detail Modal
+    function openCandidateModal(candId) {
+      const modal = document.getElementById('modal-candidate');
+      const content = document.getElementById('modal-candidate-content');
+      const candidate = (typeof CANDIDATES !== 'undefined') ? CANDIDATES.find(c => c.id === candId) : null;
+
+      if (!candidate || !modal || !content) return;
+
+      content.innerHTML = `
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom: 20px;">
+          <img src="${candidate.photo}" alt="${candidate.name}" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover; border: 2px solid ${candidate.accentColor};">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800; color: ${candidate.accentColor};">KANDIDAT ${candidate.number}</div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #FFF; line-height: 1.3;">${candidate.name}</h3>
+            <div style="font-size: 0.82rem; color: #94A3B8;">${candidate.title}</div>
+          </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+          <div style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--gold-primary); font-weight: 700; margin-bottom: 4px;">TAGLINE GAGASAN</div>
+          <div style="font-size: 0.92rem; color: #FFF; font-style: italic;">"${candidate.tagline}"</div>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <h4 style="font-size: 0.88rem; font-weight: 800; color: #FFF; margin-bottom: 8px;">VISI STRATEGIS</h4>
+          <p style="font-size: 0.86rem; color: #CBD5E1; line-height: 1.6;">${candidate.vision}</p>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <h4 style="font-size: 0.88rem; font-weight: 800; color: #FFF; margin-bottom: 8px;">MISI UTAMA</h4>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+            ${candidate.missions.map(m => `
+              <li style="display:flex; gap:10px; font-size: 0.84rem; color: #E2E8F0; line-height: 1.5;">
+                <span style="color: ${candidate.accentColor}; font-weight: 800;">✓</span>
+                <span>${m}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <a href="app.html#vote" class="btn-gate-primary" style="flex: 1; text-align: center;">
+            <span>Coblos di Bilik Suara</span>
+            <span>➜</span>
+          </a>
+          <button class="btn-gate-secondary" onclick="closeCandidateModal()">Tutup</button>
+        </div>
+      `;
+
+      modal.classList.add('active');
+    }
+
+    function closeCandidateModal() {
+      const modal = document.getElementById('modal-candidate');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Close on background click
+    document.getElementById('modal-candidate')?.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-candidate') closeCandidateModal();
+    });
+  </script>
+</body>
+</html>
