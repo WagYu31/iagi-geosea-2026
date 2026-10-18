@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>E-Voting Pemilu IAGI 2026 | Komisi Pemilihan Ketua Umum</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="description" content="Platform Resmi Pemungutan Suara Elektronik (E-Voting) Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026-2029">
+  <meta name="theme-color" content="#090D16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pemilu IAGI">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Taste-Skill Mobile PWA Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Mobile App Frame Container -->
+  <div class="app-container">
+
+    <!-- Top Sticky Header -->
+    <header class="app-header">
+      <div class="brand-wrapper" onclick="window.location.hash = 'home'">
+        <img src="assets/iagi-logo.png" alt="IAGI Logo" class="brand-logo">
+        <div class="brand-text">
+          <span class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</span>
+          <span class="brand-subtitle">KPKU OFFICIAL E-VOTING</span>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="live-badge">
+          <span class="live-dot"></span>
+          LIVE 2026
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Content Screens Viewport -->
+    <main class="app-main">
+
+      <!-- PWA Install Prompt Banner (Visible on Mobile Browser) -->
+      <div id="pwa-prompt-banner" class="pwa-prompt-banner" style="display: none;">
+        <div class="pwa-prompt-text">
+          📱 <strong>Pasang di Layar Utama HP:</strong> Akses pemungutan suara lebih cepat, stabil, & praktis.
+        </div>
+        <button id="btn-install-pwa" class="btn-install-pwa">Pasang App</button>
+      </div>
+
+      <!-- ================= SCREEN 1: BERANDA / HOME ================= -->
+      <section id="screen-home" class="screen active">
+        <!-- Master Countdown Timer Banner -->
+        <div class="countdown-banner">
+          <div class="countdown-label">⏳ WAKTU TERSISA PEMUNGUTAN SUARA</div>
+          <div class="timer-grid">
+            <div class="timer-box">
+              <div id="timer-days" class="timer-val">00</div>
+              <div class="timer-unit">Hari</div>
+            </div>
+            <div class="timer-box">
+              <div id="timer-hours" class="timer-val">00</div>
+              <div class="timer-unit">Jam</div>
+            </div>
+            <div class="timer-box">
+              <div id="timer-mins" class="timer-val">00</div>
+              <div class="timer-unit">Menit</div>
+            </div>
+            <div class="timer-box">
+              <div id="timer-secs" class="timer-val">00</div>
+              <div class="timer-unit">Detik</div>
+            </div>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px;">
+            Sinkronisasi Presisi Server KPKU • Batas Akhir: 25 Oktober 2026
+          </div>
+        </div>
+
+        <!-- Big CTA Bilik Suara Card -->
+        <div class="card card-gold" style="margin-top: 16px;">
+          <div class="card-title">
+            <span>🗳️</span> Bilik Suara Digital (Vote Now)
+          </div>
+          <div class="card-subtitle">
+            Gunakan hak suara Anda untuk menentukan kepemimpinan IAGI Periode 2026–2029 secara Langsung, Umum, Bebas, Rahasia, Jujur, dan Adil.
+          </div>
+          <button class="btn btn-gold" onclick="window.location.hash = 'vote'">
+            Masuk ke Bilik Suara ➜
+          </button>
+        </div>
+
+        <!-- Quick 4-Step Election Flow (Mandat Regulasi KPKU) -->
+        <div class="card" style="margin-top: 16px;">
+          <div class="card-title">
+            <span>📋</span> Alur Pemilu Sesuai Regulasi KPKU
+          </div>
+          <div class="card-subtitle">
+            4 Langkah mudah pemungutan suara bagi seluruh Anggota IAGI:
+          </div>
+          <div class="flow-step-list">
+            <div class="flow-step-item" onclick="window.location.hash = 'dpt'">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-content">
+                <div class="flow-step-title">
+                  <span>Cek DPT Online Mandiri</span>
+                  <span style="color: var(--gold-primary); font-size: 0.72rem;">Buka ➜</span>
+                </div>
+                <div class="flow-step-desc">
+                  Periksa nama dan NPA Anda di Daftar Pemilih Tetap (DPT) yang telah diverifikasi KPKU.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step-item" onclick="window.location.hash = 'claim'">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-content">
+                <div class="flow-step-title">
+                  <span>Klaim Surat Suara</span>
+                  <span style="color: var(--gold-primary); font-size: 0.72rem;">Buka ➜</span>
+                </div>
+                <div class="flow-step-desc">
+                  Masukkan Nama, NPA, dan Email aktif untuk memperoleh Link Akses & Kode Unik resmi.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step-item">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-content">
+                <div class="flow-step-title">
+                  <span>Terima Kode Unik via Email</span>
+                </div>
+                <div class="flow-step-desc">
+                  Sistem otomatis mengirimkan token unik kriptografi 128-bit ke email terdaftar Anda.
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-step-item" onclick="window.location.hash = 'vote'">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-content">
+                <div class="flow-step-title">
+                  <span>Bilik Suara & Dual-Confirmation</span>
+                  <span style="color: var(--gold-primary); font-size: 0.72rem;">Coblos ➜</span>
+                </div>
+                <div class="flow-step-desc">
+                  Pilih salah satu Caketum, konfirmasi melalui pop-up window, dan unduh bukti coblos digital.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Candidates Showcase Summary -->
+        <div class="card" style="margin-top: 16px;">
+          <div class="card-title">
+            <span>👥</span> Calon Ketua Umum IAGI 2026
+          </div>
+          <div class="card-subtitle">
+            Mengenal 3 kandidat pemimpin asosiasi profesi geologi Indonesia:
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 12px; align-items: center; background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); cursor: pointer;" onclick="showCandidateDetailModal(1)">
+              <img src="assets/candidate-1.jpg" alt="Caketum 01" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid #C5A059;">
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 800; color: #C5A059;">KANDIDAT 01</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-pure);">Dr. Ir. H. Muhammad Arifin, M.Sc., IPU</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Eksplorasi Migas & Transisi Energi</div>
+              </div>
+              <span style="color: var(--gold-primary); font-size: 0.8rem;">ℹ️</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); cursor: pointer;" onclick="showCandidateDetailModal(2)">
+              <img src="assets/candidate-2.jpg" alt="Caketum 02" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid #0F766E;">
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 800; color: #0F766E;">KANDIDAT 02</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-pure);">Dr. Eng. Andiani, S.T., M.T.</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Geologi Tata Lingkungan & Kebencanaan</div>
+              </div>
+              <span style="color: var(--gold-primary); font-size: 0.8rem;">ℹ️</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); cursor: pointer;" onclick="showCandidateDetailModal(3)">
+              <img src="assets/candidate-3.jpg" alt="Caketum 03" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid #38BDF8;">
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 800; color: #38BDF8;">KANDIDAT 03</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-pure);">Ir. Burhanuddin Harahap, Ph.D., ASEAN Eng.</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Hilirisasi Mineral Kritis & AI Geosains</div>
+              </div>
+              <span style="color: var(--gold-primary); font-size: 0.8rem;">ℹ️</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helpdesk & Hotline KPKU -->
+        <div class="card" style="margin-top: 16px; background: rgba(15, 118, 110, 0.12); border-color: var(--emerald-border);">
+          <div class="card-title" style="color: #2DD4BF;">
+            <span>📞</span> Layanan Bantuan & Hotline KPKU
+          </div>
+          <div class="card-subtitle" style="margin-bottom: 10px;">
+            Butuh bantuan terkait status DPT, perubahan email, atau kendala kode token?
+          </div>
+          <div style="font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px;">
+            <div>💬 <strong>WhatsApp Hotline:</strong> <a href="https://wa.me/628111581461" target="_blank" style="color: #38BDF8; text-decoration: none; font-weight: 700;">+62 811-158-1461</a></div>
+            <div>✉️ <strong>Email Resmi:</strong> <a href="mailto:iagisekretariat@gmail.com" style="color: #38BDF8; text-decoration: none; font-weight: 700;">iagisekretariat@gmail.com</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 2: CEK DPT ONLINE ================= -->
+      <section id="screen-dpt" class="screen">
+        <div class="card">
+          <div class="card-title">
+            <span>🔍</span> Cek DPT Online Mandiri
+          </div>
+          <div class="card-subtitle">
+            Cari status hak pilih Anda berdasarkan Nomor Pokok Anggota (NPA) atau Nama Lengkap terdaftar.
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span>Cari Nama / NPA</span>
+              <span id="dpt-total-count" class="helper">Memuat DPT...</span>
+            </label>
+            <input type="text" id="dpt-search-input" class="form-input" placeholder="Ketik Nama atau NPA (contoh: IAGI-2024...)">
+          </div>
+
+          <div class="alert alert-info" style="font-size: 0.75rem; margin-top: 8px;">
+            ℹ️ Data merujuk pada Daftar Pemilih Tetap (DPT) resmi yang disahkan oleh KPKU IAGI per 25 September 2026.
+          </div>
+
+          <!-- DPT Search Results List Container -->
+          <div id="dpt-results-container"></div>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 3: KLAIM SURAT SUARA ================= -->
+      <section id="screen-claim" class="screen">
+        <div class="card card-gold">
+          <div class="card-title">
+            <span>🎫</span> Formulir Klaim Surat Suara
+          </div>
+          <div class="card-subtitle">
+            Verifikasi identitas Anda untuk mengklaim surat suara dan menerima kode unik token via email.
+          </div>
+
+          <div id="claim-alert" style="display: none;"></div>
+
+          <form id="form-claim">
+            <div class="form-group">
+              <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="Contoh: IAGI-1998-0412" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap (sesuai DPT) *</label>
+              <input type="text" id="claim-name" class="form-input" placeholder="Nama lengkap beserta gelar jika ada" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span>Alamat Email Aktif *</span>
+                <span class="helper">Wajib cocok dengan email DPT</span>
+              </label>
+              <input type="email" id="claim-email" class="form-input" placeholder="email.anda@domain.com" required>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="margin-top: 10px;">
+              Klaim Surat Suara Sekarang ➜
+            </button>
+          </form>
+
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 14px; line-height: 1.4; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+            🛡️ <strong>Keamanan Kriptografi:</strong> Setiap anggota berhak atas satu kode unik sekali pakai yang belum terikat pada calon mana pun. Kode unik langsung hangus setelah pemungutan suara selesai.
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
+      <section id="screen-vote" class="screen">
+        
+        <!-- Step 1: Auth Verification Form (Hidden if auto-verified via magic link) -->
+        <div id="vote-auth-card" class="card">
+          <div class="card-title">
+            <span>🔐</span> Verifikasi Akses Bilik Suara
+          </div>
+          <div class="card-subtitle">
+            Masukkan Nomor Pokok Anggota (NPA) dan Kode Unik resmi yang Anda terima di email untuk membuka kertas suara digital.
+          </div>
+
+          <div id="vote-auth-alert" style="display: none;"></div>
+
+          <form id="form-vote-auth">
+            <div class="form-group">
+              <label class="form-label">Nomor Pokok Anggota (NPA)</label>
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="Contoh: IAGI-2024-0001" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Kode Unik Surat Suara (Token 128-bit)</label>
+              <input type="text" id="vote-token" class="form-input font-mono" placeholder="Contoh: IAGI-2026-X9K2-7LM4" required>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="margin-top: 10px;">
+              Buka Kertas Suara Digital ➜
+            </button>
+          </form>
+
+          <div style="margin-top: 14px; text-align: center; font-size: 0.75rem;">
+            <a href="#claim" data-nav="claim" style="color: var(--gold-primary); text-decoration: none;">Belum punya kode unik? Klaim di sini ➜</a>
+          </div>
+        </div>
+
+        <!-- Step 2: Official Digital Ballot (Kertas Suara Digital 3 Caketum) -->
+        <div id="vote-ballot-card" style="display: none;">
+          <div class="card card-emerald" style="margin-bottom: 14px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.7rem; font-weight: 700; color: #2DD4BF; text-transform: uppercase;">Pemilih Terverifikasi:</div>
+                <div id="voter-badge-name" style="font-weight: 800; font-size: 0.95rem; color: #fff;">-</div>
+                <div id="voter-badge-npa" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold-primary);">-</div>
+              </div>
+              <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; color: #34D399; font-size: 0.68rem; font-weight: 800; padding: 4px 10px; border-radius: var(--radius-pill);">
+                SURAT SUARA AKTIF
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 12px; text-align: center;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-pure); letter-spacing: -0.01em;">
+              KERTAS SUARA ELEKTRONIK
+            </h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">
+              Sentuh salah satu kartu Calon Ketua Umum IAGI pilihan Anda di bawah ini:
+            </p>
+          </div>
+
+          <!-- Dynamic 3 Candidate Cards List -->
+          <div id="candidate-list-container" class="candidate-list"></div>
+
+          <!-- Final Submit Button -->
+          <div style="margin-top: 20px; position: sticky; bottom: 84px; z-index: 30;">
+            <button id="btn-submit-vote" class="btn btn-gold" disabled style="box-shadow: 0 8px 30px rgba(0,0,0,0.8);">
+              Pilih Salah Satu Calon Ketua Umum
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= SCREEN 5: DIGITAL RECEIPT (TANDA TERIMA) ================= -->
+      <section id="screen-receipt" class="screen">
+        <div class="receipt-box">
+          <div class="receipt-header">
+            <img src="assets/iagi-logo.png" alt="IAGI" class="receipt-logo">
+            <div class="receipt-title">TANDA TERIMA HAK SUARA ELEKTRONIK</div>
+            <div class="receipt-subtitle">Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026</div>
+            <div class="receipt-seal">✓ SUARA RESMI TEREKAM & TERENKRIPSI</div>
+          </div>
+
+          <div class="receipt-row">
+            <span class="label">Nama Anggota:</span>
+            <span id="receipt-name" class="val">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Nomor Pokok Anggota:</span>
+            <span id="receipt-npa" class="val" style="font-family: var(--font-mono); color: var(--gold-primary);">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Waktu Pemungutan:</span>
+            <span id="receipt-date" class="val">-</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Integritas Kerahasiaan:</span>
+            <span class="val" style="color: #059669;">LUBER-JURDIL (Zero-Knowledge)</span>
+          </div>
+
+          <div class="receipt-hash-box">
+            <div style="font-size: 0.68rem; color: #64748B; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">
+              Cryptographic Receipt Hash (SHA-256)
+            </div>
+            <div id="receipt-hash" class="receipt-hash-val">-</div>
+            <div id="receipt-full-hash" style="font-size: 0.58rem; color: #94A3B8; word-break: break-all; margin-top: 4px; font-family: var(--font-mono);">-</div>
+          </div>
+
+          <div style="text-align: center; font-size: 0.72rem; color: #64748B; line-height: 1.4; margin-top: 10px;">
+            Simpan tanda terima ini sebagai bukti sah penggunaan hak suara Anda pada Pemilu Ketua Umum IAGI 2026. Sesuai asas rahasia, surat suara tidak menyimpan identitas pilihan calon Anda.
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 16px;">
+          <button id="btn-print-receipt" class="btn btn-gold btn-no-print">
+            🖨️ Cetak / Simpan Bukti
+          </button>
+          <button class="btn btn-outline btn-no-print" onclick="window.location.hash = 'home'">
+            Ke Beranda ➜
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SCREEN 6: KPKU COMMAND CENTER (ADMIN) ================= -->
+      <section id="screen-admin" class="screen">
+        <!-- PIN Gate -->
+        <div id="admin-pin-gate" class="card card-gold">
+          <div class="card-title">
+            <span>🛡️</span> KPKU Command Center
+          </div>
+          <div class="card-subtitle">
+            Area terbatas khusus Panitia Pemilihan (KPKU) dan Saksi Calon Ketua Umum IAGI 2026.
+          </div>
+
+          <div id="admin-pin-alert" style="display: none;"></div>
+
+          <form id="form-admin-pin">
+            <div class="form-group">
+              <label class="form-label">
+                <span>PIN Keamanan Panitia</span>
+                <span class="helper">PIN Default: 2026</span>
+              </label>
+              <input type="password" id="admin-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" required>
+            </div>
+            <button type="submit" class="btn btn-gold" style="margin-top: 10px;">
+              Buka Command Center ➜
+            </button>
+          </form>
+        </div>
+
+        <!-- Authenticated Dashboard -->
+        <div id="admin-dashboard-content" style="display: none;">
+          <div class="card" style="margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 12px;">
+              <div>
+                <h3 style="font-size: 1rem; font-weight: 800; color: var(--text-pure);">KPKU Live Monitor</h3>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Sistem E-Voting Terakreditasi 2026</div>
+              </div>
+              <button id="btn-reset-demo-data" class="btn btn-subtle" style="width: auto; padding: 4px 10px; font-size: 0.68rem; color: #F87171;">
+                Reset Demo
+              </button>
+            </div>
+
+            <!-- Stats 4-Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+              <div style="background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">TOTAL DPT</div>
+                <div id="admin-stat-dpt" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--text-pure);">0</div>
+              </div>
+              <div style="background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">SUDAH KLAIM</div>
+                <div id="admin-stat-claimed" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #FBBF24;">0</div>
+              </div>
+              <div style="background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">SUARA MASUK</div>
+                <div id="admin-stat-voted" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #34D399;">0</div>
+              </div>
+              <div style="background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">TURNOUT %</div>
+                <div id="admin-stat-turnout" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--gold-primary);">0%</div>
+              </div>
+            </div>
+
+            <!-- Sealed vs Unsealed Tabulation Box -->
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-pure);">Status Segel Perolehan Suara</span>
+                <button id="btn-toggle-seal" class="btn btn-gold" style="width: auto; padding: 6px 14px; font-size: 0.72rem;">
+                  Toggle Segel
+                </button>
+              </div>
+
+              <!-- Sealed Banner -->
+              <div id="admin-sealed-banner" style="background: rgba(245, 158, 11, 0.1); border: 1px dashed #F59E0B; border-radius: var(--radius-md); padding: 16px; text-align: center;">
+                <div style="font-size: 1.8rem; margin-bottom: 6px;">🔒</div>
+                <strong style="color: #FBBF24; font-size: 0.88rem; display: block;">KOTAK SUARA TERSEGEL (SEALED)</strong>
+                <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+                  Sesuai Bab 5 Proposal Regulasi KPKU, tabulasi perolehan calon disembunyikan selama masa pemungutan suara untuk menjaga objektivitas dan independensi pemilih. Buka segel saat Sidang Pleno resmi.
+                </p>
+              </div>
+
+              <!-- Unsealed Live Count Charts -->
+              <div id="admin-unsealed-results" style="display: none;">
+                <div class="chart-bar-container">
+                  <!-- Caketum 1 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #C5A059;">01. Dr. Ir. H. Muhammad Arifin, M.Sc., IPU</span>
+                      <span id="chart-pct-1" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-1" class="chart-fill" style="width: 0%; background: #C5A059;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.7rem; color: var(--text-subtle);" id="chart-val-1">0 Suara</div>
+                  </div>
+
+                  <!-- Caketum 2 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #0F766E;">02. Dr. Eng. Andiani, S.T., M.T.</span>
+                      <span id="chart-pct-2" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-2" class="chart-fill" style="width: 0%; background: #14B8A6;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.7rem; color: var(--text-subtle);" id="chart-val-2">0 Suara</div>
+                  </div>
+
+                  <!-- Caketum 3 -->
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-header">
+                      <span style="color: #38BDF8;">03. Ir. Burhanuddin Harahap, Ph.D.</span>
+                      <span id="chart-pct-3" style="font-family: var(--font-mono);">0%</span>
+                    </div>
+                    <div class="chart-track">
+                      <div id="chart-bar-3" class="chart-fill" style="width: 0%; background: #38BDF8;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 0.7rem; color: var(--text-subtle);" id="chart-val-3">0 Suara</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DPT Management Table in Admin -->
+          <div class="card" style="margin-bottom: 14px;">
+            <div class="card-title" style="font-size: 0.95rem;">
+              <span>📋</span> Monitor Status Pemilih (DPT)
+            </div>
+            <div style="overflow-x: auto; max-height: 240px; overflow-y: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border-card); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">
+                    <th style="padding: 6px;">NPA</th>
+                    <th style="padding: 6px;">Nama</th>
+                    <th style="padding: 6px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-dpt-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Immutable Audit Trail -->
+          <div class="card">
+            <div class="card-title" style="font-size: 0.95rem;">
+              <span>🛡️</span> Log Audit Aktivitas Sistem
+            </div>
+            <div id="admin-audit-logs" style="max-height: 200px; overflow-y: auto;"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Mobile Navigation Bar (Fixed Ergonomic Dock) -->
+    <nav class="mobile-nav-dock">
+      <button class="nav-item active" data-screen="home">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Beranda</span>
+      </button>
+
+      <button class="nav-item" data-screen="dpt">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Cek DPT</span>
+      </button>
+
+      <button class="nav-item highlight-vote" data-screen="vote">
+        <div class="vote-icon-bubble">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        </div>
+        <span>Bilik Suara</span>
+      </button>
+
+      <button class="nav-item" data-screen="claim">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <span>Klaim</span>
+      </button>
+
+      <button class="nav-item" data-screen="admin">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <span>KPKU</span>
+      </button>
+    </nav>
+
+    <!-- ================= MODALS & POP-UPS ================= -->
+
+    <!-- Modal 1: Mandatory Dual-Confirmation Pop-up Window (Mandat Regulasi KPKU) -->
+    <div id="modal-dual-confirm" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">⚠️ Konfirmasi Pilihan Anda</span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+
+        <div style="font-size: 0.88rem; color: var(--text-pure); font-weight: 700; text-align: center;">
+          "Apakah Anda yakin untuk submit pilihan ini?"
+        </div>
+
+        <div class="dual-confirm-box">
+          <img id="confirm-candidate-avatar" src="" alt="Caketum" class="dual-confirm-avatar">
+          <div>
+            <div id="confirm-candidate-number" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800; color: var(--gold-primary);">-</div>
+            <div id="confirm-candidate-name" style="font-size: 0.95rem; font-weight: 800; color: var(--text-pure); line-height: 1.3;">-</div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.4; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-sm); padding: 8px 10px;">
+          Pilihan yang telah di-submit bersifat <strong>FINAL & PERMANEN</strong>. Kode unik Anda akan langsung dihanguskan dan tidak dapat digunakan kembali.
+        </div>
+
+        <div class="dual-confirm-actions">
+          <button id="btn-confirm-no" class="btn btn-outline" style="border-color: #64748B; color: #94A3B8;">
+            ✕ TIDAK, KEMBALI
+          </button>
+          <button id="btn-confirm-yes" class="btn btn-gold">
+            ✓ YA, SAYA YAKIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 2: Simulated Email Dispatch Sheet (Magic Link & Unique Token) -->
+    <div id="modal-email-sim" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">✉️ Surat Suara Resmi Terkirim</span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+
+        <div class="email-sim-box">
+          <div style="font-size: 0.7rem; color: #94A3B8; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 8px;">
+            <strong>Kepada:</strong> <span id="sim-email-recipient">-</span><br>
+            <strong>Pengirim:</strong> KPKU IAGI 2026 &lt;pemilu@iagi.or.id&gt;<br>
+            <strong>Subjek:</strong> Surat Suara Elektronik & Kode Unik Pemilu IAGI 2026
+          </div>
+          <p style="font-size: 0.76rem; color: #E2E8F0; line-height: 1.45;">
+            Yth. Anggota IAGI, permohonan klaim surat suara Anda telah divalidasi oleh KPKU. Gunakan kode unik sekali pakai berikut untuk mengakses bilik suara:
+          </p>
+
+          <div id="sim-email-token" class="email-token-chip">IAGI-2026-XXXX-XXXX</div>
+
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button id="sim-btn-copy-code" class="btn btn-outline" style="font-size: 0.75rem; padding: 8px;">
+              📋 Salin Kode
+            </button>
+            <button id="sim-btn-open-vote" class="btn btn-gold" style="font-size: 0.75rem; padding: 8px;">
+              🗳️ Buka di Bilik Suara ➜
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: Candidate Detailed Vision & Mission -->
+    <div id="modal-candidate-detail" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title">Profil & Gagasan Calon</span>
+          <button class="btn-close-modal">&times;</button>
+        </div>
+        <div id="candidate-detail-content"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

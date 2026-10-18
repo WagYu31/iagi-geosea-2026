@@ -1,0 +1,54 @@
+{
+  "name": "E-Voting Pemilu IAGI 2026",
+  "short_name": "Pemilu IAGI",
+  "description": "Platform Resmi Pemungutan Suara Elektronik Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia 2026",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090D16",
+  "theme_color": "#090D16",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bilik Suara (Vote Now)",
+      "short_name": "Vote Now",
+      "description": "Masuk ke bilik suara digital untuk menggunakan hak pilih",
+      "url": "./index.html#vote",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Cek DPT Online",
+      "short_name": "Cek DPT",
+      "description": "Periksa status hak pilih dan data keanggotaan IAGI",
+      "url": "./index.html#dpt",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Klaim Surat Suara",
+      "short_name": "Klaim Suara",
+      "description": "Klaim surat suara dan peroleh kode unik via email",
+      "url": "./index.html#claim",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["government", "utilities", "productivity"]
+}
