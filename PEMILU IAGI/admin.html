@@ -759,164 +759,490 @@
       background: rgba(255, 255, 255, 0.02);
     }
 
-    /* Modal PIN */
+    /* Split-Pane Login Modal Matching Image 2 */
     #desktop-admin-pin-modal {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 8, 6, 0.94);
-      backdrop-filter: blur(20px);
+      background: radial-gradient(circle at 50% 50%, rgba(2, 28, 20, 0.96) 0%, rgba(1, 10, 8, 0.98) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
+      box-sizing: border-box;
     }
 
     .pin-modal-card {
-      background: rgba(2, 24, 19, 0.95);
-      border: 1px solid rgba(245, 186, 66, 0.4);
-      border-radius: var(--radius-lg);
-      padding: 36px 32px;
-      max-width: 440px;
+      background: #07130F;
+      border: 1px solid rgba(245, 186, 66, 0.35);
+      border-radius: 28px;
+      padding: 0;
+      max-width: 1040px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 186, 66, 0.15);
+      min-height: 600px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(16, 185, 129, 0.15);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Form Pane */
+    .login-form-pane {
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #081611;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+
+    .login-brand-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .login-brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px;
+      border: 1px solid rgba(245, 186, 66, 0.3);
+    }
+
+    .login-brand-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #94A3B8;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .login-brand-title span {
+      color: var(--gold-primary);
+    }
+
+    .login-main-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .login-sub-text {
+      font-size: 0.86rem;
+      color: #94A3B8;
+      margin: 0 0 24px 0;
+      line-height: 1.4;
+    }
+
+    .login-switch-link {
+      color: #10B981;
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .login-switch-link:hover {
+      color: #34D399;
+      text-decoration: underline;
+    }
+
+    /* Input Field Styling */
+    .login-input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .login-input-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #CBD5E1;
+      margin-bottom: 6px;
+    }
+
+    .login-input-field {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: #FFFFFF;
+      font-size: 0.92rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .login-input-field:focus {
+      outline: none;
+      border-color: #10B981;
+      background: rgba(0, 0, 0, 0.55);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Teal/Emerald Submit Button from Image 2 */
+    .btn-login-teal {
+      width: 100%;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #FFFFFF;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+      margin-top: 10px;
+    }
+
+    .btn-login-teal:hover {
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45);
+    }
+
+    /* Right Visual Artwork Pane */
+    .login-visual-pane {
+      background: radial-gradient(circle at 70% 30%, rgba(16, 185, 129, 0.2) 0%, rgba(2, 28, 21, 0.95) 60%, #02120e 100%);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 44px 40px;
+      color: #FFFFFF;
+      box-sizing: border-box;
+    }
+
+    /* Decorative cross/geometry representing wireframe box in Image 2 */
+    .visual-cross-wireframe {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background-image: 
+        linear-gradient(45deg, transparent 49.5%, rgba(245, 186, 66, 0.8) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(245, 186, 66, 0.8) 50%, transparent 50.5%);
+      background-size: 100% 100%;
+    }
+
+    .visual-top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      width: fit-content;
+      letter-spacing: 0.06em;
+      position: relative;
+      z-index: 2;
+    }
+
+    .visual-center-art {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
+      padding: 20px 0;
+    }
+
+    .visual-emblem-halo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 186, 66, 0.25) 0%, rgba(16, 185, 129, 0.08) 50%, transparent 70%);
+      border: 2px solid rgba(245, 186, 66, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(245, 186, 66, 0.25);
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .visual-emblem-halo img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+
+    .visual-art-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .visual-art-sub {
+      font-size: 0.82rem;
+      color: #CBD5E1;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .visual-bottom-features {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+    }
+
+    .visual-feature-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: #E2E8F0;
+      font-weight: 600;
+    }
+
+    .visual-feature-row svg {
+      width: 14px;
+      height: 14px;
+      color: #10B981;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 860px) {
+      .pin-modal-card {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        min-height: auto;
+      }
+
+      .login-visual-pane {
+        display: none;
+      }
+
+      .login-form-pane {
+        padding: 36px 28px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Security Gateway Gate (Multi-Factor Admin Auth) -->
+  <!-- Fullscreen Security Gateway Gate (Multi-Factor Admin Auth - Split Screen Layout matching Image 2) -->
   <div id="desktop-admin-pin-modal">
-    <div class="pin-modal-card" style="max-width: 480px;">
+    <div class="pin-modal-card">
       
-      <!-- Top Emblem -->
-      <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 2px solid rgba(245, 186, 66, 0.5); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-        <svg style="width: 30px; height: 30px; stroke: #F5BA42; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-      </div>
-
-      <h2 style="font-size: 1.35rem; font-weight: 900; color: #FFFFFF; margin: 0 0 6px;">KPKU Command Center</h2>
-      <p style="font-size: 0.82rem; color: #94A3B8; margin: 0 0 18px;">Otoritas Terbatas Panitia Pemilihan Ketua Umum IAGI 2026 - 2029</p>
-
-      <div id="desktop-pin-alert" style="display: none; margin-bottom: 14px;"></div>
-
-      <!-- STEP 1: Email & Password Form -->
-      <div id="desktop-auth-step1">
-        <form id="desktop-login-step1-form">
-          <div class="form-group" style="text-align: left; margin-bottom: 12px;">
-            <label class="form-label" style="display: flex; justify-content: space-between;">
-              <span style="color: #CBD5E1; font-weight: 700;">Email Resmi Panitia / Saksi *</span>
-              <span style="color: var(--gold-secondary); font-size: 0.72rem;">admin.kpku@iagi.or.id</span>
-            </label>
-            <input type="email" id="desktop-email-input" class="form-input" placeholder="admin.kpku@iagi.or.id" required style="padding: 10px 14px;">
+      <!-- Left Pane: Form Column -->
+      <div class="login-form-pane">
+        <div>
+          <!-- Brand Header (like "Real Time Weather" in Image 2) -->
+          <div class="login-brand-header">
+            <img src="assets/iagi-logo.png" alt="IAGI Emblem" class="login-brand-logo">
+            <span class="login-brand-title">PEMILU <span>IAGI</span> 2026 • KPKU COMMAND</span>
           </div>
 
-          <div class="form-group" style="text-align: left; margin-bottom: 14px;">
-            <label class="form-label" style="display: flex; justify-content: space-between;">
-              <span style="color: #CBD5E1; font-weight: 700;">Password Akun *</span>
-              <span style="color: var(--gold-secondary); font-size: 0.72rem;">Default: admin</span>
-            </label>
-            <div style="position: relative;">
-              <input type="password" id="desktop-password-input" class="form-input" placeholder="Masukkan password" required style="padding: 10px 14px;">
-              <button type="button" id="btn-toggle-desktop-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer;">
-                👁️
+          <!-- Main Title & Subtitle (like Image 2: "Log in", "Don't have an account? Request account.") -->
+          <h1 class="login-main-title">Log in</h1>
+          <p class="login-sub-text">
+            Otoritas Panitia Pemilihan • 
+            <a href="app.html#vote" class="login-switch-link">Bukan panitia? Masuk sebagai Pemilih</a>
+          </p>
+
+          <div id="desktop-pin-alert" style="display: none; margin-bottom: 14px;"></div>
+
+          <!-- STEP 1: Email & Password Form -->
+          <div id="desktop-auth-step1">
+            <form id="desktop-login-step1-form">
+              
+              <div class="login-input-group">
+                <label class="login-input-label">
+                  <span>Email Resmi Panitia / Saksi</span>
+                  <span style="color: var(--gold-secondary); font-size: 0.72rem; font-family: var(--font-mono);">admin.kpku@iagi.or.id</span>
+                </label>
+                <input type="email" id="desktop-email-input" class="login-input-field" placeholder="admin.kpku@iagi.or.id" required>
+              </div>
+
+              <div class="login-input-group">
+                <label class="login-input-label">
+                  <span>Password Akun</span>
+                  <a href="#" onclick="alert('Hubungi Helpdesk Panitia KPKU (+62 811-158-1461) untuk pemulihan password.'); return false;" style="color: #10B981; font-size: 0.72rem; text-decoration: none;">Lupa Password?</a>
+                </label>
+                <div style="position: relative;">
+                  <input type="password" id="desktop-password-input" class="login-input-field" placeholder="Masukkan password" required style="padding-right: 44px;">
+                  <button type="button" id="btn-toggle-desktop-pwd" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer; font-size: 1rem;" aria-label="Toggle password">
+                    👁️
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Fill Helper -->
+              <div style="margin-bottom: 16px;">
+                <button type="button" id="btn-quick-fill-desktop" class="btn btn-subtle" style="width: 100%; font-size: 0.75rem; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center; padding: 8px;">
+                  ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
+                </button>
+              </div>
+
+              <!-- Submit Button (Teal/Emerald vibrant button from Image 2) -->
+              <button type="submit" id="btn-submit-desktop-step1" class="btn-login-teal">
+                <span>LOG IN (LANJUT KE 2FA)</span>
+                <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
               </button>
-            </div>
+            </form>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-            <button type="button" id="btn-quick-fill-desktop" class="btn btn-subtle" style="width: 100%; font-size: 0.76rem; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-              ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
-            </button>
-          </div>
-
-          <button type="submit" id="btn-submit-desktop-step1" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 12px;">
-            <span>Lanjut ke Verifikasi Masuk</span>
-            <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-          </button>
-        </form>
-      </div>
-
-      <!-- STEP 2: Verifikasi Masuk (Email OTP atau PIN) -->
-      <div id="desktop-auth-step2" style="display: none; text-align: left;">
-        <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
-          <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi Masuk (2FA Multi-Factor)</div>
-          <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">admin.kpku@iagi.or.id</div>
-        </div>
-
-        <!-- 2FA Selector Tabs -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
-          <button type="button" id="desktop-tab-2fa-otp" class="btn btn-gold" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
-            📧 OTP Email
-          </button>
-          <button type="button" id="desktop-tab-2fa-pin" class="btn btn-subtle" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
-            🔒 PIN Keamanan
-          </button>
-        </div>
-
-        <!-- View A: OTP Email -->
-        <div id="desktop-view-2fa-otp">
-          <form id="desktop-form-verify-otp">
-            <div class="form-group" style="margin-bottom: 10px;">
-              <label class="form-label" style="display: flex; justify-content: space-between;">
-                <span>Kode Verifikasi OTP 6-Digit</span>
-                <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
-              </label>
-              <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="842026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+          <!-- STEP 2: Verifikasi Masuk (Email OTP atau PIN) -->
+          <div id="desktop-auth-step2" style="display: none; text-align: left;">
+            <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
+              <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Verifikasi Masuk (2FA Multi-Factor)</div>
+              <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">admin.kpku@iagi.or.id</div>
             </div>
 
-            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-              <button type="button" id="btn-desktop-auto-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                ⚡ Masukkan OTP Otomatis
+            <!-- 2FA Selector Tabs -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+              <button type="button" id="desktop-tab-2fa-otp" class="btn btn-gold" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
+                📧 OTP Email
+              </button>
+              <button type="button" id="desktop-tab-2fa-pin" class="btn btn-subtle" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
+                🔒 PIN Keamanan
               </button>
             </div>
 
-            <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 11px; margin-bottom: 10px;">
-              <span>Verifikasi OTP & Masuk Pleno</span>
-              <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </button>
-          </form>
-        </div>
+            <!-- View A: OTP Email -->
+            <div id="desktop-view-2fa-otp">
+              <form id="desktop-form-verify-otp">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label" style="display: flex; justify-content: space-between;">
+                    <span>Kode Verifikasi OTP 6-Digit</span>
+                    <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
+                  </label>
+                  <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="842026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+                </div>
 
-        <!-- View B: PIN Keamanan -->
-        <div id="desktop-view-2fa-pin" style="display: none;">
-          <form id="desktop-form-verify-pin">
-            <div class="form-group" style="margin-bottom: 10px;">
-              <label class="form-label" style="display: flex; justify-content: space-between;">
-                <span>PIN Keamanan Panitia (4-Digit)</span>
-                <span class="helper">Default: 2026</span>
-              </label>
-              <input type="password" id="desktop-2fa-pin-input" class="form-input font-mono" placeholder="2026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+                <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                  <button type="button" id="btn-desktop-auto-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan OTP Otomatis
+                  </button>
+                </div>
+
+                <button type="submit" class="btn-login-teal">
+                  <span>VERIFIKASI OTP & MASUK PLENO</span>
+                  <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
             </div>
 
-            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-              <button type="button" id="btn-desktop-auto-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                ⚡ Masukkan PIN Otomatis (2026)
+            <!-- View B: PIN Keamanan -->
+            <div id="desktop-view-2fa-pin" style="display: none;">
+              <form id="desktop-form-verify-pin">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label" style="display: flex; justify-content: space-between;">
+                    <span>PIN Keamanan Panitia (4-Digit)</span>
+                    <span class="helper">Default: 2026</span>
+                  </label>
+                  <input type="password" id="desktop-2fa-pin-input" class="form-input font-mono" placeholder="2026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                  <button type="button" id="btn-desktop-auto-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                    ⚡ Masukkan PIN Otomatis (2026)
+                  </button>
+                </div>
+
+                <button type="submit" class="btn-login-teal">
+                  <span>VERIFIKASI PIN & MASUK PLENO</span>
+                  <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </form>
+            </div>
+
+            <div style="text-align: center; margin-top: 14px;">
+              <button type="button" id="btn-desktop-back-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.78rem; cursor: pointer; text-decoration: underline;">
+                &larr; Ganti Akun / Kembali ke Step 1
               </button>
             </div>
-
-            <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; font-weight: 800; padding: 11px; margin-bottom: 10px;">
-              <span>Verifikasi PIN & Masuk Pleno</span>
-              <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </button>
-          </form>
+          </div>
         </div>
 
-        <div style="text-align: center; margin-top: 10px;">
-          <button type="button" id="btn-desktop-back-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.78rem; cursor: pointer; text-decoration: underline;">
-            &larr; Ganti Akun / Kembali ke Step 1
-          </button>
+        <!-- Bottom Portal Link -->
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: left;">
+          <a href="landing.html" style="font-size: 0.8rem; color: #94A3B8; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;">
+            <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Kembali ke Portal Landing Page</span>
+          </a>
         </div>
       </div>
 
-      <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
-        <a href="landing.html" style="font-size: 0.78rem; color: #94A3B8; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-          <span>&larr; Kembali ke Portal Utama</span>
-        </a>
+      <!-- Right Pane: Visual Artwork / Showcase (Image 2 right half) -->
+      <div class="login-visual-pane">
+        <!-- Subtle cross wireframe lines mimicking Image 2 sketch aesthetics -->
+        <div class="visual-cross-wireframe"></div>
+
+        <!-- Top Badge -->
+        <div class="visual-top-badge">
+          <span class="live-dot" style="width:6px; height:6px; background:#10B981; border-radius:50%; display:inline-block; box-shadow:0 0 8px #10B981;"></span>
+          <span>KPKU COMMAND CENTER • LIVE 2026</span>
+        </div>
+
+        <!-- Center Visual Artwork -->
+        <div class="visual-center-art">
+          <div class="visual-emblem-halo">
+            <img src="assets/iagi-logo.png" alt="IAGI Emblem">
+          </div>
+          <h2 class="visual-art-title">Sidang Pleno Pemilihan Ketua Umum IAGI</h2>
+          <p class="visual-art-sub">
+            Sistem rekapitulasi suara elektronik terenkripsi AES-256 & SHA-256 untuk memastikan kepastian asas LUBER & JURDIL.
+          </p>
+        </div>
+
+        <!-- Bottom Feature Highlights -->
+        <div class="visual-bottom-features">
+          <div class="visual-feature-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Dual-Factor Authentication (Email OTP & Security PIN)</span>
+          </div>
+          <div class="visual-feature-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Audit Trail Kriptografis SHA-256 Immutable</span>
+          </div>
+          <div class="visual-feature-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>4.280+ Anggota Terdaftar dalam DPT Resmi</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
