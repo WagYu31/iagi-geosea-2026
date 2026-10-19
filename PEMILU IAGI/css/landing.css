@@ -453,9 +453,9 @@ body {
    ========================================================================== */
 .hero-section {
   position: relative;
-  min-height: 720px;
+  min-height: 640px;
   padding-top: 135px;
-  padding-bottom: 70px;
+  padding-bottom: 50px;
   text-align: center;
   overflow: hidden;
   background: #0A192F;
@@ -468,7 +468,7 @@ body {
 @media (max-width: 640px) {
   .hero-section {
     padding-top: 110px;
-    padding-bottom: 50px;
+    padding-bottom: 40px;
     min-height: auto;
   }
 }
@@ -501,13 +501,13 @@ body {
 .hero-video-overlay {
   position: absolute;
   inset: 0;
-  /* Crystal-clear video across hero and candidate headline, fading smoothly to #F8FAFC right below the official KPKU poster text */
+  /* Crystal-clear video across hero and candidate headline, fading smoothly to #F8FAFC right below the description */
   background: linear-gradient(
     180deg, 
     rgba(10, 25, 47, 0.32) 0%, 
     transparent 12%, 
-    transparent 84%, 
-    rgba(10, 25, 47, 0.5) 93%, 
+    transparent 80%, 
+    rgba(10, 25, 47, 0.5) 91%, 
     #F8FAFC 100%
   );
   z-index: 1;
