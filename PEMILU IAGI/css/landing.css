@@ -560,24 +560,29 @@ body {
 
 .hero-title-lead {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .hero-title-body {
-  display: inline;
-}
-
-.hero-period {
-  white-space: nowrap;
-  display: inline-block;
-  color: #FFFFFF;
+  display: block;
 }
 
 .hero-title span.highlight-gold {
+  display: block;
   background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 14px rgba(245, 158, 11, 0.45));
+  margin-bottom: 4px;
+}
+
+.hero-period {
+  white-space: nowrap;
+  display: block;
+  color: #FFFFFF;
+  margin-top: 4px;
+  font-size: 0.88em;
+  letter-spacing: 0.03em;
 }
 
 .hero-subtitle {
