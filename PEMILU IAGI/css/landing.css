@@ -546,14 +546,31 @@ body {
 }
 
 .hero-title {
-  font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+  font-size: clamp(2rem, 4.1vw, 3.5rem);
   font-weight: 900;
-  line-height: 1.15;
+  line-height: 1.18;
   letter-spacing: -0.03em;
-  max-width: 980px;
+  max-width: 1080px;
   margin: 0 auto 18px auto;
   color: #FFFFFF;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.75), 0 0 40px rgba(2, 132, 199, 0.35);
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.hero-title-lead {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hero-title-body {
+  display: inline;
+}
+
+.hero-period {
+  white-space: nowrap;
+  display: inline-block;
+  color: #FFFFFF;
 }
 
 .hero-title span.highlight-gold {
