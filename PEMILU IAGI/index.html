@@ -156,14 +156,7 @@
         </div>
       </div>
 
-      <!-- Audio / Video Controls -->
-      <div class="hero-video-ctrl-bar">
-        <button id="hero-sound-btn" class="hero-video-ctrl-btn" onclick="toggleHeroSound()" aria-label="Toggle Audio">
-          <svg id="hero-sound-muted-icon" style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-          <svg id="hero-sound-unmuted-icon" style="width:13px;height:13px;display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-          <span id="hero-sound-text">Suara Animasi: Mati</span>
-        </button>
-      </div>
+
 
     </div>
   </section>
@@ -989,27 +982,7 @@
       if (modal) modal.classList.remove('active');
     }
 
-    // Hero Video Audio Toggle
-    function toggleHeroSound() {
-      const vid = document.getElementById('hero-bg-video');
-      const mutedIcon = document.getElementById('hero-sound-muted-icon');
-      const unmutedIcon = document.getElementById('hero-sound-unmuted-icon');
-      const text = document.getElementById('hero-sound-text');
-      if (!vid) return;
 
-      if (vid.muted) {
-        vid.muted = false;
-        vid.play().catch(() => {});
-        if (mutedIcon) mutedIcon.style.display = 'none';
-        if (unmutedIcon) unmutedIcon.style.display = 'inline-block';
-        if (text) text.textContent = 'Suara Animasi: Aktif';
-      } else {
-        vid.muted = true;
-        if (mutedIcon) mutedIcon.style.display = 'inline-block';
-        if (unmutedIcon) unmutedIcon.style.display = 'none';
-        if (text) text.textContent = 'Suara Animasi: Mati';
-      }
-    }
   </script>
 </body>
 </html>
