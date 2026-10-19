@@ -453,9 +453,9 @@ body {
    ========================================================================== */
 .hero-section {
   position: relative;
-  min-height: 620px;
-  padding-top: 140px;
-  padding-bottom: 54px;
+  min-height: 720px;
+  padding-top: 135px;
+  padding-bottom: 70px;
   text-align: center;
   overflow: hidden;
   background: #0A192F;
@@ -467,9 +467,9 @@ body {
 
 @media (max-width: 640px) {
   .hero-section {
-    padding-top: 115px;
-    padding-bottom: 40px;
-    min-height: 520px;
+    padding-top: 110px;
+    padding-bottom: 50px;
+    min-height: auto;
   }
 }
 
@@ -501,13 +501,13 @@ body {
 .hero-video-overlay {
   position: absolute;
   inset: 0;
-  /* Crystal-clear video: 0% grey haze, completely transparent in the center so the entire animation is sharp and vivid */
+  /* Crystal-clear video across hero and candidate headline, fading smoothly to #F8FAFC right below the official KPKU poster text */
   background: linear-gradient(
     180deg, 
     rgba(10, 25, 47, 0.32) 0%, 
-    transparent 18%, 
-    transparent 72%, 
-    rgba(10, 25, 47, 0.65) 90%, 
+    transparent 12%, 
+    transparent 84%, 
+    rgba(10, 25, 47, 0.5) 93%, 
     #F8FAFC 100%
   );
   z-index: 1;
@@ -662,13 +662,102 @@ body {
   font-weight: 800;
 }
 
+/* ==========================================================================
+   HERO CAKETUM SPOTLIGHT INTRO (INSIDE VIDEO ZONE)
+   ========================================================================== */
+.hero-caketum-intro {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  scroll-margin-top: 90px;
+  position: relative;
+  z-index: 2;
+}
 
+.hero-caketum-intro .section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38BDF8;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.hero-caketum-title {
+  color: #FFFFFF;
+  font-size: clamp(1.85rem, 3.4vw, 2.5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8), 0 0 35px rgba(2, 132, 199, 0.3);
+}
+
+.hero-caketum-desc {
+  color: #E2E8F0;
+  font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
+}
+
+.hero-caketum-poster-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.hero-poster-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #0F172A;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.hero-poster-pill:hover {
+  background: #FFFFFF;
+  color: #0284C7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+.hero-poster-official-tag {
+  font-size: 0.82rem;
+  color: #CBD5E1;
+  font-weight: 600;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.85);
+}
 
 /* ==========================================================================
-   CANDIDATES SPOTLIGHT SECTION (GAMBAR 1)
+   CANDIDATES SPOTLIGHT SECTION (CARDS GRID)
    ========================================================================== */
 .candidates-spotlight-section {
-  padding: 30px 0 60px 0;
+  padding: 20px 0 60px 0;
   position: relative;
 }
 
