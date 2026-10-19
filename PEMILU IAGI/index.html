@@ -59,8 +59,6 @@
       <nav class="header-nav-dock" aria-label="Navigasi Utama">
         <a href="#portal" class="nav-pill-link active">Portal</a>
         <a href="#caketum" class="nav-pill-link">Caketum 2026</a>
-        <a href="#pilih-akses" class="nav-pill-link">Pilih Akses</a>
-        <a href="#keamanan" class="nav-pill-link">Keamanan</a>
       </nav>
 
       <!-- Right: Direct CTA Buttons -->
@@ -86,10 +84,6 @@
   <div class="mobile-nav-panel" id="mobile-nav-panel">
     <a href="#caketum" class="mobile-nav-link" onclick="closeMobileMenu()">
       <span>Profil Calon Ketua Umum (Caketum)</span>
-      <span>➜</span>
-    </a>
-    <a href="#pilih-akses" class="mobile-nav-link" onclick="closeMobileMenu()">
-      <span>Pilih Akses Masuk (Anggota / Admin)</span>
       <span>➜</span>
     </a>
     <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
@@ -281,166 +275,6 @@
           <div class="metric-num"><span>0</span> Detik</div>
           <div class="metric-label">Sinkronisasi Real-Time Live Pleno</div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PRIMARY ACCESS GATES (GAMBAR 2) ================= -->
-  <section class="access-gates-section" id="pilih-akses">
-    <div class="container">
-      <div class="section-head-center">
-        <div class="section-eyebrow">
-          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>PINTU GERBANG UTAMA · 2 JALUR AKSES RESMI</span>
-        </div>
-        <h2 class="section-title">Bilik Suara & Command Center</h2>
-        <p class="section-desc">
-          Pintu masuk resmi bagi seluruh anggota pemilih terdaftar DPT untuk memberikan suara, serta portal otentikasi terenkripsi bagi panitia sidang pleno KPKU.
-        </p>
-      </div>
-
-      <div class="access-gates-wrapper">
-        <div class="gates-grid">
-
-          <!-- GATE 1: ANGGOTA / PESERTA PEMILIH -->
-          <article class="gate-card gate-card-member">
-            <div>
-              <div class="gate-card-header">
-                <div class="gate-icon-bubble">
-                  <svg style="width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                </div>
-                <span class="gate-badge">PESERTA / ANGGOTA PEMILIH</span>
-              </div>
-
-              <h2 class="gate-title">Bilik Suara & Portal Anggota</h2>
-              <p class="gate-desc">
-                Pintu masuk resmi bagi seluruh anggota IAGI terdaftar dalam DPT. Periksa status hak pilih Anda, klaim kode surat suara digital, dan salurkan pilihan Caketum secara Langsung, Bebas, Rahasia, Jujur & Adil.
-              </p>
-
-              <ul class="gate-features-list">
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Pencarian DPT Mandiri Online (Cari via NPA / Nama)</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Klaim Token Surat Suara Otentik & Magic Code</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Bilik Suara Digital dengan Konfirmasi Pilihan Ganda</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Unduh Sertifikat Bukti Pemilihan Bersegel SHA-256</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="gate-actions-row">
-              <a href="app.html#vote" class="btn-gate-primary">
-                <span>Masuk Bilik Suara Pemilih</span>
-                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </a>
-              <a href="app.html#dpt" class="btn-gate-secondary">
-                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span>Cek DPT</span>
-              </a>
-              <a href="app.html#claim" class="btn-gate-secondary">
-                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                <span>Klaim Token</span>
-              </a>
-            </div>
-          </article>
-
-          <!-- GATE 2: ADMIN & PANITIA KPKU -->
-          <article class="gate-card gate-card-admin">
-            <div>
-              <div class="gate-card-header">
-                <div class="gate-icon-bubble">
-                  <svg style="width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                </div>
-                <span class="gate-badge">OTORITAS TERBATAS · 2FA WAJIB</span>
-              </div>
-
-              <h2 class="gate-title">KPKU Command Center Pleno</h2>
-              <p class="gate-desc">
-                Portal otoritas tertutup khusus Panitia Pemilihan Ketua Umum (KPKU) dan Saksi Resmi. Wajib verifikasi berlapis melalui email resmi panitia, password terenkripsi, serta 2-Factor Authentication (OTP Email atau Master Security PIN).
-              </p>
-
-              <ul class="gate-features-list">
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Otentikasi Kredensial & 2FA Verifikasi (OTP Email / Master PIN)</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Widescreen Live Count Pleno untuk Proyektor Sidang PIT 55</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Manajemen DPT & Verifikasi Manual Hak Pilih Khusus</span>
-                </li>
-                <li>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Audit Trail Kriptografi SHA-256 & Ekspor Berita Acara Pleno</span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="gate-actions-row">
-              <a href="admin.html" class="btn-gate-primary">
-                <span>Buka Desktop Command Center</span>
-                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-              </a>
-              <a href="app.html#admin" class="btn-gate-secondary">
-                <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                <span>Mobile Admin PWA</span>
-              </a>
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SECURITY & TRANSPARENCY SECTION ================= -->
-  <section class="candidates-spotlight-section" id="keamanan" style="border-top: 1px solid var(--border-subtle);">
-    <div class="container">
-      <div class="section-head-center">
-        <div class="section-eyebrow">
-          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>STANDAR KEAMANAN KPKU IAGI</span>
-        </div>
-        <h2 class="section-title">Integritas Tanpa Kompromi</h2>
-        <p class="section-desc">
-          Setiap suara dilindungi oleh 4 pilar arsitektur keamanan digital terakreditasi untuk menjamin kepastian asas Luber & Jurdil.
-        </p>
-      </div>
-
-      <div class="gates-grid" style="max-width: 1040px; margin: 0 auto;">
-        
-        <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 28px;">
-          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--gold-primary);">
-            <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          </div>
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Zero-Knowledge Voting</h3>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-            Identitas pemilih (NPA dan nama) dipisahkan secara kriptografis dari surat suara yang dipilih. Panitia maupun server tidak dapat melihat siapa memilih kandidat mana.
-          </p>
-        </div>
-
-        <div style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 28px;">
-          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--emerald-primary);">
-            <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-          </div>
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Audit Trail SHA-256</h3>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-            Setiap transaksi suara menghasilkan tanda terima hash SHA-256 unik. Setiap upaya perubahan rekapitulasi akan langsung terdeteksi oleh sistem checksum.
-          </p>
-        </div>
-
       </div>
     </div>
   </section>

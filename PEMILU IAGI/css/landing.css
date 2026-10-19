@@ -1622,14 +1622,16 @@ body {
 /* ==========================================================================
    FOOTER
    ========================================================================== */
-.site-footer {
-  background: #F1F5F9;
+.site-footer,
+.landing-footer {
+  background: #F8FAFC;
   border-top: 1px solid var(--border-medium);
   padding: 60px 0 32px 0;
   color: var(--text-secondary);
 }
 
-.footer-top-grid {
+.footer-top-grid,
+.footer-top {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 40px;
@@ -1637,7 +1639,8 @@ body {
 }
 
 @media (max-width: 768px) {
-  .footer-top-grid {
+  .footer-top-grid,
+  .footer-top {
     grid-template-columns: 1fr;
     gap: 32px;
   }
