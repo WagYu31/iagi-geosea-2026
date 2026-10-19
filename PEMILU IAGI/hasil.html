@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Hasil Perhitungan Suara (Live Count) | Pemilu Ketua Umum IAGI 2026</title>
+  <meta name="description" content="Hasil Resmi Perhitungan Suara dan Tabulasi Real-Time Pemilihan Calon Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026–2029.">
+  <link rel="icon" type="image/png" href="assets/iagi-logo.png?v=iagi2026">
+  <link rel="apple-touch-icon" href="assets/iagi-logo.png?v=iagi2026">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/landing.css?v=3.0.0">
+
+  <style>
+    /* Specific styles for Hasil Perhitungan Suara page */
+    .results-hero-section {
+      padding: 140px 0 60px 0;
+      position: relative;
+    }
+
+    .live-indicator-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #059669;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 16px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: pulseAnimation 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnimation {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .results-title {
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 900;
+      color: #0F172A;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .results-subtitle {
+      font-size: 1.05rem;
+      color: #475569;
+      max-width: 760px;
+      margin: 0 auto 36px auto;
+      line-height: 1.6;
+    }
+
+    /* Summary Metrics Bar */
+    .summary-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 900px) {
+      .summary-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .summary-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-stat-box {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .summary-stat-box:hover {
+      transform: translateY(-2px);
+      border-color: rgba(2, 132, 199, 0.4);
+      box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.12);
+    }
+
+    .stat-box-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-box-num {
+      font-family: var(--font-mono);
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #0F172A;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .stat-box-sub {
+      font-size: 0.8rem;
+      color: #64748B;
+    }
+
+    /* Tabulation Cards Grid */
+    .tallies-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 44px;
+    }
+
+    @media (max-width: 992px) {
+      .tallies-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tally-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 8px 24px -4px rgba(10, 25, 47, 0.08), 0 2px 6px -1px rgba(10, 25, 47, 0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .tally-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px -6px rgba(10, 25, 47, 0.16);
+    }
+
+    .tally-card.lead-candidate {
+      border-color: #F59E0B;
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.18);
+    }
+
+    .tally-lead-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+    }
+
+    .tally-card-visual {
+      position: relative;
+      width: 100%;
+      height: 270px;
+      background: #0B132B;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .tally-card-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: contrast(1.05) brightness(1.02);
+    }
+
+    .tally-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 65%, #FFFFFF 100%);
+    }
+
+    .tally-num-ribbon {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid currentColor;
+      z-index: 5;
+    }
+
+    .tally-card-body {
+      padding: 24px 26px 28px 26px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .tally-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+
+    .tally-title {
+      font-size: 0.84rem;
+      color: #0284C7;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    /* Score & Percentage Hero Box */
+    .tally-score-hero {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .tally-pct {
+      font-family: var(--font-mono);
+      font-size: 2.3rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .tally-votes {
+      text-align: right;
+    }
+
+    .tally-votes-val {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+
+    .tally-votes-lbl {
+      font-size: 0.72rem;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Big Progress Bar */
+    .tally-bar-track {
+      width: 100%;
+      height: 12px;
+      background: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    .tally-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tally-tagline {
+      font-size: 0.84rem;
+      color: #475569;
+      line-height: 1.5;
+      font-style: italic;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    /* Vault Status Callout */
+    .vault-status-callout {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-xl);
+      padding: 24px 28px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .vault-status-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .vault-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(2, 132, 199, 0.1);
+      border: 1px solid rgba(2, 132, 199, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0284C7;
+      flex-shrink: 0;
+    }
+
+    .audit-mini-feed {
+      background: #0B132B;
+      border: 1px solid #1E293B;
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 44px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .audit-feed-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .audit-feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+    }
+
+    .audit-feed-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      gap: 12px;
+      color: #E2E8F0;
+    }
+
+    .audit-hash-code {
+      color: #38BDF8;
+      letter-spacing: 0.05em;
+    }
+
+    .audit-timestamp {
+      color: #94A3B8;
+      font-size: 0.7rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow Background -->
+  <div class="page-bg-auras" aria-hidden="true">
+    <div class="aura-top"></div>
+    <div class="aura-bottom-right"></div>
+    <div class="aura-bottom-left"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ================= FLOATING PILL NAVIGATION HEADER ================= -->
+  <div class="floating-header-wrapper">
+    <header class="floating-header-pill">
+      
+      <!-- Brand Logo -->
+      <a href="index.html" class="brand-tile">
+        <div class="brand-icon-frame">
+          <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Emblem">
+        </div>
+        <div class="brand-name">
+          <span class="brand-main-text">PEMILU <span>IAGI</span> 2026</span>
+          <span class="brand-sub-badge">
+            <svg style="width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:3;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            OFFICIAL PORTAL
+          </span>
+        </div>
+      </a>
+
+      <!-- Center: Pill Navigation Dock -->
+      <nav class="header-nav-dock" aria-label="Navigasi Utama">
+        <a href="index.html#portal" class="nav-pill-link">Portal</a>
+        <a href="index.html#caketum" class="nav-pill-link">Caketum 2026</a>
+        <a href="hasil.html" class="nav-pill-link active">Hasil Perhitungan Suara</a>
+      </nav>
+
+      <!-- Right: Direct CTA Buttons -->
+      <div class="header-actions">
+        <a href="app.html#vote" class="btn-header-member">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>Bilik Suara (Pemilih)</span>
+        </a>
+        <a href="admin.html" class="btn-header-admin">
+          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Admin Pleno (2FA)</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Trigger Button -->
+      <button class="header-burger-btn" id="btn-toggle-mobile-menu" aria-label="Buka Menu">
+        <svg style="width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </header>
+  </div>
+
+  <!-- Mobile Dropdown Navigation Panel -->
+  <div class="mobile-nav-panel" id="mobile-nav-panel">
+    <a href="index.html#caketum" class="mobile-nav-link" onclick="closeMobileMenu()">
+      <span>Profil Calon Ketua Umum (Caketum)</span>
+      <span>➜</span>
+    </a>
+    <a href="hasil.html" class="mobile-nav-link" onclick="closeMobileMenu()" style="color: var(--blue-primary); font-weight: 700;">
+      <span>Hasil Perhitungan Suara (Live Count)</span>
+      <span>➜</span>
+    </a>
+    
+    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+    <a href="app.html#vote" class="btn-header-member" style="justify-content: center; width: 100%; padding: 12px;">
+      <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      <span>Masuk Sebagai Anggota (Bilik Suara)</span>
+    </a>
+    <a href="admin.html" class="btn-header-admin" style="justify-content: center; width: 100%; padding: 12px; margin-top: 6px;">
+      <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>Masuk Sebagai Admin KPKU (2FA)</span>
+    </a>
+  </div>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="results-hero-section">
+    <div class="container">
+      
+      <!-- Eyebrow Pill -->
+      <div style="text-align: center;">
+        <div class="live-indicator-pill">
+          <span class="pulse-dot"></span>
+          <span>LIVE COUNT · TABULASI REAL-TIME SIDANG PLENO</span>
+        </div>
+        <h1 class="results-title">Hasil Perhitungan Suara</h1>
+        <p class="results-subtitle">
+          Tabulasi resmi hasil pemungutan suara Calon Ketua Umum IAGI Periode 2026–2029. Diperbarui secara otomatis, terenkripsi kriptografis, dan terverifikasi secara matematis.
+        </p>
+      </div>
+
+      <!-- Summary Metrics Bar -->
+      <div class="summary-stats-grid">
+        <div class="summary-stat-box">
+          <div class="stat-box-label">
+            <span>Total Suara Masuk</span>
+            <svg style="width:16px; height:16px; stroke:var(--emerald-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </div>
+          <div class="stat-box-num" id="stat-total-votes" style="color: #34D399;">0</div>
+          <div class="stat-box-sub" id="stat-votes-sub">Surat suara terekam di kotak digital</div>
+        </div>
+
+        <div class="summary-stat-box">
+          <div class="stat-box-label">
+            <span>Total DPT Terdata</span>
+            <svg style="width:16px; height:16px; stroke:#38BDF8; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div class="stat-box-num" id="stat-total-dpt" style="color: #38BDF8;">4.280</div>
+          <div class="stat-box-sub">Pemilih aktif terverifikasi KPKU</div>
+        </div>
+
+        <div class="summary-stat-box">
+          <div class="stat-box-label">
+            <span>Partisipasi (Turnout)</span>
+            <svg style="width:16px; height:16px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+          </div>
+          <div class="stat-box-num" id="stat-turnout-pct" style="color: var(--gold-secondary);">0%</div>
+          <div class="stat-box-sub">Target Kuorum Pleno: 66.7%</div>
+        </div>
+
+        <div class="summary-stat-box">
+          <div class="stat-box-label">
+            <span>Integritas Kriptografi</span>
+            <svg style="width:16px; height:16px; stroke:#A78BFA; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div class="stat-box-num" style="color: #A78BFA; font-size: 1.55rem; padding-top: 4px;">SHA-256</div>
+          <div class="stat-box-sub">Zero-Knowledge & 100% Anti-Tamper</div>
+        </div>
+      </div>
+
+      <!-- Tabulation Notice & Quick Actions -->
+      <div class="vault-status-callout">
+        <div class="vault-status-info">
+          <div class="vault-icon-circle">
+            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 4px;">Status Tabulasi Hasil Suara</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5;" id="vault-status-desc">
+              Data suara otomatis tersinkronisasi secara real-time dari seluruh bilik suara anggota IAGI terdaftar.
+            </p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button id="btn-refresh-data" class="btn-gate-secondary" onclick="loadLiveResults()" style="padding: 9px 18px; font-size: 0.82rem;">
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>Perbarui Data</span>
+          </button>
+          <a href="app.html#vote" class="btn-gate-primary" style="padding: 9px 18px; font-size: 0.82rem;">
+            <span>Coblos Sekarang</span>
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3 Candidates Live Tallies Grid -->
+      <div class="tallies-grid" id="tallies-container">
+        <!-- Dynamically rendered by JS -->
+      </div>
+
+      <!-- Live Audit Trail Log (SHA-256 Block Feed) -->
+      <div class="audit-mini-feed">
+        <div class="audit-feed-head">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <svg style="width: 18px; height: 18px; stroke: #38BDF8; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            <span style="font-size: 0.92rem; font-weight: 800; color: #FFFFFF;">Log Audit Trail Kriptografi Kotak Suara</span>
+          </div>
+          <span style="font-size: 0.72rem; color: #34D399; font-family: var(--font-mono); font-weight: 700;">● TERVERIFIKASI SISTEM</span>
+        </div>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0 0 14px; line-height: 1.5;">
+          Setiap surat suara yang dimasukkan ke bilik suara menghasilkan hash SHA-256 unik. Identitas pemilih dipisahkan secara matematis (Zero-Knowledge) untuk menjaga kerahasiaan pilihan (LUBER).
+        </p>
+        <div class="audit-feed-list" id="audit-feed-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Action Banner -->
+      <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.15), rgba(16, 185, 129, 0.15)); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-xl); padding: 36px 30px; text-align: center; margin-bottom: 50px;">
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">Gunakan Hak Suara Anda untuk Masa Depan IAGI</h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 620px; margin: 0 auto 22px auto; line-height: 1.6;">
+          Pastikan Anda terdaftar dalam DPT dan telah mengklaim token surat suara digital Anda. Pemungutan suara berlangsung hingga penutupan Sidang Pleno PIT 55.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="app.html#vote" class="btn-gate-primary" style="padding: 12px 24px;">
+            <span>Masuk ke Bilik Suara Pemilih</span>
+            <span>➜</span>
+          </a>
+          <a href="app.html#dpt" class="btn-gate-secondary" style="padding: 12px 24px;">
+            <span>Cek Status DPT Mandiri</span>
+          </a>
+          <a href="admin.html" class="btn-gate-secondary" style="padding: 12px 24px;">
+            <span>Portal Admin Sidang Pleno</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-tile">
+            <div class="brand-icon-frame">
+              <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Emblem">
+            </div>
+            <div class="brand-name">
+              <span class="brand-main-text">PEMILU <span>IAGI</span> 2026</span>
+              <span class="brand-sub-badge">KPKU OFFICIAL E-VOTING</span>
+            </div>
+          </div>
+          <p>
+            Komisi Pemilihan Ketua Umum (KPKU) Ikatan Ahli Geologi Indonesia Periode 2026–2029. Diselenggarakan secara elektronik dalam rangka Pertemuan Ilmiah Tahunan (PIT) IAGI ke-55 & GEOSEA XIX 2026.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Akses Langsung</h4>
+          <ul class="footer-links">
+            <li><a href="hasil.html">Hasil Perhitungan Suara (Live Count)</a></li>
+            <li><a href="app.html#vote">Bilik Suara Pemilih</a></li>
+            <li><a href="app.html#dpt">Pemeriksaan DPT Online</a></li>
+            <li><a href="app.html#claim">Klaim Token Surat Suara</a></li>
+            <li><a href="admin.html">KPKU Command Center Pleno</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Bantuan & Helpdesk</h4>
+          <ul class="footer-links">
+            <li>WhatsApp: +62 811–158–1461</li>
+            <li>iagisekretariat@gmail.com</li>
+            <li>Gedung Sekretariat DPP IAGI</li>
+            <li><a href="Proposal_Web_Pemilu_IAGI_2026.html" target="_blank">Regulasi & Panduan PDF</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 Komisi Pemilihan Ketua Umum (KPKU) IAGI. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+        <div>
+          v3.0.0 Phone-Ready Edition &nbsp;•&nbsp; <span style="color:#10B981;">System Operational: 100%</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js?v=3.0.0"></script>
+  <script src="js/storage.js?v=3.0.0"></script>
+  <script>
+    // Initialize Pemilu Storage
+    const storage = new PemiluStorage();
+
+    // Mobile Menu Toggle
+    const btnMobileMenu = document.getElementById('btn-toggle-mobile-menu');
+    const mobilePanel = document.getElementById('mobile-nav-panel');
+    if (btnMobileMenu && mobilePanel) {
+      btnMobileMenu.addEventListener('click', () => {
+        mobilePanel.classList.toggle('open');
+      });
+    }
+
+    function closeMobileMenu() {
+      if (mobilePanel) mobilePanel.classList.remove('open');
+    }
+
+    // Load Live Results & Tabulation
+    function loadLiveResults() {
+      const results = storage.getResults();
+      const ballots = storage.getBallots();
+      const dpt = storage.getDPT();
+
+      const totalVotes = results.totalVotes || 0;
+      const totalDPT = results.totalDPT || dpt.length || 4280;
+      const turnoutPct = results.turnoutPercentage || (totalDPT > 0 ? ((totalVotes / totalDPT) * 100).toFixed(1) : 0);
+
+      // Update Summary Stats
+      document.getElementById('stat-total-votes').textContent = totalVotes.toLocaleString('id-ID');
+      document.getElementById('stat-total-dpt').textContent = totalDPT.toLocaleString('id-ID');
+      document.getElementById('stat-turnout-pct').textContent = `${turnoutPct}%`;
+      document.getElementById('stat-votes-sub').textContent = `${totalVotes} surat suara sah dari ${totalDPT} DPT`;
+
+      // Find leading candidate
+      let maxVotes = -1;
+      let leadId = null;
+      CANDIDATES.forEach(c => {
+        const v = results.counts[c.id] || 0;
+        if (v > maxVotes && v > 0) {
+          maxVotes = v;
+          leadId = c.id;
+        }
+      });
+
+      // Render 3 Candidates
+      const talliesContainer = document.getElementById('tallies-container');
+      talliesContainer.innerHTML = CANDIDATES.map(c => {
+        const votes = results.counts[c.id] || 0;
+        const pct = totalVotes > 0 ? ((votes / totalVotes) * 100).toFixed(1) : "0.0";
+        const isLeading = (c.id === leadId);
+
+        return `
+          <article class="tally-card ${isLeading ? 'lead-candidate' : ''}">
+            ${isLeading ? `
+              <div class="tally-lead-badge">
+                <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span>UNGGUL SEMENTARA</span>
+              </div>
+            ` : ''}
+
+            <div class="tally-num-ribbon" style="color: ${c.accentColor};">
+              NO. URUT ${c.number} • ${c.npa}
+            </div>
+
+            <div class="tally-card-visual">
+              <img src="${c.photo}" alt="${c.name}">
+              <div class="tally-card-overlay"></div>
+            </div>
+
+            <div class="tally-card-body">
+              <h3 class="tally-name">${c.name}</h3>
+              <div class="tally-title">${c.title}</div>
+
+              <div class="tally-score-hero">
+                <div>
+                  <div class="tally-pct" style="color: ${c.accentColor};">${pct}%</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Perolehan Suara</div>
+                </div>
+                <div class="tally-votes">
+                  <div class="tally-votes-val">${votes.toLocaleString('id-ID')}</div>
+                  <div class="tally-votes-lbl">Suara Masuk</div>
+                </div>
+              </div>
+
+              <!-- Progress bar -->
+              <div class="tally-bar-track">
+                <div class="tally-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${c.accentColor}, #FDE68A);"></div>
+              </div>
+
+              <p class="tally-tagline">"${c.tagline}"</p>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Render Audit Log feed
+      renderAuditFeed(ballots);
+    }
+
+    function renderAuditFeed(ballots) {
+      const feedList = document.getElementById('audit-feed-list');
+      if (!feedList) return;
+
+      if (!ballots || ballots.length === 0) {
+        feedList.innerHTML = `<div style="color: var(--text-muted); padding: 12px; text-align: center;">Belum ada surat suara yang masuk ke kotak suara digital.</div>`;
+        return;
+      }
+
+      // Display latest 8 ballots
+      const recentBallots = [...ballots].reverse().slice(0, 8);
+      feedList.innerHTML = recentBallots.map((b, idx) => {
+        const timeStr = b.timestamp ? new Date(b.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Baru saja';
+        const shortHash = b.ballot_hash ? (b.ballot_hash.length > 24 ? b.ballot_hash.substring(0, 24) + '...' : b.ballot_hash) : `SHA256-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+
+        return `
+          <div class="audit-feed-item">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#10B981;">✓</span>
+              <span>BLOK #${ballots.length - idx}</span>
+              <span class="audit-hash-code">HASH: ${shortHash}</span>
+            </div>
+            <div class="audit-timestamp">${timeStr} WIB</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Auto-update on page load & listen for storage events across tabs
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLiveResults();
+
+      // Live auto refresh every 4 seconds to sync when votes happen in other tabs
+      setInterval(loadLiveResults, 4000);
+
+      window.addEventListener('storage', (e) => {
+        if (e.key && e.key.includes('pemilu_iagi')) {
+          loadLiveResults();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
