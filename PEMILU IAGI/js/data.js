@@ -23,65 +23,68 @@ const CANDIDATES = [
   {
     id: 1,
     number: "01",
-    name: "Dr. Ir. H. Muhammad Arifin, M.Sc., IPU",
-    title: "Ahli Geologi Eksplorasi Migas & Transisi Energi",
-    tagline: "IAGI Berdaulat, Mandiri, dan Memimpin Transisi Energi Nasional",
-    photo: "assets/candidate-1.jpg",
+    name: "Mirzam Abdurrachman",
+    npa: "NPA: 03457",
+    title: "Pakar Vulkanologi & Dosen Teknik Geologi ITB",
+    tagline: "Geologi Berdaya, Berdampak, dan Menginspirasi untuk Indonesia",
+    photo: "assets/candidate-1.png",
     badge: "Kandidat 01",
-    accentColor: "#F5BA42",
-    secondaryColor: "#10B981",
-    vision: "Mewujudkan IAGI sebagai asosiasi profesi kebumian yang mandiri, berdaya saing global, serta menjadi garda terdepan advokasi kebijakan ketahanan energi dan hilirisasi georesources Indonesia.",
+    accentColor: "#0284C7",
+    secondaryColor: "#F59E0B",
+    vision: "Mewujudkan IAGI sebagai organisasi profesi kebumian yang inklusif, adaptif terhadap transisi energi dan krisis iklim, serta berperan aktif mencerdaskan bangsa melalui diplomasi geosains nasional dan global.",
     missions: [
-      "Memperkuat kompetensi dan sertifikasi internasional bagi seluruh anggota IAGI lintas generasi.",
-      "Mendorong kontribusi aktif geoscientist dalam mitigasi krisis iklim, teknologi CCS/CCUS, dan panas bumi (geothermal).",
-      "Modernisasi tata kelola organisasi berbasis digital yang transparan, partisipatif, dan akuntabel.",
-      "Membuka jaringan kolaborasi industri, pemerintah, dan diaspora geosains di seluruh dunia."
+      "Menguatkan jejaring riset, sinergi lintas generasi geoscientist, dan kolaborasi multipihak (akademisi, industri, pemerintah).",
+      "Mendorong advokasi kebijakan berbasis bukti geologi untuk mitigasi bencana kebumian dan tata ruang berkelanjutan.",
+      "Digitalisasi layanan keanggotaan dan peningkatan program sertifikasi kompetensi bertaraf internasional.",
+      "Membangkitkan peran aktif generasi muda dan mahasiswa geologi (SM-IAGI) di seluruh pelosok nusantara."
     ],
-    experience: "28+ tahun memimpin riset cekungan migas dan transisi energi. Dewan Penasihat IAGI & Dosen Kehormatan Petroleum Geoscience.",
-    education: "Doktor Teknik Geologi ITB • M.Sc. Colorado School of Mines",
-    endorsements: "Didukung oleh praktisi migas, akademisi, dan geoscientist senior nusantara."
+    experience: "Pendidik, peneliti vulkanologi ITB & komunikator sains kebumian terkemuka Indonesia. NPA: 03457.",
+    education: "Doktor Ilmu Kebumian • Magister Teknik Geologi ITB",
+    endorsements: "Didukung oleh akademisi, praktisi mitigasi kebencanaan, diaspora geosains, dan SM-IAGI nasional."
   },
   {
     id: 2,
     number: "02",
-    name: "Dr. Eng. Andiani, S.T., M.T.",
-    title: "Pakar Geologi Tata Lingkungan & Mitigasi Bencana Geologi",
-    tagline: "Geologi untuk Kesejahteraan Rakyat: Tangguh, Inklusif, dan Berkelanjutan",
-    photo: "assets/candidate-2.jpg",
+    name: "Sonny Yudhistira",
+    npa: "NPA: 03749",
+    title: "Praktisi Geologi Eksplorasi & Bisnis Energi Kebumian",
+    tagline: "IAGI Sinergis, Mandiri, dan Mengakselerasi Kesejahteraan Anggota",
+    photo: "assets/candidate-2.png",
     badge: "Kandidat 02",
     accentColor: "#10B981",
-    secondaryColor: "#F5BA42",
-    vision: "Menjadikan IAGI sebagai pilar keilmuan geologi terapan yang inklusif, responsif terhadap kebencanaan geologi, dan memberikan kemanfaatan nyata bagi keselamatan dan kemakmuran masyarakat Indonesia.",
+    secondaryColor: "#0284C7",
+    vision: "Menjadikan IAGI rumah besar profesi geologi Indonesia yang mandiri secara finansial, menjamin perlindungan karier profesi, dan menjadi rujukan utama ketahanan energi dan hilirisasi mineral strategis.",
     missions: [
-      "Memperluas peran strategis ahli geologi dalam penyusunan Rencana Tata Ruang Wilayah (RTRW) dan mitigasi sesar aktif/tsunami.",
-      "Membangun program mentorship berkelanjutan 'IAGI Muda & Women in Geosciences' untuk akselerasi karier anggota.",
-      "Optimalisasi dana abadi IAGI dan transparansi keuangan organisasi berbasis audit terbuka.",
-      "Revitalisasi peran Pengurus Daerah (Pengda) dan Seksi Mahasiswa (SM-IAGI) sebagai ujung tombak kegiatan ilmiah."
+      "Meningkatkan daya saing dan perlindungan advokasi hukum ketenagakerjaan bagi seluruh praktisi geologi di tanah air.",
+      "Optimalisasi kemitraan strategis dengan BUMN, sektor swasta energi, dan pertambangan untuk perluasan lapangan kerja.",
+      "Mendirikan dana abadi dan inkubasi usaha geosains bagi kemandirian program Pengurus Daerah (Pengda).",
+      "Penyelenggaraan pelatihan kompetensi terapan mutakhir, AI geoscience, dan eksplorasi mineral masa depan."
     ],
-    experience: "24+ tahun mengabdi di Badan Geologi & PVMBG. Pemimpin kajian sesar aktif dan zonasi mitigasi bencana geologi nasional.",
-    education: "Doctor of Engineering Kyoto University • S.T. & M.T. Universitas Padjadjaran",
-    endorsements: "Didukung oleh peneliti kebumian, aktivis lingkungan hidup, dan SM-IAGI berbagai universitas."
+    experience: "Praktisi senior eksplorasi sumber daya energi & mineral dengan rekam jejak industri komprehensif. NPA: 03749.",
+    education: "Magister Geosains • Sarjana Teknik Geologi",
+    endorsements: "Didukung oleh praktisi industri migas, pertambangan mineral strategis, dan geopreneur nusantara."
   },
   {
     id: 3,
     number: "03",
-    name: "Ir. Burhanuddin Harahap, Ph.D., ASEAN Eng.",
-    title: "Praktisi Hilirisasi Mineral Kritis & AI Geosains",
-    tagline: "Transformasi Digital Geosains: Inovatif, Kolaboratif, Mengakar di Daerah",
-    photo: "assets/candidate-3.jpg",
+    name: "Sri Hartanto",
+    npa: "NPA: 05653",
+    title: "Senior Geoscientist & Konsultan Tata Kelola Kebumian",
+    tagline: "Transformasi Nyata IAGI: Profesional, Berintegritas, Menatap Masa Depan",
+    photo: "assets/candidate-3.png",
     badge: "Kandidat 03",
-    accentColor: "#38BDF8",
-    secondaryColor: "#C5A059",
-    vision: "Transformasi IAGI menjadi lokomotif inovasi teknologi geosains terapan, hilirisasi mineral strategis (critical minerals), dan pemanfaatan AI untuk mempercepat penemuan deposit mineral baru Indonesia.",
+    accentColor: "#D97706",
+    secondaryColor: "#2563EB",
+    vision: "Transformasi menyeluruh IAGI menuju tata kelola organisasi modern yang transparan, mempererat persaudaraan seluruh anggota, serta mengangkat martabat geoscientist Indonesia di panggung regional dan global.",
     missions: [
-      "Mengintegrasikan machine learning dan big data geologi ke dalam kurikulum sertifikasi profesional berkala IAGI.",
-      "Advokasi regulasi perlindungan profesi ahli geologi Indonesia di hadapan persaingan tenaga kerja asing.",
-      "Penguatan peran geologis daerah di setiap sentra pertambangan dan megaproyek infrastruktur nasional.",
-      "Mendirikan Inkubator Start-up Geosains dan Fasilitasi Hak Cipta/Paten karya inovasi anggota."
+      "Reformasi birokrasi internal IAGI dengan sistem manajemen berbasis cloud dan keterbukaan informasi publik.",
+      "Revitalisasi seluruh Pengurus Daerah (Pengda) dan Seksi Khusus agar berdaya dalam merespons isu lokal.",
+      "Advokasi regulasi standar remunerasi profesi ahli geologi dan sertifikasi insinyur profesional (IPU/IPM).",
+      "Penyusunan peta jalan keilmuan geologi nasional menghadapi era dekarbonisasi dan revolusi teknologi informasi."
     ],
-    experience: "22+ tahun eksplorasi critical minerals (nikel, tembaga, REE). ASEAN Outstanding Geoscientist Award 2024.",
-    education: "Ph.D. Economic Geology Curtin University • Sarjana Teknik Geologi UPN Veteran",
-    endorsements: "Didukung oleh praktisi mineral, geopreneur muda, dan konsultan geoteknik."
+    experience: "Senior geoscientist dengan pengalaman panjang tata kelola proyek eksplorasi dan manajemen organisasi. NPA: 05653.",
+    education: "Sarjana Teknik Geologi • Sertifikasi Profesional Geosains",
+    endorsements: "Didukung oleh lintas Pengda IAGI, pemerhati tata kelola kebumian, dan konsultan geologi senior."
   }
 ];
 
