@@ -1203,6 +1203,35 @@ body {
   transform: translateY(-1px);
 }
 
+.cand-btn-video {
+  width: 100%;
+  margin-top: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  color: #0F172A;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
+.cand-btn-video:hover {
+  background: #FFF1F2;
+  border-color: #FECDD3;
+  color: #E11D48;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+  transform: translateY(-1px);
+}
+
 .btn-poster-banner {
   display: inline-flex;
   align-items: center;
@@ -2008,7 +2037,7 @@ body {
   background: #FFFFFF;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-xl);
-  max-width: 620px;
+  max-width: 680px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
