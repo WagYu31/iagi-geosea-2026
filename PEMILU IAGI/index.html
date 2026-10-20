@@ -687,6 +687,43 @@
     setInterval(updateLandingCountdown, 1000);
     updateLandingCountdown();
 
+    // ==========================================================================
+    // CHOREOGRAPHY: PROFESSIONAL SCROLL REVEAL OBSERVER
+    // ==========================================================================
+    const initScrollChoreography = () => {
+      const choreoTargets = document.querySelectorAll('.hero-caketum-intro, .candidate-card-showcase');
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, {
+          root: null,
+          rootMargin: '0px 0px -40px 0px',
+          threshold: 0.08
+        });
+
+        choreoTargets.forEach(el => observer.observe(el));
+      } else {
+        choreoTargets.forEach(el => el.classList.add('is-revealed'));
+      }
+
+      // Safety fallback: ensure all elements are visible after 1.8s
+      setTimeout(() => {
+        choreoTargets.forEach(el => el.classList.add('is-revealed'));
+      }, 1800);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initScrollChoreography);
+    } else {
+      initScrollChoreography();
+    }
+
     // Mobile Menu Toggle
     const btnMobileMenu = document.getElementById('btn-toggle-mobile-menu');
     const mobilePanel = document.getElementById('mobile-nav-panel');

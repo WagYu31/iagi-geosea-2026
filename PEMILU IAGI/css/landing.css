@@ -2068,3 +2068,325 @@ body {
 .modal-close-btn:hover {
   background: #E2E8F0;
 }
+
+/* ==========================================================================
+   PROFESSIONAL CHOREOGRAPHY: PAGE LOAD ENTRANCE & SCROLL REVEAL
+   ========================================================================== */
+
+/* 1. Header Bar Entrance */
+.floating-header-wrap {
+  animation: choreo-header-slide 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  will-change: transform, opacity;
+}
+
+@keyframes choreo-header-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 2. Hero Eyebrow Pill */
+.hero-eyebrow {
+  animation: choreo-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+  will-change: transform, opacity;
+}
+
+/* 3. Hero Headline Split Lines */
+.hero-title .hero-title-lead {
+  animation: choreo-title-lead 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+  will-change: transform, opacity;
+}
+
+.hero-title span.highlight-gold {
+  background-size: 200% auto;
+  animation: choreo-title-lead 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.40s both,
+             choreo-gold-shimmer 6s ease-in-out infinite 1.4s;
+  will-change: transform, opacity, background-position;
+}
+
+.hero-period {
+  animation: choreo-title-lead 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
+  will-change: transform, opacity;
+}
+
+@keyframes choreo-title-lead {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    letter-spacing: -0.04em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: -0.03em;
+  }
+}
+
+@keyframes choreo-gold-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 4. Hero Subtitle */
+.hero-subtitle {
+  animation: choreo-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
+  will-change: transform, opacity;
+}
+
+/* 5. Live Chrono Capsule */
+.hero-chrono-capsule {
+  animation: choreo-capsule-pop 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.74s both,
+             choreo-chrono-glow 4s ease-in-out infinite alternate 1.8s;
+  will-change: transform, opacity, box-shadow;
+}
+
+@keyframes choreo-capsule-pop {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes choreo-chrono-glow {
+  0% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.2);
+  }
+  100% {
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55), 0 0 24px rgba(56, 189, 248, 0.35), 0 0 0 1.5px rgba(56, 189, 248, 0.5);
+  }
+}
+
+/* 6. Affiliates Capsule Label */
+.affiliates-label {
+  animation: choreo-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.86s both;
+  will-change: transform, opacity;
+}
+
+/* 7. Affiliates Bar & Staggered Badge Wave */
+.affiliates-pill-bar {
+  animation: choreo-fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+  will-change: transform, opacity;
+}
+
+.affiliate-badge-circle {
+  animation: choreo-badge-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  will-change: transform, opacity;
+}
+
+.affiliate-badge-circle:nth-child(1)  { animation-delay: 1.02s; }
+.affiliate-badge-circle:nth-child(2)  { animation-delay: 1.07s; }
+.affiliate-badge-circle:nth-child(3)  { animation-delay: 1.12s; }
+.affiliate-badge-circle:nth-child(4)  { animation-delay: 1.17s; }
+.affiliate-badge-circle:nth-child(5)  { animation-delay: 1.22s; }
+.affiliate-badge-circle:nth-child(6)  { animation-delay: 1.27s; }
+.affiliate-badge-circle:nth-child(7)  { animation-delay: 1.32s; }
+.affiliate-badge-circle:nth-child(8)  { animation-delay: 1.37s; }
+.affiliate-badge-circle:nth-child(9)  { animation-delay: 1.42s; }
+.affiliate-badge-circle:nth-child(10) { animation-delay: 1.47s; }
+
+@keyframes choreo-badge-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes choreo-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   SCROLL REVEAL CHOREOGRAPHY (INTERSECTION OBSERVER)
+   ========================================================================== */
+
+/* Candidate Intro Section Header */
+.hero-caketum-intro {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.hero-caketum-intro.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-caketum-intro .section-eyebrow {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s,
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+
+.hero-caketum-intro.is-revealed .section-eyebrow {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-caketum-intro .hero-caketum-title {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.18s,
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.18s;
+}
+
+.hero-caketum-intro.is-revealed .hero-caketum-title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-caketum-intro .hero-caketum-desc {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.26s,
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.26s;
+}
+
+.hero-caketum-intro.is-revealed .hero-caketum-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   CANDIDATE CARDS CHOREOGRAPHY & STAGGER CASCADE
+   ========================================================================== */
+.candidate-card-showcase {
+  opacity: 0;
+  transform: translateY(48px) scale(0.97);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s ease,
+              border-color 0.4s ease;
+  will-change: transform, opacity;
+  position: relative;
+}
+
+/* Stagger delay for cards when revealed */
+.candidate-card-showcase.is-revealed:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 0.05s;
+}
+
+.candidate-card-showcase.is-revealed:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 0.20s;
+}
+
+.candidate-card-showcase.is-revealed:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 0.35s;
+}
+
+/* Hover elevation & 3D luxury depth */
+.candidate-card-showcase.is-revealed:hover {
+  transform: translateY(-10px) scale(1.012);
+  border-color: rgba(2, 132, 199, 0.5);
+  box-shadow: 0 24px 48px -10px rgba(10, 25, 47, 0.18),
+              0 0 30px rgba(2, 132, 199, 0.14);
+}
+
+.candidate-photo-header img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.candidate-card-showcase.is-revealed:hover .candidate-photo-header img {
+  transform: scale(1.045);
+}
+
+/* Pill Badges micro-float */
+.candidate-num-pill,
+.candidate-npa-pill {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.candidate-card-showcase:hover .candidate-num-pill {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
+}
+
+/* Button Shimmer Sweeper */
+.cand-btn-vision {
+  position: relative;
+  overflow: hidden;
+}
+
+.cand-btn-vision::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -70%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  transition: left 0.65s ease;
+  pointer-events: none;
+}
+
+.cand-btn-vision:hover::after {
+  left: 130%;
+}
+
+.cand-btn-video {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cand-btn-video:hover {
+  background: #FFF1F2 !important;
+  border-color: #FECDD3 !important;
+  color: #DC2626 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18) !important;
+}
+
+/* Reduced Motion Support for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .hero-caketum-intro,
+  .candidate-card-showcase {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
