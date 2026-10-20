@@ -595,41 +595,48 @@ body {
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
 }
 
-/* Hero Chrono Bar */
+/* ==========================================================================
+   HERO CHRONO (LIVE COUNTDOWN) - DESKTOP & MOBILE RESPONSIVE
+   ========================================================================== */
 .hero-chrono-capsule {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
-  background: rgba(15, 23, 42, 0.8);
+  justify-content: center;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: var(--radius-pill);
-  padding: 8px 20px 8px 14px;
+  padding: 7px 18px 7px 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
 }
 
 .chrono-tag {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   font-weight: 800;
   color: #38BDF8;
   letter-spacing: 0.06em;
   background: rgba(2, 132, 199, 0.25);
   border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 5px 12px;
+  padding: 5px 11px;
   border-radius: var(--radius-pill);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .chrono-tag .live-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: #38BDF8;
   box-shadow: 0 0 10px #38BDF8;
   animation: pulse-dot 1.8s infinite;
+  flex-shrink: 0;
 }
 
 @keyframes pulse-dot {
@@ -651,20 +658,82 @@ body {
 }
 
 .chrono-val {
-  font-size: 1.18rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #FFFFFF;
+  line-height: 1;
 }
 
 .chrono-lbl {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  color: #94A3B8;
+  color: #38BDF8;
+  line-height: 1;
 }
 
 .chrono-sep {
   color: rgba(255, 255, 255, 0.35);
   font-weight: 800;
+  margin: 0 1px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .hero-chrono-capsule {
+    max-width: 310px;
+    width: 100%;
+    padding: 6px 12px 6px 8px;
+    gap: 10px;
+    justify-content: space-between;
+    margin: 0 auto;
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .chrono-tag {
+    font-size: 0.60rem;
+    padding: 4px 8px;
+    gap: 5px;
+    letter-spacing: 0.03em;
+  }
+  .chrono-tag .live-dot {
+    width: 6px;
+    height: 6px;
+  }
+  .chrono-units-wrap {
+    gap: 5px;
+  }
+  .chrono-val {
+    font-size: 0.98rem;
+  }
+  .chrono-lbl {
+    font-size: 0.58rem;
+  }
+  .chrono-sep {
+    font-size: 0.85rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-chrono-capsule {
+    max-width: 280px;
+    padding: 5px 8px 5px 6px;
+    gap: 6px;
+  }
+  .chrono-tag {
+    font-size: 0.56rem;
+    padding: 3px 6px;
+  }
+  .chrono-units-wrap {
+    gap: 3px;
+  }
+  .chrono-val {
+    font-size: 0.90rem;
+  }
+  .chrono-lbl {
+    font-size: 0.52rem;
+  }
 }
 
 /* ==========================================================================

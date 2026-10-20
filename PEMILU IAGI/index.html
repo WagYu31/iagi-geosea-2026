@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- GetLayers Style Landing Page CSS -->
-  <link rel="stylesheet" href="css/landing.css?v=3.2.0">
+  <link rel="stylesheet" href="css/landing.css?v=3.3.0">
 
   <style id="affiliates-capsule-style">
     /* ==========================================================================
@@ -167,6 +167,137 @@
         min-height: 38px !important;
         max-width: 38px !important;
         max-height: 38px !important;
+      }
+    }
+
+    /* ==========================================================================
+       HERO CHRONO (LIVE COUNTDOWN) - DESKTOP & MOBILE RESPONSIVE
+       ========================================================================== */
+    .hero-chrono-capsule {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 14px !important;
+      background: rgba(15, 23, 42, 0.82) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border-radius: 999px !important;
+      padding: 7px 18px 7px 12px !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+      box-sizing: border-box !important;
+    }
+    .chrono-tag {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-size: 0.70rem !important;
+      font-weight: 800 !important;
+      color: #38BDF8 !important;
+      letter-spacing: 0.06em !important;
+      background: rgba(2, 132, 199, 0.25) !important;
+      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+      padding: 5px 11px !important;
+      border-radius: 999px !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+    }
+    .chrono-tag .live-dot {
+      width: 7px !important;
+      height: 7px !important;
+      border-radius: 50% !important;
+      background-color: #38BDF8 !important;
+      box-shadow: 0 0 10px #38BDF8 !important;
+      animation: pulse-dot 1.8s infinite !important;
+      flex-shrink: 0 !important;
+    }
+    .chrono-units-wrap {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      font-family: var(--font-mono, monospace) !important;
+    }
+    .chrono-item {
+      display: flex !important;
+      align-items: baseline !important;
+      gap: 2px !important;
+    }
+    .chrono-val {
+      font-size: 1.15rem !important;
+      font-weight: 800 !important;
+      color: #FFFFFF !important;
+      line-height: 1 !important;
+    }
+    .chrono-lbl {
+      font-size: 0.65rem !important;
+      font-weight: 800 !important;
+      color: #38BDF8 !important;
+      line-height: 1 !important;
+    }
+    .chrono-sep {
+      color: rgba(255, 255, 255, 0.35) !important;
+      font-weight: 800 !important;
+      margin: 0 1px !important;
+      line-height: 1 !important;
+    }
+
+    /* SMART MOBILE RESPONSIVE (< 768px): COMPACT & BALANCED */
+    @media (max-width: 768px) {
+      .hero-chrono-capsule {
+        max-width: 310px !important;
+        width: 100% !important;
+        padding: 6px 12px 6px 8px !important;
+        gap: 10px !important;
+        justify-content: space-between !important;
+        margin: 0 auto !important;
+        box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.65) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      }
+      .chrono-tag {
+        font-size: 0.60rem !important;
+        padding: 4px 8px !important;
+        gap: 5px !important;
+        letter-spacing: 0.03em !important;
+      }
+      .chrono-tag .live-dot {
+        width: 6px !important;
+        height: 6px !important;
+      }
+      .chrono-units-wrap {
+        gap: 5px !important;
+      }
+      .chrono-val {
+        font-size: 0.98rem !important;
+      }
+      .chrono-lbl {
+        font-size: 0.58rem !important;
+      }
+      .chrono-sep {
+        font-size: 0.85rem !important;
+        margin: 0 !important;
+        color: rgba(255, 255, 255, 0.25) !important;
+      }
+    }
+
+    /* ULTRA COMPACT FOR < 360px */
+    @media (max-width: 360px) {
+      .hero-chrono-capsule {
+        max-width: 280px !important;
+        padding: 5px 8px 5px 6px !important;
+        gap: 6px !important;
+      }
+      .chrono-tag {
+        font-size: 0.56rem !important;
+        padding: 3px 6px !important;
+      }
+      .chrono-units-wrap {
+        gap: 3px !important;
+      }
+      .chrono-val {
+        font-size: 0.90rem !important;
+      }
+      .chrono-lbl {
+        font-size: 0.52rem !important;
       }
     }
   </style>
