@@ -241,63 +241,70 @@
       line-height: 1 !important;
     }
 
-    /* SMART MOBILE RESPONSIVE (< 768px): COMPACT & BALANCED */
+    /* SMART MOBILE RESPONSIVE (< 768px): COMPACT, BALANCED & NEVER CLIPPED */
     @media (max-width: 768px) {
       .hero-chrono-capsule {
-        max-width: 310px !important;
-        width: 100% !important;
-        padding: 6px 12px 6px 8px !important;
-        gap: 10px !important;
-        justify-content: space-between !important;
+        display: inline-flex !important;
+        width: auto !important;
+        max-width: min(324px, 92vw) !important;
+        padding: 5px 16px 5px 8px !important;
+        gap: 9px !important;
+        justify-content: center !important;
         margin: 0 auto !important;
-        box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.65) !important;
-        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.22) !important;
       }
       .chrono-tag {
-        font-size: 0.60rem !important;
+        font-size: 0.58rem !important;
         padding: 4px 8px !important;
         gap: 5px !important;
-        letter-spacing: 0.03em !important;
+        letter-spacing: 0.04em !important;
       }
       .chrono-tag .live-dot {
         width: 6px !important;
         height: 6px !important;
       }
       .chrono-units-wrap {
-        gap: 5px !important;
+        gap: 4px !important;
+      }
+      .chrono-item {
+        gap: 1.5px !important;
       }
       .chrono-val {
-        font-size: 0.98rem !important;
+        font-size: 0.94rem !important;
+        font-weight: 700 !important;
       }
       .chrono-lbl {
-        font-size: 0.58rem !important;
+        font-size: 0.56rem !important;
+        font-weight: 700 !important;
       }
       .chrono-sep {
-        font-size: 0.85rem !important;
-        margin: 0 !important;
-        color: rgba(255, 255, 255, 0.25) !important;
+        font-size: 0.80rem !important;
+        margin: 0 1px !important;
+        color: rgba(255, 255, 255, 0.3) !important;
       }
     }
 
     /* ULTRA COMPACT FOR < 360px */
     @media (max-width: 360px) {
       .hero-chrono-capsule {
-        max-width: 280px !important;
-        padding: 5px 8px 5px 6px !important;
+        max-width: 290px !important;
+        padding: 4px 12px 4px 6px !important;
         gap: 6px !important;
       }
       .chrono-tag {
-        font-size: 0.56rem !important;
+        font-size: 0.54rem !important;
         padding: 3px 6px !important;
+        letter-spacing: 0.02em !important;
       }
       .chrono-units-wrap {
         gap: 3px !important;
       }
       .chrono-val {
-        font-size: 0.90rem !important;
+        font-size: 0.86rem !important;
       }
       .chrono-lbl {
-        font-size: 0.52rem !important;
+        font-size: 0.50rem !important;
       }
     }
   </style>
