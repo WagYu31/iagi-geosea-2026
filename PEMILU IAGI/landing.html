@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- GetLayers Style Landing Page CSS -->
-  <link rel="stylesheet" href="css/landing.css?v=3.3.0">
+  <link rel="stylesheet" href="css/landing.css?v=3.4.0">
 
   <style id="affiliates-capsule-style">
     /* ==========================================================================
@@ -339,7 +339,7 @@
       <!-- Center: Pill Navigation Dock -->
       <nav class="header-nav-dock" aria-label="Navigasi Utama">
         <a href="#portal" class="nav-pill-link active">Portal</a>
-        <a href="hasil.html" class="nav-pill-link">Hasil Perhitungan Suara</a>
+        <a href="#caketum" class="nav-pill-link">Profil Kandidat</a>
       </nav>
 
       <!-- Right: Direct CTA Buttons -->
@@ -365,10 +365,6 @@
   <div class="mobile-nav-panel" id="mobile-nav-panel">
     <a href="#caketum" class="mobile-nav-link" onclick="closeMobileMenu()">
       <span>Profil Calon Ketua Umum (Caketum)</span>
-      <span>➜</span>
-    </a>
-    <a href="hasil.html" class="mobile-nav-link" onclick="closeMobileMenu()">
-      <span>Hasil Perhitungan Suara (Live Count)</span>
       <span>➜</span>
     </a>
     
@@ -417,10 +413,10 @@
       </p>
 
       <!-- Live Chronometer Capsule Bar -->
-      <div class="hero-chrono-capsule">
+      <div class="hero-chrono-capsule" title="Hitung Mundur Pembukaan Bilik Suara: 26 Oktober 2026 pukul 00.01 WIB">
         <div class="chrono-tag">
           <span class="live-dot"></span>
-          <span>LIVE COUNTDOWN</span>
+          <span>LIVE VOTING</span>
         </div>
         <div class="chrono-units-wrap">
           <div class="chrono-item"><span id="landing-days" class="chrono-val">00</span><span class="chrono-lbl">H</span></div>
@@ -437,9 +433,9 @@
       <div class="affiliates-capsule-wrap">
         <div class="affiliates-label">
           <svg style="width:12px; height:12px; color:#F59E0B;" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          <span>Didukung Oleh Badan Khusus · Pengurus Daerah · Seksi Mahasiswa IAGI</span>
+          <span>Didukung Oleh Anak Organisasi · Pengurus Daerah - Komisariat · Seksi Mahasiswa IAGI</span>
         </div>
-        <div class="affiliates-pill-bar" aria-label="Afiliasi dan Badan Khusus IAGI">
+        <div class="affiliates-pill-bar" aria-label="Anak Organisasi, Pengurus Daerah - Komisariat, dan Seksi Mahasiswa IAGI">
           <div class="affiliate-badge-circle" title="FOSI - Forum Sedimentologi Indonesia">
             <img src="assets/affiliates/01-fosi-badge.png" alt="FOSI (Forum Sedimentologi Indonesia)">
           </div>
@@ -603,7 +599,7 @@
         <div class="footer-col">
           <h4>Akses Langsung</h4>
           <ul class="footer-links">
-            <li><a href="hasil.html">Hasil Perhitungan Suara (Live Count)</a></li>
+            <li><a href="#caketum">Profil Calon Ketua Umum</a></li>
             <li><a href="app.html#vote">Bilik Suara Pemilih</a></li>
             <li><a href="app.html#dpt">Pemeriksaan DPT Online</a></li>
             <li><a href="app.html#claim">Klaim Token Surat Suara</a></li>
@@ -649,9 +645,10 @@
   <!-- Scripts -->
   <script src="js/data.js?v=3.0.0"></script>
   <script>
-    // Live Countdown
+    // Live Countdown Dimulainya Pemilihan
     function updateLandingCountdown() {
-      const targetDate = new Date("2026-10-25T18:00:00+07:00").getTime();
+      // Target: 26 Oktober 2026 pukul 00.01 WIB (UTC+7)
+      const targetDate = new Date("2026-10-26T00:01:00+07:00").getTime();
       const now = new Date().getTime();
       const diff = targetDate - now;
 
@@ -665,6 +662,11 @@
         document.getElementById('landing-hours').textContent = String(hours).padStart(2, '0');
         document.getElementById('landing-mins').textContent = String(mins).padStart(2, '0');
         document.getElementById('landing-secs').textContent = String(secs).padStart(2, '0');
+      } else {
+        document.getElementById('landing-days').textContent = "00";
+        document.getElementById('landing-hours').textContent = "00";
+        document.getElementById('landing-mins').textContent = "00";
+        document.getElementById('landing-secs').textContent = "00";
       }
     }
     setInterval(updateLandingCountdown, 1000);

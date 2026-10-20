@@ -679,7 +679,7 @@
       <!-- Center: Pill Navigation Dock -->
       <nav class="header-nav-dock" aria-label="Navigasi Utama">
         <a href="index.html#portal" class="nav-pill-link">Portal</a>
-        <a href="hasil.html" class="nav-pill-link active">Hasil Perhitungan Suara</a>
+        <a href="index.html#caketum" class="nav-pill-link">Profil Kandidat</a>
       </nav>
 
       <!-- Right: Direct CTA Buttons -->
@@ -707,10 +707,6 @@
       <span>Profil Calon Ketua Umum (Caketum)</span>
       <span>➜</span>
     </a>
-    <a href="hasil.html" class="mobile-nav-link" onclick="closeMobileMenu()" style="color: var(--blue-primary); font-weight: 700;">
-      <span>Hasil Perhitungan Suara (Live Count)</span>
-      <span>➜</span>
-    </a>
     
     <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
     <a href="app.html#vote" class="btn-header-member" style="justify-content: center; width: 100%; padding: 12px;">
@@ -726,18 +722,75 @@
   <!-- ================= MAIN CONTENT ================= -->
   <main class="results-hero-section">
     <div class="container">
-      
-      <!-- Eyebrow Pill -->
-      <div style="text-align: center;">
-        <div class="live-indicator-pill">
-          <span class="pulse-dot"></span>
-          <span>LIVE COUNT · TABULASI REAL-TIME SIDANG PLENO</span>
+
+      <!-- Sealed / Locked State Screen (Shown before 04 November 2026 16:00 WIB) -->
+      <div id="results-locked-card" style="display: none; max-width: 680px; margin: 40px auto; padding: 42px 24px; text-align: center; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 24px; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 25px 60px rgba(0,0,0,0.6);">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #F59E0B; margin-bottom: 20px; box-shadow: 0 0 30px rgba(245, 158, 11, 0.25);">
+          <svg style="width: 34px; height: 34px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
-        <h1 class="results-title">Hasil Perhitungan Suara</h1>
-        <p class="results-subtitle">
-          Tabulasi resmi hasil pemungutan suara Calon Ketua Umum IAGI Periode 2026–2029. Diperbarui secara otomatis, terenkripsi kriptografis, dan terverifikasi secara matematis.
+        
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #F59E0B; background: rgba(245, 158, 11, 0.12); padding: 5px 14px; border-radius: 999px; margin-bottom: 16px; border: 1px solid rgba(245, 158, 11, 0.3);">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background-color: #F59E0B; box-shadow: 0 0 8px #F59E0B;"></span>
+            KOTAK SUARA TERSEGEL DIGITAL RESMI
+          </div>
+        </div>
+
+        <h1 style="font-size: 1.85rem; font-weight: 900; color: #FFFFFF; margin-bottom: 14px; line-height: 1.3;">
+          Hasil Perhitungan Suara Belum Dibuka
+        </h1>
+
+        <p style="font-size: 0.95rem; color: #94A3B8; line-height: 1.65; max-width: 560px; margin: 0 auto 24px auto;">
+          Sesuai dengan ketentuan Panitia KPKU IAGI, tabulasi hasil pemungutan suara Calon Ketua Umum IAGI Periode 2026–2029 saat ini berada dalam status <strong>Terkunci &amp; Terenkripsi Kriptografis</strong>. Fitur hasil perhitungan suara baru akan dibuka secara resmi pada Sidang Pleno Terbuka KPKU.
         </p>
+
+        <div style="background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(56, 189, 248, 0.28); border-radius: 16px; padding: 18px 20px; max-width: 500px; margin: 0 auto 28px auto;">
+          <div style="font-size: 0.74rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;">Jadwal Pembukaan Sidang Pleno Terbuka:</div>
+          <div style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF;">Rabu, 04 November 2026 pukul 16.00 WIB</div>
+          
+          <!-- Countdown to 04 Nov 2026 16:00 WIB -->
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; font-family: var(--font-mono, monospace);">
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 10px; min-width: 54px; text-align: center;">
+              <span id="locked-cd-days" style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; display: block; line-height: 1;">00</span>
+              <span style="font-size: 0.6rem; color: #38BDF8; font-weight: 700;">HARI</span>
+            </div>
+            <span style="color: rgba(255,255,255,0.3); font-weight: 800;">:</span>
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 10px; min-width: 54px; text-align: center;">
+              <span id="locked-cd-hours" style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; display: block; line-height: 1;">00</span>
+              <span style="font-size: 0.6rem; color: #38BDF8; font-weight: 700;">JAM</span>
+            </div>
+            <span style="color: rgba(255,255,255,0.3); font-weight: 800;">:</span>
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 10px; min-width: 54px; text-align: center;">
+              <span id="locked-cd-mins" style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; display: block; line-height: 1;">00</span>
+              <span style="font-size: 0.6rem; color: #38BDF8; font-weight: 700;">MENIT</span>
+            </div>
+            <span style="color: rgba(255,255,255,0.3); font-weight: 800;">:</span>
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 10px; min-width: 54px; text-align: center;">
+              <span id="locked-cd-secs" style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; display: block; line-height: 1;">00</span>
+              <span style="font-size: 0.6rem; color: #38BDF8; font-weight: 700;">DETIK</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="index.html" class="btn-header-member" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; text-decoration: none; border-radius: 999px;">
+          <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Kembali ke Portal Pemilu IAGI</span>
+        </a>
       </div>
+
+      <!-- Active Tabulation Area (Unlocked automatically on 04 November 2026 16:00 WIB) -->
+      <div id="live-results-active-area">
+        <!-- Eyebrow Pill -->
+        <div style="text-align: center;">
+          <div class="live-indicator-pill">
+            <span class="pulse-dot"></span>
+            <span>LIVE COUNT · TABULASI REAL-TIME SIDANG PLENO</span>
+          </div>
+          <h1 class="results-title">Hasil Perhitungan Suara</h1>
+          <p class="results-subtitle">
+            Tabulasi resmi hasil pemungutan suara Calon Ketua Umum IAGI Periode 2026–2029. Diperbarui secara otomatis, terenkripsi kriptografis, dan terverifikasi secara matematis.
+          </p>
+        </div>
 
       <!-- Summary Metrics Bar -->
       <div class="summary-stats-grid">
@@ -886,6 +939,7 @@
           </a>
         </div>
       </div>
+      </div><!-- End #live-results-active-area -->
 
     </div>
   </main>
@@ -912,7 +966,7 @@
         <div class="footer-col">
           <h4>Akses Langsung</h4>
           <ul class="footer-links">
-            <li><a href="hasil.html">Hasil Perhitungan Suara (Live Count)</a></li>
+            <li><a href="index.html#caketum">Profil Calon Ketua Umum</a></li>
             <li><a href="app.html#vote">Bilik Suara Pemilih</a></li>
             <li><a href="app.html#dpt">Pemeriksaan DPT Online</a></li>
             <li><a href="app.html#claim">Klaim Token Surat Suara</a></li>
@@ -1256,15 +1310,54 @@
       }).join('');
     }
 
+    // Locked Date: 04 November 2026 pukul 16.00 WIB
+    const PLENO_UNLOCK_TIME = new Date("2026-11-04T16:00:00+07:00").getTime();
+
+    function checkPlenoUnlock() {
+      const now = new Date().getTime();
+      const diff = PLENO_UNLOCK_TIME - now;
+      const lockedCard = document.getElementById('results-locked-card');
+      const activeArea = document.getElementById('live-results-active-area');
+
+      if (diff > 0) {
+        if (lockedCard) lockedCard.style.display = 'block';
+        if (activeArea) activeArea.style.display = 'none';
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const dEl = document.getElementById('locked-cd-days');
+        const hEl = document.getElementById('locked-cd-hours');
+        const mEl = document.getElementById('locked-cd-mins');
+        const sEl = document.getElementById('locked-cd-secs');
+
+        if (dEl) dEl.textContent = String(days).padStart(2, '0');
+        if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+        if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+        if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+        return false;
+      } else {
+        if (lockedCard) lockedCard.style.display = 'none';
+        if (activeArea) activeArea.style.display = 'block';
+        return true;
+      }
+    }
+
     // Auto-update on page load & listen for storage events across tabs
     document.addEventListener('DOMContentLoaded', () => {
-      loadLiveResults();
+      checkPlenoUnlock();
+      setInterval(checkPlenoUnlock, 1000);
 
-      // Live auto refresh every 3 seconds to sync when votes happen in other tabs
-      setInterval(loadLiveResults, 3000);
+      if (checkPlenoUnlock()) {
+        loadLiveResults();
+        // Live auto refresh every 3 seconds to sync when votes happen in other tabs
+        setInterval(loadLiveResults, 3000);
+      }
 
       window.addEventListener('storage', (e) => {
-        if (e.key && e.key.includes('pemilu_iagi')) {
+        if (e.key && e.key.includes('pemilu_iagi') && checkPlenoUnlock()) {
           loadLiveResults();
         }
       });
