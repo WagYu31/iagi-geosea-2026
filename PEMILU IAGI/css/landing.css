@@ -668,6 +668,98 @@ body {
 }
 
 /* ==========================================================================
+   AFFILIATED ORGANIZATIONS & PENGDA LOGO CAPSULE
+   ========================================================================== */
+.affiliates-capsule-wrap {
+  margin: 32px auto 28px auto;
+  max-width: 980px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.affiliates-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #E2E8F0;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.affiliates-pill-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 10px 22px;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.affiliates-pill-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.affiliate-badge-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.8);
+  padding: 3px;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.affiliate-badge-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.affiliate-badge-circle:hover {
+  transform: translateY(-5px) scale(1.14);
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.5), 0 0 0 2px #38BDF8;
+}
+
+@media (max-width: 768px) {
+  .affiliates-pill-bar {
+    justify-content: flex-start;
+    padding: 8px 16px;
+    gap: 10px;
+    border-radius: 24px;
+  }
+  .affiliate-badge-circle {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ==========================================================================
    HERO CAKETUM SPOTLIGHT INTRO (INSIDE VIDEO ZONE)
    ========================================================================== */
 .hero-caketum-intro {
