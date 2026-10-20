@@ -242,32 +242,69 @@
 
       <!-- ================= SCREEN 2: CEK DPT ONLINE ================= -->
       <section id="screen-dpt" class="screen">
-        <div class="card">
+        <div class="card card-gold">
           <div class="card-header-flex">
-            <div class="card-icon-frame">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <div class="card-icon-frame" style="background: rgba(245, 186, 66, 0.15); border-color: rgba(245, 186, 66, 0.35);">
+              <svg viewBox="0 0 24 24" style="stroke: var(--gold-primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             </div>
             <div>
-              <div class="card-title">Cek DPT Online Mandiri</div>
-              <div style="font-size: 0.74rem; color: #94A3B8;">Verifikasi status hak suara Anda di basis data DPT KPKU</div>
+              <div class="card-title">Daftar Pemilih Tetap (DPT)</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Pengumuman & Publikasi Dokumen Resmi Pemilu IAGI 2026</div>
             </div>
           </div>
 
-          <div class="form-group" style="margin-top: 14px;">
-            <label class="form-label">
-              <span>Cari Berdasarkan Nama / NPA</span>
-              <span id="dpt-total-count" class="helper">Memuat DPT...</span>
-            </label>
-            <input type="text" id="dpt-search-input" class="form-input" placeholder="Ketik Nama atau NPA (contoh: IAGI-1998...)">
+          <!-- DPT Release Schedule Banner -->
+          <div style="margin-top: 16px; background: rgba(15, 23, 42, 0.65); border: 1.5px solid rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); padding: 16px; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px;">
+              <span style="font-size: 0.72rem; font-weight: 800; background: rgba(245, 186, 66, 0.2); color: #FDE68A; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.04em;">
+                📅 JADWAL RILIS RESMI
+              </span>
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #94A3B8; font-weight: 700;">
+                25 OKTOBER 2026
+              </span>
+            </div>
+
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: #FFFFFF; line-height: 1.4; margin-bottom: 8px;">
+              File Daftar DPT Akan Dibagikan sebagai Tabel PDF pada 25 Oktober 2026
+            </h4>
+            <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.55; margin-bottom: 14px;">
+              Sesuai tahapan pelaksanaan Pemilu Ketua Umum IAGI 2026–2029, file resmi <strong>Daftar Pemilih Tetap (DPT)</strong> dalam format <strong>PDF Tabel</strong> saat ini sedang dalam proses finalisasi & verifikasi keanggotaan oleh Panitia KPKU IAGI, dan baru akan dipublikasikan/dapat diakses secara resmi pada hari <strong>Minggu, 25 Oktober 2026</strong>.
+            </p>
+
+            <!-- PDF Download Action Box (Scheduled) -->
+            <div style="background: rgba(2, 6, 23, 0.7); border: 1px dashed rgba(245, 186, 66, 0.35); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                  📄
+                </div>
+                <div>
+                  <div style="font-size: 0.82rem; font-weight: 800; color: #F1F5F9;">Daftar_Pemilih_Tetap_IAGI_2026.pdf</div>
+                  <div style="font-size: 0.7rem; color: #94A3B8;">Tabel Resmi Anggota Berhak Pilih • KPKU IAGI</div>
+                </div>
+              </div>
+              <div style="font-size: 0.74rem; font-weight: 800; color: #F5BA42; background: rgba(245, 186, 66, 0.12); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(245, 186, 66, 0.25);">
+                ⏳ Rilis 25 Okt 2026
+              </div>
+            </div>
           </div>
 
-          <div class="alert alert-info" style="font-size: 0.76rem; margin-top: 10px;">
-            <span>ℹ️</span>
-            <span>Data merujuk pada Daftar Pemilih Tetap (DPT) resmi yang disahkan oleh KPKU IAGI per 25 September 2026.</span>
-          </div>
+          <!-- Quick NPA Check Form (Simulasi Pra-Rilis) -->
+          <div style="margin-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16px;">
+            <div class="form-group">
+              <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Simulasi Pencarian Mandiri (Nama / NPA)</span>
+                <span id="dpt-total-count" class="helper">Sinkronisasi 25 Okt 2026</span>
+              </label>
+              <input type="text" id="dpt-search-input" class="form-input" placeholder="Ketik Nama atau NPA (Contoh : 12XXX)">
+            </div>
+            
+            <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 6px; line-height: 1.4;">
+              *Untuk verifikasi hak suara atau status keaktifan anggota sebelum 25 Oktober 2026, silakan hubungi Helpdesk KPKU via WhatsApp: <strong style="color:var(--gold-text);">+62 811-158-1461</strong>.
+            </div>
 
-          <!-- DPT Search Results List Container -->
-          <div id="dpt-results-container"></div>
+            <!-- DPT Search Results List Container -->
+            <div id="dpt-results-container" style="margin-top: 12px;"></div>
+          </div>
         </div>
       </section>
 
@@ -289,7 +326,7 @@
           <form id="form-claim" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
-              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="Contoh: IAGI-1998-0412" required>
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="Contoh : 12XXX" required>
             </div>
 
             <div class="form-group">
@@ -338,7 +375,7 @@
           <form id="form-vote-auth" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA)</label>
-              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="Contoh: IAGI-1998-0412" required>
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="Contoh : 12XXX" required>
             </div>
 
             <div class="form-group">
@@ -352,8 +389,11 @@
             </button>
           </form>
 
-          <div style="margin-top: 14px; text-align: center; font-size: 0.78rem;">
-            <a href="#claim" data-nav="claim" style="color: var(--gold-text); text-decoration: none; font-weight: 700;">Belum punya kode unik? Klaim di sini ➜</a>
+          <div style="margin-top: 18px; text-align: center;">
+            <a href="#claim" data-nav="claim" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #F5BA42; background: rgba(245, 186, 66, 0.1); border: 1.5px solid rgba(245, 186, 66, 0.35); padding: 11px 22px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 0.98rem; letter-spacing: 0.01em; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: all 0.2s ease;">
+              <span>Belum punya kode unik? Klaim di sini</span>
+              <span style="font-size: 1.15rem; transform: translateX(2px);">➜</span>
+            </a>
           </div>
 
           <!-- Demo Quick-Fill Helper Box for Easy Testing -->

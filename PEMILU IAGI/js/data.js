@@ -8,7 +8,7 @@ const ELECTION_CONFIG = {
   shortTitle: "Pemilu IAGI 2026",
   organization: "Ikatan Ahli Geologi Indonesia (IAGI)",
   committee: "Komisi Pemilihan Ketua Umum (KPKU) 2026",
-  dptReleaseDate: "25 September 2026",
+  dptReleaseDate: "25 Oktober 2026",
   reactivationDeadline: "24 September 2026",
   votingEndDate: "2026-10-25T18:00:00+07:00", // Target countdown timer
   helpdesk: {
