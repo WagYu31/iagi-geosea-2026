@@ -23,9 +23,11 @@
   <link rel="stylesheet" href="css/landing.css?v=3.2.0">
 
   <style id="affiliates-capsule-style">
-    /* Robust inline guard: pastikan selalu horizontal flex pill */
+    /* ==========================================================================
+       AFFILIATES CAPSULE - DESKTOP 1 ROW & MOBILE 5x2 SYMMETRICAL GRID
+       ========================================================================== */
     .affiliates-capsule-wrap {
-      margin: 26px auto 24px auto !important;
+      margin: 24px auto 22px auto !important;
       max-width: 980px !important;
       text-align: center !important;
       position: relative !important;
@@ -35,6 +37,7 @@
     .affiliates-label {
       display: inline-flex !important;
       align-items: center !important;
+      justify-content: center !important;
       gap: 8px !important;
       font-size: 0.72rem !important;
       font-weight: 800 !important;
@@ -51,14 +54,19 @@
       border: 1px solid rgba(255, 255, 255, 0.22) !important;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35) !important;
     }
+    .affiliates-label svg {
+      flex-shrink: 0 !important;
+    }
+
+    /* DESKTOP & TABLET: 1 horizontal capsule */
     .affiliates-pill-bar {
       display: flex !important;
       flex-direction: row !important;
-      flex-wrap: wrap !important;
+      flex-wrap: nowrap !important;
       align-items: center !important;
       justify-content: center !important;
       gap: 12px !important;
-      background: rgba(15, 23, 42, 0.78) !important;
+      background: rgba(15, 23, 42, 0.8) !important;
       backdrop-filter: blur(20px) !important;
       -webkit-backdrop-filter: blur(20px) !important;
       border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
@@ -67,9 +75,7 @@
       box-shadow: 0 18px 40px -4px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45) !important;
       max-width: 860px !important;
       margin: 0 auto !important;
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-      scrollbar-width: none !important;
+      box-sizing: border-box !important;
     }
     .affiliates-pill-bar::-webkit-scrollbar {
       display: none !important;
@@ -92,6 +98,7 @@
       flex-shrink: 0 !important;
       cursor: pointer !important;
       position: relative !important;
+      box-sizing: border-box !important;
     }
     .affiliate-badge-circle img {
       width: 100% !important;
@@ -107,17 +114,59 @@
       box-shadow: 0 12px 28px rgba(56, 189, 248, 0.65), 0 0 0 2.5px #38BDF8 !important;
       z-index: 10 !important;
     }
+
+    /* SMART MOBILE RESPONSIVE: 5 x 2 BALANCED SYMMETRICAL GRID */
     @media (max-width: 768px) {
+      .affiliates-capsule-wrap {
+        margin: 16px auto 14px auto !important;
+        padding: 0 12px !important;
+      }
+      .affiliates-label {
+        font-size: 0.64rem !important;
+        padding: 5px 12px !important;
+        letter-spacing: 0.04em !important;
+        max-width: 320px !important;
+        line-height: 1.35 !important;
+        margin-bottom: 10px !important;
+        white-space: normal !important;
+      }
       .affiliates-pill-bar {
-        border-radius: 28px !important;
-        padding: 10px 16px !important;
-        gap: 8px !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        justify-items: center !important;
+        align-items: center !important;
+        gap: 10px 8px !important;
+        padding: 12px 14px !important;
+        border-radius: 22px !important;
+        max-width: 310px !important;
+        width: 100% !important;
+        box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.65) !important;
       }
       .affiliate-badge-circle {
-        width: 42px !important;
-        height: 42px !important;
-        min-width: 42px !important;
-        min-height: 42px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        max-width: 44px !important;
+        max-height: 44px !important;
+        padding: 2.5px !important;
+      }
+    }
+
+    /* VERY SMALL SCREENS (e.g. Galaxy Fold 280px / 320px) */
+    @media (max-width: 360px) {
+      .affiliates-pill-bar {
+        max-width: 280px !important;
+        padding: 10px 8px !important;
+        gap: 8px 5px !important;
+      }
+      .affiliate-badge-circle {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        max-width: 38px !important;
+        max-height: 38px !important;
       }
     }
   </style>
@@ -247,41 +296,41 @@
       </div>
 
       <!-- ================= AFFILIATED ORGANIZATIONS & PENGDA LOGO CAPSULE ================= -->
-      <div class="affiliates-capsule-wrap" style="margin:26px auto 24px auto; max-width:980px; text-align:center; position:relative; z-index:20; padding:0 16px;">
-        <div class="affiliates-label" style="display:inline-flex; align-items:center; gap:8px; font-size:0.72rem; font-weight:800; letter-spacing:0.08em; color:#F8FAFC; text-transform:uppercase; margin-bottom:12px; background:rgba(15,23,42,0.75); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); padding:6px 18px; border-radius:999px; border:1px solid rgba(255,255,255,0.22); box-shadow:0 4px 15px rgba(0,0,0,0.35);">
+      <div class="affiliates-capsule-wrap">
+        <div class="affiliates-label">
           <svg style="width:12px; height:12px; color:#F59E0B;" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           <span>Didukung Oleh Badan Khusus · Pengurus Daerah · Seksi Mahasiswa IAGI</span>
         </div>
-        <div class="affiliates-pill-bar" style="display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; background:rgba(15,23,42,0.78); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1.5px solid rgba(255,255,255,0.28); border-radius:999px; padding:10px 24px; box-shadow:0 18px 40px -4px rgba(0,0,0,0.65); max-width:860px; margin:0 auto;" aria-label="Afiliasi dan Badan Khusus IAGI">
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="FOSI - Forum Sedimentologi Indonesia">
-            <img src="assets/affiliates/01-fosi-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="FOSI (Forum Sedimentologi Indonesia)">
+        <div class="affiliates-pill-bar" aria-label="Afiliasi dan Badan Khusus IAGI">
+          <div class="affiliate-badge-circle" title="FOSI - Forum Sedimentologi Indonesia">
+            <img src="assets/affiliates/01-fosi-badge.png" alt="FOSI (Forum Sedimentologi Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="MAGI / IGS - Masyarakat Geowisata Indonesia">
-            <img src="assets/affiliates/02-magi-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="MAGI (Masyarakat Geowisata Indonesia)">
+          <div class="affiliate-badge-circle" title="MAGI / IGS - Masyarakat Geowisata Indonesia">
+            <img src="assets/affiliates/02-magi-badge.png" alt="MAGI (Masyarakat Geowisata Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="MGEI - Masyarakat Geologi Ekonomi Indonesia">
-            <img src="assets/affiliates/03-mgei-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="MGEI (Masyarakat Geologi Ekonomi Indonesia)">
+          <div class="affiliate-badge-circle" title="MGEI - Masyarakat Geologi Ekonomi Indonesia">
+            <img src="assets/affiliates/03-mgei-badge.png" alt="MGEI (Masyarakat Geologi Ekonomi Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="FGMI - Forum Geosaintis Muda Indonesia">
-            <img src="assets/affiliates/04-fgmi-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="FGMI (Forum Geosaintis Muda Indonesia)">
+          <div class="affiliate-badge-circle" title="FGMI - Forum Geosaintis Muda Indonesia">
+            <img src="assets/affiliates/04-fgmi-badge.png" alt="FGMI (Forum Geosaintis Muda Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="ISPG - Indonesian Society of Petroleum Geologists">
-            <img src="assets/affiliates/05-ispg-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="ISPG (Indonesian Society of Petroleum Geologists)">
+          <div class="affiliate-badge-circle" title="ISPG - Indonesian Society of Petroleum Geologists">
+            <img src="assets/affiliates/05-ispg-badge.png" alt="ISPG (Indonesian Society of Petroleum Geologists)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="MGTI - Masyarakat Geologi Teknik Indonesia">
-            <img src="assets/affiliates/06-mgti-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="MGTI (Masyarakat Geologi Teknik Indonesia)">
+          <div class="affiliate-badge-circle" title="MGTI - Masyarakat Geologi Teknik Indonesia">
+            <img src="assets/affiliates/06-mgti-badge.png" alt="MGTI (Masyarakat Geologi Teknik Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="MAGETI - Masyarakat Geologi Tata Lingkungan Indonesia">
-            <img src="assets/affiliates/07-mageti-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="MAGETI (Masyarakat Geologi Tata Lingkungan Indonesia)">
+          <div class="affiliate-badge-circle" title="MAGETI - Masyarakat Geologi Tata Lingkungan Indonesia">
+            <img src="assets/affiliates/07-mageti-badge.png" alt="MAGETI (Masyarakat Geologi Tata Lingkungan Indonesia)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="Pengurus Daerah dan Komisariat IAGI">
-            <img src="assets/affiliates/08-pengda-komisariat-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="Pengurus Daerah dan Komisariat IAGI">
+          <div class="affiliate-badge-circle" title="Pengurus Daerah dan Komisariat IAGI">
+            <img src="assets/affiliates/08-pengda-komisariat-badge.png" alt="Pengurus Daerah dan Komisariat IAGI">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="SM-IAGI - Seksi Mahasiswa IAGI">
-            <img src="assets/affiliates/09-sm-iagi-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="SM-IAGI (Seksi Mahasiswa IAGI)">
+          <div class="affiliate-badge-circle" title="SM-IAGI - Seksi Mahasiswa IAGI">
+            <img src="assets/affiliates/09-sm-iagi-badge.png" alt="SM-IAGI (Seksi Mahasiswa IAGI)">
           </div>
-          <div class="affiliate-badge-circle" style="width:48px; height:48px; min-width:48px; min-height:48px; max-width:48px; max-height:48px; border-radius:50%; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 4px 12px rgba(0,0,0,0.35),0 0 0 1px rgba(255,255,255,0.9); flex-shrink:0; cursor:pointer;" title="MGEI-SC - MGEI Student Chapter">
-            <img src="assets/affiliates/10-mgei-sc-badge.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="MGEI Student Chapter">
+          <div class="affiliate-badge-circle" title="MGEI-SC - MGEI Student Chapter">
+            <img src="assets/affiliates/10-mgei-sc-badge.png" alt="MGEI Student Chapter">
           </div>
         </div>
       </div>
