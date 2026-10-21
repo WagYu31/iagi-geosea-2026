@@ -610,6 +610,14 @@
       animation: dptHighlightGlow 1.8s ease-out;
     }
 
+    .section-view-fade {
+      animation: sectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes sectionFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .stat-card-executive::after {
       content: '';
       position: absolute;
@@ -1355,7 +1363,7 @@
           <div class="sidebar-group-title">Monitoring Utama</div>
           <ul class="sidebar-nav-list">
             <li>
-              <a href="#section-metrics" class="sidebar-nav-link active" onclick="highlightSidebar(this)">
+              <a href="#section-metrics" class="sidebar-nav-link active" onclick="switchAdminSection('section-metrics', event)">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                   <span>Ringkasan Pleno</span>
@@ -1364,7 +1372,7 @@
               </a>
             </li>
             <li>
-              <a href="#section-pleno" class="sidebar-nav-link" onclick="highlightSidebar(this)">
+              <a href="#section-pleno" class="sidebar-nav-link" onclick="switchAdminSection('section-pleno', event)">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                   <span>Sidang Suara Masuk</span>
@@ -1372,7 +1380,7 @@
               </a>
             </li>
             <li>
-              <a href="#section-audit-trail" class="sidebar-nav-link" onclick="highlightSidebar(this)">
+              <a href="#section-audit-trail" class="sidebar-nav-link" onclick="switchAdminSection('section-audit-trail', event)">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
                   <span>Live Audit Trail</span>
@@ -1381,7 +1389,7 @@
               </a>
             </li>
             <li>
-              <a href="#section-dpt-table" class="sidebar-nav-link" onclick="scrollToDptSection(event)">
+              <a href="#section-dpt-table" class="sidebar-nav-link" onclick="switchAdminSection('section-dpt-table', event)">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                   <span>Daftar Pemilih (DPT)</span>
@@ -1513,7 +1521,7 @@
 
     <!-- Key Metrics Ribbon -->
     <section id="section-metrics" class="admin-stats-grid">
-      <div class="stat-card-executive clickable-card" onclick="scrollToDptSection(event)" onkeydown="if(event.key==='Enter'||event.key===' ')scrollToDptSection(event)" role="button" tabindex="0" title="Klik untuk langsung membuka tabel Daftar Pemilih Tetap (DPT)">
+      <div class="stat-card-executive clickable-card" onclick="switchAdminSection('section-dpt-table', event)" onkeydown="if(event.key==='Enter'||event.key===' ')switchAdminSection('section-dpt-table', event)" role="button" tabindex="0" title="Klik untuk membuka modul Daftar Pemilih Tetap (DPT)">
         <div class="stat-card-label">
           <span>Daftar Pemilih Tetap (DPT)</span>
           <div style="display: flex; align-items: center; gap: 6px;">
@@ -1522,7 +1530,7 @@
           </div>
         </div>
         <div id="stat-total-dpt" class="stat-card-value">0</div>
-        <div class="stat-card-sub">Anggota teregistrasi resmi KPKU • <span style="color: var(--admin-gold); text-decoration: underline;">Lihat Data</span></div>
+        <div class="stat-card-sub">Anggota teregistrasi resmi KPKU • <span style="color: var(--admin-gold); text-decoration: underline;">Buka Modul DPT</span></div>
       </div>
 
       <div class="stat-card-executive">
@@ -1554,7 +1562,7 @@
     </section>
 
     <!-- Main Section: Pleno Chamber vs Cryptographic Audit Stream -->
-    <section class="admin-main-split">
+    <section id="section-main-split" class="admin-main-split">
       
       <!-- Left: Pleno Live Count Chamber -->
       <div id="section-pleno" class="panel-card">
@@ -1621,11 +1629,16 @@
     </section>
 
     <!-- Bottom Section: DPT Management & Voter Verification -->
-    <section id="section-dpt-table" class="panel-card">
+    <section id="section-dpt-table" class="panel-card" style="display: none;">
       <div class="panel-header" style="flex-wrap: wrap; gap: 14px;">
-        <div class="panel-title">
-          <svg style="width: 20px; height: 20px; stroke: #A78BFA; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span>Daftar Pemilih Tetap (DPT) & Status Hak Suara</span>
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <div class="panel-title">
+            <svg style="width: 20px; height: 20px; stroke: #A78BFA; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Daftar Pemilih Tetap (DPT) & Status Hak Suara</span>
+          </div>
+          <button class="btn btn-subtle" onclick="switchAdminSection('section-metrics', event)" style="font-size: 0.74rem; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-sm); cursor: pointer;" title="Kembali ke layar ringkasan pleno">
+            <span>← Kembali ke Ringkasan Pleno</span>
+          </button>
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -1642,6 +1655,19 @@
             📥 Export CSV
           </button>
         </div>
+      </div>
+
+      <!-- Quick DPT Mini Stats Bar (Embedded within DPT View) -->
+      <div id="dpt-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
+        <div style="color: #94A3B8;">Total DPT: <strong id="dpt-mini-total" style="color: #F8FAFC; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
+        <span style="color: rgba(255,255,255,0.15);">|</span>
+        <div style="color: #94A3B8;">Sudah Memilih: <strong id="dpt-mini-voted" style="color: #34D399; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
+        <span style="color: rgba(255,255,255,0.15);">|</span>
+        <div style="color: #94A3B8;">Klaim Token (Belum Vote): <strong id="dpt-mini-claimed" style="color: #FBBF24; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
+        <span style="color: rgba(255,255,255,0.15);">|</span>
+        <div style="color: #94A3B8;">Belum Klaim: <strong id="dpt-mini-unclaimed" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
+        <span style="color: rgba(255,255,255,0.15);">|</span>
+        <div style="color: #94A3B8;">Partisipasi: <strong id="dpt-mini-turnout" style="color: var(--gold-secondary); font-family: var(--font-mono); font-size: 0.95rem;">0.0%</strong></div>
       </div>
 
       <div class="table-container">
@@ -1875,36 +1901,166 @@
         }
       };
 
-      window.highlightSidebar = function(el) {
-        document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
-        if (el) el.classList.add('active');
-        if (window.innerWidth <= 1080) {
+      window.switchAdminSection = function(sectionId, e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        // Normalize sectionId
+        if (sectionId && sectionId.startsWith('#')) {
+          sectionId = sectionId.substring(1);
+        }
+
+        const metricsSection = document.getElementById('section-metrics');
+        const mainSplitSection = document.getElementById('section-main-split') || document.querySelector('.admin-main-split');
+        const plenoSection = document.getElementById('section-pleno');
+        const auditSection = document.getElementById('section-audit-trail');
+        const dptSection = document.getElementById('section-dpt-table');
+        const topbarTitle = document.querySelector('.topbar-title span:first-child');
+        const topbarSubtitle = document.querySelector('.topbar-left p');
+
+        // Update active class on sidebar links
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+          link.classList.remove('active');
+          const href = link.getAttribute('href');
+          if (href === '#' + sectionId) {
+            link.classList.add('active');
+          }
+        });
+
+        if (sectionId === 'section-dpt-table') {
+          // ═════════════════════════════════════════════════════════════
+          // ONLY DAFTAR PEMILIH TETAP (DPT) & STATUS HAK SUARA
+          // "yang lain-lainnya enggak"
+          // ═════════════════════════════════════════════════════════════
+          if (metricsSection) metricsSection.style.display = 'none';
+          if (mainSplitSection) mainSplitSection.style.display = 'none';
+          if (dptSection) {
+            dptSection.style.display = 'block';
+            dptSection.classList.remove('highlight-pulse');
+            dptSection.classList.remove('section-view-fade');
+            void dptSection.offsetWidth;
+            dptSection.classList.add('section-view-fade');
+          }
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Daftar Pemilih Tetap (DPT) & Status Hak Suara';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Data Pemilih Terverifikasi KPKU • Status Hak Suara & Audit Token Kriptografi';
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-dpt-table');
+          } else {
+            window.location.hash = 'section-dpt-table';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          const searchInput = document.getElementById('desktop-dpt-search');
+          if (searchInput) {
+            setTimeout(() => searchInput.focus(), 250);
+          }
+        } else if (sectionId === 'section-pleno') {
+          // Sidang Suara Masuk only
+          if (metricsSection) metricsSection.style.display = 'grid';
+          if (mainSplitSection) {
+            mainSplitSection.style.display = 'grid';
+            mainSplitSection.style.gridTemplateColumns = '1fr';
+            mainSplitSection.classList.remove('section-view-fade');
+            void mainSplitSection.offsetWidth;
+            mainSplitSection.classList.add('section-view-fade');
+          }
+          if (plenoSection) plenoSection.style.display = 'block';
+          if (auditSection) auditSection.style.display = 'none';
+          if (dptSection) dptSection.style.display = 'none';
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Brankas Elektronik Bersegel Kriptografi & Live Quick Count Perolehan Suara';
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-pleno');
+          } else {
+            window.location.hash = 'section-pleno';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (sectionId === 'section-audit-trail') {
+          // Live Audit Trail only
+          if (metricsSection) metricsSection.style.display = 'grid';
+          if (mainSplitSection) {
+            mainSplitSection.style.display = 'grid';
+            mainSplitSection.style.gridTemplateColumns = '1fr';
+            mainSplitSection.classList.remove('section-view-fade');
+            void mainSplitSection.offsetWidth;
+            mainSplitSection.classList.add('section-view-fade');
+          }
+          if (plenoSection) plenoSection.style.display = 'none';
+          if (auditSection) auditSection.style.display = 'flex';
+          if (dptSection) dptSection.style.display = 'none';
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Catatan Transaksi Kriptografi Immutable & Verifikasi LUBER Zero-Knowledge';
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-audit-trail');
+          } else {
+            window.location.hash = 'section-audit-trail';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Ringkasan Pleno (Default overview)
+          if (metricsSection) {
+            metricsSection.style.display = 'grid';
+            metricsSection.classList.remove('section-view-fade');
+            void metricsSection.offsetWidth;
+            metricsSection.classList.add('section-view-fade');
+          }
+          if (mainSplitSection) {
+            mainSplitSection.style.display = 'grid';
+            mainSplitSection.style.gridTemplateColumns = '';
+          }
+          if (plenoSection) plenoSection.style.display = 'block';
+          if (auditSection) auditSection.style.display = 'flex';
+          if (dptSection) dptSection.style.display = 'none';
+
+          const defaultLink = document.querySelector('a[href="#section-metrics"]');
+          if (defaultLink) defaultLink.classList.add('active');
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Sidang Pleno: Quick Count & Command Center';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia Periode 2026–2029';
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-metrics');
+          } else {
+            window.location.hash = 'section-metrics';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        if (window.innerWidth <= 1080 && typeof window.toggleAdminSidebar === 'function') {
           window.toggleAdminSidebar(false);
         }
       };
 
       window.scrollToDptSection = function(e) {
-        if (e && e.preventDefault) e.preventDefault();
-        const section = document.getElementById('section-dpt-table');
-        if (section) {
-          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          section.classList.remove('highlight-pulse');
-          void section.offsetWidth; // trigger reflow
-          section.classList.add('highlight-pulse');
+        window.switchAdminSection('section-dpt-table', e);
+      };
 
-          // Highlight corresponding sidebar link
-          const sidebarLink = document.querySelector('a[href="#section-dpt-table"]');
-          if (sidebarLink && typeof window.highlightSidebar === 'function') {
-            window.highlightSidebar(sidebarLink);
-          }
-
-          // Focus on search input for quick lookup
-          const searchInput = document.getElementById('desktop-dpt-search');
-          if (searchInput) {
-            setTimeout(() => {
-              searchInput.focus();
-            }, 450);
-          }
+      window.highlightSidebar = function(el) {
+        if (!el) return;
+        const href = el.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          window.switchAdminSection(href.substring(1));
         }
       };
 
@@ -1925,6 +2081,23 @@
           hideAlert();
         });
       }
+
+      // Initialize view based on URL hash or default
+      function initSectionFromHash() {
+        const hash = window.location.hash || '';
+        if (hash.includes('section-dpt-table')) {
+          window.switchAdminSection('section-dpt-table');
+        } else if (hash.includes('section-pleno')) {
+          window.switchAdminSection('section-pleno');
+        } else if (hash.includes('section-audit-trail')) {
+          window.switchAdminSection('section-audit-trail');
+        } else {
+          window.switchAdminSection('section-metrics');
+        }
+      }
+
+      initSectionFromHash();
+      window.addEventListener('hashchange', initSectionFromHash);
 
       // Auto-unlock check if session active or demo hash
       const activeSession = window.pemiluStorage.getAdminSession();
@@ -1976,7 +2149,24 @@
         // 3. Audit Logs
         renderAuditLogs();
 
-        // 4. DPT Table
+        // 4. Update DPT mini stats bar
+        const dptList = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const votedCount = dptList.filter(v => v.voted).length;
+        const claimedNotVoted = dptList.filter(v => v.claimed && !v.voted).length;
+        const unclaimedCount = dptList.filter(v => !v.claimed).length;
+
+        const elMiniTotal = document.getElementById('dpt-mini-total');
+        if (elMiniTotal) elMiniTotal.innerText = results.totalDPT;
+        const elMiniVoted = document.getElementById('dpt-mini-voted');
+        if (elMiniVoted) elMiniVoted.innerText = votedCount;
+        const elMiniClaimed = document.getElementById('dpt-mini-claimed');
+        if (elMiniClaimed) elMiniClaimed.innerText = claimedNotVoted;
+        const elMiniUnclaimed = document.getElementById('dpt-mini-unclaimed');
+        if (elMiniUnclaimed) elMiniUnclaimed.innerText = unclaimedCount;
+        const elMiniTurnout = document.getElementById('dpt-mini-turnout');
+        if (elMiniTurnout) elMiniTurnout.innerText = `${results.turnoutPercentage}%`;
+
+        // 5. DPT Table
         renderDptTable();
       }
 
