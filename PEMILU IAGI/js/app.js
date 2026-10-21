@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${c.photo}" alt="${c.name}" class="candidate-avatar">
           <div class="candidate-info">
             <h4 class="candidate-name">${c.name}</h4>
-            <div class="candidate-title">${c.title}</div>
+            <div class="candidate-title">NPA: ${c.npa || ''}</div>
             <div class="candidate-tagline">"${c.tagline}"</div>
           </div>
         </div>
@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div>
           <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight:800; color:${c.accentColor};">${c.badge}</div>
           <h3 style="font-size: 0.95rem; font-weight:800; color:var(--text-pure);">${c.name}</h3>
-          <div style="font-size: 0.74rem; color:var(--text-muted);">${c.title}</div>
+          <div style="font-size: 0.74rem; color:var(--text-muted);">NPA: ${c.npa || ''}</div>
         </div>
       </div>
 

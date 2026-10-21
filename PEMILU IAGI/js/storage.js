@@ -5,10 +5,10 @@
  */
 
 const STORAGE_KEYS = {
-  DPT: 'pemilu_iagi_dpt_v1',
-  BALLOTS: 'pemilu_iagi_ballots_v1',
-  AUDIT: 'pemilu_iagi_audit_logs_v1',
-  SETTINGS: 'pemilu_iagi_settings_v1'
+  DPT: 'pemilu_iagi_dpt_v2',
+  BALLOTS: 'pemilu_iagi_ballots_v2',
+  AUDIT: 'pemilu_iagi_audit_logs_v2',
+  SETTINGS: 'pemilu_iagi_settings_v2'
 };
 
 // Simple pseudo SHA-256 string hash for client-side cryptographic receipt
@@ -51,31 +51,43 @@ class PemiluStorage {
   }
 
   init() {
+    // Hapus data mock/dummy v1 dari sesi sebelumnya agar benar-benar kosong
+    try {
+      localStorage.removeItem('pemilu_iagi_dpt_v1');
+      localStorage.removeItem('pemilu_iagi_ballots_v1');
+      localStorage.removeItem('pemilu_iagi_audit_logs_v1');
+      localStorage.removeItem('pemilu_iagi_settings_v1');
+    } catch (e) {}
+
     const defaultDpt = (typeof window !== 'undefined' && window.INITIAL_DPT) ? window.INITIAL_DPT : (typeof INITIAL_DPT !== 'undefined' ? INITIAL_DPT : []);
+    
+    // Pastikan seluruh DPT berada dalam status bersih (belum klaim & belum vote)
+    const cleanDpt = defaultDpt.map(v => ({
+      ...v,
+      claimed: false,
+      token: null,
+      voted: false,
+      voted_at: null,
+      receipt_hash: null
+    }));
+
     if (!localStorage.getItem(STORAGE_KEYS.DPT) || JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT) || '[]').length === 0) {
-      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(defaultDpt));
+      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(cleanDpt));
     }
+
+    // Kotak suara murni KOSONG (0 suara) untuk persiapan audit & pengecekan
     if (!localStorage.getItem(STORAGE_KEYS.BALLOTS)) {
-      // Seed a few anonymous baseline ballots for realistic Pleno preview (e.g. 14 votes)
-      const seedBallots = [
-        { id: 'b-01', candidate_id: 1, ballot_hash: '8f92c10a4e7d3b5a', timestamp: 1727251200000 },
-        { id: 'b-02', candidate_id: 2, ballot_hash: '3d8e5f2a1b9c7e4d', timestamp: 1727251800000 },
-        { id: 'b-03', candidate_id: 1, ballot_hash: 'a1b2c3d4e5f60718', timestamp: 1727252400000 },
-        { id: 'b-04', candidate_id: 3, ballot_hash: 'c4d5e6f7a8b90123', timestamp: 1727253000000 },
-        { id: 'b-05', candidate_id: 2, ballot_hash: 'e7f8a9b0c1d23456', timestamp: 1727253600000 },
-        { id: 'b-06', candidate_id: 1, ballot_hash: '9a8b7c6d5e4f3210', timestamp: 1727254200000 },
-        { id: 'b-07', candidate_id: 3, ballot_hash: '2b3c4d5e6f7a8b9c', timestamp: 1727254800000 },
-        { id: 'b-08', candidate_id: 2, ballot_hash: '5d6e7f8a9b0c1d2e', timestamp: 1727255400000 }
-      ];
-      localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(seedBallots));
+      localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
     }
+
     if (!localStorage.getItem(STORAGE_KEYS.AUDIT)) {
       const initialLogs = [
-        { id: 'log-01', action: 'SYSTEM_BOOT', details: 'Sistem Pemilu IAGI 2026 diinisialisasi KPKU', timestamp: new Date(Date.now() - 3600000 * 24).toISOString() },
-        { id: 'log-02', action: 'DPT_VALIDATED', details: 'DPT final 22 anggota terverifikasi disahkan', timestamp: new Date(Date.now() - 3600000 * 12).toISOString() }
+        { id: 'log-01', action: 'SYSTEM_BOOT', details: 'Sistem Pemilu IAGI 2026 diinisialisasi. Kotak suara kosong (0 suara terverifikasi).', timestamp: new Date().toISOString() },
+        { id: 'log-02', action: 'DPT_VERIFIED', details: 'DPT 22 pemilih aktif siap digunakan tanpa data perolehan suara sebelumnya.', timestamp: new Date().toISOString() }
       ];
       localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify(initialLogs));
     }
+
     if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
       const defaultSettings = {
         isSealed: true, // Sealed mode active by default
