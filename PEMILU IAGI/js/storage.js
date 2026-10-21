@@ -71,7 +71,8 @@ class PemiluStorage {
       receipt_hash: null
     }));
 
-    if (!localStorage.getItem(STORAGE_KEYS.DPT) || JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT) || '[]').length === 0) {
+    // Inisialisasi awal hanya jika data DPT belum pernah dibuat sama sekali (null)
+    if (localStorage.getItem(STORAGE_KEYS.DPT) === null) {
       localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(cleanDpt));
     }
 
@@ -102,9 +103,16 @@ class PemiluStorage {
   // --- DPT Management ---
   getDPT() {
     try {
-      let dpt = JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT));
-      if (!dpt || !Array.isArray(dpt) || dpt.length === 0) {
-        return (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
+      const raw = localStorage.getItem(STORAGE_KEYS.DPT);
+      if (raw === null) {
+        const initial = (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
+        this.saveDPT(initial);
+        return initial;
+      }
+
+      let dpt = JSON.parse(raw);
+      if (!Array.isArray(dpt)) {
+        return [];
       }
 
       // Auto-migrate legacy NPA formats (e.g. IAGI-2024-0001) to strictly 5-digit numbers
@@ -155,12 +163,27 @@ class PemiluStorage {
 
       return dpt;
     } catch (e) {
-      return (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
+      return [];
     }
   }
 
   saveDPT(dpt) {
     localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(dpt));
+  }
+
+  resetDPTToDefault() {
+    const defaultDpt = (typeof window !== 'undefined' && window.INITIAL_DPT) ? window.INITIAL_DPT : (typeof INITIAL_DPT !== 'undefined' ? INITIAL_DPT : []);
+    const cleanDpt = defaultDpt.map(v => ({
+      ...v,
+      claimed: false,
+      token: null,
+      voted: false,
+      voted_at: null,
+      receipt_hash: null
+    }));
+    this.saveDPT(cleanDpt);
+    this.addAuditLog('DPT_RESET', 'Data DPT direset kembali ke data default template 5-digit.');
+    return cleanDpt;
   }
 
   findVoter(query) {
@@ -235,9 +258,9 @@ class PemiluStorage {
   }
 
   deleteVoter(npa) {
-    const cleanNpa = (npa || '').trim().toUpperCase();
+    const cleanNpa = String(npa || '').trim().toUpperCase();
     const dpt = this.getDPT();
-    const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    const idx = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
     if (idx === -1) {
       return { success: false, error: `NPA ${cleanNpa} tidak ditemukan dalam DPT.` };
     }
@@ -253,13 +276,14 @@ class PemiluStorage {
     if (!Array.isArray(npas) || npas.length === 0) {
       return { success: false, error: 'Daftar NPA tidak valid.' };
     }
-    const cleanNpaSet = new Set(npas.map(n => (n || '').trim().toUpperCase()));
+    const cleanNpaSet = new Set(npas.map(n => String(n || '').trim().toUpperCase()));
     const dpt = this.getDPT();
 
     const remaining = [];
     const removed = [];
     for (const v of dpt) {
-      if (cleanNpaSet.has(v.npa.toUpperCase())) {
+      const vNpa = String(v.npa || '').trim().toUpperCase();
+      if (cleanNpaSet.has(vNpa)) {
         removed.push(v);
       } else {
         remaining.push(v);

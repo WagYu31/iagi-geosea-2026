@@ -3752,18 +3752,21 @@
         }
 
         const npas = Array.from(window.selectedDptNpas);
-        const dpt = window.pemiluStorage.getDPT();
-        const dptMap = new Map(dpt.map(v => [v.npa, v]));
+        const dptMap = new Map();
+        dpt.forEach(v => {
+          if (v && v.npa) dptMap.set(String(v.npa).trim().toUpperCase(), v);
+        });
 
         // Check voted vs unvoted
         const votedVoters = [];
         const unvotedNpas = [];
         npas.forEach(n => {
-          const v = dptMap.get(n);
+          const key = String(n || '').trim().toUpperCase();
+          const v = dptMap.get(key);
           if (v && v.voted) {
             votedVoters.push(v);
           } else {
-            unvotedNpas.push(n);
+            unvotedNpas.push(key);
           }
         });
 
@@ -3783,6 +3786,7 @@
         const res = window.pemiluStorage.deleteMultipleVoters(unvotedNpas);
         if (res.success) {
           window.selectedDptNpas.clear();
+          updateBulkSelectionUI();
           refreshAll();
           alert(`✓ Berhasil menghapus ${res.count} pemilih terpilih dari DPT.`);
         } else {
