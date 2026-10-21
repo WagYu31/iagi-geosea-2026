@@ -1107,8 +1107,15 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
 export default function Settings({ settings, submissionSettings, pricing: initialPricing }) {
     const theme = useTheme();
     const c = theme.palette.custom;
-    const isDark = theme.palette.mode === 'dark';
-    const [tabValue, setTabValue] = useState(0); // Start with Landing Page Settings
+    const [tabValue, setTabValue] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam === 'visitor' || tabParam === 'visitor_tickets' || tabParam === '6') return 6;
+            if (window.location.hash === '#visitor' || window.location.hash === '#visitor-tickets') return 6;
+        }
+        return 0;
+    });
     const [uploading, setUploading] = useState(false);
 
     // Shared premium styles
