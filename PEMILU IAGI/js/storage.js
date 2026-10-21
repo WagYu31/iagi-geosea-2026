@@ -130,6 +130,123 @@ class PemiluStorage {
     return dpt.find(v => v.npa.toUpperCase() === cleanNpa) || null;
   }
 
+  addVoter(voterData) {
+    const cleanNpa = (voterData.npa || '').trim().toUpperCase();
+    const cleanName = (voterData.name || '').trim();
+    const cleanEmail = (voterData.email || '').trim().toLowerCase();
+    const cleanPengda = (voterData.pengda || '').trim() || 'DKI Jakarta';
+    const cleanCategory = (voterData.category || '').trim() || 'Professional';
+
+    if (!cleanNpa) {
+      return { success: false, error: 'Nomor Pokok Anggota (NPA) wajib diisi!' };
+    }
+    if (!cleanName) {
+      return { success: false, error: 'Nama Lengkap wajib diisi!' };
+    }
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      return { success: false, error: 'Alamat Email aktif tidak valid!' };
+    }
+
+    const dpt = this.getDPT();
+    const exists = dpt.find(v => v.npa.toUpperCase() === cleanNpa);
+    if (exists) {
+      return { 
+        success: false, 
+        error: `NPA "${cleanNpa}" sudah terdaftar sebelumnya atas nama "${exists.name}". Gunakan NPA lain atau edit pemilih.` 
+      };
+    }
+
+    const newVoter = {
+      npa: cleanNpa,
+      name: cleanName,
+      email: cleanEmail,
+      pengda: cleanPengda,
+      category: cleanCategory,
+      status: 'AKTIF',
+      claimed: false,
+      token: null,
+      voted: false,
+      voted_at: null,
+      receipt_hash: null
+    };
+
+    dpt.unshift(newVoter);
+    this.saveDPT(dpt);
+    this.addAuditLog('DPT_ADDED', `Pemilih baru didaftarkan: NPA ${cleanNpa} (${cleanName}) Pengda ${cleanPengda}`);
+
+    return { success: true, voter: newVoter };
+  }
+
+  deleteVoter(npa) {
+    const cleanNpa = (npa || '').trim().toUpperCase();
+    const dpt = this.getDPT();
+    const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    if (idx === -1) {
+      return { success: false, error: `NPA ${cleanNpa} tidak ditemukan dalam DPT.` };
+    }
+
+    const removed = dpt.splice(idx, 1)[0];
+    this.saveDPT(dpt);
+    this.addAuditLog('DPT_REMOVED', `Pemilih dihapus dari DPT: NPA ${cleanNpa} (${removed.name})`);
+
+    return { success: true, removed };
+  }
+
+  importVoters(voterList) {
+    if (!Array.isArray(voterList) || voterList.length === 0) {
+      return { success: false, error: 'Daftar pemilih kosong atau format tidak sesuai.' };
+    }
+
+    const dpt = this.getDPT();
+    const existingNpas = new Set(dpt.map(v => v.npa.toUpperCase()));
+    let addedCount = 0;
+    let skippedCount = 0;
+
+    voterList.forEach(item => {
+      const cleanNpa = (item.npa || '').trim().toUpperCase();
+      const cleanName = (item.name || '').trim();
+      const cleanEmail = (item.email || '').trim().toLowerCase();
+      const cleanPengda = (item.pengda || '').trim() || 'DKI Jakarta';
+      const cleanCategory = (item.category || '').trim() || 'Professional';
+
+      if (!cleanNpa || !cleanName || !cleanEmail) {
+        skippedCount++;
+        return;
+      }
+
+      if (existingNpas.has(cleanNpa)) {
+        skippedCount++;
+        return;
+      }
+
+      existingNpas.add(cleanNpa);
+      dpt.unshift({
+        npa: cleanNpa,
+        name: cleanName,
+        email: cleanEmail,
+        pengda: cleanPengda,
+        category: cleanCategory,
+        status: 'AKTIF',
+        claimed: false,
+        token: null,
+        voted: false,
+        voted_at: null,
+        receipt_hash: null
+      });
+      addedCount++;
+    });
+
+    this.saveDPT(dpt);
+    this.addAuditLog('DPT_IMPORTED', `Import DPT Massal: ${addedCount} pemilih baru ditambahkan, ${skippedCount} dilewati (duplikat/tidak lengkap).`);
+
+    return { 
+      success: true, 
+      addedCount, 
+      skippedCount, 
+      total: dpt.length 
+    };
+  }
+
   // --- Claim Surat Suara Engine ---
   claimSuratSuara(npa, name, email) {
     const dpt = this.getDPT();

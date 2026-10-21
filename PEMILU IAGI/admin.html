@@ -1122,10 +1122,114 @@
       .login-visual-pane {
         display: none;
       }
+    }
 
-      .login-form-pane {
-        padding: 36px 28px;
-      }
+    /* Modal Dialog System for Admin Actions (Tambah Pemilih & Import DPT) */
+    .admin-modal-backdrop {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(2, 6, 23, 0.88) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      z-index: 100000 !important;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .admin-modal-dialog {
+      background: #081611;
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(16, 185, 129, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: modalSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .admin-modal-header {
+      padding: 18px 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-modal-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-modal-close {
+      background: none;
+      border: none;
+      color: #94A3B8;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .admin-modal-close:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-modal-body {
+      padding: 22px 24px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .admin-modal-footer {
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-action-delete {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-delete:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #EF4444;
+      color: #FFFFFF;
     }
   </style>
 </head>
@@ -1642,16 +1746,27 @@
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <input type="text" id="desktop-dpt-search" class="form-input" placeholder="🔍 Cari NPA / Nama Anggota..." style="width: 260px; padding: 7px 12px; font-size: 0.78rem;">
+          <input type="text" id="desktop-dpt-search" class="form-input" placeholder="🔍 Cari NPA / Nama Anggota..." style="width: 230px; padding: 7px 12px; font-size: 0.78rem;">
           
-          <select id="desktop-dpt-filter" class="form-input" style="width: 170px; padding: 7px 10px; font-size: 0.78rem;">
+          <select id="desktop-dpt-filter" class="form-input" style="width: 150px; padding: 7px 10px; font-size: 0.78rem;">
             <option value="all">Semua Status</option>
             <option value="voted">Sudah Memilih (Voted)</option>
             <option value="claimed">Klaim Token (Belum Vote)</option>
             <option value="unclaimed">Belum Klaim</option>
           </select>
 
-          <button id="btn-export-dpt-csv" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 14px;">
+          <!-- Action Buttons: Add Voter & Import CSV & Export CSV -->
+          <button id="btn-open-add-voter" class="btn" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFFFFF; font-weight: 700; font-size: 0.76rem; padding: 7px 14px; border: 1px solid #34D399; box-shadow: 0 2px 10px rgba(16,185,129,0.35); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-radius: var(--radius-sm);" title="Daftarkan NPA anggota baru ke DPT">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Tambah Pemilih</span>
+          </button>
+
+          <button id="btn-open-import-voter" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(245,186,66,0.4); color: #FDE68A; border-radius: var(--radius-sm); cursor: pointer;" title="Upload banyak anggota dari Excel/CSV">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>📤 Import CSV</span>
+          </button>
+
+          <button id="btn-export-dpt-csv" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 12px; border-radius: var(--radius-sm); cursor: pointer;" title="Unduh semua data DPT ke CSV">
             📥 Export CSV
           </button>
         </div>
@@ -1677,9 +1792,10 @@
               <th>No. Pokok Anggota (NPA)</th>
               <th>Nama Lengkap</th>
               <th>Email Resmi</th>
+              <th>Pengda / Wilayah</th>
               <th>Status Token</th>
               <th>Status Suara</th>
-              <th>Waktu Transaksi</th>
+              <th style="text-align: center; width: 70px;">Aksi</th>
             </tr>
           </thead>
           <tbody id="desktop-dpt-table-body">
@@ -1688,6 +1804,131 @@
         </table>
       </div>
     </section>
+
+    <!-- ================= MODAL 1: TAMBAH PEMILIH BARU ================= -->
+    <div id="modal-add-voter" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #34D399; font-size: 1.2rem;">👤</span>
+            <span>Tambah Anggota ke DPT KPKU</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeAddVoterModal()">✕</button>
+        </div>
+        <form id="form-add-voter">
+          <div class="admin-modal-body">
+            <div id="add-voter-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Nomor Pokok Anggota (NPA) *</span>
+                <span class="helper">Format bebas / Contoh: 12345 atau IAGI-2024-XXXX</span>
+              </label>
+              <input type="text" id="add-voter-npa" class="form-input font-mono" placeholder="Contoh: 03457 atau IAGI-2024-0099" required style="font-weight: 700;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Nama Lengkap & Gelar *</label>
+              <input type="text" id="add-voter-name" class="form-input" placeholder="Contoh: Dr. Ir. Budi Santoso, M.Sc." required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Alamat Email Resmi *</span>
+                <span class="helper">Wajib aktif (untuk menerima kode unik)</span>
+              </label>
+              <input type="email" id="add-voter-email" class="form-input" placeholder="contoh: anggota@iagi.or.id" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; margin-bottom: 6px;">
+              <div class="form-group">
+                <label class="form-label">Pengda / Wilayah</label>
+                <input type="text" id="add-voter-pengda" class="form-input" placeholder="Contoh: DKI Jakarta" list="pengda-datalist" value="DKI Jakarta">
+                <datalist id="pengda-datalist">
+                  <option value="DKI Jakarta">
+                  <option value="Jawa Barat">
+                  <option value="Jawa Timur">
+                  <option value="Jawa Tengah">
+                  <option value="D.I. Yogyakarta">
+                  <option value="Sumatera Utara">
+                  <option value="Sumatera Selatan">
+                  <option value="Riau">
+                  <option value="Kalimantan Timur">
+                  <option value="Kalimantan Selatan">
+                  <option value="Sulawesi Selatan">
+                  <option value="Papua">
+                  <option value="Banten">
+                  <option value="Luar Negeri">
+                </datalist>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <select id="add-voter-category" class="form-input">
+                  <option value="Professional">Professional</option>
+                  <option value="Student">Student (SM-IAGI)</option>
+                  <option value="Kehormatan">Kehormatan</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.4; margin-top: 10px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
+              ℹ️ Setelah disimpan, anggota dengan NPA ini langsung bisa mengecek hak suara dan melakukan klaim surat suara di bilik suara portal.
+            </div>
+          </div>
+
+          <div class="admin-modal-footer">
+            <button type="button" class="btn btn-subtle" onclick="closeAddVoterModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
+            <button type="button" id="btn-submit-add-voter" onclick="doSubmitAddVoter()" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700;">Simpan ke DPT ✓</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 2: IMPORT CSV / EXCEL ================= -->
+    <div id="modal-import-dpt" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 600px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #FBBF24; font-size: 1.2rem;">📤</span>
+            <span>Import Massal Daftar DPT (CSV / Excel)</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeImportModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <div id="import-dpt-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.25); padding: 10px 14px; border-radius: var(--radius-sm);">
+            <div style="font-size: 0.74rem; color: #FDE68A;">
+              <strong>Format CSV:</strong> NPA, Nama Lengkap, Email, Pengda, Kategori
+            </div>
+            <button type="button" id="btn-download-csv-template" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; border-color: rgba(245,186,66,0.4); color: #FDE68A;">
+              📄 Unduh Template
+            </button>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Pilih File CSV (.csv / .txt)</label>
+            <input type="file" id="import-csv-file" accept=".csv, .txt" class="form-input" style="padding: 6px 10px; font-size: 0.78rem;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 6px;">
+            <label class="form-label" style="display: flex; justify-content: space-between;">
+              <span>Atau Paste Data Teks CSV di Bawah:</span>
+              <span class="helper">Baris baru per anggota</span>
+            </label>
+            <textarea id="import-csv-text" class="form-input font-mono" rows="6" placeholder="IAGI-2024-0023, Ahmad Sujarwo S.T., ahmad.s@migas.com, DKI Jakarta, Professional&#10;IAGI-2024-0024, Ratna Sari Dewi S.Si., ratna.sari@tambang.id, Jawa Timur, Professional" style="font-size: 0.74rem; line-height: 1.4; resize: vertical;"></textarea>
+          </div>
+          
+          <div id="import-preview-count" style="font-size: 0.75rem; color: #34D399; font-weight: 700; margin-top: 6px;"></div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-subtle" onclick="closeImportModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
+          <button type="button" id="btn-submit-import-dpt" onclick="doSubmitImportDpt()" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700;">Proses Import Data ✓</button>
+        </div>
+      </div>
+    </div>
 
     </main>
   </div>
@@ -2229,7 +2470,10 @@
         const dpt = window.pemiluStorage.getDPT();
 
         const filtered = dpt.filter(item => {
-          const matchQuery = item.npa.toLowerCase().includes(query) || item.name.toLowerCase().includes(query) || item.email.toLowerCase().includes(query);
+          const matchQuery = item.npa.toLowerCase().includes(query) || 
+                             item.name.toLowerCase().includes(query) || 
+                             item.email.toLowerCase().includes(query) ||
+                             (item.pengda && item.pengda.toLowerCase().includes(query));
           if (!matchQuery) return false;
 
           if (filter === 'voted') return item.voted === true;
@@ -2239,7 +2483,7 @@
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 20px;">Tidak ditemukan data pemilih yang sesuai.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 24px;">Tidak ditemukan data pemilih yang sesuai. Klik tombol <strong>+ Tambah Pemilih</strong> di atas untuk mendaftarkan anggota baru.</td></tr>`;
           return;
         }
 
@@ -2248,9 +2492,10 @@
             <td style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold);">${v.npa}</td>
             <td style="font-weight: 600; color: #FFFFFF;">${v.name}</td>
             <td style="font-family: var(--font-mono); font-size: 0.75rem; color: #94A3B8;">${v.email}</td>
+            <td style="font-size: 0.75rem; color: #CBD5E1;">${v.pengda || 'DKI Jakarta'}</td>
             <td>
               ${v.claimed 
-                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#FBBF24; font-family:var(--font-mono); font-size:0.75rem; background:rgba(251,191,36,0.1); padding:2px 8px; border-radius:4px;">TOKEN: ${v.token || 'AKTIF'}</span>`
+                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#FBBF24; font-family:var(--font-mono); font-size:0.75rem; background:rgba(251,191,36,0.1); padding:2px 8px; border-radius:4px;" title="Kode Token: ${v.token || 'AKTIF'}">TOKEN: ${v.token ? v.token.substring(0, 14) + '...' : 'AKTIF'}</span>`
                 : `<span style="color:#64748B;">Belum Klaim</span>`
               }
             </td>
@@ -2260,8 +2505,11 @@
                 : `<span style="color:#F87171; font-weight:600;">Belum Suara</span>`
               }
             </td>
-            <td style="font-family: var(--font-mono); font-size: 0.72rem; color: #64748B;">
-              ${v.voteTimestamp ? new Date(v.voteTimestamp).toLocaleTimeString('id-ID') : '-'}
+            <td style="text-align: center;">
+              <button type="button" class="btn-action-delete" onclick="handleDeleteVoter('${v.npa}')" title="Hapus ${v.name} (${v.npa}) dari DPT">
+                <svg style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Hapus</span>
+              </button>
             </td>
           </tr>
         `).join('');
@@ -2270,6 +2518,238 @@
       // Filter & Search Events
       document.getElementById('desktop-dpt-search').addEventListener('input', renderDptTable);
       document.getElementById('desktop-dpt-filter').addEventListener('change', renderDptTable);
+
+      // --- Modals Controller (Tambah Pemilih & Import CSV) ---
+      window.openAddVoterModal = function() {
+        const modal = document.getElementById('modal-add-voter');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+        const alertEl = document.getElementById('add-voter-alert');
+        if (alertEl) alertEl.style.display = 'none';
+        const npaInput = document.getElementById('add-voter-npa');
+        if (npaInput) {
+          setTimeout(() => npaInput.focus(), 100);
+        }
+      };
+
+      window.closeAddVoterModal = function() {
+        const modal = document.getElementById('modal-add-voter');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        const form = document.getElementById('form-add-voter');
+        if (form) form.reset();
+      };
+
+      window.openImportModal = function() {
+        const modal = document.getElementById('modal-import-dpt');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+        const alertEl = document.getElementById('import-dpt-alert');
+        if (alertEl) alertEl.style.display = 'none';
+        const preview = document.getElementById('import-preview-count');
+        if (preview) preview.innerText = '';
+      };
+
+      window.closeImportModal = function() {
+        const modal = document.getElementById('modal-import-dpt');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        document.getElementById('import-csv-text').value = '';
+        document.getElementById('import-csv-file').value = '';
+      };
+
+      // Open Modal Buttons
+      const btnAddVoter = document.getElementById('btn-open-add-voter');
+      if (btnAddVoter) btnAddVoter.addEventListener('click', window.openAddVoterModal);
+
+      const btnImportVoter = document.getElementById('btn-open-import-voter');
+      if (btnImportVoter) btnImportVoter.addEventListener('click', window.openImportModal);
+
+      // Close modal on click backdrop
+      document.querySelectorAll('.admin-modal-backdrop').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.style.setProperty('display', 'none', 'important');
+          }
+        });
+      });
+
+      // Submit Form Add Voter
+      function doSubmitAddVoter() {
+        const alertEl = document.getElementById('add-voter-alert');
+        const npa = (document.getElementById('add-voter-npa').value || '').trim();
+        const name = (document.getElementById('add-voter-name').value || '').trim();
+        const email = (document.getElementById('add-voter-email').value || '').trim();
+        const pengda = (document.getElementById('add-voter-pengda').value || '').trim();
+        const category = (document.getElementById('add-voter-category').value || '').trim();
+
+        if (!npa || !name || !email) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Mohon lengkapi NPA, Nama Lengkap, dan Email aktif.';
+          return;
+        }
+
+        const res = window.pemiluStorage.addVoter({ npa, name, email, pengda, category });
+        if (!res.success) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = res.error;
+          return;
+        }
+
+        alertEl.style.display = 'block';
+        alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+        alertEl.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+        alertEl.style.color = '#A7F3D0';
+        alertEl.innerText = `✓ Berhasil! NPA ${res.voter.npa} (${res.voter.name}) telah resmi terdaftar di DPT.`;
+
+        refreshAll();
+
+        setTimeout(() => {
+          window.closeAddVoterModal();
+        }, 1100);
+      }
+
+      window.doSubmitAddVoter = doSubmitAddVoter;
+
+      document.getElementById('form-add-voter').addEventListener('submit', (e) => {
+        e.preventDefault();
+        doSubmitAddVoter();
+      });
+
+      const btnSubmitAddVoter = document.getElementById('btn-submit-add-voter');
+      if (btnSubmitAddVoter) {
+        btnSubmitAddVoter.addEventListener('click', (e) => {
+          e.preventDefault();
+          doSubmitAddVoter();
+        });
+      }
+
+      // Delete Voter Action
+      window.handleDeleteVoter = function(npa) {
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) return;
+
+        let msg = `Hapus pemilih NPA "${npa}" (${voter.name}) dari Daftar Pemilih Tetap (DPT)?`;
+        if (voter.voted) {
+          msg += `\n\n⚠️ PERINGATAN: Anggota ini sudah memberikan suara pada pemilu. Menghapus DPT ini akan menghapus akun pemilihnya. Lanjutkan?`;
+        }
+
+        if (confirm(msg)) {
+          const res = window.pemiluStorage.deleteVoter(npa);
+          if (res.success) {
+            refreshAll();
+          } else {
+            alert(res.error || 'Gagal menghapus pemilih.');
+          }
+        }
+      };
+
+      // Download CSV Template
+      document.getElementById('btn-download-csv-template').addEventListener('click', () => {
+        const sample = "NPA,Nama Lengkap,Email,Pengda,Kategori\n" +
+          "03457,Dr. Mirzam Abdurrachman,mirzam@itb.ac.id,Jawa Barat,Professional\n" +
+          "03749,Sonny Yudhistira S.T.,sonny.y@migas.com,DKI Jakarta,Professional\n" +
+          "05653,Sri Hartanto S.T. M.Sc.,sri.hartanto@energi.id,Kalimantan Timur,Professional\n" +
+          "12890,Andi Pratama S.T.,andi.pratama@geosains.id,Sulawesi Selatan,Student\n";
+        const blob = new Blob([sample], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "template_dpt_pemilu_iagi_2026.csv";
+        a.click();
+      });
+
+      // CSV File Selection
+      document.getElementById('import-csv-file').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          document.getElementById('import-csv-text').value = evt.target.result;
+          updateImportPreview();
+        };
+        reader.readAsText(file);
+      });
+
+      function updateImportPreview() {
+        const text = document.getElementById('import-csv-text').value;
+        const lines = text.split('\n').filter(l => l.trim().length > 0);
+        const preview = document.getElementById('import-preview-count');
+        if (lines.length > 0) {
+          preview.innerText = `Terdeteksi ${lines.length} baris data CSV siap diimport.`;
+        } else {
+          preview.innerText = '';
+        }
+      }
+      document.getElementById('import-csv-text').addEventListener('input', updateImportPreview);
+
+      // Submit Import CSV
+      function doSubmitImportDpt() {
+        const text = document.getElementById('import-csv-text').value.trim();
+        const alertEl = document.getElementById('import-dpt-alert');
+
+        if (!text) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Pilih file CSV atau paste teks daftar anggota terlebih dahulu.';
+          return;
+        }
+
+        const rawLines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        const parsedVoters = [];
+
+        rawLines.forEach((line, idx) => {
+          if (idx === 0 && line.toLowerCase().includes('npa') && line.toLowerCase().includes('nama')) {
+            return;
+          }
+          const cols = line.split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
+          if (cols.length >= 3) {
+            parsedVoters.push({
+              npa: cols[0],
+              name: cols[1],
+              email: cols[2],
+              pengda: cols[3] || 'DKI Jakarta',
+              category: cols[4] || 'Professional'
+            });
+          }
+        });
+
+        if (parsedVoters.length === 0) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Format data tidak sesuai. Pastikan ada minimal kolom: NPA, Nama, Email dipisahkan tanda koma.';
+          return;
+        }
+
+        const res = window.pemiluStorage.importVoters(parsedVoters);
+        alertEl.style.display = 'block';
+        alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+        alertEl.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+        alertEl.style.color = '#A7F3D0';
+        alertEl.innerText = `✓ Sukses! Berhasil menambahkan ${res.addedCount} anggota ke DPT (${res.skippedCount} dilewati karena duplikat/tidak lengkap). Total DPT: ${res.total}.`;
+
+        refreshAll();
+
+        setTimeout(() => {
+          window.closeImportModal();
+        }, 1600);
+      }
+
+      window.doSubmitImportDpt = doSubmitImportDpt;
+
+      const btnSubmitImport = document.getElementById('btn-submit-import-dpt');
+      if (btnSubmitImport) {
+        btnSubmitImport.addEventListener('click', (e) => {
+          e.preventDefault();
+          doSubmitImportDpt();
+        });
+      }
 
       // Toggle Vault
       document.getElementById('btn-toggle-vault-desktop').addEventListener('click', () => {
@@ -2298,9 +2778,9 @@
       // Export CSV
       document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
         const dpt = window.pemiluStorage.getDPT();
-        let csv = 'NPA,Nama Lengkap,Email,Status Klaim,Status Vote,Waktu\n';
+        let csv = 'NPA,Nama Lengkap,Email,Pengda,Kategori,Status Klaim,Status Vote,Waktu\n';
         dpt.forEach(item => {
-          csv += `"${item.npa}","${item.name}","${item.email}","${item.claimed ? 'Klaim' : 'Belum'}","${item.voted ? 'Voted' : 'Belum'}","${item.voteTimestamp || ''}"\n`;
+          csv += `"${item.npa}","${item.name}","${item.email}","${item.pengda || 'DKI Jakarta'}","${item.category || 'Professional'}","${item.claimed ? 'Klaim' : 'Belum'}","${item.voted ? 'Voted' : 'Belum'}","${item.voteTimestamp || ''}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
