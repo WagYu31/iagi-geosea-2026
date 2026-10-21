@@ -194,6 +194,53 @@ class PemiluStorage {
     return { success: true, removed };
   }
 
+  deleteMultipleVoters(npas) {
+    if (!Array.isArray(npas) || npas.length === 0) {
+      return { success: false, error: 'Daftar NPA tidak valid.' };
+    }
+    const cleanNpaSet = new Set(npas.map(n => (n || '').trim().toUpperCase()));
+    const dpt = this.getDPT();
+
+    const remaining = [];
+    const removed = [];
+    for (const v of dpt) {
+      if (cleanNpaSet.has(v.npa.toUpperCase())) {
+        removed.push(v);
+      } else {
+        remaining.push(v);
+      }
+    }
+
+    if (removed.length === 0) {
+      return { success: false, error: 'Tidak ada data pemilih yang cocok untuk dihapus.' };
+    }
+
+    this.saveDPT(remaining);
+    this.addAuditLog('DPT_BULK_REMOVED', `Hapus massal DPT: ${removed.length} pemilih berhasil dihapus dari sistem.`);
+    return { success: true, count: removed.length, removed };
+  }
+
+  deleteVotersByCount({ count = 1, order = 'top', onlyUnvoted = true } = {}) {
+    const num = parseInt(count, 10);
+    if (isNaN(num) || num <= 0) {
+      return { success: false, error: 'Jumlah pemilih harus berupa angka positif.' };
+    }
+    const dpt = this.getDPT();
+    let candidates = dpt.filter(v => onlyUnvoted ? !v.voted : true);
+
+    if (order === 'bottom') {
+      candidates = [...candidates].reverse();
+    }
+
+    const toDelete = candidates.slice(0, num);
+    if (toDelete.length === 0) {
+      return { success: false, error: 'Tidak ada pemilih yang memenuhi syarat untuk dihapus.' };
+    }
+
+    const npas = toDelete.map(v => v.npa);
+    return this.deleteMultipleVoters(npas);
+  }
+
   updateVoterPhone(npa, phone) {
     const cleanNpa = (npa || '').trim().toUpperCase();
     const cleanPhone = (phone || '').trim();

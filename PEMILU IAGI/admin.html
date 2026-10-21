@@ -1464,6 +1464,100 @@
       box-shadow: 0 0 14px rgba(37, 211, 102, 0.4);
     }
 
+    .btn-dpt-quickdel {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-quickdel:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: #EF4444;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-dpt-bulk-del {
+      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+      border: 1px solid #EF4444;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.4);
+      animation: pulseBulk 2s infinite;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-bulk-del:hover {
+      background: #EF4444;
+      transform: translateY(-1px);
+    }
+
+    @keyframes pulseBulk {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .btn-bulk-sub {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #E2E8F0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-bulk-sub:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+    }
+
+    .btn-bulk-delete-main {
+      background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+      border: 1px solid #EF4444;
+      color: #FFFFFF;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-bulk-delete-main:hover {
+      background: #EF4444;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.5);
+    }
+
+    tr.row-selected {
+      background: rgba(239, 68, 68, 0.09) !important;
+    }
+
     /* Table Action Buttons Group (Komplit & Elegan) */
     .row-actions-group {
       display: inline-flex;
@@ -2124,11 +2218,20 @@
           <button id="btn-open-broadcast-wa" class="btn-dpt-broadcast" title="Broadcast token via WhatsApp ke pemilih yang belum klaim">
             <span>💬 Broadcast WA</span>
           </button>
+
+          <!-- Aksi Cepat Hapus & Bulk Action -->
+          <button id="btn-open-fast-delete" class="btn-dpt-quickdel" title="Aksi Cepat Hapus DPT (Berdasarkan Jumlah / Kategori)">
+            <span>⚡ Hapus Cepat</span>
+          </button>
+
+          <button id="btn-toolbar-bulk-delete" class="btn-dpt-bulk-del" style="display: none;" onclick="handleBulkDeleteSelected()">
+            <span>🗑️ Hapus (<span id="btn-tb-bulk-count">0</span>) Terpilih</span>
+          </button>
         </div>
       </div>
 
       <!-- Quick DPT Mini Stats Bar (Embedded within DPT View) -->
-      <div id="dpt-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
+      <div id="dpt-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
         <div style="color: #94A3B8;">Total DPT: <strong id="dpt-mini-total" style="color: #F8FAFC; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Sudah Memilih: <strong id="dpt-mini-voted" style="color: #34D399; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
@@ -2140,10 +2243,33 @@
         <div style="color: #94A3B8;">Partisipasi: <strong id="dpt-mini-turnout" style="color: var(--gold-secondary); font-family: var(--font-mono); font-size: 0.95rem;">0.0%</strong></div>
       </div>
 
+      <!-- DPT Bulk Action Alert Bar (Muncul Otomatis Saat Ada Baris yang Dicentang) -->
+      <div id="dpt-bulk-action-bar" style="display: none; background: rgba(220, 38, 38, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: rgba(239, 68, 68, 0.25); border-radius: 6px; color: #FCA5A5; font-size: 0.85rem; font-weight: 700;">✓</span>
+          <span style="font-weight: 700; color: #FFFFFF; font-size: 0.82rem;">
+            <span id="bulk-selected-count">0</span> pemilih dipilih
+          </span>
+          <span style="color: rgba(255,255,255,0.2);">|</span>
+          <button type="button" class="btn-bulk-sub" onclick="handleSelectAllFiltered(true)">Pilih Semua di Tampilan</button>
+          <button type="button" class="btn-bulk-sub" onclick="handleSelectOnlyUnclaimed()">Pilih Belum Klaim</button>
+          <button type="button" class="btn-bulk-sub" onclick="handleSelectAllFiltered(false)">Batal Pilih</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" class="btn-bulk-delete-main" onclick="handleBulkDeleteSelected()">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <span>Hapus <span id="bulk-delete-btn-num">0</span> Pemilih Terpilih</span>
+          </button>
+        </div>
+      </div>
+
       <div class="table-container">
         <table class="admin-table">
           <thead>
             <tr>
+              <th style="width: 44px; text-align: center;">
+                <input type="checkbox" id="dpt-select-all" title="Pilih Semua di Tampilan Ini" style="width: 16px; height: 16px; cursor: pointer; accent-color: #EF4444;">
+              </th>
               <th style="width: 140px;">No. Pokok Anggota (NPA)</th>
               <th>Nama Anggota & Kategori</th>
               <th>Kontak (Email & WhatsApp)</th>
@@ -2355,6 +2481,94 @@
         <div class="admin-modal-footer">
           <button type="button" class="btn btn-subtle" onclick="closeEditPhoneModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
           <button type="button" id="btn-save-phone" onclick="doSavePhone()" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700;">Simpan & Buka WA ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 5: AKSI CEPAT HAPUS DPT ================= -->
+    <div id="modal-fast-delete" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 480px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #F87171; font-size: 1.2rem;">⚡</span>
+            <span>Aksi Cepat Hapus Pemilih DPT</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeFastDeleteModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <div id="fast-delete-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+
+          <p style="font-size: 0.78rem; color: #94A3B8; margin-bottom: 16px; line-height: 1.5;">
+            Pilih metode hapus cepat di bawah ini untuk menghapus beberapa anggota dari DPT tanpa perlu menghapus satu per satu secara manual.
+          </p>
+
+          <!-- Opsi 1: Hapus Berdasarkan Jumlah -->
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #F8FAFC; font-size: 0.82rem; cursor: pointer; margin-bottom: 8px;">
+              <input type="radio" name="fast-del-mode" value="by-count" checked style="accent-color: #EF4444;">
+              <span>1. Hapus Berdasarkan Jumlah (Berapa Orang)</span>
+            </label>
+            
+            <div id="section-by-count" style="margin-left: 24px; margin-top: 8px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span style="font-size: 0.76rem; color: #CBD5E1;">Jumlah:</span>
+                <input type="number" id="fast-del-count-input" min="1" max="1000" value="5" class="form-input font-mono" style="width: 80px; padding: 5px 8px; font-size: 0.85rem; font-weight: 700;">
+                <span style="font-size: 0.76rem; color: #94A3B8;">pemilih</span>
+              </div>
+              
+              <!-- Shortcut pills -->
+              <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                <button type="button" class="btn-bulk-sub" onclick="setFastDelCount(1)">1</button>
+                <button type="button" class="btn-bulk-sub" onclick="setFastDelCount(3)">3</button>
+                <button type="button" class="btn-bulk-sub" onclick="setFastDelCount(5)">5</button>
+                <button type="button" class="btn-bulk-sub" onclick="setFastDelCount(10)">10</button>
+                <button type="button" class="btn-bulk-sub" onclick="setFastDelCount(20)">20</button>
+              </div>
+
+              <div style="display: flex; gap: 14px; font-size: 0.74rem; color: #94A3B8; flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                  <input type="radio" name="fast-del-order" value="top" checked style="accent-color: #EF4444;">
+                  <span>Data Teratas (Baru Ditambah)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                  <input type="radio" name="fast-del-order" value="bottom" style="accent-color: #EF4444;">
+                  <span>Data Terbawah (Paling Awal)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opsi 2: Hapus Berdasarkan Status -->
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #F8FAFC; font-size: 0.82rem; cursor: pointer; margin-bottom: 8px;">
+              <input type="radio" name="fast-del-mode" value="by-status" style="accent-color: #EF4444;">
+              <span>2. Hapus Berdasarkan Status Hak Suara</span>
+            </label>
+            
+            <div id="section-by-status" style="margin-left: 24px; margin-top: 8px;">
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: #E2E8F0; margin-bottom: 8px; cursor: pointer;">
+                <input type="radio" name="fast-del-status-opt" value="unclaimed" checked style="accent-color: #EF4444;">
+                <span>Semua yang <strong>Belum Klaim Token</strong> (<span id="fast-count-unclaimed" style="color: #F87171; font-weight: 700;">0</span> pemilih)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: #E2E8F0; cursor: pointer;">
+                <input type="radio" name="fast-del-status-opt" value="claimed-not-voted" style="accent-color: #EF4444;">
+                <span>Semua yang Klaim Token tapi <strong>Belum Memilih</strong> (<span id="fast-count-claimed" style="color: #FBBF24; font-weight: 700;">0</span> pemilih)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Safety Guard Note -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 8px 12px; font-size: 0.73rem; color: #A7F3D0; display: flex; align-items: center; gap: 8px;">
+            <span>🛡️</span>
+            <span><strong>Perlindungan Integritas:</strong> Pemilih yang sudah memberikan suara sah (VOTED) secara otomatis dilindungi dan tidak akan dihapus.</span>
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-subtle" onclick="closeFastDeleteModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
+          <button type="button" id="btn-execute-fast-delete" onclick="doExecuteFastDelete()" class="btn" style="background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color: #FFFFFF; border: 1px solid #EF4444; font-size: 0.8rem; padding: 8px 20px; font-weight: 700; box-shadow: 0 2px 10px rgba(220, 38, 38, 0.4);">
+            🗑️ Eksekusi Hapus DPT
+          </button>
         </div>
       </div>
     </div>
@@ -2917,12 +3131,18 @@
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
+          updateBulkSelectionUI();
           return;
         }
 
-        tbody.innerHTML = filtered.map(v => `
-          <tr>
+        tbody.innerHTML = filtered.map(v => {
+          const isChecked = window.selectedDptNpas && window.selectedDptNpas.has(v.npa);
+          return `
+          <tr id="dpt-row-${v.npa}" class="${isChecked ? 'row-selected' : ''}">
+            <td style="text-align: center; width: 44px;">
+              <input type="checkbox" class="dpt-row-check" value="${v.npa}" ${isChecked ? 'checked' : ''} onchange="handleRowCheckChange('${v.npa}')" style="width: 16px; height: 16px; cursor: pointer; accent-color: #EF4444;">
+            </td>
             <td>
               <div style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold); font-size: 0.82rem; letter-spacing: 0.02em;">
                 ${v.npa}
@@ -2991,7 +3211,9 @@
               </div>
             </td>
           </tr>
-        `).join('');
+        `}).join('');
+
+        updateBulkSelectionUI();
       }
 
       // Filter & Search Events
@@ -3253,12 +3475,268 @@
         if (confirm(msg)) {
           const res = window.pemiluStorage.deleteVoter(npa);
           if (res.success) {
+            if (window.selectedDptNpas) window.selectedDptNpas.delete(npa);
             refreshAll();
           } else {
             alert(res.error || 'Gagal menghapus pemilih.');
           }
         }
       };
+
+      // --- Bulk Selection & Fast Delete Controller ---
+      window.selectedDptNpas = new Set();
+
+      function updateBulkSelectionUI() {
+        const count = window.selectedDptNpas ? window.selectedDptNpas.size : 0;
+        const bar = document.getElementById('dpt-bulk-action-bar');
+        const tbBtn = document.getElementById('btn-toolbar-bulk-delete');
+        const countLabel = document.getElementById('bulk-selected-count');
+        const btnCount = document.getElementById('bulk-delete-btn-num');
+        const tbCount = document.getElementById('btn-tb-bulk-count');
+        const masterCheck = document.getElementById('dpt-select-all');
+
+        if (countLabel) countLabel.innerText = count;
+        if (btnCount) btnCount.innerText = count;
+        if (tbCount) tbCount.innerText = count;
+
+        if (count > 0) {
+          if (bar) bar.style.display = 'flex';
+          if (tbBtn) tbBtn.style.display = 'inline-flex';
+        } else {
+          if (bar) bar.style.display = 'none';
+          if (tbBtn) tbBtn.style.display = 'none';
+        }
+
+        const checks = document.querySelectorAll('.dpt-row-check');
+        if (checks.length > 0 && masterCheck) {
+          const checkedCount = Array.from(checks).filter(c => c.checked).length;
+          masterCheck.checked = (checkedCount === checks.length && checks.length > 0);
+          masterCheck.indeterminate = (checkedCount > 0 && checkedCount < checks.length);
+        } else if (masterCheck) {
+          masterCheck.checked = false;
+          masterCheck.indeterminate = false;
+        }
+      }
+
+      window.handleRowCheckChange = function(npa) {
+        const row = document.getElementById(`dpt-row-${npa}`);
+        const checkbox = row ? row.querySelector('.dpt-row-check') : null;
+        if (checkbox && checkbox.checked) {
+          window.selectedDptNpas.add(npa);
+          if (row) row.classList.add('row-selected');
+        } else {
+          window.selectedDptNpas.delete(npa);
+          if (row) row.classList.remove('row-selected');
+        }
+        updateBulkSelectionUI();
+      };
+
+      window.handleSelectAllFiltered = function(selectAll) {
+        const checks = document.querySelectorAll('.dpt-row-check');
+        checks.forEach(c => {
+          c.checked = selectAll;
+          const row = document.getElementById(`dpt-row-${c.value}`);
+          if (selectAll) {
+            window.selectedDptNpas.add(c.value);
+            if (row) row.classList.add('row-selected');
+          } else {
+            window.selectedDptNpas.delete(c.value);
+            if (row) row.classList.remove('row-selected');
+          }
+        });
+        updateBulkSelectionUI();
+      };
+
+      window.handleSelectOnlyUnclaimed = function() {
+        const dpt = window.pemiluStorage.getDPT();
+        const dptMap = new Map(dpt.map(v => [v.npa, v]));
+        const checks = document.querySelectorAll('.dpt-row-check');
+        checks.forEach(c => {
+          const v = dptMap.get(c.value);
+          const shouldCheck = v && !v.claimed && !v.voted;
+          c.checked = shouldCheck;
+          const row = document.getElementById(`dpt-row-${c.value}`);
+          if (shouldCheck) {
+            window.selectedDptNpas.add(c.value);
+            if (row) row.classList.add('row-selected');
+          } else {
+            window.selectedDptNpas.delete(c.value);
+            if (row) row.classList.remove('row-selected');
+          }
+        });
+        updateBulkSelectionUI();
+      };
+
+      // Master checkbox event
+      const masterCheck = document.getElementById('dpt-select-all');
+      if (masterCheck) {
+        masterCheck.addEventListener('change', (e) => {
+          window.handleSelectAllFiltered(e.target.checked);
+        });
+      }
+
+      // Bulk Delete Selected
+      window.handleBulkDeleteSelected = function() {
+        if (!window.selectedDptNpas || window.selectedDptNpas.size === 0) {
+          alert('Pilih minimal 1 pemilih pada tabel untuk dihapus.');
+          return;
+        }
+
+        const npas = Array.from(window.selectedDptNpas);
+        const dpt = window.pemiluStorage.getDPT();
+        const dptMap = new Map(dpt.map(v => [v.npa, v]));
+
+        // Check voted vs unvoted
+        const votedVoters = [];
+        const unvotedNpas = [];
+        npas.forEach(n => {
+          const v = dptMap.get(n);
+          if (v && v.voted) {
+            votedVoters.push(v);
+          } else {
+            unvotedNpas.push(n);
+          }
+        });
+
+        if (unvotedNpas.length === 0) {
+          alert('⚠️ Gagal Hapus: Semua pemilih yang Anda pilih sudah memberikan suara sah (VOTED).\n\nPemilih yang sudah memilih dilindungi oleh sistem dan tidak dapat dihapus demi menjaga integritas perhitungan suara pleno!');
+          return;
+        }
+
+        let confirmMsg = `⚠️ KONFIRMASI HAPUS MASSAL\n\nApakah Anda yakin ingin menghapus ${unvotedNpas.length} pemilih terpilih dari Daftar Pemilih Tetap (DPT)?`;
+        if (votedVoters.length > 0) {
+          confirmMsg += `\n\n🛡️ CATATAN: ${votedVoters.length} pemilih yang sudah memilih TIDAK akan dihapus agar keabsahan suara pleno tetap terjaga.`;
+        }
+        confirmMsg += `\n\nTindakan ini bersifat permanen. Lanjutkan?`;
+
+        if (!confirm(confirmMsg)) return;
+
+        const res = window.pemiluStorage.deleteMultipleVoters(unvotedNpas);
+        if (res.success) {
+          window.selectedDptNpas.clear();
+          refreshAll();
+          alert(`✓ Berhasil menghapus ${res.count} pemilih terpilih dari DPT.`);
+        } else {
+          alert(res.error || 'Gagal menghapus pemilih terpilih.');
+        }
+      };
+
+      // Modal Fast Delete Controller
+      window.openFastDeleteModal = function() {
+        const modal = document.getElementById('modal-fast-delete');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+        const alertEl = document.getElementById('fast-delete-alert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        const dpt = window.pemiluStorage.getDPT();
+        const unclaimed = dpt.filter(v => !v.claimed && !v.voted).length;
+        const claimedNotVoted = dpt.filter(v => v.claimed && !v.voted).length;
+
+        const elUncl = document.getElementById('fast-count-unclaimed');
+        if (elUncl) elUncl.innerText = unclaimed;
+        const elCl = document.getElementById('fast-count-claimed');
+        if (elCl) elCl.innerText = claimedNotVoted;
+      };
+
+      window.closeFastDeleteModal = function() {
+        const modal = document.getElementById('modal-fast-delete');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      window.setFastDelCount = function(n) {
+        const input = document.getElementById('fast-del-count-input');
+        if (input) input.value = n;
+        const radio = document.querySelector('input[name="fast-del-mode"][value="by-count"]');
+        if (radio) radio.checked = true;
+      };
+
+      window.doExecuteFastDelete = function() {
+        const mode = document.querySelector('input[name="fast-del-mode"]:checked')?.value || 'by-count';
+        const alertEl = document.getElementById('fast-delete-alert');
+
+        if (mode === 'by-count') {
+          const count = parseInt(document.getElementById('fast-del-count-input').value, 10);
+          if (isNaN(count) || count <= 0) {
+            if (alertEl) {
+              alertEl.style.display = 'block';
+              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+              alertEl.style.color = '#FCA5A5';
+              alertEl.innerText = 'Mohon masukkan jumlah pemilih yang valid (minimal 1).';
+            }
+            return;
+          }
+
+          const order = document.querySelector('input[name="fast-del-order"]:checked')?.value || 'top';
+          const orderText = order === 'top' ? 'teratas (data terbaru)' : 'terbawah (data terlama)';
+
+          if (!confirm(`⚠️ Hapus cepat ${count} pemilih ${orderText} dari DPT yang belum memberikan suara?`)) {
+            return;
+          }
+
+          const res = window.pemiluStorage.deleteVotersByCount({ count, order, onlyUnvoted: true });
+          if (!res.success) {
+            if (alertEl) {
+              alertEl.style.display = 'block';
+              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+              alertEl.style.color = '#FCA5A5';
+              alertEl.innerText = res.error;
+            }
+            return;
+          }
+
+          window.closeFastDeleteModal();
+          refreshAll();
+          alert(`✓ Berhasil menghapus ${res.count} pemilih secara cepat.`);
+        } else if (mode === 'by-status') {
+          const statusOpt = document.querySelector('input[name="fast-del-status-opt"]:checked')?.value || 'unclaimed';
+          const dpt = window.pemiluStorage.getDPT();
+          let targetVoters = [];
+
+          if (statusOpt === 'unclaimed') {
+            targetVoters = dpt.filter(v => !v.claimed && !v.voted);
+          } else if (statusOpt === 'claimed-not-voted') {
+            targetVoters = dpt.filter(v => v.claimed && !v.voted);
+          }
+
+          if (targetVoters.length === 0) {
+            if (alertEl) {
+              alertEl.style.display = 'block';
+              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+              alertEl.style.color = '#FCA5A5';
+              alertEl.innerText = 'Tidak ada pemilih yang sesuai dengan kriteria status ini.';
+            }
+            return;
+          }
+
+          const targetLabel = statusOpt === 'unclaimed' ? 'belum klaim token' : 'sudah klaim tapi belum memilih';
+          if (!confirm(`⚠️ Hapus SEMUA ${targetVoters.length} pemilih yang ${targetLabel} dari DPT?`)) {
+            return;
+          }
+
+          const npas = targetVoters.map(v => v.npa);
+          const res = window.pemiluStorage.deleteMultipleVoters(npas);
+          if (!res.success) {
+            if (alertEl) {
+              alertEl.style.display = 'block';
+              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+              alertEl.style.color = '#FCA5A5';
+              alertEl.innerText = res.error;
+            }
+            return;
+          }
+
+          window.closeFastDeleteModal();
+          refreshAll();
+          alert(`✓ Berhasil menghapus ${res.count} pemilih.`);
+        }
+      };
+
+      const btnOpenFastDel = document.getElementById('btn-open-fast-delete');
+      if (btnOpenFastDel) btnOpenFastDel.addEventListener('click', window.openFastDeleteModal);
 
       // Download CSV Template
       document.getElementById('btn-download-csv-template').addEventListener('click', () => {
