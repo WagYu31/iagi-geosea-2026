@@ -241,6 +241,34 @@ class PemiluStorage {
     return this.deleteMultipleVoters(npas);
   }
 
+  updateVoter(oldNpa, { npa, name, email, phone, pengda, category } = {}) {
+    const cleanOldNpa = (oldNpa || '').trim().toUpperCase();
+    const cleanNewNpa = (npa || '').trim().toUpperCase();
+    const dpt = this.getDPT();
+    const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanOldNpa);
+    if (idx === -1) return { success: false, error: 'Pemilih tidak ditemukan dalam DPT.' };
+
+    const voter = dpt[idx];
+
+    // If NPA changed, verify uniqueness
+    if (cleanNewNpa && cleanNewNpa !== cleanOldNpa) {
+      if (dpt.some((v, i) => i !== idx && v.npa.toUpperCase() === cleanNewNpa)) {
+        return { success: false, error: `NPA "${cleanNewNpa}" sudah terdaftar pada anggota lain.` };
+      }
+      voter.npa = cleanNewNpa;
+    }
+
+    if (name && name.trim()) voter.name = name.trim();
+    if (email && email.trim()) voter.email = email.trim();
+    if (phone !== undefined) voter.phone = (phone || '').trim();
+    if (pengda && pengda.trim()) voter.pengda = pengda.trim();
+    if (category && category.trim()) voter.category = category.trim();
+
+    this.saveDPT(dpt);
+    this.addAuditLog('DPT_UPDATED', `Data pemilih diperbarui: NPA ${voter.npa} (${voter.name}), Pengda ${voter.pengda}`);
+    return { success: true, voter };
+  }
+
   updateVoterPhone(npa, phone) {
     const cleanNpa = (npa || '').trim().toUpperCase();
     const cleanPhone = (phone || '').trim();
