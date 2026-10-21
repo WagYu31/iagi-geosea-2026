@@ -2200,9 +2200,10 @@
 
           <select id="desktop-dpt-filter" class="dpt-select-filter">
             <option value="all">Semua Status (All)</option>
-            <option value="voted">✓ Sudah Memilih (Voted)</option>
-            <option value="claimed">🔑 Klaim Token (Belum Vote)</option>
-            <option value="unclaimed">⏳ Belum Klaim</option>
+            <option value="voted">✓ Sudah Memilih</option>
+            <option value="not_voted">⏳ Belum Memilih</option>
+            <option value="claimed">🔑 Token Terbit (Belum Vote)</option>
+            <option value="unclaimed">Belum Ada Token</option>
           </select>
         </div>
 
@@ -2279,7 +2280,8 @@
               <th style="width: 140px;">No. Pokok Anggota (NPA)</th>
               <th>Nama Lengkap Anggota</th>
               <th>Kontak (Email & WhatsApp)</th>
-              <th>Status Hak Suara</th>
+              <th style="width: 120px; text-align: center;">Status Token</th>
+              <th style="width: 140px; text-align: center;">Sudah Memilih?</th>
               <th style="text-align: center; width: 270px;">Aksi Cepat</th>
             </tr>
           </thead>
@@ -3154,6 +3156,7 @@
           if (!matchQuery) return false;
 
           if (filter === 'voted') return item.voted === true;
+          if (filter === 'not_voted') return item.voted !== true;
           if (filter === 'claimed') return item.claimed === true && !item.voted;
           if (filter === 'unclaimed') return !item.claimed;
 
@@ -3161,7 +3164,7 @@
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
           updateBulkSelectionUI();
           return;
         }
@@ -3194,19 +3197,28 @@
                 }
               </div>
             </td>
-            <td>
+            <td style="text-align: center;">
+              ${v.claimed && v.token 
+                ? `<div style="display: inline-flex; flex-direction: column; gap: 3px; align-items: center;">
+                    <span style="color: #FBBF24; font-size: 0.68rem; font-weight: 700; background: rgba(245,186,66,0.12); border: 1px solid rgba(245,186,66,0.3); padding: 2px 7px; border-radius: 4px;">🔑 Terbit</span>
+                    <span class="token-chip-mini" onclick="handleCopyToken('${v.token}')" title="Klik untuk salin token: ${v.token}">
+                      <span>${v.token.substring(0, 8)}...</span>
+                      <span>📋</span>
+                    </span>
+                  </div>`
+                : `<span style="color: #94A3B8; font-size: 0.7rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; display: inline-block;">Belum Terbit</span>`
+              }
+            </td>
+            <td style="text-align: center;">
               ${v.voted 
-                ? `<span style="display:inline-flex; align-items:center; gap:5px; color:#34D399; font-weight:700; font-size: 0.72rem; background:rgba(16,185,129,0.14); border: 1px solid rgba(16,185,129,0.35); padding:4px 9px; border-radius:4px;">✓ SUDAH MEMILIH</span>`
-                : (v.claimed && v.token 
-                    ? `<div style="display: flex; flex-direction: column; gap: 3px;">
-                        <span style="color: #FBBF24; font-size: 0.68rem; font-weight: 700;">🔑 KLAIM AKTIF</span>
-                        <span class="token-chip-mini" onclick="handleCopyToken('${v.token}')" title="Klik untuk salin kode token: ${v.token}">
-                          <span>${v.token.substring(0, 14)}...</span>
-                          <span>📋</span>
-                        </span>
-                      </div>`
-                    : `<span style="color: #F87171; font-size: 0.72rem; font-weight: 600; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); padding: 3px 8px; border-radius: 4px;">Belum Klaim</span>`
-                  )
+                ? `<span style="display:inline-flex; align-items:center; justify-content:center; gap:5px; color:#34D399; font-weight:700; font-size: 0.72rem; background:rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); padding:4px 10px; border-radius:4px; box-shadow: 0 0 10px rgba(16,185,129,0.15);">
+                    <span>✓</span>
+                    <span>Sudah Memilih</span>
+                  </span>`
+                : `<span style="display:inline-flex; align-items:center; justify-content:center; gap:5px; color:#F87171; font-weight:600; font-size: 0.72rem; background:rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); padding:4px 10px; border-radius:4px;">
+                    <span>⏳</span>
+                    <span>Belum Memilih</span>
+                  </span>`
               }
             </td>
             <td style="text-align: center;">
