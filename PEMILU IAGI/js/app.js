@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.autoFillDemoVote = () => {
     const dpt = window.pemiluStorage.getDPT();
-    let demoVoter = dpt.find(v => v.npa === 'IAGI-2024-0001');
+    let demoVoter = dpt.find(v => v.npa === '01001' || v.npa === 'IAGI-2024-0001');
     if (demoVoter) {
       demoVoter.claimed = true;
       demoVoter.token = 'IAGI-2026-DEMO-2026';
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const npaInput = document.getElementById('vote-npa');
     const tokenInput = document.getElementById('vote-token');
-    if (npaInput) npaInput.value = 'IAGI-2024-0001';
+    if (npaInput) npaInput.value = '01001';
     if (tokenInput) tokenInput.value = 'IAGI-2026-DEMO-2026';
     triggerHaptic('medium');
     if (voteFormAuth) {

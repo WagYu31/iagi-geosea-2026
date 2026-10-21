@@ -2309,9 +2309,9 @@
             <div class="form-group" style="margin-bottom: 14px;">
               <label class="form-label" style="display: flex; justify-content: space-between;">
                 <span>Nomor Pokok Anggota (NPA) *</span>
-                <span class="helper">Format bebas / Contoh: 12345 atau IAGI-2024-XXXX</span>
+                <span class="helper">Wajib 5 digit angka (Contoh: 01234 atau 12345)</span>
               </label>
-              <input type="text" id="add-voter-npa" class="form-input font-mono" placeholder="Contoh: 03457 atau IAGI-2024-0099" required style="font-weight: 700;">
+              <input type="text" id="add-voter-npa" class="form-input font-mono" placeholder="Contoh: 01234" maxlength="5" inputmode="numeric" pattern="\d{5}" required style="font-weight: 700; letter-spacing: 0.1em;" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group" style="margin-bottom: 14px;">
@@ -2363,7 +2363,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.25); padding: 10px 14px; border-radius: var(--radius-sm);">
             <div style="font-size: 0.74rem; color: #FDE68A;">
-              <strong>Format CSV:</strong> NPA, Nama Lengkap, Email, No. WA, Pengda, Kategori
+              <strong>Format CSV:</strong> NPA (5 Digit), Nama Lengkap, Email, No. WA
             </div>
             <button type="button" id="btn-download-csv-template" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; border-color: rgba(245,186,66,0.4); color: #FDE68A;">
               📄 Unduh Template
@@ -2380,7 +2380,7 @@
               <span>Atau Paste Data Teks CSV di Bawah:</span>
               <span class="helper">Baris baru per anggota</span>
             </label>
-            <textarea id="import-csv-text" class="form-input font-mono" rows="6" placeholder="IAGI-2024-0023, Ahmad Sujarwo S.T., ahmad.s@migas.com, 081234567890, DKI Jakarta, Professional&#10;IAGI-2024-0024, Ratna Sari Dewi S.Si., ratna.sari@tambang.id, 081298765432, Jawa Timur, Professional" style="font-size: 0.74rem; line-height: 1.4; resize: vertical;"></textarea>
+            <textarea id="import-csv-text" class="form-input font-mono" rows="6" placeholder="01023, Ahmad Sujarwo S.T., ahmad.s@migas.com, 081234567890&#10;01024, Ratna Sari Dewi S.Si., ratna.sari@tambang.id, 081298765432" style="font-size: 0.74rem; line-height: 1.4; resize: vertical;"></textarea>
           </div>
           
           <div id="import-preview-count" style="font-size: 0.75rem; color: #34D399; font-weight: 700; margin-top: 6px;"></div>
@@ -2572,9 +2572,9 @@
             <div class="form-group" style="margin-bottom: 14px;">
               <label class="form-label" style="display: flex; justify-content: space-between;">
                 <span>Nomor Pokok Anggota (NPA) *</span>
-                <span class="helper">Pengenal unik anggota</span>
+                <span class="helper">Wajib 5 digit angka</span>
               </label>
-              <input type="text" id="edit-voter-npa" class="form-input font-mono" required style="font-weight: 700;">
+              <input type="text" id="edit-voter-npa" class="form-input font-mono" placeholder="Contoh: 01234" maxlength="5" inputmode="numeric" pattern="\d{5}" required style="font-weight: 700; letter-spacing: 0.1em;" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group" style="margin-bottom: 14px;">
@@ -3462,6 +3462,15 @@
           return;
         }
 
+        if (!/^\d{5}$/.test(npa)) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Nomor Pokok Anggota (NPA) wajib tepat 5 digit angka (contoh: 01234 atau 12345).';
+          return;
+        }
+
         const res = window.pemiluStorage.addVoter({ npa, name, email, phone, pengda, category });
         if (!res.success) {
           alertEl.style.display = 'block';
@@ -3564,6 +3573,17 @@
             alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
             alertEl.style.color = '#FCA5A5';
             alertEl.innerText = 'Mohon lengkapi NPA, Nama Lengkap, dan Email aktif.';
+          }
+          return;
+        }
+
+        if (!/^\d{5}$/.test(npa)) {
+          if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+            alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+            alertEl.style.color = '#FCA5A5';
+            alertEl.innerText = 'Nomor Pokok Anggota (NPA) wajib tepat 5 digit angka (contoh: 01234 atau 12345).';
           }
           return;
         }
@@ -3889,11 +3909,11 @@
 
       // Download CSV Template
       document.getElementById('btn-download-csv-template').addEventListener('click', () => {
-        const sample = "NPA,Nama Lengkap,Email,Pengda,Kategori\n" +
-          "03457,Dr. Mirzam Abdurrachman,mirzam@itb.ac.id,Jawa Barat,Professional\n" +
-          "03749,Sonny Yudhistira S.T.,sonny.y@migas.com,DKI Jakarta,Professional\n" +
-          "05653,Sri Hartanto S.T. M.Sc.,sri.hartanto@energi.id,Kalimantan Timur,Professional\n" +
-          "12890,Andi Pratama S.T.,andi.pratama@geosains.id,Sulawesi Selatan,Student\n";
+        const sample = "NPA,Nama Lengkap,Email,No. WhatsApp\n" +
+          "03457,Dr. Mirzam Abdurrachman,mirzam@itb.ac.id,081234567890\n" +
+          "03749,Sonny Yudhistira S.T.,sonny.y@migas.com,081298765432\n" +
+          "05653,Sri Hartanto S.T. M.Sc.,sri.hartanto@energi.id,081211223344\n" +
+          "12890,Andi Pratama S.T.,andi.pratama@geosains.id,081299887766\n";
         const blob = new Blob([sample], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -3949,27 +3969,23 @@
           }
           const cols = line.split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
           if (cols.length >= 3) {
-            let phone = '';
-            let pengda = 'DKI Jakarta';
-            let category = 'Professional';
+            const rawNpa = cols[0].replace(/\D/g, '');
+            const cleanNpa = rawNpa.length > 0 ? rawNpa.slice(-5).padStart(5, '0') : '';
+            if (cleanNpa.length === 5) {
+              let phone = '';
+              if (cols.length >= 4 && (/^[\d\s\+\-\(\)]+$/.test(cols[3]) || cols[3].startsWith('08') || cols[3].startsWith('62'))) {
+                phone = cols[3];
+              }
 
-            if (cols.length >= 4 && (/^[\d\s\+\-\(\)]+$/.test(cols[3]) || cols[3].startsWith('08') || cols[3].startsWith('62'))) {
-              phone = cols[3];
-              pengda = cols[4] || 'DKI Jakarta';
-              category = cols[5] || 'Professional';
-            } else {
-              pengda = cols[3] || 'DKI Jakarta';
-              category = cols[4] || 'Professional';
+              parsedVoters.push({
+                npa: cleanNpa,
+                name: cols[1],
+                email: cols[2],
+                phone: phone,
+                pengda: 'DKI Jakarta',
+                category: 'Professional'
+              });
             }
-
-            parsedVoters.push({
-              npa: cols[0],
-              name: cols[1],
-              email: cols[2],
-              phone: phone,
-              pengda: pengda,
-              category: category
-            });
           }
         });
 

@@ -326,7 +326,7 @@
           <form id="form-claim" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
-              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="Contoh : 12XXX" required>
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="5 Digit Angka (Contoh: 01001)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
@@ -375,7 +375,7 @@
           <form id="form-vote-auth" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA)</label>
-              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="Contoh : 12XXX" required>
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="5 Digit Angka (Contoh: 01001)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
@@ -400,7 +400,7 @@
           <div style="margin-top: 14px; background: rgba(245, 186, 66, 0.1); border: 1px dashed rgba(245, 186, 66, 0.4); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
             <div>
               <div style="font-size: 0.74rem; font-weight: 800; color: #FDE68A;">Akun Uji Coba Demo:</div>
-              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">NPA: <strong style="color:#FFF;">IAGI-2024-0001</strong></div>
+              <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">NPA: <strong style="color:#FFF;">01001</strong></div>
               <div style="font-size: 0.68rem; color: #CBD5E1; font-family: var(--font-mono);">Token: <strong style="color:#FFF;">IAGI-2026-DEMO-2026</strong></div>
             </div>
             <button type="button" id="btn-fill-demo" class="btn btn-gold" style="font-size: 0.70rem; padding: 6px 12px; width: auto; flex-shrink: 0;" onclick="autoFillDemoVote()">

@@ -102,9 +102,60 @@ class PemiluStorage {
   // --- DPT Management ---
   getDPT() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT)) || [];
+      let dpt = JSON.parse(localStorage.getItem(STORAGE_KEYS.DPT));
+      if (!dpt || !Array.isArray(dpt) || dpt.length === 0) {
+        return (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
+      }
+
+      // Auto-migrate legacy NPA formats (e.g. IAGI-2024-0001) to strictly 5-digit numbers
+      let updated = false;
+      const legacyMap = {
+        'IAGI-2024-0001': '01001',
+        'IAGI-2024-0002': '01002',
+        'IAGI-2024-0003': '01003',
+        'IAGI-1994-0104': '01104',
+        'IAGI-1998-0412': '01412',
+        'IAGI-2001-0789': '01789',
+        'IAGI-2004-1102': '02102',
+        'IAGI-2005-1420': '02420',
+        'IAGI-2008-2041': '02841',
+        'IAGI-2010-2580': '03580',
+        'IAGI-2012-3341': '04341',
+        'IAGI-2014-4115': '05115',
+        'IAGI-2015-4890': '05890',
+        'IAGI-2016-5520': '06520',
+        'IAGI-2017-6102': '07102',
+        'IAGI-2018-6889': '07889',
+        'IAGI-2019-7450': '08450',
+        'IAGI-2020-8012': '09012',
+        'IAGI-2021-8765': '09765',
+        'IAGI-2022-9340': '10340',
+        'IAGI-2023-9890': '11890',
+        'IAGI-2024-1052': '12852'
+      };
+
+      dpt.forEach(v => {
+        if (v && v.npa && !/^\d{5}$/.test(v.npa)) {
+          if (legacyMap[v.npa]) {
+            v.npa = legacyMap[v.npa];
+            updated = true;
+          } else {
+            const digits = v.npa.replace(/\D/g, '');
+            if (digits.length > 0) {
+              v.npa = digits.slice(-5).padStart(5, '0');
+              updated = true;
+            }
+          }
+        }
+      });
+
+      if (updated) {
+        this.saveDPT(dpt);
+      }
+
+      return dpt;
     } catch (e) {
-      return [];
+      return (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
     }
   }
 
@@ -126,12 +177,13 @@ class PemiluStorage {
   getVoterByNpa(npa) {
     if (!npa) return null;
     const dpt = this.getDPT();
-    const cleanNpa = npa.trim().toUpperCase();
+    const cleanNpa = String(npa).trim().toUpperCase();
     return dpt.find(v => v.npa.toUpperCase() === cleanNpa) || null;
   }
 
   addVoter(voterData) {
-    const cleanNpa = (voterData.npa || '').trim().toUpperCase();
+    const rawNpa = (voterData.npa || '').trim();
+    const cleanNpa = rawNpa.replace(/\D/g, ''); // Extract digits only
     const cleanName = (voterData.name || '').trim();
     const cleanEmail = (voterData.email || '').trim().toLowerCase();
     const cleanPhone = (voterData.phone || voterData.whatsapp || '').trim();
@@ -140,6 +192,9 @@ class PemiluStorage {
 
     if (!cleanNpa) {
       return { success: false, error: 'Nomor Pokok Anggota (NPA) wajib diisi!' };
+    }
+    if (cleanNpa.length !== 5 || !/^\d{5}$/.test(cleanNpa)) {
+      return { success: false, error: 'Nomor Pokok Anggota (NPA) harus terdiri dari 5 digit angka (contoh: 01234 atau 12345)!' };
     }
     if (!cleanName) {
       return { success: false, error: 'Nama Lengkap wajib diisi!' };
@@ -250,8 +305,11 @@ class PemiluStorage {
 
     const voter = dpt[idx];
 
-    // If NPA changed, verify uniqueness
+    // If NPA changed, verify uniqueness & 5-digit format
     if (cleanNewNpa && cleanNewNpa !== cleanOldNpa) {
+      if (!/^\d{5}$/.test(cleanNewNpa)) {
+        return { success: false, error: 'Nomor Pokok Anggota (NPA) harus terdiri dari 5 digit angka (contoh: 01234 atau 12345)!' };
+      }
       if (dpt.some((v, i) => i !== idx && v.npa.toUpperCase() === cleanNewNpa)) {
         return { success: false, error: `NPA "${cleanNewNpa}" sudah terdaftar pada anggota lain.` };
       }
@@ -453,9 +511,9 @@ class PemiluStorage {
     const cleanToken = (token || '').trim().toUpperCase();
 
     // Built-in testing account for instant demonstration
-    if (cleanNpa === 'IAGI-2024-0001' && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
+    if ((cleanNpa === '01001' || cleanNpa === 'IAGI-2024-0001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
       const dpt = this.getDPT();
-      let demoVoter = dpt.find(v => v.npa === 'IAGI-2024-0001');
+      let demoVoter = dpt.find(v => v.npa === '01001' || v.npa === 'IAGI-2024-0001');
       if (demoVoter) {
         demoVoter.claimed = true;
         demoVoter.token = 'IAGI-2026-DEMO-2026';
