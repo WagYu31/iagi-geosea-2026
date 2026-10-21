@@ -288,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const simEmailToken = document.getElementById('sim-email-token');
   const simBtnOpenVote = document.getElementById('sim-btn-open-vote');
   const simBtnCopyCode = document.getElementById('sim-btn-copy-code');
+  const simBtnWaMe = document.getElementById('sim-btn-wa-me');
 
   function showEmailSimulationModal(voter, token) {
     if (!modalEmailSim) return;
@@ -314,6 +315,26 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>Salin Kode</span>
           `;
         }, 2000);
+      };
+    }
+
+    if (simBtnWaMe) {
+      simBtnWaMe.onclick = () => {
+        let msg = `*KODE SURAT SUARA PEMILU IAGI 2026*\n` +
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+          `Yth. ${voter.name}\n` +
+          `NPA: ${voter.npa}\n\n` +
+          `Kode Token Anda: *${token}*\n\n` +
+          `🗳️ Tautan Bilik Suara:\n${window.location.origin + window.location.pathname}#vote\n\n` +
+          `_Harap simpan kode token unik ini untuk memberikan suara sah._`;
+        
+        let phoneParam = '';
+        if (voter.phone) {
+          let cleanPhone = voter.phone.replace(/\D/g, '');
+          if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.substring(1);
+          phoneParam = `&phone=${cleanPhone}`;
+        }
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}${phoneParam}`, '_blank');
       };
     }
 

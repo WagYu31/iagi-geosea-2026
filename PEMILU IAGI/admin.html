@@ -1216,7 +1216,8 @@
       background: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.35);
       color: #FCA5A5;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
+      font-weight: 600;
       padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
@@ -1224,12 +1225,333 @@
       align-items: center;
       gap: 4px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
     .btn-action-delete:hover {
       background: rgba(239, 68, 68, 0.25);
       border-color: #EF4444;
       color: #FFFFFF;
+    }
+
+    /* Enhanced DPT Header & Toolbar System */
+    .dpt-header-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .dpt-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .dpt-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #A78BFA;
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.15);
+      flex-shrink: 0;
+    }
+
+    .dpt-title-wrap h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .dpt-title-wrap p {
+      font-size: 0.74rem;
+      color: #94A3B8;
+      margin: 0;
+    }
+
+    .btn-dpt-back {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #E2E8F0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-back:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      transform: translateX(-2px);
+    }
+
+    /* Command Toolbar Container */
+    .dpt-command-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+    }
+
+    .dpt-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      flex: 1 1 auto;
+    }
+
+    .dpt-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dpt-search-box {
+      position: relative;
+      min-width: 220px;
+      max-width: 320px;
+      flex: 1 1 220px;
+    }
+
+    .dpt-search-box svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      color: #64748B;
+      pointer-events: none;
+    }
+
+    .dpt-search-input {
+      width: 100%;
+      padding: 7px 12px 7px 32px !important;
+      font-size: 0.76rem !important;
+      background: rgba(2, 6, 23, 0.8) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: var(--radius-sm) !important;
+      color: #F8FAFC !important;
+    }
+
+    .dpt-search-input:focus {
+      border-color: var(--gold-secondary) !important;
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.2) !important;
+    }
+
+    .dpt-select-filter {
+      padding: 7px 12px !important;
+      font-size: 0.76rem !important;
+      background: rgba(2, 6, 23, 0.8) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: var(--radius-sm) !important;
+      color: #CBD5E1 !important;
+      cursor: pointer;
+    }
+
+    /* Executive Toolbar Action Buttons */
+    .btn-dpt-add {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #34D399;
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-add:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-dpt-import {
+      background: rgba(245, 186, 66, 0.08);
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      color: #FDE68A;
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-import:hover {
+      background: rgba(245, 186, 66, 0.18);
+      color: #FFFFFF;
+      border-color: #F5BA42;
+    }
+
+    .btn-dpt-export {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-export:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+    }
+
+    .btn-dpt-broadcast {
+      background: rgba(37, 211, 102, 0.12);
+      border: 1px solid rgba(37, 211, 102, 0.4);
+      color: #4ADE80;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-broadcast:hover {
+      background: #25D366;
+      border-color: #25D366;
+      color: #032514;
+      box-shadow: 0 0 14px rgba(37, 211, 102, 0.4);
+    }
+
+    /* Table Action Buttons Group (Komplit & Elegan) */
+    .row-actions-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .btn-act-wa {
+      background: rgba(37, 211, 102, 0.12);
+      border: 1px solid rgba(37, 211, 102, 0.4);
+      color: #4ADE80;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn-act-wa:hover {
+      background: #25D366;
+      border-color: #25D366;
+      color: #032514;
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-act-token {
+      background: rgba(245, 186, 66, 0.1);
+      border: 1px solid rgba(245, 186, 66, 0.35);
+      color: #FDE68A;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn-act-token:hover {
+      background: rgba(245, 186, 66, 0.25);
+      border-color: #F5BA42;
+      color: #FFFFFF;
+    }
+
+    .token-chip-mini {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: rgba(0,0,0,0.5);
+      border: 1px dashed rgba(245, 186, 66, 0.45);
+      color: #FDE68A;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .token-chip-mini:hover {
+      border-color: #34D399;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    @media (max-width: 900px) {
+      .dpt-command-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .dpt-toolbar-left, .dpt-toolbar-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .dpt-search-box {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -1734,40 +2056,73 @@
 
     <!-- Bottom Section: DPT Management & Voter Verification -->
     <section id="section-dpt-table" class="panel-card" style="display: none;">
-      <div class="panel-header" style="flex-wrap: wrap; gap: 14px;">
-        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-          <div class="panel-title">
-            <svg style="width: 20px; height: 20px; stroke: #A78BFA; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Daftar Pemilih Tetap (DPT) & Status Hak Suara</span>
+      <!-- Top Header Bar of DPT Panel -->
+      <div class="dpt-header-strip">
+        <div class="dpt-header-left">
+          <div class="dpt-icon-badge">
+            <svg style="width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           </div>
-          <button class="btn btn-subtle" onclick="switchAdminSection('section-metrics', event)" style="font-size: 0.74rem; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-sm); cursor: pointer;" title="Kembali ke layar ringkasan pleno">
-            <span>← Kembali ke Ringkasan Pleno</span>
-          </button>
+          <div class="dpt-title-wrap">
+            <h2>Daftar Pemilih Tetap (DPT) & Status Hak Suara</h2>
+            <p>Manajemen DPT Resmi KPKU • Distribusi Token Kriptografi Sekali Pakai & Verifikasi WhatsApp</p>
+          </div>
         </div>
+        <button class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" title="Kembali ke layar ringkasan pleno">
+          <span>← Kembali ke Ringkasan Pleno</span>
+        </button>
+      </div>
 
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <input type="text" id="desktop-dpt-search" class="form-input" placeholder="🔍 Cari NPA / Nama Anggota..." style="width: 230px; padding: 7px 12px; font-size: 0.78rem;">
-          
-          <select id="desktop-dpt-filter" class="form-input" style="width: 150px; padding: 7px 10px; font-size: 0.78rem;">
-            <option value="all">Semua Status</option>
-            <option value="voted">Sudah Memilih (Voted)</option>
-            <option value="claimed">Klaim Token (Belum Vote)</option>
-            <option value="unclaimed">Belum Klaim</option>
+      <!-- Unified Command Toolbar -->
+      <div class="dpt-command-toolbar">
+        <div class="dpt-toolbar-left">
+          <div class="dpt-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="desktop-dpt-search" class="dpt-search-input" placeholder="🔍 Cari NPA, Nama, WA, atau Pengda...">
+          </div>
+
+          <select id="desktop-dpt-filter" class="dpt-select-filter">
+            <option value="all">Semua Status (All)</option>
+            <option value="voted">✓ Sudah Memilih (Voted)</option>
+            <option value="claimed">🔑 Klaim Token (Belum Vote)</option>
+            <option value="unclaimed">⏳ Belum Klaim</option>
           </select>
 
-          <!-- Action Buttons: Add Voter & Import CSV & Export CSV -->
-          <button id="btn-open-add-voter" class="btn" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFFFFF; font-weight: 700; font-size: 0.76rem; padding: 7px 14px; border: 1px solid #34D399; box-shadow: 0 2px 10px rgba(16,185,129,0.35); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-radius: var(--radius-sm);" title="Daftarkan NPA anggota baru ke DPT">
+          <select id="desktop-dpt-filter-pengda" class="dpt-select-filter" style="max-width: 140px;">
+            <option value="all">Semua Pengda</option>
+            <option value="DKI Jakarta">DKI Jakarta</option>
+            <option value="Jawa Barat">Jawa Barat</option>
+            <option value="Jawa Timur">Jawa Timur</option>
+            <option value="D.I. Yogyakarta">D.I. Yogyakarta</option>
+            <option value="Kalimantan Timur">Kalimantan Timur</option>
+            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+            <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+            <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+            <option value="Sumatera Utara">Sumatera Utara</option>
+            <option value="Sumatera Selatan">Sumatera Selatan</option>
+            <option value="Riau">Riau</option>
+            <option value="Papua">Papua</option>
+            <option value="Banten">Banten</option>
+            <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+          </select>
+        </div>
+
+        <div class="dpt-toolbar-right">
+          <button id="btn-open-add-voter" class="btn-dpt-add" title="Daftarkan anggota baru ke DPT">
             <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>+ Tambah Pemilih</span>
           </button>
 
-          <button id="btn-open-import-voter" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(245,186,66,0.4); color: #FDE68A; border-radius: var(--radius-sm); cursor: pointer;" title="Upload banyak anggota dari Excel/CSV">
+          <button id="btn-open-import-voter" class="btn-dpt-import" title="Upload banyak anggota dari Excel/CSV">
             <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
             <span>📤 Import CSV</span>
           </button>
 
-          <button id="btn-export-dpt-csv" class="btn btn-subtle" style="font-size: 0.76rem; padding: 7px 12px; border-radius: var(--radius-sm); cursor: pointer;" title="Unduh semua data DPT ke CSV">
-            📥 Export CSV
+          <button id="btn-export-dpt-csv" class="btn-dpt-export" title="Unduh semua data DPT ke CSV">
+            <span>📥 Export CSV</span>
+          </button>
+
+          <button id="btn-open-broadcast-wa" class="btn-dpt-broadcast" title="Broadcast token via WhatsApp ke pemilih yang belum klaim">
+            <span>💬 Broadcast WA</span>
           </button>
         </div>
       </div>
@@ -1778,7 +2133,7 @@
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Sudah Memilih: <strong id="dpt-mini-voted" style="color: #34D399; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
-        <div style="color: #94A3B8;">Klaim Token (Belum Vote): <strong id="dpt-mini-claimed" style="color: #FBBF24; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
+        <div style="color: #94A3B8;">Klaim Token: <strong id="dpt-mini-claimed" style="color: #FBBF24; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Belum Klaim: <strong id="dpt-mini-unclaimed" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
@@ -1789,13 +2144,12 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>No. Pokok Anggota (NPA)</th>
-              <th>Nama Lengkap</th>
-              <th>Email Resmi</th>
+              <th style="width: 140px;">No. Pokok Anggota (NPA)</th>
+              <th>Nama Anggota & Kategori</th>
+              <th>Kontak (Email & WhatsApp)</th>
               <th>Pengda / Wilayah</th>
-              <th>Status Token</th>
-              <th>Status Suara</th>
-              <th style="text-align: center; width: 70px;">Aksi</th>
+              <th>Status Hak Suara</th>
+              <th style="text-align: center; width: 220px;">Aksi Cepat</th>
             </tr>
           </thead>
           <tbody id="desktop-dpt-table-body">
@@ -1840,6 +2194,14 @@
               <input type="email" id="add-voter-email" class="form-input" placeholder="contoh: anggota@iagi.or.id" required>
             </div>
 
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Nomor WhatsApp / HP</span>
+                <span class="helper">Wajib aktif untuk distribusi token WA (contoh: 081234567890)</span>
+              </label>
+              <input type="tel" id="add-voter-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
+            </div>
+
             <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; margin-bottom: 6px;">
               <div class="form-group">
                 <label class="form-label">Pengda / Wilayah</label>
@@ -1873,7 +2235,7 @@
             </div>
 
             <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.4; margin-top: 10px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
-              ℹ️ Setelah disimpan, anggota dengan NPA ini langsung bisa mengecek hak suara dan melakukan klaim surat suara di bilik suara portal.
+              ℹ️ Setelah disimpan, anggota langsung bisa mengecek hak suara dan menerima token via tombol <strong>Kirim WA</strong> atau klaim mandiri di bilik suara portal.
             </div>
           </div>
 
@@ -1900,7 +2262,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.25); padding: 10px 14px; border-radius: var(--radius-sm);">
             <div style="font-size: 0.74rem; color: #FDE68A;">
-              <strong>Format CSV:</strong> NPA, Nama Lengkap, Email, Pengda, Kategori
+              <strong>Format CSV:</strong> NPA, Nama Lengkap, Email, No. WA, Pengda, Kategori
             </div>
             <button type="button" id="btn-download-csv-template" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; border-color: rgba(245,186,66,0.4); color: #FDE68A;">
               📄 Unduh Template
@@ -1917,7 +2279,7 @@
               <span>Atau Paste Data Teks CSV di Bawah:</span>
               <span class="helper">Baris baru per anggota</span>
             </label>
-            <textarea id="import-csv-text" class="form-input font-mono" rows="6" placeholder="IAGI-2024-0023, Ahmad Sujarwo S.T., ahmad.s@migas.com, DKI Jakarta, Professional&#10;IAGI-2024-0024, Ratna Sari Dewi S.Si., ratna.sari@tambang.id, Jawa Timur, Professional" style="font-size: 0.74rem; line-height: 1.4; resize: vertical;"></textarea>
+            <textarea id="import-csv-text" class="form-input font-mono" rows="6" placeholder="IAGI-2024-0023, Ahmad Sujarwo S.T., ahmad.s@migas.com, 081234567890, DKI Jakarta, Professional&#10;IAGI-2024-0024, Ratna Sari Dewi S.Si., ratna.sari@tambang.id, 081298765432, Jawa Timur, Professional" style="font-size: 0.74rem; line-height: 1.4; resize: vertical;"></textarea>
           </div>
           
           <div id="import-preview-count" style="font-size: 0.75rem; color: #34D399; font-weight: 700; margin-top: 6px;"></div>
@@ -1926,6 +2288,73 @@
         <div class="admin-modal-footer">
           <button type="button" class="btn btn-subtle" onclick="closeImportModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
           <button type="button" id="btn-submit-import-dpt" onclick="doSubmitImportDpt()" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700;">Proses Import Data ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 3: BROADCAST TOKEN VIA WHATSAPP ================= -->
+    <div id="modal-broadcast-wa" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 650px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #25D366; font-size: 1.2rem;">💬</span>
+            <span>Broadcast Surat Suara & Token via WhatsApp</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeBroadcastWaModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <div style="background: rgba(37, 211, 102, 0.08); border: 1px solid rgba(37, 211, 102, 0.3); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; font-size: 0.78rem; color: #DCFCE7; line-height: 1.5;">
+            <strong>ℹ️ Mekanisme Pengiriman WhatsApp:</strong><br>
+            Panitia KPKU dapat mengirimkan Kode Token unik surat suara langsung ke WhatsApp setiap pemilih yang belum menggunakan hak suaranya. Klik tombol hijau <strong>"Kirim WA"</strong> di samping setiap nama untuk membuka WhatsApp dengan template pesan resmi terisi otomatis.
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #FFFFFF;">
+              Daftar Pemilih Belum Klaim (<span id="broadcast-wa-count" style="color: #FBBF24;">0</span> anggota)
+            </div>
+            <div style="font-size: 0.72rem; color: #94A3B8;">
+              Status: Siap Dikirimkan
+            </div>
+          </div>
+
+          <div id="broadcast-wa-list" style="max-height: 280px; overflow-y: auto; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); padding: 8px;">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div style="margin-top: 14px;">
+            <details style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.74rem;">
+              <summary style="cursor: pointer; color: #F5BA42; font-weight: 600;">👁️ Lihat Pratinjau Template Pesan WhatsApp Resmi</summary>
+              <pre id="broadcast-msg-preview" style="margin-top: 8px; font-family: var(--font-mono); font-size: 0.7rem; color: #CBD5E1; white-space: pre-wrap; line-height: 1.4; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px;"></pre>
+            </details>
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-subtle" onclick="closeBroadcastWaModal()" style="font-size: 0.8rem; padding: 8px 16px;">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 4: INPUT NOMOR WHATSAPP ================= -->
+    <div id="modal-edit-phone" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 420px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #4ADE80; font-size: 1.1rem;">📱</span>
+            <span>Set Nomor WhatsApp Anggota</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeEditPhoneModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <p id="edit-phone-voter-label" style="font-size: 0.8rem; color: #E2E8F0; margin-bottom: 12px;"></p>
+          <div class="form-group">
+            <label class="form-label">Nomor WhatsApp / HP Aktif</label>
+            <input type="tel" id="edit-phone-input" class="form-input font-mono" placeholder="Contoh: 081234567890" style="font-size: 0.9rem; font-weight: 700;">
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-subtle" onclick="closeEditPhoneModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
+          <button type="button" id="btn-save-phone" onclick="doSavePhone()" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700;">Simpan & Buka WA ✓</button>
         </div>
       </div>
     </div>
@@ -2467,49 +2896,99 @@
 
         const query = (document.getElementById('desktop-dpt-search').value || '').toLowerCase();
         const filter = document.getElementById('desktop-dpt-filter').value;
+        const pengdaFilter = (document.getElementById('desktop-dpt-filter-pengda')?.value || 'all');
         const dpt = window.pemiluStorage.getDPT();
 
         const filtered = dpt.filter(item => {
           const matchQuery = item.npa.toLowerCase().includes(query) || 
                              item.name.toLowerCase().includes(query) || 
                              item.email.toLowerCase().includes(query) ||
+                             (item.phone && item.phone.toLowerCase().includes(query)) ||
                              (item.pengda && item.pengda.toLowerCase().includes(query));
           if (!matchQuery) return false;
 
           if (filter === 'voted') return item.voted === true;
           if (filter === 'claimed') return item.claimed === true && !item.voted;
           if (filter === 'unclaimed') return !item.claimed;
+
+          if (pengdaFilter !== 'all' && (item.pengda || '') !== pengdaFilter) return false;
+
           return true;
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 24px;">Tidak ditemukan data pemilih yang sesuai. Klik tombol <strong>+ Tambah Pemilih</strong> di atas untuk mendaftarkan anggota baru.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
           return;
         }
 
         tbody.innerHTML = filtered.map(v => `
           <tr>
-            <td style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold);">${v.npa}</td>
-            <td style="font-weight: 600; color: #FFFFFF;">${v.name}</td>
-            <td style="font-family: var(--font-mono); font-size: 0.75rem; color: #94A3B8;">${v.email}</td>
-            <td style="font-size: 0.75rem; color: #CBD5E1;">${v.pengda || 'DKI Jakarta'}</td>
             <td>
-              ${v.claimed 
-                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#FBBF24; font-family:var(--font-mono); font-size:0.75rem; background:rgba(251,191,36,0.1); padding:2px 8px; border-radius:4px;" title="Kode Token: ${v.token || 'AKTIF'}">TOKEN: ${v.token ? v.token.substring(0, 14) + '...' : 'AKTIF'}</span>`
-                : `<span style="color:#64748B;">Belum Klaim</span>`
-              }
+              <div style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold); font-size: 0.82rem; letter-spacing: 0.02em;">
+                ${v.npa}
+              </div>
+              <div style="margin-top: 3px;">
+                <span style="font-size: 0.65rem; background: rgba(255,255,255,0.06); color: #94A3B8; padding: 1px 6px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.08);">
+                  ${v.category || 'Professional'}
+                </span>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #FFFFFF; font-size: 0.85rem;">${v.name}</div>
+              <div style="font-size: 0.68rem; color: #64748B; margin-top: 2px;">Terdaftar Resmi KPKU</div>
+            </td>
+            <td>
+              <div style="font-family: var(--font-mono); font-size: 0.74rem; color: #CBD5E1; display: flex; align-items: center; gap: 5px;">
+                <span>✉️</span>
+                <span>${v.email}</span>
+              </div>
+              <div style="margin-top: 4px; font-family: var(--font-mono); font-size: 0.72rem; display: flex; align-items: center; gap: 5px;">
+                ${v.phone 
+                  ? `<span style="color: #4ADE80; display: inline-flex; align-items: center; gap: 4px;"><span>📱</span><span>${v.phone}</span></span>` 
+                  : `<a href="javascript:void(0)" onclick="promptSetPhone('${v.npa}')" style="color: #F5BA42; text-decoration: underline; font-size: 0.7rem;">+ Set No. WA</a>`
+                }
+              </div>
+            </td>
+            <td>
+              <div style="font-size: 0.78rem; color: #E2E8F0; font-weight: 600;">${v.pengda || 'DKI Jakarta'}</div>
             </td>
             <td>
               ${v.voted 
-                ? `<span style="display:inline-flex; align-items:center; gap:4px; color:#34D399; font-weight:700; background:rgba(16,185,129,0.12); padding:3px 8px; border-radius:4px;">✓ SUDAH MEMILIH</span>`
-                : `<span style="color:#F87171; font-weight:600;">Belum Suara</span>`
+                ? `<span style="display:inline-flex; align-items:center; gap:5px; color:#34D399; font-weight:700; font-size: 0.72rem; background:rgba(16,185,129,0.14); border: 1px solid rgba(16,185,129,0.35); padding:4px 9px; border-radius:4px;">✓ SUDAH MEMILIH</span>`
+                : (v.claimed && v.token 
+                    ? `<div style="display: flex; flex-direction: column; gap: 3px;">
+                        <span style="color: #FBBF24; font-size: 0.68rem; font-weight: 700;">🔑 KLAIM AKTIF</span>
+                        <span class="token-chip-mini" onclick="handleCopyToken('${v.token}')" title="Klik untuk salin kode token: ${v.token}">
+                          <span>${v.token.substring(0, 14)}...</span>
+                          <span>📋</span>
+                        </span>
+                      </div>`
+                    : `<span style="color: #F87171; font-size: 0.72rem; font-weight: 600; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); padding: 3px 8px; border-radius: 4px;">Belum Klaim</span>`
+                  )
               }
             </td>
             <td style="text-align: center;">
-              <button type="button" class="btn-action-delete" onclick="handleDeleteVoter('${v.npa}')" title="Hapus ${v.name} (${v.npa}) dari DPT">
-                <svg style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                <span>Hapus</span>
-              </button>
+              <div class="row-actions-group">
+                <!-- WhatsApp Button -->
+                <button type="button" class="btn-act-wa" onclick="handleSendWhatsApp('${v.npa}')" title="Kirim Surat Suara & Token via WhatsApp Resmi">
+                  <span>💬</span>
+                  <span>Kirim WA</span>
+                </button>
+
+                <!-- Token Button -->
+                ${!v.voted ? `
+                  <button type="button" class="btn-act-token" onclick="handleGenerateToken('${v.npa}')" title="${v.token ? 'Salin / Tampilkan Token' : 'Terbitkan Token Manual'}">
+                    <span>🔑</span>
+                    <span>${v.token ? 'Token' : 'Terbit'}</span>
+                  </button>
+                ` : ''}
+
+                <!-- Delete Button -->
+                <button type="button" class="btn-action-delete" onclick="handleDeleteVoter('${v.npa}')" title="Hapus ${v.name} dari DPT">
+                  <svg style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <span>Hapus</span>
+                </button>
+              </div>
             </td>
           </tr>
         `).join('');
@@ -2518,6 +2997,8 @@
       // Filter & Search Events
       document.getElementById('desktop-dpt-search').addEventListener('input', renderDptTable);
       document.getElementById('desktop-dpt-filter').addEventListener('change', renderDptTable);
+      const pengdaFilterSelect = document.getElementById('desktop-dpt-filter-pengda');
+      if (pengdaFilterSelect) pengdaFilterSelect.addEventListener('change', renderDptTable);
 
       // --- Modals Controller (Tambah Pemilih & Import CSV) ---
       window.openAddVoterModal = function() {
@@ -2554,6 +3035,138 @@
         document.getElementById('import-csv-file').value = '';
       };
 
+      // WhatsApp Actions Handlers
+      window.handleSendWhatsApp = function(npa) {
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) {
+          alert('Data pemilih tidak ditemukan.');
+          return;
+        }
+
+        // Generate token if not yet created
+        let token = voter.token;
+        if (!token) {
+          const genRes = window.pemiluStorage.generateTokenForVoter(npa);
+          if (genRes.success) {
+            token = genRes.token;
+          }
+        }
+
+        // If no phone number is recorded, prompt admin to enter phone
+        if (!voter.phone || voter.phone.trim().length < 5) {
+          window.promptSetPhone(npa);
+          return;
+        }
+
+        let cleanPhone = voter.phone.replace(/\D/g, '');
+        if (cleanPhone.startsWith('0')) {
+          cleanPhone = '62' + cleanPhone.substring(1);
+        } else if (!cleanPhone.startsWith('62')) {
+          cleanPhone = '62' + cleanPhone;
+        }
+
+        const msg = window.pemiluStorage.formatWhatsAppMessage(voter, token || 'IAGI-2026-TOKEN');
+        const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+        
+        window.open(waUrl, '_blank');
+        refreshAll();
+      };
+
+      window.handleGenerateToken = function(npa) {
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) return;
+
+        let token = voter.token;
+        if (!token) {
+          const res = window.pemiluStorage.generateTokenForVoter(npa);
+          if (!res.success) {
+            alert(res.error || 'Gagal menerbitkan token.');
+            return;
+          }
+          token = res.token;
+        }
+
+        navigator.clipboard.writeText(token);
+        alert(`🔑 KODE TOKEN SURAT SUARA RESMI:\n\nNama: ${voter.name}\nNPA: ${voter.npa}\nKode Token: ${token}\n\n✓ Kode token berhasil disalin ke clipboard!`);
+        refreshAll();
+      };
+
+      window.handleCopyToken = function(token) {
+        if (!token) return;
+        navigator.clipboard.writeText(token);
+        alert(`✓ Kode token "${token}" telah disalin ke clipboard!`);
+      };
+
+      let activePhoneNpa = null;
+      window.promptSetPhone = function(npa) {
+        activePhoneNpa = npa;
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) return;
+        document.getElementById('edit-phone-voter-label').innerText = `Anggota: ${voter.name} (${voter.npa})`;
+        document.getElementById('edit-phone-input').value = voter.phone || '';
+        const modal = document.getElementById('modal-edit-phone');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+        setTimeout(() => document.getElementById('edit-phone-input').focus(), 100);
+      };
+
+      window.closeEditPhoneModal = function() {
+        const modal = document.getElementById('modal-edit-phone');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        activePhoneNpa = null;
+      };
+
+      window.doSavePhone = function() {
+        if (!activePhoneNpa) return;
+        const phone = (document.getElementById('edit-phone-input').value || '').trim();
+        window.pemiluStorage.updateVoterPhone(activePhoneNpa, phone);
+        const savedNpa = activePhoneNpa;
+        window.closeEditPhoneModal();
+        renderDptTable();
+        // Immediately trigger WhatsApp dispatch
+        handleSendWhatsApp(savedNpa);
+      };
+
+      // Broadcast WhatsApp Modal
+      window.openBroadcastWaModal = function() {
+        const modal = document.getElementById('modal-broadcast-wa');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+
+        const dpt = window.pemiluStorage.getDPT();
+        const unclaimed = dpt.filter(v => !v.voted && !v.claimed);
+        document.getElementById('broadcast-wa-count').innerText = unclaimed.length;
+
+        const listContainer = document.getElementById('broadcast-wa-list');
+        if (unclaimed.length === 0) {
+          listContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:#34D399; font-weight:700;">✓ Semua pemilih yang terdaftar di DPT telah mengklaim surat suara mereka.</div>`;
+        } else {
+          listContainer.innerHTML = unclaimed.map(v => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px;">
+              <div>
+                <div style="font-weight: 700; color: #FFFFFF; font-size: 0.8rem;">${v.name}</div>
+                <div style="font-size: 0.7rem; color: #94A3B8; font-family: var(--font-mono);">${v.npa} • ${v.phone ? '📱 ' + v.phone : '⚠️ Belum ada no WA'}</div>
+              </div>
+              <button type="button" class="btn-act-wa" onclick="handleSendWhatsApp('${v.npa}')" style="padding: 5px 10px; font-size: 0.72rem;">
+                <span>💬 Kirim WA</span>
+              </button>
+            </div>
+          `).join('');
+        }
+
+        // Preview sample message
+        const sampleVoter = unclaimed[0] || dpt[0];
+        if (sampleVoter) {
+          document.getElementById('broadcast-msg-preview').innerText = window.pemiluStorage.formatWhatsAppMessage(sampleVoter, 'IAGI-2026-X9K2-7LM4');
+        }
+      };
+
+      window.closeBroadcastWaModal = function() {
+        const modal = document.getElementById('modal-broadcast-wa');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      const btnOpenBroadcast = document.getElementById('btn-open-broadcast-wa');
+      if (btnOpenBroadcast) btnOpenBroadcast.addEventListener('click', window.openBroadcastWaModal);
+
       // Open Modal Buttons
       const btnAddVoter = document.getElementById('btn-open-add-voter');
       if (btnAddVoter) btnAddVoter.addEventListener('click', window.openAddVoterModal);
@@ -2576,6 +3189,7 @@
         const npa = (document.getElementById('add-voter-npa').value || '').trim();
         const name = (document.getElementById('add-voter-name').value || '').trim();
         const email = (document.getElementById('add-voter-email').value || '').trim();
+        const phone = (document.getElementById('add-voter-phone')?.value || '').trim();
         const pengda = (document.getElementById('add-voter-pengda').value || '').trim();
         const category = (document.getElementById('add-voter-category').value || '').trim();
 
@@ -2588,7 +3202,7 @@
           return;
         }
 
-        const res = window.pemiluStorage.addVoter({ npa, name, email, pengda, category });
+        const res = window.pemiluStorage.addVoter({ npa, name, email, phone, pengda, category });
         if (!res.success) {
           alertEl.style.display = 'block';
           alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -2708,12 +3322,26 @@
           }
           const cols = line.split(',').map(c => c.replace(/^["']|["']$/g, '').trim());
           if (cols.length >= 3) {
+            let phone = '';
+            let pengda = 'DKI Jakarta';
+            let category = 'Professional';
+
+            if (cols.length >= 4 && (/^[\d\s\+\-\(\)]+$/.test(cols[3]) || cols[3].startsWith('08') || cols[3].startsWith('62'))) {
+              phone = cols[3];
+              pengda = cols[4] || 'DKI Jakarta';
+              category = cols[5] || 'Professional';
+            } else {
+              pengda = cols[3] || 'DKI Jakarta';
+              category = cols[4] || 'Professional';
+            }
+
             parsedVoters.push({
               npa: cols[0],
               name: cols[1],
               email: cols[2],
-              pengda: cols[3] || 'DKI Jakarta',
-              category: cols[4] || 'Professional'
+              phone: phone,
+              pengda: pengda,
+              category: category
             });
           }
         });
@@ -2778,9 +3406,9 @@
       // Export CSV
       document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
         const dpt = window.pemiluStorage.getDPT();
-        let csv = 'NPA,Nama Lengkap,Email,Pengda,Kategori,Status Klaim,Status Vote,Waktu\n';
+        let csv = 'NPA,Nama Lengkap,Email,No. WhatsApp,Pengda,Kategori,Status Klaim,Token,Status Vote,Waktu\n';
         dpt.forEach(item => {
-          csv += `"${item.npa}","${item.name}","${item.email}","${item.pengda || 'DKI Jakarta'}","${item.category || 'Professional'}","${item.claimed ? 'Klaim' : 'Belum'}","${item.voted ? 'Voted' : 'Belum'}","${item.voteTimestamp || ''}"\n`;
+          csv += `"${item.npa}","${item.name}","${item.email}","${item.phone || ''}","${item.pengda || 'DKI Jakarta'}","${item.category || 'Professional'}","${item.claimed ? 'Klaim' : 'Belum'}","${item.token || ''}","${item.voted ? 'Voted' : 'Belum'}","${item.voted_at || ''}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);

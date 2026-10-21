@@ -134,6 +134,7 @@ class PemiluStorage {
     const cleanNpa = (voterData.npa || '').trim().toUpperCase();
     const cleanName = (voterData.name || '').trim();
     const cleanEmail = (voterData.email || '').trim().toLowerCase();
+    const cleanPhone = (voterData.phone || voterData.whatsapp || '').trim();
     const cleanPengda = (voterData.pengda || '').trim() || 'DKI Jakarta';
     const cleanCategory = (voterData.category || '').trim() || 'Professional';
 
@@ -160,6 +161,7 @@ class PemiluStorage {
       npa: cleanNpa,
       name: cleanName,
       email: cleanEmail,
+      phone: cleanPhone,
       pengda: cleanPengda,
       category: cleanCategory,
       status: 'AKTIF',
@@ -192,6 +194,64 @@ class PemiluStorage {
     return { success: true, removed };
   }
 
+  updateVoterPhone(npa, phone) {
+    const cleanNpa = (npa || '').trim().toUpperCase();
+    const cleanPhone = (phone || '').trim();
+    const dpt = this.getDPT();
+    const voter = dpt.find(v => v.npa.toUpperCase() === cleanNpa);
+    if (!voter) return { success: false, error: 'Pemilih tidak ditemukan' };
+    voter.phone = cleanPhone;
+    this.saveDPT(dpt);
+    return { success: true, voter };
+  }
+
+  generateTokenForVoter(npa) {
+    const cleanNpa = (npa || '').trim().toUpperCase();
+    const dpt = this.getDPT();
+    const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    if (idx === -1) return { success: false, error: 'NPA tidak ditemukan dalam DPT' };
+
+    const voter = dpt[idx];
+    if (voter.voted) {
+      return { success: false, error: 'Pemilih ini sudah memberikan suara (VOTED). Tidak dapat menerbitkan token baru.' };
+    }
+
+    if (!voter.token) {
+      voter.token = generateToken();
+      voter.claimed = true;
+      voter.claimed_at = new Date().toISOString();
+      dpt[idx] = voter;
+      this.saveDPT(dpt);
+      this.addAuditLog('ADMIN_TOKEN_GEN', `Panitia menerbitkan token surat suara untuk NPA ${cleanNpa} (${voter.name}): ${voter.token}`);
+    }
+
+    return { success: true, token: voter.token, voter };
+  }
+
+  formatWhatsAppMessage(voter, token) {
+    let siteUrl = window.location.origin + window.location.pathname.replace('admin.html', 'app.html');
+    if (!siteUrl.includes('http')) {
+      siteUrl = 'https://pemiluiagi.web.id/app.html';
+    }
+    return `*KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026*\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+      `Yth. Rekan Sejawat Ahli Geologi,\n` +
+      `*${voter.name}*\n` +
+      `NPA: *${voter.npa}*\n` +
+      `Pengda: *${voter.pengda || 'IAGI'}*\n\n` +
+      `Hak suara Anda pada Pemilihan Ketua Umum IAGI Periode 2026–2029 telah *TERVERIFIKASI AKTIF* di Daftar Pemilih Tetap (DPT) KPKU.\n\n` +
+      `🔑 *KODE SURAT SUARA ELEKTRONIK (TOKEN):*\n` +
+      `👉 *${token}*\n\n` +
+      `🗳️ *Akses Bilik Suara Digital:*\n` +
+      `${siteUrl}#vote\n\n` +
+      `*Langkah Memilih:*\n` +
+      `1. Buka tautan bilik suara di atas\n` +
+      `2. Masukkan NPA: *${voter.npa}*\n` +
+      `3. Masukkan Kode Token di atas\n` +
+      `4. Tentukan pilihan Calon Ketua Umum Anda dan klik Kirim Suara Sah.\n\n` +
+      `_Pesan otomatis resmi Panitia KPKU IAGI 2026. Kode token bersifat rahasia dan sekali pakai._`;
+  }
+
   importVoters(voterList) {
     if (!Array.isArray(voterList) || voterList.length === 0) {
       return { success: false, error: 'Daftar pemilih kosong atau format tidak sesuai.' };
@@ -206,6 +266,7 @@ class PemiluStorage {
       const cleanNpa = (item.npa || '').trim().toUpperCase();
       const cleanName = (item.name || '').trim();
       const cleanEmail = (item.email || '').trim().toLowerCase();
+      const cleanPhone = (item.phone || item.whatsapp || '').trim();
       const cleanPengda = (item.pengda || '').trim() || 'DKI Jakarta';
       const cleanCategory = (item.category || '').trim() || 'Professional';
 
@@ -224,6 +285,7 @@ class PemiluStorage {
         npa: cleanNpa,
         name: cleanName,
         email: cleanEmail,
+        phone: cleanPhone,
         pengda: cleanPengda,
         category: cleanCategory,
         status: 'AKTIF',
