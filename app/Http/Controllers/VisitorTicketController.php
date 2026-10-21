@@ -47,6 +47,8 @@ class VisitorTicketController extends Controller
             'visitor_price_non_iagi_member_expat',
             'visitor_price_student',
             'visitor_registration_enabled',
+            'visitor_free_pass_unlocked',
+            'visitor_free_pass_unlock_date',
             'visitor_qris_image',
             'visitor_bank_transfer_info',
             'visitor_event_date',
@@ -76,10 +78,25 @@ class VisitorTicketController extends Controller
         $priceNonIagiExpat = floatval($settings['visitor_ticket_price_non_iagi_member_expatriate'] ?? ($settings['visitor_price_non_iagi_member_expat'] == '6000000' ? 7000000 : ($settings['visitor_price_non_iagi_member_expat'] ?? 7000000)));
         $priceStudent = floatval($settings['visitor_ticket_price_student_undergraduate'] ?? ($settings['visitor_price_student'] == '750000' ? 1000000 : ($settings['visitor_price_student'] ?? 1000000)));
 
-        // Free visitor pass is locked until Nov 3, 2026 00:00:00 WIB
-        $freeTicketUnlockTime = \Carbon\Carbon::create(2026, 11, 3, 0, 0, 0, 'Asia/Jakarta');
-        $isFreeUnlocked = now('Asia/Jakarta')->greaterThanOrEqualTo($freeTicketUnlockTime);
-        $freeUnlockTimestamp = $freeTicketUnlockTime->timestamp * 1000;
+        // Free visitor pass status configuration
+        // Default to unlocked ('1') so it is immediately open, and admin can lock/unlock it anytime from Admin Settings
+        $freePassSetting = $settings['visitor_free_pass_unlocked'] ?? '1';
+        $unlockDateSetting = $settings['visitor_free_pass_unlock_date'] ?? null;
+
+        if ($freePassSetting === '1') {
+            $isFreeUnlocked = true;
+            $freeUnlockTimestamp = now('Asia/Jakarta')->timestamp * 1000;
+        } elseif ($freePassSetting === '0' && empty($unlockDateSetting)) {
+            $isFreeUnlocked = false;
+            $freeTicketUnlockTime = \Carbon\Carbon::create(2026, 11, 3, 0, 0, 0, 'Asia/Jakarta');
+            $freeUnlockTimestamp = $freeTicketUnlockTime->timestamp * 1000;
+        } else {
+            $freeTicketUnlockTime = !empty($unlockDateSetting)
+                ? \Carbon\Carbon::parse($unlockDateSetting, 'Asia/Jakarta')
+                : \Carbon\Carbon::create(2026, 11, 3, 0, 0, 0, 'Asia/Jakarta');
+            $isFreeUnlocked = now('Asia/Jakarta')->greaterThanOrEqualTo($freeTicketUnlockTime);
+            $freeUnlockTimestamp = $freeTicketUnlockTime->timestamp * 1000;
+        }
 
         // Full category configuration list matching official conference pricing (regular prices)
         $categories = [

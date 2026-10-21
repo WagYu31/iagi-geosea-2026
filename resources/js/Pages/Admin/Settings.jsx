@@ -721,6 +721,9 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
             .replace(/atas\s*nama\s*:?/gi, 'Account Holder : ')
         : rawBankInfo;
     const [bankInfo, setBankInfo] = useState(initialBankInfo);
+    const [eventVenue, setEventVenue] = useState(getSettingValue('visitor_event_venue', 'Royal Ambarrukmo Yogyakarta'));
+    const [freePassUnlocked, setFreePassUnlocked] = useState(getSettingValue('visitor_free_pass_unlocked', '1') === '1');
+    const [freePassUnlockDate, setFreePassUnlockDate] = useState(getSettingValue('visitor_free_pass_unlock_date', '2026-11-03T00:00'));
     
     const [exclusiveTemplate, setExclusiveTemplate] = useState(getSettingValue('visitor_exclusive_lanyard_template', ''));
     const [nonExclusiveTemplate, setNonExclusiveTemplate] = useState(getSettingValue('visitor_non_exclusive_lanyard_template', ''));
@@ -734,6 +737,8 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
         try {
             const response = await axios.post(route('admin.settings.saveVisitorTickets'), {
                 visitor_registration_enabled: enabled ? '1' : '0',
+                visitor_free_pass_unlocked: freePassUnlocked ? '1' : '0',
+                visitor_free_pass_unlock_date: freePassUnlockDate,
                 visitor_ticket_price_iagi_member_professional: priceIagiPro,
                 visitor_ticket_price_non_iagi_member_professional: priceNonIagiPro,
                 visitor_ticket_price_iagi_member_expatriate: priceIagiExpat,
@@ -809,6 +814,76 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                     </Typography>
                                 }
                             />
+
+                            {/* Visitor Pass (Free) Unlock Control Card */}
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 2.5,
+                                    borderRadius: '14px',
+                                    border: freePassUnlocked ? '1.5px solid #10b981' : '1.5px solid #f59e0b',
+                                    bgcolor: freePassUnlocked ? (isDark ? 'rgba(16, 185, 129, 0.08)' : '#f0fdf4') : (isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb'),
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                                    <Box sx={{ flex: 1, minWidth: 260 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                            <Typography sx={{ fontWeight: 800, fontSize: '0.95rem', color: freePassUnlocked ? '#065f46' : '#92400e' }}>
+                                                {freePassUnlocked ? '🔓 Status Tiket Visitor Pass (Free): TERBUKA' : '🔒 Status Tiket Visitor Pass (Free): TERKUNCI (Coming Soon)'}
+                                            </Typography>
+                                            <Chip
+                                                label={freePassUnlocked ? 'OPEN FOR PUBLIC' : 'LOCKED'}
+                                                size="small"
+                                                sx={{
+                                                    fontWeight: 900,
+                                                    fontSize: '0.62rem',
+                                                    height: 20,
+                                                    bgcolor: freePassUnlocked ? '#dcfce7' : '#fef3c7',
+                                                    color: freePassUnlocked ? '#15803d' : '#b45309',
+                                                }}
+                                            />
+                                        </Box>
+                                        <Typography variant="caption" sx={{ color: freePassUnlocked ? '#047857' : '#b45309', display: 'block', lineHeight: 1.5 }}>
+                                            {freePassUnlocked
+                                                ? 'Tiket pendaftaran gratis (Visitor Pass) saat ini terbuka untuk umum. Pengunjung di landing page dapat langsung memilih dan mendaftar.'
+                                                : 'Tiket pendaftaran gratis terkunci dan menampilkan badge "COMING SOON" di landing page registrasi.'}
+                                        </Typography>
+                                    </Box>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={freePassUnlocked}
+                                                onChange={(e) => setFreePassUnlocked(e.target.checked)}
+                                                sx={{
+                                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#10b981' },
+                                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#10b981' },
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography sx={{ fontWeight: 700, fontSize: '0.88rem', color: c.textPrimary }}>
+                                                {freePassUnlocked ? 'Buka Sekarang' : 'Terkunci'}
+                                            </Typography>
+                                        }
+                                        sx={{ m: 0 }}
+                                    />
+                                </Box>
+                                {!freePassUnlocked && (
+                                    <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed #fde68a' }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 700, color: '#92400e', display: 'block', mb: 1 }}>
+                                            📅 Jadwal Buka Otomatis (Opsional jika ingin dijadwalkan):
+                                        </Typography>
+                                        <TextField
+                                            type="datetime-local"
+                                            size="small"
+                                            value={freePassUnlockDate}
+                                            onChange={(e) => setFreePassUnlockDate(e.target.value)}
+                                            sx={{ ...inputSx, maxWidth: 320 }}
+                                            helperText="Tiket akan otomatis terbuka saat mencapai tanggal & waktu ini (WIB)."
+                                        />
+                                    </Box>
+                                )}
+                            </Paper>
 
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>

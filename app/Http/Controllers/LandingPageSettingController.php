@@ -1409,6 +1409,8 @@ class LandingPageSettingController extends Controller
             'visitor_ticket_price_exclusive' => 'nullable|numeric|min:0',
             'visitor_ticket_price_non_exclusive' => 'nullable|numeric|min:0',
             'visitor_registration_enabled' => 'nullable|string|in:0,1',
+            'visitor_free_pass_unlocked' => 'nullable|string|in:0,1',
+            'visitor_free_pass_unlock_date' => 'nullable|string|max:255',
             'visitor_bank_transfer_info' => 'nullable|string',
             'visitor_event_date' => 'nullable|string|max:255',
             'visitor_event_venue' => 'nullable|string|max:255',
