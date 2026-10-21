@@ -402,6 +402,13 @@ export default function AdminDashboard({
             color: '#64748b',
             bgColor: isDark ? 'rgba(100, 116, 139, 0.15)' : '#f1f5f9',
         },
+        {
+            label: 'Landing Page',
+            href: '/',
+            icon: <PublicRoundedIcon />,
+            color: '#059669',
+            bgColor: isDark ? 'rgba(5, 150, 105, 0.15)' : '#ecfdf5',
+        },
     ];
 
     // Filter submissions by presentation category and participant category
@@ -705,6 +712,34 @@ export default function AdminDashboard({
                             }}
                         >
                             Manage Papers
+                        </Button>
+
+                        <Button
+                            component={Link}
+                            href="/"
+                            variant="outlined"
+                            startIcon={<PublicRoundedIcon sx={{ fontSize: 18, color: '#10b981' }} />}
+                            sx={{
+                                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.12)',
+                                color: c.textPrimary,
+                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#ffffff',
+                                px: 1.75,
+                                py: 0.75,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                boxShadow: isDark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
+                                '&:hover': {
+                                    bgcolor: isDark ? 'rgba(16, 185, 129, 0.08)' : '#ecfdf5',
+                                    borderColor: '#10b981',
+                                    color: '#059669',
+                                    transform: 'translateY(-1px)',
+                                },
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Landing Page
                         </Button>
                     </Box>
                 </Box>

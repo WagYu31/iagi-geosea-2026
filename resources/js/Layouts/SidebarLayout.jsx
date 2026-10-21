@@ -41,6 +41,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
+import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import ShieldIcon from '@mui/icons-material/Shield';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -271,49 +272,67 @@ function SidebarLayout({ children }) {
         pointerEvents: 'none', zIndex: 0,
       }} />
 
-      {/* ─── Brand Header ─── */}
-      <Box
-        component={motion.div}
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.65, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-        sx={{
-          px: isCollapsed ? 1 : 2.5,
-          py: isCollapsed ? 2 : 3,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
-          gap: 1.5,
-          position: 'relative', zIndex: 1,
-        }}
-      >
+      {/* ─── Brand Header (Click to return to Landing Page) ─── */}
+      <Tooltip title="Kembali ke Landing Page" placement="right" arrow>
         <Box
-          component="img" src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png" alt="IAGI-GEOSEA"
+          component={motion.div}
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           sx={{
-            width: isCollapsed ? 38 : 44, height: isCollapsed ? 38 : 44,
-            borderRadius: '50%', flexShrink: 0, objectFit: 'contain',
-            filter: 'drop-shadow(0 2px 8px rgba(16,185,129,0.3))',
-            border: '2px solid rgba(255,255,255,0.15)',
-            backgroundColor: 'rgba(255,255,255,0.08)',
+            px: isCollapsed ? 1 : 2.5,
+            py: isCollapsed ? 2 : 3,
+            position: 'relative', zIndex: 1,
           }}
-        />
-        {!isCollapsed && (
-          <Box>
-            <Typography sx={{
-              fontWeight: 800, fontSize: '1.05rem', color: '#ffffff',
-              letterSpacing: '-0.01em', lineHeight: 1.2,
-            }}>
-              IAGI-GEOSEA
-            </Typography>
-            <Typography sx={{
-              fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)',
-              fontWeight: 500, letterSpacing: '0.02em',
-            }}>
-              Conference 2026
-            </Typography>
+        >
+          <Box
+            component={Link}
+            href="/"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: 1.5,
+              textDecoration: 'none',
+              cursor: 'pointer',
+              borderRadius: '12px',
+              p: 0.5,
+              transition: 'all 0.25s ease',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.06)',
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <Box
+              component="img" src="/WhatsApp_Image_2025-12-29_at_19.37.46-removebg-preview.png" alt="IAGI-GEOSEA"
+              sx={{
+                width: isCollapsed ? 38 : 44, height: isCollapsed ? 38 : 44,
+                borderRadius: '50%', flexShrink: 0, objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(16,185,129,0.3))',
+                border: '2px solid rgba(255,255,255,0.15)',
+                backgroundColor: 'rgba(255,255,255,0.08)',
+              }}
+            />
+            {!isCollapsed && (
+              <Box>
+                <Typography sx={{
+                  fontWeight: 800, fontSize: '1.05rem', color: '#ffffff',
+                  letterSpacing: '-0.01em', lineHeight: 1.2,
+                }}>
+                  IAGI-GEOSEA
+                </Typography>
+                <Typography sx={{
+                  fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)',
+                  fontWeight: 500, letterSpacing: '0.02em',
+                }}>
+                  Conference 2026
+                </Typography>
+              </Box>
+            )}
           </Box>
-        )}
-      </Box>
+        </Box>
+      </Tooltip>
 
       {/* ─── Menu Items ─── */}
       <List sx={{ px: isCollapsed ? 0.75 : 1.5, py: 0.5, flex: 1, position: 'relative', zIndex: 1 }} aria-label="Navigation menu">
@@ -426,6 +445,66 @@ function SidebarLayout({ children }) {
           );
         })}
       </List>
+
+      {/* ─── Landing Page Link (Sidebar) ─── */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        sx={{ px: isCollapsed ? 0.75 : 1.5, pb: 1, position: 'relative', zIndex: 1 }}
+      >
+        {isCollapsed ? (
+          <Tooltip title="Kembali ke Landing Page" placement="right" arrow>
+            <ListItemButton
+              component={Link} href="/"
+              sx={{
+                borderRadius: '14px', py: 1.2, px: 1,
+                justifyContent: 'center',
+                bgcolor: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  bgcolor: 'rgba(16, 185, 129, 0.25)',
+                  borderColor: 'rgba(16, 185, 129, 0.45)',
+                  transform: 'scale(1.05)',
+                },
+              }}
+            >
+              <Box sx={{ color: '#34d399', display: 'flex', alignItems: 'center' }}>
+                <PublicRoundedIcon sx={{ fontSize: 20 }} />
+              </Box>
+            </ListItemButton>
+          </Tooltip>
+        ) : (
+          <ListItemButton
+            component={Link} href="/"
+            sx={{
+              borderRadius: '14px', py: 1, px: 2,
+              bgcolor: 'rgba(16, 185, 129, 0.12)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              backdropFilter: 'blur(8px)',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                bgcolor: 'rgba(16, 185, 129, 0.22)',
+                borderColor: 'rgba(16, 185, 129, 0.45)',
+                transform: 'translateX(4px)',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: '#34d399', minWidth: 40 }}>
+              <PublicRoundedIcon sx={{ fontSize: 20 }} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Landing Page"
+              secondary="Ke Website Utama"
+              primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 600, color: '#ecfdf5' }}
+              secondaryTypographyProps={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.6)' }}
+            />
+          </ListItemButton>
+        )}
+      </Box>
 
       {/* ─── Logout (frosted glass container) ─── */}
       <Box
@@ -556,6 +635,41 @@ function SidebarLayout({ children }) {
           </IconButton>
 
           <Box sx={{ flex: 1 }} />
+
+          {/* Button Kembali ke Landing Page */}
+          <Tooltip title="Kembali ke Landing Page (Website Publik)" arrow>
+            <Button
+              component={Link}
+              href="/"
+              size="small"
+              startIcon={<PublicRoundedIcon sx={{ fontSize: 18, color: '#10b981' }} />}
+              sx={{
+                mr: 1.5,
+                textTransform: 'none',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                borderRadius: '10px',
+                border: `1.5px solid ${isDark ? '#374151' : '#e2e8f0'}`,
+                bgcolor: isDark ? '#1f2937' : '#ffffff',
+                color: isDark ? '#e2e8f0' : '#1e293b',
+                px: { xs: 1.2, sm: 1.8 },
+                py: 0.65,
+                boxShadow: isDark ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  borderColor: '#10b981',
+                  bgcolor: isDark ? 'rgba(16, 185, 129, 0.12)' : '#ecfdf5',
+                  color: '#059669',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.18)',
+                },
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                Landing Page
+              </Box>
+            </Button>
+          </Tooltip>
 
           {/* Dark Mode Toggle */}
           <Tooltip title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
