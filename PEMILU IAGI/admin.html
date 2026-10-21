@@ -2195,7 +2195,7 @@
         <div class="dpt-toolbar-left">
           <div class="dpt-search-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="desktop-dpt-search" class="dpt-search-input" placeholder="🔍 Cari NPA, Nama, WA, atau Pengda...">
+            <input type="text" id="desktop-dpt-search" class="dpt-search-input" placeholder="🔍 Cari NPA, Nama Lengkap, atau No. WhatsApp...">
           </div>
 
           <select id="desktop-dpt-filter" class="dpt-select-filter">
@@ -2203,24 +2203,6 @@
             <option value="voted">✓ Sudah Memilih (Voted)</option>
             <option value="claimed">🔑 Klaim Token (Belum Vote)</option>
             <option value="unclaimed">⏳ Belum Klaim</option>
-          </select>
-
-          <select id="desktop-dpt-filter-pengda" class="dpt-select-filter" style="max-width: 140px;">
-            <option value="all">Semua Pengda</option>
-            <option value="DKI Jakarta">DKI Jakarta</option>
-            <option value="Jawa Barat">Jawa Barat</option>
-            <option value="Jawa Timur">Jawa Timur</option>
-            <option value="D.I. Yogyakarta">D.I. Yogyakarta</option>
-            <option value="Kalimantan Timur">Kalimantan Timur</option>
-            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-            <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-            <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-            <option value="Sumatera Utara">Sumatera Utara</option>
-            <option value="Sumatera Selatan">Sumatera Selatan</option>
-            <option value="Riau">Riau</option>
-            <option value="Papua">Papua</option>
-            <option value="Banten">Banten</option>
-            <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
           </select>
         </div>
 
@@ -2297,7 +2279,6 @@
               <th style="width: 140px;">No. Pokok Anggota (NPA)</th>
               <th>Nama Lengkap Anggota</th>
               <th>Kontak (Email & WhatsApp)</th>
-              <th>Pengda / Wilayah</th>
               <th>Status Hak Suara</th>
               <th style="text-align: center; width: 270px;">Aksi Cepat</th>
             </tr>
@@ -2350,27 +2331,6 @@
                 <span class="helper">Wajib aktif untuk distribusi token WA (contoh: 081234567890)</span>
               </label>
               <input type="tel" id="add-voter-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
-            </div>
-
-            <div class="form-group" style="margin-bottom: 6px;">
-              <label class="form-label">Pengda / Wilayah</label>
-              <input type="text" id="add-voter-pengda" class="form-input" placeholder="Contoh: DKI Jakarta" list="pengda-datalist" value="DKI Jakarta">
-              <datalist id="pengda-datalist">
-                <option value="DKI Jakarta">
-                <option value="Jawa Barat">
-                <option value="Jawa Timur">
-                <option value="Jawa Tengah">
-                <option value="D.I. Yogyakarta">
-                <option value="Sumatera Utara">
-                <option value="Sumatera Selatan">
-                <option value="Riau">
-                <option value="Kalimantan Timur">
-                <option value="Kalimantan Selatan">
-                <option value="Sulawesi Selatan">
-                <option value="Papua">
-                <option value="Banten">
-                <option value="Luar Negeri">
-              </datalist>
             </div>
 
             <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.4; margin-top: 10px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
@@ -2634,11 +2594,6 @@
                 <span class="helper">Format: 0812... / 628... (Untuk kirim WA)</span>
               </label>
               <input type="tel" id="edit-voter-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
-            </div>
-
-            <div class="form-group" style="margin-bottom: 6px;">
-              <label class="form-label">Pengda / Wilayah</label>
-              <input type="text" id="edit-voter-pengda" class="form-input" list="pengda-datalist" value="DKI Jakarta" placeholder="Pilih atau ketik Pengda...">
             </div>
           </div>
 
@@ -3189,28 +3144,24 @@
 
         const query = (document.getElementById('desktop-dpt-search').value || '').toLowerCase();
         const filter = document.getElementById('desktop-dpt-filter').value;
-        const pengdaFilter = (document.getElementById('desktop-dpt-filter-pengda')?.value || 'all');
         const dpt = window.pemiluStorage.getDPT();
 
         const filtered = dpt.filter(item => {
           const matchQuery = item.npa.toLowerCase().includes(query) || 
                              item.name.toLowerCase().includes(query) || 
                              item.email.toLowerCase().includes(query) ||
-                             (item.phone && item.phone.toLowerCase().includes(query)) ||
-                             (item.pengda && item.pengda.toLowerCase().includes(query));
+                             (item.phone && item.phone.toLowerCase().includes(query));
           if (!matchQuery) return false;
 
           if (filter === 'voted') return item.voted === true;
           if (filter === 'claimed') return item.claimed === true && !item.voted;
           if (filter === 'unclaimed') return !item.claimed;
 
-          if (pengdaFilter !== 'all' && (item.pengda || '') !== pengdaFilter) return false;
-
           return true;
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
           updateBulkSelectionUI();
           return;
         }
@@ -3242,9 +3193,6 @@
                   : `<a href="javascript:void(0)" onclick="promptSetPhone('${v.npa}')" style="color: #F5BA42; text-decoration: underline; font-size: 0.7rem;">+ Set No. WA</a>`
                 }
               </div>
-            </td>
-            <td>
-              <div style="font-size: 0.78rem; color: #E2E8F0; font-weight: 600;">${v.pengda || 'DKI Jakarta'}</div>
             </td>
             <td>
               ${v.voted 
@@ -3299,8 +3247,6 @@
       // Filter & Search Events
       document.getElementById('desktop-dpt-search').addEventListener('input', renderDptTable);
       document.getElementById('desktop-dpt-filter').addEventListener('change', renderDptTable);
-      const pengdaFilterSelect = document.getElementById('desktop-dpt-filter-pengda');
-      if (pengdaFilterSelect) pengdaFilterSelect.addEventListener('change', renderDptTable);
 
       // --- Modals Controller (Tambah Pemilih & Import CSV) ---
       window.openAddVoterModal = function() {
@@ -3492,7 +3438,7 @@
         const name = (document.getElementById('add-voter-name').value || '').trim();
         const email = (document.getElementById('add-voter-email').value || '').trim();
         const phone = (document.getElementById('add-voter-phone')?.value || '').trim();
-        const pengda = (document.getElementById('add-voter-pengda').value || '').trim();
+        const pengda = (document.getElementById('add-voter-pengda')?.value || '').trim();
         const category = (document.getElementById('add-voter-category')?.value || 'Professional').trim();
 
         if (!npa || !name || !email) {
@@ -3559,7 +3505,9 @@
         document.getElementById('edit-voter-name').value = voter.name || '';
         document.getElementById('edit-voter-email').value = voter.email || '';
         document.getElementById('edit-voter-phone').value = voter.phone || '';
-        document.getElementById('edit-voter-pengda').value = voter.pengda || 'DKI Jakarta';
+        if (document.getElementById('edit-voter-pengda')) {
+          document.getElementById('edit-voter-pengda').value = voter.pengda || '';
+        }
         if (document.getElementById('edit-voter-category')) {
           document.getElementById('edit-voter-category').value = voter.category || 'Professional';
         }
@@ -3594,7 +3542,7 @@
         const name = (document.getElementById('edit-voter-name').value || '').trim();
         const email = (document.getElementById('edit-voter-email').value || '').trim();
         const phone = (document.getElementById('edit-voter-phone')?.value || '').trim();
-        const pengda = (document.getElementById('edit-voter-pengda').value || '').trim();
+        const pengda = (document.getElementById('edit-voter-pengda')?.value || '').trim();
         const category = (document.getElementById('edit-voter-category')?.value || 'Professional').trim();
 
         if (!npa || !name || !email) {
