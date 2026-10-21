@@ -22,6 +22,7 @@ import {
     FormControl,
     InputLabel,
     Select,
+    Menu,
     MenuItem,
     ListSubheader,
     Dialog,
@@ -73,6 +74,7 @@ import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -307,6 +309,24 @@ export default function VisitorTicketsIndex({
     const [emailSending, setEmailSending] = useState(false);
     const [bulkActionProcessing, setBulkActionProcessing] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    // Quick Status Popover Menus State
+    const [ticketMenuAnchor, setTicketMenuAnchor] = useState(null);
+    const [selectedTicketForStatus, setSelectedTicketForStatus] = useState(null);
+
+    const [paymentMenuAnchor, setPaymentMenuAnchor] = useState(null);
+    const [selectedPaymentForStatus, setSelectedPaymentForStatus] = useState(null);
+
+    const [debtMenuAnchor, setDebtMenuAnchor] = useState(null);
+    const [selectedPaymentForDebt, setSelectedPaymentForDebt] = useState(null);
+
+    const [quickDebtModal, setQuickDebtModal] = useState({
+        open: false,
+        payment: null,
+        isDebt: true,
+        debtNotes: '',
+        processing: false,
+    });
 
     // Proof & Debt Editing states (inside Proof Lightbox Modal)
     const [isEditingProof, setIsEditingProof] = useState(false);
@@ -580,6 +600,105 @@ export default function VisitorTicketsIndex({
                 preserveScroll: true,
             });
         }
+    };
+
+    // Ticket Status Quick Switch
+    const handleOpenTicketMenu = (e, ticket) => {
+        e.stopPropagation();
+        setTicketMenuAnchor(e.currentTarget);
+        setSelectedTicketForStatus(ticket);
+    };
+
+    const handleCloseTicketMenu = () => {
+        setTicketMenuAnchor(null);
+        setSelectedTicketForStatus(null);
+    };
+
+    const handleSelectTicketStatus = (newStatus) => {
+        if (!selectedTicketForStatus) return;
+        const ticketId = selectedTicketForStatus.id;
+        handleCloseTicketMenu();
+        router.patch(route('admin.visitorTickets.quickStatus', ticketId), {
+            status: newStatus
+        }, {
+            preserveScroll: true,
+        });
+    };
+
+    // Payment Status Quick Switch
+    const handleOpenPaymentMenu = (e, payment) => {
+        e.stopPropagation();
+        setPaymentMenuAnchor(e.currentTarget);
+        setSelectedPaymentForStatus(payment);
+    };
+
+    const handleClosePaymentMenu = () => {
+        setPaymentMenuAnchor(null);
+        setSelectedPaymentForStatus(null);
+    };
+
+    const handleSelectPaymentStatus = (newStatus) => {
+        if (!selectedPaymentForStatus) return;
+        const paymentId = selectedPaymentForStatus.id;
+        handleClosePaymentMenu();
+        router.patch(route('admin.visitorTickets.quickPaymentStatus', paymentId), {
+            status: newStatus
+        }, {
+            preserveScroll: true,
+        });
+    };
+
+    // Debt Status Quick Switch
+    const handleOpenDebtMenu = (e, payment) => {
+        e.stopPropagation();
+        setDebtMenuAnchor(e.currentTarget);
+        setSelectedPaymentForDebt(payment);
+    };
+
+    const handleCloseDebtMenu = () => {
+        setDebtMenuAnchor(null);
+        setSelectedPaymentForDebt(null);
+    };
+
+    const handleQuickToggleDebt = (isDebt) => {
+        if (!selectedPaymentForDebt) return;
+        const paymentId = selectedPaymentForDebt.id;
+        handleCloseDebtMenu();
+        router.patch(route('admin.visitorTickets.toggleDebt', paymentId), {
+            is_debt: isDebt,
+            debt_notes: isDebt ? (selectedPaymentForDebt.debt_notes || 'Tanggungan Bendahara') : null,
+        }, {
+            preserveScroll: true,
+        });
+    };
+
+    const handleOpenQuickDebtModal = (payment) => {
+        handleCloseDebtMenu();
+        handleClosePaymentMenu();
+        setQuickDebtModal({
+            open: true,
+            payment,
+            isDebt: Boolean(payment?.is_debt),
+            debtNotes: payment?.debt_notes || '',
+            processing: false,
+        });
+    };
+
+    const handleSaveQuickDebtModal = () => {
+        if (!quickDebtModal.payment) return;
+        setQuickDebtModal(prev => ({ ...prev, processing: true }));
+        router.patch(route('admin.visitorTickets.toggleDebt', quickDebtModal.payment.id), {
+            is_debt: quickDebtModal.isDebt,
+            debt_notes: quickDebtModal.debtNotes,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setQuickDebtModal({ open: false, payment: null, isDebt: true, debtNotes: '', processing: false });
+            },
+            onError: () => {
+                setQuickDebtModal(prev => ({ ...prev, processing: false }));
+            }
+        });
     };
 
     const handleOpenEdit = (ticket) => {
@@ -1761,19 +1880,34 @@ export default function VisitorTicketsIndex({
 
                                                 {/* TICKET STATUS */}
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
-                                                    <Chip
-                                                        label={t.status.toUpperCase()}
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor: t.status === 'active' ? '#dcfce7' : t.status === 'pending' ? '#fef3c7' : '#fee2e2',
-                                                            border: `1px solid ${t.status === 'active' ? '#86efac' : t.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
-                                                            color: t.status === 'active' ? '#15803d' : t.status === 'pending' ? '#b45309' : '#b91c1c',
-                                                            fontWeight: 900,
-                                                            fontSize: '0.64rem',
-                                                            height: 20,
-                                                            whiteSpace: 'nowrap',
-                                                        }}
-                                                    />
+                                                    <Tooltip title="Klik untuk ubah status tiket langsung (ACTIVE / PENDING / CANCELLED)" arrow>
+                                                        <Chip
+                                                            label={
+                                                                <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.4 }}>
+                                                                    <span>{t.status.toUpperCase()}</span>
+                                                                    <span style={{ fontSize: '9px', opacity: 0.7 }}>▾</span>
+                                                                </Box>
+                                                            }
+                                                            size="small"
+                                                            onClick={(e) => handleOpenTicketMenu(e, t)}
+                                                            sx={{
+                                                                bgcolor: t.status === 'active' ? '#dcfce7' : t.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                                                border: `1px solid ${t.status === 'active' ? '#86efac' : t.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                                                color: t.status === 'active' ? '#15803d' : t.status === 'pending' ? '#b45309' : '#b91c1c',
+                                                                fontWeight: 900,
+                                                                fontSize: '0.64rem',
+                                                                height: 22,
+                                                                cursor: 'pointer',
+                                                                whiteSpace: 'nowrap',
+                                                                transition: 'all 0.15s ease-in-out',
+                                                                '&:hover': {
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                                                                    filter: 'brightness(0.96)',
+                                                                },
+                                                            }}
+                                                        />
+                                                    </Tooltip>
                                                 </TableCell>
 
                                                 {/* PAYMENT */}
@@ -1784,28 +1918,48 @@ export default function VisitorTicketsIndex({
                                                                 Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
                                                             </Typography>
                                                             <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
-                                                                <Chip
-                                                                    label={t.payment.status.toUpperCase()}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        height: 18,
-                                                                        fontSize: '0.58rem',
-                                                                        bgcolor: t.payment.status === 'approved' ? '#dcfce7' : t.payment.status === 'pending' ? '#fef3c7' : '#fee2e2',
-                                                                        color: t.payment.status === 'approved' ? '#166534' : t.payment.status === 'pending' ? '#92400e' : '#991b1b',
-                                                                        fontWeight: 900,
-                                                                        border: `1px solid ${t.payment.status === 'approved' ? '#86efac' : t.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
-                                                                        whiteSpace: 'nowrap',
-                                                                    }}
-                                                                />
+                                                                <Tooltip title="Klik untuk ubah status pembayaran (Approved, Pending, Rejected)" arrow>
+                                                                    <Chip
+                                                                        label={
+                                                                            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.4 }}>
+                                                                                <span>{t.payment.status.toUpperCase()}</span>
+                                                                                <span style={{ fontSize: '8px', opacity: 0.7 }}>▾</span>
+                                                                            </Box>
+                                                                        }
+                                                                        size="small"
+                                                                        onClick={(e) => handleOpenPaymentMenu(e, t.payment)}
+                                                                        sx={{
+                                                                            height: 20,
+                                                                            fontSize: '0.58rem',
+                                                                            bgcolor: t.payment.status === 'approved' ? '#dcfce7' : t.payment.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                                                            color: t.payment.status === 'approved' ? '#166534' : t.payment.status === 'pending' ? '#92400e' : '#991b1b',
+                                                                            fontWeight: 900,
+                                                                            border: `1px solid ${t.payment.status === 'approved' ? '#86efac' : t.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                                                            whiteSpace: 'nowrap',
+                                                                            cursor: 'pointer',
+                                                                            transition: 'all 0.15s ease-in-out',
+                                                                            '&:hover': {
+                                                                                transform: 'translateY(-1px)',
+                                                                                boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                                                                                filter: 'brightness(0.96)',
+                                                                            },
+                                                                        }}
+                                                                    />
+                                                                </Tooltip>
                                                                 {t.payment.is_debt ? (
-                                                                    <Tooltip title={`⚠️ DEBT STATUS (Receivable): ${t.payment.debt_notes || 'Treasurer agreement'}. Click to edit transfer proof & clear debt tag.`} arrow>
+                                                                    <Tooltip title={`⚠️ DEBT STATUS: ${t.payment.debt_notes || 'Kesepakatan Bendahara'}. Klik untuk kelola hutang / ubah catatan / tandai lunas.`} arrow>
                                                                         <Chip
                                                                             icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#92400e !important' }} />}
-                                                                            label="DEBT"
+                                                                            label={
+                                                                                <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.3 }}>
+                                                                                    <span>DEBT</span>
+                                                                                    <span style={{ fontSize: '8px', opacity: 0.7 }}>▾</span>
+                                                                                </Box>
+                                                                            }
                                                                             size="small"
-                                                                            onClick={() => handleOpenProofModal(t.payment)}
+                                                                            onClick={(e) => handleOpenDebtMenu(e, t.payment)}
                                                                             sx={{
-                                                                                height: 18,
+                                                                                height: 20,
                                                                                 fontSize: '0.58rem',
                                                                                 bgcolor: '#fef3c7',
                                                                                 color: '#92400e',
@@ -1813,29 +1967,72 @@ export default function VisitorTicketsIndex({
                                                                                 border: '1px solid #f59e0b',
                                                                                 cursor: 'pointer',
                                                                                 whiteSpace: 'nowrap',
-                                                                                '&:hover': { bgcolor: '#fde68a' },
+                                                                                transition: 'all 0.15s ease-in-out',
+                                                                                '&:hover': {
+                                                                                    bgcolor: '#fde68a',
+                                                                                    transform: 'translateY(-1px)',
+                                                                                    boxShadow: '0 2px 5px rgba(245, 158, 11, 0.25)',
+                                                                                },
                                                                             }}
                                                                         />
                                                                     </Tooltip>
                                                                 ) : t.payment.debt_settled_at ? (
-                                                                    <Tooltip title={`Debt settled & cleared on ${new Date(t.payment.debt_settled_at).toLocaleDateString('en-GB')}`} arrow>
+                                                                    <Tooltip title={`Hutang telah dilunasi pada ${new Date(t.payment.debt_settled_at).toLocaleDateString('id-ID')}. Klik untuk opsi.`} arrow>
                                                                         <Chip
                                                                             icon={<TaskAltIcon sx={{ fontSize: '11px !important', color: '#15803d !important' }} />}
-                                                                            label="PAID"
+                                                                            label={
+                                                                                <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.3 }}>
+                                                                                    <span>PAID</span>
+                                                                                    <span style={{ fontSize: '8px', opacity: 0.7 }}>▾</span>
+                                                                                </Box>
+                                                                            }
                                                                             size="small"
+                                                                            onClick={(e) => handleOpenDebtMenu(e, t.payment)}
                                                                             sx={{
-                                                                                height: 18,
+                                                                                height: 20,
                                                                                 fontSize: '0.56rem',
                                                                                 bgcolor: '#f0fdf4',
                                                                                 color: '#15803d',
                                                                                 fontWeight: 800,
                                                                                 border: '1px solid #bbf7d0',
                                                                                 whiteSpace: 'nowrap',
+                                                                                cursor: 'pointer',
+                                                                                transition: 'all 0.15s ease-in-out',
+                                                                                '&:hover': {
+                                                                                    bgcolor: '#dcfce7',
+                                                                                    transform: 'translateY(-1px)',
+                                                                                },
                                                                             }}
                                                                         />
                                                                     </Tooltip>
-                                                                ) : null}
-                                                                <Tooltip title="View & Update Payment Status">
+                                                                ) : (
+                                                                    <Tooltip title="Klik untuk tandai pembayaran ini sebagai HUTANG (DEBT)" arrow>
+                                                                        <Chip
+                                                                            label="+ DEBT"
+                                                                            size="small"
+                                                                            onClick={(e) => handleOpenDebtMenu(e, t.payment)}
+                                                                            sx={{
+                                                                                height: 18,
+                                                                                fontSize: '0.52rem',
+                                                                                bgcolor: 'transparent',
+                                                                                color: '#94a3b8',
+                                                                                fontWeight: 700,
+                                                                                border: '1px dashed #cbd5e1',
+                                                                                whiteSpace: 'nowrap',
+                                                                                cursor: 'pointer',
+                                                                                opacity: 0.7,
+                                                                                transition: 'all 0.15s ease-in-out',
+                                                                                '&:hover': {
+                                                                                    opacity: 1,
+                                                                                    color: '#d97706',
+                                                                                    borderColor: '#f59e0b',
+                                                                                    bgcolor: '#fffbeb',
+                                                                                },
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                )}
+                                                                <Tooltip title="Lihat Bukti Transfer & Detail Lengkap">
                                                                     <IconButton
                                                                         size="small"
                                                                         onClick={() => handleOpenProofModal(t.payment)}
@@ -3258,6 +3455,472 @@ export default function VisitorTicketsIndex({
                         }}
                     >
                         {emailSending ? 'Sedang Mengirim...' : `Kirim E-Tiket (${emailTargetMode === 'selected' ? selectedIds.length : totalItems})`}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* QUICK STATUS POPOVER 1: TICKET STATUS */}
+            <Menu
+                anchorEl={ticketMenuAnchor}
+                open={Boolean(ticketMenuAnchor)}
+                onClose={handleCloseTicketMenu}
+                PaperProps={{
+                    elevation: 8,
+                    sx: {
+                        borderRadius: '14px',
+                        minWidth: 260,
+                        p: 0.5,
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    }
+                }}
+                transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            >
+                <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f1f5f9' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Ubah Status Tiket
+                    </Typography>
+                    {selectedTicketForStatus && (
+                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a', mt: 0.2 }}>
+                            {selectedTicketForStatus.ticket_code} ({selectedTicketForStatus.visitor_name})
+                        </Typography>
+                    )}
+                </Box>
+
+                <MenuItem
+                    onClick={() => handleSelectTicketStatus('active')}
+                    selected={selectedTicketForStatus?.status === 'active'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#f0fdf4' },
+                        '&:hover': { bgcolor: '#f0fdf4' }
+                    }}
+                >
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#16a34a' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#166534' }}>
+                            ACTIVE (Tiket Aktif)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Tiket aktif & otomatis kirim E-Tiket ke email
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectTicketStatus('pending')}
+                    selected={selectedTicketForStatus?.status === 'pending'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#fffbeb' },
+                        '&:hover': { bgcolor: '#fffbeb' }
+                    }}
+                >
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#d97706' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                            PENDING (Menunggu)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Menunggu proses pembayaran / verifikasi
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectTicketStatus('cancelled')}
+                    selected={selectedTicketForStatus?.status === 'cancelled'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#fef2f2' },
+                        '&:hover': { bgcolor: '#fef2f2' }
+                    }}
+                >
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#dc2626' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#991b1b' }}>
+                            CANCELLED (Dibatalkan)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Tiket dinonaktifkan / dibatalkan
+                        </Typography>
+                    </Box>
+                </MenuItem>
+            </Menu>
+
+            {/* QUICK STATUS POPOVER 2: PAYMENT STATUS */}
+            <Menu
+                anchorEl={paymentMenuAnchor}
+                open={Boolean(paymentMenuAnchor)}
+                onClose={handleClosePaymentMenu}
+                PaperProps={{
+                    elevation: 8,
+                    sx: {
+                        borderRadius: '14px',
+                        minWidth: 280,
+                        p: 0.5,
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    }
+                }}
+                transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            >
+                <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f1f5f9' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Ubah Status Pembayaran
+                    </Typography>
+                    {selectedPaymentForStatus && (
+                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a', mt: 0.2 }}>
+                            {selectedPaymentForStatus.payment_code} — Rp {Number(selectedPaymentForStatus.total_amount || 0).toLocaleString('id-ID')}
+                        </Typography>
+                    )}
+                </Box>
+
+                <MenuItem
+                    onClick={() => handleSelectPaymentStatus('approved')}
+                    selected={selectedPaymentForStatus?.status === 'approved'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#f0fdf4' },
+                        '&:hover': { bgcolor: '#f0fdf4' }
+                    }}
+                >
+                    <CheckCircleIcon sx={{ fontSize: 18, color: '#16a34a' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#166534' }}>
+                            APPROVED (Lunas / Diverifikasi)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Verifikasi pembayaran & aktifkan tiket otomatis
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectPaymentStatus('pending')}
+                    selected={selectedPaymentForStatus?.status === 'pending'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#fffbeb' },
+                        '&:hover': { bgcolor: '#fffbeb' }
+                    }}
+                >
+                    <AccessTimeIcon sx={{ fontSize: 18, color: '#d97706' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                            PENDING (Menunggu Pembayaran)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Kembalikan ke status belum lunas
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectPaymentStatus('rejected')}
+                    selected={selectedPaymentForStatus?.status === 'rejected'}
+                    sx={{
+                        py: 1.2,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&.Mui-selected': { bgcolor: '#fef2f2' },
+                        '&:hover': { bgcolor: '#fef2f2' }
+                    }}
+                >
+                    <CloseIcon sx={{ fontSize: 18, color: '#dc2626' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#991b1b' }}>
+                            REJECTED (Tolak Pembayaran)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                            Tolak bukti & batalkan tiket
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <Divider sx={{ my: 0.8 }} />
+
+                <MenuItem
+                    onClick={() => handleOpenQuickDebtModal(selectedPaymentForStatus)}
+                    sx={{
+                        py: 1,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&:hover': { bgcolor: '#fffbeb' }
+                    }}
+                >
+                    <WarningAmberIcon sx={{ fontSize: 18, color: '#d97706' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#92400e' }}>
+                            {selectedPaymentForStatus?.is_debt ? 'Kelola / Ubah Catatan Hutang (DEBT)' : 'Tandai Sebagai Hutang (DEBT)'}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', fontSize: '0.72rem' }}>
+                            Atur tagihan tertunda / tanggungan sponsor
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => {
+                        const p = selectedPaymentForStatus;
+                        handleClosePaymentMenu();
+                        handleOpenProofModal(p);
+                    }}
+                    sx={{
+                        py: 1,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&:hover': { bgcolor: '#f0f9ff' }
+                    }}
+                >
+                    <VisibilityIcon sx={{ fontSize: 18, color: '#0284c7' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0284c7' }}>
+                            Lihat Bukti Transfer & Detail Lengkap
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', fontSize: '0.72rem' }}>
+                            Buka modal bukti bayar & upload ulang struk
+                        </Typography>
+                    </Box>
+                </MenuItem>
+            </Menu>
+
+            {/* QUICK STATUS POPOVER 3: DEBT ACTION MENU */}
+            <Menu
+                anchorEl={debtMenuAnchor}
+                open={Boolean(debtMenuAnchor)}
+                onClose={handleCloseDebtMenu}
+                PaperProps={{
+                    elevation: 8,
+                    sx: {
+                        borderRadius: '14px',
+                        minWidth: 280,
+                        p: 0.5,
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    }
+                }}
+                transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            >
+                <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f1f5f9' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Status Hutang / Tagihan (DEBT)
+                    </Typography>
+                    {selectedPaymentForDebt && (
+                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a', mt: 0.2 }}>
+                            {selectedPaymentForDebt.payment_code}
+                        </Typography>
+                    )}
+                </Box>
+
+                {selectedPaymentForDebt?.is_debt ? (
+                    <>
+                        <MenuItem
+                            onClick={() => handleQuickToggleDebt(false)}
+                            sx={{
+                                py: 1.2,
+                                px: 2,
+                                borderRadius: '8px',
+                                m: 0.5,
+                                gap: 1.5,
+                                bgcolor: '#f0fdf4',
+                                '&:hover': { bgcolor: '#dcfce7' }
+                            }}
+                        >
+                            <TaskAltIcon sx={{ fontSize: 20, color: '#16a34a' }} />
+                            <Box>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#166534' }}>
+                                    Cabut Tag Hutang (Sudah Lunas)
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#4b5563', display: 'block', fontSize: '0.72rem' }}>
+                                    Tandai hutang telah selesai dibayar
+                                </Typography>
+                            </Box>
+                        </MenuItem>
+
+                        <MenuItem
+                            onClick={() => handleOpenQuickDebtModal(selectedPaymentForDebt)}
+                            sx={{
+                                py: 1.2,
+                                px: 2,
+                                borderRadius: '8px',
+                                m: 0.5,
+                                gap: 1.5,
+                                '&:hover': { bgcolor: '#fffbeb' }
+                            }}
+                        >
+                            <EditIcon sx={{ fontSize: 18, color: '#d97706' }} />
+                            <Box>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                                    Ubah Catatan Hutang (Notes)
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', fontSize: '0.72rem' }}>
+                                    {selectedPaymentForDebt.debt_notes || 'Edit penanggung jawab / tempo bayar'}
+                                </Typography>
+                            </Box>
+                        </MenuItem>
+                    </>
+                ) : (
+                    <MenuItem
+                        onClick={() => handleOpenQuickDebtModal(selectedPaymentForDebt)}
+                        sx={{
+                            py: 1.2,
+                            px: 2,
+                            borderRadius: '8px',
+                            m: 0.5,
+                            gap: 1.5,
+                            bgcolor: '#fffbeb',
+                            '&:hover': { bgcolor: '#fef3c7' }
+                        }}
+                    >
+                        <WarningAmberIcon sx={{ fontSize: 20, color: '#d97706' }} />
+                        <Box>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                                Tandai Sebagai HUTANG (DEBT)
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', fontSize: '0.72rem' }}>
+                                Tandai tiket ini sebagai tanggungan kasbon/sponsor
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                )}
+
+                <Divider sx={{ my: 0.8 }} />
+
+                <MenuItem
+                    onClick={() => {
+                        const p = selectedPaymentForDebt;
+                        handleCloseDebtMenu();
+                        handleOpenProofModal(p);
+                    }}
+                    sx={{
+                        py: 1,
+                        px: 2,
+                        borderRadius: '8px',
+                        m: 0.5,
+                        gap: 1.5,
+                        '&:hover': { bgcolor: '#f0f9ff' }
+                    }}
+                >
+                    <VisibilityIcon sx={{ fontSize: 18, color: '#0284c7' }} />
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0284c7' }}>
+                            Lihat Bukti Transfer & Detail
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', fontSize: '0.72rem' }}>
+                            Buka modal bukti bayar
+                        </Typography>
+                    </Box>
+                </MenuItem>
+            </Menu>
+
+            {/* QUICK DEBT DIALOG */}
+            <Dialog
+                open={quickDebtModal.open}
+                onClose={() => !quickDebtModal.processing && setQuickDebtModal({ open: false, payment: null, isDebt: true, debtNotes: '', processing: false })}
+                maxWidth="xs"
+                fullWidth
+                PaperProps={{
+                    sx: { borderRadius: '16px', p: 1 }
+                }}
+            >
+                <DialogTitle sx={{ pb: 1, fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <WarningAmberIcon sx={{ color: '#d97706' }} />
+                    Kelola Status Hutang (DEBT)
+                </DialogTitle>
+                <DialogContent sx={{ pt: 1 }}>
+                    <Typography variant="body2" sx={{ color: '#64748b', mb: 2, fontSize: '0.85rem' }}>
+                        Kode Pembayaran: <strong>{quickDebtModal.payment?.payment_code}</strong><br />
+                        Total: <strong>Rp {Number(quickDebtModal.payment?.total_amount || 0).toLocaleString('id-ID')}</strong>
+                    </Typography>
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={quickDebtModal.isDebt}
+                                onChange={(e) => setQuickDebtModal(prev => ({ ...prev, isDebt: e.target.checked }))}
+                                sx={{ color: '#d97706', '&.Mui-checked': { color: '#d97706' } }}
+                            />
+                        }
+                        label={
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: quickDebtModal.isDebt ? '#b45309' : '#64748b' }}>
+                                Tandai Sebagai Hutang / Tanggungan (DEBT)
+                            </Typography>
+                        }
+                        sx={{ mb: 1.5 }}
+                    />
+
+                    {quickDebtModal.isDebt && (
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={3}
+                            label="Catatan Hutang (Debt Notes)"
+                            placeholder="Contoh: Ditanggung PT Petrokimia / Janji bayar tgl 25 Okt / PIC: Pak Budi"
+                            value={quickDebtModal.debtNotes}
+                            onChange={(e) => setQuickDebtModal(prev => ({ ...prev, debtNotes: e.target.value }))}
+                            helperText="Tuliskan nama instansi penanggung jawab, kontak PIC, atau batas waktu pelunasan."
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '10px',
+                                }
+                            }}
+                        />
+                    )}
+                </DialogContent>
+                <DialogActions sx={{ p: 2, pt: 1, justifyContent: 'space-between' }}>
+                    <Button
+                        onClick={() => setQuickDebtModal({ open: false, payment: null, isDebt: true, debtNotes: '', processing: false })}
+                        disabled={quickDebtModal.processing}
+                        sx={{ textTransform: 'none', color: '#64748b', fontWeight: 700 }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleSaveQuickDebtModal}
+                        disabled={quickDebtModal.processing}
+                        startIcon={quickDebtModal.processing ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <CheckIcon />}
+                        sx={{
+                            bgcolor: '#d97706',
+                            color: '#fff',
+                            fontWeight: 800,
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            px: 2.5,
+                            '&:hover': { bgcolor: '#b45309' }
+                        }}
+                    >
+                        {quickDebtModal.processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                     </Button>
                 </DialogActions>
             </Dialog>

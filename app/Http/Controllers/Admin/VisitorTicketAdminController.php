@@ -434,6 +434,97 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
+     * Quick update ticket status directly from table chip (active, pending, cancelled)
+     */
+    public function updateTicketStatus(Request $request, $id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:active,pending,cancelled',
+        ]);
+
+        $oldStatus = $ticket->status;
+        $newStatus = $request->status;
+
+        $ticket->update(['status' => $newStatus]);
+
+        // If newly activated and has email, send E-Ticket email
+        if ($newStatus === 'active' && $oldStatus !== 'active' && !empty($ticket->visitor_email)) {
+            try {
+                $this->applySmtpSettings();
+                Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+            } catch (\Exception $e) {
+                Log::error("Failed to send ticket email on quick activation: " . $e->getMessage());
+            }
+        }
+
+        return back()->with('success', "Status tiket {$ticket->ticket_code} ({$ticket->visitor_name}) berhasil diubah menjadi " . strtoupper($newStatus) . ".");
+    }
+
+    /**
+     * Quick update payment status directly from table chip (approved, pending, rejected)
+     */
+    public function updatePaymentStatus(Request $request, $id)
+    {
+        $payment = VisitorPayment::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:approved,pending,rejected',
+            'is_debt' => 'nullable|boolean',
+            'debt_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $newStatus = $request->status;
+
+        if ($newStatus === 'approved') {
+            $payment->update([
+                'status' => 'approved',
+                'verified_at' => $payment->verified_at ?: now(),
+                'verified_by_admin_id' => Auth::id(),
+            ]);
+
+            // Activate all tickets for this payment
+            VisitorTicket::where('payment_id', $payment->id)->update([
+                'status' => 'active',
+            ]);
+
+            // Send E-Ticket emails
+            $tickets = VisitorTicket::where('payment_id', $payment->id)->get();
+            $this->applySmtpSettings();
+            foreach ($tickets as $t) {
+                if (!empty($t->visitor_email)) {
+                    try {
+                        Mail::to($t->visitor_email)->send(new VisitorTicketIssued($t));
+                    } catch (\Exception $e) {
+                        Log::error("Failed sending visitor ticket email on quick approval: " . $e->getMessage());
+                    }
+                }
+            }
+        } elseif ($newStatus === 'rejected') {
+            $payment->update([
+                'status' => 'rejected',
+                'notes' => $request->input('notes', 'Pembayaran ditolak oleh admin.'),
+            ]);
+
+            VisitorTicket::where('payment_id', $payment->id)->update([
+                'status' => 'cancelled',
+            ]);
+        } else { // pending
+            $payment->update([
+                'status' => 'pending',
+                'verified_at' => null,
+            ]);
+
+            VisitorTicket::where('payment_id', $payment->id)->update([
+                'status' => 'pending',
+            ]);
+        }
+
+        return back()->with('success', "Status pembayaran berhasil diubah menjadi " . strtoupper($newStatus) . ".");
+    }
+
+    /**
      * Resend E-Ticket email to visitor
      */
     public function resendEmail($id)
