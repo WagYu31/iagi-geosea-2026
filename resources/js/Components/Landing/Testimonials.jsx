@@ -101,6 +101,15 @@ function getRoleBadge(role) {
     };
 }
 
+const OFFICIAL_PHOTO_MAP = {
+    'yuliot': '/images/speakers/yuliot-tanjung.jpg',
+    'sultan': '/images/speakers/sri-sultan-hb-x.jpg',
+    'hamengkubuwana': '/images/speakers/sri-sultan-hb-x.jpg',
+    'budi santoso': '/images/speakers/stj-budi-santoso.jpg',
+    'maroef': '/images/speakers/maroef-sjamsoeddin.jpg',
+    'yudistian': '/images/speakers/yudistian-yunis.jpg',
+};
+
 export default function Testimonials({ settings }) {
     const [selectedTab, setSelectedTab] = useState('all');
     const [posterOpen, setPosterOpen] = useState(false);
@@ -109,13 +118,26 @@ export default function Testimonials({ settings }) {
         ? settings.keynote_speakers.filter(s => s.name && s.name.trim() !== '')
         : [];
 
-    // Standardize session names and ensure fallbacks
+    // Standardize session names, photo paths, and ensure fallbacks
     const speakers = useMemo(() => {
-        return rawSpeakers.map(s => ({
-            ...s,
-            session: s.session && s.session.trim() !== '' ? s.session.trim() : 'Special Keynote Speech',
-            role: s.role && s.role.trim() !== '' ? s.role.trim() : 'Speaker / Panelist',
-        }));
+        return rawSpeakers.map(s => {
+            let photo = s.photo;
+            if (!photo || photo.trim() === '') {
+                const lower = (s.name || '').toLowerCase();
+                for (const [key, p] of Object.entries(OFFICIAL_PHOTO_MAP)) {
+                    if (lower.includes(key)) {
+                        photo = p;
+                        break;
+                    }
+                }
+            }
+            return {
+                ...s,
+                photo,
+                session: s.session && s.session.trim() !== '' ? s.session.trim() : 'Special Keynote Speech',
+                role: s.role && s.role.trim() !== '' ? s.role.trim() : 'Speaker / Panelist',
+            };
+        });
     }, [rawSpeakers]);
 
     // Extract unique sessions in preferred order

@@ -1528,7 +1528,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Kementerian ESDM',
             session: 'Special Keynote Speech',
             role: 'Special Keynote',
-            photo: '',
+            photo: '/images/speakers/yuliot-tanjung.jpg',
         },
         {
             name: 'Sri Sultan Hamengkubuwana X*',
@@ -1536,7 +1536,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Pemda D.I. Yogyakarta',
             session: 'Special Keynote Speech',
             role: 'Special Keynote',
-            photo: '',
+            photo: '/images/speakers/sri-sultan-hb-x.jpg',
         },
         {
             name: 'STJ Budi Santoso',
@@ -1544,7 +1544,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Ikatan Ahli Geologi Indonesia (IAGI)',
             session: 'CEO Forum',
             role: 'Moderator',
-            photo: '',
+            photo: '/images/speakers/stj-budi-santoso.jpg',
         },
         {
             name: 'Maroef Sjamsoeddin',
@@ -1552,7 +1552,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'MIND ID',
             session: 'CEO Forum',
             role: 'Speaker / Panelist',
-            photo: '',
+            photo: '/images/speakers/maroef-sjamsoeddin.jpg',
         },
         {
             name: 'Asep Samsul Arifin',
@@ -1568,7 +1568,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'PT Geo Dipa Energi',
             session: 'CEO Forum',
             role: 'Speaker / Panelist',
-            photo: '',
+            photo: '/images/speakers/yudistian-yunis.jpg',
         },
         {
             name: 'Rikky Rahmat Firdaus*',
