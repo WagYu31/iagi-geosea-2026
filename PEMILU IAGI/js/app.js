@@ -118,6 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update URL hash
     window.location.hash = screenId;
 
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer && screenId !== 'vote') {
+      appContainer.classList.remove('ballot-mode-active');
+    }
+
     // Special screen initializations
     if (screenId === 'vote') {
       setupVotingScreen(params);
@@ -415,10 +420,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (voterBadgeNpa) voterBadgeNpa.innerText = currentVoter.npa;
 
     // Hide auth, show official digital ballot!
-    if (voteAuthCard) voteAuthCard.style.display = 'none';
+    if (voteAuthCard) voteAuthCard.style.display = 'block';
     if (voteBallotCard) voteBallotCard.style.display = 'block';
+    if (voteAuthCard) voteAuthCard.style.display = 'none';
 
-    renderCandidateCards();
+    // Expand app shell for panoramic landscape on tablet/desktop
+    const appShell = document.querySelector('.app-container');
+    if (appShell) appShell.classList.add('ballot-mode-active');
+
+    renderLandscapeBallotGrid();
+    renderCandidateCards(); // Also render vertical cards for fallback mode
     triggerHaptic('success');
   }
 
@@ -431,18 +442,421 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render 3 Candidate Cards in Ballot
+  // ================= 3D PAKU & KERTAS COBLOS CONTROLLERS =================
+  let coblosAudioEnabled = true;
+  let currentBallotViewMode = 'landscape';
+  let isCoblosAnimating = false;
+
+  window.toggleCoblosAudio = function() {
+    coblosAudioEnabled = !coblosAudioEnabled;
+    const soundIcon = document.getElementById('sound-icon');
+    const soundText = document.getElementById('sound-text');
+    const btn = document.getElementById('btn-toggle-ballot-sound');
+    if (soundIcon) soundIcon.innerText = coblosAudioEnabled ? '🔊' : '🔇';
+    if (soundText) soundText.innerText = coblosAudioEnabled ? 'Suara: ON' : 'Suara: OFF';
+    if (btn) {
+      if (coblosAudioEnabled) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+    triggerHaptic('light');
+  };
+
+  window.toggleBallotViewMode = function() {
+    const landscapeWrap = document.getElementById('ballot-interactive-container');
+    const verticalWrap = document.getElementById('candidate-list-container');
+    const helperTip = document.getElementById('mobile-landscape-helper');
+    const dots = document.getElementById('ballot-col-indicator');
+    const label = document.getElementById('label-toggle-view');
+    const btn = document.getElementById('btn-toggle-ballot-view');
+
+    if (currentBallotViewMode === 'landscape') {
+      currentBallotViewMode = 'vertical';
+      if (landscapeWrap) landscapeWrap.style.display = 'none';
+      if (verticalWrap) verticalWrap.style.display = 'flex';
+      if (helperTip) helperTip.style.display = 'none';
+      if (dots) dots.style.display = 'none';
+      if (label) label.innerText = 'Mode Kartu Tegak';
+      if (btn) btn.classList.remove('active');
+    } else {
+      currentBallotViewMode = 'landscape';
+      if (landscapeWrap) landscapeWrap.style.display = 'block';
+      if (verticalWrap) verticalWrap.style.display = 'none';
+      if (helperTip) helperTip.style.display = 'flex';
+      if (dots) dots.style.display = 'flex';
+      if (label) label.innerText = 'Kertas Suara Landscape';
+      if (btn) btn.classList.add('active');
+    }
+    triggerHaptic('light');
+  };
+
+  window.toggleBallotZoom = function() {
+    const sheet = document.getElementById('ballot-paper-sheet');
+    const zoomText = document.getElementById('zoom-text');
+    if (!sheet) return;
+    if (sheet.classList.contains('is-zoomed-fit')) {
+      sheet.classList.remove('is-zoomed-fit');
+      sheet.style.transform = 'none';
+      if (zoomText) zoomText.innerText = 'Lebar Penuh';
+    } else {
+      sheet.classList.add('is-zoomed-fit');
+      if (zoomText) zoomText.innerText = 'Skala Asli';
+    }
+    triggerHaptic('light');
+  };
+
+  window.scrollBallotToCandidate = function(candidateNum) {
+    const col = document.getElementById(`ballot-col-${candidateNum}`);
+    const container = document.getElementById('ballot-interactive-container');
+    if (col && container) {
+      const colLeft = col.offsetLeft - container.offsetLeft - 16;
+      container.scrollTo({ left: colLeft, behavior: 'smooth' });
+    }
+    updateCandidateDots(candidateNum);
+  };
+
+  function updateCandidateDots(activeNum) {
+    const dots = document.querySelectorAll('.col-dot');
+    dots.forEach((dot, idx) => {
+      if (idx + 1 === activeNum) dot.classList.add('active');
+      else dot.classList.remove('active');
+    });
+  }
+
+  // Monitor horizontal scroll to auto-update pagination dots
+  const ballotScrollContainer = document.getElementById('ballot-interactive-container');
+  if (ballotScrollContainer) {
+    ballotScrollContainer.addEventListener('scroll', () => {
+      const scrollX = ballotScrollContainer.scrollLeft;
+      const width = ballotScrollContainer.offsetWidth;
+      const activeIdx = Math.min(3, Math.max(1, Math.round(scrollX / (width * 0.75)) + 1));
+      updateCandidateDots(activeIdx);
+    }, { passive: true });
+  }
+
+  // Synthesize realistic acoustic nail-punch audio through cardstock paper
+  function playCoblosSound() {
+    if (!coblosAudioEnabled) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+
+      // 1. Low Thud (Impact resonance of ballot desk)
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(130, now);
+      osc.frequency.exponentialRampToValueAtTime(32, now + 0.12);
+      oscGain.gain.setValueAtTime(0.75, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+
+      // 2. Paper Fiber Perforation Snap (Bandpassed noise burst)
+      const bufferSize = Math.floor(ctx.sampleRate * 0.05); // 50ms
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2200, now);
+      filter.Q.setValueAtTime(2.2, now);
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.85, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.05);
+
+      // 3. Crisp Metallic Nail Click
+      const clickOsc = ctx.createOscillator();
+      const clickGain = ctx.createGain();
+      clickOsc.type = 'triangle';
+      clickOsc.frequency.setValueAtTime(2800, now);
+      clickOsc.frequency.exponentialRampToValueAtTime(900, now + 0.035);
+      clickGain.gain.setValueAtTime(0.3, now);
+      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      clickOsc.connect(clickGain);
+      clickGain.connect(ctx.destination);
+      clickOsc.start(now);
+      clickOsc.stop(now + 0.035);
+    } catch (e) {
+      // Audio fallback silent
+    }
+  }
+
+  // Spawn realistic paper dust particles on impact
+  function spawnPaperParticles(targetX, targetY, parentContainer) {
+    if (!parentContainer) return;
+    const particleCount = 8;
+    for (let i = 0; i < particleCount; i++) {
+      const p = document.createElement('div');
+      p.className = 'paper-dust-particle';
+      const size = Math.random() * 4 + 3;
+      p.style.width = `${size}px`;
+      p.style.height = `${size * 0.8}px`;
+      p.style.left = `${targetX}px`;
+      p.style.top = `${targetY}px`;
+
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+      const dist = Math.random() * 45 + 25;
+      const tx = Math.cos(angle) * dist;
+      const ty = Math.sin(angle) * dist;
+      const rot = Math.random() * 360;
+
+      p.style.setProperty('--p-tx', `${tx}px`);
+      p.style.setProperty('--p-ty', `${ty}px`);
+      p.style.setProperty('--p-rot', `${rot}deg`);
+
+      parentContainer.appendChild(p);
+      setTimeout(() => {
+        if (p.parentNode) p.parentNode.removeChild(p);
+      }, 500);
+    }
+  }
+
+  // Render 3 Candidate Columns in Landscape Ballot Paper
+  function renderLandscapeBallotGrid() {
+    const grid = document.getElementById('ballot-landscape-grid');
+    if (!grid) return;
+
+    grid.innerHTML = CANDIDATES.map(c => `
+      <div class="ballot-col ${selectedCandidateId === c.id ? 'selected is-coblos' : ''}" id="ballot-col-${c.id}" onclick="handleCoblosCandidate(${c.id}, event)">
+        <div class="ballot-col-frame">
+
+          <!-- Nomor Urut Box (Besar, Bold, Gaya Pemilu Resmi) -->
+          <div class="b-col-number-box">
+            <span class="b-number-text">${c.number}</span>
+          </div>
+
+          <!-- Foto Kandidat Resmi -->
+          <div class="b-col-photo-wrap">
+            <img src="${c.photoWhite || c.photo}" alt="${c.name}" class="b-col-avatar" loading="lazy">
+          </div>
+
+          <!-- Identitas Nama Kandidat -->
+          <div class="b-col-identity">
+            <h3 class="b-col-name">${c.name}</h3>
+            <div class="b-col-npa">${c.npa || ''}</div>
+          </div>
+
+          <!-- AREA TARGET COBLOS RESMI (Kotak Coblos 3D) -->
+          <div class="b-coblos-target-zone" id="coblos-target-${c.id}">
+            <div class="coblos-target-ring">
+              <div class="coblos-crosshair-v"></div>
+              <div class="coblos-crosshair-h"></div>
+              <div class="coblos-center-point"></div>
+            </div>
+            <div class="coblos-label">
+              <span class="coblos-label-icon">📌</span>
+              <span class="coblos-label-text">COBLOS DI SINI</span>
+            </div>
+
+            <!-- 3D Puncture Hole Container (Renders realistic torn paper hole upon coblos!) -->
+            <div class="puncture-hole-wrap" id="puncture-hole-${c.id}" style="${selectedCandidateId === c.id ? 'display: block;' : 'display: none;'}">
+              <div class="hole-dent-shadow"></div>
+              <svg class="hole-creases-svg" viewBox="0 0 100 100">
+                <path d="M 50 50 L 15 40 M 50 50 L 30 20 M 50 50 L 70 15 M 50 50 L 85 45 M 50 50 L 80 75 M 50 50 L 52 90 M 50 50 L 25 80 M 50 50 L 10 65" stroke="rgba(100, 116, 139, 0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" />
+              </svg>
+              <div class="hole-void">
+                <svg class="hole-flaps-svg" viewBox="0 0 80 80">
+                  <polygon points="40,10 46,26 60,15 53,30 70,30 58,40 74,50 58,52 64,68 48,60 42,74 36,60 22,70 28,54 10,55 24,42 10,30 26,32 18,16 34,25" fill="#F4EFE6" stroke="#D1C7B7" stroke-width="1.2" />
+                  <circle cx="40" cy="40" r="14" fill="#06090D" />
+                  <circle cx="40" cy="40" r="12" fill="#000000" />
+                  <circle cx="40" cy="40" r="11" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="2.5" />
+                </svg>
+              </div>
+              <div class="coblos-stamp-seal">
+                <span>✓ SUARA SAH</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Candidate Tagline / Visi Misi Modal Trigger -->
+          <div class="b-col-footer">
+            <button type="button" class="b-btn-visimisi" onclick="event.stopPropagation(); showCandidateDetailModal(${c.id})">
+              <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Visi, Misi & Gagasan</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ================= 3D PAKU STRIKE & HOLE PUNCTURE ANIMATION =================
+  window.handleCoblosCandidate = function(candidateId, event) {
+    if (isCoblosAnimating) return;
+    isCoblosAnimating = true;
+
+    triggerHaptic('medium');
+    selectedCandidateId = candidateId;
+
+    const pakuStage = document.getElementById('paku-3d-stage');
+    const pakuObj = document.getElementById('paku-coblos-object');
+    const pakuShadow = document.getElementById('paku-coblos-shadow');
+    const paperSheet = document.getElementById('ballot-paper-sheet');
+    const targetZone = document.getElementById(`coblos-target-${candidateId}`);
+    const candidateCol = document.getElementById(`ballot-col-${candidateId}`);
+
+    // Fallback if elements not found
+    if (!pakuStage || !pakuObj || !pakuShadow || !targetZone || !paperSheet) {
+      applyCandidateSelection(candidateId);
+      isCoblosAnimating = false;
+      return;
+    }
+
+    // Calculate strike coordinate relative to ballot sheet
+    const sheetRect = paperSheet.getBoundingClientRect();
+    const targetRect = targetZone.getBoundingClientRect();
+
+    // The impact point is center of target ring
+    const impactX = (targetRect.left + targetRect.width / 2) - sheetRect.left;
+    const impactY = (targetRect.top + targetRect.height / 2 + 6) - sheetRect.top;
+
+    // Show stage
+    pakuStage.style.display = 'block';
+
+    // 1. Initial State: Paku hovers high above the impact point with 3D angle
+    pakuObj.style.transition = 'none';
+    pakuShadow.style.transition = 'none';
+
+    // Nail tip is at bottom center of SVG (x: 45px, y: 195px of object)
+    const nailTipOffsetX = 45;
+    const nailTipOffsetY = 195;
+
+    const startX = impactX - nailTipOffsetX + 20;
+    const startY = impactY - nailTipOffsetY - 90;
+
+    pakuObj.style.transform = `translate3d(${startX}px, ${startY}px, 120px) rotateX(28deg) rotateY(-18deg) rotateZ(8deg) scale(1.15)`;
+    pakuObj.style.opacity = '0';
+
+    pakuShadow.style.left = `${impactX + 15}px`;
+    pakuShadow.style.top = `${impactY + 10}px`;
+    pakuShadow.style.transform = 'translate(-50%, -50%) scale(1.6)';
+    pakuShadow.style.opacity = '0.25';
+
+    // Trigger swift descent in next frame
+    requestAnimationFrame(() => {
+      // Fade in poised nail
+      pakuObj.style.transition = 'opacity 0.08s ease-out, transform 0.16s cubic-bezier(0.12, 0.9, 0.2, 1)';
+      pakuShadow.style.transition = 'opacity 0.08s ease-out, transform 0.16s cubic-bezier(0.12, 0.9, 0.2, 1)';
+
+      pakuObj.style.opacity = '1';
+
+      // 2. THE STRIKE DOWNWARD (Plunge into paper)
+      setTimeout(() => {
+        const strikeX = impactX - nailTipOffsetX;
+        const strikeY = impactY - nailTipOffsetY;
+
+        pakuObj.style.transform = `translate3d(${strikeX}px, ${strikeY}px, 0px) rotateX(10deg) rotateY(-6deg) rotateZ(3deg) scale(0.98)`;
+        pakuShadow.style.left = `${impactX}px`;
+        pakuShadow.style.top = `${impactY}px`;
+        pakuShadow.style.transform = 'translate(-50%, -50%) scale(0.85)';
+        pakuShadow.style.opacity = '0.85';
+
+        // 3. THE PUNCTURE MOMENT (Impact at 160ms)
+        setTimeout(() => {
+          // Play acoustic punch sound
+          playCoblosSound();
+
+          // Physical thud recoil of paper
+          paperSheet.classList.remove('paper-impact-shake');
+          void paperSheet.offsetWidth; // trigger reflow
+          paperSheet.classList.add('paper-impact-shake');
+
+          // Spawn paper dust particles
+          spawnPaperParticles(impactX, impactY, paperSheet);
+
+          // Update puncture hole visibility
+          document.querySelectorAll('.puncture-hole-wrap').forEach(el => el.style.display = 'none');
+          const myHole = document.getElementById(`puncture-hole-${candidateId}`);
+          if (myHole) myHole.style.display = 'block';
+
+          // Apply selection state
+          applyCandidateSelection(candidateId);
+
+          // 4. NAIL REBOUND (Springs up slightly in 3D, revealing fresh hole)
+          setTimeout(() => {
+            const reboundY = strikeY - 35;
+            pakuObj.style.transition = 'transform 0.24s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.22s ease-in';
+            pakuObj.style.transform = `translate3d(${strikeX}px, ${reboundY}px, 35px) rotateX(18deg) rotateY(-10deg) rotateZ(5deg) scale(1.04)`;
+            pakuShadow.style.transform = 'translate(-50%, -50%) scale(1.2)';
+            pakuShadow.style.opacity = '0.45';
+
+            // Gracefully retract and hide stage after user inspects
+            setTimeout(() => {
+              pakuObj.style.opacity = '0';
+              pakuShadow.style.opacity = '0';
+              setTimeout(() => {
+                pakuStage.style.display = 'none';
+                isCoblosAnimating = false;
+              }, 220);
+            }, 380);
+
+          }, 110);
+
+        }, 160);
+
+      }, 30);
+    });
+  };
+
+  function applyCandidateSelection(candidateId) {
+    // Update landscape columns active class
+    document.querySelectorAll('.ballot-col').forEach(col => {
+      col.classList.remove('selected', 'is-coblos');
+    });
+    const activeCol = document.getElementById(`ballot-col-${candidateId}`);
+    if (activeCol) {
+      activeCol.classList.add('selected', 'is-coblos');
+    }
+
+    // Update vertical fallback cards
+    document.querySelectorAll('.candidate-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    const activeCard = document.getElementById(`candidate-card-${candidateId}`);
+    if (activeCard) {
+      activeCard.classList.add('selected');
+    }
+
+    // Enable and style submit button
+    const candidate = CANDIDATES.find(c => c.id === candidateId);
+    if (btnSubmitVote && candidate) {
+      btnSubmitVote.disabled = false;
+      btnSubmitVote.innerHTML = `<span>SUBMIT PILIHAN: <strong>CALON ${candidate.number} (${candidate.name.split(',')[0]})</strong></span> ✓`;
+      btnSubmitVote.style.boxShadow = '0 0 25px rgba(245, 186, 66, 0.6), 0 10px 30px rgba(0,0,0,0.8)';
+    }
+
+    triggerHaptic('success');
+  }
+
+  // Render 3 Candidate Cards in Ballot (Vertical Fallback)
   function renderCandidateCards() {
     if (!candidateListContainer) return;
 
     candidateListContainer.innerHTML = CANDIDATES.map(c => `
-      <div class="candidate-card" id="candidate-card-${c.id}" onclick="selectCandidate(${c.id})">
+      <div class="candidate-card ${selectedCandidateId === c.id ? 'selected' : ''}" id="candidate-card-${c.id}" onclick="handleCoblosCandidate(${c.id}, event)">
         <div class="candidate-header">
           <div class="candidate-number-badge">${c.number}</div>
           <span class="selected-indicator">✓ TERPILIH</span>
         </div>
         <div class="candidate-body">
-          <img src="${c.photo}" alt="${c.name}" class="candidate-avatar">
+          <img src="${c.photoWhite || c.photo}" alt="${c.name}" class="candidate-avatar">
           <div class="candidate-info">
             <h4 class="candidate-name">${c.name}</h4>
             <div class="candidate-title">NPA: ${c.npa || ''}</div>
@@ -455,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>Visi, Misi & Gagasan</span>
           </button>
           <div class="vote-radio-btn" id="radio-label-${c.id}">
-            Coblos Calon ${c.number}
+            ${selectedCandidateId === c.id ? '✓ Dicoblos' : `Coblos Calon ${c.number}`}
           </div>
         </div>
       </div>
@@ -463,24 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.selectCandidate = (candidateId) => {
-    triggerHaptic('medium');
-    selectedCandidateId = candidateId;
-
-    // Update active classes
-    document.querySelectorAll('.candidate-card').forEach(card => {
-      card.classList.remove('selected');
-    });
-
-    const activeCard = document.getElementById(`candidate-card-${candidateId}`);
-    if (activeCard) {
-      activeCard.classList.add('selected');
-    }
-
-    const candidate = CANDIDATES.find(c => c.id === candidateId);
-    if (btnSubmitVote && candidate) {
-      btnSubmitVote.disabled = false;
-      btnSubmitVote.innerText = `SUBMIT PILIHAN: CALON ${candidate.number}`;
-    }
+    handleCoblosCandidate(candidateId);
   };
 
   // Submit button -> triggers mandatory Dual-Confirmation Modal

@@ -1138,6 +1138,754 @@ body::before {
   box-shadow: 0 4px 15px rgba(245, 186, 66, 0.5);
 }
 
+/* ==========================================================================
+   OFFICIAL LANDSCAPE BALLOT PAPER (KERTAS SUARA PEMILU) & 3D PAKU COBLOS
+   ========================================================================== */
+
+/* Widen app container when ballot landscape is active on desktop / tablets */
+.app-container.ballot-mode-active {
+  max-width: 1060px !important;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ballot-control-header {
+  margin-bottom: 16px;
+}
+
+.ballot-action-tools {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.ballot-tool-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(6, 36, 29, 0.85);
+  border: 1px solid rgba(245, 186, 66, 0.3);
+  color: #FDE68A;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  user-select: none;
+}
+
+.ballot-tool-pill:hover {
+  background: rgba(12, 66, 53, 0.95);
+  border-color: var(--gold-primary);
+  transform: translateY(-1px);
+}
+
+.ballot-tool-pill.active {
+  background: linear-gradient(135deg, rgba(245, 186, 66, 0.22) 0%, rgba(16, 185, 129, 0.25) 100%);
+  border-color: var(--gold-primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(245, 186, 66, 0.25);
+}
+
+.mobile-landscape-helper {
+  background: rgba(245, 186, 66, 0.1);
+  border: 1px dashed rgba(245, 186, 66, 0.4);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.76rem;
+  color: #FDE68A;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+@media (min-width: 900px) {
+  .mobile-landscape-helper {
+    display: none;
+  }
+}
+
+/* Landscape Viewport Container */
+.ballot-interactive-container {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  padding: 10px 4px 18px 4px;
+  perspective: 1200px;
+}
+
+/* Custom Scrollbar for horizontal ballot paper */
+.ballot-interactive-container::-webkit-scrollbar {
+  height: 8px;
+}
+.ballot-interactive-container::-webkit-scrollbar-track {
+  background: rgba(2, 19, 15, 0.6);
+  border-radius: 4px;
+}
+.ballot-interactive-container::-webkit-scrollbar-thumb {
+  background: rgba(245, 186, 66, 0.4);
+  border-radius: 4px;
+}
+.ballot-interactive-container::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-primary);
+}
+
+/* 3D PAKU STAGE OVERLAY */
+.paku-3d-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  overflow: visible;
+}
+
+.paku-coblos-object {
+  position: absolute;
+  width: 90px;
+  height: 210px;
+  top: 0;
+  left: 0;
+  transform-origin: 50% 95%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
+  transition: transform 0.16s cubic-bezier(0.12, 0.9, 0.2, 1);
+}
+
+.paku-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.paku-coblos-shadow {
+  position: absolute;
+  width: 50px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.25) 50%, transparent 80%);
+  filter: blur(4px);
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: translate(-50%, -50%);
+  transition: all 0.16s cubic-bezier(0.12, 0.9, 0.2, 1);
+}
+
+/* THE PHYSICAL BALLOT PAPER SHEET (KERTAS SUARA REALISTIS) */
+.ballot-paper-sheet {
+  min-width: 860px;
+  width: 100%;
+  background: #FCFBF7;
+  color: #0F172A;
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 0 35px rgba(217, 203, 178, 0.25);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+  border: 1px solid #D6CEBE;
+}
+
+/* Paper Impact Shake Animation on Strike */
+.ballot-paper-sheet.paper-impact-shake {
+  animation: paperRecoilImpact 0.32s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes paperRecoilImpact {
+  0% { transform: scale(1) translateZ(0); }
+  25% { transform: scale(0.995) translateY(2px) translateZ(-8px); }
+  50% { transform: scale(1.002) translateY(-1px) translateZ(2px); }
+  75% { transform: scale(0.998) translateY(1px); }
+  100% { transform: scale(1) translateZ(0); }
+}
+
+/* Authentic Paper Creases (Folding Lines) */
+.ballot-crease-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(to right, rgba(0,0,0,0.06), rgba(255,255,255,0.7), rgba(0,0,0,0.08));
+  box-shadow: 0 0 4px rgba(0,0,0,0.04);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ballot-crease-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 130px;
+  height: 2px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(255,255,255,0.6), rgba(0,0,0,0.06));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ballot-watermark-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(203, 185, 148, 0.06) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 2px, transparent 2px, transparent 8px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Outer & Inner Security Frames */
+.ballot-paper-inner-frame {
+  margin: 12px;
+  border: 3px solid #1E293B;
+  outline: 1.5px solid #64748B;
+  outline-offset: 3px;
+  padding: 16px;
+  background: #FCFBF7;
+  position: relative;
+  z-index: 3;
+}
+
+/* Header Kertas Suara */
+.ballot-paper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2.5px solid #0F172A;
+  padding-bottom: 12px;
+  margin-bottom: 10px;
+}
+
+.b-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+}
+
+.b-logo-iagi {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.b-org-name {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #0F172A;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.b-org-sub {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.b-header-center {
+  text-align: center;
+  flex: 1;
+}
+
+.b-header-badge {
+  display: inline-block;
+  background: #1E293B;
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+
+.b-header-title {
+  font-size: 1.28rem;
+  font-weight: 900;
+  color: #0F172A;
+  letter-spacing: 0.04em;
+  margin: 2px 0;
+  text-transform: uppercase;
+}
+
+.b-header-org {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #334155;
+  letter-spacing: 0.02em;
+}
+
+.b-header-period {
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: #B45309;
+  letter-spacing: 0.06em;
+}
+
+.b-header-right {
+  width: 200px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.b-security-box {
+  border: 1px solid #94A3B8;
+  padding: 6px 10px;
+  text-align: center;
+  background: #FFFFFF;
+  border-radius: 4px;
+}
+
+.b-sec-code {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.b-sec-barcode {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  color: #334155;
+  line-height: 1;
+  margin: 3px 0;
+}
+
+.b-sec-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* Ribbon Instruction */
+.ballot-instruction-ribbon {
+  background: #1E293B;
+  color: #F8FAFC;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 5px 8px;
+  margin-bottom: 14px;
+  border-radius: 3px;
+}
+
+/* 3 COLUMNS CANDIDATE GRID (LANDSCAPE) */
+.ballot-landscape-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* Individual Candidate Column */
+.ballot-col {
+  background: #FFFFFF;
+  border: 2.5px solid #1E293B;
+  border-radius: 6px;
+  padding: 12px;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  scroll-snap-align: center;
+}
+
+.ballot-col:hover {
+  transform: translateY(-2px);
+  border-color: #B45309;
+  box-shadow: 0 8px 24px rgba(180, 83, 9, 0.18);
+}
+
+.ballot-col.selected {
+  border-color: #D97706;
+  background: #FFFDF5;
+  box-shadow: 0 8px 28px rgba(217, 119, 6, 0.25), 0 0 0 2px #FDE68A;
+}
+
+.ballot-col.is-coblos {
+  border-color: #059669;
+}
+
+/* Nomor Urut Box */
+.b-col-number-box {
+  background: #0F172A;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 4px 0;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.b-number-text {
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.ballot-col.selected .b-col-number-box {
+  background: linear-gradient(135deg, #B45309 0%, #D97706 100%);
+  color: #FFFFFF;
+}
+
+/* Photo Wrapper */
+.b-col-photo-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1.08;
+  position: relative;
+  background: #F1F5F9;
+  border: 1.5px solid #94A3B8;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.b-col-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.ballot-col:hover .b-col-avatar {
+  transform: scale(1.02);
+}
+
+/* Candidate Name & Info */
+.b-col-identity {
+  text-align: center;
+  margin-bottom: 12px;
+  min-height: 54px;
+}
+
+.b-col-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.25;
+  margin: 0 0 3px 0;
+}
+
+.b-col-npa {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #64748B;
+}
+
+/* KOTAK TARGET COBLOS RESMI */
+.b-coblos-target-zone {
+  border: 2px dashed #94A3B8;
+  border-radius: 8px;
+  padding: 12px 6px;
+  text-align: center;
+  background: #F8FAFC;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s ease;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ballot-col:hover .b-coblos-target-zone {
+  border-color: #D97706;
+  background: #FFFBEB;
+}
+
+.ballot-col.selected .b-coblos-target-zone {
+  border-color: #059669;
+  background: #F0FDF4;
+}
+
+.coblos-target-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px dashed #64748B;
+  border-radius: 50%;
+  position: relative;
+  margin-bottom: 5px;
+  transition: all 0.2s ease;
+}
+
+.coblos-crosshair-v {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 50%;
+  width: 1px;
+  background: #94A3B8;
+}
+
+.coblos-crosshair-h {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 50%;
+  height: 1px;
+  background: #94A3B8;
+}
+
+.coblos-center-point {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: #D97706;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.coblos-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #475569;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.coblos-label-icon {
+  font-size: 0.8rem;
+}
+
+/* ================= 3D PUNCTURE TORN PAPER HOLE ================= */
+.puncture-hole-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  z-index: 10;
+  animation: holePuncturePop 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+@keyframes holePuncturePop {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
+  60% { transform: translate(-50%, -50%) scale(1.15) rotate(5deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+}
+
+.hole-dent-shadow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 50%, transparent 75%);
+  filter: blur(2px);
+}
+
+.hole-creases-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hole-void {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+}
+
+.hole-flaps-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.65));
+}
+
+/* Inked Red/Green Election Stamp */
+.coblos-stamp-seal {
+  position: absolute;
+  top: -10px;
+  right: -12px;
+  background: rgba(220, 38, 38, 0.92);
+  border: 1.5px solid #991B1B;
+  color: #FFFFFF;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 3px;
+  transform: rotate(12deg);
+  letter-spacing: 0.05em;
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.4);
+  animation: stampSlam 0.22s 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+@keyframes stampSlam {
+  0% { transform: scale(2.2) rotate(25deg); opacity: 0; }
+  100% { transform: scale(1) rotate(12deg); opacity: 1; }
+}
+
+/* Paper Confetti Dust Particle */
+.paper-dust-particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 120;
+  border-radius: 2px;
+  background: #FCFBF7;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  animation: paperDustFly 0.45s ease-out forwards;
+}
+
+@keyframes paperDustFly {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--p-tx), var(--p-ty)) scale(0.2) rotate(var(--p-rot));
+    opacity: 0;
+  }
+}
+
+/* Visi Misi Button in Column */
+.b-col-footer {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.b-btn-visimisi {
+  background: none;
+  border: none;
+  color: #0284C7;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+}
+
+.b-btn-visimisi:hover {
+  color: #0369A1;
+  text-decoration: underline;
+}
+
+/* Footer Kertas Suara */
+.ballot-paper-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1.5px solid #CBD5E1;
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+.b-footer-legal {
+  max-width: 60%;
+}
+
+.b-legal-item {
+  font-size: 0.62rem;
+  color: #64748B;
+  line-height: 1.35;
+}
+
+.b-footer-seal-wrap {
+  text-align: center;
+}
+
+.b-seal-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.b-seal-stamp {
+  border: 1.5px solid #059669;
+  border-radius: 50%;
+  padding: 4px 8px;
+  color: #059669;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  transform: rotate(-6deg);
+  margin-bottom: 4px;
+}
+
+.b-sig-line {
+  width: 90px;
+  height: 1px;
+  background: #334155;
+  margin-bottom: 2px;
+}
+
+.b-sig-name {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+/* Mobile Pagination Indicator Dots */
+.ballot-col-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.col-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(6, 36, 29, 0.8);
+  border: 1px solid rgba(245, 186, 66, 0.3);
+  color: #CBD5E1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.col-dot.active {
+  background: var(--gold-metallic);
+  color: var(--text-dark);
+  border-color: #FFF6D1;
+  box-shadow: 0 0 10px rgba(245, 186, 66, 0.6);
+}
+
+@media (min-width: 900px) {
+  .ballot-col-indicator {
+    display: none;
+  }
+}
+
 /* Forms & Inputs */
 .form-group {
   margin-bottom: 16px;

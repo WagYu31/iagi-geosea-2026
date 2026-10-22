@@ -409,35 +409,220 @@
           </div>
         </div>
 
-        <!-- Step 2: Official Digital Ballot (Kertas Suara Digital 3 Caketum) -->
+        <!-- Step 2: Official Digital Ballot (Kertas Suara Digital 3 Caketum Landscape) -->
         <div id="vote-ballot-card" style="display: none;">
-          <div class="card card-emerald" style="margin-bottom: 16px; padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+          <!-- Voter Verified Status Banner -->
+          <div class="card card-emerald voter-status-banner" style="margin-bottom: 16px; padding: 14px 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
               <div>
-                <div style="font-size: 0.7rem; font-weight: 800; color: #6EE7B7; text-transform: uppercase; letter-spacing: 0.05em;">Pemilih Terverifikasi KPKU:</div>
-                <div id="voter-badge-name" style="font-weight: 900; font-size: 1rem; color: #FFFFFF;">-</div>
-                <div id="voter-badge-npa" style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--gold-text); font-weight: 700;">-</div>
+                <div style="font-size: 0.68rem; font-weight: 800; color: #6EE7B7; text-transform: uppercase; letter-spacing: 0.06em;">Pemilih Terverifikasi KPKU:</div>
+                <div id="voter-badge-name" style="font-weight: 900; font-size: 1.05rem; color: #FFFFFF;">-</div>
+                <div id="voter-badge-npa" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold-text); font-weight: 700;">-</div>
               </div>
-              <div style="background: rgba(16, 185, 129, 0.25); border: 1.5px solid #10B981; color: #A7F3D0; font-size: 0.7rem; font-weight: 900; padding: 5px 12px; border-radius: var(--radius-pill); letter-spacing: 0.05em;">
-                SURAT SUARA AKTIF
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="live-indicator-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981; animation: pulseGlow 1.8s infinite;"></span>
+                <div style="background: rgba(16, 185, 129, 0.22); border: 1.5px solid #10B981; color: #A7F3D0; font-size: 0.72rem; font-weight: 900; padding: 6px 14px; border-radius: var(--radius-pill); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>SURAT SUARA AKTIF</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div style="margin-bottom: 14px; text-align: center;">
-            <div style="display: inline-block; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-border); padding: 3px 12px; border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 800; color: #FDE68A; margin-bottom: 6px;">
-              SURAT SUARA DIGITAL RESMI
+          <!-- Ballot Header, Controls & Mode Toggle -->
+          <div class="ballot-control-header">
+            <div style="text-align: center; margin-bottom: 12px;">
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-border); padding: 4px 14px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 800; color: #FDE68A; margin-bottom: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>SURAT SUARA ELEKTRONIK RESMI</span>
+              </div>
+              <h3 style="font-size: 1.25rem; font-weight: 900; color: var(--text-pure); letter-spacing: -0.01em; margin: 4px 0 6px 0;">
+                SURAT SUARA PEMILIHAN KETUA UMUM
+              </h3>
+              <p style="font-size: 0.8rem; color: #94A3B8; margin: 0 auto; max-width: 460px; line-height: 1.45;">
+                Sentuh kotak coblos atau foto kandidat untuk mencoblos dengan <strong style="color: #FDE68A;">Paku 3D</strong> resmi.
+              </p>
             </div>
-            <h3 style="font-size: 1.15rem; font-weight: 900; color: var(--text-pure); letter-spacing: -0.01em;">
-              PILIH SALAH SATU CALON KETUA UMUM
-            </h3>
-            <p style="font-size: 0.78rem; color: #94A3B8;">
-              Sentuh kartu kandidat pilihan Anda, lalu tekan tombol konfirmasi di bawah:
-            </p>
+
+            <!-- Toolbar: Mode Switcher & Sound Toggle -->
+            <div class="ballot-action-tools">
+              <button type="button" id="btn-toggle-ballot-view" class="ballot-tool-pill active" onclick="toggleBallotViewMode()" title="Ganti Tampilan Kertas Suara / Kartu">
+                <span class="tool-icon">📄</span>
+                <span id="label-toggle-view">Kertas Suara Landscape</span>
+              </button>
+              <button type="button" id="btn-toggle-ballot-sound" class="ballot-tool-pill" onclick="toggleCoblosAudio()" title="Efek Suara Pencoblosan">
+                <span class="tool-icon" id="sound-icon">🔊</span>
+                <span id="sound-text">Suara: ON</span>
+              </button>
+              <button type="button" id="btn-zoom-ballot-mobile" class="ballot-tool-pill btn-zoom-mobile" onclick="toggleBallotZoom()" title="Bentangkan Lebar / Normal">
+                <span class="tool-icon">↔️</span>
+                <span id="zoom-text">Lebar Penuh</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Dynamic 3 Candidate Cards List -->
-          <div id="candidate-list-container" class="candidate-list"></div>
+          <!-- Mobile Landscape Tip -->
+          <div class="mobile-landscape-helper" id="mobile-landscape-helper">
+            <span class="helper-icon">📱</span>
+            <span class="helper-txt"><strong>Format Kertas Suara Landscape:</strong> Geser ke kanan untuk melihat semua calon, atau miringkan HP Anda ke landscape.</span>
+          </div>
+
+          <!-- ================= CONTAINER KERTAS SUARA LANDSCAPE ================= -->
+          <div id="ballot-interactive-container" class="ballot-interactive-container">
+
+            <!-- 3D PAKU COBLOS STAGE (Overlay Absolute) -->
+            <div id="paku-3d-stage" class="paku-3d-stage" style="display: none;">
+              <!-- 3D Cast Shadow that tracks with nail height and impact -->
+              <div id="paku-coblos-shadow" class="paku-coblos-shadow"></div>
+
+              <!-- 3D Paku Metal Object -->
+              <div id="paku-coblos-object" class="paku-coblos-object">
+                <svg class="paku-svg" viewBox="0 0 120 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Tali Bilik Suara Menggantung -->
+                  <path d="M 60 10 C 95 35, 125 -10, 150 45" stroke="#D1B280" stroke-width="3.5" stroke-linecap="round" fill="none" />
+                  <path d="M 60 12 C 92 32, 122 -8, 148 47" stroke="#8C6527" stroke-width="1.8" stroke-linecap="round" fill="none" />
+
+                  <!-- Kepala Paku Besi Bulat Beveled (Metallic Head) -->
+                  <ellipse cx="60" cy="24" rx="30" ry="11" fill="url(#metalHeadGrad)" filter="url(#pakuHeadShadow)" />
+                  <ellipse cx="60" cy="22" rx="27" ry="9" fill="url(#metalHeadInner)" />
+                  <ellipse cx="57" cy="20" rx="16" ry="4.5" fill="#FFFFFF" opacity="0.75" />
+
+                  <!-- Collar & Ring Leher Paku -->
+                  <path d="M 38 27 L 48 42 L 72 42 L 82 27 Z" fill="url(#metalCollarGrad)" />
+
+                  <!-- Batang Paku Besi Baja Silinder (Polished Steel Shaft) -->
+                  <path d="M 52 42 L 54 212 L 66 212 L 68 42 Z" fill="url(#metalShaftGrad)" />
+                  <!-- Specular Shiny Reflections down shaft -->
+                  <line x1="56" y1="44" x2="57.5" y2="208" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.85" />
+                  <line x1="60" y1="44" x2="60.5" y2="208" stroke="#E2E8F0" stroke-width="1.5" opacity="0.6" />
+
+                  <!-- Ujung Runcing Penusuk Paku (Sharp Pointed Tip) -->
+                  <path d="M 54 212 L 60 264 L 66 212 Z" fill="url(#metalTipGrad)" />
+                  <line x1="58.5" y1="212" x2="60" y2="262" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.95" />
+
+                  <!-- Gradients & Lighting Definitions -->
+                  <defs>
+                    <radialGradient id="metalHeadGrad" cx="42%" cy="35%" r="65%">
+                      <stop offset="0%" stop-color="#FFFFFF" />
+                      <stop offset="35%" stop-color="#CBD5E1" />
+                      <stop offset="70%" stop-color="#64748B" />
+                      <stop offset="95%" stop-color="#1E293B" />
+                      <stop offset="100%" stop-color="#0F172A" />
+                    </radialGradient>
+                    <radialGradient id="metalHeadInner" cx="38%" cy="30%" r="55%">
+                      <stop offset="0%" stop-color="#FFFFFF" />
+                      <stop offset="45%" stop-color="#E2E8F0" />
+                      <stop offset="85%" stop-color="#94A3B8" />
+                      <stop offset="100%" stop-color="#475569" />
+                    </radialGradient>
+                    <linearGradient id="metalCollarGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#1E293B" />
+                      <stop offset="25%" stop-color="#64748B" />
+                      <stop offset="50%" stop-color="#FFFFFF" />
+                      <stop offset="75%" stop-color="#94A3B8" />
+                      <stop offset="100%" stop-color="#0F172A" />
+                    </linearGradient>
+                    <linearGradient id="metalShaftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#0F172A" />
+                      <stop offset="15%" stop-color="#334155" />
+                      <stop offset="35%" stop-color="#94A3B8" />
+                      <stop offset="50%" stop-color="#FFFFFF" />
+                      <stop offset="75%" stop-color="#94A3B8" />
+                      <stop offset="90%" stop-color="#475569" />
+                      <stop offset="100%" stop-color="#0F172A" />
+                    </linearGradient>
+                    <linearGradient id="metalTipGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#1E293B" />
+                      <stop offset="45%" stop-color="#FFFFFF" />
+                      <stop offset="100%" stop-color="#0F172A" />
+                    </linearGradient>
+                    <filter id="pakuHeadShadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.55" />
+                    </filter>
+                  </defs>
+                </svg>
+              </div>
+            </div>
+
+            <!-- FISIK KERTAS SUARA (AUTHENTIC BALLOT PAPER SHEET) -->
+            <div id="ballot-paper-sheet" class="ballot-paper-sheet">
+              <!-- Tekstur Lipatan Kertas Realistis -->
+              <div class="ballot-crease-v"></div>
+              <div class="ballot-crease-h"></div>
+              <div class="ballot-watermark-overlay"></div>
+
+              <!-- KERTAS SUARA: BINGKAI GANDA DENGAN HEADER FORMAL -->
+              <div class="ballot-paper-inner-frame">
+
+                <!-- Header Kertas Suara -->
+                <div class="ballot-paper-header">
+                  <div class="b-header-left">
+                    <img src="assets/iagi-logo.png" alt="Logo IAGI" class="b-logo-iagi">
+                    <div class="b-org-block">
+                      <div class="b-org-name">IKATAN AHLI GEOLOGI INDONESIA</div>
+                      <div class="b-org-sub">KOMISI PEMILIHAN KETUA UMUM (KPKU)</div>
+                    </div>
+                  </div>
+
+                  <div class="b-header-center">
+                    <div class="b-header-badge">SURAT SUARA DIGITAL RESMI</div>
+                    <h2 class="b-header-title">PEMILIHAN KETUA UMUM</h2>
+                    <div class="b-header-org">IKATAN AHLI GEOLOGI INDONESIA (IAGI)</div>
+                    <div class="b-header-period">PERIODE 2026 – 2029</div>
+                  </div>
+
+                  <div class="b-header-right">
+                    <div class="b-security-box">
+                      <div class="b-sec-code">KPKU-2026-IAGI</div>
+                      <div class="b-sec-barcode">||||| ||| ||||||| |||| ||||||</div>
+                      <div class="b-sec-label">DOKUMEN RESMI E-VOTING</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Petunjuk Coblos Horizontal Kertas Suara -->
+                <div class="ballot-instruction-ribbon">
+                  <span>★ PETUNJUK: SENTUH / KLIK SALAH SATU KOLOM KANDIDAT UNTUK MENCOBLOS DENGAN PAKU ELEKTRONIK RESMI ★</span>
+                </div>
+
+                <!-- 3 KOLOM KANDIDAT LANDSCAPE (KIRI KE KANAN) -->
+                <div id="ballot-landscape-grid" class="ballot-landscape-grid">
+                  <!-- Rendered dynamically by JavaScript -->
+                </div>
+
+                <!-- Footer Kertas Suara (Stempel & Tanda Sah Panitia) -->
+                <div class="ballot-paper-footer">
+                  <div class="b-footer-legal">
+                    <div class="b-legal-item">✓ Surat suara ini sah bila dicoblos pada salah satu nomor, foto, atau kotak nama calon ketua umum.</div>
+                    <div class="b-legal-item">✓ Pilihan pemilih dilindungi kerahasiaannya dengan enkripsi SHA-256 Zero-Knowledge.</div>
+                  </div>
+
+                  <div class="b-footer-seal-wrap">
+                    <div class="b-seal-box">
+                      <div class="b-seal-stamp">
+                        <span class="b-stamp-text">KPKU SAH 2026</span>
+                      </div>
+                      <div class="b-seal-sign">
+                        <div class="b-sig-line"></div>
+                        <div class="b-sig-name">PANITIA KPKU IAGI</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Mobile Pagination Dots for Horizontal Swipe -->
+          <div class="ballot-col-indicator" id="ballot-col-indicator">
+            <button type="button" class="col-dot active" onclick="scrollBallotToCandidate(1)">01</button>
+            <button type="button" class="col-dot" onclick="scrollBallotToCandidate(2)">02</button>
+            <button type="button" class="col-dot" onclick="scrollBallotToCandidate(3)">03</button>
+          </div>
+
+          <!-- Fallback Vertical Cards Container (Shown when user chooses vertical mode) -->
+          <div id="candidate-list-container" class="candidate-list" style="display: none;"></div>
 
           <!-- Final Submit Button -->
           <div style="margin-top: 24px; margin-bottom: 28px;">

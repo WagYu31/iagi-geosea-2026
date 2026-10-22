@@ -1234,6 +1234,235 @@
       color: #FFFFFF;
     }
 
+    /* ===================================================
+       ANIMATED SUCCESS CHECKMARK (CEKLIS HAPUS BERHASIL)
+       =================================================== */
+    .admin-success-overlay {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 1000000 !important;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.78) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      cursor: pointer;
+    }
+
+    .admin-success-overlay.active {
+      display: flex !important;
+      animation: successOverlayFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .admin-success-overlay.closing {
+      animation: successOverlayFadeOut 0.25s ease forwards !important;
+    }
+
+    @keyframes successOverlayFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes successOverlayFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .admin-success-card {
+      background: linear-gradient(145deg, #0B1914 0%, #06110D 100%);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 50px rgba(16, 185, 129, 0.25);
+      border-radius: 20px;
+      padding: 34px 36px 26px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transform: scale(0.9);
+      animation: successCardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes successCardPop {
+      0% {
+        transform: scale(0.82) translateY(20px);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* SVG Checkmark Animation */
+    .success-checkmark-wrapper {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 18px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-checkmark-svg {
+      width: 84px;
+      height: 84px;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .checkmark-circle-bg {
+      fill: rgba(16, 185, 129, 0.12);
+      stroke: rgba(16, 185, 129, 0.25);
+      stroke-width: 2;
+    }
+
+    .checkmark-circle {
+      stroke-dasharray: 260;
+      stroke-dashoffset: 260;
+      stroke-width: 3.5;
+      stroke-miterlimit: 10;
+      stroke: #10B981;
+      fill: none;
+      animation: strokeCircleAnim 0.65s cubic-bezier(0.65, 0, 0.45, 1) 0.1s forwards;
+    }
+
+    .checkmark-check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      stroke-width: 4.5;
+      stroke: #34D399;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      animation: strokeCheckAnim 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.45s forwards;
+    }
+
+    @keyframes strokeCircleAnim {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes strokeCheckAnim {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Glow pulse behind checkmark */
+    .success-checkmark-glow {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.4) 0%, rgba(16, 185, 129, 0) 70%);
+      animation: glowPulse 1.6s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    @keyframes glowPulse {
+      0% { transform: scale(0.9); opacity: 0.5; }
+      100% { transform: scale(1.3); opacity: 0.9; }
+    }
+
+    .success-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .success-card-title {
+      color: #FFFFFF;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .success-card-desc {
+      color: #94A3B8;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0 0 22px;
+    }
+
+    .success-dismiss-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #F8FAFC;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .success-dismiss-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+    }
+
+    .success-card-progress {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .success-card-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10B981, #34D399, #6EE7B7);
+      width: 100%;
+    }
+
+    /* Row Delete Fade Animation in Table */
+    @keyframes rowDeleteGlowFade {
+      0% {
+        background-color: rgba(239, 68, 68, 0.35);
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        background-color: rgba(239, 68, 68, 0.2);
+        opacity: 0.6;
+        transform: scale(0.98);
+      }
+      100% {
+        background-color: rgba(239, 68, 68, 0);
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+
+    .row-deleting {
+      animation: rowDeleteGlowFade 0.4s ease forwards !important;
+    }
+
     /* Enhanced DPT Header & Toolbar System */
     .dpt-header-strip {
       display: flex;
@@ -2609,6 +2838,58 @@
       </div>
     </div>
 
+    <!-- ================= MODAL 7: ANIMASI CEKLIS SUKSES (HAPUS BERHASIL) ================= -->
+    <div id="modal-success-check" class="admin-success-overlay" onclick="handleSuccessDismiss(event)">
+      <div class="admin-success-card" onclick="event.stopPropagation()">
+        <div class="success-checkmark-wrapper">
+          <div class="success-checkmark-glow"></div>
+          <svg class="success-checkmark-svg" viewBox="0 0 84 84">
+            <circle class="checkmark-circle-bg" cx="42" cy="42" r="38"/>
+            <circle class="checkmark-circle" cx="42" cy="42" r="38"/>
+            <path class="checkmark-check" d="M25 43 L37 55 L59 31"/>
+          </svg>
+        </div>
+        <div class="success-badge-pill" id="success-check-badge">
+          <span>✓</span>
+          <span id="success-badge-text">DPT BERHASIL DIPERBARUI</span>
+        </div>
+        <h3 class="success-card-title" id="success-check-title">Penghapusan Berhasil!</h3>
+        <p class="success-card-desc" id="success-check-desc">Data pemilih telah berhasil dihapus dari sistem DPT.</p>
+        <button type="button" class="success-dismiss-btn" onclick="dismissSuccessAnimation()">
+          Tutup (Esc)
+        </button>
+        <div class="success-card-progress">
+          <div class="success-card-progress-bar" id="success-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 8: KONFIRMASI HAPUS EKSEKUTIF ================= -->
+    <div id="modal-confirm-delete" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 440px; text-align: center; border: 1px solid rgba(239, 68, 68, 0.35); box-shadow: 0 20px 48px rgba(0,0,0,0.7), 0 0 30px rgba(239, 68, 68, 0.15);">
+        <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 16px auto; box-shadow: 0 0 24px rgba(239, 68, 68, 0.3);">
+          🗑️
+        </div>
+        <div id="confirm-delete-badge" style="display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; background: rgba(239, 68, 68, 0.12); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.3); margin-bottom: 10px;">
+          KONFIRMASI PENGHAPUSAN
+        </div>
+        <h3 id="confirm-delete-title" style="margin: 0 0 8px 0; font-size: 1.15rem; font-weight: 700; color: #FFFFFF;">
+          Hapus Pemilih dari DPT?
+        </h3>
+        <p id="confirm-delete-desc" style="margin: 0 0 22px 0; font-size: 0.82rem; color: #94A3B8; line-height: 1.5; text-align: center;">
+          Apakah Anda yakin ingin menghapus data ini dari sistem? Tindakan ini bersifat permanen.
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button type="button" class="btn btn-subtle" onclick="closeConfirmDeleteModal()" style="font-size: 0.8rem; padding: 10px 18px; min-width: 100px;">
+            Batal
+          </button>
+          <button type="button" id="btn-execute-confirmed-delete" class="btn" style="background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%); color: #FFFFFF; border: 1px solid #F87171; font-size: 0.8rem; padding: 10px 22px; font-weight: 700; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); min-width: 140px;">
+            🗑️ Ya, Hapus Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+
     </main>
   </div>
 
@@ -3631,25 +3912,156 @@
         });
       }
 
+      // ===================================================
+      // ANIMATED SUCCESS CHECKMARK CONTROLLER
+      // ===================================================
+      window._successDismissTimer = null;
+
+      window.showSuccessAnimation = function({
+        title = 'Berhasil Dihapus!',
+        desc = 'Data pemilih telah berhasil dihapus dari DPT.',
+        badge = 'DPT BERHASIL DIPERBARUI',
+        duration = 2400
+      } = {}) {
+        const overlay = document.getElementById('modal-success-check');
+        if (!overlay) return;
+
+        const titleEl = document.getElementById('success-check-title');
+        const descEl = document.getElementById('success-check-desc');
+        const badgeTextEl = document.getElementById('success-badge-text');
+        const progressFill = document.getElementById('success-progress-fill');
+
+        if (titleEl) titleEl.innerText = title;
+        if (descEl) descEl.innerText = desc;
+        if (badgeTextEl) badgeTextEl.innerText = badge;
+
+        // Reset progress bar animation
+        if (progressFill) {
+          progressFill.style.transition = 'none';
+          progressFill.style.width = '100%';
+          setTimeout(() => {
+            progressFill.style.transition = `width ${duration}ms linear`;
+            progressFill.style.width = '0%';
+          }, 30);
+        }
+
+        // Replay SVG checkmark animation by cloning
+        const svg = overlay.querySelector('.success-checkmark-svg');
+        if (svg) {
+          const clone = svg.cloneNode(true);
+          svg.parentNode.replaceChild(clone, svg);
+        }
+
+        overlay.classList.remove('closing');
+        overlay.classList.add('active');
+
+        // Auto dismiss timer
+        clearTimeout(window._successDismissTimer);
+        window._successDismissTimer = setTimeout(() => {
+          window.dismissSuccessAnimation();
+        }, duration);
+      };
+
+      window.dismissSuccessAnimation = function() {
+        const overlay = document.getElementById('modal-success-check');
+        if (!overlay || !overlay.classList.contains('active')) return;
+        clearTimeout(window._successDismissTimer);
+        overlay.classList.add('closing');
+        setTimeout(() => {
+          overlay.classList.remove('active', 'closing');
+        }, 220);
+      };
+
+      window.handleSuccessDismiss = function(e) {
+        if (e.target && e.target.id === 'modal-success-check') {
+          window.dismissSuccessAnimation();
+        }
+      };
+
+      // Support pressing Esc key to dismiss success checkmark
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          window.dismissSuccessAnimation();
+        }
+      });
+
+      // --- Executive Delete Confirmation Controller ---
+      window._pendingDeleteAction = null;
+
+      window.askConfirmDelete = function({ title, desc, badge = 'KONFIRMASI PENGHAPUSAN', onConfirm }) {
+        const modal = document.getElementById('modal-confirm-delete');
+        if (!modal) {
+          if (confirm(desc || title)) {
+            if (typeof onConfirm === 'function') onConfirm();
+          }
+          return;
+        }
+
+        const titleEl = document.getElementById('confirm-delete-title');
+        const descEl = document.getElementById('confirm-delete-desc');
+        const badgeEl = document.getElementById('confirm-delete-badge');
+
+        if (titleEl && title) titleEl.innerText = title;
+        if (descEl && desc) descEl.innerText = desc;
+        if (badgeEl && badge) badgeEl.innerText = badge;
+
+        window._pendingDeleteAction = onConfirm;
+        modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      window.closeConfirmDeleteModal = function() {
+        const modal = document.getElementById('modal-confirm-delete');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        window._pendingDeleteAction = null;
+      };
+
+      document.getElementById('btn-execute-confirmed-delete')?.addEventListener('click', () => {
+        const action = window._pendingDeleteAction;
+        window.closeConfirmDeleteModal();
+        if (typeof action === 'function') {
+          action();
+        }
+      });
+
       // Delete Voter Action
       window.handleDeleteVoter = function(npa) {
         const voter = window.pemiluStorage.getVoterByNpa(npa);
         if (!voter) return;
 
-        let msg = `Hapus pemilih NPA "${npa}" (${voter.name}) dari Daftar Pemilih Tetap (DPT)?`;
+        let desc = `Apakah Anda yakin ingin menghapus data pemilih "${voter.name}" (NPA: ${npa}) dari Daftar Pemilih Tetap (DPT)? Tindakan ini bersifat permanen.`;
+        let badge = 'KONFIRMASI HAPUS';
         if (voter.voted) {
-          msg += `\n\n⚠️ PERINGATAN: Anggota ini sudah memberikan suara pada pemilu. Menghapus DPT ini akan menghapus akun pemilihnya. Lanjutkan?`;
+          desc += `\n\n⚠️ PERINGATAN: Anggota ini sudah memberikan suara pada pemilu. Menghapus DPT ini akan menghapus akun pemilihnya.`;
+          badge = '⚠️ SUDAH MEMILIH';
         }
 
-        if (confirm(msg)) {
-          const res = window.pemiluStorage.deleteVoter(npa);
-          if (res.success) {
-            if (window.selectedDptNpas) window.selectedDptNpas.delete(npa);
-            refreshAll();
-          } else {
-            alert(res.error || 'Gagal menghapus pemilih.');
+        window.askConfirmDelete({
+          title: 'Hapus Pemilih dari DPT?',
+          desc: desc,
+          badge: badge,
+          onConfirm: () => {
+            // Highlight row with deleting animation
+            const checkbox = document.querySelector(`.dpt-row-check[value="${npa}"]`);
+            const row = checkbox ? checkbox.closest('tr') : null;
+            if (row) row.classList.add('row-deleting');
+
+            setTimeout(() => {
+              const res = window.pemiluStorage.deleteVoter(npa);
+              if (res.success) {
+                if (window.selectedDptNpas) window.selectedDptNpas.delete(npa);
+                updateBulkSelectionUI();
+                refreshAll();
+                window.showSuccessAnimation({
+                  title: 'Pemilih Berhasil Dihapus!',
+                  desc: `${voter.name} (NPA: ${npa}) telah dihapus dari sistem DPT.`,
+                  badge: 'HAPUS DPT BERHASIL'
+                });
+              } else {
+                alert(res.error || 'Gagal menghapus pemilih.');
+              }
+            }, row ? 280 : 0);
           }
-        }
+        });
       };
 
       // --- Bulk Selection & Fast Delete Controller ---
@@ -3776,23 +4188,40 @@
           return;
         }
 
-        let confirmMsg = `⚠️ KONFIRMASI HAPUS MASSAL\n\nApakah Anda yakin ingin menghapus ${unvotedNpas.length} pemilih terpilih dari Daftar Pemilih Tetap (DPT)?`;
+        let confirmMsg = `Apakah Anda yakin ingin menghapus ${unvotedNpas.length} pemilih terpilih dari Daftar Pemilih Tetap (DPT)? Tindakan ini bersifat permanen.`;
         if (votedVoters.length > 0) {
           confirmMsg += `\n\n🛡️ CATATAN: ${votedVoters.length} pemilih yang sudah memilih TIDAK akan dihapus agar keabsahan suara pleno tetap terjaga.`;
         }
-        confirmMsg += `\n\nTindakan ini bersifat permanen. Lanjutkan?`;
 
-        if (!confirm(confirmMsg)) return;
+        window.askConfirmDelete({
+          title: `Hapus ${unvotedNpas.length} Pemilih Terpilih?`,
+          desc: confirmMsg,
+          badge: 'HAPUS MASSAL TERPILIH',
+          onConfirm: () => {
+            // Animate all selected rows in table with deleting animation
+            unvotedNpas.forEach(npa => {
+              const chk = document.querySelector(`.dpt-row-check[value="${npa}"]`);
+              const tr = chk ? chk.closest('tr') : null;
+              if (tr) tr.classList.add('row-deleting');
+            });
 
-        const res = window.pemiluStorage.deleteMultipleVoters(unvotedNpas);
-        if (res.success) {
-          window.selectedDptNpas.clear();
-          updateBulkSelectionUI();
-          refreshAll();
-          alert(`✓ Berhasil menghapus ${res.count} pemilih terpilih dari DPT.`);
-        } else {
-          alert(res.error || 'Gagal menghapus pemilih terpilih.');
-        }
+            setTimeout(() => {
+              const res = window.pemiluStorage.deleteMultipleVoters(unvotedNpas);
+              if (res.success) {
+                window.selectedDptNpas.clear();
+                updateBulkSelectionUI();
+                refreshAll();
+                window.showSuccessAnimation({
+                  title: 'Hapus Massal Berhasil!',
+                  desc: `${res.count} data pemilih terpilih telah berhasil dihapus dari sistem DPT.`,
+                  badge: 'HAPUS MASSAL BERHASIL'
+                });
+              } else {
+                alert(res.error || 'Gagal menghapus pemilih terpilih.');
+              }
+            }, 280);
+          }
+        });
       };
 
       // Modal Fast Delete Controller
@@ -3844,25 +4273,32 @@
           const order = document.querySelector('input[name="fast-del-order"]:checked')?.value || 'top';
           const orderText = order === 'top' ? 'teratas (data terbaru)' : 'terbawah (data terlama)';
 
-          if (!confirm(`⚠️ Hapus cepat ${count} pemilih ${orderText} dari DPT yang belum memberikan suara?`)) {
-            return;
-          }
+          window.askConfirmDelete({
+            title: `Hapus Cepat ${count} Pemilih?`,
+            desc: `Hapus cepat ${count} data pemilih ${orderText} dari DPT yang belum memberikan suara? Tindakan ini bersifat permanen.`,
+            badge: 'AKSI CEPAT DPT',
+            onConfirm: () => {
+              const res = window.pemiluStorage.deleteVotersByCount({ count, order, onlyUnvoted: true });
+              if (!res.success) {
+                if (alertEl) {
+                  alertEl.style.display = 'block';
+                  alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                  alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+                  alertEl.style.color = '#FCA5A5';
+                  alertEl.innerText = res.error;
+                }
+                return;
+              }
 
-          const res = window.pemiluStorage.deleteVotersByCount({ count, order, onlyUnvoted: true });
-          if (!res.success) {
-            if (alertEl) {
-              alertEl.style.display = 'block';
-              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
-              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
-              alertEl.style.color = '#FCA5A5';
-              alertEl.innerText = res.error;
+              window.closeFastDeleteModal();
+              refreshAll();
+              window.showSuccessAnimation({
+                title: 'Hapus Cepat Berhasil!',
+                desc: `${res.count} data pemilih ${orderText} telah berhasil dihapus dari DPT.`,
+                badge: 'AKSI CEPAT SELESAI'
+              });
             }
-            return;
-          }
-
-          window.closeFastDeleteModal();
-          refreshAll();
-          alert(`✓ Berhasil menghapus ${res.count} pemilih secara cepat.`);
+          });
         } else if (mode === 'by-status') {
           const statusOpt = document.querySelector('input[name="fast-del-status-opt"]:checked')?.value || 'unclaimed';
           const dpt = window.pemiluStorage.getDPT();
@@ -3886,26 +4322,34 @@
           }
 
           const targetLabel = statusOpt === 'unclaimed' ? 'belum klaim token' : 'sudah klaim tapi belum memilih';
-          if (!confirm(`⚠️ Hapus SEMUA ${targetVoters.length} pemilih yang ${targetLabel} dari DPT?`)) {
-            return;
-          }
 
-          const npas = targetVoters.map(v => v.npa);
-          const res = window.pemiluStorage.deleteMultipleVoters(npas);
-          if (!res.success) {
-            if (alertEl) {
-              alertEl.style.display = 'block';
-              alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
-              alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
-              alertEl.style.color = '#FCA5A5';
-              alertEl.innerText = res.error;
+          window.askConfirmDelete({
+            title: `Hapus Kategori Status?`,
+            desc: `Hapus SEMUA ${targetVoters.length} pemilih yang ${targetLabel} dari DPT? Tindakan ini bersifat permanen.`,
+            badge: 'BERSIHKAN STATUS',
+            onConfirm: () => {
+              const npas = targetVoters.map(v => v.npa);
+              const res = window.pemiluStorage.deleteMultipleVoters(npas);
+              if (!res.success) {
+                if (alertEl) {
+                  alertEl.style.display = 'block';
+                  alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                  alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+                  alertEl.style.color = '#FCA5A5';
+                  alertEl.innerText = res.error;
+                }
+                return;
+              }
+
+              window.closeFastDeleteModal();
+              refreshAll();
+              window.showSuccessAnimation({
+                title: 'Hapus Kategori Berhasil!',
+                desc: `${res.count} data pemilih (${targetLabel}) telah berhasil dihapus dari DPT.`,
+                badge: 'STATUS DPT BERSIH'
+              });
             }
-            return;
-          }
-
-          window.closeFastDeleteModal();
-          refreshAll();
-          alert(`✓ Berhasil menghapus ${res.count} pemilih.`);
+          });
         }
       };
 
