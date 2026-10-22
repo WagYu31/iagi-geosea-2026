@@ -680,21 +680,146 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- 3D Puncture Hole Container (Renders realistic torn paper hole upon coblos!) -->
             <div class="puncture-hole-wrap" id="puncture-hole-${c.id}" style="${selectedCandidateId === c.id ? 'display: block;' : 'display: none;'}">
-              <div class="hole-dent-shadow"></div>
-              <svg class="hole-creases-svg" viewBox="0 0 100 100">
-                <path d="M 50 50 L 15 40 M 50 50 L 30 20 M 50 50 L 70 15 M 50 50 L 85 45 M 50 50 L 80 75 M 50 50 L 52 90 M 50 50 L 25 80 M 50 50 L 10 65" stroke="rgba(100, 116, 139, 0.5)" stroke-width="1.3" stroke-linecap="round" fill="none" />
+              <!-- Hyper-Realistic Puncture Hole SVG -->
+              <svg class="puncture-hole-svg" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <!-- Foam Pad Sponge Texture Gradient (Kedalaman Busa) -->
+                  <radialGradient id="foamPadVoid-${c.id}" cx="44%" cy="42%" r="62%">
+                    <stop offset="0%" stop-color="#010403" />
+                    <stop offset="45%" stop-color="#04120D" />
+                    <stop offset="80%" stop-color="#081E15" />
+                    <stop offset="100%" stop-color="#0C2A1E" />
+                  </radialGradient>
+
+                  <!-- Paper Dent Concave Shadow (Cekungan Tekanan Paku) -->
+                  <radialGradient id="paperDentShade-${c.id}" cx="42%" cy="40%" r="58%">
+                    <stop offset="0%" stop-color="rgba(35, 28, 18, 0.42)" />
+                    <stop offset="35%" stop-color="rgba(35, 28, 18, 0.22)" />
+                    <stop offset="70%" stop-color="rgba(35, 28, 18, 0.06)" />
+                    <stop offset="100%" stop-color="transparent" />
+                  </radialGradient>
+
+                  <!-- Flap Top: In shadow, folded downward into cavity -->
+                  <linearGradient id="flapTopGrad-${c.id}" x1="50%" y1="0%" x2="50%" y2="100%">
+                    <stop offset="0%" stop-color="#9C9482" />
+                    <stop offset="55%" stop-color="#544E41" />
+                    <stop offset="100%" stop-color="#1C1A14" />
+                  </linearGradient>
+
+                  <!-- Flap Left: Medium shadow, jagged fiber rim -->
+                  <linearGradient id="flapLeftGrad-${c.id}" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stop-color="#BDB39E" />
+                    <stop offset="65%" stop-color="#6E6554" />
+                    <stop offset="100%" stop-color="#2B271F" />
+                  </linearGradient>
+
+                  <!-- Flap Bottom: Catching direct light, textured paper surface -->
+                  <linearGradient id="flapBottomGrad-${c.id}" x1="50%" y1="100%" x2="50%" y2="0%">
+                    <stop offset="0%" stop-color="#FCFBF7" />
+                    <stop offset="35%" stop-color="#F4EEE3" />
+                    <stop offset="75%" stop-color="#DCD2BF" />
+                    <stop offset="100%" stop-color="#8F836F" />
+                  </linearGradient>
+
+                  <!-- Flap Right: Cross-lit ragged edge -->
+                  <linearGradient id="flapRightGrad-${c.id}" x1="100%" y1="50%" x2="0%" y2="50%">
+                    <stop offset="0%" stop-color="#FBF8F0" />
+                    <stop offset="45%" stop-color="#E8E0D0" />
+                    <stop offset="80%" stop-color="#B8AC96" />
+                    <stop offset="100%" stop-color="#524A3D" />
+                  </linearGradient>
+
+                  <!-- Flap Drop Shadow onto foam -->
+                  <filter id="flapShadow-${c.id}" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="1.2" dy="2.2" stdDeviation="1.8" flood-color="#000000" flood-opacity="0.85" />
+                  </filter>
+                </defs>
+
+                <!-- 1. Ambient Paper Dent (Cekungan kertas di sekitar lubang) -->
+                <ellipse cx="70" cy="71" rx="46" ry="40" fill="url(#paperDentShade-${c.id})" />
+                <ellipse cx="69" cy="70" rx="36" ry="32" fill="rgba(35, 28, 18, 0.12)" />
+
+                <!-- 2. Organic Curved Stress Creases in Paper Fibers (Kerutan & Lipatan Fisik Kertas) -->
+                <!-- Shadow creases (depressed troughs) -->
+                <g stroke="rgba(55, 42, 28, 0.42)" stroke-width="1.2" stroke-linecap="round" fill="none">
+                  <path d="M 66 54 C 61 44, 54 33, 40 18" />
+                  <path d="M 72 52 C 73 38, 71 27, 68 12" />
+                  <path d="M 79 55 C 90 46, 102 37, 118 26" />
+                  <path d="M 83 67 C 97 69, 111 70, 128 72" />
+                  <path d="M 82 79 C 94 90, 107 103, 120 120" />
+                  <path d="M 71 84 C 71 99, 69 112, 66 128" />
+                  <path d="M 57 82 C 45 93, 34 104, 18 118" />
+                  <path d="M 53 69 C 40 68, 28 66, 11 63" />
+                  <path d="M 55 58 C 42 46, 32 34, 21 21" />
+                </g>
+                <!-- Highlight creases (raised paper ridges directly catching ambient light) -->
+                <g stroke="rgba(255, 255, 255, 0.92)" stroke-width="1.3" stroke-linecap="round" fill="none">
+                  <path d="M 64.5 53.5 C 59.5 43.5, 52.5 32.5, 38.5 17.5" />
+                  <path d="M 71 51.5 C 72 37.5, 70 26.5, 67 11.5" />
+                  <path d="M 80 54 C 91 45, 103 36, 119 25" />
+                  <path d="M 83 66 C 97 68, 111 69, 128 71" />
+                  <path d="M 83 78 C 95 89, 108 102, 121 119" />
+                  <path d="M 70 83.5 C 70 98.5, 68 111.5, 65 127.5" />
+                  <path d="M 58 81 C 46 92, 35 103, 19 117" />
+                  <path d="M 53 67.5 C 40 66.5, 28 64.5, 11 61.5" />
+                  <path d="M 56 57 C 43 45, 33 33, 22 20" />
+                </g>
+
+                <!-- 3. The Foam Pad Void Aperture (Lubang Tembus ke Bantalan Busa) -->
+                <path d="M 54 53 C 62 47, 74 48, 82 54 C 88 59, 90 68, 87 76 C 84 83, 77 89, 68 90 C 59 91, 51 86, 48 79 C 44 71, 46 60, 50 55 Z" fill="url(#foamPadVoid-${c.id})" />
+
+                <!-- Inner ambient occlusion shadow inside foam crater -->
+                <ellipse cx="68" cy="70" rx="14" ry="13" fill="#010604" />
+                <ellipse cx="67" cy="71" rx="8" ry="7" fill="#000000" />
+
+                <!-- 4. Hyper-Realistic Torn Paper Petals (Flaps) Bent Inward -->
+                <!-- Top Flap (Pressed deeply down into foam shadow) -->
+                <path d="M 54 53 C 62 48, 73 49, 82 54 L 75 65 C 68 62, 62 63, 58 64 Z" fill="url(#flapTopGrad-${c.id})" />
+                <path d="M 54 53 Q 68 49 82 54" stroke="#FFFFFF" stroke-width="1.4" fill="none" opacity="0.75" />
+
+                <!-- Left-Top Pointed Flap -->
+                <path d="M 48 65 L 58 64 L 54 73 Z" fill="url(#flapLeftGrad-${c.id})" />
+                <path d="M 48 65 L 58 64" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.9" />
+
+                <!-- Right Flap (Sharp pointed tongue angled into hole) -->
+                <path d="M 82 54 C 88 62, 88 71, 85 77 L 74 72 C 77 66, 76 61, 75 65 Z" fill="url(#flapRightGrad-${c.id})" filter="url(#flapShadow-${c.id})" />
+                <path d="M 82 54 C 87 61, 88 70, 85 77" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="3,1.2" fill="none" opacity="0.9" />
+
+                <!-- Bottom Flap (Primary cardstock flap facing viewer, brightly lit) -->
+                <path d="M 48 79 C 55 87, 65 91, 77 88 L 74 72 C 67 76, 58 75, 54 73 L 48 79 Z" fill="url(#flapBottomGrad-${c.id})" filter="url(#flapShadow-${c.id})" />
+                <path d="M 48 79 C 57 88, 67 91, 77 88" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.95" />
+                <path d="M 54 73 Q 65 77 74 72" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.8" />
+
+                <!-- Left Flap Fold Ridge -->
+                <path d="M 48 65 C 45 70, 46 75, 48 79 L 54 73 Z" fill="url(#flapLeftGrad-${c.id})" />
+                <path d="M 48 65 C 46 70, 46 75, 48 79" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.8" />
+
+                <!-- 5. Microscopic Paper Whiskers & Frayed Cellulose Pulp (Serat Kertas Kasar) -->
+                <g stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.95">
+                  <line x1="56" y1="52" x2="58" y2="56" />
+                  <line x1="63" y1="49" x2="64" y2="53" />
+                  <line x1="71" y1="50" x2="70" y2="55" />
+                  <line x1="79" y1="54" x2="76" y2="58" />
+                  <line x1="86" y1="62" x2="82" y2="64" />
+                  <line x1="87" y1="71" x2="83" y2="70" />
+                  <line x1="76" y1="74" x2="73" y2="77" />
+                  <line x1="68" y1="89" x2="67" y2="85" />
+                  <line x1="59" y1="87" x2="60" y2="83" />
+                  <line x1="50" y1="80" x2="53" y2="77" />
+                  <line x1="47" y1="67" x2="51" y2="67" />
+                  <line x1="50" y1="58" x2="53" y2="61" />
+                </g>
               </svg>
-              <div class="hole-void">
-                <svg class="hole-flaps-svg" viewBox="0 0 80 80">
-                  <polygon points="40,8 47,26 62,14 54,30 72,28 58,40 75,52 57,53 65,70 48,60 41,75 35,60 20,72 27,54 8,56 23,42 8,28 25,32 16,14 34,25" fill="#FAF7EE" stroke="#C8BEAC" stroke-width="1.3" />
-                  <circle cx="40" cy="40" r="14" fill="#04120E" />
-                  <circle cx="40" cy="40" r="12" fill="#000000" />
-                  <circle cx="40" cy="40" r="11" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="2.5" />
-                </svg>
+            </div>
+
+            <!-- Cap Stempel Basah Tinta Merah Resmi (Posisi Rapi di Pojok Kanan Atas Kotak) -->
+            <div class="coblos-stamp-seal" id="coblos-stamp-${c.id}" style="${selectedCandidateId === c.id ? 'display: block;' : 'display: none;'}">
+              <div class="stamp-inner-border">
+                <span class="stamp-star">★</span>
+                <span class="stamp-text">SUARA SAH</span>
+                <span class="stamp-star">★</span>
               </div>
-              <div class="coblos-stamp-seal">
-                <span>✓ SAH DICOBLOS</span>
-              </div>
+              <div class="stamp-sub-text">KPKU IAGI 2026</div>
             </div>
           </div>
 
@@ -815,6 +940,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const myHole = document.getElementById(`puncture-hole-${candidateId}`);
           if (myHole) myHole.style.display = 'block';
 
+          // Update stamp visibility
+          document.querySelectorAll('.coblos-stamp-seal').forEach(el => el.style.display = 'none');
+          const myStamp = document.getElementById(`coblos-stamp-${candidateId}`);
+          if (myStamp) myStamp.style.display = 'block';
+
           // Apply selection state
           applyCandidateSelection(candidateId);
 
@@ -853,6 +983,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeCol) {
       activeCol.classList.add('selected', 'is-coblos');
     }
+
+    // Update puncture hole visibility
+    document.querySelectorAll('.puncture-hole-wrap').forEach(el => el.style.display = 'none');
+    const myHole = document.getElementById(`puncture-hole-${candidateId}`);
+    if (myHole) myHole.style.display = 'block';
+
+    // Update stamp visibility
+    document.querySelectorAll('.coblos-stamp-seal').forEach(el => el.style.display = 'none');
+    const myStamp = document.getElementById(`coblos-stamp-${candidateId}`);
+    if (myStamp) myStamp.style.display = 'block';
 
     // Update vertical fallback cards
     document.querySelectorAll('.candidate-card').forEach(card => {

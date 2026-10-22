@@ -1727,7 +1727,7 @@ body::before {
   text-align: center;
   background: #F8FAFC;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Biarkan bayangan 3D dan stempel cap basah tidak terpotong */
   transition: all 0.22s ease;
   min-height: 94px;
   display: flex;
@@ -1804,14 +1804,20 @@ body::before {
   font-size: 0.82rem;
 }
 
+/* Sembunyikan garis bidik dan teks target saat sudah dicoblos agar lubang 3D menjadi fokus utama */
+.ballot-col.is-coblos .coblos-target-ring,
+.ballot-col.is-coblos .coblos-label {
+  display: none !important;
+}
+
 /* ================= 3D PUNCTURE TORN PAPER HOLE ================= */
 .puncture-hole-wrap {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 86px;
-  height: 86px;
+  width: 116px;
+  height: 116px;
   pointer-events: none;
   z-index: 10;
   animation: holePuncturePop 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
@@ -1819,67 +1825,73 @@ body::before {
 
 @keyframes holePuncturePop {
   0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
-  60% { transform: translate(-50%, -50%) scale(1.15) rotate(5deg); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1.12) rotate(4deg); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
 }
 
-/* Foam Depth Behind Hole */
-.hole-dent-shadow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 66px;
-  height: 66px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #020806 0%, #061914 55%, transparent 75%);
-  filter: blur(2px);
-}
-
-.hole-creases-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+.puncture-hole-svg {
   width: 100%;
   height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.38));
 }
 
-.hole-void {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 56px;
-  height: 56px;
-}
-
-.hole-flaps-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.75));
-}
-
-/* Inked Red/Green Election Stamp */
+/* Authentic Wet Ink Election Stamp (Cap Stempel Basah - Posisi Rapi di Sudut Kanan Atas Kotak) */
 .coblos-stamp-seal {
   position: absolute;
-  top: -12px;
-  right: -14px;
-  background: rgba(220, 38, 38, 0.95);
-  border: 1.5px solid #991B1B;
-  color: #FFFFFF;
-  font-size: 0.64rem;
-  font-weight: 900;
-  padding: 3px 9px;
-  border-radius: 3px;
-  transform: rotate(12deg);
+  top: 5px;
+  right: 6px;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1.5px solid #DC2626;
+  color: #DC2626;
+  padding: 1px 6px;
+  border-radius: 4px;
+  transform: rotate(6deg);
   letter-spacing: 0.05em;
-  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.5);
-  animation: stampSlam 0.22s 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.2), inset 0 0 5px rgba(220, 38, 38, 0.12);
+  animation: stampSlam 0.24s 0.14s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+  user-select: none;
+  text-align: center;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.stamp-inner-border {
+  border: 1px dashed #DC2626;
+  padding: 1px 6px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.stamp-star {
+  font-size: 0.52rem;
+  color: #DC2626;
+}
+
+.stamp-text {
+  font-size: 0.65rem;
+  font-weight: 900;
+  font-family: 'Arial Black', Impact, -apple-system, sans-serif;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  color: #DC2626;
+}
+
+.stamp-sub-text {
+  font-size: 0.46rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+  color: #B91C1C;
 }
 
 @keyframes stampSlam {
-  0% { transform: scale(2.2) rotate(25deg); opacity: 0; }
-  100% { transform: scale(1) rotate(12deg); opacity: 1; }
+  0% { transform: scale(2) rotate(20deg); opacity: 0; }
+  100% { transform: scale(1) rotate(6deg); opacity: 1; }
 }
 
 /* Paper Confetti Dust Particle */
