@@ -11,6 +11,7 @@ import Features from '../Components/Landing/Features';
 import Highlights from '../Components/Landing/Highlights';
 import Pricing from '../Components/Landing/Pricing';
 import Testimonials from '../Components/Landing/Testimonials';
+import ProgramSchedule from '../Components/Landing/ProgramSchedule';
 import FAQ from '../Components/Landing/FAQ';
 import Footer from '../Components/Landing/Footer';
 import ScrollReveal from '../Components/Landing/ScrollReveal';
@@ -77,6 +78,8 @@ export default function LandingPage({ auth, serverSettings }) {
                 <Pricing settings={settings} />
 
                 <Testimonials settings={settings} />
+
+                <ProgramSchedule />
 
                 <FAQ settings={settings} />
 
