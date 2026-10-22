@@ -17,9 +17,10 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import MicIcon from '@mui/icons-material/Mic';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ScrollReveal from './ScrollReveal';
 
-// Official Day 1 Presets for instant fallback / full 15 speakers roster
+// Official Day 1 Presets (15 speakers)
 const DAY1_DEFAULT_SPEAKERS = [
     {
         name: 'Yuliot Tanjung*',
@@ -27,6 +28,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Kementerian ESDM',
         session: 'Special Keynote Speech',
         role: 'Special Keynote',
+        day: 'Day 1',
         photo: '/images/speakers/yuliot-tanjung.jpg',
     },
     {
@@ -35,6 +37,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Pemda D.I. Yogyakarta',
         session: 'Special Keynote Speech',
         role: 'Special Keynote',
+        day: 'Day 1',
         photo: '/images/speakers/sri-sultan-hb-x.jpg',
     },
     {
@@ -43,6 +46,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Ikatan Ahli Geologi Indonesia (IAGI)',
         session: 'CEO Forum',
         role: 'Moderator',
+        day: 'Day 1',
         photo: '/images/speakers/stj-budi-santoso.jpg',
     },
     {
@@ -51,6 +55,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'MIND ID',
         session: 'CEO Forum',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '/images/speakers/maroef-sjamsoeddin.jpg',
     },
     {
@@ -59,6 +64,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'PT Pertamina Hulu Energi (PHE)',
         session: 'CEO Forum',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -67,6 +73,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'PT Geo Dipa Energi',
         session: 'CEO Forum',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '/images/speakers/yudistian-yunis.jpg',
     },
     {
@@ -75,6 +82,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'SKK Migas',
         session: 'Special Session',
         role: 'Keynote Speaker',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -83,6 +91,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Badan Geologi Kementerian ESDM',
         session: 'Special Session',
         role: 'Moderator',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -91,6 +100,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'MedcoEnergi',
         session: 'Special Session',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -99,6 +109,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'PT Energi Mega Persada Tbk',
         session: 'Special Session',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -107,6 +118,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Pertamina Hulu Energi',
         session: 'Special Session',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -115,6 +127,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'MGEI',
         session: 'Panel Discussion 1',
         role: 'Moderator',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -123,6 +136,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Ditjen Minerba ESDM',
         session: 'Panel Discussion 1',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -131,6 +145,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'Mubadala Energy',
         session: 'Panel Discussion 1',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
     {
@@ -139,9 +154,106 @@ const DAY1_DEFAULT_SPEAKERS = [
         institution: 'PT Pertamina Geothermal Energy Tbk',
         session: 'Panel Discussion 1',
         role: 'Speaker / Panelist',
+        day: 'Day 1',
         photo: '',
     },
 ];
+
+// Official Day 2 Presets (10 speakers)
+const DAY2_DEFAULT_SPEAKERS = [
+    {
+        name: 'Prof. Ir. Mega Fatimah Rosana, M.Sc., Ph.D.',
+        title: 'Professor of Exploration Geology, UNPAD',
+        institution: 'Universitas Padjadjaran (UNPAD)',
+        session: 'Panel Discussion 2',
+        role: 'Moderator',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Dr. Ir. Carolus Prasetyadi, M.Sc.',
+        title: 'Geopark Expert / Lead',
+        institution: 'Geopark Yogyakarta',
+        session: 'Panel Discussion 2',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Narongrit Thungprue',
+        title: 'Expert UGGp Satun (Thailand)',
+        institution: 'UNESCO Global Geopark Satun',
+        session: 'Panel Discussion 2',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Leo T. Virtucio',
+        title: 'Vice-Chairperson National Geopark Committee',
+        institution: 'National Geopark Committee (Philippines)',
+        session: 'Panel Discussion 2',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Dr. Priatin Hadi Wijaya, S.T., M.T.*',
+        title: 'Director of Geothermal',
+        institution: 'Ditjen EBTKE Kementerian ESDM',
+        session: 'Special Session',
+        role: 'Keynote Speaker',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Dr. Lana Saria, S.Si., M.Si.',
+        title: 'Head of Badan Geologi',
+        institution: 'Badan Geologi Kementerian ESDM',
+        session: 'Panel Discussion 3',
+        role: 'Keynote Speaker',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Prof Dr. Ir. Eko Teguh Paripurno, M.T',
+        title: 'Center of Disaster Management Studies UPNVY',
+        institution: 'UPN "Veteran" Yogyakarta',
+        session: 'Panel Discussion 3',
+        role: 'Moderator',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Dr. Nelly Florida Riama, M.Si.',
+        title: 'Deputy for Geophysics BMKG',
+        institution: 'BMKG',
+        session: 'Panel Discussion 3',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Noer Isrodin Muchlisin',
+        title: 'Direktur Kesiapsiagaan BASARNAS',
+        institution: 'BASARNAS',
+        session: 'Panel Discussion 3',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+    {
+        name: 'Prof. Dr. Eng. IR. Wahyu Wilopo, S.T., M.Eng., IPM',
+        title: 'Geotechnical and Disaster Expert UGM',
+        institution: 'Universitas Gadjah Mada (UGM)',
+        session: 'Panel Discussion 3',
+        role: 'Speaker / Panelist',
+        day: 'Day 2',
+        photo: '',
+    },
+];
+
+const ALL_PRESET_SPEAKERS = [...DAY1_DEFAULT_SPEAKERS, ...DAY2_DEFAULT_SPEAKERS];
 
 const OFFICIAL_PHOTO_MAP = {
     'yuliot': '/images/speakers/yuliot-tanjung.jpg',
@@ -183,9 +295,11 @@ function getRoleBadge(role) {
 }
 
 export default function Testimonials({ settings }) {
+    const [selectedDay, setSelectedDay] = useState('Day 1');
     const [selectedTab, setSelectedTab] = useState('all');
     const [activeIndex, setActiveIndex] = useState(0);
     const [posterOpen, setPosterOpen] = useState(false);
+    const [posterModalDay, setPosterModalDay] = useState('Day 1');
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartX, setDragStartX] = useState(0);
     const [dragDistance, setDragDistance] = useState(0);
@@ -196,7 +310,7 @@ export default function Testimonials({ settings }) {
         : [];
 
     const allSpeakers = useMemo(() => {
-        const sourceList = rawSpeakers.length > 0 ? rawSpeakers : DAY1_DEFAULT_SPEAKERS;
+        const sourceList = rawSpeakers.length > 0 ? rawSpeakers : ALL_PRESET_SPEAKERS;
         return sourceList.map((s, idx) => {
             let photo = s.photo;
             if (!photo || photo.trim() === '') {
@@ -208,20 +322,45 @@ export default function Testimonials({ settings }) {
                     }
                 }
             }
+
+            // Detect Day if not explicitly defined
+            let day = s.day;
+            if (!day) {
+                const session = (s.session || '').toLowerCase();
+                if (session.includes('panel discussion 2') || session.includes('panel discussion 3') || session.includes('geothermal') || session.includes('geopark') || session.includes('geohazard')) {
+                    day = 'Day 2';
+                } else {
+                    day = 'Day 1';
+                }
+            }
+
             return {
                 ...s,
                 photo,
-                session: s.session && s.session.trim() !== '' ? s.session.trim() : 'Special Keynote Speech',
+                day,
+                session: s.session && s.session.trim() !== '' ? s.session.trim() : (day === 'Day 2' ? 'Panel Discussion 2' : 'Special Keynote Speech'),
                 role: s.role && s.role.trim() !== '' ? s.role.trim() : 'Speaker / Panelist',
                 originalIndex: idx,
             };
         });
     }, [rawSpeakers]);
 
-    // Unique Sessions
+    // Speakers for selected Day
+    const daySpeakers = useMemo(() => {
+        return allSpeakers.filter(s => s.day === selectedDay);
+    }, [allSpeakers, selectedDay]);
+
+    // Unique Sessions for the currently selected Day
     const sessions = useMemo(() => {
-        const order = ['Special Keynote Speech', 'CEO Forum', 'Special Session', 'Panel Discussion 1'];
-        const unique = Array.from(new Set(allSpeakers.map(s => s.session)));
+        const order = [
+            'Special Keynote Speech',
+            'CEO Forum',
+            'Special Session',
+            'Panel Discussion 1',
+            'Panel Discussion 2',
+            'Panel Discussion 3',
+        ];
+        const unique = Array.from(new Set(daySpeakers.map(s => s.session)));
         return unique.sort((a, b) => {
             const idxA = order.indexOf(a);
             const idxB = order.indexOf(b);
@@ -230,15 +369,21 @@ export default function Testimonials({ settings }) {
             if (idxB !== -1) return 1;
             return a.localeCompare(b);
         });
-    }, [allSpeakers]);
+    }, [daySpeakers]);
 
-    // Filtered Speakers
+    // Filtered Speakers (by Day + Session)
     const filteredSpeakers = useMemo(() => {
-        if (selectedTab === 'all') return allSpeakers;
-        return allSpeakers.filter(s => s.session === selectedTab);
-    }, [allSpeakers, selectedTab]);
+        if (selectedTab === 'all') return daySpeakers;
+        return daySpeakers.filter(s => s.session === selectedTab);
+    }, [daySpeakers, selectedTab]);
 
-    // Reset index on filter change
+    // Reset carousel index when Day or Session tab changes
+    const handleDayChange = (newDay) => {
+        setSelectedDay(newDay);
+        setSelectedTab('all');
+        setActiveIndex(0);
+    };
+
     useEffect(() => {
         setActiveIndex(0);
     }, [selectedTab]);
@@ -292,6 +437,9 @@ export default function Testimonials({ settings }) {
 
     if (filteredSpeakers.length === 0) return null;
 
+    const day1Total = allSpeakers.filter(s => s.day === 'Day 1').length;
+    const day2Total = allSpeakers.filter(s => s.day === 'Day 2').length;
+
     return (
         <Box
             id="speakers"
@@ -320,9 +468,53 @@ export default function Testimonials({ settings }) {
             />
 
             <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
-                {/* Header Section — Editorial Luxury Title */}
+                {/* Header Section */}
                 <ScrollReveal variant="fadeUp" duration={700}>
-                    <Box sx={{ mb: { xs: 4, md: 5 }, textAlign: 'center' }}>
+                    <Box sx={{ mb: { xs: 3, md: 4 }, textAlign: 'center' }}>
+                        {/* Day 1 & Day 2 Switcher Toggle */}
+                        <Box sx={{ display: 'inline-flex', p: 0.6, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '35px', boxShadow: '0 4px 16px rgba(0,0,0,0.05)', mb: 3 }}>
+                            <Button
+                                onClick={() => handleDayChange('Day 1')}
+                                sx={{
+                                    borderRadius: '30px',
+                                    px: { xs: 2.2, sm: 3.2 },
+                                    py: 0.9,
+                                    fontSize: { xs: '0.82rem', sm: '0.92rem' },
+                                    fontWeight: 800,
+                                    textTransform: 'none',
+                                    bgcolor: selectedDay === 'Day 1' ? '#0d9488' : 'transparent',
+                                    color: selectedDay === 'Day 1' ? '#ffffff' : '#64748b',
+                                    boxShadow: selectedDay === 'Day 1' ? '0 4px 14px rgba(13, 148, 136, 0.35)' : 'none',
+                                    '&:hover': {
+                                        bgcolor: selectedDay === 'Day 1' ? '#0f766e' : '#f1f5f9',
+                                    },
+                                    transition: 'all 0.25s ease',
+                                }}
+                            >
+                                📅 DAY 1 — 3 Nov 2026 ({day1Total})
+                            </Button>
+                            <Button
+                                onClick={() => handleDayChange('Day 2')}
+                                sx={{
+                                    borderRadius: '30px',
+                                    px: { xs: 2.2, sm: 3.2 },
+                                    py: 0.9,
+                                    fontSize: { xs: '0.82rem', sm: '0.92rem' },
+                                    fontWeight: 800,
+                                    textTransform: 'none',
+                                    bgcolor: selectedDay === 'Day 2' ? '#0d9488' : 'transparent',
+                                    color: selectedDay === 'Day 2' ? '#ffffff' : '#64748b',
+                                    boxShadow: selectedDay === 'Day 2' ? '0 4px 14px rgba(13, 148, 136, 0.35)' : 'none',
+                                    '&:hover': {
+                                        bgcolor: selectedDay === 'Day 2' ? '#0f766e' : '#f1f5f9',
+                                    },
+                                    transition: 'all 0.25s ease',
+                                }}
+                            >
+                                📅 DAY 2 — 4 Nov 2026 ({day2Total})
+                            </Button>
+                        </Box>
+
                         <Typography
                             variant="overline"
                             sx={{
@@ -334,7 +526,7 @@ export default function Testimonials({ settings }) {
                                 mb: 1,
                             }}
                         >
-                            — THE SPOTLIGHT COLLECTION • DAY 1 —
+                            — THE SPOTLIGHT COLLECTION • {selectedDay.toUpperCase()} —
                         </Typography>
 
                         <Typography
@@ -356,18 +548,18 @@ export default function Testimonials({ settings }) {
                             </Box>
                         </Typography>
 
-                        {/* Session Filter Tabs */}
+                        {/* Session Filter Tabs for the Active Day */}
                         <Box
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'center',
                                 flexWrap: 'wrap',
                                 gap: 1,
-                                mt: 3,
+                                mt: 2.5,
                             }}
                         >
                             <Chip
-                                label={`Semua Sesi (${allSpeakers.length})`}
+                                label={`Semua Sesi (${daySpeakers.length})`}
                                 clickable
                                 onClick={() => setSelectedTab('all')}
                                 sx={{
@@ -384,7 +576,7 @@ export default function Testimonials({ settings }) {
                                 }}
                             />
                             {sessions.map(sessName => {
-                                const count = allSpeakers.filter(s => s.session === sessName).length;
+                                const count = daySpeakers.filter(s => s.session === sessName).length;
                                 const isSelected = selectedTab === sessName;
                                 const shortName = sessName === 'Special Keynote Speech' ? 'Special Keynote' : sessName;
                                 return (
@@ -475,7 +667,6 @@ export default function Testimonials({ settings }) {
                             if (absOffset > 3) return null;
 
                             // 3D positioning calculations
-                            // Responsive horizontal step
                             const stepX = typeof window !== 'undefined' && window.innerWidth < 600 ? 95 : (typeof window !== 'undefined' && window.innerWidth < 960 ? 140 : 185);
                             const translateX = offset * stepX + (isDragging ? dragDistance * 0.4 : 0);
                             const translateZ = -absOffset * (absOffset === 1 ? 90 : 160);
@@ -563,7 +754,6 @@ export default function Testimonials({ settings }) {
                                         </Box>
                                     )}
 
-                                    {/* Card Header Info Overlays */}
                                     {/* Number Top-Left */}
                                     <Box
                                         sx={{
@@ -816,39 +1006,71 @@ export default function Testimonials({ settings }) {
                         </Box>
                     </Box>
 
-                    {/* View Official Day 1 Flyer Action */}
-                    <Box sx={{ textAlign: 'center', mt: 3.5 }}>
+                    {/* View Official Flyer Action */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap', mt: 3.5 }}>
                         <Button
                             variant="outlined"
                             startIcon={<VisibilityIcon />}
-                            onClick={() => setPosterOpen(true)}
+                            onClick={() => {
+                                setPosterModalDay('Day 1');
+                                setPosterOpen(true);
+                            }}
                             sx={{
                                 borderColor: '#0d9488',
                                 color: '#0d9488',
                                 textTransform: 'none',
                                 fontWeight: 700,
                                 borderRadius: '30px',
-                                px: 2.8,
+                                px: 2.5,
                                 py: 0.8,
-                                fontSize: '0.88rem',
+                                fontSize: '0.85rem',
                                 bgcolor: '#ffffff',
-                                boxShadow: '0 2px 10px rgba(13, 148, 136, 0.08)',
+                                boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
                                 '&:hover': {
                                     borderColor: '#0f766e',
                                     bgcolor: '#f0fdfa',
                                     transform: 'translateY(-2px)',
-                                    boxShadow: '0 6px 16px rgba(13, 148, 136, 0.18)',
+                                    boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
                                 },
                                 transition: 'all 0.2s ease',
                             }}
                         >
-                            Lihat Flyer Poster Resmi (DAY 1)
+                            Lihat Flyer Poster (DAY 1)
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            startIcon={<VisibilityIcon />}
+                            onClick={() => {
+                                setPosterModalDay('Day 2');
+                                setPosterOpen(true);
+                            }}
+                            sx={{
+                                borderColor: '#0d9488',
+                                color: '#0d9488',
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                borderRadius: '30px',
+                                px: 2.5,
+                                py: 0.8,
+                                fontSize: '0.85rem',
+                                bgcolor: '#ffffff',
+                                boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
+                                '&:hover': {
+                                    borderColor: '#0f766e',
+                                    bgcolor: '#f0fdfa',
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
+                                },
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            Lihat Flyer Poster (DAY 2)
                         </Button>
                     </Box>
                 </Box>
             </Container>
 
-            {/* Lightbox Dialog: Full Official Day 1 Flyer Poster */}
+            {/* Lightbox Dialog: Full Official Day 1 / Day 2 Flyer Poster */}
             <Dialog
                 open={posterOpen}
                 onClose={() => setPosterOpen(false)}
@@ -877,27 +1099,59 @@ export default function Testimonials({ settings }) {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <CollectionsBookmarkIcon sx={{ color: '#10b981', fontSize: '1.2rem' }} />
                         <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#f8fafc' }}>
-                            Flyer Resmi: DAY 1 — November 3, 2026
+                            Flyer Resmi: {posterModalDay === 'Day 1' ? 'DAY 1 — 3 Nov 2026' : 'DAY 2 — 4 Nov 2026'}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {/* Switch Day buttons inside modal */}
+                        <Button
+                            size="small"
+                            variant={posterModalDay === 'Day 1' ? 'contained' : 'outlined'}
+                            onClick={() => setPosterModalDay('Day 1')}
+                            sx={{
+                                fontSize: '0.72rem',
+                                py: 0.3,
+                                px: 1.2,
+                                bgcolor: posterModalDay === 'Day 1' ? '#0d9488' : 'transparent',
+                                borderColor: '#0d9488',
+                                color: '#ffffff',
+                            }}
+                        >
+                            Day 1
+                        </Button>
+                        <Button
+                            size="small"
+                            variant={posterModalDay === 'Day 2' ? 'contained' : 'outlined'}
+                            onClick={() => setPosterModalDay('Day 2')}
+                            sx={{
+                                fontSize: '0.72rem',
+                                py: 0.3,
+                                px: 1.2,
+                                bgcolor: posterModalDay === 'Day 2' ? '#0d9488' : 'transparent',
+                                borderColor: '#0d9488',
+                                color: '#ffffff',
+                            }}
+                        >
+                            Day 2
+                        </Button>
                         <Button
                             variant="contained"
                             size="small"
                             component="a"
-                            href="/images/day1-poster.jpg"
-                            download="DAY1_KEYNOTE_PIT_IAGI_GEOSEA_2026.jpg"
+                            href={posterModalDay === 'Day 1' ? '/images/day1-poster.jpg' : '/images/day2-poster.jpg'}
+                            download={posterModalDay === 'Day 1' ? 'DAY1_POSTER_PIT_IAGI_2026.jpg' : 'DAY2_POSTER_PIT_IAGI_2026.jpg'}
                             startIcon={<DownloadIcon />}
                             sx={{
                                 bgcolor: '#0d9488',
                                 textTransform: 'none',
                                 fontWeight: 700,
-                                fontSize: '0.78rem',
+                                fontSize: '0.75rem',
                                 borderRadius: '16px',
                                 '&:hover': { bgcolor: '#0f766e' },
+                                ml: 1,
                             }}
                         >
-                            Download Flyer
+                            Download
                         </Button>
                         <IconButton
                             onClick={() => setPosterOpen(false)}
@@ -911,8 +1165,8 @@ export default function Testimonials({ settings }) {
                 <DialogContent sx={{ p: 0, textAlign: 'center', bgcolor: '#091512' }}>
                     <Box
                         component="img"
-                        src="/images/day1-poster.jpg"
-                        alt="PIT IAGI & GEOSEA XIX 2026 Day 1 Keynote Speakers and Forums"
+                        src={posterModalDay === 'Day 1' ? '/images/day1-poster.jpg' : '/images/day2-poster.jpg'}
+                        alt={`PIT IAGI & GEOSEA XIX 2026 ${posterModalDay} Keynote Speakers and Forums`}
                         sx={{
                             width: '100%',
                             maxHeight: '85vh',

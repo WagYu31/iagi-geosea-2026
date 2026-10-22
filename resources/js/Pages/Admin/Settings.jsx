@@ -1640,9 +1640,106 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'PT Pertamina Geothermal Energy Tbk',
             session: 'Panel Discussion 1',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
     ];
+
+    // Official Day 2 Poster Speakers Preset (10 figures)
+    const DAY2_OFFICIAL_SPEAKERS = [
+        {
+            name: 'Prof. Ir. Mega Fatimah Rosana, M.Sc., Ph.D.',
+            title: 'Professor of Exploration Geology, UNPAD',
+            institution: 'Universitas Padjadjaran (UNPAD)',
+            session: 'Panel Discussion 2',
+            role: 'Moderator',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Dr. Ir. Carolus Prasetyadi, M.Sc.',
+            title: 'Geopark Expert / Lead',
+            institution: 'Geopark Yogyakarta',
+            session: 'Panel Discussion 2',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Narongrit Thungprue',
+            title: 'Expert UGGp Satun (Thailand)',
+            institution: 'UNESCO Global Geopark Satun',
+            session: 'Panel Discussion 2',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Leo T. Virtucio',
+            title: 'Vice-Chairperson National Geopark Committee',
+            institution: 'National Geopark Committee (Philippines)',
+            session: 'Panel Discussion 2',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Dr. Priatin Hadi Wijaya, S.T., M.T.*',
+            title: 'Director of Geothermal',
+            institution: 'Ditjen EBTKE Kementerian ESDM',
+            session: 'Special Session',
+            role: 'Keynote Speaker',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Dr. Lana Saria, S.Si., M.Si.',
+            title: 'Head of Badan Geologi',
+            institution: 'Badan Geologi Kementerian ESDM',
+            session: 'Panel Discussion 3',
+            role: 'Keynote Speaker',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Prof Dr. Ir. Eko Teguh Paripurno, M.T',
+            title: 'Center of Disaster Management Studies UPNVY',
+            institution: 'UPN "Veteran" Yogyakarta',
+            session: 'Panel Discussion 3',
+            role: 'Moderator',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Dr. Nelly Florida Riama, M.Si.',
+            title: 'Deputy for Geophysics BMKG',
+            institution: 'BMKG',
+            session: 'Panel Discussion 3',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Noer Isrodin Muchlisin',
+            title: 'Direktur Kesiapsiagaan BASARNAS',
+            institution: 'BASARNAS',
+            session: 'Panel Discussion 3',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+        {
+            name: 'Prof. Dr. Eng. IR. Wahyu Wilopo, S.T., M.Eng., IPM',
+            title: 'Geotechnical and Disaster Expert UGM',
+            institution: 'Universitas Gadjah Mada (UGM)',
+            session: 'Panel Discussion 3',
+            role: 'Speaker / Panelist',
+            day: 'Day 2',
+            photo: '',
+        },
+    ];
+
+    const ALL_OFFICIAL_SPEAKERS = [...DAY1_OFFICIAL_SPEAKERS, ...DAY2_OFFICIAL_SPEAKERS];
 
     // Add new speaker
     const addSpeaker = () => {
@@ -1651,19 +1748,56 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             title: '',
             photo: '',
             institution: '',
+            day: 'Day 1',
             session: 'Special Keynote Speech',
             role: 'Speaker / Panelist',
         }]);
     };
 
-    // Load 15 official speakers from poster
+    // Load all 25 official speakers (Day 1 + Day 2)
+    const loadAllOfficialSpeakers = () => {
+        if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
+            if (!confirm('Apakah Anda ingin memuat seluruh 25 Pembicara Day 1 & Day 2 sesuai poster resmi? Foto pembicara yang sudah ada akan tetap dipertahankan jika nama cocok.')) {
+                return;
+            }
+        }
+        const merged = ALL_OFFICIAL_SPEAKERS.map(official => {
+            const cleanName = official.name.replace('*', '').toLowerCase().trim();
+            const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
+            return {
+                ...official,
+                photo: existing && existing.photo ? existing.photo : (official.photo || ''),
+            };
+        });
+        setSpeakers(merged);
+    };
+
+    // Load 15 official speakers from poster Day 1
     const loadOfficialDay1Speakers = () => {
         if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
-            if (!confirm('Apakah Anda ingin memuat 15 Pembicara Day 1 sesuai poster resmi? Foto pembicara yang sudah ada akan tetap dipertahankan jika nama cocok.')) {
+            if (!confirm('Apakah Anda ingin memuat 15 Pembicara Day 1 sesuai poster resmi?')) {
                 return;
             }
         }
         const merged = DAY1_OFFICIAL_SPEAKERS.map(official => {
+            const cleanName = official.name.replace('*', '').toLowerCase().trim();
+            const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
+            return {
+                ...official,
+                photo: existing && existing.photo ? existing.photo : (official.photo || ''),
+            };
+        });
+        setSpeakers(merged);
+    };
+
+    // Load 10 official speakers from poster Day 2
+    const loadOfficialDay2Speakers = () => {
+        if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
+            if (!confirm('Apakah Anda ingin memuat 10 Pembicara Day 2 sesuai poster resmi?')) {
+                return;
+            }
+        }
+        const merged = DAY2_OFFICIAL_SPEAKERS.map(official => {
             const cleanName = official.name.replace('*', '').toLowerCase().trim();
             const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
             return {
@@ -3100,7 +3234,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                             <Stack direction="row" spacing={1.5} flexWrap="wrap">
                                                 <Button
                                                     variant="contained"
-                                                    onClick={loadOfficialDay1Speakers}
+                                                    onClick={loadAllOfficialSpeakers}
                                                     sx={{
                                                         bgcolor: '#0d9488',
                                                         '&:hover': { bgcolor: '#0f766e' },
@@ -3110,7 +3244,33 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                         height: 42,
                                                     }}
                                                 >
-                                                    ✨ Muat 15 Pembicara Poster Day 1
+                                                    ✨ Muat Semua Pembicara Day 1 & Day 2 (25 Tokoh)
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={loadOfficialDay1Speakers}
+                                                    sx={{
+                                                        borderColor: '#0d9488',
+                                                        color: '#0d9488',
+                                                        whiteSpace: 'nowrap',
+                                                        fontWeight: 600,
+                                                        height: 42,
+                                                    }}
+                                                >
+                                                    Muat Day 1 (15)
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={loadOfficialDay2Speakers}
+                                                    sx={{
+                                                        borderColor: '#3b82f6',
+                                                        color: '#2563eb',
+                                                        whiteSpace: 'nowrap',
+                                                        fontWeight: 600,
+                                                        height: 42,
+                                                    }}
+                                                >
+                                                    Muat Day 2 (10)
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
@@ -3206,6 +3366,17 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fff' : '#1e293b', whiteSpace: 'nowrap' }}>
                                                                         #{index + 1}
                                                                     </Typography>
+                                                                    <Chip
+                                                                        label={speaker.day || 'Day 1'}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 20,
+                                                                            fontSize: '0.65rem',
+                                                                            fontWeight: 700,
+                                                                            bgcolor: (speaker.day === 'Day 2') ? (isDark ? 'rgba(59,130,246,0.2)' : '#dbeafe') : (isDark ? 'rgba(26,188,156,0.15)' : '#e6fcf5'),
+                                                                            color: (speaker.day === 'Day 2') ? (isDark ? '#60a5fa' : '#2563eb') : (isDark ? '#2dd4bf' : '#0d9488'),
+                                                                        }}
+                                                                    />
                                                                     {speaker.session && (
                                                                         <Chip
                                                                             label={speaker.session}
@@ -3214,9 +3385,9 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                                                 height: 20,
                                                                                 fontSize: '0.65rem',
                                                                                 fontWeight: 700,
-                                                                                bgcolor: isDark ? 'rgba(26,188,156,0.15)' : '#e6fcf5',
-                                                                                color: isDark ? '#2dd4bf' : '#0d9488',
-                                                                                maxWidth: 120,
+                                                                                bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#f1f5f9',
+                                                                                color: isDark ? '#cbd5e1' : '#475569',
+                                                                                maxWidth: 110,
                                                                             }}
                                                                         />
                                                                     )}
@@ -3361,6 +3532,20 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                             />
                                                         </Button>
 
+                                                        {/* Hari / Day */}
+                                                        <TextField
+                                                            select
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Hari (Day)"
+                                                            value={speaker.day || 'Day 1'}
+                                                            onChange={(e) => updateSpeaker(index, 'day', e.target.value)}
+                                                            sx={{ mb: 1.2 }}
+                                                        >
+                                                            <MenuItem value="Day 1">📅 Day 1 (3 Nov 2026)</MenuItem>
+                                                            <MenuItem value="Day 2">📅 Day 2 (4 Nov 2026)</MenuItem>
+                                                        </TextField>
+
                                                         {/* Sesi / Forum */}
                                                         <TextField
                                                             select
@@ -3375,6 +3560,8 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                             <MenuItem value="CEO Forum">CEO Forum</MenuItem>
                                                             <MenuItem value="Special Session">Special Session</MenuItem>
                                                             <MenuItem value="Panel Discussion 1">Panel Discussion 1</MenuItem>
+                                                            <MenuItem value="Panel Discussion 2">Panel Discussion 2</MenuItem>
+                                                            <MenuItem value="Panel Discussion 3">Panel Discussion 3</MenuItem>
                                                         </TextField>
 
                                                         {/* Peran / Role */}

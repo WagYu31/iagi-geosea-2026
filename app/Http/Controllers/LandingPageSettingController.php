@@ -186,6 +186,7 @@ class LandingPageSettingController extends Controller
                     'institution' => '',
                     'session' => 'Special Keynote Speech',
                     'role' => 'Speaker / Panelist',
+                    'day' => 'Day 1',
                 ];
             }
 
