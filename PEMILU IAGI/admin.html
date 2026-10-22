@@ -4914,6 +4914,469 @@
         });
       }
 
+      // ═════════════════════════════════════════════════════════════════════
+      // MANAJEMEN AKUN ADMIN & OTORITAS KPKU CONTROLLER
+      // ═════════════════════════════════════════════════════════════════════
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      window.renderAdminUsersTable = function() {
+        if (!window.pemiluStorage || !window.pemiluStorage.getAdminAccounts) return;
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        const searchInput = document.getElementById('admin-search-input');
+        const roleFilter = document.getElementById('admin-role-filter');
+        const statusFilter = document.getElementById('admin-status-filter');
+
+        const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+        const roleVal = roleFilter ? roleFilter.value : 'all';
+        const statusVal = statusFilter ? statusFilter.value : 'all';
+
+        // 1. Update Metrics
+        const totalCount = accounts.length;
+        const coreCount = accounts.filter(a => a.role === 'Ketua Panitia').length;
+        const opCount = accounts.filter(a => a.role === 'Operator DPT').length;
+        const witnessCount = accounts.filter(a => a.role === 'Pengawas / Saksi' || a.role === 'Tim IT & Teknis').length;
+
+        const elTotal = document.getElementById('stat-total-admins');
+        if (elTotal) elTotal.innerText = totalCount;
+        const elCore = document.getElementById('stat-admins-core');
+        if (elCore) elCore.innerText = coreCount;
+        const elOp = document.getElementById('stat-admins-operator');
+        if (elOp) elOp.innerText = opCount;
+        const elWit = document.getElementById('stat-admins-witness');
+        if (elWit) elWit.innerText = witnessCount;
+
+        const badgeSidebar = document.getElementById('sidebar-admin-count-badge');
+        if (badgeSidebar) badgeSidebar.innerText = totalCount;
+
+        // 2. Filter list
+        let filtered = accounts.filter(a => {
+          if (roleVal !== 'all' && a.role !== roleVal) return false;
+          if (statusVal !== 'all' && a.status !== statusVal) return false;
+          if (query) {
+            const matchName = (a.name || '').toLowerCase().includes(query);
+            const matchEmail = (a.email || '').toLowerCase().includes(query);
+            const matchPhone = (a.phone || '').toLowerCase().includes(query);
+            const matchNpa = (a.npa || '').toLowerCase().includes(query);
+            const matchRole = (a.role || '').toLowerCase().includes(query);
+            if (!matchName && !matchEmail && !matchPhone && !matchNpa && !matchRole) return false;
+          }
+          return true;
+        });
+
+        const tbody = document.getElementById('admin-users-table-body');
+        if (!tbody) return;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 40px 20px; color: #94A3B8;">
+                <div style="font-size: 2.2rem; margin-bottom: 8px;">👤</div>
+                <div style="font-weight: 700; color: #E2E8F0; font-size: 0.95rem; margin-bottom: 4px;">Tidak Ada Akun Admin Ditemukan</div>
+                <p style="font-size: 0.8rem; margin: 0 0 16px; color: #64748B;">Klik tombol di bawah ini untuk menambahkan akun admin baru ke sistem.</p>
+                <button type="button" class="btn btn-primary" style="margin: 0 auto; background: linear-gradient(135deg, #10B981, #059669); border-color: #10B981; font-weight: 700;" onclick="openAddAdminModal()">
+                  <span>+ Buat Akun Admin Baru</span>
+                </button>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((a, idx) => {
+          let roleBadgeStyle = 'background: rgba(96,165,250,0.15); color: #60A5FA; border: 1px solid rgba(96,165,250,0.3);';
+          let roleIcon = '📋';
+          if (a.role === 'Ketua Panitia') {
+            roleBadgeStyle = 'background: rgba(245,186,66,0.15); color: #F5BA42; border: 1px solid rgba(245,186,66,0.3); font-weight: 700;';
+            roleIcon = '👑';
+          } else if (a.role === 'Pengawas / Saksi') {
+            roleBadgeStyle = 'background: rgba(192,132,252,0.15); color: #C084FC; border: 1px solid rgba(192,132,252,0.3);';
+            roleIcon = '👁️';
+          } else if (a.role === 'Tim IT & Teknis') {
+            roleBadgeStyle = 'background: rgba(45,212,191,0.15); color: #2DD4BF; border: 1px solid rgba(45,212,191,0.3);';
+            roleIcon = '💻';
+          }
+
+          const isAktif = a.status === 'AKTIF';
+          const statusBadge = isAktif
+            ? `<span class="status-badge status-voted" style="font-size: 0.72rem; padding: 3px 8px;">🟢 AKTIF</span>`
+            : `<span class="status-badge" style="background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); font-size: 0.72rem; padding: 3px 8px;">🔴 NON-AKTIF</span>`;
+
+          let lastLoginStr = '<span style="color: #64748B; font-style: italic;">Belum Pernah</span>';
+          if (a.lastLogin) {
+            try {
+              const d = new Date(a.lastLogin);
+              lastLoginStr = `${d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })} ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+            } catch (e) {
+              lastLoginStr = a.lastLogin;
+            }
+          }
+
+          const isPrimaryRoot = a.email === 'admin.kpku@iagi.or.id';
+
+          return `
+            <tr>
+              <td style="text-align: center; color: #64748B; font-weight: 600;">${idx + 1}</td>
+              <td>
+                <div style="font-weight: 700; color: #FFFFFF; font-size: 0.9rem;">${escapeHtml(a.name)}</div>
+                <div style="font-size: 0.73rem; color: #94A3B8; margin-top: 2px;">
+                  NPA: <span class="font-mono text-gold" style="font-weight: 600;">${escapeHtml(a.npa || '-')}</span>
+                  ${a.title ? ` • <span style="color: #CBD5E1;">${escapeHtml(a.title)}</span>` : ''}
+                </div>
+              </td>
+              <td>
+                <div class="font-mono" style="color: #60A5FA; font-size: 0.8rem; font-weight: 600;">${escapeHtml(a.email)}</div>
+                <div style="font-size: 0.73rem; color: #94A3B8; display: flex; align-items: center; gap: 6px; margin-top: 3px;">
+                  <span>📱 ${escapeHtml(a.phone || '-')}</span>
+                  ${a.phone ? `
+                    <button type="button" style="background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid rgba(37,211,102,0.3); padding: 1px 6px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; cursor: pointer;" onclick="sendSingleAdminWA('${a.id}')" title="Kirim info kredensial via WhatsApp">
+                      WA
+                    </button>
+                  ` : ''}
+                </div>
+              </td>
+              <td style="text-align: center;">
+                <span class="badge" style="${roleBadgeStyle} display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;">
+                  <span>${roleIcon}</span>
+                  <span>${escapeHtml(a.role)}</span>
+                </span>
+              </td>
+              <td style="text-align: center;">
+                <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #34D399; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); padding: 3px 8px; border-radius: 6px;">
+                  <span>🛡️</span>
+                  <span>OTP & PIN</span>
+                </span>
+              </td>
+              <td style="text-align: center;">
+                ${statusBadge}
+              </td>
+              <td style="text-align: center; font-size: 0.76rem; color: #94A3B8;">
+                ${lastLoginStr}
+              </td>
+              <td style="text-align: center;">
+                <div style="display: inline-flex; align-items: center; gap: 4px;">
+                  <button type="button" class="btn-table-action" style="background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="openEditAdminModal('${a.id}')" title="Ubah data atau hak akses admin">
+                    ✏️ Edit
+                  </button>
+                  <button type="button" class="btn-table-action" style="background: rgba(245,186,66,0.12); color: #F5BA42; border: 1px solid rgba(245,186,66,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="showAdminCredentialsModal('${a.id}')" title="Lihat password & PIN untuk dikirim ke panitia">
+                    🔑 Kredensial
+                  </button>
+                  ${isPrimaryRoot ? `
+                    <span title="Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus" style="opacity: 0.4; font-size: 0.72rem; padding: 4px 6px; cursor: not-allowed; color: #94A3B8;">🔒 Utama</span>
+                  ` : `
+                    <button type="button" class="btn-table-action" style="background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="openDeleteAdminModal('${a.id}')" title="Hapus akun admin">
+                      🗑️
+                    </button>
+                  `}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      };
+
+      window.openAddAdminModal = function() {
+        const modal = document.getElementById('modal-manage-admin');
+        if (!modal) return;
+
+        const form = document.getElementById('form-manage-admin');
+        if (form) form.reset();
+
+        document.getElementById('manage-admin-id').value = '';
+        document.getElementById('manage-admin-title').innerText = 'Tambah Akun Panitia / Admin Baru';
+        document.getElementById('manage-admin-icon').innerText = '👤';
+        document.getElementById('manage-admin-email').disabled = false;
+        document.getElementById('manage-admin-password').value = 'admin2026';
+        document.getElementById('manage-admin-pin').value = '2026';
+        document.getElementById('manage-admin-status').value = 'AKTIF';
+        document.getElementById('manage-admin-role').value = 'Operator DPT';
+        document.getElementById('manage-admin-2fa').checked = true;
+
+        const alertEl = document.getElementById('manage-admin-alert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        modal.style.setProperty('display', 'flex', 'important');
+        setTimeout(() => {
+          const nameInput = document.getElementById('manage-admin-name');
+          if (nameInput) nameInput.focus();
+        }, 100);
+      };
+
+      window.openEditAdminModal = function(id) {
+        const modal = document.getElementById('modal-manage-admin');
+        if (!modal) return;
+
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        const target = accounts.find(a => a.id === id);
+        if (!target) {
+          alert('Akun admin tidak ditemukan.');
+          return;
+        }
+
+        document.getElementById('manage-admin-id').value = target.id;
+        document.getElementById('manage-admin-title').innerText = `Ubah Akun: ${target.name}`;
+        document.getElementById('manage-admin-icon').innerText = '✏️';
+        document.getElementById('manage-admin-name').value = target.name || '';
+        document.getElementById('manage-admin-npa').value = target.npa || '';
+        document.getElementById('manage-admin-position').value = target.title || '';
+        document.getElementById('manage-admin-email').value = target.email || '';
+        document.getElementById('manage-admin-phone').value = target.phone || '';
+        document.getElementById('manage-admin-role').value = target.role || 'Operator DPT';
+        document.getElementById('manage-admin-status').value = target.status || 'AKTIF';
+        document.getElementById('manage-admin-password').value = target.password || 'admin2026';
+        document.getElementById('manage-admin-pin').value = target.securityPin || '2026';
+        document.getElementById('manage-admin-2fa').checked = target.twoFactor !== false;
+
+        if (target.email === 'admin.kpku@iagi.or.id') {
+          document.getElementById('manage-admin-email').disabled = true;
+        } else {
+          document.getElementById('manage-admin-email').disabled = false;
+        }
+
+        const alertEl = document.getElementById('manage-admin-alert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      window.closeManageAdminModal = function() {
+        const modal = document.getElementById('modal-manage-admin');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      window.handleSaveAdmin = function(e) {
+        if (e) e.preventDefault();
+
+        const id = document.getElementById('manage-admin-id').value;
+        const name = document.getElementById('manage-admin-name').value.trim();
+        const npa = document.getElementById('manage-admin-npa').value.trim();
+        const position = document.getElementById('manage-admin-position').value.trim();
+        const email = document.getElementById('manage-admin-email').value.trim();
+        const phone = document.getElementById('manage-admin-phone').value.trim();
+        const role = document.getElementById('manage-admin-role').value;
+        const status = document.getElementById('manage-admin-status').value;
+        const password = document.getElementById('manage-admin-password').value.trim();
+        const pin = document.getElementById('manage-admin-pin').value.trim();
+        const twoFactor = document.getElementById('manage-admin-2fa').checked;
+
+        const alertEl = document.getElementById('manage-admin-alert');
+        const showAlert = (msg, isErr = true) => {
+          if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = isErr ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)';
+            alertEl.style.border = isErr ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)';
+            alertEl.style.color = isErr ? '#FCA5A5' : '#6EE7B7';
+            alertEl.innerText = msg;
+          } else {
+            alert(msg);
+          }
+        };
+
+        if (!name) return showAlert('Nama lengkap wajib diisi.');
+        if (!email || !email.includes('@')) return showAlert('Email tidak valid.');
+        if (!password) return showAlert('Password wajib diisi.');
+        if (!pin || pin.length < 4) return showAlert('PIN Keamanan minimal 4 angka.');
+
+        const payload = {
+          name,
+          npa,
+          title: position || role,
+          email,
+          phone,
+          role,
+          status,
+          password,
+          securityPin: pin,
+          twoFactor
+        };
+
+        let res;
+        if (id) {
+          res = window.pemiluStorage.updateAdminAccount(id, payload);
+        } else {
+          res = window.pemiluStorage.addAdminAccount(payload);
+        }
+
+        if (!res.success) {
+          showAlert(res.error || 'Gagal menyimpan akun admin.');
+          return;
+        }
+
+        closeManageAdminModal();
+        renderAdminUsersTable();
+        if (typeof refreshAll === 'function') refreshAll();
+
+        const savedAdmin = res.admin;
+        if (savedAdmin) {
+          showAdminCredentialsModal(savedAdmin.id);
+        }
+      };
+
+      // Modal Kredensial & WhatsApp Dispatch
+      let currentViewedAdmin = null;
+
+      window.showAdminCredentialsModal = function(id) {
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        const target = accounts.find(a => a.id === id);
+        if (!target) return;
+
+        currentViewedAdmin = target;
+
+        document.getElementById('cred-view-name').innerText = target.name;
+        document.getElementById('cred-view-role').innerText = target.role + (target.title ? ` (${target.title})` : '');
+        document.getElementById('cred-view-email').innerText = target.email;
+        document.getElementById('cred-view-password').innerText = target.password || 'admin2026';
+        document.getElementById('cred-view-pin').innerText = target.securityPin || '2026';
+
+        const modal = document.getElementById('modal-admin-credentials-view');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      window.closeAdminCredentialsModal = function() {
+        const modal = document.getElementById('modal-admin-credentials-view');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      window.dispatchAdminCredentialsWA = function() {
+        if (!currentViewedAdmin) return;
+        const admin = currentViewedAdmin;
+        let phone = (admin.phone || '').replace(/\D/g, '');
+        if (phone.startsWith('0')) {
+          phone = '62' + phone.substring(1);
+        } else if (!phone.startsWith('62')) {
+          phone = '62' + phone;
+        }
+
+        const originUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html';
+        const text = `*KREDENSIAL AKSES ADMIN E-VOTING PEMILU IAGI 2026*\n\n` +
+          `Halo Bapak/Ibu *${admin.name}*,\n` +
+          `Berikut adalah akun kredensial akses resmi Anda untuk Portal Panitia Pemilu Ketua Umum IAGI 2026:\n\n` +
+          `🔗 *Portal Admin*: ${originUrl}\n` +
+          `👤 *Jabatan/Role*: ${admin.role} (${admin.title || 'Panitia KPKU'})\n` +
+          `📧 *Email Login*: ${admin.email}\n` +
+          `🔑 *Kata Sandi*: ${admin.password}\n` +
+          `🛡️ *PIN Keamanan 2FA*: ${admin.securityPin}\n\n` +
+          `_Penting: Harap jaga kerahasiaan kata sandi dan PIN ini. Saat login, sistem mewajibkan verifikasi OTP Email dan PIN keamanan._\n\n` +
+          `Salam hormat,\n*Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026*`;
+
+        window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`, '_blank');
+      };
+
+      window.sendSingleAdminWA = function(id) {
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        const target = accounts.find(a => a.id === id);
+        if (!target) return;
+        currentViewedAdmin = target;
+        dispatchAdminCredentialsWA();
+      };
+
+      window.copyAdminCredentialsText = function() {
+        if (!currentViewedAdmin) return;
+        const a = currentViewedAdmin;
+        const text = `KREDENSIAL ADMIN E-VOTING PEMILU IAGI 2026\n` +
+          `Nama: ${a.name}\n` +
+          `Role: ${a.role}\n` +
+          `Email: ${a.email}\n` +
+          `Password: ${a.password}\n` +
+          `PIN Keamanan: ${a.securityPin}\n` +
+          `URL: ${window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html'}`;
+
+        navigator.clipboard.writeText(text).then(() => {
+          alert('✓ Kredensial berhasil disalin ke clipboard!');
+        }).catch(() => {
+          alert(text);
+        });
+      };
+
+      // Modal Hapus Admin
+      let adminToDeleteId = null;
+
+      window.openDeleteAdminModal = function(id) {
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        const target = accounts.find(a => a.id === id);
+        if (!target) return;
+
+        if (target.email === 'admin.kpku@iagi.or.id') {
+          alert('Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus.');
+          return;
+        }
+
+        adminToDeleteId = id;
+        document.getElementById('delete-admin-modal-target-name').innerText = `${target.name} (${target.email})`;
+        const alertEl = document.getElementById('delete-admin-modal-alert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        const modal = document.getElementById('modal-confirm-delete-admin');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      window.closeDeleteAdminModal = function() {
+        const modal = document.getElementById('modal-confirm-delete-admin');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        adminToDeleteId = null;
+      };
+
+      window.executeDeleteAdmin = function() {
+        if (!adminToDeleteId) return;
+        const res = window.pemiluStorage.deleteAdminAccount(adminToDeleteId);
+        if (!res.success) {
+          const alertEl = document.getElementById('delete-admin-modal-alert');
+          if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+            alertEl.style.color = '#FCA5A5';
+            alertEl.innerText = res.error;
+          } else {
+            alert(res.error);
+          }
+          return;
+        }
+
+        closeDeleteAdminModal();
+        renderAdminUsersTable();
+        if (typeof refreshAll === 'function') refreshAll();
+      };
+
+      window.handleAdminSearchFilter = function() {
+        renderAdminUsersTable();
+      };
+
+      window.exportAdminAccountsCSV = function() {
+        const accounts = window.pemiluStorage.getAdminAccounts();
+        let csv = 'ID,Nama Lengkap,NPA,Jabatan,Email,No. WhatsApp,Peran,Status,2FA,Terakhir Login,Dibuat Pada\n';
+        accounts.forEach(a => {
+          csv += `"${a.id}","${a.name}","${a.npa || '-'}","${a.title || a.role}","${a.email}","${a.phone || '-'}","${a.role}","${a.status}","${a.twoFactor ? 'Aktif' : 'Non-Aktif'}","${a.lastLogin || '-'}","${a.createdAt || '-'}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ADMIN_ACCOUNTS_KPKU_IAGI_2026_${Date.now()}.csv`;
+        a.click();
+      };
+
+      // Direct event listener bindings for Add Admin and Form
+      const btnAddAdminDirect = document.getElementById('btn-open-add-admin');
+      if (btnAddAdminDirect) {
+        btnAddAdminDirect.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.openAddAdminModal();
+        });
+      }
+
+      const formManageAdmin = document.getElementById('form-manage-admin');
+      if (formManageAdmin) {
+        formManageAdmin.addEventListener('submit', handleSaveAdmin);
+      }
+
       // Toggle Vault
       document.getElementById('btn-toggle-vault-desktop').addEventListener('click', () => {
         const settings = window.pemiluStorage.getSettings();
