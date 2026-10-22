@@ -2227,7 +2227,7 @@
           </button>
 
           <!-- Aksi Cepat Hapus & Bulk Action -->
-          <button id="btn-open-fast-delete" class="btn-dpt-quickdel" title="Aksi Cepat Hapus DPT (Berdasarkan Jumlah / Kategori)">
+          <button id="btn-open-fast-delete" class="btn-dpt-quickdel" onclick="openFastDeleteModal()" title="Aksi Cepat Hapus DPT (Berdasarkan Jumlah / Kategori)">
             <span>⚡ Hapus Cepat</span>
           </button>
 
@@ -3752,6 +3752,7 @@
         }
 
         const npas = Array.from(window.selectedDptNpas);
+        const dpt = window.pemiluStorage.getDPT();
         const dptMap = new Map();
         dpt.forEach(v => {
           if (v && v.npa) dptMap.set(String(v.npa).trim().toUpperCase(), v);
