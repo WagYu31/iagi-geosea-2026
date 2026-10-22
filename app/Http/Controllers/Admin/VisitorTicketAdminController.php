@@ -463,6 +463,90 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
+     * Quick update ticket category directly from table chip
+     */
+    public function updateTicketCategory(Request $request, $id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        $request->validate([
+            'visitor_type' => 'required|string|max:100',
+        ]);
+
+        $newType = $request->visitor_type;
+        $oldType = $ticket->visitor_type;
+
+        $paidCategories = [
+            'iagi_member_professional' => 3000000,
+            'non_iagi_member_professional' => 4000000,
+            'iagi_member_expatriate' => 6000000,
+            'non_iagi_member_expatriate' => 7000000,
+            'student_undergraduate' => 1000000,
+            'exclusive' => 500000,
+        ];
+
+        $prefixMap = [
+            'vip' => 'TKT-VIP',
+            'speaker' => 'TKT-SPK',
+            'keynote_speech' => 'TKT-SPK',
+            'keynote_speaker' => 'TKT-SPK',
+            'panelist' => 'TKT-PNL',
+            'moderator' => 'TKT-MOD',
+            'exhibition' => 'TKT-EXH',
+            'committee' => 'TKT-COM',
+            'student_volunteer' => 'TKT-VOL',
+            'board' => 'TKT-BRD',
+            'sponsorship' => 'TKT-SPN',
+            'sponsor' => 'TKT-SPN',
+            'delegate' => 'TKT-DLG',
+            'non_exclusive' => 'TKT-VIS',
+            'exclusive' => 'TKT-EXC',
+            'iagi_member_professional' => 'TKT-IPRO',
+            'non_iagi_member_professional' => 'TKT-NPRO',
+            'iagi_member_expatriate' => 'TKT-IEXP',
+            'non_iagi_member_expatriate' => 'TKT-NEXP',
+            'student_undergraduate' => 'TKT-STUD',
+        ];
+
+        $newPrice = $paidCategories[$newType] ?? 0;
+
+        // Update ticket code prefix if needed
+        $newCode = $ticket->ticket_code;
+        if (isset($prefixMap[$newType])) {
+            $newPrefix = $prefixMap[$newType];
+            $parts = explode('-', $ticket->ticket_code);
+            if (count($parts) >= 4) {
+                $prefParts = explode('-', $newPrefix);
+                $parts[0] = $prefParts[0];
+                $parts[1] = $prefParts[1];
+                $newCode = implode('-', $parts);
+            } else {
+                $newCode = VisitorTicket::generateTicketCode($newType);
+            }
+        }
+
+        $ticket->update([
+            'visitor_type' => $newType,
+            'individual_price' => $newPrice,
+            'ticket_code' => $newCode,
+        ]);
+
+        // Recalculate payment total if payment exists
+        if ($ticket->payment_id) {
+            $payment = $ticket->payment;
+            if ($payment) {
+                $subtotal = $payment->tickets()->sum('individual_price');
+                $uniqueCode = (int) ($payment->unique_code ?? 0);
+                $payment->update([
+                    'total_amount' => $subtotal + $uniqueCode,
+                ]);
+            }
+        }
+
+        return back()->with('success', "Kategori tiket {$ticket->visitor_name} berhasil diubah.");
+    }
+
+    /**
      * Quick update payment status directly from table chip (approved, pending, rejected)
      */
     public function updatePaymentStatus(Request $request, $id)
@@ -907,6 +991,29 @@ class VisitorTicketAdminController extends Controller
                     'exclusive' => 500000,
                 ];
 
+                $prefixMap = [
+                    'vip' => 'TKT-VIP',
+                    'speaker' => 'TKT-SPK',
+                    'keynote_speech' => 'TKT-SPK',
+                    'keynote_speaker' => 'TKT-SPK',
+                    'panelist' => 'TKT-PNL',
+                    'moderator' => 'TKT-MOD',
+                    'exhibition' => 'TKT-EXH',
+                    'committee' => 'TKT-COM',
+                    'student_volunteer' => 'TKT-VOL',
+                    'board' => 'TKT-BRD',
+                    'sponsorship' => 'TKT-SPN',
+                    'sponsor' => 'TKT-SPN',
+                    'delegate' => 'TKT-DLG',
+                    'non_exclusive' => 'TKT-VIS',
+                    'exclusive' => 'TKT-EXC',
+                    'iagi_member_professional' => 'TKT-IPRO',
+                    'non_iagi_member_professional' => 'TKT-NPRO',
+                    'iagi_member_expatriate' => 'TKT-IEXP',
+                    'non_iagi_member_expatriate' => 'TKT-NEXP',
+                    'student_undergraduate' => 'TKT-STUD',
+                ];
+
                 // 1. Delete removed tickets safely
                 if (!empty($removedIds) && is_array($removedIds)) {
                     foreach ($removedIds as $remId) {
@@ -934,6 +1041,20 @@ class VisitorTicketAdminController extends Controller
                         // Existing ticket update
                         $existing = VisitorTicket::find($m['id']);
                         if ($existing) {
+                            $newCode = $existing->ticket_code;
+                            if ($existing->visitor_type !== $vType && isset($prefixMap[$vType])) {
+                                $newPrefix = $prefixMap[$vType];
+                                $parts = explode('-', $existing->ticket_code);
+                                if (count($parts) >= 4) {
+                                    $prefParts = explode('-', $newPrefix);
+                                    $parts[0] = $prefParts[0];
+                                    $parts[1] = $prefParts[1];
+                                    $newCode = implode('-', $parts);
+                                } else {
+                                    $newCode = VisitorTicket::generateTicketCode($vType);
+                                }
+                            }
+
                             $existing->update([
                                 'visitor_name' => $m['visitor_name'],
                                 'visitor_email' => $m['visitor_email'],
@@ -941,6 +1062,7 @@ class VisitorTicketAdminController extends Controller
                                 'visitor_institution' => $m['visitor_institution'] ?? null,
                                 'visitor_type' => $vType,
                                 'individual_price' => $indPrice,
+                                'ticket_code' => $newCode,
                                 'status' => $status,
                                 'is_group_leader' => $isLeader,
                             ]);
@@ -1034,14 +1156,74 @@ class VisitorTicketAdminController extends Controller
             'status' => 'required|in:active,pending,cancelled',
         ]);
 
+        $vType = $request->visitor_type;
+        $paidCategories = [
+            'iagi_member_professional' => 3000000,
+            'non_iagi_member_professional' => 4000000,
+            'iagi_member_expatriate' => 6000000,
+            'non_iagi_member_expatriate' => 7000000,
+            'student_undergraduate' => 1000000,
+            'exclusive' => 500000,
+        ];
+        $indPrice = $paidCategories[$vType] ?? 0;
+
+        $prefixMap = [
+            'vip' => 'TKT-VIP',
+            'speaker' => 'TKT-SPK',
+            'keynote_speech' => 'TKT-SPK',
+            'keynote_speaker' => 'TKT-SPK',
+            'panelist' => 'TKT-PNL',
+            'moderator' => 'TKT-MOD',
+            'exhibition' => 'TKT-EXH',
+            'committee' => 'TKT-COM',
+            'student_volunteer' => 'TKT-VOL',
+            'board' => 'TKT-BRD',
+            'sponsorship' => 'TKT-SPN',
+            'sponsor' => 'TKT-SPN',
+            'delegate' => 'TKT-DLG',
+            'non_exclusive' => 'TKT-VIS',
+            'exclusive' => 'TKT-EXC',
+            'iagi_member_professional' => 'TKT-IPRO',
+            'non_iagi_member_professional' => 'TKT-NPRO',
+            'iagi_member_expatriate' => 'TKT-IEXP',
+            'non_iagi_member_expatriate' => 'TKT-NEXP',
+            'student_undergraduate' => 'TKT-STUD',
+        ];
+
+        $newCode = $ticket->ticket_code;
+        if ($ticket->visitor_type !== $vType && isset($prefixMap[$vType])) {
+            $newPrefix = $prefixMap[$vType];
+            $parts = explode('-', $ticket->ticket_code);
+            if (count($parts) >= 4) {
+                $prefParts = explode('-', $newPrefix);
+                $parts[0] = $prefParts[0];
+                $parts[1] = $prefParts[1];
+                $newCode = implode('-', $parts);
+            } else {
+                $newCode = VisitorTicket::generateTicketCode($vType);
+            }
+        }
+
         $ticket->update([
             'visitor_name' => $request->visitor_name,
             'visitor_email' => $request->visitor_email,
             'visitor_phone' => $request->visitor_phone,
             'visitor_institution' => $request->visitor_institution,
-            'visitor_type' => $request->visitor_type,
+            'visitor_type' => $vType,
+            'individual_price' => $indPrice,
+            'ticket_code' => $newCode,
             'status' => $request->status,
         ]);
+
+        if ($ticket->payment_id && $ticket->payment) {
+            $subtotal = $ticket->payment->tickets()->sum('individual_price');
+            $uniqueCode = (int) ($ticket->payment->unique_code ?? 0);
+            if ($subtotal > 0) {
+                $ticket->payment->update([
+                    'total_amount' => $subtotal + $uniqueCode,
+                ]);
+            }
+        }
 
         return back()->with('success', "Data pengunjung {$ticket->visitor_name} berhasil diperbarui.");
     }

@@ -240,6 +240,29 @@ const CATEGORY_META = {
 
 const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
 
+const CATEGORY_PRICES = {
+    'iagi_member_professional': 3000000,
+    'non_iagi_member_professional': 4000000,
+    'iagi_member_expatriate': 6000000,
+    'non_iagi_member_expatriate': 7000000,
+    'student_undergraduate': 1000000,
+    'exclusive': 500000,
+    'non_exclusive': 0,
+    'vip': 0,
+    'speaker': 0,
+    'keynote_speech': 0,
+    'keynote_speaker': 0,
+    'panelist': 0,
+    'moderator': 0,
+    'exhibition': 0,
+    'committee': 0,
+    'student_volunteer': 0,
+    'board': 0,
+    'sponsorship': 0,
+    'sponsor': 0,
+    'delegate': 0,
+};
+
 export default function VisitorTicketsIndex({
     tickets = {},
     stats = {},
@@ -325,6 +348,10 @@ export default function VisitorTicketsIndex({
     const [debtMenuAnchor, setDebtMenuAnchor] = useState(null);
     const [selectedPaymentForDebt, setSelectedPaymentForDebt] = useState(null);
 
+    // Quick Category Popover Menus State
+    const [categoryMenuAnchor, setCategoryMenuAnchor] = useState(null);
+    const [selectedTicketForCategory, setSelectedTicketForCategory] = useState(null);
+
     const [quickDebtModal, setQuickDebtModal] = useState({
         open: false,
         payment: null,
@@ -371,6 +398,10 @@ export default function VisitorTicketsIndex({
         members: [],
         removed_ticket_ids: [],
     });
+
+    const liveEditSubtotal = (editData.members || []).reduce((acc, m) => acc + (CATEGORY_PRICES[m.visitor_type] || 0), 0);
+    const liveEditUniqueCode = Number(editModal.ticket?.payment?.unique_code || 0);
+    const liveEditTotal = liveEditSubtotal > 0 ? (liveEditSubtotal + liveEditUniqueCode) : 0;
 
     const searchTimer = useRef(null);
 
@@ -616,6 +647,29 @@ export default function VisitorTicketsIndex({
         }
     };
 
+    // Category Quick Switch
+    const handleOpenCategoryMenu = (e, ticket) => {
+        e.stopPropagation();
+        setCategoryMenuAnchor(e.currentTarget);
+        setSelectedTicketForCategory(ticket);
+    };
+
+    const handleCloseCategoryMenu = () => {
+        setCategoryMenuAnchor(null);
+        setSelectedTicketForCategory(null);
+    };
+
+    const handleSelectCategory = (newType) => {
+        if (!selectedTicketForCategory) return;
+        const ticketId = selectedTicketForCategory.id;
+        handleCloseCategoryMenu();
+        router.patch(route('admin.visitorTickets.quickCategory', ticketId), {
+            visitor_type: newType
+        }, {
+            preserveScroll: true,
+        });
+    };
+
     // Ticket Status Quick Switch
     const handleOpenTicketMenu = (e, ticket) => {
         e.stopPropagation();
@@ -764,50 +818,54 @@ export default function VisitorTicketsIndex({
     };
 
     const handleMemberChange = (idx, field, value) => {
-        const updated = editData.members.map((m, i) => i === idx ? { ...m, [field]: value } : m);
-        const isPrimary = updated[idx]?.is_group_leader || idx === 0;
+        setEditData(prev => {
+            const updated = prev.members.map((m, i) => i === idx ? { ...m, [field]: value } : m);
+            const isPrimary = updated[idx]?.is_group_leader || idx === 0;
 
-        let picUpdates = {};
-        if (isPrimary && editData.sync_pic_with_primary) {
-            if (field === 'visitor_name') picUpdates.pic_name = value;
-            if (field === 'visitor_email') picUpdates.pic_email = value;
-            if (field === 'visitor_phone') picUpdates.pic_phone = value;
-            if (field === 'visitor_institution') picUpdates.pic_institution = value;
-        }
+            let picUpdates = {};
+            if (isPrimary && prev.sync_pic_with_primary) {
+                if (field === 'visitor_name') picUpdates.pic_name = value;
+                if (field === 'visitor_email') picUpdates.pic_email = value;
+                if (field === 'visitor_phone') picUpdates.pic_phone = value;
+                if (field === 'visitor_institution') picUpdates.pic_institution = value;
+            }
 
-        setEditData({
-            ...editData,
-            ...picUpdates,
-            members: updated,
-            ...(isPrimary ? {
-                visitor_name: updated[idx].visitor_name,
-                visitor_email: updated[idx].visitor_email,
-                visitor_phone: updated[idx].visitor_phone,
-                visitor_institution: updated[idx].visitor_institution,
-                visitor_type: updated[idx].visitor_type,
-                status: updated[idx].status,
-            } : {})
+            return {
+                ...prev,
+                ...picUpdates,
+                members: updated,
+                ...(isPrimary ? {
+                    visitor_name: updated[idx].visitor_name,
+                    visitor_email: updated[idx].visitor_email,
+                    visitor_phone: updated[idx].visitor_phone,
+                    visitor_institution: updated[idx].visitor_institution,
+                    visitor_type: updated[idx].visitor_type,
+                    status: updated[idx].status,
+                } : {})
+            };
         });
     };
 
     const handleAddMember = () => {
-        const defaultInst = editData.pic_institution || editData.members[0]?.visitor_institution || '';
-        const defaultCat = editData.members[0]?.visitor_type || 'non_iagi_member_professional';
-        const defaultStatus = editData.members[0]?.status || 'pending';
-        const newMember = {
-            id: null,
-            ticket_code: 'NEW TICKET (AUTO)',
-            visitor_name: '',
-            visitor_email: '',
-            visitor_phone: '',
-            visitor_institution: defaultInst,
-            visitor_type: defaultCat,
-            status: defaultStatus,
-            is_group_leader: false,
-        };
-        setEditData({
-            ...editData,
-            members: [...editData.members, newMember]
+        setEditData(prev => {
+            const defaultInst = prev.pic_institution || prev.members[0]?.visitor_institution || '';
+            const defaultCat = prev.members[0]?.visitor_type || 'non_iagi_member_professional';
+            const defaultStatus = prev.members[0]?.status || 'pending';
+            const newMember = {
+                id: null,
+                ticket_code: 'NEW TICKET (AUTO)',
+                visitor_name: '',
+                visitor_email: '',
+                visitor_phone: '',
+                visitor_institution: defaultInst,
+                visitor_type: defaultCat,
+                status: defaultStatus,
+                is_group_leader: false,
+            };
+            return {
+                ...prev,
+                members: [...prev.members, newMember]
+            };
         });
     };
 
@@ -816,57 +874,61 @@ export default function VisitorTicketsIndex({
             alert('Minimal harus ada 1 peserta dalam pendaftaran.');
             return;
         }
-        const target = editData.members[idx];
-        const newMembers = editData.members.filter((_, i) => i !== idx);
-        const newRemoved = target.id ? [...editData.removed_ticket_ids, target.id] : editData.removed_ticket_ids;
+        setEditData(prev => {
+            const target = prev.members[idx];
+            const newMembers = prev.members.filter((_, i) => i !== idx);
+            const newRemoved = target.id ? [...prev.removed_ticket_ids, target.id] : prev.removed_ticket_ids;
 
-        if (target.is_group_leader && newMembers.length > 0) {
-            newMembers[0].is_group_leader = true;
-        }
+            if (target.is_group_leader && newMembers.length > 0) {
+                newMembers[0].is_group_leader = true;
+            }
 
-        const primary = newMembers.find(m => m.is_group_leader) || newMembers[0];
+            const primary = newMembers.find(m => m.is_group_leader) || newMembers[0];
 
-        setEditData({
-            ...editData,
-            members: newMembers,
-            removed_ticket_ids: newRemoved,
-            visitor_name: primary?.visitor_name || '',
-            visitor_email: primary?.visitor_email || '',
-            visitor_phone: primary?.visitor_phone || '',
-            visitor_institution: primary?.visitor_institution || '',
-            visitor_type: primary?.visitor_type || 'non_exclusive',
-            status: primary?.status || 'active',
+            return {
+                ...prev,
+                members: newMembers,
+                removed_ticket_ids: newRemoved,
+                visitor_name: primary?.visitor_name || '',
+                visitor_email: primary?.visitor_email || '',
+                visitor_phone: primary?.visitor_phone || '',
+                visitor_institution: primary?.visitor_institution || '',
+                visitor_type: primary?.visitor_type || 'non_exclusive',
+                status: primary?.status || 'active',
+            };
         });
     };
 
     const handleSetGroupLeader = (idx) => {
-        const updated = editData.members.map((m, i) => ({
-            ...m,
-            is_group_leader: i === idx,
-        }));
-        const leader = updated.splice(idx, 1)[0];
-        updated.unshift(leader);
+        setEditData(prev => {
+            const updated = prev.members.map((m, i) => ({
+                ...m,
+                is_group_leader: i === idx,
+            }));
+            const leader = updated.splice(idx, 1)[0];
+            updated.unshift(leader);
 
-        let picUpdates = {};
-        if (editData.sync_pic_with_primary) {
-            picUpdates = {
-                pic_name: leader.visitor_name,
-                pic_email: leader.visitor_email,
-                pic_phone: leader.visitor_phone,
-                pic_institution: leader.visitor_institution,
+            let picUpdates = {};
+            if (prev.sync_pic_with_primary) {
+                picUpdates = {
+                    pic_name: leader.visitor_name,
+                    pic_email: leader.visitor_email,
+                    pic_phone: leader.visitor_phone,
+                    pic_institution: leader.visitor_institution,
+                };
+            }
+
+            return {
+                ...prev,
+                ...picUpdates,
+                visitor_name: leader.visitor_name,
+                visitor_email: leader.visitor_email,
+                visitor_phone: leader.visitor_phone,
+                visitor_institution: leader.visitor_institution,
+                visitor_type: leader.visitor_type,
+                status: leader.status,
+                members: updated,
             };
-        }
-
-        setEditData({
-            ...editData,
-            ...picUpdates,
-            visitor_name: leader.visitor_name,
-            visitor_email: leader.visitor_email,
-            visitor_phone: leader.visitor_phone,
-            visitor_institution: leader.visitor_institution,
-            visitor_type: leader.visitor_type,
-            status: leader.status,
-            members: updated,
         });
     };
 
@@ -1997,20 +2059,35 @@ export default function VisitorTicketsIndex({
 
                                                 {/* CATEGORY */}
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
-                                                    <Chip
-                                                        icon={t.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
-                                                        label={getCategoryMeta(t.visitor_type).shortLabel}
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor: getCategoryMeta(t.visitor_type).bg,
-                                                            border: `1px solid ${getCategoryMeta(t.visitor_type).border}`,
-                                                            color: getCategoryMeta(t.visitor_type).color,
-                                                            fontWeight: 900,
-                                                            fontSize: '0.65rem',
-                                                            height: 22,
-                                                            whiteSpace: 'nowrap',
-                                                        }}
-                                                    />
+                                                    <Tooltip title="Klik untuk ubah kategori pengunjung / peserta" arrow>
+                                                        <Chip
+                                                            icon={t.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 12, color: '#92400e !important' }} /> : undefined}
+                                                            label={
+                                                                <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.4 }}>
+                                                                    <span>{getCategoryMeta(t.visitor_type).shortLabel}</span>
+                                                                    <span style={{ fontSize: '8px', opacity: 0.7 }}>▾</span>
+                                                                </Box>
+                                                            }
+                                                            size="small"
+                                                            onClick={(e) => handleOpenCategoryMenu(e, t)}
+                                                            sx={{
+                                                                bgcolor: getCategoryMeta(t.visitor_type).bg,
+                                                                border: `1px solid ${getCategoryMeta(t.visitor_type).border}`,
+                                                                color: getCategoryMeta(t.visitor_type).color,
+                                                                fontWeight: 900,
+                                                                fontSize: '0.65rem',
+                                                                height: 22,
+                                                                whiteSpace: 'nowrap',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.15s ease-in-out',
+                                                                '&:hover': {
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                                                                    filter: 'brightness(0.96)',
+                                                                },
+                                                            }}
+                                                        />
+                                                    </Tooltip>
                                                     {t.individual_price && Number(t.individual_price) > 0 && (
                                                         <Typography variant="caption" sx={{ color: '#094d42', fontWeight: 800, fontSize: '0.67rem', display: 'block', mt: 0.3 }}>
                                                             Rp {Number(t.individual_price).toLocaleString('id-ID')}
@@ -2762,9 +2839,25 @@ export default function VisitorTicketsIndex({
                                         <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', fontSize: '0.68rem' }}>
                                             CURRENT INVOICE TOTAL
                                         </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 900, color: '#094d42', fontSize: '1rem', fontFamily: 'monospace' }}>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                fontWeight: 900,
+                                                color: (editData.recalculate_total && liveEditTotal !== Number(editModal.ticket.payment.total_amount)) ? '#94a3b8' : '#094d42',
+                                                fontSize: (editData.recalculate_total && liveEditTotal !== Number(editModal.ticket.payment.total_amount)) ? '0.85rem' : '1rem',
+                                                fontFamily: 'monospace',
+                                                textDecoration: (editData.recalculate_total && liveEditTotal !== Number(editModal.ticket.payment.total_amount)) ? 'line-through' : 'none',
+                                            }}
+                                        >
                                             Rp {Number(editModal.ticket.payment.total_amount || 0).toLocaleString('id-ID')}
                                         </Typography>
+                                        {editData.recalculate_total && (
+                                            <Box sx={{ mt: 0.3, display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: '#ecfdf5', px: 1, py: 0.25, borderRadius: '6px', border: '1px solid #a7f3d0' }}>
+                                                <Typography variant="caption" sx={{ color: '#047857', fontWeight: 900, fontSize: '0.76rem', fontFamily: 'monospace' }}>
+                                                    Estimated New: Rp {liveEditTotal.toLocaleString('id-ID')}
+                                                </Typography>
+                                            </Box>
+                                        )}
                                     </Box>
                                 </Box>
 
@@ -2965,6 +3058,34 @@ export default function VisitorTicketsIndex({
                                                         }}
                                                     />
                                                 )}
+                                                {CATEGORY_PRICES[member.visitor_type] > 0 ? (
+                                                    <Chip
+                                                        label={`Rp ${Number(CATEGORY_PRICES[member.visitor_type]).toLocaleString('id-ID')}`}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#ecfdf5',
+                                                            border: '1px solid #a7f3d0',
+                                                            color: '#065f46',
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: 900,
+                                                            fontSize: '0.72rem',
+                                                            height: 24,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Chip
+                                                        label="Free"
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#f8fafc',
+                                                            border: '1px solid #e2e8f0',
+                                                            color: '#64748b',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.7rem',
+                                                            height: 24,
+                                                        }}
+                                                    />
+                                                )}
                                             </Box>
 
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -3108,33 +3229,91 @@ export default function VisitorTicketsIndex({
                                                         value={member.visitor_type}
                                                         label="Visitor Category"
                                                         onChange={(e) => handleMemberChange(idx, 'visitor_type', e.target.value)}
+                                                        renderValue={(selected) => {
+                                                            const meta = getCategoryMeta(selected);
+                                                            const price = CATEGORY_PRICES[selected];
+                                                            return (
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 1 }}>
+                                                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#0f172a', fontSize: '0.82rem' }} noWrap>
+                                                                        {meta.label}
+                                                                    </Typography>
+                                                                    {price > 0 && (
+                                                                        <Typography variant="caption" sx={{ fontWeight: 900, color: '#094d42', fontFamily: 'monospace', fontSize: '0.74rem' }}>
+                                                                            Rp {price.toLocaleString('id-ID')}
+                                                                        </Typography>
+                                                                    )}
+                                                                </Box>
+                                                            );
+                                                        }}
                                                     >
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                                            1. PARTICIPANT
+                                                            1. PARTICIPANT (BERBAYAR)
                                                         </ListSubheader>
-                                                        <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member)</MenuItem>
-                                                        <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member)</MenuItem>
-                                                        <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
-                                                        <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
-                                                        <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
+                                                        <MenuItem value="iagi_member_professional" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#15803d', fontSize: '0.82rem' }}>
+                                                                    • Professional (Member)
+                                                                </Typography>
+                                                                <Chip label="Rp 3.000.000" size="small" sx={{ bgcolor: '#dcfce7', color: '#166534', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="non_iagi_member_professional" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#0369a1', fontSize: '0.82rem' }}>
+                                                                    • Professional (Non-Member)
+                                                                </Typography>
+                                                                <Chip label="Rp 4.000.000" size="small" sx={{ bgcolor: '#e0f2fe', color: '#0369a1', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="iagi_member_expatriate" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#6d28d9', fontSize: '0.82rem' }}>
+                                                                    • Expatriate (Member)
+                                                                </Typography>
+                                                                <Chip label="Rp 6.000.000" size="small" sx={{ bgcolor: '#ede9fe', color: '#6d28d9', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#5b21b6', fontSize: '0.82rem' }}>
+                                                                    • Expatriate (Non-Member)
+                                                                </Typography>
+                                                                <Chip label="Rp 7.000.000" size="small" sx={{ bgcolor: '#ede9fe', color: '#5b21b6', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="student_undergraduate" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#3730a3', fontSize: '0.82rem' }}>
+                                                                    • Student Undergraduate
+                                                                </Typography>
+                                                                <Chip label="Rp 1.000.000" size="small" sx={{ bgcolor: '#e0e7ff', color: '#3730a3', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                                            2. VISITOR
+                                                            2. VISITOR PASS
                                                         </ListSubheader>
-                                                        <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
+                                                        <MenuItem value="non_exclusive" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#047857', fontSize: '0.82rem' }}>
+                                                                    🎟️ Visitor Pass (Free)
+                                                                </Typography>
+                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             ROLES & INVITATIONS (3 - 11)
                                                         </ListSubheader>
-                                                        <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
-                                                        <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
-                                                        <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
-                                                        <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
-                                                        <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
-                                                        <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
-                                                        <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
-                                                        <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
-                                                        <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
+                                                        <MenuItem value="vip" sx={{ pl: 2.5, py: 0.8 }}>3. ⭐ VIP (Free)</MenuItem>
+                                                        <MenuItem value="speaker" sx={{ pl: 2.5, py: 0.8 }}>4. 🎤 Keynote Speaker (Free)</MenuItem>
+                                                        <MenuItem value="panelist" sx={{ pl: 2.5, py: 0.8 }}>5. 👥 Panelist (Free)</MenuItem>
+                                                        <MenuItem value="moderator" sx={{ pl: 2.5, py: 0.8 }}>6. 🎯 Moderator (Free)</MenuItem>
+                                                        <MenuItem value="exhibition" sx={{ pl: 2.5, py: 0.8 }}>7. 🏛️ Exhibition (Free)</MenuItem>
+                                                        <MenuItem value="committee" sx={{ pl: 2.5, py: 0.8 }}>8. 👔 Committee (Free)</MenuItem>
+                                                        <MenuItem value="student_volunteer" sx={{ pl: 2.5, py: 0.8 }}>9. 🤝 Student Volunteer (Free)</MenuItem>
+                                                        <MenuItem value="board" sx={{ pl: 2.5, py: 0.8 }}>10. 🎖️ Board (Free)</MenuItem>
+                                                        <MenuItem value="sponsorship" sx={{ pl: 2.5, py: 0.8 }}>11. 💎 Delegate (Free)</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
@@ -3164,6 +3343,21 @@ export default function VisitorTicketsIndex({
                             Cancel
                         </Button>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            {editModal.ticket?.payment && editData.recalculate_total && (
+                                <Chip
+                                    label={`Est. Total: Rp ${liveEditTotal.toLocaleString('id-ID')}`}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: '#ecfdf5',
+                                        border: '1px solid #a7f3d0',
+                                        color: '#065f46',
+                                        fontFamily: 'monospace',
+                                        fontWeight: 900,
+                                        fontSize: '0.74rem',
+                                        height: 26,
+                                    }}
+                                />
+                            )}
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 800 }}>
                                 {editData.members.length} participant(s) to save
                             </Typography>
@@ -4417,6 +4611,202 @@ export default function VisitorTicketsIndex({
                         </Typography>
                     </Box>
                 </MenuItem>
+            </Menu>
+
+            {/* QUICK STATUS POPOVER 4: CATEGORY SWITCHER */}
+            <Menu
+                anchorEl={categoryMenuAnchor}
+                open={Boolean(categoryMenuAnchor)}
+                onClose={handleCloseCategoryMenu}
+                PaperProps={{
+                    elevation: 8,
+                    sx: {
+                        borderRadius: '16px',
+                        width: 320,
+                        maxHeight: 460,
+                        p: 0.5,
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    }
+                }}
+                transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            >
+                <Box sx={{ px: 2, py: 1.2, borderBottom: '1px solid #f1f5f9' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Ubah Kategori Pengunjung
+                    </Typography>
+                    {selectedTicketForCategory && (
+                        <Box sx={{ mt: 0.4 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }} noWrap>
+                                {selectedTicketForCategory.visitor_name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#094d42', fontWeight: 800, fontFamily: 'monospace' }}>
+                                {selectedTicketForCategory.ticket_code} • {getCategoryMeta(selectedTicketForCategory.visitor_type).label}
+                            </Typography>
+                        </Box>
+                    )}
+                </Box>
+
+                <ListSubheader sx={{ fontWeight: 900, color: '#094d42', bgcolor: '#f8fafc', lineHeight: '28px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
+                    1. PARTICIPANT (BERBAYAR)
+                </ListSubheader>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('iagi_member_professional')}
+                    selected={selectedTicketForCategory?.visitor_type === 'iagi_member_professional'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#15803d', fontSize: '0.8rem' }}>
+                                Professional (Member)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 3.000.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-IPRO
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('non_iagi_member_professional')}
+                    selected={selectedTicketForCategory?.visitor_type === 'non_iagi_member_professional'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0369a1', fontSize: '0.8rem' }}>
+                                Professional (Non-Member)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 4.000.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-NPRO
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('iagi_member_expatriate')}
+                    selected={selectedTicketForCategory?.visitor_type === 'iagi_member_expatriate'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#6d28d9', fontSize: '0.8rem' }}>
+                                Expatriate (Member)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 6.000.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-IEXP
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('non_iagi_member_expatriate')}
+                    selected={selectedTicketForCategory?.visitor_type === 'non_iagi_member_expatriate'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#5b21b6', fontSize: '0.8rem' }}>
+                                Expatriate (Non-Member)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 7.000.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-NEXP
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('student_undergraduate')}
+                    selected={selectedTicketForCategory?.visitor_type === 'student_undergraduate'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#3730a3', fontSize: '0.8rem' }}>
+                                Student Undergraduate
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 1.000.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-STUD
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <ListSubheader sx={{ fontWeight: 900, color: '#094d42', bgcolor: '#f8fafc', lineHeight: '28px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
+                    2. VISITOR PASS
+                </ListSubheader>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('non_exclusive')}
+                    selected={selectedTicketForCategory?.visitor_type === 'non_exclusive'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#047857', fontSize: '0.8rem' }}>
+                                🎟️ Visitor Pass (Free)
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#047857' }}>
+                                Free
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-VIS
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <ListSubheader sx={{ fontWeight: 900, color: '#094d42', bgcolor: '#f8fafc', lineHeight: '28px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
+                    3. ROLES & INVITATIONS (FREE)
+                </ListSubheader>
+
+                {[
+                    { type: 'vip', label: '3. ⭐ VIP', code: 'TKT-VIP' },
+                    { type: 'speaker', label: '4. 🎤 Keynote Speaker', code: 'TKT-SPK' },
+                    { type: 'panelist', label: '5. 👥 Panelist', code: 'TKT-PNL' },
+                    { type: 'moderator', label: '6. 🎯 Moderator', code: 'TKT-MOD' },
+                    { type: 'exhibition', label: '7. 🏛️ Exhibition', code: 'TKT-EXH' },
+                    { type: 'committee', label: '8. 👔 Committee', code: 'TKT-COM' },
+                    { type: 'student_volunteer', label: '9. 🤝 Volunteer', code: 'TKT-VOL' },
+                    { type: 'board', label: '10. 🎖️ Board', code: 'TKT-BRD' },
+                    { type: 'sponsorship', label: '11. 💎 Delegate', code: 'TKT-DLG' },
+                ].map((item) => (
+                    <MenuItem
+                        key={item.type}
+                        onClick={() => handleSelectCategory(item.type)}
+                        selected={selectedTicketForCategory?.visitor_type === item.type}
+                        sx={{ py: 0.6, px: 2, borderRadius: '8px', m: 0.3 }}
+                    >
+                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#334155', fontSize: '0.78rem' }}>
+                                {item.label}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontFamily: 'monospace', fontSize: '0.68rem' }}>
+                                {item.code}
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                ))}
             </Menu>
 
             {/* QUICK DEBT DIALOG */}

@@ -243,6 +243,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/visitor-tickets', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'index'])->name('visitorTickets');
         Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
         Route::patch('/visitor-tickets/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketStatus'])->name('visitorTickets.quickStatus');
+        Route::patch('/visitor-tickets/{id}/quick-category', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketCategory'])->name('visitorTickets.quickCategory');
         Route::patch('/visitor-tickets/payment/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentStatus'])->name('visitorTickets.quickPaymentStatus');
         Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
         Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
