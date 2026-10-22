@@ -25,10 +25,13 @@ import {
     Avatar,
     useTheme,
     Chip,
+    Tooltip,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -1119,6 +1122,16 @@ export default function Settings({ settings, submissionSettings, pricing: initia
     });
     const [uploading, setUploading] = useState(false);
 
+    // Drag & Drop State for Keynote Speakers
+    const [draggedSpeakerIndex, setDraggedSpeakerIndex] = useState(null);
+    const [dragOverSpeakerSlot, setDragOverSpeakerSlot] = useState(null);
+    const [speakerDragOverFileIndex, setSpeakerDragOverFileIndex] = useState(null);
+
+    // Drag & Drop State for Sponsors
+    const [draggedSponsorIndex, setDraggedSponsorIndex] = useState(null);
+    const [dragOverSponsorSlot, setDragOverSponsorSlot] = useState(null);
+    const [sponsorDragOverFileIndex, setSponsorDragOverFileIndex] = useState(null);
+
     // Shared premium styles
     const inputSx = { '& .MuiOutlinedInput-root': { borderRadius: '10px', '& fieldset': { borderColor: c.cardBorder }, '&:hover fieldset': { borderColor: '#1abc9c' }, '&.Mui-focused fieldset': { borderColor: '#1abc9c' } }, '& .MuiInputLabel-root.Mui-focused': { color: '#1abc9c' }, '& input, & textarea': { color: c.textPrimary }, '& .MuiFormHelperText-root': { color: c.textMuted } };
     const tealBtnSx = { background: 'linear-gradient(135deg, #0d7a6a 0%, #1abc9c 100%)', '&:hover': { background: 'linear-gradient(135deg, #16a085 0%, #0d7a6a 100%)' }, borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 3, boxShadow: '0 4px 14px rgba(26,188,156,0.35)' };
@@ -1644,24 +1657,37 @@ export default function Settings({ settings, submissionSettings, pricing: initia
         }
     };
 
-    // Handle speaker photo upload
+    // Handle speaker photo upload (supports click and drag & drop)
     const handleSpeakerPhotoUpload = async (index, file) => {
         if (!file) return;
 
-        // Check if this is a new speaker (not yet in DB)
-        const speakersInDB = getSettingValue('keynote_speakers', []);
-        if (index >= speakersInDB.length) {
-            alert('Please save the speakers first before uploading photos for new speakers.');
+        if (!file.type || !file.type.startsWith('image/')) {
+            alert('File harus berupa format gambar (JPG, PNG, GIF, WebP).');
             return;
         }
-
-        const formData = new FormData();
-        formData.append('photo', file);
-        formData.append('index', index);
 
         setUploading(true);
 
         try {
+            // Auto-save speakers state first if new speaker card hasn't been written to DB
+            const speakersInDB = getSettingValue('keynote_speakers', []);
+            if (index >= speakersInDB.length) {
+                try {
+                    await axios.post(route('admin.settings.store'), {
+                        key: 'keynote_speakers',
+                        value: JSON.stringify(speakers),
+                        group: 'landing_page',
+                        type: 'json'
+                    });
+                } catch (saveErr) {
+                    console.warn('Auto-save speakers before photo upload:', saveErr);
+                }
+            }
+
+            const formData = new FormData();
+            formData.append('photo', file);
+            formData.append('index', index);
+
             const response = await axios.post(route('admin.settings.uploadSpeakerPhoto'), formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -1669,8 +1695,10 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             });
 
             if (response.data.success) {
-                alert('Speaker photo uploaded successfully!');
                 const newSpeakers = [...speakers];
+                if (!newSpeakers[index]) {
+                    newSpeakers[index] = { name: '', title: '', photo: '', institution: '' };
+                }
                 newSpeakers[index].photo = response.data.photo_url;
                 setSpeakers(newSpeakers);
             } else {
@@ -1684,9 +1712,14 @@ export default function Settings({ settings, submissionSettings, pricing: initia
         }
     };
 
-    // Handle sponsor logo upload
+    // Handle sponsor logo upload (supports click and drag & drop)
     const handleSponsorLogoUpload = async (index, file) => {
         if (!file) return;
+
+        if (!file.type || !file.type.startsWith('image/')) {
+            alert('File harus berupa format gambar (JPG, PNG, SVG, WebP).');
+            return;
+        }
 
         const formData = new FormData();
         formData.append('logo', file);
@@ -1694,6 +1727,20 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
         setUploading(true);
         try {
+            const sponsorsInDB = getSettingValue('sponsors', []);
+            if (index >= sponsorsInDB.length) {
+                try {
+                    await axios.post(route('admin.settings.store'), {
+                        key: 'sponsors',
+                        value: JSON.stringify(sponsors),
+                        group: 'landing_page',
+                        type: 'json'
+                    });
+                } catch (saveErr) {
+                    console.warn('Auto-save sponsors before logo upload:', saveErr);
+                }
+            }
+
             const response = await axios.post(route('admin.settings.uploadSponsorLogo'), formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -1702,12 +1749,15 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
             if (response.data.success) {
                 const newSponsors = [...sponsors];
+                if (!newSponsors[index]) {
+                    newSponsors[index] = { name: '', logo: '', category: 'silver' };
+                }
                 newSponsors[index].logo = response.data.logo_url;
                 setSponsors(newSponsors);
             }
         } catch (error) {
             console.error('Logo upload failed:', error);
-            alert('Failed to upload logo');
+            alert('Failed to upload logo: ' + (error.response?.data?.error || error.message));
         } finally {
             setUploading(false);
         }
@@ -2893,16 +2943,16 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                             Manage keynote speakers for the conference. Upload photos and add speaker details.
                                         </Alert>
 
-                                        {/* Add Speaker Button */}
-                                        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Alert severity="warning" sx={{ flex: 1, mr: 2 }}>
-                                                Save speakers first before uploading photos for new speakers!
+                                        {/* Add Speaker Button & Tip */}
+                                        <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Alert severity="success" icon={<CloudUploadIcon />} sx={{ flex: 1, minWidth: 280, bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#e6fcf5', color: isDark ? '#2dd4bf' : '#0d9488', border: `1px solid ${isDark ? 'rgba(26,188,156,0.3)' : '#99f6e4'}` }}>
+                                                <strong>Fitur Drag & Drop:</strong> Tarik & lepaskan file foto langsung ke kotak foto, atau geser kartu (icon grip) untuk mengatur urutan pembicara.
                                             </Alert>
                                             <Button
                                                 variant="outlined"
                                                 startIcon={<AddIcon />}
                                                 onClick={addSpeaker}
-                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c', whiteSpace: 'nowrap' }}
+                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c', whiteSpace: 'nowrap', fontWeight: 600, height: 42 }}
                                             >
                                                 Add Speaker
                                             </Button>
@@ -2924,62 +2974,211 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                         <Grid container spacing={2}>
                                             {speakers.map((speaker, index) => (
                                                 <Grid item xs={12} sm={6} md={3} key={index}>
-                                                    <Card sx={{ p: 2, height: '100%', position: 'relative' }}>
-                                                        {/* Remove Button */}
-                                                        <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-                                                            <Button
+                                                    <Card
+                                                        draggable
+                                                        onDragStart={(e) => {
+                                                            if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+                                                                e.preventDefault();
+                                                                return;
+                                                            }
+                                                            e.dataTransfer.setData('text/plain', String(index));
+                                                            e.dataTransfer.effectAllowed = 'move';
+                                                            setDraggedSpeakerIndex(index);
+                                                        }}
+                                                        onDragOver={(e) => {
+                                                            e.preventDefault();
+                                                            e.dataTransfer.dropEffect = 'move';
+                                                            if (dragOverSpeakerSlot !== index) {
+                                                                setDragOverSpeakerSlot(index);
+                                                            }
+                                                        }}
+                                                        onDragLeave={() => {
+                                                            if (dragOverSpeakerSlot === index) {
+                                                                setDragOverSpeakerSlot(null);
+                                                            }
+                                                        }}
+                                                        onDrop={(e) => {
+                                                            const fromIdxStr = e.dataTransfer.getData('text/plain');
+                                                            const fromIdx = fromIdxStr !== '' ? parseInt(fromIdxStr, 10) : draggedSpeakerIndex;
+                                                            if (!isNaN(fromIdx) && fromIdx !== null && fromIdx !== index && fromIdx < speakers.length) {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                const updated = [...speakers];
+                                                                const [movedItem] = updated.splice(fromIdx, 1);
+                                                                updated.splice(index, 0, movedItem);
+                                                                setSpeakers(updated);
+                                                            }
+                                                            setDraggedSpeakerIndex(null);
+                                                            setDragOverSpeakerSlot(null);
+                                                        }}
+                                                        onDragEnd={() => {
+                                                            setDraggedSpeakerIndex(null);
+                                                            setDragOverSpeakerSlot(null);
+                                                        }}
+                                                        sx={{
+                                                            p: 2,
+                                                            height: '100%',
+                                                            position: 'relative',
+                                                            borderRadius: '14px',
+                                                            border: dragOverSpeakerSlot === index
+                                                                ? '2px dashed #1abc9c'
+                                                                : `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                                            bgcolor: dragOverSpeakerSlot === index
+                                                                ? (isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9')
+                                                                : (isDark ? 'rgba(255,255,255,0.02)' : '#ffffff'),
+                                                            opacity: draggedSpeakerIndex === index ? 0.4 : 1,
+                                                            transition: 'all 0.2s ease',
+                                                            boxShadow: dragOverSpeakerSlot === index
+                                                                ? '0 8px 24px rgba(26,188,156,0.25)'
+                                                                : (isDark ? '0 4px 12px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.04)'),
+                                                        }}
+                                                    >
+                                                        {/* Card Header with Drag Handle & Delete */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                                            <Tooltip title="Tahan & geser untuk mengubah urutan pembicara">
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'grab', userSelect: 'none' }}>
+                                                                    <DragIndicatorIcon sx={{ color: '#1abc9c', fontSize: '1.25rem' }} />
+                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fff' : '#1e293b' }}>
+                                                                        Speaker {index + 1}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Tooltip>
+                                                            <IconButton
                                                                 size="small"
-                                                                variant="outlined"
                                                                 color="error"
                                                                 onClick={() => removeSpeaker(index)}
-                                                                sx={{ minWidth: 'auto', p: 0.5 }}
+                                                                sx={{ p: 0.5, bgcolor: isDark ? 'rgba(239,68,68,0.1)' : '#fee2e2', '&:hover': { bgcolor: '#fca5a5' } }}
+                                                                title="Hapus Pembicara"
                                                             >
                                                                 <DeleteIcon fontSize="small" />
-                                                            </Button>
+                                                            </IconButton>
                                                         </Box>
 
-                                                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                                                            Speaker {index + 1}
-                                                        </Typography>
-                                                        {/* Photo Preview */}
+                                                        {/* Drag & Drop Photo Area */}
                                                         <Box
+                                                            onDragOver={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSpeakerDragOverFileIndex(index);
+                                                            }}
+                                                            onDragEnter={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSpeakerDragOverFileIndex(index);
+                                                            }}
+                                                            onDragLeave={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSpeakerDragOverFileIndex(null);
+                                                            }}
+                                                            onDrop={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSpeakerDragOverFileIndex(null);
+                                                                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                                                                    handleSpeakerPhotoUpload(index, e.dataTransfer.files[0]);
+                                                                }
+                                                            }}
+                                                            onClick={() => {
+                                                                const fileInput = document.getElementById(`speaker-file-${index}`);
+                                                                if (fileInput) fileInput.click();
+                                                            }}
                                                             sx={{
                                                                 width: '100%',
                                                                 height: 200,
-                                                                backgroundColor: '#f5f5f5',
-                                                                borderRadius: 1,
-                                                                mb: 2,
+                                                                backgroundColor: speakerDragOverFileIndex === index
+                                                                    ? (isDark ? 'rgba(26,188,156,0.2)' : '#e6fcf5')
+                                                                    : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                                                borderRadius: '10px',
+                                                                border: speakerDragOverFileIndex === index
+                                                                    ? '2px dashed #1abc9c'
+                                                                    : `2px dashed ${speaker.photo ? 'transparent' : (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1')}`,
+                                                                mb: 1.5,
                                                                 display: 'flex',
+                                                                flexDirection: 'column',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
+                                                                cursor: 'pointer',
+                                                                position: 'relative',
                                                                 overflow: 'hidden',
+                                                                transition: 'all 0.2s ease',
                                                                 backgroundImage: speaker.photo ? `url(${speaker.photo})` : 'none',
                                                                 backgroundSize: 'cover',
                                                                 backgroundPosition: 'center',
+                                                                '&:hover': {
+                                                                    borderColor: '#1abc9c',
+                                                                    backgroundColor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
+                                                                    '& .speaker-photo-hover': { opacity: 1 },
+                                                                }
                                                             }}
                                                         >
-                                                            {!speaker.photo && (
-                                                                <Typography variant="caption" color="text.secondary">
-                                                                    No Photo
-                                                                </Typography>
+                                                            {speaker.photo ? (
+                                                                <Box
+                                                                    className="speaker-photo-hover"
+                                                                    sx={{
+                                                                        position: 'absolute',
+                                                                        inset: 0,
+                                                                        bgcolor: 'rgba(0, 0, 0, 0.65)',
+                                                                        color: '#fff',
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        opacity: speakerDragOverFileIndex === index ? 1 : 0,
+                                                                        transition: 'opacity 0.2s ease',
+                                                                        p: 1.5,
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                >
+                                                                    <CloudUploadIcon sx={{ fontSize: 34, color: '#1abc9c', mb: 0.5 }} />
+                                                                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#fff' }}>
+                                                                        {speakerDragOverFileIndex === index ? 'Lepaskan foto sekarang!' : 'Drag & drop foto baru atau klik untuk mengganti'}
+                                                                    </Typography>
+                                                                </Box>
+                                                            ) : (
+                                                                <Box sx={{ p: 2, textAlign: 'center', pointerEvents: 'none' }}>
+                                                                    <CloudUploadIcon sx={{ fontSize: 40, color: speakerDragOverFileIndex === index ? '#1abc9c' : '#94a3b8', mb: 1, transition: 'all 0.2s' }} />
+                                                                    <Typography variant="body2" sx={{ fontWeight: 700, color: speakerDragOverFileIndex === index ? '#1abc9c' : (isDark ? '#e2e8f0' : '#334155'), mb: 0.5 }}>
+                                                                        {speakerDragOverFileIndex === index ? 'Lepaskan Foto Di Sini!' : 'Drag & Drop Foto di Sini'}
+                                                                    </Typography>
+                                                                    <Typography variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b', display: 'block', fontSize: '0.72rem' }}>
+                                                                        atau klik untuk memilih file
+                                                                    </Typography>
+                                                                </Box>
                                                             )}
+                                                            <input
+                                                                id={`speaker-file-${index}`}
+                                                                type="file"
+                                                                hidden
+                                                                accept="image/*"
+                                                                onChange={(e) => {
+                                                                    if (e.target.files && e.target.files[0]) {
+                                                                        handleSpeakerPhotoUpload(index, e.target.files[0]);
+                                                                    }
+                                                                }}
+                                                            />
                                                         </Box>
 
-                                                        {/* Upload Button */}
+                                                        {/* Fallback Upload / Change Button */}
                                                         <Button
                                                             fullWidth
+                                                            size="small"
                                                             variant="outlined"
                                                             component="label"
                                                             startIcon={<UploadFileIcon />}
                                                             disabled={uploading}
-                                                            sx={{ mb: 2 }}
+                                                            sx={{ mb: 2, borderColor: '#1abc9c', color: '#1abc9c', textTransform: 'none', fontWeight: 600, fontSize: '0.78rem' }}
                                                         >
-                                                            Upload Photo
+                                                            {speaker.photo ? 'Ganti Foto' : 'Pilih Foto'}
                                                             <input
                                                                 type="file"
                                                                 hidden
                                                                 accept="image/*"
-                                                                onChange={(e) => handleSpeakerPhotoUpload(index, e.target.files[0])}
+                                                                onChange={(e) => {
+                                                                    if (e.target.files && e.target.files[0]) {
+                                                                        handleSpeakerPhotoUpload(index, e.target.files[0]);
+                                                                    }
+                                                                }}
                                                             />
                                                         </Button>
 

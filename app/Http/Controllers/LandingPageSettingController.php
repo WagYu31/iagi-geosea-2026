@@ -170,19 +170,21 @@ class LandingPageSettingController extends Controller
                 'index' => 'required|integer'
             ]);
 
-            $setting = LandingPageSetting::where('key', 'keynote_speakers')->first();
+            $setting = LandingPageSetting::firstOrCreate(
+                ['key' => 'keynote_speakers'],
+                ['value' => json_encode([]), 'section' => 'landing_page', 'type' => 'json']
+            );
 
-            if (!$setting) {
-                \Log::error('Keynote speakers setting not found');
-                return response()->json(['error' => 'Setting not found'], 404);
-            }
-
-            $speakers = json_decode($setting->value, true);
-            $index = $request->index;
+            $speakers = json_decode($setting->value, true) ?: [];
+            $index = (int) $request->index;
 
             if (!isset($speakers[$index])) {
-                \Log::error('Speaker not found at index: ' . $index);
-                return response()->json(['error' => 'Speaker not found at index ' . $index], 404);
+                $speakers[$index] = [
+                    'name' => '',
+                    'title' => '',
+                    'photo' => '',
+                    'institution' => '',
+                ];
             }
 
             // Ensure directory exists
@@ -240,19 +242,20 @@ class LandingPageSettingController extends Controller
                 'index' => 'required|integer'
             ]);
 
-            $setting = LandingPageSetting::where('key', 'sponsors')->first();
+            $setting = LandingPageSetting::firstOrCreate(
+                ['key' => 'sponsors'],
+                ['value' => json_encode([]), 'section' => 'landing_page', 'type' => 'json']
+            );
 
-            if (!$setting) {
-                Log::error('Sponsors setting not found');
-                return response()->json(['error' => 'Setting not found'], 404);
-            }
-
-            $sponsors = json_decode($setting->value, true);
-            $index = $request->index;
+            $sponsors = json_decode($setting->value, true) ?: [];
+            $index = (int) $request->index;
 
             if (!isset($sponsors[$index])) {
-                Log::error('Sponsor not found at index: ' . $index);
-                return response()->json(['error' => 'Sponsor not found at index ' . $index], 404);
+                $sponsors[$index] = [
+                    'name' => '',
+                    'logo' => '',
+                    'category' => 'silver',
+                ];
             }
 
             // Ensure directory exists
@@ -313,19 +316,20 @@ class LandingPageSettingController extends Controller
                 'index' => 'required|integer'
             ]);
 
-            $setting = LandingPageSetting::where('key', 'partners')->first();
+            $setting = LandingPageSetting::firstOrCreate(
+                ['key' => 'partners'],
+                ['value' => json_encode([]), 'section' => 'landing_page', 'type' => 'json']
+            );
 
-            if (!$setting) {
-                Log::error('Partners setting not found');
-                return response()->json(['error' => 'Setting not found'], 404);
-            }
-
-            $partners = json_decode($setting->value, true);
-            $index = $request->index;
+            $partners = json_decode($setting->value, true) ?: [];
+            $index = (int) $request->index;
 
             if (!isset($partners[$index])) {
-                Log::error('Partner not found at index: ' . $index);
-                return response()->json(['error' => 'Partner not found at index ' . $index], 404);
+                $partners[$index] = [
+                    'name' => '',
+                    'poster' => '',
+                    'category' => 'co-host',
+                ];
             }
 
             // Ensure directory exists
