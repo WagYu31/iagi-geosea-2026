@@ -1263,6 +1263,7 @@ export default function ProgramSchedule() {
                                         fontWeight: 800,
                                         fontSize: { xs: "1.05rem", sm: "1.18rem" },
                                         fontFamily: '"Playfair Display", Georgia, serif',
+                                        color: "#ffffff",
                                     }}
                                 >
                                     {currentDay?.dateStr}
