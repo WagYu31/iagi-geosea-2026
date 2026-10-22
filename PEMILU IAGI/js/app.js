@@ -504,7 +504,19 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerHaptic('light');
   };
 
+  // Navigation Arrows for Mobile
+  let currentCandidateFocus = 1;
+  window.prevCandidateBallot = function() {
+    currentCandidateFocus = Math.max(1, currentCandidateFocus - 1);
+    scrollBallotToCandidate(currentCandidateFocus);
+  };
+  window.nextCandidateBallot = function() {
+    currentCandidateFocus = Math.min(3, currentCandidateFocus + 1);
+    scrollBallotToCandidate(currentCandidateFocus);
+  };
+
   window.scrollBallotToCandidate = function(candidateNum) {
+    currentCandidateFocus = candidateNum;
     const col = document.getElementById(`ballot-col-${candidateNum}`);
     const container = document.getElementById('ballot-interactive-container');
     if (col && container) {
@@ -529,11 +541,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const scrollX = ballotScrollContainer.scrollLeft;
       const width = ballotScrollContainer.offsetWidth;
       const activeIdx = Math.min(3, Math.max(1, Math.round(scrollX / (width * 0.75)) + 1));
+      currentCandidateFocus = activeIdx;
       updateCandidateDots(activeIdx);
     }, { passive: true });
   }
 
-  // Synthesize realistic acoustic nail-punch audio through cardstock paper
+  // Synthesize realistic acoustic nail-punch audio through cardstock paper & foam pad
   function playCoblosSound() {
     if (!coblosAudioEnabled) return;
     try {
@@ -542,51 +555,51 @@ document.addEventListener('DOMContentLoaded', () => {
       const ctx = new AudioCtx();
       const now = ctx.currentTime;
 
-      // 1. Low Thud (Impact resonance of ballot desk)
+      // 1. Deep Foam Pad Impact Resonance (Bantalan Spons Coblosan)
       const osc = ctx.createOscillator();
       const oscGain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(130, now);
-      osc.frequency.exponentialRampToValueAtTime(32, now + 0.12);
-      oscGain.gain.setValueAtTime(0.75, now);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(28, now + 0.14);
+      oscGain.gain.setValueAtTime(0.85, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       osc.connect(oscGain);
       oscGain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.12);
+      osc.stop(now + 0.14);
 
       // 2. Paper Fiber Perforation Snap (Bandpassed noise burst)
-      const bufferSize = Math.floor(ctx.sampleRate * 0.05); // 50ms
+      const bufferSize = Math.floor(ctx.sampleRate * 0.055);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.28));
       }
       const noise = ctx.createBufferSource();
       noise.buffer = buffer;
 
       const filter = ctx.createBiquadFilter();
       filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(2200, now);
-      filter.Q.setValueAtTime(2.2, now);
+      filter.frequency.setValueAtTime(2400, now);
+      filter.Q.setValueAtTime(2.5, now);
 
       const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.85, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      noiseGain.gain.setValueAtTime(0.9, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.055);
 
       noise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(ctx.destination);
       noise.start(now);
-      noise.stop(now + 0.05);
+      noise.stop(now + 0.055);
 
       // 3. Crisp Metallic Nail Click
       const clickOsc = ctx.createOscillator();
       const clickGain = ctx.createGain();
-      clickOsc.type = 'triangle';
-      clickOsc.frequency.setValueAtTime(2800, now);
-      clickOsc.frequency.exponentialRampToValueAtTime(900, now + 0.035);
-      clickGain.gain.setValueAtTime(0.3, now);
+      clickOsc.type = 'sine';
+      clickOsc.frequency.setValueAtTime(3200, now);
+      clickOsc.frequency.exponentialRampToValueAtTime(1100, now + 0.035);
+      clickGain.gain.setValueAtTime(0.35, now);
       clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
       clickOsc.connect(clickGain);
       clickGain.connect(ctx.destination);
@@ -600,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Spawn realistic paper dust particles on impact
   function spawnPaperParticles(targetX, targetY, parentContainer) {
     if (!parentContainer) return;
-    const particleCount = 8;
+    const particleCount = 10;
     for (let i = 0; i < particleCount; i++) {
       const p = document.createElement('div');
       p.className = 'paper-dust-particle';
@@ -611,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
       p.style.top = `${targetY}px`;
 
       const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
-      const dist = Math.random() * 45 + 25;
+      const dist = Math.random() * 50 + 25;
       const tx = Math.cos(angle) * dist;
       const ty = Math.sin(angle) * dist;
       const rot = Math.random() * 360;
@@ -638,7 +651,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <!-- Nomor Urut Box (Besar, Bold, Gaya Pemilu Resmi) -->
           <div class="b-col-number-box">
-            <span class="b-number-text">${c.number}</span>
+            <div class="b-col-number-tag">CALON KETUA UMUM</div>
+            <div class="b-number-text">${c.number}</div>
           </div>
 
           <!-- Foto Kandidat Resmi -->
@@ -668,18 +682,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="puncture-hole-wrap" id="puncture-hole-${c.id}" style="${selectedCandidateId === c.id ? 'display: block;' : 'display: none;'}">
               <div class="hole-dent-shadow"></div>
               <svg class="hole-creases-svg" viewBox="0 0 100 100">
-                <path d="M 50 50 L 15 40 M 50 50 L 30 20 M 50 50 L 70 15 M 50 50 L 85 45 M 50 50 L 80 75 M 50 50 L 52 90 M 50 50 L 25 80 M 50 50 L 10 65" stroke="rgba(100, 116, 139, 0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" />
+                <path d="M 50 50 L 15 40 M 50 50 L 30 20 M 50 50 L 70 15 M 50 50 L 85 45 M 50 50 L 80 75 M 50 50 L 52 90 M 50 50 L 25 80 M 50 50 L 10 65" stroke="rgba(100, 116, 139, 0.5)" stroke-width="1.3" stroke-linecap="round" fill="none" />
               </svg>
               <div class="hole-void">
                 <svg class="hole-flaps-svg" viewBox="0 0 80 80">
-                  <polygon points="40,10 46,26 60,15 53,30 70,30 58,40 74,50 58,52 64,68 48,60 42,74 36,60 22,70 28,54 10,55 24,42 10,30 26,32 18,16 34,25" fill="#F4EFE6" stroke="#D1C7B7" stroke-width="1.2" />
-                  <circle cx="40" cy="40" r="14" fill="#06090D" />
+                  <polygon points="40,8 47,26 62,14 54,30 72,28 58,40 75,52 57,53 65,70 48,60 41,75 35,60 20,72 27,54 8,56 23,42 8,28 25,32 16,14 34,25" fill="#FAF7EE" stroke="#C8BEAC" stroke-width="1.3" />
+                  <circle cx="40" cy="40" r="14" fill="#04120E" />
                   <circle cx="40" cy="40" r="12" fill="#000000" />
-                  <circle cx="40" cy="40" r="11" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="2.5" />
+                  <circle cx="40" cy="40" r="11" fill="none" stroke="rgba(0,0,0,0.9)" stroke-width="2.5" />
                 </svg>
               </div>
               <div class="coblos-stamp-seal">
-                <span>✓ SUARA SAH</span>
+                <span>✓ SAH DICOBLOS</span>
               </div>
             </div>
           </div>
@@ -695,6 +709,21 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+
+    // Setup Desktop 3D Interactive Mouse Tilt
+    const paper = document.getElementById('ballot-paper-sheet');
+    if (paper && !paper.dataset.hasTiltListener && window.innerWidth >= 900) {
+      paper.dataset.hasTiltListener = 'true';
+      paper.addEventListener('mousemove', (e) => {
+        const rect = paper.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        paper.style.transform = `perspective(1200px) rotateY(${x * 3}deg) rotateX(${-y * 3}deg)`;
+      });
+      paper.addEventListener('mouseleave', () => {
+        paper.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
+      });
+    }
   }
 
   // ================= 3D PAKU STRIKE & HOLE PUNCTURE ANIMATION =================
