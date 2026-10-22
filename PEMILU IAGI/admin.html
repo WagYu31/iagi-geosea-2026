@@ -5001,7 +5001,7 @@
           .replace(/'/g, '&#39;');
       }
 
-      window.renderAdminUsersTable = function() {
+      function renderAdminUsersTable() {
         if (!window.pemiluStorage || !window.pemiluStorage.getAdminAccounts) return;
         const accounts = window.pemiluStorage.getAdminAccounts();
         const searchInput = document.getElementById('admin-search-input');
@@ -5154,7 +5154,8 @@
             </tr>
           `;
         }).join('');
-      };
+      }
+      window.renderAdminUsersTable = renderAdminUsersTable;
 
       window.openAddAdminModal = function() {
         const modal = document.getElementById('modal-manage-admin');

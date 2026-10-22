@@ -752,8 +752,9 @@ class PemiluStorage {
     }
 
     // Check email uniqueness
-    if (accounts.some(a => a.email.toLowerCase() === cleanEmail)) {
-      return { success: false, error: 'Email admin sudah terdaftar di sistem KPKU.' };
+    const existing = accounts.find(a => a.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      return { success: false, error: `Email "${cleanEmail}" sudah terdaftar pada akun "${existing.name}". Silakan klik tombol ✏️ Edit pada tabel akun panitia untuk mengubah data.` };
     }
 
     // Validate NPA (strict 5 digits if provided)
