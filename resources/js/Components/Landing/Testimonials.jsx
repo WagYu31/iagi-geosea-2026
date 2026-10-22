@@ -310,8 +310,34 @@ export default function Testimonials({ settings }) {
         : [];
 
     const allSpeakers = useMemo(() => {
-        const sourceList = rawSpeakers.length > 0 ? rawSpeakers : ALL_PRESET_SPEAKERS;
-        return sourceList.map((s, idx) => {
+        let list = [];
+        if (rawSpeakers.length === 0) {
+            list = [...ALL_PRESET_SPEAKERS];
+        } else {
+            // Check if rawSpeakers has any Day 1 and Day 2 items
+            const hasExplicitDay2 = rawSpeakers.some(s => {
+                const day = (s.day || '').trim();
+                const sess = (s.session || '').toLowerCase();
+                return day === 'Day 2' || sess.includes('panel discussion 2') || sess.includes('panel discussion 3') || sess.includes('geothermal') || sess.includes('geopark') || sess.includes('geohazard');
+            });
+            const hasExplicitDay1 = rawSpeakers.some(s => {
+                const day = (s.day || '').trim();
+                const sess = (s.session || '').toLowerCase();
+                return day === 'Day 1' || sess.includes('ceo') || sess.includes('keynote') || sess.includes('panel discussion 1');
+            });
+
+            list = [...rawSpeakers];
+            // If database only has Day 1 (which happened because only Day 1 was saved previously), auto-append default Day 2 so Day 2 is never empty!
+            if (!hasExplicitDay2) {
+                list = [...list, ...DAY2_DEFAULT_SPEAKERS];
+            }
+            // In case database only has Day 2, auto-append default Day 1
+            if (!hasExplicitDay1) {
+                list = [...DAY1_DEFAULT_SPEAKERS, ...list];
+            }
+        }
+
+        return list.map((s, idx) => {
             let photo = s.photo;
             if (!photo || photo.trim() === '') {
                 const lower = (s.name || '').toLowerCase();
@@ -435,7 +461,7 @@ export default function Testimonials({ settings }) {
         setDragDistance(0);
     };
 
-    if (filteredSpeakers.length === 0) return null;
+    if (allSpeakers.length === 0) return null;
 
     const day1Total = allSpeakers.filter(s => s.day === 'Day 1').length;
     const day2Total = allSpeakers.filter(s => s.day === 'Day 2').length;
@@ -604,14 +630,29 @@ export default function Testimonials({ settings }) {
                     </Box>
                 </ScrollReveal>
 
-                {/* 3D Coverflow Stage Area */}
-                <Box
-                    onMouseDown={handleTouchStart}
-                    onMouseMove={handleTouchMove}
-                    onMouseUp={handleTouchEnd}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
+                {filteredSpeakers.length === 0 ? (
+                    <Box sx={{ textAlign: 'center', py: 8, my: 4, bgcolor: '#ffffff', borderRadius: '24px', border: '1px dashed #cbd5e1', maxWidth: 500, mx: 'auto', p: 4, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                        <Typography sx={{ color: '#475569', fontSize: '1.05rem', mb: 2, fontWeight: 700 }}>
+                            Belum ada pembicara untuk kategori sesi ini di {selectedDay}.
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            onClick={() => setSelectedTab('all')}
+                            sx={{ bgcolor: '#0d9488', '&:hover': { bgcolor: '#0f766e' }, textTransform: 'none', fontWeight: 700, borderRadius: '20px', px: 3 }}
+                        >
+                            Lihat Semua Pembicara {selectedDay}
+                        </Button>
+                    </Box>
+                ) : (
+                    <>
+                        {/* 3D Coverflow Stage Area */}
+                        <Box
+                            onMouseDown={handleTouchStart}
+                            onMouseMove={handleTouchMove}
+                            onMouseUp={handleTouchEnd}
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
                     sx={{
                         position: 'relative',
                         height: { xs: '320px', sm: '380px', md: '430px' },
@@ -1005,68 +1046,70 @@ export default function Testimonials({ settings }) {
                             </IconButton>
                         </Box>
                     </Box>
+                </Box>
+                </>
+            )}
 
-                    {/* View Official Flyer Action */}
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap', mt: 3.5 }}>
-                        <Button
-                            variant="outlined"
-                            startIcon={<VisibilityIcon />}
-                            onClick={() => {
-                                setPosterModalDay('Day 1');
-                                setPosterOpen(true);
-                            }}
-                            sx={{
-                                borderColor: '#0d9488',
-                                color: '#0d9488',
-                                textTransform: 'none',
-                                fontWeight: 700,
-                                borderRadius: '30px',
-                                px: 2.5,
-                                py: 0.8,
-                                fontSize: '0.85rem',
-                                bgcolor: '#ffffff',
-                                boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
-                                '&:hover': {
-                                    borderColor: '#0f766e',
-                                    bgcolor: '#f0fdfa',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
-                                },
-                                transition: 'all 0.2s ease',
-                            }}
-                        >
-                            Lihat Flyer Poster (DAY 1)
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            startIcon={<VisibilityIcon />}
-                            onClick={() => {
-                                setPosterModalDay('Day 2');
-                                setPosterOpen(true);
-                            }}
-                            sx={{
-                                borderColor: '#0d9488',
-                                color: '#0d9488',
-                                textTransform: 'none',
-                                fontWeight: 700,
-                                borderRadius: '30px',
-                                px: 2.5,
-                                py: 0.8,
-                                fontSize: '0.85rem',
-                                bgcolor: '#ffffff',
-                                boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
-                                '&:hover': {
-                                    borderColor: '#0f766e',
-                                    bgcolor: '#f0fdfa',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
-                                },
-                                transition: 'all 0.2s ease',
-                            }}
-                        >
-                            Lihat Flyer Poster (DAY 2)
-                        </Button>
-                    </Box>
+                {/* View Official Flyer Action */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap', mt: 4 }}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<VisibilityIcon />}
+                        onClick={() => {
+                            setPosterModalDay('Day 1');
+                            setPosterOpen(true);
+                        }}
+                        sx={{
+                            borderColor: '#0d9488',
+                            color: '#0d9488',
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            borderRadius: '30px',
+                            px: 2.5,
+                            py: 0.8,
+                            fontSize: '0.85rem',
+                            bgcolor: '#ffffff',
+                            boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
+                            '&:hover': {
+                                borderColor: '#0f766e',
+                                bgcolor: '#f0fdfa',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
+                            },
+                            transition: 'all 0.2s ease',
+                        }}
+                    >
+                        Lihat Flyer Poster (DAY 1)
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        startIcon={<VisibilityIcon />}
+                        onClick={() => {
+                            setPosterModalDay('Day 2');
+                            setPosterOpen(true);
+                        }}
+                        sx={{
+                            borderColor: '#0d9488',
+                            color: '#0d9488',
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            borderRadius: '30px',
+                            px: 2.5,
+                            py: 0.8,
+                            fontSize: '0.85rem',
+                            bgcolor: '#ffffff',
+                            boxShadow: '0 2px 8px rgba(13, 148, 136, 0.08)',
+                            '&:hover': {
+                                borderColor: '#0f766e',
+                                bgcolor: '#f0fdfa',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 16px rgba(13, 148, 136, 0.16)',
+                            },
+                            transition: 'all 0.2s ease',
+                        }}
+                    >
+                        Lihat Flyer Poster (DAY 2)
+                    </Button>
                 </Box>
             </Container>
 
