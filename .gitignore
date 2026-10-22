@@ -30,3 +30,7 @@ storage/logs/*.log
 # SQLite databases
 *.sqlite
 *.sqlite-journal
+
+# Server / Local Assets
+/.well-known/ID Card/
+PEMILU IAGI/Aset BG/*.mp4
