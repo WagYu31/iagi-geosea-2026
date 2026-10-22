@@ -349,9 +349,9 @@ export const SCHEDULE_DAYS = [
 ];
 
 function EventCard({ event, compact = false }) {
-    const isGeoseaTrack = event.track === geosea;
-    const isGeneralTrack = event.track === general;
-    const isCombinedTrack = event.track === all;
+    const isGeoseaTrack = event.track === 'geosea';
+    const isGeneralTrack = event.track === 'general';
+    const isCombinedTrack = event.track === 'all';
 
     return (
         <Box
