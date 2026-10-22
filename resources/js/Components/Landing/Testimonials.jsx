@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
+import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -29,7 +30,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         session: 'Special Keynote Speech',
         role: 'Special Keynote',
         day: 'Day 1',
-        photo: '/images/speakers/yuliot-tanjung.jpg',
+        photo: '/images/speakers/yuliot-tanjung.webp',
     },
     {
         name: 'Sri Sultan Hamengkubuwana X*',
@@ -38,7 +39,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         session: 'Special Keynote Speech',
         role: 'Special Keynote',
         day: 'Day 1',
-        photo: '/images/speakers/sri-sultan-hb-x.jpg',
+        photo: '/images/speakers/sri-sultan-hb-x.webp',
     },
     {
         name: 'STJ Budi Santoso',
@@ -47,7 +48,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         session: 'CEO Forum',
         role: 'Moderator',
         day: 'Day 1',
-        photo: '/images/speakers/stj-budi-santoso.jpg',
+        photo: '/images/speakers/stj-budi-santoso.webp',
     },
     {
         name: 'Maroef Sjamsoeddin',
@@ -56,7 +57,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         session: 'CEO Forum',
         role: 'Speaker / Panelist',
         day: 'Day 1',
-        photo: '/images/speakers/maroef-sjamsoeddin.jpg',
+        photo: '/images/speakers/maroef-sjamsoeddin.webp',
     },
     {
         name: 'Asep Samsul Arifin',
@@ -74,7 +75,7 @@ const DAY1_DEFAULT_SPEAKERS = [
         session: 'CEO Forum',
         role: 'Speaker / Panelist',
         day: 'Day 1',
-        photo: '/images/speakers/yudistian-yunis.jpg',
+        photo: '/images/speakers/yudistian-yunis.webp',
     },
     {
         name: 'Rikky Rahmat Firdaus*',
@@ -256,13 +257,68 @@ const DAY2_DEFAULT_SPEAKERS = [
 const ALL_PRESET_SPEAKERS = [...DAY1_DEFAULT_SPEAKERS, ...DAY2_DEFAULT_SPEAKERS];
 
 const OFFICIAL_PHOTO_MAP = {
-    'yuliot': '/images/speakers/yuliot-tanjung.jpg',
-    'sultan': '/images/speakers/sri-sultan-hb-x.jpg',
-    'hamengkubuwana': '/images/speakers/sri-sultan-hb-x.jpg',
-    'budi santoso': '/images/speakers/stj-budi-santoso.jpg',
-    'maroef': '/images/speakers/maroef-sjamsoeddin.jpg',
-    'yudistian': '/images/speakers/yudistian-yunis.jpg',
+    'yuliot': '/images/speakers/yuliot-tanjung.webp',
+    'sultan': '/images/speakers/sri-sultan-hb-x.webp',
+    'hamengkubuwana': '/images/speakers/sri-sultan-hb-x.webp',
+    'budi santoso': '/images/speakers/stj-budi-santoso.webp',
+    'maroef': '/images/speakers/maroef-sjamsoeddin.webp',
+    'yudistian': '/images/speakers/yudistian-yunis.webp',
 };
+
+// Ultra-fast progressive image component with smooth fade-in and shimmer
+function SpeakerCardImage({ src, alt, isCenter }) {
+    const [loaded, setLoaded] = useState(false);
+    const [imgSrc, setImgSrc] = useState(src);
+
+    useEffect(() => {
+        setImgSrc(src);
+        setLoaded(false);
+    }, [src]);
+
+    return (
+        <Box sx={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', bgcolor: '#0b1320' }}>
+            {/* Shimmer skeleton while loading */}
+            {!loaded && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+                        backgroundSize: '200% 100%',
+                        animation: 'speakerShimmer 1.6s infinite',
+                        '@keyframes speakerShimmer': {
+                            '0%': { backgroundPosition: '200% 0' },
+                            '100%': { backgroundPosition: '-200% 0' },
+                        },
+                    }}
+                />
+            )}
+            <Box
+                component="img"
+                src={imgSrc}
+                alt={alt}
+                decoding="async"
+                loading={isCenter ? 'eager' : 'lazy'}
+                onLoad={() => setLoaded(true)}
+                onError={() => {
+                    if (imgSrc && imgSrc.endsWith('.webp')) {
+                        setImgSrc(imgSrc.replace('.webp', '.jpg'));
+                    }
+                }}
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'top center',
+                    display: 'block',
+                    opacity: loaded ? 1 : 0,
+                    transform: loaded ? 'scale(1)' : 'scale(1.04)',
+                    transition: 'opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+            />
+        </Box>
+    );
+}
 
 // Helper for speaker role badges
 function getRoleBadge(role) {
@@ -300,6 +356,7 @@ export default function Testimonials({ settings }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [posterOpen, setPosterOpen] = useState(false);
     const [posterModalDay, setPosterModalDay] = useState('Day 1');
+    const [posterLoaded, setPosterLoaded] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartX, setDragStartX] = useState(0);
     const [dragDistance, setDragDistance] = useState(0);
@@ -720,164 +777,186 @@ export default function Testimonials({ settings }) {
                             return (
                                 <Box
                                     key={`${speaker.name}-${index}`}
-                                    onClick={() => {
-                                        if (!isCenter) setActiveIndex(index);
-                                    }}
                                     sx={{
                                         position: 'absolute',
                                         width: { xs: 170, sm: 220, md: 250 },
                                         height: { xs: 240, sm: 310, md: 350 },
-                                        borderRadius: '22px',
-                                        overflow: 'hidden',
-                                        bgcolor: '#0f172a',
-                                        border: isCenter ? '2px solid rgba(13, 148, 136, 0.8)' : '1px solid rgba(255, 255, 255, 0.8)',
-                                        boxShadow: isCenter
-                                            ? '0 24px 48px -12px rgba(13, 148, 136, 0.35), 0 12px 24px -8px rgba(0, 0, 0, 0.2)'
-                                            : '0 12px 28px -6px rgba(0, 0, 0, 0.15)',
                                         transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                                         opacity,
                                         zIndex,
-                                        filter: isCenter ? 'none' : `brightness(${Math.max(1 - absOffset * 0.12, 0.65)})`,
-                                        transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
-                                        cursor: isCenter ? 'default' : 'pointer',
-                                        '&:hover': {
-                                            boxShadow: isCenter
-                                                ? '0 30px 60px -12px rgba(13, 148, 136, 0.45)'
-                                                : '0 16px 36px -6px rgba(0, 0, 0, 0.25)',
-                                        },
+                                        transition: isDragging ? 'none' : 'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease',
                                     }}
                                 >
-                                    {/* Photo or Initials Fallback */}
-                                    {speaker.photo ? (
+                                    {/* Ambient Aura for Active Center Card */}
+                                    {isCenter && (
                                         <Box
-                                            component="img"
-                                            src={speaker.photo}
-                                            alt={speaker.name}
-                                            loading="lazy"
                                             sx={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                objectPosition: 'top center',
-                                                display: 'block',
+                                                position: 'absolute',
+                                                inset: -6,
+                                                borderRadius: '28px',
+                                                background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.7) 0%, rgba(16, 185, 129, 0.4) 50%, rgba(245, 158, 11, 0.5) 100%)',
+                                                filter: 'blur(16px)',
+                                                zIndex: -1,
+                                                pointerEvents: 'none',
+                                                animation: 'auraPulse 3.5s ease-in-out infinite',
+                                                '@keyframes auraPulse': {
+                                                    '0%, 100%': { opacity: 0.65, transform: 'scale(0.98)' },
+                                                    '50%': { opacity: 1, transform: 'scale(1.03)' },
+                                                },
                                             }}
                                         />
-                                    ) : (
+                                    )}
+
+                                    {/* The Card Surface */}
+                                    <Box
+                                        onClick={() => {
+                                            if (!isCenter) setActiveIndex(index);
+                                        }}
+                                        sx={{
+                                            position: 'relative',
+                                            width: '100%',
+                                            height: '100%',
+                                            borderRadius: '22px',
+                                            overflow: 'hidden',
+                                            bgcolor: '#0f172a',
+                                            border: isCenter ? '2px solid rgba(45, 212, 191, 0.95)' : '1px solid rgba(255, 255, 255, 0.7)',
+                                            boxShadow: isCenter
+                                                ? '0 25px 50px -12px rgba(13, 148, 136, 0.4), 0 12px 24px -8px rgba(0, 0, 0, 0.25)'
+                                                : '0 10px 24px -6px rgba(0, 0, 0, 0.16)',
+                                            filter: isCenter ? 'none' : `brightness(${Math.max(1 - absOffset * 0.12, 0.65)})`,
+                                            cursor: isCenter ? 'default' : 'pointer',
+                                            transition: 'all 0.3s ease',
+                                            '&:hover': {
+                                                boxShadow: isCenter
+                                                    ? '0 32px 64px -12px rgba(13, 148, 136, 0.5)'
+                                                    : '0 16px 36px -6px rgba(0, 0, 0, 0.25)',
+                                            },
+                                        }}
+                                    >
+                                        {/* Photo with progressive webp and fade-in, or Initials Fallback */}
+                                        {speaker.photo ? (
+                                            <SpeakerCardImage
+                                                src={speaker.photo}
+                                                alt={speaker.name}
+                                                isCenter={isCenter}
+                                            />
+                                        ) : (
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    background: 'linear-gradient(135deg, #094d42 0%, #0d9488 100%)',
+                                                    color: '#ffffff',
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: { xs: '2.5rem', md: '3.2rem' },
+                                                        fontWeight: 800,
+                                                        letterSpacing: '0.05em',
+                                                        color: 'rgba(255, 255, 255, 0.9)',
+                                                        fontFamily: '"Playfair Display", serif',
+                                                    }}
+                                                >
+                                                    {speaker.name
+                                                        ? speaker.name
+                                                              .split(' ')
+                                                              .filter(Boolean)
+                                                              .slice(0, 2)
+                                                              .map(n => n[0])
+                                                              .join('')
+                                                        : 'SP'}
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        {/* Number Top-Left */}
                                         <Box
                                             sx={{
-                                                width: '100%',
-                                                height: '100%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                background: 'linear-gradient(135deg, #094d42 0%, #0d9488 100%)',
-                                                color: '#ffffff',
+                                                position: 'absolute',
+                                                top: 10,
+                                                left: 12,
+                                                zIndex: 2,
+                                                bgcolor: 'rgba(15, 23, 42, 0.65)',
+                                                backdropFilter: 'blur(6px)',
+                                                px: 1,
+                                                py: 0.2,
+                                                borderRadius: '8px',
+                                            }}
+                                        >
+                                            <Typography sx={{ color: '#ffffff', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                                {String(index + 1).padStart(2, '0')}
+                                            </Typography>
+                                        </Box>
+
+                                        {/* Role Badge Top-Right */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 10,
+                                                right: 10,
+                                                zIndex: 2,
+                                            }}
+                                        >
+                                            <Chip
+                                                icon={roleBadge.icon}
+                                                label={roleBadge.label}
+                                                size="small"
+                                                sx={{
+                                                    bgcolor: roleBadge.bgColor,
+                                                    color: roleBadge.color,
+                                                    border: roleBadge.border,
+                                                    fontWeight: 700,
+                                                    fontSize: '0.66rem',
+                                                    height: 22,
+                                                    backdropFilter: 'blur(8px)',
+                                                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                                                    '& .MuiChip-icon': {
+                                                        color: `${roleBadge.color} !important`,
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+
+                                        {/* Gradient Vignette at Bottom */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                background: 'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.4) 40%, transparent 68%)',
+                                                pointerEvents: 'none',
+                                            }}
+                                        />
+
+                                        {/* Name at Card Bottom */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                bottom: 0,
+                                                left: 0,
+                                                right: 0,
+                                                p: 1.8,
+                                                zIndex: 2,
                                             }}
                                         >
                                             <Typography
                                                 sx={{
-                                                    fontSize: { xs: '2.5rem', md: '3.2rem' },
+                                                    color: '#ffffff',
                                                     fontWeight: 800,
-                                                    letterSpacing: '0.05em',
-                                                    color: 'rgba(255, 255, 255, 0.9)',
-                                                    fontFamily: '"Playfair Display", serif',
+                                                    fontSize: { xs: '0.92rem', md: '1.05rem' },
+                                                    lineHeight: 1.25,
+                                                    textShadow: '0 2px 4px rgba(0,0,0,0.7)',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
                                                 }}
                                             >
-                                                {speaker.name
-                                                    ? speaker.name
-                                                          .split(' ')
-                                                          .filter(Boolean)
-                                                          .slice(0, 2)
-                                                          .map(n => n[0])
-                                                          .join('')
-                                                    : 'SP'}
+                                                {speaker.name}
                                             </Typography>
                                         </Box>
-                                    )}
-
-                                    {/* Number Top-Left */}
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 10,
-                                            left: 12,
-                                            zIndex: 2,
-                                            bgcolor: 'rgba(15, 23, 42, 0.65)',
-                                            backdropFilter: 'blur(6px)',
-                                            px: 1,
-                                            py: 0.2,
-                                            borderRadius: '8px',
-                                        }}
-                                    >
-                                        <Typography sx={{ color: '#ffffff', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em' }}>
-                                            {String(index + 1).padStart(2, '0')}
-                                        </Typography>
-                                    </Box>
-
-                                    {/* Role Badge Top-Right */}
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 10,
-                                            right: 10,
-                                            zIndex: 2,
-                                        }}
-                                    >
-                                        <Chip
-                                            icon={roleBadge.icon}
-                                            label={roleBadge.label}
-                                            size="small"
-                                            sx={{
-                                                bgcolor: roleBadge.bgColor,
-                                                color: roleBadge.color,
-                                                border: roleBadge.border,
-                                                fontWeight: 700,
-                                                fontSize: '0.66rem',
-                                                height: 22,
-                                                backdropFilter: 'blur(8px)',
-                                                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                                                '& .MuiChip-icon': {
-                                                    color: `${roleBadge.color} !important`,
-                                                },
-                                            }}
-                                        />
-                                    </Box>
-
-                                    {/* Gradient Vignette at Bottom */}
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            inset: 0,
-                                            background: 'linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.35) 40%, transparent 65%)',
-                                            pointerEvents: 'none',
-                                        }}
-                                    />
-
-                                    {/* Name at Card Bottom */}
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            p: 1.8,
-                                            zIndex: 2,
-                                        }}
-                                    >
-                                        <Typography
-                                            sx={{
-                                                color: '#ffffff',
-                                                fontWeight: 800,
-                                                fontSize: { xs: '0.92rem', md: '1.05rem' },
-                                                lineHeight: 1.25,
-                                                textShadow: '0 2px 4px rgba(0,0,0,0.7)',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            {speaker.name}
-                                        </Typography>
                                     </Box>
                                 </Box>
                             );
@@ -921,12 +1000,18 @@ export default function Testimonials({ settings }) {
                         {/* Left Counter */}
                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, minWidth: { sm: 90 } }}>
                             <Typography
+                                key={safeActiveIndex}
                                 sx={{
                                     fontFamily: '"Playfair Display", Georgia, serif',
                                     fontSize: { xs: '2rem', md: '2.4rem' },
                                     fontWeight: 800,
                                     color: '#0f172a',
                                     lineHeight: 1,
+                                    animation: 'counterPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                    '@keyframes counterPop': {
+                                        '0%': { opacity: 0, transform: 'scale(0.82)' },
+                                        '100%': { opacity: 1, transform: 'scale(1)' },
+                                    },
                                 }}
                             >
                                 {String(safeActiveIndex + 1).padStart(2, '0')}
@@ -937,7 +1022,20 @@ export default function Testimonials({ settings }) {
                         </Box>
 
                         {/* Center Speaker Typography */}
-                        <Box sx={{ flex: 1, textAlign: 'center', px: { xs: 1, sm: 2 } }}>
+                        {/* Center Speaker Typography with Choreographed Slide */}
+                        <Box
+                            key={`${activeSpeaker.name}-${safeActiveIndex}`}
+                            sx={{
+                                flex: 1,
+                                textAlign: 'center',
+                                px: { xs: 1, sm: 2 },
+                                animation: 'speakerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+                                '@keyframes speakerSlideUp': {
+                                    '0%': { opacity: 0, transform: 'translateY(10px)' },
+                                    '100%': { opacity: 1, transform: 'translateY(0)' },
+                                },
+                            }}
+                        >
                             <Typography
                                 component="h3"
                                 sx={{
@@ -976,7 +1074,7 @@ export default function Testimonials({ settings }) {
                                 {activeSpeaker.institution ? ` — ${activeSpeaker.institution}` : ''}
                             </Typography>
 
-                            {/* Capsule Dots Pagination */}
+                            {/* Capsule Dots Pagination with smooth stretching */}
                             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0.7, mt: 2 }}>
                                 {filteredSpeakers.map((_, idx) => (
                                     <Box
@@ -985,12 +1083,15 @@ export default function Testimonials({ settings }) {
                                         sx={{
                                             cursor: 'pointer',
                                             height: 6,
-                                            width: safeActiveIndex === idx ? 24 : 6,
+                                            width: safeActiveIndex === idx ? 28 : 6,
                                             borderRadius: 3,
                                             bgcolor: safeActiveIndex === idx ? '#0d9488' : '#cbd5e1',
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            background: safeActiveIndex === idx ? 'linear-gradient(90deg, #0d9488 0%, #10b981 100%)' : '#cbd5e1',
+                                            boxShadow: safeActiveIndex === idx ? '0 2px 8px rgba(13, 148, 136, 0.45)' : 'none',
+                                            transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
                                             '&:hover': {
                                                 bgcolor: safeActiveIndex === idx ? '#0f766e' : '#94a3b8',
+                                                transform: 'scale(1.2)',
                                             },
                                         }}
                                     />
@@ -1057,6 +1158,7 @@ export default function Testimonials({ settings }) {
                         startIcon={<VisibilityIcon />}
                         onClick={() => {
                             setPosterModalDay('Day 1');
+                            setPosterLoaded(false);
                             setPosterOpen(true);
                         }}
                         sx={{
@@ -1086,6 +1188,7 @@ export default function Testimonials({ settings }) {
                         startIcon={<VisibilityIcon />}
                         onClick={() => {
                             setPosterModalDay('Day 2');
+                            setPosterLoaded(false);
                             setPosterOpen(true);
                         }}
                         sx={{
@@ -1150,7 +1253,10 @@ export default function Testimonials({ settings }) {
                         <Button
                             size="small"
                             variant={posterModalDay === 'Day 1' ? 'contained' : 'outlined'}
-                            onClick={() => setPosterModalDay('Day 1')}
+                            onClick={() => {
+                                setPosterModalDay('Day 1');
+                                setPosterLoaded(false);
+                            }}
                             sx={{
                                 fontSize: '0.72rem',
                                 py: 0.3,
@@ -1165,7 +1271,10 @@ export default function Testimonials({ settings }) {
                         <Button
                             size="small"
                             variant={posterModalDay === 'Day 2' ? 'contained' : 'outlined'}
-                            onClick={() => setPosterModalDay('Day 2')}
+                            onClick={() => {
+                                setPosterModalDay('Day 2');
+                                setPosterLoaded(false);
+                            }}
                             sx={{
                                 fontSize: '0.72rem',
                                 py: 0.3,
@@ -1181,8 +1290,8 @@ export default function Testimonials({ settings }) {
                             variant="contained"
                             size="small"
                             component="a"
-                            href={posterModalDay === 'Day 1' ? '/images/day1-poster.jpg' : '/images/day2-poster.jpg'}
-                            download={posterModalDay === 'Day 1' ? 'DAY1_POSTER_PIT_IAGI_2026.jpg' : 'DAY2_POSTER_PIT_IAGI_2026.jpg'}
+                            href={posterModalDay === 'Day 1' ? '/images/day1-poster.webp' : '/images/day2-poster.webp'}
+                            download={posterModalDay === 'Day 1' ? 'DAY1_POSTER_PIT_IAGI_2026.webp' : 'DAY2_POSTER_PIT_IAGI_2026.webp'}
                             startIcon={<DownloadIcon />}
                             sx={{
                                 bgcolor: '#0d9488',
@@ -1205,16 +1314,29 @@ export default function Testimonials({ settings }) {
                         </IconButton>
                     </Box>
                 </Box>
-                <DialogContent sx={{ p: 0, textAlign: 'center', bgcolor: '#091512' }}>
+                <DialogContent sx={{ p: 0, textAlign: 'center', bgcolor: '#091512', minHeight: 350, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {!posterLoaded && (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, gap: 1.5 }}>
+                            <CircularProgress size={36} sx={{ color: '#0d9488' }} />
+                            <Typography sx={{ color: '#94a3b8', fontSize: '0.84rem', fontWeight: 600 }}>
+                                Memuat poster flyer resmi...
+                            </Typography>
+                        </Box>
+                    )}
                     <Box
                         component="img"
-                        src={posterModalDay === 'Day 1' ? '/images/day1-poster.jpg' : '/images/day2-poster.jpg'}
+                        src={posterModalDay === 'Day 1' ? '/images/day1-poster.webp' : '/images/day2-poster.webp'}
                         alt={`PIT IAGI & GEOSEA XIX 2026 ${posterModalDay} Keynote Speakers and Forums`}
+                        onLoad={() => setPosterLoaded(true)}
+                        onError={(e) => {
+                            e.target.src = posterModalDay === 'Day 1' ? '/images/day1-poster.jpg' : '/images/day2-poster.jpg';
+                            setPosterLoaded(true);
+                        }}
                         sx={{
                             width: '100%',
                             maxHeight: '85vh',
                             objectFit: 'contain',
-                            display: 'block',
+                            display: posterLoaded ? 'block' : 'none',
                             mx: 'auto',
                         }}
                     />

@@ -348,76 +348,123 @@ export const SCHEDULE_DAYS = [
     },
 ];
 
-function EventCard({ event, compact = false }) {
+function EventCard({ event, compact = false, index = 0 }) {
     const isGeoseaTrack = event.track === 'geosea';
     const isGeneralTrack = event.track === 'general';
     const isCombinedTrack = event.track === 'all';
 
+    // Accent line & color scheme based on track
+    const accentColor = isGeoseaTrack ? '#2563eb' : (isGeneralTrack ? '#0d9488' : '#d97706');
+    const accentBorder = isGeoseaTrack ? '3.5px solid #2563eb' : (isGeneralTrack ? '3.5px solid #0d9488' : '3.5px solid #f59e0b');
+
     return (
         <Box
             sx={{
-                p: compact ? 1.5 : 2,
-                borderRadius: "14px",
+                p: compact ? 1.6 : 2.2,
+                borderRadius: "15px",
                 border: "1px solid",
                 borderColor: event.highlight
-                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.35)" : "rgba(13, 148, 136, 0.35)")
-                    : "#e2e8f0",
-                bgcolor: event.highlight
-                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.02)" : "rgba(13, 148, 136, 0.025)")
-                    : "#ffffff",
+                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.4)" : (isGeneralTrack ? "rgba(13, 148, 136, 0.4)" : "rgba(245, 158, 11, 0.4)"))
+                    : "rgba(226, 232, 240, 0.95)",
+                borderLeft: accentBorder,
+                bgcolor: "#ffffff",
                 boxShadow: event.highlight
-                    ? "0 4px 14px rgba(13, 148, 136, 0.08)"
-                    : "0 2px 6px rgba(0, 0, 0, 0.02)",
+                    ? "0 4px 16px rgba(13, 148, 136, 0.08), 0 1px 3px rgba(0,0,0,0.03)"
+                    : "0 2px 8px rgba(0, 0, 0, 0.025)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
                 height: "100%",
                 boxSizing: "border-box",
-                transition: "all 0.2s ease",
+                animation: 'eventCardEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards',
+                animationDelay: `${Math.min(index * 35, 350)}ms`,
+                '@keyframes eventCardEnter': {
+                    '0%': { opacity: 0, transform: 'translateY(14px)' },
+                    '100%': { opacity: 1, transform: 'translateY(0)' },
+                },
+                transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
                 "&:hover": {
                     bgcolor: "#ffffff",
-                    borderColor: isGeoseaTrack ? "#2563eb" : "#0d9488",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.06)",
+                    transform: "translateY(-4px) scale(1.012)",
+                    boxShadow: isGeoseaTrack
+                        ? "0 14px 28px -6px rgba(37, 99, 235, 0.18), 0 4px 12px rgba(0,0,0,0.04)"
+                        : "0 14px 28px -6px rgba(13, 148, 136, 0.2), 0 4px 12px rgba(0,0,0,0.04)",
+                    borderColor: accentColor,
                 },
             }}
         >
             <Box>
-                {/* Time & Category */}
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 0.8 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.6 }}>
+                {/* Time Badge & Live Category Indicator */}
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.2 }}>
+                    {/* Time Pill Badge */}
+                    <Box
+                        sx={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 0.6,
+                            bgcolor: "#0f172a",
+                            color: "#ffffff",
+                            px: 1,
+                            py: 0.35,
+                            borderRadius: "8px",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+                        }}
+                    >
                         <AccessTimeFilledIcon
                             sx={{
-                                fontSize: 14,
-                                color: isGeoseaTrack ? "#2563eb" : "#0d9488",
+                                fontSize: 13,
+                                color: isGeoseaTrack ? "#60a5fa" : (isGeneralTrack ? "#2dd4bf" : "#fbbf24"),
                             }}
                         />
                         <Typography
                             sx={{
                                 fontWeight: 800,
-                                fontSize: "0.82rem",
-                                color: "#0f172a",
+                                fontSize: "0.75rem",
+                                color: "#f8fafc",
+                                letterSpacing: "0.02em",
                             }}
                         >
                             {event.time} WIB
                         </Typography>
                     </Box>
 
+                    {/* Category Chip with Live Pulse if highlighted */}
                     {event.category && (
-                        <Chip
-                            label={event.category}
-                            size="small"
-                            sx={{
-                                height: 20,
-                                fontSize: "0.67rem",
-                                fontWeight: 700,
-                                bgcolor: event.highlight
-                                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.1)" : "rgba(13, 148, 136, 0.12)")
-                                    : "#f1f5f9",
-                                color: isGeoseaTrack ? "#1d4ed8" : "#0d9488",
-                                border: "none",
-                            }}
-                        />
+                        <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                            {event.highlight && (
+                                <Box
+                                    sx={{
+                                        width: 7,
+                                        height: 7,
+                                        borderRadius: "50%",
+                                        bgcolor: accentColor,
+                                        boxShadow: `0 0 0 ${accentColor}`,
+                                        animation: "livePulseBeacon 2s infinite",
+                                        "@keyframes livePulseBeacon": {
+                                            "0%": { boxShadow: `0 0 0 0 ${accentColor}88` },
+                                            "70%": { boxShadow: "0 0 0 6px transparent" },
+                                            "100%": { boxShadow: "0 0 0 0 transparent" },
+                                        },
+                                    }}
+                                />
+                            )}
+                            <Chip
+                                label={event.category}
+                                size="small"
+                                sx={{
+                                    height: 20,
+                                    fontSize: "0.68rem",
+                                    fontWeight: 700,
+                                    bgcolor: event.highlight
+                                        ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.08)" : (isGeneralTrack ? "rgba(13, 148, 136, 0.09)" : "rgba(245, 158, 11, 0.1)"))
+                                        : "#f1f5f9",
+                                    color: isGeoseaTrack ? "#1d4ed8" : (isGeneralTrack ? "#0f766e" : "#b45309"),
+                                    border: event.highlight
+                                        ? `1px solid ${isGeoseaTrack ? "rgba(37, 99, 235, 0.25)" : "rgba(13, 148, 136, 0.25)"}`
+                                        : "1px solid #e2e8f0",
+                                }}
+                            />
+                        </Box>
                     )}
                 </Box>
 
@@ -477,9 +524,10 @@ function EventCard({ event, compact = false }) {
                     sx={{
                         fontWeight: 800,
                         color: "#0f172a",
-                        fontSize: compact ? "0.86rem" : "0.92rem",
+                        fontSize: compact ? "0.88rem" : "0.95rem",
                         lineHeight: 1.35,
                         mb: 0.6,
+                        letterSpacing: "-0.01em",
                     }}
                 >
                     {event.title}
@@ -492,7 +540,7 @@ function EventCard({ event, compact = false }) {
                         sx={{
                             color: "#64748b",
                             fontSize: "0.78rem",
-                            lineHeight: 1.45,
+                            lineHeight: 1.48,
                             display: "-webkit-box",
                             WebkitLineClamp: compact ? 2 : 3,
                             WebkitBoxOrient: "vertical",
@@ -508,19 +556,19 @@ function EventCard({ event, compact = false }) {
             {event.location && (
                 <Box
                     sx={{
-                        pt: 0.8,
-                        mt: 0.8,
+                        pt: 1,
+                        mt: 1.2,
                         borderTop: "1px dashed #e2e8f0",
                         display: "flex",
                         alignItems: "center",
                         gap: 0.6,
                     }}
                 >
-                    <PlaceIcon sx={{ fontSize: 13, color: "#0d9488" }} />
+                    <PlaceIcon sx={{ fontSize: 13, color: accentColor }} />
                     <Typography
                         variant="caption"
                         sx={{
-                            color: "#0d9488",
+                            color: isGeoseaTrack ? "#1d4ed8" : (isGeneralTrack ? "#0f766e" : "#b45309"),
                             fontWeight: 700,
                             fontSize: "0.72rem",
                             whiteSpace: "nowrap",
@@ -977,9 +1025,15 @@ export default function ProgramSchedule() {
                                 <Chip
                                     label="Panorama 4 Hari"
                                     size="small"
-                                    sx={{ bgcolor: "#0d9488", color: "#ffffff", fontWeight: 700, fontSize: "0.72rem" }}
+                                    sx={{
+                                        bgcolor: "#0d9488",
+                                        color: "#ffffff",
+                                        fontWeight: 800,
+                                        fontSize: "0.74rem",
+                                        boxShadow: "0 2px 8px rgba(13, 148, 136, 0.3)",
+                                    }}
                                 />
-                                <Typography sx={{ color: "#475569", fontSize: "0.84rem", fontWeight: 600 }}>
+                                <Typography sx={{ color: "#475569", fontSize: "0.86rem", fontWeight: 700 }}>
                                     Jadwal 4 hari berdampingan ke samping (geser horizontal)
                                 </Typography>
                             </Box>
@@ -989,9 +1043,15 @@ export default function ProgramSchedule() {
                                     onClick={() => handleScroll("left")}
                                     sx={{
                                         bgcolor: "#ffffff",
-                                        border: "1px solid #e2e8f0",
+                                        border: "1px solid #cbd5e1",
                                         color: "#0d9488",
-                                        "&:hover": { bgcolor: "#f0fdfa" },
+                                        boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+                                        "&:hover": {
+                                            bgcolor: "#f0fdfa",
+                                            borderColor: "#0d9488",
+                                            transform: "translateX(-2px)",
+                                        },
+                                        transition: "all 0.2s ease",
                                     }}
                                 >
                                     <ChevronLeftIcon fontSize="small" />
@@ -1001,9 +1061,15 @@ export default function ProgramSchedule() {
                                     onClick={() => handleScroll("right")}
                                     sx={{
                                         bgcolor: "#ffffff",
-                                        border: "1px solid #e2e8f0",
+                                        border: "1px solid #cbd5e1",
                                         color: "#0d9488",
-                                        "&:hover": { bgcolor: "#f0fdfa" },
+                                        boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+                                        "&:hover": {
+                                            bgcolor: "#f0fdfa",
+                                            borderColor: "#0d9488",
+                                            transform: "translateX(2px)",
+                                        },
+                                        transition: "all 0.2s ease",
                                     }}
                                 >
                                     <ChevronRightIcon fontSize="small" />
@@ -1043,48 +1109,80 @@ export default function ProgramSchedule() {
                                         key={day.id}
                                         sx={{
                                             flex: "0 0 auto",
-                                            width: { xs: "290px", sm: "320px", md: "335px" },
+                                            width: { xs: "290px", sm: "320px", md: "340px" },
                                             scrollSnapAlign: "start",
                                             bgcolor: "#f8fafc",
-                                            borderRadius: "16px",
-                                            border: "1px solid #e2e8f0",
+                                            borderRadius: "18px",
+                                            border: "1px solid rgba(226, 232, 240, 0.9)",
                                             overflow: "hidden",
                                             display: "flex",
                                             flexDirection: "column",
+                                            boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+                                            transition: "all 0.3s ease",
                                         }}
                                     >
-                                        {/* Day Column Header */}
+                                        {/* Day Column Header with Rich Gradient and Ambient Glow */}
                                         <Box
                                             sx={{
-                                                p: 1.8,
-                                                bgcolor: "#094d42",
+                                                p: 2,
+                                                background: "linear-gradient(135deg, #052e27 0%, #084c3f 55%, #0d6e5c 100%)",
                                                 color: "#ffffff",
-                                                borderBottom: "2px solid #0d9488",
+                                                borderTop: "3px solid #10b981",
+                                                borderBottom: "1px solid rgba(255,255,255,0.1)",
+                                                position: "relative",
+                                                overflow: "hidden",
                                             }}
                                         >
-                                            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.6 }}>
+                                            {/* Subtle ambient light dot in header */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: -20,
+                                                    right: -20,
+                                                    width: 80,
+                                                    height: 80,
+                                                    borderRadius: '50%',
+                                                    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
+                                                    pointerEvents: 'none',
+                                                }}
+                                            />
+                                            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.8, position: 'relative', zIndex: 1 }}>
                                                 <Chip
                                                     label={day.dayNumber}
                                                     size="small"
                                                     sx={{
-                                                        bgcolor: "#4dd4ac",
-                                                        color: "#073d34",
+                                                        bgcolor: "rgba(16, 185, 129, 0.2)",
+                                                        color: "#34d399",
+                                                        border: "1px solid rgba(52, 211, 153, 0.45)",
                                                         fontWeight: 800,
-                                                        fontSize: "0.7rem",
-                                                        height: 20,
+                                                        fontSize: "0.72rem",
+                                                        height: 22,
+                                                        backdropFilter: "blur(6px)",
                                                     }}
                                                 />
-                                                <Typography sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.74rem", fontWeight: 600 }}>
-                                                    {dayEvents.length} Sesi
-                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        bgcolor: "rgba(255, 255, 255, 0.12)",
+                                                        px: 1.1,
+                                                        py: 0.2,
+                                                        borderRadius: "10px",
+                                                    }}
+                                                >
+                                                    <Typography sx={{ color: "rgba(255,255,255,0.9)", fontSize: "0.72rem", fontWeight: 700 }}>
+                                                        {dayEvents.length} Sesi
+                                                    </Typography>
+                                                </Box>
                                             </Box>
                                             <Typography
                                                 variant="subtitle1"
                                                 sx={{
                                                     fontWeight: 800,
-                                                    fontSize: "0.98rem",
+                                                    fontSize: "1.05rem",
                                                     color: "#ffffff",
                                                     fontFamily: '"Playfair Display", Georgia, serif',
+                                                    letterSpacing: '-0.01em',
+                                                    position: 'relative',
+                                                    zIndex: 1,
                                                 }}
                                             >
                                                 {day.shortDate}
@@ -1092,14 +1190,16 @@ export default function ProgramSchedule() {
                                             <Typography
                                                 variant="caption"
                                                 sx={{
-                                                    color: "#4dd4ac",
-                                                    fontSize: "0.72rem",
+                                                    color: "#6ee7b7",
+                                                    fontSize: "0.74rem",
                                                     fontWeight: 600,
                                                     display: "block",
                                                     mt: 0.3,
                                                     whiteSpace: "nowrap",
                                                     overflow: "hidden",
                                                     textOverflow: "ellipsis",
+                                                    position: 'relative',
+                                                    zIndex: 1,
                                                 }}
                                             >
                                                 {day.badge}
@@ -1107,9 +1207,9 @@ export default function ProgramSchedule() {
                                         </Box>
 
                                         {/* Column Event Cards List */}
-                                        <Box sx={{ p: 1.4, display: "flex", flexDirection: "column", gap: 1.2, flexGrow: 1 }}>
+                                        <Box sx={{ p: 1.4, display: "flex", flexDirection: "column", gap: 1.3, flexGrow: 1 }}>
                                             {dayEvents.map((ev, evIdx) => (
-                                                <EventCard key={evIdx} event={ev} compact />
+                                                <EventCard key={evIdx} event={ev} compact index={evIdx} />
                                             ))}
                                         </Box>
                                     </Box>
@@ -1133,8 +1233,9 @@ export default function ProgramSchedule() {
                             sx={{
                                 px: { xs: 2, sm: 3 },
                                 py: 1.8,
-                                bgcolor: "#094d42",
+                                background: "linear-gradient(135deg, #052e27 0%, #084c3f 55%, #0d6e5c 100%)",
                                 color: "#ffffff",
+                                borderTop: "3px solid #10b981",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
@@ -1147,11 +1248,13 @@ export default function ProgramSchedule() {
                                     label={currentDay?.dayNumber}
                                     size="small"
                                     sx={{
-                                        bgcolor: "rgba(255, 255, 255, 0.2)",
-                                        color: "#ffffff",
+                                        bgcolor: "rgba(16, 185, 129, 0.2)",
+                                        color: "#34d399",
+                                        border: "1px solid rgba(52, 211, 153, 0.45)",
                                         fontWeight: 800,
-                                        fontSize: "0.72rem",
-                                        height: 22,
+                                        fontSize: "0.74rem",
+                                        height: 24,
+                                        backdropFilter: "blur(6px)",
                                     }}
                                 />
                                 <Typography
@@ -1167,7 +1270,7 @@ export default function ProgramSchedule() {
                                 <Typography
                                     sx={{
                                         display: { xs: "none", md: "inline" },
-                                        color: "#4dd4ac",
+                                        color: "#6ee7b7",
                                         fontSize: "0.82rem",
                                         fontWeight: 600,
                                     }}
@@ -1181,7 +1284,7 @@ export default function ProgramSchedule() {
                                 <Typography
                                     variant="caption"
                                     sx={{
-                                        color: "rgba(255,255,255,0.7)",
+                                        color: "rgba(255,255,255,0.75)",
                                         fontSize: "0.75rem",
                                         display: { xs: "none", sm: "inline-block" },
                                     }}
@@ -1194,8 +1297,9 @@ export default function ProgramSchedule() {
                                     sx={{
                                         color: "#ffffff",
                                         bgcolor: "rgba(255,255,255,0.12)",
-                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)" },
+                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)", transform: "translateX(-2px)" },
                                         p: 0.6,
+                                        transition: "all 0.2s ease",
                                     }}
                                 >
                                     <ChevronLeftIcon fontSize="small" />
@@ -1206,8 +1310,9 @@ export default function ProgramSchedule() {
                                     sx={{
                                         color: "#ffffff",
                                         bgcolor: "rgba(255,255,255,0.12)",
-                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)" },
+                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)", transform: "translateX(2px)" },
                                         p: 0.6,
+                                        transition: "all 0.2s ease",
                                     }}
                                 >
                                     <ChevronRightIcon fontSize="small" />
@@ -1248,7 +1353,7 @@ export default function ProgramSchedule() {
                                         scrollSnapAlign: "start",
                                     }}
                                 >
-                                    <EventCard event={event} />
+                                    <EventCard event={event} index={idx} />
                                 </Box>
                             ))}
                         </Box>
