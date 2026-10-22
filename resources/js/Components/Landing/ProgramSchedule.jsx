@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -26,6 +26,8 @@ import PublicIcon from '@mui/icons-material/Public';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import TableChartIcon from '@mui/icons-material/TableChart';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ScrollReveal from './ScrollReveal';
 
 export const SCHEDULE_DAYS = [
@@ -346,52 +348,260 @@ export const SCHEDULE_DAYS = [
     },
 ];
 
+function EventCard({ event, compact = false }) {
+    const isGeoseaTrack = event.track === geosea;
+    const isGeneralTrack = event.track === general;
+    const isCombinedTrack = event.track === all;
+
+    return (
+        <Box
+            sx={{
+                p: compact ? 1.5 : 2,
+                borderRadius: "14px",
+                border: "1px solid",
+                borderColor: event.highlight
+                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.35)" : "rgba(13, 148, 136, 0.35)")
+                    : "#e2e8f0",
+                bgcolor: event.highlight
+                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.02)" : "rgba(13, 148, 136, 0.025)")
+                    : "#ffffff",
+                boxShadow: event.highlight
+                    ? "0 4px 14px rgba(13, 148, 136, 0.08)"
+                    : "0 2px 6px rgba(0, 0, 0, 0.02)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+                boxSizing: "border-box",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                    bgcolor: "#ffffff",
+                    borderColor: isGeoseaTrack ? "#2563eb" : "#0d9488",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.06)",
+                },
+            }}
+        >
+            <Box>
+                {/* Time & Category */}
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 0.8 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.6 }}>
+                        <AccessTimeFilledIcon
+                            sx={{
+                                fontSize: 14,
+                                color: isGeoseaTrack ? "#2563eb" : "#0d9488",
+                            }}
+                        />
+                        <Typography
+                            sx={{
+                                fontWeight: 800,
+                                fontSize: "0.82rem",
+                                color: "#0f172a",
+                            }}
+                        >
+                            {event.time} WIB
+                        </Typography>
+                    </Box>
+
+                    {event.category && (
+                        <Chip
+                            label={event.category}
+                            size="small"
+                            sx={{
+                                height: 20,
+                                fontSize: "0.67rem",
+                                fontWeight: 700,
+                                bgcolor: event.highlight
+                                    ? (isGeoseaTrack ? "rgba(37, 99, 235, 0.1)" : "rgba(13, 148, 136, 0.12)")
+                                    : "#f1f5f9",
+                                color: isGeoseaTrack ? "#1d4ed8" : "#0d9488",
+                                border: "none",
+                            }}
+                        />
+                    )}
+                </Box>
+
+                {/* Track Badge */}
+                <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mb: 1 }}>
+                    {isGeoseaTrack && (
+                        <Chip
+                            icon={<PublicIcon sx={{ fontSize: 11 }} />}
+                            label="GEOSEA Track"
+                            size="small"
+                            sx={{
+                                height: 20,
+                                fontSize: "0.66rem",
+                                fontWeight: 700,
+                                bgcolor: "#eff6ff",
+                                color: "#1d4ed8",
+                                border: "1px solid #bfdbfe",
+                                "& .MuiChip-icon": { color: "#1d4ed8 !important" },
+                            }}
+                        />
+                    )}
+                    {isGeneralTrack && (
+                        <Chip
+                            icon={<GroupsIcon sx={{ fontSize: 11 }} />}
+                            label="PIT IAGI General"
+                            size="small"
+                            sx={{
+                                height: 20,
+                                fontSize: "0.66rem",
+                                fontWeight: 700,
+                                bgcolor: "#f0fdfa",
+                                color: "#0f766e",
+                                border: "1px solid #99f6e4",
+                                "& .MuiChip-icon": { color: "#0f766e !important" },
+                            }}
+                        />
+                    )}
+                    {isCombinedTrack && (
+                        <Chip
+                            label="All Delegates"
+                            size="small"
+                            sx={{
+                                height: 20,
+                                fontSize: "0.66rem",
+                                fontWeight: 700,
+                                bgcolor: "#f8fafc",
+                                color: "#475569",
+                                border: "1px solid #e2e8f0",
+                            }}
+                        />
+                    )}
+                </Box>
+
+                {/* Title */}
+                <Typography
+                    variant="subtitle2"
+                    sx={{
+                        fontWeight: 800,
+                        color: "#0f172a",
+                        fontSize: compact ? "0.86rem" : "0.92rem",
+                        lineHeight: 1.35,
+                        mb: 0.6,
+                    }}
+                >
+                    {event.title}
+                </Typography>
+
+                {/* Subtitle */}
+                {event.subtitle && (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: "#64748b",
+                            fontSize: "0.78rem",
+                            lineHeight: 1.45,
+                            display: "-webkit-box",
+                            WebkitLineClamp: compact ? 2 : 3,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                        }}
+                    >
+                        {event.subtitle}
+                    </Typography>
+                )}
+            </Box>
+
+            {/* Location */}
+            {event.location && (
+                <Box
+                    sx={{
+                        pt: 0.8,
+                        mt: 0.8,
+                        borderTop: "1px dashed #e2e8f0",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.6,
+                    }}
+                >
+                    <PlaceIcon sx={{ fontSize: 13, color: "#0d9488" }} />
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: "#0d9488",
+                            fontWeight: 700,
+                            fontSize: "0.72rem",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}
+                    >
+                        {event.location}
+                    </Typography>
+                </Box>
+            )}
+        </Box>
+    );
+}
+
 export default function ProgramSchedule() {
     // Default to Day 1 (Tue, 3 Nov) for fast initial render
-    const [selectedDayId, setSelectedDayId] = useState('day-1');
-    const [selectedTrack, setSelectedTrack] = useState('all');
-    const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'table'
+    const [selectedDayId, setSelectedDayId] = useState("day-1");
+    const [selectedTrack, setSelectedTrack] = useState("all");
+    const [viewMode, setViewMode] = useState("cards"); // "cards" | "table"
     const [flyerOpen, setFlyerOpen] = useState(false);
     const [flyerLoading, setFlyerLoading] = useState(true);
+    const scrollContainerRef = useRef(null);
 
-    const daysToShow = selectedDayId === 'all'
-        ? SCHEDULE_DAYS
-        : SCHEDULE_DAYS.filter(d => d.id === selectedDayId);
+    const handleScroll = (direction) => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = 360;
+            scrollContainerRef.current.scrollBy({
+                left: direction === "left" ? -scrollAmount : scrollAmount,
+                behavior: "smooth",
+            });
+        }
+    };
+
+    const currentDay = SCHEDULE_DAYS.find(d => d.id === selectedDayId) || SCHEDULE_DAYS[1];
+
+    const filterEvents = (events) => {
+        return events.filter(ev => {
+            if (selectedTrack === "all") return true;
+            if (selectedTrack === "general") return ev.track === "general" || ev.track === "all";
+            if (selectedTrack === "geosea") return ev.track === "geosea" || ev.track === "all";
+            return true;
+        });
+    };
+
+    const singleDayEvents = filterEvents(currentDay ? currentDay.events : []);
 
     return (
         <Box
             id="schedule"
             sx={{
                 py: { xs: 7, md: 10 },
-                position: 'relative',
-                background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 40%, #f8fafc 100%)',
+                position: "relative",
+                background: "linear-gradient(180deg, #f0fdfa 0%, #ffffff 40%, #f8fafc 100%)",
             }}
         >
-            <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
+            <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
                 {/* Section Header */}
                 <ScrollReveal variant="fadeUp" duration={600}>
-                    <Box sx={{ textAlign: 'center', maxWidth: '800px', mx: 'auto', mb: { xs: 3.5, md: 5 } }}>
+                    <Box sx={{ textAlign: "center", maxWidth: "800px", mx: "auto", mb: { xs: 3.5, md: 5 } }}>
                         <Box
                             sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
+                                display: "inline-flex",
+                                alignItems: "center",
                                 gap: 1,
-                                bgcolor: 'rgba(13, 148, 136, 0.08)',
-                                borderRadius: '50px',
+                                bgcolor: "rgba(13, 148, 136, 0.08)",
+                                borderRadius: "50px",
                                 px: 2.2,
                                 py: 0.6,
                                 mb: 1.8,
-                                border: '1px solid rgba(13, 148, 136, 0.25)',
+                                border: "1px solid rgba(13, 148, 136, 0.25)",
                             }}
                         >
-                            <CalendarMonthIcon sx={{ color: '#0d9488', fontSize: 17 }} />
+                            <CalendarMonthIcon sx={{ color: "#0d9488", fontSize: 17 }} />
                             <Typography
                                 variant="overline"
                                 sx={{
-                                    color: '#0d9488',
+                                    color: "#0d9488",
                                     fontWeight: 800,
-                                    letterSpacing: '0.15em',
-                                    fontSize: '0.74rem',
+                                    letterSpacing: "0.15em",
+                                    fontSize: "0.74rem",
                                 }}
                             >
                                 PROGRAM & SCHEDULE
@@ -404,15 +614,15 @@ export default function ProgramSchedule() {
                             sx={{
                                 fontFamily: '"Playfair Display", Georgia, serif',
                                 fontWeight: 700,
-                                color: '#0f172a',
-                                fontSize: { xs: '1.9rem', sm: '2.6rem', md: '3rem' },
-                                letterSpacing: '-0.02em',
+                                color: "#0f172a",
+                                fontSize: { xs: "1.9rem", sm: "2.6rem", md: "3rem" },
+                                letterSpacing: "-0.02em",
                                 lineHeight: 1.18,
                                 mb: 1.5,
                             }}
                         >
                             Conference Agenda & <br />
-                            <Box component="span" sx={{ fontStyle: 'italic', color: '#0d9488' }}>
+                            <Box component="span" sx={{ fontStyle: "italic", color: "#0d9488" }}>
                                 Rundown Acara
                             </Box>
                         </Typography>
@@ -420,18 +630,18 @@ export default function ProgramSchedule() {
                         <Typography
                             variant="body1"
                             sx={{
-                                color: '#64748b',
-                                fontSize: { xs: '0.92rem', md: '1rem' },
+                                color: "#64748b",
+                                fontSize: { xs: "0.92rem", md: "1rem" },
                                 lineHeight: 1.6,
-                                maxWidth: '680px',
-                                mx: 'auto',
+                                maxWidth: "680px",
+                                mx: "auto",
                             }}
                         >
                             Jadwal lengkap konferensi internasional 4 hari: sesi pleno umum, forum CEO, simposium geoheritage & geopark, GEOSEA Congress, hingga cultural excursion di Yogyakarta.
                         </Typography>
 
                         {/* Top Action Buttons (Fast Flyer & View Toggle) */}
-                        <Box sx={{ mt: 2.5, display: 'flex', justifyContent: 'center', gap: 1.2, flexWrap: 'wrap' }}>
+                        <Box sx={{ mt: 2.5, display: "flex", justifyContent: "center", gap: 1.2, flexWrap: "wrap" }}>
                             <Button
                                 variant="outlined"
                                 startIcon={<VisibilityIcon />}
@@ -440,18 +650,18 @@ export default function ProgramSchedule() {
                                     setFlyerOpen(true);
                                 }}
                                 sx={{
-                                    borderColor: '#0d9488',
-                                    color: '#0d9488',
+                                    borderColor: "#0d9488",
+                                    color: "#0d9488",
                                     fontWeight: 700,
-                                    borderRadius: '30px',
+                                    borderRadius: "30px",
                                     px: 2.4,
                                     py: 0.75,
-                                    fontSize: '0.84rem',
-                                    textTransform: 'none',
-                                    bgcolor: '#ffffff',
-                                    '&:hover': {
-                                        bgcolor: '#f0fdfa',
-                                        borderColor: '#0f766e',
+                                    fontSize: "0.84rem",
+                                    textTransform: "none",
+                                    bgcolor: "#ffffff",
+                                    "&:hover": {
+                                        bgcolor: "#f0fdfa",
+                                        borderColor: "#0f766e",
                                     },
                                 }}
                             >
@@ -466,18 +676,18 @@ export default function ProgramSchedule() {
                                 rel="noopener noreferrer"
                                 startIcon={<DownloadIcon />}
                                 sx={{
-                                    bgcolor: '#0d9488',
-                                    color: '#ffffff',
+                                    bgcolor: "#0d9488",
+                                    color: "#ffffff",
                                     fontWeight: 700,
-                                    borderRadius: '30px',
+                                    borderRadius: "30px",
                                     px: 2.4,
                                     py: 0.75,
-                                    fontSize: '0.84rem',
-                                    textTransform: 'none',
-                                    boxShadow: 'none',
-                                    '&:hover': {
-                                        bgcolor: '#0f766e',
-                                        boxShadow: '0 4px 12px rgba(13, 148, 136, 0.3)',
+                                    fontSize: "0.84rem",
+                                    textTransform: "none",
+                                    boxShadow: "none",
+                                    "&:hover": {
+                                        bgcolor: "#0f766e",
+                                        boxShadow: "0 4px 12px rgba(13, 148, 136, 0.3)",
                                     },
                                 }}
                             >
@@ -490,23 +700,23 @@ export default function ProgramSchedule() {
                 {/* Day Switcher Segmented Buttons */}
                 <Box
                     sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        flexWrap: 'wrap',
+                        display: "flex",
+                        justifyContent: "center",
+                        flexWrap: "wrap",
                         gap: 1,
                         mb: 2.5,
                     }}
                 >
                     <Box
                         sx={{
-                            display: 'inline-flex',
+                            display: "inline-flex",
                             p: 0.5,
-                            borderRadius: '50px',
-                            bgcolor: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
+                            borderRadius: "50px",
+                            bgcolor: "#ffffff",
+                            border: "1px solid #e2e8f0",
+                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                            flexWrap: "wrap",
+                            justifyContent: "center",
                             gap: 0.4,
                         }}
                     >
@@ -515,38 +725,38 @@ export default function ProgramSchedule() {
                                 key={day.id}
                                 onClick={() => setSelectedDayId(day.id)}
                                 sx={{
-                                    borderRadius: '40px',
+                                    borderRadius: "40px",
                                     px: { xs: 1.6, sm: 2.2 },
                                     py: 0.7,
-                                    fontSize: { xs: '0.78rem', sm: '0.85rem' },
+                                    fontSize: { xs: "0.78rem", sm: "0.85rem" },
                                     fontWeight: 700,
-                                    textTransform: 'none',
-                                    bgcolor: selectedDayId === day.id ? '#0d9488' : 'transparent',
-                                    color: selectedDayId === day.id ? '#ffffff' : '#475569',
-                                    '&:hover': {
-                                        bgcolor: selectedDayId === day.id ? '#0f766e' : '#f8fafc',
+                                    textTransform: "none",
+                                    bgcolor: selectedDayId === day.id ? "#0d9488" : "transparent",
+                                    color: selectedDayId === day.id ? "#ffffff" : "#475569",
+                                    "&:hover": {
+                                        bgcolor: selectedDayId === day.id ? "#0f766e" : "#f8fafc",
                                     },
-                                    transition: 'all 0.15s ease',
+                                    transition: "all 0.15s ease",
                                 }}
                             >
                                 📅 {day.shortDate} ({day.dayNumber})
                             </Button>
                         ))}
                         <Button
-                            onClick={() => setSelectedDayId('all')}
+                            onClick={() => setSelectedDayId("all")}
                             sx={{
-                                borderRadius: '40px',
+                                borderRadius: "40px",
                                 px: { xs: 1.6, sm: 2.2 },
                                 py: 0.7,
-                                fontSize: { xs: '0.78rem', sm: '0.85rem' },
+                                fontSize: { xs: "0.78rem", sm: "0.85rem" },
                                 fontWeight: 700,
-                                textTransform: 'none',
-                                bgcolor: selectedDayId === 'all' ? '#0d9488' : 'transparent',
-                                color: selectedDayId === 'all' ? '#ffffff' : '#475569',
-                                '&:hover': {
-                                    bgcolor: selectedDayId === 'all' ? '#0f766e' : '#f8fafc',
+                                textTransform: "none",
+                                bgcolor: selectedDayId === "all" ? "#0d9488" : "transparent",
+                                color: selectedDayId === "all" ? "#ffffff" : "#475569",
+                                "&:hover": {
+                                    bgcolor: selectedDayId === "all" ? "#0f766e" : "#f8fafc",
                                 },
-                                transition: 'all 0.15s ease',
+                                transition: "all 0.15s ease",
                             }}
                         >
                             Semua Hari (4 Hari)
@@ -557,29 +767,29 @@ export default function ProgramSchedule() {
                 {/* Sub-toolbar: Track Filter & View Mode Toggle */}
                 <Box
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         gap: 1.5,
-                        flexWrap: 'wrap',
+                        flexWrap: "wrap",
                         mb: { xs: 3, md: 4 },
                     }}
                 >
                     {/* Track Pills */}
-                    <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <Box sx={{ display: "flex", gap: 0.8, flexWrap: "wrap", justifyContent: "center" }}>
                         <Chip
                             label="Semua Track"
                             clickable
                             size="small"
-                            onClick={() => setSelectedTrack('all')}
+                            onClick={() => setSelectedTrack("all")}
                             sx={{
                                 fontWeight: 700,
-                                fontSize: '0.78rem',
+                                fontSize: "0.78rem",
                                 height: 30,
-                                bgcolor: selectedTrack === 'all' ? '#1e293b' : '#ffffff',
-                                color: selectedTrack === 'all' ? '#ffffff' : '#64748b',
-                                border: '1px solid',
-                                borderColor: selectedTrack === 'all' ? '#1e293b' : '#e2e8f0',
+                                bgcolor: selectedTrack === "all" ? "#1e293b" : "#ffffff",
+                                color: selectedTrack === "all" ? "#ffffff" : "#64748b",
+                                border: "1px solid",
+                                borderColor: selectedTrack === "all" ? "#1e293b" : "#e2e8f0",
                             }}
                         />
                         <Chip
@@ -587,17 +797,17 @@ export default function ProgramSchedule() {
                             label="General (PIT IAGI)"
                             clickable
                             size="small"
-                            onClick={() => setSelectedTrack('general')}
+                            onClick={() => setSelectedTrack("general")}
                             sx={{
                                 fontWeight: 700,
-                                fontSize: '0.78rem',
+                                fontSize: "0.78rem",
                                 height: 30,
-                                bgcolor: selectedTrack === 'general' ? '#0d9488' : '#ffffff',
-                                color: selectedTrack === 'general' ? '#ffffff' : '#0d9488',
-                                border: '1px solid',
-                                borderColor: selectedTrack === 'general' ? '#0d9488' : 'rgba(13, 148, 136, 0.3)',
-                                '& .MuiChip-icon': {
-                                    color: selectedTrack === 'general' ? '#ffffff !important' : '#0d9488 !important',
+                                bgcolor: selectedTrack === "general" ? "#0d9488" : "#ffffff",
+                                color: selectedTrack === "general" ? "#ffffff" : "#0d9488",
+                                border: "1px solid",
+                                borderColor: selectedTrack === "general" ? "#0d9488" : "rgba(13, 148, 136, 0.3)",
+                                "& .MuiChip-icon": {
+                                    color: selectedTrack === "general" ? "#ffffff !important" : "#0d9488 !important",
                                 },
                             }}
                         />
@@ -606,17 +816,17 @@ export default function ProgramSchedule() {
                             label="GEOSEA Track"
                             clickable
                             size="small"
-                            onClick={() => setSelectedTrack('geosea')}
+                            onClick={() => setSelectedTrack("geosea")}
                             sx={{
                                 fontWeight: 700,
-                                fontSize: '0.78rem',
+                                fontSize: "0.78rem",
                                 height: 30,
-                                bgcolor: selectedTrack === 'geosea' ? '#2563eb' : '#ffffff',
-                                color: selectedTrack === 'geosea' ? '#ffffff' : '#2563eb',
-                                border: '1px solid',
-                                borderColor: selectedTrack === 'geosea' ? '#2563eb' : 'rgba(37, 99, 235, 0.3)',
-                                '& .MuiChip-icon': {
-                                    color: selectedTrack === 'geosea' ? '#ffffff !important' : '#2563eb !important',
+                                bgcolor: selectedTrack === "geosea" ? "#2563eb" : "#ffffff",
+                                color: selectedTrack === "geosea" ? "#ffffff" : "#2563eb",
+                                border: "1px solid",
+                                borderColor: selectedTrack === "geosea" ? "#2563eb" : "rgba(37, 99, 235, 0.3)",
+                                "& .MuiChip-icon": {
+                                    color: selectedTrack === "geosea" ? "#ffffff !important" : "#2563eb !important",
                                 },
                             }}
                         />
@@ -625,23 +835,23 @@ export default function ProgramSchedule() {
                     {/* View Mode Toggle: Cards vs Table */}
                     <Box
                         sx={{
-                            display: 'inline-flex',
+                            display: "inline-flex",
                             p: 0.3,
-                            bgcolor: '#f1f5f9',
-                            borderRadius: '8px',
-                            border: '1px solid #e2e8f0',
+                            bgcolor: "#f1f5f9",
+                            borderRadius: "8px",
+                            border: "1px solid #e2e8f0",
                         }}
                     >
-                        <Tooltip title="Tampilan Kartu">
+                        <Tooltip title="Tampilan Kartu Meluncur (Landscape)">
                             <IconButton
                                 size="small"
-                                onClick={() => setViewMode('cards')}
+                                onClick={() => setViewMode("cards")}
                                 sx={{
                                     p: 0.6,
-                                    borderRadius: '6px',
-                                    bgcolor: viewMode === 'cards' ? '#ffffff' : 'transparent',
-                                    color: viewMode === 'cards' ? '#0d9488' : '#64748b',
-                                    boxShadow: viewMode === 'cards' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                    borderRadius: "6px",
+                                    bgcolor: viewMode === "cards" ? "#ffffff" : "transparent",
+                                    color: viewMode === "cards" ? "#0d9488" : "#64748b",
+                                    boxShadow: viewMode === "cards" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
                                 }}
                             >
                                 <ViewListIcon sx={{ fontSize: 18 }} />
@@ -650,13 +860,13 @@ export default function ProgramSchedule() {
                         <Tooltip title="Tampilan Tabel Ringkas (Seperti Flyer)">
                             <IconButton
                                 size="small"
-                                onClick={() => setViewMode('table')}
+                                onClick={() => setViewMode("table")}
                                 sx={{
                                     p: 0.6,
-                                    borderRadius: '6px',
-                                    bgcolor: viewMode === 'table' ? '#ffffff' : 'transparent',
-                                    color: viewMode === 'table' ? '#0d9488' : '#64748b',
-                                    boxShadow: viewMode === 'table' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                    borderRadius: "6px",
+                                    bgcolor: viewMode === "table" ? "#ffffff" : "transparent",
+                                    color: viewMode === "table" ? "#0d9488" : "#64748b",
+                                    boxShadow: viewMode === "table" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
                                 }}
                             >
                                 <TableChartIcon sx={{ fontSize: 18 }} />
@@ -665,83 +875,54 @@ export default function ProgramSchedule() {
                     </Box>
                 </Box>
 
-                {/* Day-by-Day Schedule List */}
-                <Stack spacing={4} sx={{ maxWidth: '980px', mx: 'auto' }}>
-                    {daysToShow.map((day) => {
-                        const events = day.events.filter(ev => {
-                            if (selectedTrack === 'all') return true;
-                            if (selectedTrack === 'general') return ev.track === 'general' || ev.track === 'all';
-                            if (selectedTrack === 'geosea') return ev.track === 'geosea' || ev.track === 'all';
-                            return true;
-                        });
+                {/* Main Schedule Content: Table vs Landscape Cards */}
+                {viewMode === "table" ? (
+                    <Stack spacing={3} sx={{ maxWidth: "1000px", mx: "auto" }}>
+                        {(selectedDayId === "all" ? SCHEDULE_DAYS : [currentDay]).map((day) => {
+                            const events = filterEvents(day.events);
+                            if (events.length === 0) return null;
 
-                        if (events.length === 0) return null;
-
-                        return (
-                            <Box
-                                key={day.id}
-                                sx={{
-                                    bgcolor: '#ffffff',
-                                    borderRadius: '18px',
-                                    border: '1px solid #e2e8f0',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                {/* Day Header Banner */}
+                            return (
                                 <Box
+                                    key={day.id}
                                     sx={{
-                                        px: { xs: 2, sm: 3 },
-                                        py: 1.8,
-                                        bgcolor: '#094d42',
-                                        color: '#ffffff',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        flexWrap: 'wrap',
-                                        gap: 1,
+                                        bgcolor: "#ffffff",
+                                        borderRadius: "16px",
+                                        border: "1px solid #e2e8f0",
+                                        overflow: "hidden",
+                                        boxShadow: "0 2px 12px rgba(0,0,0,0.03)",
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                                        <Chip
-                                            label={day.dayNumber}
-                                            size="small"
-                                            sx={{
-                                                bgcolor: 'rgba(255, 255, 255, 0.2)',
-                                                color: '#ffffff',
-                                                fontWeight: 800,
-                                                fontSize: '0.72rem',
-                                                height: 22,
-                                            }}
-                                        />
-                                        <Typography
-                                            variant="subtitle1"
-                                            sx={{
-                                                fontWeight: 800,
-                                                fontSize: { xs: '1.05rem', sm: '1.18rem' },
-                                                fontFamily: '"Playfair Display", Georgia, serif',
-                                            }}
-                                        >
-                                            {day.dateStr}
+                                    <Box
+                                        sx={{
+                                            px: 2.5,
+                                            py: 1.2,
+                                            bgcolor: "#094d42",
+                                            color: "#ffffff",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between",
+                                        }}
+                                    >
+                                        <Typography sx={{ fontWeight: 800, fontSize: "0.95rem" }}>
+                                            {day.dateStr} ({day.dayNumber})
+                                        </Typography>
+                                        <Typography sx={{ color: "#4dd4ac", fontSize: "0.78rem", fontWeight: 600 }}>
+                                            {day.badge}
                                         </Typography>
                                     </Box>
-                                    <Typography sx={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.8rem', fontWeight: 600 }}>
-                                        {day.badge}
-                                    </Typography>
-                                </Box>
 
-                                {/* Conditional Render: Table vs Cards */}
-                                {viewMode === 'table' ? (
                                     <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0 }}>
                                         <Table size="small">
                                             <TableHead>
-                                                <TableRow sx={{ bgcolor: '#f8fafc' }}>
-                                                    <TableCell sx={{ fontWeight: 800, color: '#1e293b', width: 140, fontSize: '0.8rem' }}>
+                                                <TableRow sx={{ bgcolor: "#f8fafc" }}>
+                                                    <TableCell sx={{ fontWeight: 800, color: "#1e293b", width: 130, fontSize: "0.78rem" }}>
                                                         TIME (WIB)
                                                     </TableCell>
-                                                    <TableCell sx={{ fontWeight: 800, color: '#0d9488', fontSize: '0.8rem' }}>
+                                                    <TableCell sx={{ fontWeight: 800, color: "#0d9488", fontSize: "0.78rem" }}>
                                                         GENERAL: SESSION / TOPIC
                                                     </TableCell>
-                                                    <TableCell sx={{ fontWeight: 800, color: '#2563eb', width: { xs: 180, sm: 260 }, fontSize: '0.8rem' }}>
+                                                    <TableCell sx={{ fontWeight: 800, color: "#2563eb", width: { xs: 160, sm: 240 }, fontSize: "0.78rem" }}>
                                                         GEOSEA: PARTICIPANT
                                                     </TableCell>
                                                 </TableRow>
@@ -752,29 +933,29 @@ export default function ProgramSchedule() {
                                                         key={idx}
                                                         hover
                                                         sx={{
-                                                            bgcolor: ev.highlight ? 'rgba(13, 148, 136, 0.02)' : 'inherit',
-                                                            '&:nth-of-type(even)': { bgcolor: '#fafafa' },
+                                                            bgcolor: ev.highlight ? "rgba(13, 148, 136, 0.02)" : "inherit",
+                                                            "&:nth-of-type(even)": { bgcolor: "#fafafa" },
                                                         }}
                                                     >
-                                                        <TableCell sx={{ fontWeight: 700, fontSize: '0.82rem', color: '#0f172a', whiteSpace: 'nowrap' }}>
+                                                        <TableCell sx={{ fontWeight: 700, fontSize: "0.8rem", color: "#0f172a", whiteSpace: "nowrap" }}>
                                                             {ev.time}
                                                         </TableCell>
-                                                        <TableCell sx={{ fontSize: '0.84rem', color: '#334155' }}>
-                                                            <Typography sx={{ fontWeight: 700, fontSize: '0.84rem', color: '#0f172a' }}>
+                                                        <TableCell sx={{ fontSize: "0.82rem", color: "#334155" }}>
+                                                            <Typography sx={{ fontWeight: 700, fontSize: "0.82rem", color: "#0f172a" }}>
                                                                 {ev.generalTopic}
                                                             </Typography>
-                                                            {ev.location && ev.track !== 'geosea' && (
-                                                                <Typography variant="caption" sx={{ color: '#0d9488', display: 'block', mt: 0.3 }}>
+                                                            {ev.location && ev.track !== "geosea" && (
+                                                                <Typography variant="caption" sx={{ color: "#0d9488", display: "block", mt: 0.2 }}>
                                                                     📍 {ev.location}
                                                                 </Typography>
                                                             )}
                                                         </TableCell>
-                                                        <TableCell sx={{ fontSize: '0.84rem', color: '#1e40af' }}>
-                                                            <Typography sx={{ fontWeight: 700, fontSize: '0.84rem', color: ev.geoseaTopic !== '—' ? '#1e40af' : '#94a3b8' }}>
+                                                        <TableCell sx={{ fontSize: "0.82rem", color: "#1e40af" }}>
+                                                            <Typography sx={{ fontWeight: 700, fontSize: "0.82rem", color: ev.geoseaTopic !== "—" ? "#1e40af" : "#94a3b8" }}>
                                                                 {ev.geoseaTopic}
                                                             </Typography>
-                                                            {ev.location && ev.track === 'geosea' && (
-                                                                <Typography variant="caption" sx={{ color: '#2563eb', display: 'block', mt: 0.3 }}>
+                                                            {ev.location && ev.track === "geosea" && (
+                                                                <Typography variant="caption" sx={{ color: "#2563eb", display: "block", mt: 0.2 }}>
                                                                     📍 {ev.location}
                                                                 </Typography>
                                                             )}
@@ -784,171 +965,295 @@ export default function ProgramSchedule() {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                ) : (
-                                    /* Cards View */
-                                    <Box sx={{ p: { xs: 1.5, sm: 2.5 } }}>
-                                        <Stack spacing={1.5}>
-                                            {events.map((event, idx) => {
-                                                const isGeoseaTrack = event.track === 'geosea';
-                                                const isGeneralTrack = event.track === 'general';
-                                                const isCombinedTrack = event.track === 'all';
-
-                                                return (
-                                                    <Box
-                                                        key={idx}
-                                                        sx={{
-                                                            p: { xs: 1.8, sm: 2.2 },
-                                                            borderRadius: '12px',
-                                                            border: '1px solid',
-                                                            borderColor: event.highlight
-                                                                ? (isGeoseaTrack ? 'rgba(37, 99, 235, 0.25)' : 'rgba(13, 148, 136, 0.25)')
-                                                                : '#f1f5f9',
-                                                            bgcolor: event.highlight
-                                                                ? (isGeoseaTrack ? 'rgba(37, 99, 235, 0.02)' : 'rgba(13, 148, 136, 0.02)')
-                                                                : '#fafafa',
-                                                            transition: 'background-color 0.15s',
-                                                            '&:hover': {
-                                                                bgcolor: '#ffffff',
-                                                                borderColor: isGeoseaTrack ? '#3b82f6' : '#0d9488',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <Box
-                                                            sx={{
-                                                                display: 'flex',
-                                                                flexDirection: { xs: 'column', sm: 'row' },
-                                                                alignItems: { xs: 'flex-start', sm: 'center' },
-                                                                justifyContent: 'space-between',
-                                                                gap: 1.2,
-                                                            }}
-                                                        >
-                                                            {/* Left: Time & Track Badges */}
-                                                            <Box sx={{ minWidth: { sm: 200 }, flexShrink: 0 }}>
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, mb: 0.6 }}>
-                                                                    <AccessTimeFilledIcon
-                                                                        sx={{
-                                                                            fontSize: 15,
-                                                                            color: isGeoseaTrack ? '#2563eb' : '#0d9488',
-                                                                        }}
-                                                                    />
-                                                                    <Typography
-                                                                        sx={{
-                                                                            fontWeight: 800,
-                                                                            fontSize: '0.88rem',
-                                                                            color: '#0f172a',
-                                                                        }}
-                                                                    >
-                                                                        {event.time} WIB
-                                                                    </Typography>
-                                                                </Box>
-
-                                                                {/* Track Badges */}
-                                                                <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                                                                    {isGeoseaTrack && (
-                                                                        <Chip
-                                                                            icon={<PublicIcon sx={{ fontSize: 12 }} />}
-                                                                            label="GEOSEA Track"
-                                                                            size="small"
-                                                                            sx={{
-                                                                                height: 20,
-                                                                                fontSize: '0.66rem',
-                                                                                fontWeight: 700,
-                                                                                bgcolor: 'rgba(37, 99, 235, 0.12)',
-                                                                                color: '#1d4ed8',
-                                                                                border: '1px solid rgba(37, 99, 235, 0.3)',
-                                                                                '& .MuiChip-icon': { color: '#1d4ed8 !important' },
-                                                                            }}
-                                                                        />
-                                                                    )}
-                                                                    {isGeneralTrack && (
-                                                                        <Chip
-                                                                            icon={<GroupsIcon sx={{ fontSize: 12 }} />}
-                                                                            label="General"
-                                                                            size="small"
-                                                                            sx={{
-                                                                                height: 20,
-                                                                                fontSize: '0.66rem',
-                                                                                fontWeight: 700,
-                                                                                bgcolor: 'rgba(13, 148, 136, 0.12)',
-                                                                                color: '#0f766e',
-                                                                                border: '1px solid rgba(13, 148, 136, 0.3)',
-                                                                                '& .MuiChip-icon': { color: '#0f766e !important' },
-                                                                            }}
-                                                                        />
-                                                                    )}
-                                                                    {isCombinedTrack && (
-                                                                        <Chip
-                                                                            label="All Delegates"
-                                                                            size="small"
-                                                                            sx={{
-                                                                                height: 20,
-                                                                                fontSize: '0.66rem',
-                                                                                fontWeight: 700,
-                                                                                bgcolor: '#f1f5f9',
-                                                                                color: '#475569',
-                                                                                border: '1px solid #cbd5e1',
-                                                                            }}
-                                                                        />
-                                                                    )}
-                                                                </Stack>
-                                                            </Box>
-
-                                                            {/* Center/Right: Title, Subtitle, Location */}
-                                                            <Box sx={{ flex: 1 }}>
-                                                                <Typography
-                                                                    variant="subtitle2"
-                                                                    sx={{
-                                                                        fontWeight: 800,
-                                                                        fontSize: { xs: '0.94rem', sm: '1rem' },
-                                                                        color: '#0f172a',
-                                                                        lineHeight: 1.35,
-                                                                        mb: 0.4,
-                                                                    }}
-                                                                >
-                                                                    {event.title}
-                                                                </Typography>
-
-                                                                {event.subtitle && (
-                                                                    <Typography
-                                                                        variant="body2"
-                                                                        sx={{
-                                                                            color: '#475569',
-                                                                            fontSize: '0.84rem',
-                                                                            lineHeight: 1.45,
-                                                                            mb: event.location ? 0.6 : 0,
-                                                                        }}
-                                                                    >
-                                                                        {event.subtitle}
-                                                                    </Typography>
-                                                                )}
-
-                                                                {event.location && (
-                                                                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.4 }}>
-                                                                        <PlaceIcon sx={{ fontSize: 13, color: '#0d9488' }} />
-                                                                        <Typography
-                                                                            variant="caption"
-                                                                            sx={{
-                                                                                color: '#0d9488',
-                                                                                fontWeight: 700,
-                                                                                fontSize: '0.76rem',
-                                                                            }}
-                                                                        >
-                                                                            {event.location}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                )}
-                                                            </Box>
-                                                        </Box>
-                                                    </Box>
-                                                );
-                                            })}
-                                        </Stack>
-                                    </Box>
-                                )}
+                                </Box>
+                            );
+                        })}
+                    </Stack>
+                ) : selectedDayId === "all" ? (
+                    /* CASE A: All Days in Landscape 4-Column Board (Side-by-Side Horizontally) */
+                    <Box sx={{ width: "100%" }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2, px: 0.5 }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Chip
+                                    label="Panorama 4 Hari"
+                                    size="small"
+                                    sx={{ bgcolor: "#0d9488", color: "#ffffff", fontWeight: 700, fontSize: "0.72rem" }}
+                                />
+                                <Typography sx={{ color: "#475569", fontSize: "0.84rem", fontWeight: 600 }}>
+                                    Jadwal 4 hari berdampingan ke samping (geser horizontal)
+                                </Typography>
                             </Box>
-                        );
-                    })}
-                </Stack>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleScroll("left")}
+                                    sx={{
+                                        bgcolor: "#ffffff",
+                                        border: "1px solid #e2e8f0",
+                                        color: "#0d9488",
+                                        "&:hover": { bgcolor: "#f0fdfa" },
+                                    }}
+                                >
+                                    <ChevronLeftIcon fontSize="small" />
+                                </IconButton>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleScroll("right")}
+                                    sx={{
+                                        bgcolor: "#ffffff",
+                                        border: "1px solid #e2e8f0",
+                                        color: "#0d9488",
+                                        "&:hover": { bgcolor: "#f0fdfa" },
+                                    }}
+                                >
+                                    <ChevronRightIcon fontSize="small" />
+                                </IconButton>
+                            </Box>
+                        </Box>
+
+                        <Box
+                            ref={scrollContainerRef}
+                            sx={{
+                                display: "flex",
+                                overflowX: "auto",
+                                gap: 2.5,
+                                pb: 2.5,
+                                scrollSnapType: "x mandatory",
+                                scrollBehavior: "smooth",
+                                alignItems: "stretch",
+                                "&::-webkit-scrollbar": {
+                                    height: 8,
+                                },
+                                "&::-webkit-scrollbar-track": {
+                                    bgcolor: "#f1f5f9",
+                                    borderRadius: 4,
+                                },
+                                "&::-webkit-scrollbar-thumb": {
+                                    bgcolor: "#cbd5e1",
+                                    borderRadius: 4,
+                                    "&:hover": { bgcolor: "#94a3b8" },
+                                },
+                            }}
+                        >
+                            {SCHEDULE_DAYS.map((day) => {
+                                const dayEvents = filterEvents(day.events);
+
+                                return (
+                                    <Box
+                                        key={day.id}
+                                        sx={{
+                                            flex: "0 0 auto",
+                                            width: { xs: "290px", sm: "320px", md: "335px" },
+                                            scrollSnapAlign: "start",
+                                            bgcolor: "#f8fafc",
+                                            borderRadius: "16px",
+                                            border: "1px solid #e2e8f0",
+                                            overflow: "hidden",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                        }}
+                                    >
+                                        {/* Day Column Header */}
+                                        <Box
+                                            sx={{
+                                                p: 1.8,
+                                                bgcolor: "#094d42",
+                                                color: "#ffffff",
+                                                borderBottom: "2px solid #0d9488",
+                                            }}
+                                        >
+                                            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.6 }}>
+                                                <Chip
+                                                    label={day.dayNumber}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: "#4dd4ac",
+                                                        color: "#073d34",
+                                                        fontWeight: 800,
+                                                        fontSize: "0.7rem",
+                                                        height: 20,
+                                                    }}
+                                                />
+                                                <Typography sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.74rem", fontWeight: 600 }}>
+                                                    {dayEvents.length} Sesi
+                                                </Typography>
+                                            </Box>
+                                            <Typography
+                                                variant="subtitle1"
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    fontSize: "0.98rem",
+                                                    color: "#ffffff",
+                                                    fontFamily: '"Playfair Display", Georgia, serif',
+                                                }}
+                                            >
+                                                {day.shortDate}
+                                            </Typography>
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    color: "#4dd4ac",
+                                                    fontSize: "0.72rem",
+                                                    fontWeight: 600,
+                                                    display: "block",
+                                                    mt: 0.3,
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                }}
+                                            >
+                                                {day.badge}
+                                            </Typography>
+                                        </Box>
+
+                                        {/* Column Event Cards List */}
+                                        <Box sx={{ p: 1.4, display: "flex", flexDirection: "column", gap: 1.2, flexGrow: 1 }}>
+                                            {dayEvents.map((ev, evIdx) => (
+                                                <EventCard key={evIdx} event={ev} compact />
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                );
+                            })}
+                        </Box>
+                    </Box>
+                ) : (
+                    /* CASE B: Single Day in Landscape Horizontal Timeline Track */
+                    <Box
+                        sx={{
+                            bgcolor: "#ffffff",
+                            borderRadius: "18px",
+                            border: "1px solid #e2e8f0",
+                            overflow: "hidden",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.03)",
+                        }}
+                    >
+                        {/* Day Header Banner with Left / Right Arrows */}
+                        <Box
+                            sx={{
+                                px: { xs: 2, sm: 3 },
+                                py: 1.8,
+                                bgcolor: "#094d42",
+                                color: "#ffffff",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                flexWrap: "wrap",
+                                gap: 1.5,
+                            }}
+                        >
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                                <Chip
+                                    label={currentDay?.dayNumber}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: "rgba(255, 255, 255, 0.2)",
+                                        color: "#ffffff",
+                                        fontWeight: 800,
+                                        fontSize: "0.72rem",
+                                        height: 22,
+                                    }}
+                                />
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: { xs: "1.05rem", sm: "1.18rem" },
+                                        fontFamily: '"Playfair Display", Georgia, serif',
+                                    }}
+                                >
+                                    {currentDay?.dateStr}
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        display: { xs: "none", md: "inline" },
+                                        color: "#4dd4ac",
+                                        fontSize: "0.82rem",
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    — {currentDay?.badge}
+                                </Typography>
+                            </Box>
+
+                            {/* Scroll Controls & Indicator */}
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        color: "rgba(255,255,255,0.7)",
+                                        fontSize: "0.75rem",
+                                        display: { xs: "none", sm: "inline-block" },
+                                    }}
+                                >
+                                    Geser ke samping 👉
+                                </Typography>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleScroll("left")}
+                                    sx={{
+                                        color: "#ffffff",
+                                        bgcolor: "rgba(255,255,255,0.12)",
+                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)" },
+                                        p: 0.6,
+                                    }}
+                                >
+                                    <ChevronLeftIcon fontSize="small" />
+                                </IconButton>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleScroll("right")}
+                                    sx={{
+                                        color: "#ffffff",
+                                        bgcolor: "rgba(255,255,255,0.12)",
+                                        "&:hover": { bgcolor: "rgba(255,255,255,0.25)" },
+                                        p: 0.6,
+                                    }}
+                                >
+                                    <ChevronRightIcon fontSize="small" />
+                                </IconButton>
+                            </Box>
+                        </Box>
+
+                        {/* Horizontal Cards Flow */}
+                        <Box
+                            ref={scrollContainerRef}
+                            sx={{
+                                display: "flex",
+                                overflowX: "auto",
+                                gap: 2,
+                                p: { xs: 2, sm: 2.5 },
+                                scrollSnapType: "x mandatory",
+                                scrollBehavior: "smooth",
+                                "&::-webkit-scrollbar": {
+                                    height: 8,
+                                },
+                                "&::-webkit-scrollbar-track": {
+                                    bgcolor: "#f1f5f9",
+                                    borderRadius: 4,
+                                },
+                                "&::-webkit-scrollbar-thumb": {
+                                    bgcolor: "#cbd5e1",
+                                    borderRadius: 4,
+                                    "&:hover": { bgcolor: "#94a3b8" },
+                                },
+                            }}
+                        >
+                            {singleDayEvents.map((event, idx) => (
+                                <Box
+                                    key={idx}
+                                    sx={{
+                                        flex: "0 0 auto",
+                                        width: { xs: "280px", sm: "320px", md: "340px" },
+                                        scrollSnapAlign: "start",
+                                    }}
+                                >
+                                    <EventCard event={event} />
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+                )}
             </Container>
 
             {/* Fast, Clean Lightbox Dialog with Loading Spinner */}
