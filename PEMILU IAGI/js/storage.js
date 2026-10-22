@@ -756,15 +756,27 @@ class PemiluStorage {
       return { success: false, error: 'Email admin sudah terdaftar di sistem KPKU.' };
     }
 
+    // Validate NPA (strict 5 digits if provided)
+    const rawNpa = (accountData.npa || '').trim();
+    if (rawNpa && rawNpa !== '-' && !/^\d{5}$/.test(rawNpa)) {
+      return { success: false, error: 'NPA IAGI harus tepat 5 digit angka (contoh: 01412).' };
+    }
+
+    // Validate Security PIN (strict 4 digits)
+    const rawPin = (accountData.securityPin || '2026').trim();
+    if (!rawPin || !/^\d{4}$/.test(rawPin)) {
+      return { success: false, error: 'PIN Keamanan harus tepat 4 digit angka (contoh: 2026).' };
+    }
+
     const newAdmin = {
       id: 'adm-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 5),
       name: accountData.name.trim(),
       title: (accountData.title || accountData.role || 'Panitia KPKU').trim(),
       email: cleanEmail,
       phone: (accountData.phone || '').trim(),
-      npa: (accountData.npa || '-').trim(),
+      npa: rawNpa || '-',
       password: (accountData.password || 'admin2026').trim(),
-      securityPin: (accountData.securityPin || '2026').trim(),
+      securityPin: rawPin,
       role: accountData.role || 'Operator DPT',
       status: accountData.status || 'AKTIF',
       twoFactor: accountData.twoFactor !== false,
@@ -783,6 +795,24 @@ class PemiluStorage {
     const idx = accounts.findIndex(a => a.id === id);
     if (idx === -1) {
       return { success: false, error: 'Akun admin tidak ditemukan.' };
+    }
+
+    // Validate NPA if changed
+    if (updatedFields.npa !== undefined) {
+      const cleanNpa = String(updatedFields.npa).trim();
+      if (cleanNpa && cleanNpa !== '-' && !/^\d{5}$/.test(cleanNpa)) {
+        return { success: false, error: 'NPA IAGI harus tepat 5 digit angka (contoh: 01412).' };
+      }
+      updatedFields.npa = cleanNpa || '-';
+    }
+
+    // Validate PIN if changed
+    if (updatedFields.securityPin !== undefined) {
+      const cleanPin = String(updatedFields.securityPin).trim();
+      if (!cleanPin || !/^\d{4}$/.test(cleanPin)) {
+        return { success: false, error: 'PIN Keamanan harus tepat 4 digit angka (contoh: 2026).' };
+      }
+      updatedFields.securityPin = cleanPin;
     }
 
     // If email is changing, check uniqueness
@@ -841,6 +871,57 @@ class PemiluStorage {
     return { success: true, count: filtered.length };
   }
 
+  // --- Fonnte WhatsApp Gateway Integration ---
+  getFonnteToken() {
+    return localStorage.getItem('fonnte_token') || 'UbuVE56oykGTCjh1irUG';
+  }
+
+  setFonnteToken(token) {
+    if (token) localStorage.setItem('fonnte_token', token.trim());
+  }
+
+  async sendWhatsAppFonnte(targetPhone, message) {
+    let cleanPhone = String(targetPhone || '').replace(/\D/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.substring(1);
+    } else if (!cleanPhone.startsWith('62') && cleanPhone.length > 5) {
+      cleanPhone = '62' + cleanPhone;
+    }
+
+    if (!cleanPhone || cleanPhone.length < 8) {
+      return { success: false, error: 'Nomor WhatsApp tidak valid (minimal 8 angka).' };
+    }
+
+    const token = this.getFonnteToken();
+
+    try {
+      const formData = new FormData();
+      formData.append('target', cleanPhone);
+      formData.append('message', message);
+      formData.append('countryCode', '62');
+
+      const response = await fetch('https://api.fonnte.com/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': token
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data && (data.status === true || data.status === 'true' || (data.detail && data.detail.includes('success')))) {
+        this.addAuditLog('FONNTE_WA_SENT', `Pesan WhatsApp terkirim via Fonnte ke: ${cleanPhone}`);
+        return { success: true, data, target: cleanPhone };
+      } else {
+        const errMsg = data.reason || data.detail || 'Fonnte mengembalikan status gagal.';
+        return { success: false, error: errMsg, data };
+      }
+    } catch (err) {
+      console.error('Fonnte send error:', err);
+      return { success: false, error: 'Koneksi ke Fonnte gagal: ' + err.message };
+    }
+  }
+
   // --- Admin Authentication & 2FA ---
   validateAdminCredentials(email, password) {
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -850,7 +931,7 @@ class PemiluStorage {
     const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
     if (!found) {
       if (cleanEmail === 'admin.kpku@iagi.or.id' && (cleanPass === 'admin' || cleanPass === 'admin2026')) {
-        return { success: true, admin: { email: cleanEmail, name: 'Panitia KPKU 2026', role: 'Ketua Panitia', securityPin: '2026' } };
+        return { success: true, admin: { email: cleanEmail, name: 'Panitia KPKU 2026', role: 'Ketua Panitia', securityPin: '2026', phone: '085771593522' } };
       }
       return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
     }
@@ -870,50 +951,72 @@ class PemiluStorage {
     return { success: true, admin: found };
   }
 
-  generateAdminOtp(email) {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiry = Date.now() + (10 * 60 * 1000);
+  generateAdminOtp(email, digits = 4) {
+    // Generate 4-digit code for secure 2FA
+    const min = Math.pow(10, digits - 1);
+    const max = Math.pow(10, digits) - 1;
+    const otp = Math.floor(min + Math.random() * (max - min + 1)).toString();
+    const expiry = Date.now() + (10 * 60 * 1000); // 10 minutes
     const otpData = { email: (email || '').toLowerCase(), otp, expiry };
     try {
       sessionStorage.setItem('kpku_admin_otp', JSON.stringify(otpData));
     } catch(e) {}
-    this.addAuditLog('ADMIN_OTP_SENT', `Kode OTP 2FA dikirim ke email: ${email}`);
+    this.addAuditLog('ADMIN_OTP_SENT', `Kode OTP 2FA (${digits}-digit) disiapkan untuk: ${email}`);
     return otp;
   }
 
   verifyAdminOtp(email, otp) {
     const cleanOtp = (otp || '').trim();
-    if (cleanOtp === '842026' || cleanOtp === '202600' || cleanOtp === '2026') {
-      return { success: true };
+    if (!cleanOtp) {
+      return { success: false, error: 'Silakan masukkan kode verifikasi 4-digit.' };
     }
 
+    // Check stored OTP
     try {
       const stored = JSON.parse(sessionStorage.getItem('kpku_admin_otp') || '{}');
-      if (stored.otp && stored.otp === cleanOtp && stored.expiry > Date.now()) {
-        return { success: true };
+      if (stored.otp && String(stored.otp).trim() === cleanOtp) {
+        if (stored.expiry > Date.now()) {
+          return { success: true };
+        } else {
+          return { success: false, error: 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.' };
+        }
       }
     } catch(e) {}
 
-    return { success: false, error: 'Kode verifikasi OTP salah atau sudah kedaluwarsa.' };
+    // Check if entered code matches admin's registered 4-digit security PIN
+    const pinCheck = this.verifyAdminSecurityPin(cleanOtp, email);
+    if (pinCheck.success) {
+      return { success: true };
+    }
+
+    return { success: false, error: 'Kode verifikasi tidak sesuai atau sudah kedaluwarsa.' };
   }
 
   verifyAdminSecurityPin(pin, email) {
     const cleanPin = (pin || '').trim();
-    const settings = this.getSettings();
-    if (cleanPin === settings.adminPin || cleanPin === '2026') {
-      return { success: true };
+    if (!cleanPin) {
+      return { success: false, error: 'Silakan masukkan PIN Keamanan 4-digit.' };
     }
 
-    // Also check the specific admin's PIN
+    // Check against target admin's registered PIN
     if (email) {
       const accounts = this.getAdminAccounts();
       const found = accounts.find(a => a.email.toLowerCase() === email.trim().toLowerCase());
-      if (found && found.securityPin && found.securityPin === cleanPin) {
-        return { success: true };
+      if (found && found.securityPin) {
+        if (String(found.securityPin).trim() === cleanPin) {
+          return { success: true };
+        }
+        return { success: false, error: 'PIN Keamanan tidak cocok dengan akun Anda.' };
       }
     }
 
-    return { success: false, error: 'PIN Keamanan Panitia salah.' };
+    // Check global settings admin PIN
+    const settings = this.getSettings();
+    if (settings.adminPin && String(settings.adminPin).trim() === cleanPin) {
+      return { success: true };
+    }
+
+    return { success: false, error: 'PIN Keamanan 4-digit salah.' };
   }
 
   setAdminSession(admin) {

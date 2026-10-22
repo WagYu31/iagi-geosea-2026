@@ -2073,70 +2073,81 @@
             </form>
           </div>
 
-          <!-- STEP 2: Verifikasi Masuk (Email OTP atau PIN) -->
+          <!-- STEP 2: Verifikasi Masuk (2FA: Opsi WhatsApp Fonnte atau Email) -->
           <div id="desktop-auth-step2" style="display: none; text-align: left;">
             <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
-              <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Verifikasi Masuk (2FA Multi-Factor)</div>
+              <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Verifikasi Masuk Panitia (2FA Multi-Factor)</div>
               <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">admin.kpku@iagi.or.id</div>
             </div>
 
-            <!-- 2FA Selector Tabs -->
+            <!-- 2FA Selector Tabs: WhatsApp (Fonnte) vs Email -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
-              <button type="button" id="desktop-tab-2fa-otp" class="btn btn-gold" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
-                📧 OTP Email
+              <button type="button" id="desktop-tab-2fa-wa" class="btn btn-gold" style="padding: 8px 10px; font-size: 0.75rem; justify-content: center; gap: 6px;">
+                <span>📱 Opsi 1: WhatsApp (Fonnte)</span>
               </button>
-              <button type="button" id="desktop-tab-2fa-pin" class="btn btn-subtle" style="padding: 8px 12px; font-size: 0.76rem; justify-content: center;">
-                🔒 PIN Keamanan
+              <button type="button" id="desktop-tab-2fa-email" class="btn btn-subtle" style="padding: 8px 10px; font-size: 0.75rem; justify-content: center; gap: 6px;">
+                <span>📧 Opsi 2: Email Resmi</span>
               </button>
             </div>
 
-            <!-- View A: OTP Email -->
-            <div id="desktop-view-2fa-otp">
-              <form id="desktop-form-verify-otp">
-                <div class="form-group" style="margin-bottom: 10px;">
-                  <label class="form-label" style="display: flex; justify-content: space-between;">
-                    <span>Kode Verifikasi OTP 6-Digit</span>
-                    <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
-                  </label>
-                  <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="842026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                  <button type="button" id="btn-desktop-auto-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                    ⚡ Masukkan OTP Otomatis
+            <!-- View 1: WhatsApp Gateway (Fonnte API) -->
+            <div id="desktop-view-2fa-wa" style="margin-bottom: 14px;">
+              <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
+                <label class="form-label" style="font-size: 0.76rem; color: #6EE7B7; margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span>Nomor WhatsApp Tujuan OTP</span>
+                  <span style="font-size: 0.68rem; color: #A7F3D0;">Gateway: Fonnte Live</span>
+                </label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="tel" id="desktop-wa-phone-input" class="form-input font-mono" placeholder="08xxxxxxxxxx" style="font-size: 0.85rem; padding: 8px 12px;">
+                  <button type="button" id="btn-send-wa-otp" class="btn btn-primary" style="white-space: nowrap; font-size: 0.74rem; background: #059669; border-color: #10B981; padding: 8px 14px;">
+                    <span>Kirim OTP WA</span>
                   </button>
                 </div>
-
-                <button type="submit" class="btn-login-teal">
-                  <span>VERIFIKASI OTP & MASUK PLENO</span>
-                  <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </button>
-              </form>
+                <div id="desktop-wa-status-box" style="display: none; margin-top: 8px; font-size: 0.74rem; line-height: 1.4; border-radius: 4px; padding: 6px 10px;"></div>
+              </div>
             </div>
 
-            <!-- View B: PIN Keamanan -->
-            <div id="desktop-view-2fa-pin" style="display: none;">
-              <form id="desktop-form-verify-pin">
-                <div class="form-group" style="margin-bottom: 10px;">
-                  <label class="form-label" style="display: flex; justify-content: space-between;">
-                    <span>PIN Keamanan Panitia (4-Digit)</span>
-                    <span class="helper">Default: 2026</span>
-                  </label>
-                  <input type="password" id="desktop-2fa-pin-input" class="form-input font-mono" placeholder="2026" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-size: 1.3rem; padding: 10px;" required>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                  <button type="button" id="btn-desktop-auto-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                    ⚡ Masukkan PIN Otomatis (2026)
+            <!-- View 2: Email Resmi -->
+            <div id="desktop-view-2fa-email" style="display: none; margin-bottom: 14px;">
+              <div style="background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
+                <label class="form-label" style="font-size: 0.76rem; color: #93C5FD; margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span>Email Resmi Panitia</span>
+                  <span style="font-size: 0.68rem; color: #BFDBFE;">Secure SMTP</span>
+                </label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="email" id="desktop-email-target-input" class="form-input font-mono" readonly style="font-size: 0.85rem; padding: 8px 12px; opacity: 0.9;">
+                  <button type="button" id="btn-send-email-otp" class="btn btn-primary" style="white-space: nowrap; font-size: 0.74rem; background: #2563EB; border-color: #3B82F6; padding: 8px 14px;">
+                    <span>Kirim OTP Email</span>
                   </button>
                 </div>
-
-                <button type="submit" class="btn-login-teal">
-                  <span>VERIFIKASI PIN & MASUK PLENO</span>
-                  <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </button>
-              </form>
+                <div id="desktop-email-status-box" style="display: none; margin-top: 8px; font-size: 0.74rem; line-height: 1.4; border-radius: 4px; padding: 6px 10px;"></div>
+              </div>
             </div>
+
+            <!-- Form Verifikasi Kode (4-Digit OTP / PIN) -->
+            <form id="desktop-form-verify-code">
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>Kode Verifikasi (4-Digit) *</span>
+                  <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary); font-size: 0.7rem;">Default PIN: 2026</span>
+                </label>
+                <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="••••" maxlength="4" pattern="\d{4}" style="letter-spacing: 0.45em; text-align: center; font-size: 1.5rem; font-weight: 800; padding: 10px; background: rgba(0,0,0,0.35);" required autocomplete="one-time-code">
+                <span class="helper" style="display: block; margin-top: 6px; font-size: 0.72rem; color: #94A3B8;">
+                  💡 Masukkan 4-digit kode yang diterima di WhatsApp/Email, atau gunakan PIN Keamanan 4-digit Anda.
+                </span>
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                <button type="button" id="btn-desktop-auto-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 7px 10px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
+                  ⚡ Gunakan PIN Akun (2026)
+                </button>
+              </div>
+
+              <button type="submit" class="btn-login-teal">
+                <span>VERIFIKASI & MASUK PLENO</span>
+                <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+            </form>
 
             <div style="text-align: center; margin-top: 14px;">
               <button type="button" id="btn-desktop-back-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.78rem; cursor: pointer; text-decoration: underline;">
@@ -2763,8 +2774,9 @@
                 <input type="text" id="manage-admin-name" class="form-input" placeholder="Contoh: Dr. Ir. Budi Santoso, M.T." required>
               </div>
               <div class="form-group">
-                <label class="form-label">NPA IAGI</label>
-                <input type="text" id="manage-admin-npa" class="form-input font-mono" placeholder="01234" maxlength="8">
+                <label class="form-label">NPA IAGI (5 Digit)</label>
+                <input type="text" id="manage-admin-npa" class="form-input font-mono" placeholder="01412" maxlength="5" pattern="\d{5}">
+                <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#94A3B8;">Tepat 5-digit angka</span>
               </div>
             </div>
 
@@ -2775,12 +2787,13 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
               <div class="form-group">
-                <label class="form-label">Email Resmi (Untuk Login & OTP) *</label>
+                <label class="form-label">Email Resmi (Login & 2FA) *</label>
                 <input type="email" id="manage-admin-email" class="form-input" placeholder="admin@iagi.or.id" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Nomor WhatsApp (Kirim Kredensial)</label>
-                <input type="tel" id="manage-admin-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
+                <label class="form-label">Nomor WhatsApp (OTP Fonnte) *</label>
+                <input type="tel" id="manage-admin-phone" class="form-input font-mono" placeholder="Contoh: 085771593522" required>
+                <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#A7F3D0;">Tujuan OTP WhatsApp via Fonnte</span>
               </div>
             </div>
 
@@ -2810,7 +2823,8 @@
               </div>
               <div class="form-group">
                 <label class="form-label">PIN Keamanan (4-Digit) *</label>
-                <input type="text" id="manage-admin-pin" class="form-input font-mono" placeholder="2026" maxlength="6" required style="letter-spacing: 0.15em;">
+                <input type="text" id="manage-admin-pin" class="form-input font-mono" placeholder="2026" maxlength="4" pattern="\d{4}" required style="letter-spacing: 0.2em; text-align: center;">
+                <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#94A3B8;">Tepat 4-digit angka</span>
               </div>
             </div>
 
@@ -3300,24 +3314,29 @@
       const step1Div = document.getElementById('desktop-auth-step1');
       const step2Div = document.getElementById('desktop-auth-step2');
       const formStep1 = document.getElementById('desktop-login-step1-form');
-      const formVerifyOtp = document.getElementById('desktop-form-verify-otp');
-      const formVerifyPin = document.getElementById('desktop-form-verify-pin');
+      const formVerifyCode = document.getElementById('desktop-form-verify-code');
 
-      const tabOtp = document.getElementById('desktop-tab-2fa-otp');
-      const tabPin = document.getElementById('desktop-tab-2fa-pin');
-      const viewOtp = document.getElementById('desktop-view-2fa-otp');
-      const viewPin = document.getElementById('desktop-view-2fa-pin');
+      const tabWa = document.getElementById('desktop-tab-2fa-wa');
+      const tabEmail = document.getElementById('desktop-tab-2fa-email');
+      const viewWa = document.getElementById('desktop-view-2fa-wa');
+      const viewEmail = document.getElementById('desktop-view-2fa-email');
+
+      const btnSendWaOtp = document.getElementById('btn-send-wa-otp');
+      const btnSendEmailOtp = document.getElementById('btn-send-email-otp');
+      const inputWaPhone = document.getElementById('desktop-wa-phone-input');
+      const inputEmailTarget = document.getElementById('desktop-email-target-input');
+      const boxWaStatus = document.getElementById('desktop-wa-status-box');
+      const boxEmailStatus = document.getElementById('desktop-email-status-box');
 
       const btnTogglePwd = document.getElementById('btn-toggle-desktop-pwd');
       const btnQuickFill = document.getElementById('btn-quick-fill-desktop');
       const btnBackStep1 = document.getElementById('btn-desktop-back-step1');
-      const btnAutoOtp = document.getElementById('btn-desktop-auto-otp');
       const btnAutoPin = document.getElementById('btn-desktop-auto-pin');
       const btnLogout = document.getElementById('btn-desktop-logout');
 
       let isUnlocked = false;
       let pendingAdmin = null;
-      let activeOtp = '842026';
+      let activeOtp = '2026';
 
       // Clock
       function updateClock() {
@@ -3372,7 +3391,7 @@
           }
 
           pendingAdmin = validation.admin;
-          activeOtp = window.pemiluStorage.generateAdminOtp(email) || '842026';
+          activeOtp = window.pemiluStorage.generateAdminOtp(email, 4) || '2026';
 
           // Move to Step 2
           hideAlert();
@@ -3382,42 +3401,104 @@
           const emailLbl = document.getElementById('desktop-step2-email-label');
           if (emailLbl) emailLbl.innerText = `${pendingAdmin.name} (${pendingAdmin.email})`;
 
+          if (inputWaPhone) {
+            inputWaPhone.value = pendingAdmin.phone || '085771593522';
+          }
+          if (inputEmailTarget) {
+            inputEmailTarget.value = pendingAdmin.email;
+          }
+
           const hint = document.getElementById('desktop-demo-otp-hint');
-          if (hint) hint.innerText = `Kode OTP terkirim: ${activeOtp}`;
+          if (hint) hint.innerText = `Kode OTP: ${activeOtp} | PIN: ${pendingAdmin.securityPin || '2026'}`;
 
-          showAlert(`Kode OTP 6-Digit telah dikirim ke ${email}. (Kode Demo: ${activeOtp})`, 'info');
+          showAlert(`Kredensial valid. Silakan pilih opsi verifikasi: WhatsApp (Fonnte Gateway) atau Email Resmi.`, 'info');
         });
       }
 
-      // 2FA Tabs
-      if (tabOtp && tabPin) {
-        tabOtp.addEventListener('click', () => {
-          tabOtp.className = 'btn btn-gold';
-          tabPin.className = 'btn btn-subtle';
-          if (viewOtp) viewOtp.style.display = 'block';
-          if (viewPin) viewPin.style.display = 'none';
+      // 2FA Tabs: WhatsApp vs Email
+      if (tabWa && tabEmail) {
+        tabWa.addEventListener('click', () => {
+          tabWa.className = 'btn btn-gold';
+          tabEmail.className = 'btn btn-subtle';
+          if (viewWa) viewWa.style.display = 'block';
+          if (viewEmail) viewEmail.style.display = 'none';
         });
 
-        tabPin.addEventListener('click', () => {
-          tabPin.className = 'btn btn-gold';
-          tabOtp.className = 'btn btn-subtle';
-          if (viewPin) viewPin.style.display = 'block';
-          if (viewOtp) viewOtp.style.display = 'none';
-        });
-      }
-
-      // Auto fill OTP / PIN
-      if (btnAutoOtp) {
-        btnAutoOtp.addEventListener('click', () => {
-          const inp = document.getElementById('desktop-otp-input');
-          if (inp) inp.value = activeOtp || '842026';
+        tabEmail.addEventListener('click', () => {
+          tabEmail.className = 'btn btn-gold';
+          tabWa.className = 'btn btn-subtle';
+          if (viewEmail) viewEmail.style.display = 'block';
+          if (viewWa) viewWa.style.display = 'none';
         });
       }
 
+      // Send OTP via WhatsApp Fonnte
+      if (btnSendWaOtp) {
+        btnSendWaOtp.addEventListener('click', async () => {
+          const phone = (inputWaPhone ? inputWaPhone.value : '').trim();
+          if (!phone) {
+            showAlert('Silakan masukkan nomor WhatsApp tujuan.', 'error');
+            return;
+          }
+
+          btnSendWaOtp.disabled = true;
+          btnSendWaOtp.innerHTML = '<span>Mengirim via Fonnte...</span>';
+          if (boxWaStatus) {
+            boxWaStatus.style.display = 'block';
+            boxWaStatus.style.background = 'rgba(245, 186, 66, 0.15)';
+            boxWaStatus.style.border = '1px solid rgba(245, 186, 66, 0.35)';
+            boxWaStatus.style.color = '#FDE68A';
+            boxWaStatus.innerHTML = '⏳ Menghubungi Gateway Fonnte WhatsApp...';
+          }
+
+          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id', 4);
+          const msg = `*KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026*\n\nKode Verifikasi 2FA Anda: *${activeOtp}*\n\nKode ini berlaku 10 menit untuk masuk Command Center Pleno. JANGAN berikan kode ini kepada siapapun demi keamanan dan integritas pleno.`;
+
+          const res = await window.pemiluStorage.sendWhatsAppFonnte(phone, msg);
+          btnSendWaOtp.disabled = false;
+          btnSendWaOtp.innerHTML = '<span>Kirim Ulang OTP WA</span>';
+
+          if (res.success) {
+            if (boxWaStatus) {
+              boxWaStatus.style.background = 'rgba(16, 185, 129, 0.15)';
+              boxWaStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+              boxWaStatus.style.color = '#6EE7B7';
+              boxWaStatus.innerHTML = `✅ <b>OTP terkirim via Fonnte ke WhatsApp: ${res.target}</b>.<br><span style="font-size: 0.72rem; opacity: 0.9;">Kode Anda: <b>${activeOtp}</b> (atau PIN Akun: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+            }
+            showAlert(`Kode OTP 4-Digit berhasil dikirim ke WhatsApp ${res.target} via Fonnte!`, 'success');
+          } else {
+            if (boxWaStatus) {
+              boxWaStatus.style.background = 'rgba(239, 68, 68, 0.15)';
+              boxWaStatus.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+              boxWaStatus.style.color = '#FCA5A5';
+              boxWaStatus.innerHTML = `⚠️ Gagal kirim WA Fonnte: ${res.error}<br><span style="font-size: 0.72rem;">(Gunakan kode cadangan: <b>${activeOtp}</b> atau PIN Akun: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+            }
+            showAlert(`Koneksi WhatsApp Gateway terkendala: ${res.error}. Anda dapat menggunakan kode OTP cadangan atau PIN.`, 'warning');
+          }
+        });
+      }
+
+      // Send OTP via Email
+      if (btnSendEmailOtp) {
+        btnSendEmailOtp.addEventListener('click', () => {
+          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id', 4);
+          if (boxEmailStatus) {
+            boxEmailStatus.style.display = 'block';
+            boxEmailStatus.style.background = 'rgba(16, 185, 129, 0.15)';
+            boxEmailStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+            boxEmailStatus.style.color = '#6EE7B7';
+            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id'}</b>.<br><span style="font-size: 0.72rem; opacity: 0.9;">Kode OTP Email Anda: <b>${activeOtp}</b> (atau PIN: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+          }
+          showAlert(`Kode OTP 4-Digit telah dikirim ke email ${pendingAdmin ? pendingAdmin.email : ''}!`, 'success');
+        });
+      }
+
+      // Auto fill PIN button
       if (btnAutoPin) {
         btnAutoPin.addEventListener('click', () => {
-          const inp = document.getElementById('desktop-2fa-pin-input');
-          if (inp) inp.value = '2026';
+          const inp = document.getElementById('desktop-otp-input');
+          const pinVal = (pendingAdmin && pendingAdmin.securityPin) ? pendingAdmin.securityPin : '2026';
+          if (inp) inp.value = pinVal;
         });
       }
 
@@ -3430,32 +3511,25 @@
         });
       }
 
-      // Step 2A: Verify OTP
-      if (formVerifyOtp) {
-        formVerifyOtp.addEventListener('submit', (e) => {
+      // Step 2: Verify Code (OTP or PIN)
+      if (formVerifyCode) {
+        formVerifyCode.addEventListener('submit', (e) => {
           e.preventDefault();
-          const otp = document.getElementById('desktop-otp-input').value.trim();
+          const code = document.getElementById('desktop-otp-input').value.trim();
           const email = pendingAdmin ? pendingAdmin.email : '';
 
-          const res = window.pemiluStorage.verifyAdminOtp(email, otp);
-          if (res.success) {
-            completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
-          } else {
-            showAlert(res.error || 'Kode OTP salah.', 'error');
+          if (!code || code.length !== 4) {
+            showAlert('Silakan masukkan tepat 4 digit kode verifikasi atau PIN Keamanan.', 'error');
+            return;
           }
-        });
-      }
 
-      // Step 2B: Verify PIN
-      if (formVerifyPin) {
-        formVerifyPin.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const pin = document.getElementById('desktop-2fa-pin-input').value.trim();
-          const res = window.pemiluStorage.verifyAdminSecurityPin(pin);
-          if (res.success) {
+          const otpCheck = window.pemiluStorage.verifyAdminOtp(email, code);
+          const pinCheck = window.pemiluStorage.verifyAdminSecurityPin(code, email);
+
+          if (otpCheck.success || pinCheck.success) {
             completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
           } else {
-            showAlert(res.error || 'PIN Keamanan salah.', 'error');
+            showAlert('Kode verifikasi atau PIN Keamanan 4-digit salah.', 'error');
           }
         });
       }
@@ -5180,9 +5254,11 @@
         };
 
         if (!name) return showAlert('Nama lengkap wajib diisi.');
+        if (npa && npa !== '-' && !/^\d{5}$/.test(npa)) return showAlert('NPA IAGI harus tepat 5 digit angka (contoh: 01412).');
         if (!email || !email.includes('@')) return showAlert('Email tidak valid.');
+        if (!phone) return showAlert('Nomor WhatsApp wajib diisi untuk verifikasi OTP via Fonnte.');
         if (!password) return showAlert('Password wajib diisi.');
-        if (!pin || pin.length < 4) return showAlert('PIN Keamanan minimal 4 angka.');
+        if (!pin || !/^\d{4}$/.test(pin)) return showAlert('PIN Keamanan harus tepat 4 digit angka (contoh: 2026).');
 
         const payload = {
           name,
