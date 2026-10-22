@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import Tooltip from '@mui/material/Tooltip';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -23,15 +24,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import CloseIcon from '@mui/icons-material/Close';
 import PublicIcon from '@mui/icons-material/Public';
 import GroupsIcon from '@mui/icons-material/Groups';
-import StarIcon from '@mui/icons-material/Star';
-import CelebrationIcon from '@mui/icons-material/Celebration';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import LandscapeIcon from '@mui/icons-material/Landscape';
-import TheaterComedyIcon from '@mui/icons-material/TheaterComedy';
-import SchoolIcon from '@mui/icons-material/School';
-import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import HandshakeIcon from '@mui/icons-material/Handshake';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import ScrollReveal from './ScrollReveal';
@@ -53,7 +45,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Ice Breaking Night (Invitation Only)',
                 geoseaTopic: 'Ice Breaking Night (Invitation Only)',
                 category: 'Social Event',
-                icon: <CelebrationIcon sx={{ fontSize: 16 }} />,
                 location: 'Designated Venue',
                 highlight: true,
             },
@@ -75,7 +66,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Opening Ceremony & VIP Exhibition Tour',
                 geoseaTopic: 'Opening Ceremony & VIP Exhibition Tour',
                 category: 'Plenary',
-                icon: <StarIcon sx={{ fontSize: 16 }} />,
                 location: 'Main Plenary Ballroom',
                 highlight: true,
             },
@@ -88,7 +78,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'CEO Talks – Regulation, Risk, and Responsibility: How Energy Leaders Respond to Indonesia\'s Evolving Policy Landscape',
                 geoseaTopic: '—',
                 category: 'Executive Forum',
-                icon: <GroupsIcon sx={{ fontSize: 16 }} />,
                 location: 'Main Plenary Hall',
                 highlight: true,
             },
@@ -101,7 +90,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Lunch Time',
                 geoseaTopic: 'Lunch Time',
                 category: 'Break',
-                icon: <RestaurantIcon sx={{ fontSize: 16 }} />,
                 location: 'Dining Hall & Foyer',
             },
             {
@@ -113,7 +101,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Special Session – Road Map to Giant Discovery of Indonesia\'s Exploration',
                 geoseaTopic: '—',
                 category: 'Special Session',
-                icon: <StarIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
             },
             {
@@ -125,7 +112,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: '—',
                 geoseaTopic: 'GEOSEA Congress (8th Floor)',
                 category: 'GEOSEA Congress',
-                icon: <PublicIcon sx={{ fontSize: 16 }} />,
                 location: '8th Floor Meeting Hall',
                 highlight: true,
             },
@@ -138,7 +124,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Panel Discussion #1 – GEORESOURCES: "Critical Georesources for Energy Transition: Innovation, Sustainability, and Regional Collaboration in ASEAN"',
                 geoseaTopic: '—',
                 category: 'Panel Discussion',
-                icon: <GroupsIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -151,7 +136,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: '—',
                 geoseaTopic: 'Ratu Boko Prambanan City Tour',
                 category: 'City Tour',
-                icon: <DirectionsBusIcon sx={{ fontSize: 16 }} />,
                 location: 'Ratu Boko Heritage Complex',
             },
             {
@@ -163,7 +147,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: '—',
                 geoseaTopic: 'GEOSEA Dinner (Chandari Heaven)',
                 category: 'Dinner Gathering',
-                icon: <RestaurantIcon sx={{ fontSize: 16 }} />,
                 location: 'Chandari Heaven',
             },
             {
@@ -175,7 +158,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: '—',
                 geoseaTopic: 'Sendratari Ramayana (Prambanan Temple)',
                 category: 'Cultural Show',
-                icon: <TheaterComedyIcon sx={{ fontSize: 16 }} />,
                 location: 'Prambanan Temple Open-Air Theater',
                 highlight: true,
             },
@@ -197,7 +179,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'GEOSEA Leadership Handover Ceremony from INDONESIA to PHILIPPINES',
                 geoseaTopic: 'GEOSEA Leadership Handover Ceremony from INDONESIA to PHILIPPINES',
                 category: 'International Handover',
-                icon: <HandshakeIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -210,7 +191,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Panel Discussion #2 – GEOHERITAGE: "Geoheritage and Geoparks: Strengthening Regional Collaboration in Southeast Asia"',
                 geoseaTopic: '—',
                 category: 'Panel Discussion',
-                icon: <LandscapeIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -223,7 +203,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Special Session – Geothermal Community Launching (Society of Indonesian Geothermal Geologists)',
                 geoseaTopic: '—',
                 category: 'Special Launching',
-                icon: <CelebrationIcon sx={{ fontSize: 16 }} />,
                 location: 'Main Stage',
             },
             {
@@ -235,7 +214,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Lunch Time',
                 geoseaTopic: 'Lunch Time',
                 category: 'Break',
-                icon: <RestaurantIcon sx={{ fontSize: 16 }} />,
                 location: 'Dining Area & Poster Hall',
             },
             {
@@ -247,7 +225,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Student Session',
                 geoseaTopic: '—',
                 category: 'Student Research',
-                icon: <SchoolIcon sx={{ fontSize: 16 }} />,
                 location: 'Breakout Hall A',
             },
             {
@@ -259,7 +236,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Panel Discussion #3 – GEOHAZARD: "Geohazard Management for Sustainable Mining, Energy, and Infrastructure"',
                 geoseaTopic: '—',
                 category: 'Panel Discussion',
-                icon: <GroupsIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -272,7 +248,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: '—',
                 geoseaTopic: 'GEOSEA Field Trip – Yogyakarta',
                 category: 'Field Trip',
-                icon: <LandscapeIcon sx={{ fontSize: 16 }} />,
                 location: 'Yogyakarta Geological Sites',
                 highlight: true,
             },
@@ -285,7 +260,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'National Congress (Munas) IAGI and Chairman Election 2026',
                 geoseaTopic: '—',
                 category: 'National Congress',
-                icon: <HowToVoteIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -307,7 +281,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Special Session',
                 geoseaTopic: '—',
                 category: 'Special Session',
-                icon: <StarIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
             },
             {
@@ -319,7 +292,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Special Session: Exploration Strategy in Underexplored Basins: Data, Policy & De-risking',
                 geoseaTopic: '—',
                 category: 'Special Plenary',
-                icon: <GroupsIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -332,7 +304,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Arie F. Lasut Groundbreaking Ceremony',
                 geoseaTopic: 'Arie F. Lasut Groundbreaking Ceremony',
                 category: 'Memorial Ceremony',
-                icon: <CelebrationIcon sx={{ fontSize: 16 }} />,
                 location: 'Groundbreaking Site',
                 highlight: true,
             },
@@ -345,7 +316,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Lunch Time',
                 geoseaTopic: 'Lunch Time',
                 category: 'Break',
-                icon: <RestaurantIcon sx={{ fontSize: 16 }} />,
                 location: 'Dining Area',
             },
             {
@@ -357,7 +327,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Closing Ceremony & Awards',
                 geoseaTopic: 'Closing Ceremony & Awards',
                 category: 'Grand Closing',
-                icon: <StarIcon sx={{ fontSize: 16 }} />,
                 location: 'Plenary Hall',
                 highlight: true,
             },
@@ -370,7 +339,6 @@ export const SCHEDULE_DAYS = [
                 generalTopic: 'Gelologist\'s Art Performance at Tebing Breksi',
                 geoseaTopic: 'Gelologist\'s Art Performance at Tebing Breksi',
                 category: 'Cultural Celebration',
-                icon: <TheaterComedyIcon sx={{ fontSize: 16 }} />,
                 location: 'Tebing Breksi Geoheritage Park',
                 highlight: true,
             },

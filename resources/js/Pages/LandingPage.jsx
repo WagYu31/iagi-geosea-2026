@@ -53,6 +53,26 @@ const landingTheme = createTheme({
     },
 });
 
+// Section Error Boundary to prevent any child section crash from breaking the entire page
+class SectionErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+    componentDidCatch(error, errorInfo) {
+        console.error('LandingPage Section Error:', error, errorInfo);
+    }
+    render() {
+        if (this.state.hasError) {
+            return null; // Gracefully suppress error without crashing the rest of the landing page
+        }
+        return this.props.children;
+    }
+}
+
 export default function LandingPage({ auth, serverSettings }) {
     const settings = serverSettings || {};
 
@@ -79,7 +99,9 @@ export default function LandingPage({ auth, serverSettings }) {
 
                 <Testimonials settings={settings} />
 
-                <ProgramSchedule />
+                <SectionErrorBoundary>
+                    <ProgramSchedule />
+                </SectionErrorBoundary>
 
                 <FAQ settings={settings} />
 
