@@ -1899,6 +1899,113 @@
       .dpt-search-box {
         max-width: 100%;
       }
+    /* ========================================================
+       ADMIN ACCOUNTS MANAGEMENT SYSTEM (Multi-Admin Module)
+       ======================================================== */
+    .admin-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .admin-role-badge.role-gold {
+      background: rgba(245, 186, 66, 0.12);
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      color: #F5BA42;
+    }
+    .admin-role-badge.role-blue {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #60A5FA;
+    }
+    .admin-role-badge.role-purple {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #C084FC;
+    }
+    .admin-role-badge.role-emerald {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+    }
+    .admin-role-badge.role-amber {
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      color: #FB923C;
+    }
+
+    .admin-avatar-chip {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(245, 186, 66, 0.25));
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .admin-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .admin-status-pill.status-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .admin-status-pill.status-inactive {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-table-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-table-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .btn-table-action.action-edit:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #60A5FA;
+      color: #93C5FD;
+    }
+    .btn-table-action.action-reset:hover {
+      background: rgba(245, 186, 66, 0.2);
+      border-color: #F5BA42;
+      color: #FCD34D;
+    }
+    .btn-table-action.action-delete:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #EF4444;
+      color: #FCA5A5;
     }
   </style>
 </head>
@@ -2168,6 +2275,15 @@
                   <span>Daftar Pemilih (DPT)</span>
                 </div>
                 <span class="sidebar-link-badge" id="sidebar-dpt-count-badge">22</span>
+              </a>
+            </li>
+            <li>
+              <a href="#section-admin-users" class="sidebar-nav-link" id="nav-link-admin-users" onclick="switchAdminSection('section-admin-users', event)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <span>Kelola Akun Admin</span>
+                </div>
+                <span class="sidebar-link-badge badge-emerald" id="sidebar-admin-count-badge">4</span>
               </a>
             </li>
           </ul>
@@ -2520,6 +2636,284 @@
         </table>
       </div>
     </section>
+
+    <!-- ================= SECTION: MANAJEMEN AKUN ADMIN & OTORITAS KPKU ================= -->
+    <section id="section-admin-users" class="panel-card" style="display: none;">
+      <!-- Top Header Bar of Admin Panel -->
+      <div class="dpt-header-strip">
+        <div class="dpt-header-left">
+          <div class="dpt-icon-badge" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34D399;">
+            <svg style="width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div class="dpt-title-wrap">
+            <h2>Manajemen Akun Admin & Otoritas KPKU</h2>
+            <p>Kelola Multi-Akun Panitia, Manajemen Role Otorisasi, Kredensial Akses & Proteksi 2FA Pemilu IAGI 2026</p>
+          </div>
+        </div>
+        <button class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" title="Kembali ke layar ringkasan pleno">
+          <span>← Kembali ke Ringkasan Pleno</span>
+        </button>
+      </div>
+
+      <!-- Quick Admin Stats Bar -->
+      <div id="admin-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Total Akun Admin:</span>
+          <strong id="stat-total-admins" style="color: #FFFFFF; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Ketua & Panitia Inti:</span>
+          <strong id="stat-admins-core" style="color: #F5BA42; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Operator DPT:</span>
+          <strong id="stat-admins-operator" style="color: #60A5FA; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Pengawas & Saksi Paslon:</span>
+          <strong id="stat-admins-witness" style="color: #C084FC; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #34D399; background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.25);">
+          <span>🛡️ Proteksi 2FA Email & PIN Aktif</span>
+        </div>
+      </div>
+
+      <!-- Command Toolbar for Admin Management -->
+      <div class="dpt-command-toolbar">
+        <div class="dpt-toolbar-left">
+          <div class="dpt-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="admin-search-input" class="dpt-search-input" placeholder="🔍 Cari Nama, Email, No. WA, atau Peran Admin..." oninput="handleAdminSearchFilter()">
+          </div>
+
+          <select id="admin-role-filter" class="dpt-select-filter" onchange="handleAdminSearchFilter()">
+            <option value="all">Semua Peran (All Roles)</option>
+            <option value="Ketua Panitia">👑 Ketua Panitia / Super Admin</option>
+            <option value="Operator DPT">📋 Operator DPT</option>
+            <option value="Pengawas / Saksi">👁️ Pengawas / Saksi Paslon</option>
+            <option value="Tim IT & Teknis">💻 Tim IT & Teknis Kriptografi</option>
+          </select>
+
+          <select id="admin-status-filter" class="dpt-select-filter" onchange="handleAdminSearchFilter()">
+            <option value="all">Semua Status</option>
+            <option value="AKTIF">🟢 Aktif</option>
+            <option value="NON-AKTIF">🔴 Non-Aktif / Ditangguhkan</option>
+          </select>
+        </div>
+
+        <div class="dpt-toolbar-right">
+          <button id="btn-open-add-admin" class="btn-dpt-add" onclick="openAddAdminModal()" title="Buat akun admin baru">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Tambah Akun Admin</span>
+          </button>
+
+          <button id="btn-export-admin-csv" class="btn-dpt-export" onclick="exportAdminAccountsCSV()" title="Ekspor daftar akun admin ke CSV">
+            <span>📥 Export CSV</span>
+          </button>
+
+          <button class="btn-dpt-quickdel" style="background: rgba(255,255,255,0.06); color: #E2E8F0; border-color: rgba(255,255,255,0.15);" onclick="renderAdminUsersTable()" title="Muat ulang tabel admin">
+            <span>🔄 Segarkan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="table-responsive">
+        <table class="data-table" id="admin-users-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">No</th>
+              <th>Nama Lengkap & NPA</th>
+              <th>Email Login & WhatsApp</th>
+              <th style="width: 170px; text-align: center;">Peran / Role Otoritas</th>
+              <th style="width: 130px; text-align: center;">Keamanan (2FA)</th>
+              <th style="width: 110px; text-align: center;">Status</th>
+              <th style="width: 130px; text-align: center;">Terakhir Login</th>
+              <th style="text-align: center; width: 170px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-table-body">
+            <!-- Dynamically populated via renderAdminUsersTable() -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= MODAL: KELOLA AKUN ADMIN (TAMBAH / EDIT) ================= -->
+    <div id="modal-manage-admin" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 580px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span id="manage-admin-icon" style="color: #34D399; font-size: 1.2rem;">👤</span>
+            <span id="manage-admin-title">Tambah Akun Panitia / Admin Baru</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeManageAdminModal()">✕</button>
+        </div>
+        <form id="form-manage-admin" onsubmit="handleSaveAdmin(event)">
+          <input type="hidden" id="manage-admin-id" value="">
+          <div class="admin-modal-body">
+            <div id="manage-admin-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Nama Lengkap & Gelar *</label>
+                <input type="text" id="manage-admin-name" class="form-input" placeholder="Contoh: Dr. Ir. Budi Santoso, M.T." required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">NPA IAGI</label>
+                <input type="text" id="manage-admin-npa" class="form-input font-mono" placeholder="01234" maxlength="8">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label class="form-label">Jabatan Struktural di KPKU</label>
+              <input type="text" id="manage-admin-position" class="form-input" placeholder="Contoh: Divisi Verifikasi DPT / Saksi Paslon 01">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Email Resmi (Untuk Login & OTP) *</label>
+                <input type="email" id="manage-admin-email" class="form-input" placeholder="admin@iagi.or.id" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nomor WhatsApp (Kirim Kredensial)</label>
+                <input type="tel" id="manage-admin-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Peran / Otoritas Akses *</label>
+                <select id="manage-admin-role" class="form-input" required>
+                  <option value="Operator DPT">📋 Operator DPT (Kelola Pemilih & Token)</option>
+                  <option value="Ketua Panitia">👑 Ketua Panitia (Hak Akses Penuh / Super Admin)</option>
+                  <option value="Pengawas / Saksi">👁️ Pengawas / Saksi Paslon (Hanya Pantau & Audit)</option>
+                  <option value="Tim IT & Teknis">💻 Tim IT & Teknis (Kriptografi & Server)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status Akun *</label>
+                <select id="manage-admin-status" class="form-input" required>
+                  <option value="AKTIF">🟢 AKTIF (Bisa Login)</option>
+                  <option value="NON-AKTIF">🔴 NON-AKTIF (Ditangguhkan)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group">
+                <label class="form-label">Kata Sandi (Password Login) *</label>
+                <input type="text" id="manage-admin-password" class="form-input font-mono" placeholder="admin2026" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PIN Keamanan (4-Digit) *</label>
+                <input type="text" id="manage-admin-pin" class="form-input font-mono" placeholder="2026" maxlength="6" required style="letter-spacing: 0.15em;">
+              </div>
+            </div>
+
+            <div style="margin-top: 8px; padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1); font-size: 0.75rem; color: #94A3B8;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #E2E8F0;">
+                <input type="checkbox" id="manage-admin-2fa" checked style="accent-color: #10B981;">
+                <span>Aktifkan Verifikasi 2FA (Two-Factor Authentication via OTP Email & PIN)</span>
+              </label>
+            </div>
+          </div>
+          <div class="admin-modal-footer">
+            <button type="button" class="btn btn-subtle" onclick="closeManageAdminModal()">Batal</button>
+            <button type="submit" id="btn-submit-manage-admin" class="btn btn-primary" style="background: linear-gradient(135deg, #10B981, #059669); border-color: #10B981; color: white;">
+              <span>💾 Simpan Akun Admin</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: TAMPILKAN KREDENSIAL & DISPATCH WHATSAPP ================= -->
+    <div id="modal-admin-credentials-view" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 520px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #F5BA42; font-size: 1.2rem;">🔑</span>
+            <span>Kredensial Akses Admin Baru</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeAdminCredentialsModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <p style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 14px;">
+            Akun admin berhasil disimpan. Silakan simpan dan teruskan kredensial ini kepada panitia yang bersangkutan via WhatsApp:
+          </p>
+
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(245,186,66,0.3); border-radius: var(--radius-sm); padding: 14px; font-size: 0.82rem; line-height: 1.6; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94A3B8;">Nama Admin:</span>
+              <strong id="cred-view-name" style="color: #FFFFFF;">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94A3B8;">Peran / Otoritas:</span>
+              <strong id="cred-view-role" style="color: #F5BA42;">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94A3B8;">Email Login:</span>
+              <strong id="cred-view-email" class="font-mono" style="color: #60A5FA;">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94A3B8;">Password:</span>
+              <strong id="cred-view-password" class="font-mono" style="color: #34D399; letter-spacing: 0.05em;">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #94A3B8;">PIN Keamanan:</span>
+              <strong id="cred-view-pin" class="font-mono" style="color: #FB923C; letter-spacing: 0.15em;">-</strong>
+            </div>
+          </div>
+
+          <div id="cred-wa-action-box" style="display: flex; gap: 8px;">
+            <button type="button" id="btn-cred-send-wa" class="btn" style="flex: 1; background: #25D366; color: #FFFFFF; font-weight: 700; border: none;" onclick="dispatchAdminCredentialsWA()">
+              <span>📲 Kirim via WhatsApp</span>
+            </button>
+            <button type="button" class="btn btn-subtle" onclick="copyAdminCredentialsText()">
+              <span>📋 Salin Kredensial</span>
+            </button>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-primary" onclick="closeAdminCredentialsModal()">
+            <span>Selesai & Tutup</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: KONFIRMASI HAPUS AKUN ADMIN ================= -->
+    <div id="modal-confirm-delete-admin" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 440px;">
+        <div class="admin-modal-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+          <div class="admin-modal-title" style="color: #EF4444;">
+            <span>⚠️</span>
+            <span>Hapus Akun Panitia / Admin</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeDeleteAdminModal()">✕</button>
+        </div>
+        <div class="admin-modal-body" style="text-align: center; padding: 22px 20px;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 14px;">
+            🗑️
+          </div>
+          <h3 id="delete-admin-modal-target-name" style="font-size: 1.05rem; margin-bottom: 8px; color: #FFFFFF;">-</h3>
+          <p style="font-size: 0.8rem; color: #94A3B8; line-height: 1.5; margin-bottom: 12px;">
+            Apakah Anda yakin ingin menghapus akun admin ini dari sistem KPKU? Tindakan ini akan dicatat ke dalam audit trail permanen.
+          </p>
+          <div id="delete-admin-modal-alert" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.78rem; margin-top: 10px;"></div>
+        </div>
+        <div class="admin-modal-footer" style="justify-content: center; gap: 10px;">
+          <button type="button" class="btn btn-subtle" onclick="closeDeleteAdminModal()">Batal</button>
+          <button type="button" id="btn-confirm-delete-admin-submit" class="btn" style="background: #DC2626; color: white; border: none; font-weight: 700;" onclick="executeDeleteAdmin()">
+            <span>Ya, Hapus Akun Admin</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ================= MODAL 1: TAMBAH PEMILIH BARU ================= -->
     <div id="modal-add-voter" class="admin-modal-backdrop" style="display: none !important;">
@@ -3115,6 +3509,7 @@
         const plenoSection = document.getElementById('section-pleno');
         const auditSection = document.getElementById('section-audit-trail');
         const dptSection = document.getElementById('section-dpt-table');
+        const adminSection = document.getElementById('section-admin-users');
         const topbarTitle = document.querySelector('.topbar-title span:first-child');
         const topbarSubtitle = document.querySelector('.topbar-left p');
 
@@ -3127,13 +3522,53 @@
           }
         });
 
-        if (sectionId === 'section-dpt-table') {
+        if (sectionId === 'section-admin-users') {
+          // ═════════════════════════════════════════════════════════════
+          // KELOLA AKUN ADMIN & OTORITAS KPKU
+          // ═════════════════════════════════════════════════════════════
+          if (metricsSection) metricsSection.style.display = 'none';
+          if (mainSplitSection) mainSplitSection.style.display = 'none';
+          if (dptSection) dptSection.style.display = 'none';
+          if (plenoSection) plenoSection.style.display = 'none';
+          if (auditSection) auditSection.style.display = 'none';
+
+          if (adminSection) {
+            adminSection.style.display = 'block';
+            adminSection.classList.remove('section-view-fade');
+            void adminSection.offsetWidth;
+            adminSection.classList.add('section-view-fade');
+          }
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Kelola Akun Admin & Otoritas KPKU';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Multi-Akun Panitia • Otoritas Peran • Kredensial Akses & Verifikasi 2FA';
+          }
+
+          if (typeof renderAdminUsersTable === 'function') {
+            renderAdminUsersTable();
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-admin-users');
+          } else {
+            window.location.hash = 'section-admin-users';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          const adminSearchInput = document.getElementById('admin-search-input');
+          if (adminSearchInput) {
+            setTimeout(() => adminSearchInput.focus(), 250);
+          }
+        } else if (sectionId === 'section-dpt-table') {
           // ═════════════════════════════════════════════════════════════
           // ONLY DAFTAR PEMILIH TETAP (DPT) & STATUS HAK SUARA
           // "yang lain-lainnya enggak"
           // ═════════════════════════════════════════════════════════════
           if (metricsSection) metricsSection.style.display = 'none';
           if (mainSplitSection) mainSplitSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
           if (dptSection) {
             dptSection.style.display = 'block';
             dptSection.classList.remove('highlight-pulse');
@@ -3173,6 +3608,7 @@
           if (plenoSection) plenoSection.style.display = 'block';
           if (auditSection) auditSection.style.display = 'none';
           if (dptSection) dptSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
@@ -3200,6 +3636,7 @@
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'flex';
           if (dptSection) dptSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
@@ -3229,6 +3666,7 @@
           if (plenoSection) plenoSection.style.display = 'block';
           if (auditSection) auditSection.style.display = 'flex';
           if (dptSection) dptSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
 
           const defaultLink = document.querySelector('a[href="#section-metrics"]');
           if (defaultLink) defaultLink.classList.add('active');
@@ -3286,7 +3724,9 @@
       // Initialize view based on URL hash or default
       function initSectionFromHash() {
         const hash = window.location.hash || '';
-        if (hash.includes('section-dpt-table')) {
+        if (hash.includes('section-admin-users')) {
+          window.switchAdminSection('section-admin-users');
+        } else if (hash.includes('section-dpt-table')) {
           window.switchAdminSection('section-dpt-table');
         } else if (hash.includes('section-pleno')) {
           window.switchAdminSection('section-pleno');
@@ -3367,8 +3807,11 @@
         const elMiniTurnout = document.getElementById('dpt-mini-turnout');
         if (elMiniTurnout) elMiniTurnout.innerText = `${results.turnoutPercentage}%`;
 
-        // 5. DPT Table
+        // 5. DPT Table & Admin Users Table
         renderDptTable();
+        if (typeof renderAdminUsersTable === 'function') {
+          renderAdminUsersTable();
+        }
       }
 
       function renderCandidateTallies(results) {

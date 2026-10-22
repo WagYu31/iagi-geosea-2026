@@ -8,7 +8,8 @@ const STORAGE_KEYS = {
   DPT: 'pemilu_iagi_dpt_v2',
   BALLOTS: 'pemilu_iagi_ballots_v2',
   AUDIT: 'pemilu_iagi_audit_logs_v2',
-  SETTINGS: 'pemilu_iagi_settings_v2'
+  SETTINGS: 'pemilu_iagi_settings_v2',
+  ADMIN_ACCOUNTS: 'pemilu_iagi_admin_accounts_v1'
 };
 
 // Simple pseudo SHA-256 string hash for client-side cryptographic receipt
@@ -674,13 +675,177 @@ class PemiluStorage {
     return updated;
   }
 
+  // --- Admin Accounts Management (Multi-Admin & Roles) ---
+  getAdminAccounts() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.ADMIN_ACCOUNTS);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Error reading admin accounts from storage:', e);
+    }
+
+    // Default seed from window.ADMIN_ACCOUNTS or fallback
+    const seeds = (typeof window !== 'undefined' && Array.isArray(window.ADMIN_ACCOUNTS) && window.ADMIN_ACCOUNTS.length > 0)
+      ? window.ADMIN_ACCOUNTS
+      : [
+          {
+            id: "adm-01",
+            name: "Dr. Ir. Hendra Saputra, M.T.",
+            title: "Ketua Komisi Pemilihan Ketua Umum (KPKU)",
+            email: "admin.kpku@iagi.or.id",
+            phone: "081234567890",
+            npa: "01412",
+            password: "admin",
+            securityPin: "2026",
+            role: "Ketua Panitia",
+            status: "AKTIF",
+            twoFactor: true,
+            createdAt: "2026-01-15T08:00:00Z",
+            lastLogin: null
+          },
+          {
+            id: "adm-02",
+            name: "Sekretariat Panitia & Saksi Pleno",
+            title: "Pengawas Pemilu & Saksi Resmi",
+            email: "panitia@pemiluiagi.id",
+            phone: "081298765432",
+            npa: "02100",
+            password: "admin",
+            securityPin: "2026",
+            role: "Pengawas / Saksi",
+            status: "AKTIF",
+            twoFactor: true,
+            createdAt: "2026-01-20T09:30:00Z",
+            lastLogin: null
+          }
+        ];
+
+    this.saveAdminAccounts(seeds);
+    return seeds;
+  }
+
+  saveAdminAccounts(accounts) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.ADMIN_ACCOUNTS, JSON.stringify(accounts));
+      return true;
+    } catch (e) {
+      console.error('Error saving admin accounts to storage:', e);
+      return false;
+    }
+  }
+
+  addAdminAccount(accountData) {
+    const accounts = this.getAdminAccounts();
+    const cleanEmail = (accountData.email || '').trim().toLowerCase();
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      return { success: false, error: 'Alamat email admin tidak valid.' };
+    }
+
+    if (!accountData.name || !accountData.name.trim()) {
+      return { success: false, error: 'Nama lengkap admin wajib diisi.' };
+    }
+
+    // Check email uniqueness
+    if (accounts.some(a => a.email.toLowerCase() === cleanEmail)) {
+      return { success: false, error: 'Email admin sudah terdaftar di sistem KPKU.' };
+    }
+
+    const newAdmin = {
+      id: 'adm-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 5),
+      name: accountData.name.trim(),
+      title: (accountData.title || accountData.role || 'Panitia KPKU').trim(),
+      email: cleanEmail,
+      phone: (accountData.phone || '').trim(),
+      npa: (accountData.npa || '-').trim(),
+      password: (accountData.password || 'admin2026').trim(),
+      securityPin: (accountData.securityPin || '2026').trim(),
+      role: accountData.role || 'Operator DPT',
+      status: accountData.status || 'AKTIF',
+      twoFactor: accountData.twoFactor !== false,
+      createdAt: new Date().toISOString(),
+      lastLogin: null
+    };
+
+    accounts.push(newAdmin);
+    this.saveAdminAccounts(accounts);
+    this.addAuditLog('ADMIN_CREATED', `Akun admin baru dibuat: ${newAdmin.name} (${newAdmin.email}) - Role: ${newAdmin.role}`);
+    return { success: true, admin: newAdmin };
+  }
+
+  updateAdminAccount(id, updatedFields) {
+    const accounts = this.getAdminAccounts();
+    const idx = accounts.findIndex(a => a.id === id);
+    if (idx === -1) {
+      return { success: false, error: 'Akun admin tidak ditemukan.' };
+    }
+
+    // If email is changing, check uniqueness
+    if (updatedFields.email) {
+      const cleanEmail = updatedFields.email.trim().toLowerCase();
+      const duplicate = accounts.find(a => a.id !== id && a.email.toLowerCase() === cleanEmail);
+      if (duplicate) {
+        return { success: false, error: 'Email sudah digunakan oleh akun admin lain.' };
+      }
+      updatedFields.email = cleanEmail;
+    }
+
+    // Protect root admin email change
+    if (accounts[idx].email === 'admin.kpku@iagi.or.id' && updatedFields.email && updatedFields.email !== 'admin.kpku@iagi.or.id') {
+      return { success: false, error: 'Email akun Ketua KPKU Utama tidak dapat diubah demi integritas sistem.' };
+    }
+
+    accounts[idx] = {
+      ...accounts[idx],
+      ...updatedFields,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.saveAdminAccounts(accounts);
+    this.addAuditLog('ADMIN_UPDATED', `Akun admin diperbarui: ${accounts[idx].name} (${accounts[idx].email})`);
+    return { success: true, admin: accounts[idx] };
+  }
+
+  deleteAdminAccount(id) {
+    const accounts = this.getAdminAccounts();
+    const target = accounts.find(a => a.id === id);
+    if (!target) {
+      return { success: false, error: 'Akun admin tidak ditemukan.' };
+    }
+
+    // Protection 1: cannot delete primary root admin
+    if (target.email === 'admin.kpku@iagi.or.id') {
+      return { success: false, error: 'Akun Ketua KPKU Utama (admin.kpku@iagi.or.id) tidak dapat dihapus demi keamanan sistem.' };
+    }
+
+    // Protection 2: cannot delete own currently logged in account
+    const currentSession = this.getAdminSession();
+    if (currentSession && currentSession.email && currentSession.email.toLowerCase() === target.email.toLowerCase()) {
+      return { success: false, error: 'Anda tidak dapat menghapus akun yang sedang Anda gunakan untuk login saat ini.' };
+    }
+
+    // Protection 3: ensure at least 1 active admin remains
+    const activeCount = accounts.filter(a => a.status === 'AKTIF').length;
+    if (activeCount <= 1 && target.status === 'AKTIF') {
+      return { success: false, error: 'Tidak dapat menghapus admin aktif terakhir. Sistem wajib memiliki minimal 1 akun admin aktif.' };
+    }
+
+    const filtered = accounts.filter(a => a.id !== id);
+    this.saveAdminAccounts(filtered);
+    this.addAuditLog('ADMIN_DELETED', `Akun admin dihapus: ${target.name} (${target.email}) - Role: ${target.role}`);
+    return { success: true, count: filtered.length };
+  }
+
   // --- Admin Authentication & 2FA ---
   validateAdminCredentials(email, password) {
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanPass = (password || '').trim();
-    const accounts = (typeof window !== 'undefined' && window.ADMIN_ACCOUNTS) ? window.ADMIN_ACCOUNTS : [
-      { email: 'admin.kpku@iagi.or.id', password: 'admin', name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', securityPin: '2026' }
-    ];
+    const accounts = this.getAdminAccounts();
 
     const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
     if (!found) {
@@ -690,9 +855,17 @@ class PemiluStorage {
       return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
     }
 
+    if (found.status === 'NON-AKTIF') {
+      return { success: false, error: 'Akun admin ini berstatus NON-AKTIF / ditangguhkan. Hubungi Ketua KPKU.' };
+    }
+
     if (found.password !== cleanPass && cleanPass !== 'admin' && cleanPass !== 'admin2026') {
       return { success: false, error: 'Password salah. Silakan periksa kembali kata sandi Anda.' };
     }
+
+    // Record last login time
+    found.lastLogin = new Date().toISOString();
+    this.saveAdminAccounts(accounts);
 
     return { success: true, admin: found };
   }
@@ -724,12 +897,22 @@ class PemiluStorage {
     return { success: false, error: 'Kode verifikasi OTP salah atau sudah kedaluwarsa.' };
   }
 
-  verifyAdminSecurityPin(pin) {
+  verifyAdminSecurityPin(pin, email) {
     const cleanPin = (pin || '').trim();
     const settings = this.getSettings();
     if (cleanPin === settings.adminPin || cleanPin === '2026') {
       return { success: true };
     }
+
+    // Also check the specific admin's PIN
+    if (email) {
+      const accounts = this.getAdminAccounts();
+      const found = accounts.find(a => a.email.toLowerCase() === email.trim().toLowerCase());
+      if (found && found.securityPin && found.securityPin === cleanPin) {
+        return { success: true };
+      }
+    }
+
     return { success: false, error: 'PIN Keamanan Panitia salah.' };
   }
 
