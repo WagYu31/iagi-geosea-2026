@@ -1520,9 +1520,158 @@ export default function Settings({ settings, submissionSettings, pricing: initia
         }
     };
 
+    // Official Day 1 Poster Speakers Preset
+    const DAY1_OFFICIAL_SPEAKERS = [
+        {
+            name: 'Yuliot Tanjung*',
+            title: 'Wakil Menteri Energi dan Sumber Daya Mineral',
+            institution: 'Kementerian ESDM',
+            session: 'Special Keynote Speech',
+            role: 'Special Keynote',
+            photo: '',
+        },
+        {
+            name: 'Sri Sultan Hamengkubuwana X*',
+            title: 'Gubernur Daerah Istimewa Yogyakarta',
+            institution: 'Pemda D.I. Yogyakarta',
+            session: 'Special Keynote Speech',
+            role: 'Special Keynote',
+            photo: '',
+        },
+        {
+            name: 'STJ Budi Santoso',
+            title: 'Chairman of IAGI',
+            institution: 'Ikatan Ahli Geologi Indonesia (IAGI)',
+            session: 'CEO Forum',
+            role: 'Moderator',
+            photo: '',
+        },
+        {
+            name: 'Maroef Sjamsoeddin',
+            title: 'President Director MIND ID',
+            institution: 'MIND ID',
+            session: 'CEO Forum',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Asep Samsul Arifin',
+            title: 'Exploration Director PT Pertamina Hulu Energi (PHE)',
+            institution: 'PT Pertamina Hulu Energi (PHE)',
+            session: 'CEO Forum',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Ir. Yudistian Yunis, M.Eng.',
+            title: 'President Director PT Geo Dipa Energi',
+            institution: 'PT Geo Dipa Energi',
+            session: 'CEO Forum',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Rikky Rahmat Firdaus*',
+            title: 'Deputy for Exploration, Development and Working Area Management',
+            institution: 'SKK Migas',
+            session: 'Special Session',
+            role: 'Keynote Speaker',
+            photo: '',
+        },
+        {
+            name: 'Dr. N. Alit Ascaria, PhD',
+            title: 'Geology Agency',
+            institution: 'Badan Geologi Kementerian ESDM',
+            session: 'Special Session',
+            role: 'Moderator',
+            photo: '',
+        },
+        {
+            name: 'Feriyanto',
+            title: 'Exploration Leadership',
+            institution: 'MedcoEnergi',
+            session: 'Special Session',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Resky Yustiawan',
+            title: 'Exploration Executive',
+            institution: 'PT Energi Mega Persada Tbk',
+            session: 'Special Session',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Bayu Giriansyah',
+            title: 'Exploration Manager',
+            institution: 'Pertamina Hulu Energi',
+            session: 'Special Session',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Dr.mont. Ir. Andy Yahya Al Hakim, S.T., M.T.',
+            title: 'Secretary General MGEI',
+            institution: 'MGEI',
+            session: 'Panel Discussion 1',
+            role: 'Moderator',
+            photo: '',
+        },
+        {
+            name: 'Dr. Asep Kurnia Permana',
+            title: 'Direktur Pembinaan Pengusahaan Batubara',
+            institution: 'Ditjen Minerba ESDM',
+            session: 'Panel Discussion 1',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Ivan Crabb',
+            title: 'VP Exploration & Exploitation',
+            institution: 'Mubadala Energy',
+            session: 'Panel Discussion 1',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+        {
+            name: 'Ahmad Yani',
+            title: 'CEO PT PGE',
+            institution: 'PT Pertamina Geothermal Energy Tbk',
+            session: 'Panel Discussion 1',
+            role: 'Speaker / Panelist',
+            photo: '',
+        },
+    ];
+
     // Add new speaker
     const addSpeaker = () => {
-        setSpeakers([...speakers, { name: '', title: '', photo: '', institution: '' }]);
+        setSpeakers([...speakers, {
+            name: '',
+            title: '',
+            photo: '',
+            institution: '',
+            session: 'Special Keynote Speech',
+            role: 'Speaker / Panelist',
+        }]);
+    };
+
+    // Load 15 official speakers from poster
+    const loadOfficialDay1Speakers = () => {
+        if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
+            if (!confirm('Apakah Anda ingin memuat 15 Pembicara Day 1 sesuai poster resmi? Foto pembicara yang sudah ada akan tetap dipertahankan jika nama cocok.')) {
+                return;
+            }
+        }
+        const merged = DAY1_OFFICIAL_SPEAKERS.map(official => {
+            const cleanName = official.name.replace('*', '').toLowerCase().trim();
+            const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
+            return {
+                ...official,
+                photo: existing && existing.photo ? existing.photo : (official.photo || ''),
+            };
+        });
+        setSpeakers(merged);
     };
 
     // Remove speaker
@@ -2948,14 +3097,30 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                             <Alert severity="success" icon={<CloudUploadIcon />} sx={{ flex: 1, minWidth: 280, bgcolor: isDark ? 'rgba(26,188,156,0.1)' : '#e6fcf5', color: isDark ? '#2dd4bf' : '#0d9488', border: `1px solid ${isDark ? 'rgba(26,188,156,0.3)' : '#99f6e4'}` }}>
                                                 <strong>Fitur Drag & Drop:</strong> Tarik & lepaskan file foto langsung ke kotak foto, atau geser kartu (icon grip) untuk mengatur urutan pembicara.
                                             </Alert>
-                                            <Button
-                                                variant="outlined"
-                                                startIcon={<AddIcon />}
-                                                onClick={addSpeaker}
-                                                sx={{ borderColor: '#1abc9c', color: '#1abc9c', whiteSpace: 'nowrap', fontWeight: 600, height: 42 }}
-                                            >
-                                                Add Speaker
-                                            </Button>
+                                            <Stack direction="row" spacing={1.5} flexWrap="wrap">
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={loadOfficialDay1Speakers}
+                                                    sx={{
+                                                        bgcolor: '#0d9488',
+                                                        '&:hover': { bgcolor: '#0f766e' },
+                                                        color: '#ffffff',
+                                                        whiteSpace: 'nowrap',
+                                                        fontWeight: 700,
+                                                        height: 42,
+                                                    }}
+                                                >
+                                                    ✨ Muat 15 Pembicara Poster Day 1
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    startIcon={<AddIcon />}
+                                                    onClick={addSpeaker}
+                                                    sx={{ borderColor: '#1abc9c', color: '#1abc9c', whiteSpace: 'nowrap', fontWeight: 600, height: 42 }}
+                                                >
+                                                    Add Speaker
+                                                </Button>
+                                            </Stack>
                                         </Box>
 
                                         {/* Speakers Description */}
@@ -3036,11 +3201,25 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                         {/* Card Header with Drag Handle & Delete */}
                                                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                                                             <Tooltip title="Tahan & geser untuk mengubah urutan pembicara">
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'grab', userSelect: 'none' }}>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, cursor: 'grab', userSelect: 'none', overflow: 'hidden' }}>
                                                                     <DragIndicatorIcon sx={{ color: '#1abc9c', fontSize: '1.25rem' }} />
-                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fff' : '#1e293b' }}>
-                                                                        Speaker {index + 1}
+                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fff' : '#1e293b', whiteSpace: 'nowrap' }}>
+                                                                        #{index + 1}
                                                                     </Typography>
+                                                                    {speaker.session && (
+                                                                        <Chip
+                                                                            label={speaker.session}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                height: 20,
+                                                                                fontSize: '0.65rem',
+                                                                                fontWeight: 700,
+                                                                                bgcolor: isDark ? 'rgba(26,188,156,0.15)' : '#e6fcf5',
+                                                                                color: isDark ? '#2dd4bf' : '#0d9488',
+                                                                                maxWidth: 120,
+                                                                            }}
+                                                                        />
+                                                                    )}
                                                                 </Box>
                                                             </Tooltip>
                                                             <IconButton
@@ -3181,6 +3360,38 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                                 }}
                                                             />
                                                         </Button>
+
+                                                        {/* Sesi / Forum */}
+                                                        <TextField
+                                                            select
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Sesi / Forum"
+                                                            value={speaker.session || 'Special Keynote Speech'}
+                                                            onChange={(e) => updateSpeaker(index, 'session', e.target.value)}
+                                                            sx={{ mb: 1.2 }}
+                                                        >
+                                                            <MenuItem value="Special Keynote Speech">Special Keynote Speech</MenuItem>
+                                                            <MenuItem value="CEO Forum">CEO Forum</MenuItem>
+                                                            <MenuItem value="Special Session">Special Session</MenuItem>
+                                                            <MenuItem value="Panel Discussion 1">Panel Discussion 1</MenuItem>
+                                                        </TextField>
+
+                                                        {/* Peran / Role */}
+                                                        <TextField
+                                                            select
+                                                            fullWidth
+                                                            size="small"
+                                                            label="Peran (Role)"
+                                                            value={speaker.role || 'Speaker / Panelist'}
+                                                            onChange={(e) => updateSpeaker(index, 'role', e.target.value)}
+                                                            sx={{ mb: 1.2 }}
+                                                        >
+                                                            <MenuItem value="Special Keynote">Special Keynote</MenuItem>
+                                                            <MenuItem value="Keynote Speaker">Keynote Speaker</MenuItem>
+                                                            <MenuItem value="Moderator">Moderator</MenuItem>
+                                                            <MenuItem value="Speaker / Panelist">Speaker / Panelist</MenuItem>
+                                                        </TextField>
 
                                                         {/* Name */}
                                                         <TextField

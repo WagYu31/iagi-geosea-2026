@@ -184,6 +184,8 @@ class LandingPageSettingController extends Controller
                     'title' => '',
                     'photo' => '',
                     'institution' => '',
+                    'session' => 'Special Keynote Speech',
+                    'role' => 'Speaker / Panelist',
                 ];
             }
 
