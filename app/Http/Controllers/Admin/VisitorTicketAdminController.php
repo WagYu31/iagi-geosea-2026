@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Mail\VisitorTicketIssued;
 use App\Mail\VisitorPaymentRejected;
+use App\Models\ActivityLog;
 
 class VisitorTicketAdminController extends Controller
 {
@@ -267,6 +268,15 @@ class VisitorTicketAdminController extends Controller
                 }
             }
 
+            ActivityLog::record(
+                action: 'create_onsite_ticket',
+                module: 'visitor_tickets',
+                description: "Registrasi onsite tiket {$ticket->ticket_code} atas nama {$ticket->visitor_name} ({$ticket->visitor_type})",
+                targetId: $ticket->id,
+                targetCode: $ticket->ticket_code,
+                snapshot: $ticket->toArray()
+            );
+
             return back()->with('success', "Onsite registration successful! Ticket Code: {$ticket->ticket_code}");
         });
     }
@@ -311,6 +321,15 @@ class VisitorTicketAdminController extends Controller
         $msg = $isDebt 
             ? 'Pembayaran berhasil diverifikasi dengan TAG HUTANG (Tanggungan). Tiket aktif & E-Tiket telah dikirim.' 
             : 'Pembayaran visitor berhasil diverifikasi, tiket telah diaktifkan, dan email E-Tiket telah dikirimkan ke pengunjung.';
+
+        ActivityLog::record(
+            action: 'verify_payment',
+            module: 'payments',
+            description: "Verifikasi pembayaran invoice {$payment->payment_code} (Rp " . number_format($payment->total_amount, 0, ',', '.') . ")" . ($isDebt ? " [TAG HUTANG]" : ""),
+            targetId: $payment->id,
+            targetCode: $payment->payment_code,
+            snapshot: $payment->toArray()
+        );
 
         return back()->with('success', $msg);
     }
@@ -430,6 +449,15 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        ActivityLog::record(
+            action: 'reject_payment',
+            module: 'payments',
+            description: "Menolak pembayaran invoice {$payment->payment_code}. Catatan: {$notes}",
+            targetId: $payment->id,
+            targetCode: $payment->payment_code,
+            snapshot: $payment->toArray()
+        );
+
         return back()->with('success', 'Pembayaran visitor telah ditolak dan email pemberitahuan telah dikirimkan.');
     }
 
@@ -458,6 +486,15 @@ class VisitorTicketAdminController extends Controller
                 Log::error("Failed to send ticket email on quick activation: " . $e->getMessage());
             }
         }
+
+        ActivityLog::record(
+            action: 'update_ticket_status',
+            module: 'visitor_tickets',
+            description: "Mengubah status tiket {$ticket->ticket_code} ({$ticket->visitor_name}) dari " . strtoupper($oldStatus) . " menjadi " . strtoupper($newStatus),
+            targetId: $ticket->id,
+            targetCode: $ticket->ticket_code,
+            snapshot: ['old_status' => $oldStatus, 'new_status' => $newStatus]
+        );
 
         return back()->with('success', "Status tiket {$ticket->ticket_code} ({$ticket->visitor_name}) berhasil diubah menjadi " . strtoupper($newStatus) . ".");
     }
@@ -548,6 +585,19 @@ class VisitorTicketAdminController extends Controller
                 ]);
             }
         }
+
+        ActivityLog::record(
+            action: 'change_ticket_category',
+            module: 'visitor_tickets',
+            description: "Mengubah kategori tiket {$newCode} ({$ticket->visitor_name}) dari '{$oldType}' menjadi '{$newType}'",
+            targetId: $ticket->id,
+            targetCode: $newCode,
+            snapshot: [
+                'old_type' => $oldType,
+                'new_type' => $newType,
+                'ticket_code' => $newCode,
+            ]
+        );
 
         return back()->with('success', "Kategori tiket {$ticket->visitor_name} berhasil diubah.");
     }
@@ -1039,6 +1089,14 @@ class VisitorTicketAdminController extends Controller
                         if ($remTicket) {
                             if ($payment && $remTicket->payment_id === $payment->id) {
                                 if ($payment->tickets()->count() > 1) {
+                                    ActivityLog::record(
+                                        action: 'delete_ticket',
+                                        module: 'visitor_tickets',
+                                        description: "Menghapus peserta tiket {$remTicket->ticket_code} ({$remTicket->visitor_name}) dari rombongan pendaftaran grup {$payment->payment_code}",
+                                        targetId: $remTicket->id,
+                                        targetCode: $remTicket->ticket_code,
+                                        snapshot: $remTicket->toArray()
+                                    );
                                     $remTicket->delete();
                                 }
                             }
@@ -1257,14 +1315,36 @@ class VisitorTicketAdminController extends Controller
      */
     public function destroyVisitor($id)
     {
-        $ticket = VisitorTicket::findOrFail($id);
+        $ticket = VisitorTicket::with('payment')->findOrFail($id);
         $name = $ticket->visitor_name;
         $code = $ticket->ticket_code;
         $paymentId = $ticket->payment_id;
+        $payment = $ticket->payment;
+
+        // Record activity audit log BEFORE deleting
+        ActivityLog::record(
+            action: 'delete_ticket',
+            module: 'visitor_tickets',
+            description: "Menghapus tiket {$code} atas nama {$name} ({$ticket->visitor_email})",
+            targetId: $ticket->id,
+            targetCode: $code,
+            snapshot: [
+                'ticket' => $ticket->toArray(),
+                'payment' => $payment ? $payment->toArray() : null,
+            ]
+        );
 
         $ticket->delete();
 
         if ($paymentId && VisitorTicket::where('payment_id', $paymentId)->count() === 0) {
+            ActivityLog::record(
+                action: 'delete_payment',
+                module: 'payments',
+                description: "Menghapus invoice pembayaran {$payment?->payment_code} karena seluruh tiket anggotanya telah dihapus",
+                targetId: $paymentId,
+                targetCode: $payment?->payment_code,
+                snapshot: $payment ? $payment->toArray() : null
+            );
             VisitorPayment::where('id', $paymentId)->delete();
         }
 
@@ -1342,6 +1422,31 @@ class VisitorTicketAdminController extends Controller
 
             case 'delete':
                 $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
+                $deletedSnapshots = [];
+                foreach ($tickets as $t) {
+                    $deletedSnapshots[] = [
+                        'id' => $t->id,
+                        'name' => $t->visitor_name,
+                        'code' => $t->ticket_code,
+                        'email' => $t->visitor_email,
+                        'type' => $t->visitor_type,
+                        'price' => $t->individual_price,
+                        'payment_id' => $t->payment_id,
+                    ];
+                }
+
+                ActivityLog::record(
+                    action: 'bulk_delete_tickets',
+                    module: 'visitor_tickets',
+                    description: "Menghapus massal " . count($tickets) . " tiket pengunjung (" . implode(', ', $tickets->pluck('ticket_code')->take(5)->toArray()) . (count($tickets) > 5 ? '...' : '') . ")",
+                    targetId: null,
+                    targetCode: 'BULK-DELETE',
+                    snapshot: [
+                        'count' => count($tickets),
+                        'tickets' => $deletedSnapshots,
+                    ]
+                );
+
                 VisitorTicket::whereIn('id', $ticketIds)->delete();
                 foreach ($paymentIds as $pid) {
                     if (VisitorTicket::where('payment_id', $pid)->count() === 0) {

@@ -43,6 +43,7 @@ import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import PublicRoundedIcon from '@mui/icons-material/PublicRounded';
 import ShieldIcon from '@mui/icons-material/Shield';
+import HistoryIcon from '@mui/icons-material/History';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
@@ -130,6 +131,7 @@ function SidebarLayout({ children }) {
     { text: 'Certificates', icon: <GradeIcon />, href: route('admin.certificates'), color: '#7c3aed' },
     { text: 'Settings', icon: <SettingsIcon />, href: route('admin.settings'), color: '#0891b2' },
     { text: 'Email Settings', icon: <EmailIcon />, href: route('admin.email.settings.page'), color: '#db2777' },
+    { text: 'Activity & Audit Logs', icon: <HistoryIcon />, href: route('admin.logs'), color: '#f59e0b' },
     { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
   ] : isReviewer ? [
     { text: 'Dashboard', icon: <DashboardIcon />, href: route('reviewer.dashboard'), color: '#059669' },
@@ -244,6 +246,15 @@ function SidebarLayout({ children }) {
     })(),
     'Settings': <OutlineSettings />,
     'Email Settings': <OutlineEmail />,
+    'Activity & Audit Logs': (() => {
+      const LogIcon = () => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      );
+      return <LogIcon />;
+    })(),
   };
 
   const drawer = (

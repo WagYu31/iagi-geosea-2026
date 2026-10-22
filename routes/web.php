@@ -263,6 +263,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/settings/save-visitor-ticket-settings', [App\Http\Controllers\LandingPageSettingController::class, 'saveVisitorTicketSettings'])->name('settings.saveVisitorTickets');
         Route::post('/settings/upload-visitor-lanyard-template', [App\Http\Controllers\LandingPageSettingController::class, 'uploadVisitorLanyardTemplate'])->name('settings.uploadVisitorLanyardTemplate');
 
+        // Activity & Audit Logs
+        Route::get('/logs', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'index'])->name('logs');
+        Route::post('/logs/clear-system', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'clearSystemLog'])->name('logs.clearSystem');
+        Route::get('/logs/download-system', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'downloadSystemLog'])->name('logs.downloadSystem');
+
         // Landing Page Settings
         Route::get('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'index'])->name('settings');
         Route::post('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'store'])->name('settings.store');
