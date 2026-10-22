@@ -830,6 +830,98 @@
       background: rgba(255, 255, 255, 0.02);
     }
 
+    /* Enhanced Styling for Admin Users Management Table */
+    .admin-users-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .admin-users-table th {
+      background: rgba(15, 23, 42, 0.75) !important;
+      backdrop-filter: blur(8px);
+      color: #94A3B8;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+    .admin-users-table td {
+      padding: 14px 16px;
+      vertical-align: middle;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s ease;
+    }
+    .admin-users-table tr:hover td {
+      background: rgba(255, 255, 255, 0.025) !important;
+    }
+    .admin-avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      color: #FFFFFF;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .admin-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    .admin-action-btn:hover {
+      transform: translateY(-1px);
+    }
+    .admin-action-btn.btn-edit {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60A5FA;
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+    .admin-action-btn.btn-edit:hover {
+      background: rgba(59, 130, 246, 0.22);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #93C5FD;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+    }
+    .admin-action-btn.btn-cred {
+      background: rgba(245, 186, 66, 0.12);
+      color: #F5BA42;
+      border-color: rgba(245, 186, 66, 0.25);
+    }
+    .admin-action-btn.btn-cred:hover {
+      background: rgba(245, 186, 66, 0.22);
+      border-color: rgba(245, 186, 66, 0.5);
+      color: #FDE68A;
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.2);
+    }
+    .admin-action-btn.btn-del {
+      background: rgba(239, 68, 68, 0.12);
+      color: #F87171;
+      border-color: rgba(239, 68, 68, 0.25);
+      padding: 6px 9px;
+    }
+    .admin-action-btn.btn-del:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #FCA5A5;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+    }
+
     /* Split-Pane Login Modal Matching Image 2 */
     #desktop-admin-pin-modal {
       position: fixed;
@@ -2732,18 +2824,18 @@
       </div>
 
       <!-- Table Container -->
-      <div class="table-responsive">
-        <table class="data-table" id="admin-users-table">
+      <div class="table-container">
+        <table class="admin-table admin-users-table" id="admin-users-table">
           <thead>
             <tr>
-              <th style="width: 40px; text-align: center;">No</th>
-              <th>Nama Lengkap & NPA</th>
-              <th>Email Login & WhatsApp</th>
-              <th style="width: 170px; text-align: center;">Peran / Role Otoritas</th>
+              <th style="width: 50px; text-align: center;">No</th>
+              <th style="min-width: 260px;">Panitia & NPA IAGI</th>
+              <th style="min-width: 230px;">Email & WhatsApp</th>
+              <th style="width: 170px; text-align: center;">Peran / Hak Akses</th>
               <th style="width: 130px; text-align: center;">Keamanan (2FA)</th>
               <th style="width: 110px; text-align: center;">Status</th>
               <th style="width: 130px; text-align: center;">Terakhir Login</th>
-              <th style="text-align: center; width: 170px;">Aksi</th>
+              <th style="text-align: center; width: 180px;">Aksi</th>
             </tr>
           </thead>
           <tbody id="admin-users-table-body">
@@ -5065,31 +5157,65 @@
         }
 
         tbody.innerHTML = filtered.map((a, idx) => {
-          let roleBadgeStyle = 'background: rgba(96,165,250,0.15); color: #60A5FA; border: 1px solid rgba(96,165,250,0.3);';
+          let roleBadgeStyle = 'background: rgba(59, 130, 246, 0.12); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3);';
+          let avatarStyle = 'background: linear-gradient(135deg, #1E40AF, #3B82F6); border: 1px solid rgba(59, 130, 246, 0.5);';
           let roleIcon = '📋';
+
           if (a.role === 'Ketua Panitia') {
-            roleBadgeStyle = 'background: rgba(245,186,66,0.15); color: #F5BA42; border: 1px solid rgba(245,186,66,0.3); font-weight: 700;';
+            roleBadgeStyle = 'background: rgba(245, 186, 66, 0.14); color: #F5BA42; border: 1px solid rgba(245, 186, 66, 0.35); font-weight: 700;';
+            avatarStyle = 'background: linear-gradient(135deg, #B45309, #F5BA42); border: 1px solid rgba(245, 186, 66, 0.6); color: #000;';
             roleIcon = '👑';
           } else if (a.role === 'Pengawas / Saksi') {
-            roleBadgeStyle = 'background: rgba(192,132,252,0.15); color: #C084FC; border: 1px solid rgba(192,132,252,0.3);';
+            roleBadgeStyle = 'background: rgba(168, 85, 247, 0.12); color: #C084FC; border: 1px solid rgba(168, 85, 247, 0.3);';
+            avatarStyle = 'background: linear-gradient(135deg, #6B21A8, #A855F7); border: 1px solid rgba(168, 85, 247, 0.5);';
             roleIcon = '👁️';
           } else if (a.role === 'Tim IT & Teknis') {
-            roleBadgeStyle = 'background: rgba(45,212,191,0.15); color: #2DD4BF; border: 1px solid rgba(45,212,191,0.3);';
+            roleBadgeStyle = 'background: rgba(20, 184, 166, 0.12); color: #2DD4BF; border: 1px solid rgba(20, 184, 166, 0.3);';
+            avatarStyle = 'background: linear-gradient(135deg, #0F766E, #14B8A6); border: 1px solid rgba(20, 184, 166, 0.5);';
             roleIcon = '💻';
           }
 
           const isAktif = a.status === 'AKTIF';
           const statusBadge = isAktif
-            ? `<span class="status-badge status-voted" style="font-size: 0.72rem; padding: 3px 8px;">🟢 AKTIF</span>`
-            : `<span class="status-badge" style="background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); font-size: 0.72rem; padding: 3px 8px;">🔴 NON-AKTIF</span>`;
+            ? `<span style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; color: #10B981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3);">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                <span>AKTIF</span>
+              </span>`
+            : `<span style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; color: #EF4444; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3);">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #EF4444;"></span>
+                <span>NON-AKTIF</span>
+              </span>`;
 
+          // Format Last Login
           let lastLoginStr = '<span style="color: #64748B; font-style: italic;">Belum Pernah</span>';
           if (a.lastLogin) {
             try {
               const d = new Date(a.lastLogin);
-              lastLoginStr = `${d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })} ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+              lastLoginStr = `<span style="display: inline-flex; align-items: center; gap: 4px; color: #CBD5E1;">
+                <span style="opacity: 0.7;">🕒</span>
+                <span>${d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}, ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+              </span>`;
             } catch (e) {
-              lastLoginStr = a.lastLogin;
+              lastLoginStr = `<span style="color: #CBD5E1;">${escapeHtml(a.lastLogin)}</span>`;
+            }
+          }
+
+          // Format Initials
+          const cleanName = (a.name || 'Admin').replace(/Dr\.|Ir\.|M\.T\.|S\.T\.|M\.Sc\.|Prof\.|H\./gi, '').trim();
+          const nameParts = cleanName.split(/\s+/).filter(Boolean);
+          const initials = nameParts.length >= 2
+            ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
+            : (cleanName.substring(0, 2) || 'AD').toUpperCase();
+
+          // Format Phone number with dashes
+          const rawPhone = String(a.phone || '').trim();
+          const cleanDigits = rawPhone.replace(/\D/g, '');
+          let displayPhone = rawPhone || '-';
+          if (cleanDigits.length >= 10 && cleanDigits.length <= 13) {
+            if (cleanDigits.startsWith('0')) {
+              displayPhone = cleanDigits.replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3');
+            } else if (cleanDigits.startsWith('62')) {
+              displayPhone = '+' + cleanDigits.replace(/(\d{2})(\d{3})(\d{4})(\d+)/, '$1 $2-$3-$4');
             }
           }
 
@@ -5097,56 +5223,81 @@
 
           return `
             <tr>
-              <td style="text-align: center; color: #64748B; font-weight: 600;">${idx + 1}</td>
+              <td style="text-align: center;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); color: #94A3B8; font-weight: 700; font-size: 0.76rem; border: 1px solid rgba(255, 255, 255, 0.08);">
+                  ${idx + 1}
+                </span>
+              </td>
               <td>
-                <div style="font-weight: 700; color: #FFFFFF; font-size: 0.9rem;">${escapeHtml(a.name)}</div>
-                <div style="font-size: 0.73rem; color: #94A3B8; margin-top: 2px;">
-                  NPA: <span class="font-mono text-gold" style="font-weight: 600;">${escapeHtml(a.npa || '-')}</span>
-                  ${a.title ? ` • <span style="color: #CBD5E1;">${escapeHtml(a.title)}</span>` : ''}
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="admin-avatar-circle" style="${avatarStyle}">
+                    ${initials}
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; color: #FFFFFF; font-size: 0.92rem; line-height: 1.3;">
+                      ${escapeHtml(a.name)}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 0.73rem;">
+                      <span style="font-family: var(--font-mono); color: #F5BA42; font-weight: 700; background: rgba(245, 186, 66, 0.1); border: 1px solid rgba(245, 186, 66, 0.25); padding: 1px 6px; border-radius: 4px;">
+                        NPA: ${escapeHtml(a.npa || '-')}
+                      </span>
+                      ${a.title ? `<span style="color: #94A3B8;">${escapeHtml(a.title)}</span>` : ''}
+                    </div>
+                  </div>
                 </div>
               </td>
               <td>
-                <div class="font-mono" style="color: #60A5FA; font-size: 0.8rem; font-weight: 600;">${escapeHtml(a.email)}</div>
-                <div style="font-size: 0.73rem; color: #94A3B8; display: flex; align-items: center; gap: 6px; margin-top: 3px;">
-                  <span>📱 ${escapeHtml(a.phone || '-')}</span>
+                <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); color: #67E8F9; font-size: 0.8rem; font-weight: 600;">
+                  <span style="opacity: 0.7;">✉️</span>
+                  <span>${escapeHtml(a.email)}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 5px;">
+                  <span style="font-family: var(--font-mono); color: #CBD5E1; font-size: 0.76rem;">
+                    📱 ${escapeHtml(displayPhone)}
+                  </span>
                   ${a.phone ? `
-                    <button type="button" style="background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid rgba(37,211,102,0.3); padding: 1px 6px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; cursor: pointer;" onclick="sendSingleAdminWA('${a.id}')" title="Kirim info kredensial via WhatsApp">
-                      WA
+                    <button type="button" onclick="sendSingleAdminWA('${a.id}')" title="Kirim notifikasi kredensial ke WhatsApp" style="display: inline-flex; align-items: center; gap: 3px; background: rgba(37, 211, 102, 0.15); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.35); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                      <span>WhatsApp</span>
                     </button>
                   ` : ''}
                 </div>
               </td>
               <td style="text-align: center;">
-                <span class="badge" style="${roleBadgeStyle} display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;">
+                <span style="${roleBadgeStyle} display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; white-space: nowrap;">
                   <span>${roleIcon}</span>
                   <span>${escapeHtml(a.role)}</span>
                 </span>
               </td>
               <td style="text-align: center;">
-                <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #34D399; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); padding: 3px 8px; border-radius: 6px;">
-                  <span>🛡️</span>
-                  <span>OTP & PIN</span>
-                </span>
+                <div style="display: inline-flex; flex-direction: column; align-items: center; gap: 2px;">
+                  <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; color: #34D399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 9px; border-radius: 12px;">
+                    <span>🛡️</span>
+                    <span>2FA AKTIF</span>
+                  </span>
+                  <span style="font-size: 0.66rem; color: #6EE7B7; opacity: 0.85;">WA + PIN 4-Digit</span>
+                </div>
               </td>
               <td style="text-align: center;">
                 ${statusBadge}
               </td>
-              <td style="text-align: center; font-size: 0.76rem; color: #94A3B8;">
+              <td style="text-align: center; font-size: 0.76rem;">
                 ${lastLoginStr}
               </td>
               <td style="text-align: center;">
-                <div style="display: inline-flex; align-items: center; gap: 4px;">
-                  <button type="button" class="btn-table-action" style="background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="openEditAdminModal('${a.id}')" title="Ubah data atau hak akses admin">
-                    ✏️ Edit
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  <button type="button" class="admin-action-btn btn-edit" onclick="openEditAdminModal('${a.id}')" title="Ubah data atau peran admin">
+                    <span>✏️ Edit</span>
                   </button>
-                  <button type="button" class="btn-table-action" style="background: rgba(245,186,66,0.12); color: #F5BA42; border: 1px solid rgba(245,186,66,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="showAdminCredentialsModal('${a.id}')" title="Lihat password & PIN untuk dikirim ke panitia">
-                    🔑 Kredensial
+                  <button type="button" class="admin-action-btn btn-cred" onclick="showAdminCredentialsModal('${a.id}')" title="Lihat password & PIN untuk diteruskan ke panitia">
+                    <span>🔑 Kredensial</span>
                   </button>
                   ${isPrimaryRoot ? `
-                    <span title="Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus" style="opacity: 0.4; font-size: 0.72rem; padding: 4px 6px; cursor: not-allowed; color: #94A3B8;">🔒 Utama</span>
+                    <span title="Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus" style="opacity: 0.5; font-size: 0.72rem; padding: 5px 8px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.15); color: #94A3B8; font-weight: 600;">
+                      🔒 Utama
+                    </span>
                   ` : `
-                    <button type="button" class="btn-table-action" style="background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;" onclick="openDeleteAdminModal('${a.id}')" title="Hapus akun admin">
-                      🗑️
+                    <button type="button" class="admin-action-btn btn-del" onclick="openDeleteAdminModal('${a.id}')" title="Hapus akun admin">
+                      <span>🗑️</span>
                     </button>
                   `}
                 </div>
