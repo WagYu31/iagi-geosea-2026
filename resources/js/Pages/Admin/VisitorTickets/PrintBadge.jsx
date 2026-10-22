@@ -65,6 +65,10 @@ export const BADGE_TEMPLATES = {
     session_chair_judge: '/images/badges/Moderator.png',
     session_chair: '/images/badges/Moderator.png',
     judge: '/images/badges/Moderator.png',
+    oral: '/images/badges/Speaker.png',
+    oral_presenter: '/images/badges/Speaker.png',
+    poster: '/images/badges/Speaker.png',
+    poster_presenter: '/images/badges/Speaker.png',
 };
 
 const CATEGORY_MAP = {
@@ -81,6 +85,10 @@ const CATEGORY_MAP = {
     session_chair_judge: { label: 'SESSION CHAIR / JUDGE', short: 'CHAIR / JUDGE' },
     session_chair: { label: 'SESSION CHAIR', short: 'SESSION CHAIR' },
     judge: { label: 'JUDGE', short: 'JUDGE' },
+    oral: { label: 'ORAL', short: 'ORAL' },
+    oral_presenter: { label: 'ORAL', short: 'ORAL' },
+    poster: { label: 'POSTER', short: 'POSTER' },
+    poster_presenter: { label: 'POSTER', short: 'POSTER' },
 
     // 3. Visitor
     non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },

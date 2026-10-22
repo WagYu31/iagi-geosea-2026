@@ -54,6 +54,10 @@ const CATEGORY_MAP = {
     session_chair_judge: { label: 'Session Chair / Judge', badge: 'SESSION CHAIR / JUDGE' },
     session_chair: { label: 'Session Chair', badge: 'SESSION CHAIR' },
     judge: { label: 'Judge', badge: 'JUDGE' },
+    oral: { label: 'Oral', badge: 'ORAL' },
+    oral_presenter: { label: 'Oral', badge: 'ORAL' },
+    poster: { label: 'Poster', badge: 'POSTER' },
+    poster_presenter: { label: 'Poster', badge: 'POSTER' },
 
     // 3. Visitor
     non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },

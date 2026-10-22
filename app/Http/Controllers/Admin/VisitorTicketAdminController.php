@@ -549,6 +549,10 @@ class VisitorTicketAdminController extends Controller
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
+            'oral' => 'TKT-ORL',
+            'oral_presenter' => 'TKT-ORL',
+            'poster' => 'TKT-PST',
+            'poster_presenter' => 'TKT-PST',
         ];
 
         $newPrice = $paidCategories[$newType] ?? 0;
@@ -808,6 +812,10 @@ class VisitorTicketAdminController extends Controller
             'session_chair_judge' => '/images/badges/Moderator.png',
             'session_chair' => '/images/badges/Moderator.png',
             'judge' => '/images/badges/Moderator.png',
+            'oral' => '/images/badges/Speaker.png',
+            'oral_presenter' => '/images/badges/Speaker.png',
+            'poster' => '/images/badges/Speaker.png',
+            'poster_presenter' => '/images/badges/Speaker.png',
         ];
 
         return $map[$type] ?? '/images/badges/Participant.png';
@@ -1080,6 +1088,10 @@ class VisitorTicketAdminController extends Controller
                     'session_chair_judge' => 'TKT-JDG',
                     'session_chair' => 'TKT-JDG',
                     'judge' => 'TKT-JDG',
+                    'oral' => 'TKT-ORL',
+                    'oral_presenter' => 'TKT-ORL',
+                    'poster' => 'TKT-PST',
+                    'poster_presenter' => 'TKT-PST',
                 ];
 
                 // 1. Delete removed tickets safely
@@ -1270,6 +1282,10 @@ class VisitorTicketAdminController extends Controller
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
+            'oral' => 'TKT-ORL',
+            'oral_presenter' => 'TKT-ORL',
+            'poster' => 'TKT-PST',
+            'poster_presenter' => 'TKT-PST',
         ];
 
         $newCode = $ticket->ticket_code;

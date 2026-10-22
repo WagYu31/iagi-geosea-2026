@@ -155,6 +155,34 @@ const CATEGORY_META = {
         color: '#0e7490',
         border: '#a5f3fc',
     },
+    oral: {
+        label: 'Oral',
+        shortLabel: 'ORAL',
+        bg: '#f0fdfa',
+        color: '#0f766e',
+        border: '#99f6e4',
+    },
+    oral_presenter: {
+        label: 'Oral',
+        shortLabel: 'ORAL',
+        bg: '#f0fdfa',
+        color: '#0f766e',
+        border: '#99f6e4',
+    },
+    poster: {
+        label: 'Poster',
+        shortLabel: 'POSTER',
+        bg: '#fdf4ff',
+        color: '#a21caf',
+        border: '#f5d0fe',
+    },
+    poster_presenter: {
+        label: 'Poster',
+        shortLabel: 'POSTER',
+        bg: '#fdf4ff',
+        color: '#a21caf',
+        border: '#f5d0fe',
+    },
 
     // 3. Visitor
     non_exclusive: {
@@ -303,6 +331,10 @@ const CATEGORY_PRICES = {
     'session_chair_judge': 0,
     'session_chair': 0,
     'judge': 0,
+    'oral': 0,
+    'oral_presenter': 0,
+    'poster': 0,
+    'poster_presenter': 0,
 };
 
 export default function VisitorTicketsIndex({
@@ -1667,6 +1699,8 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="presenter" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎙️ Presenter</MenuItem>
                                 <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🗣️ Invited Speaker</MenuItem>
                                 <MenuItem value="session_chair_judge" sx={{ pl: 3, fontSize: '0.82rem' }}>3. ⚖️ Session Chair / Judge</MenuItem>
+                                <MenuItem value="oral" sx={{ pl: 3, fontSize: '0.82rem' }}>4. 📢 Oral</MenuItem>
+                                <MenuItem value="poster" sx={{ pl: 3, fontSize: '0.82rem' }}>5. 📑 Poster</MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     3. VISITOR
@@ -3366,6 +3400,22 @@ export default function VisitorTicketsIndex({
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#ecfeff', color: '#0e7490', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
+                                                        <MenuItem value="oral" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#0f766e', fontSize: '0.82rem' }}>
+                                                                    4. 📢 Oral
+                                                                </Typography>
+                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#f0fdfa', color: '#0f766e', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="poster" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#a21caf', fontSize: '0.82rem' }}>
+                                                                    5. 📑 Poster
+                                                                </Typography>
+                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#fdf4ff', color: '#a21caf', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             3. VISITOR PASS
@@ -3496,6 +3546,8 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎙️ Presenter (Invited / Free)</MenuItem>
                                     <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
                                     <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
+                                    <MenuItem value="oral" sx={{ pl: 3 }}>4. 📢 Oral (Invited / Free)</MenuItem>
+                                    <MenuItem value="poster" sx={{ pl: 3 }}>5. 📑 Poster (Invited / Free)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         3. VISITOR
@@ -4844,6 +4896,8 @@ export default function VisitorTicketsIndex({
                     { type: 'presenter', label: '1. 🎙️ Presenter', code: 'TKT-PRS', color: '#15803d' },
                     { type: 'invited_speaker', label: '2. 🗣️ Invited Speaker', code: 'TKT-ISPK', color: '#9d174d' },
                     { type: 'session_chair_judge', label: '3. ⚖️ Session Chair / Judge', code: 'TKT-JDG', color: '#0e7490' },
+                    { type: 'oral', label: '4. 📢 Oral', code: 'TKT-ORL', color: '#0f766e' },
+                    { type: 'poster', label: '5. 📑 Poster', code: 'TKT-PST', color: '#a21caf' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}

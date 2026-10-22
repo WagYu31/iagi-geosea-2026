@@ -98,6 +98,10 @@ class VisitorTicket extends Model
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
+            'oral' => 'TKT-ORL',
+            'oral_presenter' => 'TKT-ORL',
+            'poster' => 'TKT-PST',
+            'poster_presenter' => 'TKT-PST',
         ];
 
         $prefix = $prefixMap[$type] ?? 'TKT-VIS';
@@ -131,6 +135,10 @@ class VisitorTicket extends Model
             'session_chair_judge' => 'Session Chair / Judge',
             'session_chair' => 'Session Chair',
             'judge' => 'Judge',
+            'oral' => 'Oral',
+            'oral_presenter' => 'Oral',
+            'poster' => 'Poster',
+            'poster_presenter' => 'Poster',
 
             // 3. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',
