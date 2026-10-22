@@ -506,6 +506,12 @@ class VisitorTicketAdminController extends Controller
             'iagi_member_expatriate' => 'TKT-IEXP',
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
+            // Technical
+            'presenter' => 'TKT-PRS',
+            'invited_speaker' => 'TKT-ISPK',
+            'session_chair_judge' => 'TKT-JDG',
+            'session_chair' => 'TKT-JDG',
+            'judge' => 'TKT-JDG',
         ];
 
         $newPrice = $paidCategories[$newType] ?? 0;
@@ -746,6 +752,12 @@ class VisitorTicketAdminController extends Controller
             'general_ticket' => '/images/badges/Participant.png',
             'exclusive' => '/images/badges/VIP.png',
             'non_exclusive' => '/images/badges/Visitor.png',
+            // Technical
+            'presenter' => '/images/badges/Speaker.png',
+            'invited_speaker' => '/images/badges/Speaker.png',
+            'session_chair_judge' => '/images/badges/Moderator.png',
+            'session_chair' => '/images/badges/Moderator.png',
+            'judge' => '/images/badges/Moderator.png',
         ];
 
         return $map[$type] ?? '/images/badges/Participant.png';
@@ -1012,6 +1024,12 @@ class VisitorTicketAdminController extends Controller
                     'iagi_member_expatriate' => 'TKT-IEXP',
                     'non_iagi_member_expatriate' => 'TKT-NEXP',
                     'student_undergraduate' => 'TKT-STUD',
+                    // Technical
+                    'presenter' => 'TKT-PRS',
+                    'invited_speaker' => 'TKT-ISPK',
+                    'session_chair_judge' => 'TKT-JDG',
+                    'session_chair' => 'TKT-JDG',
+                    'judge' => 'TKT-JDG',
                 ];
 
                 // 1. Delete removed tickets safely
@@ -1188,6 +1206,12 @@ class VisitorTicketAdminController extends Controller
             'iagi_member_expatriate' => 'TKT-IEXP',
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
+            // Technical
+            'presenter' => 'TKT-PRS',
+            'invited_speaker' => 'TKT-ISPK',
+            'session_chair_judge' => 'TKT-JDG',
+            'session_chair' => 'TKT-JDG',
+            'judge' => 'TKT-JDG',
         ];
 
         $newCode = $ticket->ticket_code;

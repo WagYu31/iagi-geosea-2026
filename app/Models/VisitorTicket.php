@@ -92,6 +92,12 @@ class VisitorTicket extends Model
             'iagi_member_expatriate' => 'TKT-IEXP',
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
+            // Technical
+            'presenter' => 'TKT-PRS',
+            'invited_speaker' => 'TKT-ISPK',
+            'session_chair_judge' => 'TKT-JDG',
+            'session_chair' => 'TKT-JDG',
+            'judge' => 'TKT-JDG',
         ];
 
         $prefix = $prefixMap[$type] ?? 'TKT-VIS';
@@ -119,10 +125,17 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'Expatriate (Non-Member)',
             'student_undergraduate' => 'Student Undergraduate',
 
-            // 2. Visitor
+            // 2. Technical
+            'presenter' => 'Presenter',
+            'invited_speaker' => 'Invited Speaker',
+            'session_chair_judge' => 'Session Chair / Judge',
+            'session_chair' => 'Session Chair',
+            'judge' => 'Judge',
+
+            // 3. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',
 
-            // 3-11. Roles & Invitations
+            // Roles & Invitations
             'vip' => 'VIP',
             'exclusive' => 'VIP',
             'speaker' => 'Keynote Speaker',

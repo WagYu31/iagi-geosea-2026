@@ -58,6 +58,13 @@ export const BADGE_TEMPLATES = {
     sponsorship: '/images/badges/Sponsorship.png',
     sponsor: '/images/badges/Sponsorship.png',
     delegate: '/images/badges/Sponsorship.png',
+
+    // Technical
+    presenter: '/images/badges/Speaker.png',
+    invited_speaker: '/images/badges/Speaker.png',
+    session_chair_judge: '/images/badges/Moderator.png',
+    session_chair: '/images/badges/Moderator.png',
+    judge: '/images/badges/Moderator.png',
 };
 
 const CATEGORY_MAP = {
@@ -68,37 +75,44 @@ const CATEGORY_MAP = {
     non_iagi_member_expatriate: { label: 'PARTICIPANT: EXPATRIATE (NON-MEMBER)', short: 'EXPAT NON-MEMBER' },
     student_undergraduate: { label: 'PARTICIPANT: STUDENT UNDERGRADUATE', short: 'STUDENT' },
 
-    // 2. Visitor
+    // 2. Technical
+    presenter: { label: 'PRESENTER', short: 'PRESENTER' },
+    invited_speaker: { label: 'INVITED SPEAKER', short: 'INVITED SPEAKER' },
+    session_chair_judge: { label: 'SESSION CHAIR / JUDGE', short: 'CHAIR / JUDGE' },
+    session_chair: { label: 'SESSION CHAIR', short: 'SESSION CHAIR' },
+    judge: { label: 'JUDGE', short: 'JUDGE' },
+
+    // 3. Visitor
     non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },
 
-    // 3. VIP
+    // 4. VIP
     vip: { label: 'VIP', short: 'VIP' },
     exclusive: { label: 'VIP', short: 'VIP' },
 
-    // 4. Keynote Speaker
+    // 5. Keynote Speaker
     speaker: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
     keynote_speech: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
     keynote_speaker: { label: 'KEYNOTE SPEAKER', short: 'KEYNOTE SPEAKER' },
 
-    // 5. Panelist
+    // 6. Panelist
     panelist: { label: 'PANELIST', short: 'PANELIST' },
 
-    // 6. Moderator
+    // 7. Moderator
     moderator: { label: 'MODERATOR', short: 'MODERATOR' },
 
-    // 7. Exhibition
+    // 8. Exhibition
     exhibition: { label: 'EXHIBITION', short: 'EXHIBITION' },
 
-    // 8. Committee
+    // 9. Committee
     committee: { label: 'COMMITTEE', short: 'COMMITTEE' },
 
-    // 9. Student Volunteer
+    // 10. Student Volunteer
     student_volunteer: { label: 'STUDENT VOLUNTEER', short: 'STUDENT VOLUNTEER' },
 
-    // 10. Board
+    // 11. Board
     board: { label: 'BOARD', short: 'BOARD' },
 
-    // 11. Delegate
+    // 12. Delegate
     sponsorship: { label: 'DELEGATE', short: 'DELEGATE' },
     sponsor: { label: 'DELEGATE', short: 'DELEGATE' },
     delegate: { label: 'DELEGATE', short: 'DELEGATE' },

@@ -48,7 +48,14 @@ const CATEGORY_MAP = {
     non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', badge: 'EXPATRIATE (NON-MEMBER)' },
     student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT UNDERGRADUATE' },
 
-    // 2. Visitor
+    // 2. Technical
+    presenter: { label: 'Presenter', badge: 'PRESENTER' },
+    invited_speaker: { label: 'Invited Speaker', badge: 'INVITED SPEAKER' },
+    session_chair_judge: { label: 'Session Chair / Judge', badge: 'SESSION CHAIR / JUDGE' },
+    session_chair: { label: 'Session Chair', badge: 'SESSION CHAIR' },
+    judge: { label: 'Judge', badge: 'JUDGE' },
+
+    // 3. Visitor
     non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },
 };
 
