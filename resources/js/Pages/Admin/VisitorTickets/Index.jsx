@@ -75,6 +75,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
+import BusinessIcon from '@mui/icons-material/Business';
+import SaveIcon from '@mui/icons-material/Save';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -348,14 +353,23 @@ export default function VisitorTicketsIndex({
         payment_status: 'paid_cash',
     });
 
-    // Edit Visitor Form
+    // Edit Visitor & Group Registration Form
     const { data: editData, setData: setEditData, put: putEdit, processing: editProcessing, reset: resetEdit, errors: editErrors } = useForm({
+        is_group_edit: true,
         visitor_name: '',
         visitor_email: '',
         visitor_phone: '',
         visitor_institution: '',
         visitor_type: 'non_exclusive',
         status: 'active',
+        pic_name: '',
+        pic_email: '',
+        pic_phone: '',
+        pic_institution: '',
+        sync_pic_with_primary: true,
+        recalculate_total: true,
+        members: [],
+        removed_ticket_ids: [],
     });
 
     const searchTimer = useRef(null);
@@ -703,13 +717,156 @@ export default function VisitorTicketsIndex({
 
     const handleOpenEdit = (ticket) => {
         setEditModal({ open: true, ticket });
+
+        const rawMembers = ticket.payment?.tickets && ticket.payment.tickets.length > 0
+            ? [...ticket.payment.tickets]
+            : [ticket];
+
+        // Sort so is_group_leader is first, then id asc
+        rawMembers.sort((a, b) => {
+            if (a.is_group_leader && !b.is_group_leader) return -1;
+            if (!a.is_group_leader && b.is_group_leader) return 1;
+            return a.id - b.id;
+        });
+
+        const hasLeader = rawMembers.some(m => m.is_group_leader);
+        const mappedMembers = rawMembers.map((m, idx) => ({
+            id: m.id,
+            ticket_code: m.ticket_code,
+            visitor_name: m.visitor_name || '',
+            visitor_email: m.visitor_email || '',
+            visitor_phone: m.visitor_phone || '',
+            visitor_institution: m.visitor_institution || '',
+            visitor_type: m.visitor_type || 'non_exclusive',
+            status: m.status || ticket.status || 'pending',
+            is_group_leader: hasLeader ? Boolean(m.is_group_leader) : (idx === 0),
+        }));
+
+        const primaryMember = mappedMembers.find(m => m.is_group_leader) || mappedMembers[0];
+
         setEditData({
-            visitor_name: ticket.visitor_name || '',
-            visitor_email: ticket.visitor_email || '',
-            visitor_phone: ticket.visitor_phone || '',
-            visitor_institution: ticket.visitor_institution || '',
-            visitor_type: ticket.visitor_type || 'non_exclusive',
-            status: ticket.status || 'active',
+            is_group_edit: true,
+            visitor_name: primaryMember?.visitor_name || ticket.visitor_name || '',
+            visitor_email: primaryMember?.visitor_email || ticket.visitor_email || '',
+            visitor_phone: primaryMember?.visitor_phone || ticket.visitor_phone || '',
+            visitor_institution: primaryMember?.visitor_institution || ticket.visitor_institution || '',
+            visitor_type: primaryMember?.visitor_type || ticket.visitor_type || 'non_exclusive',
+            status: primaryMember?.status || ticket.status || 'active',
+            pic_name: ticket.payment?.pic_name || primaryMember?.visitor_name || '',
+            pic_email: ticket.payment?.pic_email || primaryMember?.visitor_email || '',
+            pic_phone: ticket.payment?.pic_phone || primaryMember?.visitor_phone || '',
+            pic_institution: ticket.payment?.pic_institution || primaryMember?.visitor_institution || '',
+            sync_pic_with_primary: true,
+            recalculate_total: true,
+            members: mappedMembers,
+            removed_ticket_ids: [],
+        });
+    };
+
+    const handleMemberChange = (idx, field, value) => {
+        const updated = editData.members.map((m, i) => i === idx ? { ...m, [field]: value } : m);
+        const isPrimary = updated[idx]?.is_group_leader || idx === 0;
+
+        let picUpdates = {};
+        if (isPrimary && editData.sync_pic_with_primary) {
+            if (field === 'visitor_name') picUpdates.pic_name = value;
+            if (field === 'visitor_email') picUpdates.pic_email = value;
+            if (field === 'visitor_phone') picUpdates.pic_phone = value;
+            if (field === 'visitor_institution') picUpdates.pic_institution = value;
+        }
+
+        setEditData({
+            ...editData,
+            ...picUpdates,
+            members: updated,
+            ...(isPrimary ? {
+                visitor_name: updated[idx].visitor_name,
+                visitor_email: updated[idx].visitor_email,
+                visitor_phone: updated[idx].visitor_phone,
+                visitor_institution: updated[idx].visitor_institution,
+                visitor_type: updated[idx].visitor_type,
+                status: updated[idx].status,
+            } : {})
+        });
+    };
+
+    const handleAddMember = () => {
+        const defaultInst = editData.pic_institution || editData.members[0]?.visitor_institution || '';
+        const defaultCat = editData.members[0]?.visitor_type || 'non_iagi_member_professional';
+        const defaultStatus = editData.members[0]?.status || 'pending';
+        const newMember = {
+            id: null,
+            ticket_code: 'NEW TICKET (AUTO)',
+            visitor_name: '',
+            visitor_email: '',
+            visitor_phone: '',
+            visitor_institution: defaultInst,
+            visitor_type: defaultCat,
+            status: defaultStatus,
+            is_group_leader: false,
+        };
+        setEditData({
+            ...editData,
+            members: [...editData.members, newMember]
+        });
+    };
+
+    const handleRemoveMember = (idx) => {
+        if (editData.members.length <= 1) {
+            alert('Minimal harus ada 1 peserta dalam pendaftaran.');
+            return;
+        }
+        const target = editData.members[idx];
+        const newMembers = editData.members.filter((_, i) => i !== idx);
+        const newRemoved = target.id ? [...editData.removed_ticket_ids, target.id] : editData.removed_ticket_ids;
+
+        if (target.is_group_leader && newMembers.length > 0) {
+            newMembers[0].is_group_leader = true;
+        }
+
+        const primary = newMembers.find(m => m.is_group_leader) || newMembers[0];
+
+        setEditData({
+            ...editData,
+            members: newMembers,
+            removed_ticket_ids: newRemoved,
+            visitor_name: primary?.visitor_name || '',
+            visitor_email: primary?.visitor_email || '',
+            visitor_phone: primary?.visitor_phone || '',
+            visitor_institution: primary?.visitor_institution || '',
+            visitor_type: primary?.visitor_type || 'non_exclusive',
+            status: primary?.status || 'active',
+        });
+    };
+
+    const handleSetGroupLeader = (idx) => {
+        const updated = editData.members.map((m, i) => ({
+            ...m,
+            is_group_leader: i === idx,
+        }));
+        const leader = updated.splice(idx, 1)[0];
+        updated.unshift(leader);
+
+        let picUpdates = {};
+        if (editData.sync_pic_with_primary) {
+            picUpdates = {
+                pic_name: leader.visitor_name,
+                pic_email: leader.visitor_email,
+                pic_phone: leader.visitor_phone,
+                pic_institution: leader.visitor_institution,
+            };
+        }
+
+        setEditData({
+            ...editData,
+            ...picUpdates,
+            visitor_name: leader.visitor_name,
+            visitor_email: leader.visitor_email,
+            visitor_phone: leader.visitor_phone,
+            visitor_institution: leader.visitor_institution,
+            visitor_type: leader.visitor_type,
+            status: leader.status,
+            members: updated,
         });
     };
 
@@ -2516,101 +2673,520 @@ export default function VisitorTicketsIndex({
                 )}
             </Dialog>
 
-            {/* MODAL 2: EDIT VISITOR DATA */}
-            <Dialog open={editModal.open} onClose={() => setEditModal({ open: false, ticket: null })} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+            {/* MODAL 2: EDIT VISITOR DATA & GROUP PARTICIPANTS */}
+            <Dialog 
+                open={editModal.open} 
+                onClose={() => setEditModal({ open: false, ticket: null })} 
+                maxWidth="md" 
+                fullWidth 
+                PaperProps={{ 
+                    sx: { 
+                        borderRadius: '24px', 
+                        overflow: 'hidden',
+                        boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+                    } 
+                }}
+            >
                 <form onSubmit={handleEditSubmit}>
-                    <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
-                        ✏️ Edit Visitor Information
+                    <DialogTitle sx={{ p: 2.5, px: 3, bgcolor: '#ffffff', borderBottom: '1.5px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <span>✏️ Edit Registration & Participants</span>
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, display: 'block', mt: 0.3 }}>
+                                {editModal.ticket?.payment ? (
+                                    <>
+                                        Invoice: <strong>{(editModal.ticket.payment.receipt_no || editModal.ticket.payment.payment_code).replace('Receipt No. ', '')}</strong> • Code: {editModal.ticket.payment.payment_code} • {editData.members.length} Participant(s)
+                                    </>
+                                ) : (
+                                    <>
+                                        Single Participant • Code: {editModal.ticket?.ticket_code}
+                                    </>
+                                )}
+                            </Typography>
+                        </Box>
+                        <IconButton onClick={() => setEditModal({ open: false, ticket: null })} size="small" sx={{ color: '#94a3b8', '&:hover': { color: '#0f172a' } }}>
+                            <CloseIcon sx={{ fontSize: 20 }} />
+                        </IconButton>
                     </DialogTitle>
-                    <DialogContent sx={{ pt: 2.5 }}>
-                        <Stack spacing={2} sx={{ mt: 1 }}>
-                            <TextField
-                                label="Full Name *"
-                                value={editData.visitor_name}
-                                onChange={(e) => setEditData('visitor_name', e.target.value)}
-                                fullWidth
-                                size="small"
-                                required
-                            />
-                            <TextField
-                                label="Email Address *"
-                                type="email"
-                                value={editData.visitor_email}
-                                onChange={(e) => setEditData('visitor_email', e.target.value)}
-                                fullWidth
-                                size="small"
-                                required
-                            />
-                            <TextField
-                                label="WhatsApp / Phone Number"
-                                value={editData.visitor_phone}
-                                onChange={(e) => setEditData('visitor_phone', e.target.value)}
-                                fullWidth
-                                size="small"
-                            />
-                            <TextField
-                                label="Institution / Organization"
-                                value={editData.visitor_institution}
-                                onChange={(e) => setEditData('visitor_institution', e.target.value)}
-                                fullWidth
-                                size="small"
-                            />
-                            <FormControl fullWidth size="small">
-                                <InputLabel>Visitor Category</InputLabel>
-                                <Select
-                                    value={editData.visitor_type}
-                                    label="Visitor Category"
-                                    onChange={(e) => setEditData('visitor_type', e.target.value)}
-                                >
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        1. PARTICIPANT
-                                    </ListSubheader>
-                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member)</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member)</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
-                                    <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
 
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        2. VISITOR
-                                    </ListSubheader>
-                                    <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
+                    <DialogContent sx={{ p: { xs: 2, sm: 3 }, bgcolor: '#f8fafc', maxHeight: '72vh', overflowY: 'auto' }}>
+                        {/* INVOICE & PIC SUMMARY SECTION (IF PAYMENT EXISTS) */}
+                        {editModal.ticket?.payment && (
+                            <Box
+                                sx={{
+                                    p: 2.2,
+                                    mb: 3,
+                                    borderRadius: '16px',
+                                    bgcolor: '#ffffff',
+                                    border: '1.5px solid #e2e8f0',
+                                    borderLeft: '5px solid #094d42',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                        <Chip
+                                            icon={<ReceiptLongIcon sx={{ fontSize: '14px !important', color: '#094d42 !important' }} />}
+                                            label={(editModal.ticket.payment.receipt_no || editModal.ticket.payment.payment_code).replace('Receipt No. ', '')}
+                                            size="small"
+                                            sx={{
+                                                bgcolor: '#ecfdf5',
+                                                border: '1px solid #a7f3d0',
+                                                color: '#065f46',
+                                                fontWeight: 900,
+                                                fontFamily: 'monospace',
+                                                fontSize: '0.74rem',
+                                            }}
+                                        />
+                                        <Chip
+                                            label={editModal.ticket.payment.status.toUpperCase()}
+                                            size="small"
+                                            sx={{
+                                                bgcolor: editModal.ticket.payment.status === 'approved' ? '#dcfce7' : editModal.ticket.payment.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                                border: `1px solid ${editModal.ticket.payment.status === 'approved' ? '#86efac' : editModal.ticket.payment.status === 'pending' ? '#fde68a' : '#fca5a5'}`,
+                                                color: editModal.ticket.payment.status === 'approved' ? '#166534' : editModal.ticket.payment.status === 'pending' ? '#92400e' : '#991b1b',
+                                                fontWeight: 900,
+                                                fontSize: '0.68rem',
+                                            }}
+                                        />
+                                        {editModal.ticket.payment.is_debt && (
+                                            <Chip
+                                                label="DEBT"
+                                                size="small"
+                                                sx={{ bgcolor: '#fffbeb', border: '1px solid #fde68a', color: '#b45309', fontWeight: 900, fontSize: '0.68rem' }}
+                                            />
+                                        )}
+                                    </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, display: 'block', fontSize: '0.68rem' }}>
+                                            CURRENT INVOICE TOTAL
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 900, color: '#094d42', fontSize: '1rem', fontFamily: 'monospace' }}>
+                                            Rp {Number(editModal.ticket.payment.total_amount || 0).toLocaleString('id-ID')}
+                                        </Typography>
+                                    </Box>
+                                </Box>
 
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        ROLES & INVITATIONS (3 - 11)
-                                    </ListSubheader>
-                                    <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
-                                    <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
-                                    <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
-                                    <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
-                                    <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
-                                    <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
-                                    <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
-                                    <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth size="small">
-                                <InputLabel>Ticket Status</InputLabel>
-                                <Select
-                                    value={editData.status}
-                                    label="Ticket Status"
-                                    onChange={(e) => setEditData('status', e.target.value)}
-                                >
-                                    <MenuItem value="active">Active</MenuItem>
-                                    <MenuItem value="pending">Pending Payment</MenuItem>
-                                    <MenuItem value="cancelled">Cancelled</MenuItem>
-                                </Select>
-                            </FormControl>
+                                <Divider sx={{ my: 1.2, borderColor: '#f1f5f9' }} />
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={editData.sync_pic_with_primary}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+                                                    setEditData(prev => ({
+                                                        ...prev,
+                                                        sync_pic_with_primary: checked,
+                                                        ...(checked && prev.members[0] ? {
+                                                            pic_name: prev.members[0].visitor_name,
+                                                            pic_email: prev.members[0].visitor_email,
+                                                            pic_phone: prev.members[0].visitor_phone,
+                                                            pic_institution: prev.members[0].visitor_institution,
+                                                        } : {})
+                                                    }));
+                                                }}
+                                                sx={{ color: '#094d42', '&.Mui-checked': { color: '#094d42' } }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.78rem' }}>
+                                                Auto-sync PIC Invoice dengan Primary Registrant / Group Leader
+                                            </Typography>
+                                        }
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={editData.recalculate_total}
+                                                onChange={(e) => setEditData('recalculate_total', e.target.checked)}
+                                                sx={{ color: '#094d42', '&.Mui-checked': { color: '#094d42' } }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.78rem' }}>
+                                                Hitung ulang total tagihan otomatis
+                                            </Typography>
+                                        }
+                                    />
+                                </Box>
+
+                                {!editData.sync_pic_with_primary && (
+                                    <Grid container spacing={1.5} sx={{ mt: 1 }}>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="PIC Name"
+                                                size="small"
+                                                fullWidth
+                                                value={editData.pic_name}
+                                                onChange={(e) => setEditData('pic_name', e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="PIC Email"
+                                                size="small"
+                                                fullWidth
+                                                value={editData.pic_email}
+                                                onChange={(e) => setEditData('pic_email', e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="PIC Phone / WhatsApp"
+                                                size="small"
+                                                fullWidth
+                                                value={editData.pic_phone}
+                                                onChange={(e) => setEditData('pic_phone', e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                label="PIC Institution / Company"
+                                                size="small"
+                                                fullWidth
+                                                value={editData.pic_institution}
+                                                onChange={(e) => setEditData('pic_institution', e.target.value)}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                )}
+                            </Box>
+                        )}
+
+                        {/* PARTICIPANT SECTION HEADER */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <span>👥 Participant Details</span>
+                                <Chip
+                                    label={`${editData.members.length} People`}
+                                    size="small"
+                                    sx={{ bgcolor: '#094d42', color: '#ffffff', fontWeight: 900, fontSize: '0.7rem', height: 22 }}
+                                />
+                            </Typography>
+
+                            <Button
+                                onClick={handleAddMember}
+                                size="small"
+                                startIcon={<PersonAddIcon sx={{ fontSize: 16 }} />}
+                                sx={{
+                                    background: 'linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%)',
+                                    border: '1.5px solid #a7f3d0',
+                                    borderBottom: '3.5px solid #059669',
+                                    color: '#065f46',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 900,
+                                    textTransform: 'none',
+                                    borderRadius: '10px',
+                                    px: 2,
+                                    py: 0.6,
+                                    boxShadow: '0 2px 4px rgba(5, 150, 105, 0.15)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%)',
+                                        transform: 'translateY(-1px)',
+                                        boxShadow: '0 4px 8px rgba(5, 150, 105, 0.2)',
+                                    },
+                                    '&:active': { transform: 'translateY(1px)', borderBottom: '1px solid #059669' },
+                                }}
+                            >
+                                + Add Another Participant
+                            </Button>
+                        </Box>
+
+                        {/* PARTICIPANT CARDS */}
+                        <Stack spacing={2.5}>
+                            {editData.members.map((member, idx) => {
+                                const isLeader = member.is_group_leader || idx === 0;
+                                return (
+                                    <Box
+                                        key={idx}
+                                        sx={{
+                                            p: { xs: 2, sm: 2.8 },
+                                            borderRadius: '20px',
+                                            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                                            border: isLeader ? '1.5px solid #7dd3fc' : '1.5px solid #cbd5e1',
+                                            borderBottom: isLeader ? '4.5px solid #0284c7' : '4.5px solid #94a3b8',
+                                            boxShadow: isLeader
+                                                ? '0 6px 20px -2px rgba(2, 132, 199, 0.12), inset 0 1px 0 #ffffff'
+                                                : '0 6px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 #ffffff',
+                                            position: 'relative',
+                                        }}
+                                    >
+                                        {/* Card Header */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.2, flexWrap: 'wrap', gap: 1 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                <Chip
+                                                    label={isLeader ? 'Primary Registrant / Group Leader' : `Participant #${idx + 1}`}
+                                                    size="small"
+                                                    sx={{
+                                                        background: isLeader 
+                                                            ? 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)' 
+                                                            : 'linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%)',
+                                                        border: isLeader ? '1.5px solid #7dd3fc' : '1.5px solid #cbd5e1',
+                                                        borderBottom: isLeader ? '3px solid #0284c7' : '3px solid #94a3b8',
+                                                        color: isLeader ? '#0369a1' : '#334155',
+                                                        fontWeight: 900,
+                                                        fontSize: '0.74rem',
+                                                        height: 26,
+                                                        px: 1,
+                                                        borderRadius: '8px',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.06)',
+                                                    }}
+                                                />
+                                                {member.id ? (
+                                                    <Chip
+                                                        label={member.ticket_code}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#f1f5f9',
+                                                            border: '1px solid #cbd5e1',
+                                                            color: '#475569',
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.72rem',
+                                                            height: 24,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Chip
+                                                        label="✨ New Participant"
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: '#fef3c7',
+                                                            border: '1px solid #fde68a',
+                                                            color: '#b45309',
+                                                            fontWeight: 800,
+                                                            fontSize: '0.7rem',
+                                                            height: 24,
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
+
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                {!isLeader && (
+                                                    <Button
+                                                        onClick={() => handleSetGroupLeader(idx)}
+                                                        size="small"
+                                                        startIcon={<StarIcon sx={{ fontSize: 14, color: '#b45309' }} />}
+                                                        sx={{
+                                                            background: 'linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%)',
+                                                            border: '1px solid #fde68a',
+                                                            borderBottom: '2.5px solid #f59e0b',
+                                                            color: '#b45309',
+                                                            fontSize: '0.72rem',
+                                                            fontWeight: 800,
+                                                            textTransform: 'none',
+                                                            borderRadius: '8px',
+                                                            px: 1.2,
+                                                            py: 0.35,
+                                                            boxShadow: '0 2px 4px rgba(245, 158, 11, 0.1)',
+                                                            '&:hover': { background: '#fef3c7', transform: 'translateY(-1px)' },
+                                                            '&:active': { transform: 'translateY(1px)' },
+                                                        }}
+                                                    >
+                                                        Set as Leader
+                                                    </Button>
+                                                )}
+
+                                                {editData.members.length > 1 && (
+                                                    <Button
+                                                        onClick={() => handleRemoveMember(idx)}
+                                                        size="small"
+                                                        startIcon={<DeleteOutlineIcon sx={{ fontSize: 15 }} />}
+                                                        sx={{
+                                                            background: 'linear-gradient(180deg, #fee2e2 0%, #fecaca 100%)',
+                                                            border: '1px solid #fca5a5',
+                                                            borderBottom: '2.5px solid #ef4444',
+                                                            color: '#991b1b',
+                                                            fontSize: '0.72rem',
+                                                            fontWeight: 800,
+                                                            textTransform: 'none',
+                                                            borderRadius: '8px',
+                                                            px: 1.4,
+                                                            py: 0.35,
+                                                            boxShadow: '0 2px 4px rgba(239, 68, 68, 0.15)',
+                                                            '&:hover': { background: 'linear-gradient(180deg, #fecaca 0%, #fca5a5 100%)', transform: 'translateY(-1px)' },
+                                                            '&:active': { transform: 'translateY(1px)', borderBottom: '1px solid #ef4444' },
+                                                        }}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                        </Box>
+
+                                        {/* Inputs 2x2 Grid */}
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12} sm={6}>
+                                                <TextField
+                                                    label="Full Name *"
+                                                    placeholder="e.g. Dr. John Doe, S.T., M.T."
+                                                    value={member.visitor_name}
+                                                    onChange={(e) => handleMemberChange(idx, 'visitor_name', e.target.value)}
+                                                    fullWidth
+                                                    required
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                <Box sx={{ p: 0.5, borderRadius: '6px', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center' }}>
+                                                                    <PersonOutlineIcon sx={{ color: '#047857', fontSize: 16 }} />
+                                                                </Box>
+                                                            </InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <TextField
+                                                    label="Email Address *"
+                                                    type="email"
+                                                    placeholder="e.g. john.doe@organization.com"
+                                                    value={member.visitor_email}
+                                                    onChange={(e) => handleMemberChange(idx, 'visitor_email', e.target.value)}
+                                                    fullWidth
+                                                    required
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                <Box sx={{ p: 0.5, borderRadius: '6px', bgcolor: '#f0f9ff', border: '1px solid #bae6fd', display: 'flex', alignItems: 'center' }}>
+                                                                    <EmailOutlinedIcon sx={{ color: '#0284c7', fontSize: 16 }} />
+                                                                </Box>
+                                                            </InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <TextField
+                                                    label="WhatsApp / Phone Number"
+                                                    placeholder="e.g. +62 812 3456 7890"
+                                                    value={member.visitor_phone}
+                                                    onChange={(e) => handleMemberChange(idx, 'visitor_phone', e.target.value)}
+                                                    fullWidth
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                <Box sx={{ p: 0.5, borderRadius: '6px', bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center' }}>
+                                                                    <PhoneIphoneIcon sx={{ color: '#059669', fontSize: 16 }} />
+                                                                </Box>
+                                                            </InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <TextField
+                                                    label="Institution / Company / University"
+                                                    placeholder="e.g. Medco Energi / ITB / UGM"
+                                                    value={member.visitor_institution}
+                                                    onChange={(e) => handleMemberChange(idx, 'visitor_institution', e.target.value)}
+                                                    fullWidth
+                                                    size="small"
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                <Box sx={{ p: 0.5, borderRadius: '6px', bgcolor: '#f5f3ff', border: '1px solid #ddd6fe', display: 'flex', alignItems: 'center' }}>
+                                                                    <BusinessIcon sx={{ color: '#7c3aed', fontSize: 16 }} />
+                                                                </Box>
+                                                            </InputAdornment>
+                                                        ),
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <FormControl fullWidth size="small">
+                                                    <InputLabel>Visitor Category</InputLabel>
+                                                    <Select
+                                                        value={member.visitor_type}
+                                                        label="Visitor Category"
+                                                        onChange={(e) => handleMemberChange(idx, 'visitor_type', e.target.value)}
+                                                    >
+                                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                                            1. PARTICIPANT
+                                                        </ListSubheader>
+                                                        <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member)</MenuItem>
+                                                        <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member)</MenuItem>
+                                                        <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member)</MenuItem>
+                                                        <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member)</MenuItem>
+                                                        <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate</MenuItem>
+
+                                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                                            2. VISITOR
+                                                        </ListSubheader>
+                                                        <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free)</MenuItem>
+
+                                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                                            ROLES & INVITATIONS (3 - 11)
+                                                        </ListSubheader>
+                                                        <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
+                                                        <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
+                                                        <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
+                                                        <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
+                                                        <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
+                                                        <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
+                                                        <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                                        <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
+                                                        <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <FormControl fullWidth size="small">
+                                                    <InputLabel>Ticket Status</InputLabel>
+                                                    <Select
+                                                        value={member.status}
+                                                        label="Ticket Status"
+                                                        onChange={(e) => handleMemberChange(idx, 'status', e.target.value)}
+                                                    >
+                                                        <MenuItem value="active">Active</MenuItem>
+                                                        <MenuItem value="pending">Pending Payment</MenuItem>
+                                                        <MenuItem value="cancelled">Cancelled</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
+                                );
+                            })}
                         </Stack>
                     </DialogContent>
-                    <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
-                        <Button onClick={() => setEditModal({ open: false, ticket: null })} sx={{ textTransform: 'none' }}>
+
+                    <DialogActions sx={{ p: 2.5, px: 3, bgcolor: '#ffffff', borderTop: '1.5px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Button onClick={() => setEditModal({ open: false, ticket: null })} sx={{ textTransform: 'none', color: '#64748b', fontWeight: 700 }}>
                             Cancel
                         </Button>
-                        <Button type="submit" variant="contained" disabled={editProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
-                            {editProcessing ? 'Saving...' : 'Save Changes'}
-                        </Button>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 800 }}>
+                                {editData.members.length} participant(s) to save
+                            </Typography>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={editProcessing}
+                                startIcon={<SaveIcon />}
+                                sx={{
+                                    bgcolor: '#094d42',
+                                    borderBottom: '3px solid #06332c',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    px: 3,
+                                    py: 0.8,
+                                    boxShadow: '0 4px 12px rgba(9, 77, 66, 0.25)',
+                                    '&:hover': { bgcolor: '#0b5d50' },
+                                }}
+                            >
+                                {editProcessing ? 'Saving Changes...' : 'Save All Changes'}
+                            </Button>
+                        </Box>
                     </DialogActions>
                 </form>
             </Dialog>

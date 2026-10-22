@@ -39,7 +39,7 @@ class VisitorTicketAdminController extends Controller
      */
     private function filterTicketsQuery(Request $request)
     {
-        $query = VisitorTicket::with(['payment', 'registeredBy', 'checkedInBy', 'cardPrintedBy']);
+        $query = VisitorTicket::with(['payment.tickets', 'registeredBy', 'checkedInBy', 'cardPrintedBy']);
 
         // Search filter
         if ($search = trim((string) $request->input('search', ''))) {
@@ -871,12 +871,160 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
-     * Update Visitor details
+     * Update Visitor details (supports single & group/multi-participant edit)
      */
     public function updateVisitor(Request $request, $id)
     {
         $ticket = VisitorTicket::findOrFail($id);
 
+        // Check if this is a multi-participant / group edit
+        if ($request->boolean('is_group_edit') && is_array($request->input('members'))) {
+            $request->validate([
+                'members' => 'required|array|min:1',
+                'members.*.visitor_name' => 'required|string|max:150',
+                'members.*.visitor_email' => 'required|email|max:150',
+                'members.*.visitor_phone' => 'nullable|string|max:50',
+                'members.*.visitor_institution' => 'nullable|string|max:150',
+                'members.*.visitor_type' => 'required|string|max:100',
+                'members.*.status' => 'required|in:active,pending,cancelled',
+                'pic_name' => 'nullable|string|max:150',
+                'pic_email' => 'nullable|email|max:150',
+                'pic_phone' => 'nullable|string|max:50',
+                'pic_institution' => 'nullable|string|max:150',
+            ]);
+
+            return DB::transaction(function () use ($request, $ticket) {
+                $payment = $ticket->payment;
+                $members = $request->input('members');
+                $removedIds = $request->input('removed_ticket_ids', []);
+
+                $paidCategories = [
+                    'iagi_member_professional' => 3000000,
+                    'non_iagi_member_professional' => 4000000,
+                    'iagi_member_expatriate' => 6000000,
+                    'non_iagi_member_expatriate' => 7000000,
+                    'student_undergraduate' => 1000000,
+                    'exclusive' => 500000,
+                ];
+
+                // 1. Delete removed tickets safely
+                if (!empty($removedIds) && is_array($removedIds)) {
+                    foreach ($removedIds as $remId) {
+                        $remTicket = VisitorTicket::find($remId);
+                        if ($remTicket) {
+                            if ($payment && $remTicket->payment_id === $payment->id) {
+                                if ($payment->tickets()->count() > 1) {
+                                    $remTicket->delete();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $primaryTicket = null;
+
+                // 2. Process each member in the list
+                foreach ($members as $index => $m) {
+                    $isLeader = !empty($m['is_group_leader']) || ($index === 0 && !collect($members)->contains('is_group_leader', true));
+                    $vType = $m['visitor_type'] ?? 'non_exclusive';
+                    $indPrice = $paidCategories[$vType] ?? 0;
+                    $status = $m['status'] ?? $ticket->status;
+
+                    if (!empty($m['id'])) {
+                        // Existing ticket update
+                        $existing = VisitorTicket::find($m['id']);
+                        if ($existing) {
+                            $existing->update([
+                                'visitor_name' => $m['visitor_name'],
+                                'visitor_email' => $m['visitor_email'],
+                                'visitor_phone' => $m['visitor_phone'] ?? null,
+                                'visitor_institution' => $m['visitor_institution'] ?? null,
+                                'visitor_type' => $vType,
+                                'individual_price' => $indPrice,
+                                'status' => $status,
+                                'is_group_leader' => $isLeader,
+                            ]);
+                            if ($isLeader) {
+                                $primaryTicket = $existing;
+                            }
+                        }
+                    } else {
+                        // Create newly added member ticket
+                        $newTicket = VisitorTicket::create([
+                            'payment_id' => $payment ? $payment->id : null,
+                            'registration_source' => $ticket->registration_source ?? 'online_self',
+                            'visitor_name' => $m['visitor_name'],
+                            'visitor_email' => $m['visitor_email'],
+                            'visitor_phone' => $m['visitor_phone'] ?? null,
+                            'visitor_institution' => $m['visitor_institution'] ?? ($ticket->visitor_institution ?? null),
+                            'ticket_code' => VisitorTicket::generateTicketCode($vType),
+                            'visitor_type' => $vType,
+                            'individual_price' => $indPrice,
+                            'is_group_leader' => $isLeader,
+                            'group_code' => $ticket->group_code ?? ($payment ? $payment->payment_code : null),
+                            'status' => $status,
+                            'checked_in' => false,
+                            'card_printed' => false,
+                        ]);
+                        if ($isLeader) {
+                            $primaryTicket = $newTicket;
+                        }
+                    }
+                }
+
+                // If no primary ticket was designated, use the first ticket
+                if (!$primaryTicket && $payment) {
+                    $primaryTicket = $payment->tickets()->first();
+                    if ($primaryTicket) {
+                        $primaryTicket->update(['is_group_leader' => true]);
+                    }
+                }
+
+                // 3. Update payment PIC & totals
+                if ($payment) {
+                    $paymentTickets = $payment->tickets()->get();
+                    $totalMembers = $paymentTickets->count();
+
+                    $picName = $request->input('pic_name');
+                    $picEmail = $request->input('pic_email');
+                    $picPhone = $request->input('pic_phone');
+                    $picInstitution = $request->input('pic_institution');
+
+                    if ($request->boolean('sync_pic_with_primary', true) && $primaryTicket) {
+                        $picName = $primaryTicket->visitor_name;
+                        $picEmail = $primaryTicket->visitor_email;
+                        $picPhone = $primaryTicket->visitor_phone;
+                        $picInstitution = $primaryTicket->visitor_institution;
+                    }
+
+                    $updatePayment = [
+                        'total_members' => $totalMembers,
+                        'pic_name' => $picName ?? $payment->pic_name,
+                        'pic_email' => $picEmail ?? $payment->pic_email,
+                        'pic_phone' => $picPhone ?? $payment->pic_phone,
+                        'pic_institution' => $picInstitution ?? $payment->pic_institution,
+                    ];
+
+                    if ($request->boolean('recalculate_total', true)) {
+                        $subtotal = $paymentTickets->sum('individual_price');
+                        $uniqueCode = (int) ($payment->unique_code ?? 0);
+                        if ($subtotal > 0) {
+                            $updatePayment['total_amount'] = $subtotal + $uniqueCode;
+                        }
+                    }
+
+                    $payment->update($updatePayment);
+                }
+
+                $msg = $payment 
+                    ? "Data pendaftaran & " . count($members) . " tiket peserta berhasil diperbarui." 
+                    : "Data peserta berhasil diperbarui.";
+
+                return back()->with('success', $msg);
+            });
+        }
+
+        // Standard Single Ticket update fallback
         $request->validate([
             'visitor_name' => 'required|string|max:150',
             'visitor_email' => 'required|email|max:150',

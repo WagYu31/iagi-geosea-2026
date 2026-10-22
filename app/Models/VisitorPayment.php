@@ -46,7 +46,9 @@ class VisitorPayment extends Model
 
     public function tickets(): HasMany
     {
-        return $this->hasMany(VisitorTicket::class, 'payment_id');
+        return $this->hasMany(VisitorTicket::class, 'payment_id')
+            ->orderBy('is_group_leader', 'desc')
+            ->orderBy('id', 'asc');
     }
 
     public function verifiedBy(): BelongsTo
