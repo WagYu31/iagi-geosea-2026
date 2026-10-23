@@ -1033,24 +1033,87 @@ body {
   line-height: 1.6;
 }
 
-/* 3-Column Grid for Official Candidates */
+/* 3-Column Grid with Proportional Multi-Breakpoint Scaling */
 .candidates-pair-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  max-width: 1240px;
+  gap: 20px;
+  max-width: 1200px;
   margin: 0 auto;
+  align-items: stretch;
 }
 
-@media (max-width: 992px) {
+/* Tablet & iPad (769px to 1024px): Retain 3 columns so Candidate 3 is NEVER an orphan */
+@media (max-width: 1024px) and (min-width: 769px) {
   .candidates-pair-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 0 10px;
+  }
+  .candidate-photo-header {
+    height: 220px !important;
+  }
+  .candidate-details-body {
+    padding: 16px 12px !important;
+  }
+  .cand-name {
+    font-size: 1.05rem !important;
+  }
+  .cand-btn-vision,
+  .cand-btn-video {
+    font-size: 0.75rem !important;
+    padding: 8px 8px !important;
+    gap: 5px !important;
   }
 }
 
-@media (max-width: 680px) {
+/* Mobile Screens (<= 768px): Clean, centered 1-column cards */
+@media (max-width: 768px) {
+  .candidates-spotlight-section {
+    padding: 0 0 45px 0;
+  }
   .candidates-pair-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 390px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .candidate-photo-header {
+    height: 230px !important;
+  }
+  .candidate-details-body {
+    padding: 18px 16px !important;
+  }
+  .cand-name {
+    font-size: 1.15rem !important;
+    text-align: center;
+  }
+  .candidate-card-showcase {
+    max-width: 100%;
+  }
+}
+
+/* Small Mobile Screens (<= 360px): Ultra-compact fitting */
+@media (max-width: 360px) {
+  .candidates-pair-grid {
+    gap: 16px;
+    max-width: 100%;
+  }
+  .candidate-photo-header {
+    height: 190px !important;
+  }
+  .candidate-details-body {
+    padding: 14px 12px !important;
+  }
+  .cand-name {
+    font-size: 1.05rem !important;
+  }
+  .cand-btn-vision,
+  .cand-btn-video {
+    font-size: 0.72rem !important;
+    padding: 8px 6px !important;
+    gap: 4px !important;
   }
 }
 
@@ -1061,20 +1124,23 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px -4px rgba(10, 25, 47, 0.08), 0 2px 6px -1px rgba(10, 25, 47, 0.04);
+  height: 100%;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 6px 20px -4px rgba(10, 25, 47, 0.08), 0 2px 6px -1px rgba(10, 25, 47, 0.04);
 }
 
 .candidate-card-showcase:hover {
-  transform: translateY(-6px);
+  transform: translateY(-5px);
   border-color: rgba(2, 132, 199, 0.45);
-  box-shadow: 0 20px 42px -6px rgba(10, 25, 47, 0.16), 0 0 25px rgba(2, 132, 199, 0.12);
+  box-shadow: 0 16px 36px -6px rgba(10, 25, 47, 0.14), 0 0 20px rgba(2, 132, 199, 0.1);
 }
 
 .candidate-photo-header {
   position: relative;
   width: 100%;
-  height: 330px;
+  height: 270px;
   background: #08101E;
   overflow: hidden;
   display: flex;
@@ -1922,7 +1988,11 @@ body {
   .footer-top-grid,
   .footer-top {
     grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    gap: 32px;
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+    max-width: 100%;
   }
 }
 
@@ -2368,10 +2438,10 @@ body {
    SCROLL REVEAL CHOREOGRAPHY (INTERSECTION OBSERVER)
    ========================================================================== */
 
-/* Candidate Intro Section Header */
+/* Candidate Intro Section Header - Always visible with smooth entrance */
 .hero-caketum-intro {
-  opacity: 0;
-  transform: translateY(32px);
+  opacity: 1 !important;
+  transform: none !important;
   transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
@@ -2422,8 +2492,8 @@ body {
    CANDIDATE CARDS CHOREOGRAPHY & STAGGER CASCADE
    ========================================================================== */
 .candidate-card-showcase {
-  opacity: 0;
-  transform: translateY(48px) scale(0.97);
+  opacity: 1 !important;
+  transform: none !important;
   transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.4s ease,
