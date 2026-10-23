@@ -481,6 +481,7 @@ body {
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
+  background: url('../assets/hero-bg-poster.jpg?v=665465cf') center top / cover no-repeat;
 }
 
 .hero-bg-video {
@@ -495,7 +496,12 @@ body {
   object-fit: cover;
   object-position: center;
   z-index: 0;
-  filter: saturate(1.05) contrast(1.02);
+}
+
+@media (max-width: 768px) {
+  .hero-bg-video {
+    display: none !important;
+  }
 }
 
 .hero-video-overlay {
@@ -2525,4 +2531,19 @@ body {
     transform: none !important;
   }
 }
+
+/* Mobile Performance & Smooth 60fps Optimization */
+@media (max-width: 768px) {
+  .hero-video-backdrop {
+    background: url('../assets/hero-bg-poster.jpg?v=665465cf') center top / cover no-repeat !important;
+  }
+  .hero-bg-video {
+    display: none !important;
+  }
+  .header-nav-dock {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+}
+
 

@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- GetLayers Style Landing Page CSS -->
-  <link rel="stylesheet" href="css/landing.css?v=3.5.0">
+  <link rel="stylesheet" href="css/landing.css?v=3.6.0">
 
   <style id="affiliates-capsule-style">
     /* ==========================================================================
@@ -386,14 +386,28 @@
 
   <!-- ================= HERO SECTION (VIDEO BACKGROUND) ================= -->
   <section class="hero-section" id="portal">
-    <!-- Cinematic Video Backdrop -->
+    <!-- Cinematic Video Backdrop: Video on Desktop, Lightweight HD Poster on Mobile -->
     <div class="hero-video-backdrop">
-      <video id="hero-bg-video" class="hero-bg-video" autoplay muted loop playsinline poster="assets/hero-bg-poster.jpg?v=665465cf" preload="auto">
-        <source src="assets/hero-bg.mp4?v=665465cf" type="video/mp4">
-        <source src="Aset%20BG/gemini_generated_video_665465cf.mp4" type="video/mp4">
+      <video id="hero-bg-video" class="hero-bg-video" autoplay muted loop playsinline poster="assets/hero-bg-poster.jpg?v=665465cf" preload="none">
       </video>
       <div class="hero-video-overlay"></div>
     </div>
+    <script>
+      (function() {
+        var isMobile = (window.innerWidth <= 768) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        var video = document.getElementById('hero-bg-video');
+        if (!isMobile && video) {
+          var src = document.createElement('source');
+          src.src = 'assets/hero-bg.mp4?v=665465cf';
+          src.type = 'video/mp4';
+          video.appendChild(src);
+          video.load();
+          video.play().catch(function() {});
+        } else if (video) {
+          video.remove();
+        }
+      })();
+    </script>
 
     <div class="container">
       
