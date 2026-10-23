@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- GetLayers Style Landing Page CSS -->
-  <link rel="stylesheet" href="css/landing.css?v=3.4.0">
+  <link rel="stylesheet" href="css/landing.css?v=3.5.0">
 
   <style id="affiliates-capsule-style">
     /* ==========================================================================
@@ -656,7 +656,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=3.0.0"></script>
+  <script src="js/data.js?v=3.5.0"></script>
   <script>
     // Live Countdown Dimulainya Pemilihan
     function updateLandingCountdown() {
@@ -805,10 +805,16 @@
     });
 
     // Candidate Detail & Ultra-Fast Slide Presentation Viewer
+    const CANDIDATE_SLIDE_CONFIG = {
+      1: { total: 23, prefix: 'assets/slides/c1/slide-' },
+      2: { total: 9, prefix: 'assets/slides/c2/slide-' },
+      3: { total: 9, prefix: 'assets/slides/c3/slide-' }
+    };
+
     let currentCandId = 1;
     let currentSlideIndex = 1;
     let currentSlideTotal = 23;
-    let currentSlidePrefix = '';
+    let currentSlidePrefix = 'assets/slides/c1/slide-';
 
     function openCandidateModal(candId, initialTab = 'slides') {
       const modal = document.getElementById('modal-candidate');
@@ -818,10 +824,11 @@
 
       if (!candidate || !modal || !content) return;
 
+      const fallbackMeta = CANDIDATE_SLIDE_CONFIG[candId] || { total: 23, prefix: 'assets/slides/c' + candId + '/slide-' };
       currentCandId = candidate.id;
       currentSlideIndex = 1;
-      currentSlideTotal = candidate.slideCount || 1;
-      currentSlidePrefix = candidate.slidePrefix || '';
+      currentSlideTotal = (candidate.slideCount && candidate.slideCount > 0) ? candidate.slideCount : fallbackMeta.total;
+      currentSlidePrefix = (candidate.slidePrefix && candidate.slidePrefix.length > 0) ? candidate.slidePrefix : fallbackMeta.prefix;
 
       if (dialog) dialog.classList.add('modal-pdf-mode');
 
@@ -870,9 +877,9 @@
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-weight:700; color:#0F172A;">Halaman:</span>
               <select id="slide-select-dropdown" onchange="jumpToSlide(this.value)" style="background:#FFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 8px; font-size:0.78rem; font-weight:600; color:#0F172A; cursor:pointer;">
-                ${Array.from({length: candidate.slideCount || 1}, (_, i) => `<option value="${i+1}">Slide ${i+1} dari ${candidate.slideCount}</option>`).join('')}
+                ${Array.from({length: currentSlideTotal}, (_, i) => `<option value="${i+1}">Slide ${i+1} dari ${currentSlideTotal}</option>`).join('')}
               </select>
-              <span id="slide-counter-badge" style="font-family:var(--font-mono); font-size:0.74rem; background:#E2E8F0; padding:2px 8px; border-radius:6px; font-weight:700; color:#334155;">1 / ${candidate.slideCount}</span>
+              <span id="slide-counter-badge" style="font-family:var(--font-mono); font-size:0.74rem; background:#E2E8F0; padding:2px 8px; border-radius:6px; font-weight:700; color:#334155;">1 / ${currentSlideTotal}</span>
             </div>
 
             <div style="display:flex; align-items:center; gap:10px; font-size:0.74rem; color:#64748B;">
@@ -884,19 +891,21 @@
             </div>
           </div>
 
-          <!-- Slide Stage -->
-          <div id="slide-viewer-stage" class="slide-viewer-stage">
-            <button type="button" id="btn-slide-prev" class="slide-nav-btn slide-nav-prev" onclick="prevSlide()" title="Slide Sebelumnya" style="opacity:0.35; pointer-events:none;">❮</button>
-            <img id="slide-viewer-img" class="slide-viewer-img" src="${candidate.slidePrefix}1.jpg" alt="Slide 1" loading="eager">
-            <button type="button" id="btn-slide-next" class="slide-nav-btn slide-nav-next" onclick="nextSlide()" title="Slide Berikutnya">❯</button>
+          <!-- Slide Stage (Inline Styling ensures instant rendering even if CSS cached) -->
+          <div id="slide-viewer-stage" class="slide-viewer-stage" style="position:relative; width:100%; aspect-ratio:16/9; max-height:65vh; min-height:280px; background:#090D16; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid #1E293B; box-shadow:0 10px 30px rgba(0,0,0,0.3); user-select:none;">
+            <button type="button" id="btn-slide-prev" class="slide-nav-btn slide-nav-prev" onclick="prevSlide()" title="Slide Sebelumnya" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:44px; height:44px; background:rgba(15,23,42,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.25); border-radius:50%; color:#FFFFFF; font-size:1.1rem; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; opacity:0.35; pointer-events:none; transition:all 0.2s ease;">❮</button>
+            
+            <img id="slide-viewer-img" class="slide-viewer-img" src="${currentSlidePrefix}1.jpg" alt="Slide 1" loading="eager" style="width:100%; height:100%; object-fit:contain; display:block;">
+            
+            <button type="button" id="btn-slide-next" class="slide-nav-btn slide-nav-next" onclick="nextSlide()" title="Slide Berikutnya" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:44px; height:44px; background:rgba(15,23,42,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.25); border-radius:50%; color:#FFFFFF; font-size:1.1rem; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:all 0.2s ease;">❯</button>
           </div>
 
           <!-- Thumbnail Strip -->
-          <div class="slide-thumb-strip">
-            ${Array.from({length: candidate.slideCount || 1}, (_, i) => `
-              <div class="slide-thumb-item ${i === 0 ? 'active' : ''}" id="thumb-item-${i+1}" onclick="jumpToSlide(${i+1})">
-                <img src="${candidate.slidePrefix}${i+1}.jpg" loading="lazy" alt="Thumb ${i+1}">
-                <span class="thumb-num">${i+1}</span>
+          <div class="slide-thumb-strip" style="display:flex; gap:8px; overflow-x:auto; padding:10px 4px 4px 4px; scroll-behavior:smooth;">
+            ${Array.from({length: currentSlideTotal}, (_, i) => `
+              <div class="slide-thumb-item ${i === 0 ? 'active' : ''}" id="thumb-item-${i+1}" onclick="jumpToSlide(${i+1})" style="flex-shrink:0; width:68px; height:38px; border-radius:6px; overflow:hidden; border:2px solid ${i === 0 ? '#0284C7' : 'rgba(15,23,42,0.2)'}; cursor:pointer; background:#1E293B; position:relative; opacity:${i === 0 ? '1' : '0.55'}; transition:all 0.2s ease;">
+                <img src="${currentSlidePrefix}${i+1}.jpg" loading="lazy" alt="Thumb ${i+1}" style="width:100%; height:100%; object-fit:cover; display:block;">
+                <span class="thumb-num" style="position:absolute; bottom:2px; right:3px; font-size:0.6rem; font-family:var(--font-mono); background:rgba(0,0,0,0.75); color:#FFF; padding:0 4px; border-radius:3px; font-weight:700;">${i+1}</span>
               </div>
             `).join('')}
           </div>
@@ -1013,9 +1022,9 @@
       }
 
       // Preload next slide
-      if (candidate.slideCount > 1) {
+      if (currentSlideTotal > 1) {
         const nextImg = new Image();
-        nextImg.src = `${candidate.slidePrefix}2.jpg`;
+        nextImg.src = currentSlidePrefix + '2.jpg';
       }
     }
 
@@ -1031,10 +1040,10 @@
       const btnNext = document.getElementById('btn-slide-next');
 
       if (img) {
-        img.src = `${currentSlidePrefix}${index}.jpg`;
+        img.src = currentSlidePrefix + index + '.jpg';
       }
       if (counterBadge) {
-        counterBadge.textContent = `${index} / ${currentSlideTotal}`;
+        counterBadge.textContent = index + ' / ' + currentSlideTotal;
       }
       if (selector) {
         selector.value = index;
@@ -1048,24 +1057,28 @@
         btnNext.style.pointerEvents = index === currentSlideTotal ? 'none' : 'auto';
       }
 
-      // Highlight active thumbnail
+      // Highlight active thumbnail with direct inline styling guarantees
       document.querySelectorAll('.slide-thumb-item').forEach((thumb, i) => {
         if (i + 1 === index) {
           thumb.classList.add('active');
+          thumb.style.borderColor = '#0284C7';
+          thumb.style.opacity = '1';
           thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         } else {
           thumb.classList.remove('active');
+          thumb.style.borderColor = 'rgba(15,23,42,0.2)';
+          thumb.style.opacity = '0.55';
         }
       });
 
       // Preload next 2 slides for 0ms instant transition
       if (index < currentSlideTotal) {
         const n1 = new Image();
-        n1.src = `${currentSlidePrefix}${index + 1}.jpg`;
+        n1.src = currentSlidePrefix + (index + 1) + '.jpg';
       }
       if (index + 1 < currentSlideTotal) {
         const n2 = new Image();
-        n2.src = `${currentSlidePrefix}${index + 2}.jpg`;
+        n2.src = currentSlidePrefix + (index + 2) + '.jpg';
       }
     }
 
