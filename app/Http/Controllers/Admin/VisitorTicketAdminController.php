@@ -820,7 +820,7 @@ class VisitorTicketAdminController extends Controller
         ];
 
         $path = $map[$type] ?? '/images/badges/Participant.png';
-        return $path . '?v=20261023_clean_oral_poster';
+        return $path . '?v=20261023_oral_poster_presentation';
     }
 
     /**

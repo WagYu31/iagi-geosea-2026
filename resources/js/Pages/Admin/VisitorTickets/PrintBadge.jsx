@@ -85,10 +85,10 @@ const CATEGORY_MAP = {
     session_chair_judge: { label: 'SESSION CHAIR / JUDGE', short: 'CHAIR / JUDGE' },
     session_chair: { label: 'SESSION CHAIR', short: 'SESSION CHAIR' },
     judge: { label: 'JUDGE', short: 'JUDGE' },
-    oral: { label: 'ORAL', short: 'ORAL' },
-    oral_presenter: { label: 'ORAL', short: 'ORAL' },
-    poster: { label: 'POSTER', short: 'POSTER' },
-    poster_presenter: { label: 'POSTER', short: 'POSTER' },
+    oral: { label: 'ORAL PRESENTATION', short: 'ORAL PRESENTATION' },
+    oral_presenter: { label: 'ORAL PRESENTATION', short: 'ORAL PRESENTATION' },
+    poster: { label: 'POSTER PRESENTATION', short: 'POSTER PRESENTATION' },
+    poster_presenter: { label: 'POSTER PRESENTATION', short: 'POSTER PRESENTATION' },
 
     // 3. Visitor
     non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },
@@ -126,7 +126,7 @@ const CATEGORY_MAP = {
     delegate: { label: 'DELEGATE', short: 'DELEGATE' },
 };
 
-export const BADGE_VERSION = '20261023_clean_oral_poster';
+export const BADGE_VERSION = '20261023_oral_poster_presentation';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
