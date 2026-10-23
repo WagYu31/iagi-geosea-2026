@@ -258,6 +258,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/visitor-tickets/print-badges-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadgesBulk'])->name('visitorTickets.printBadgesBulk');
         Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
         Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
+        Route::get('/visitor-tickets/import-template', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'downloadImportTemplate'])->name('visitorTickets.importTemplate');
+        Route::post('/visitor-tickets/import', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'importTickets'])->name('visitorTickets.import');
         Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');
         Route::post('/gate-scanner/checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'processCheckIn'])->name('gateScanner.checkin');
         Route::post('/settings/save-visitor-ticket-settings', [App\Http\Controllers\LandingPageSettingController::class, 'saveVisitorTicketSettings'])->name('settings.saveVisitorTickets');

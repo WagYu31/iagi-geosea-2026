@@ -80,6 +80,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import BusinessIcon from '@mui/icons-material/Business';
 import SaveIcon from '@mui/icons-material/Save';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -411,6 +412,12 @@ export default function VisitorTicketsIndex({
     const [emailSending, setEmailSending] = useState(false);
     const [bulkActionProcessing, setBulkActionProcessing] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    // Import Excel Modal state
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [importFile, setImportFile] = useState(null);
+    const [importSendEmail, setImportSendEmail] = useState(false);
+    const [importProcessing, setImportProcessing] = useState(false);
 
     // Quick Status Popover Menus State
     const [ticketMenuAnchor, setTicketMenuAnchor] = useState(null);
@@ -1029,6 +1036,34 @@ export default function VisitorTicketsIndex({
         });
     };
 
+    const handleImportSubmit = (e) => {
+        e?.preventDefault();
+        if (!importFile) {
+            alert('Silakan pilih file Excel (.xlsx) atau CSV terlebih dahulu.');
+            return;
+        }
+
+        setImportProcessing(true);
+        const formData = new FormData();
+        formData.append('file', importFile);
+        formData.append('send_email', importSendEmail ? '1' : '0');
+
+        router.post(route('admin.visitorTickets.import'), formData, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setImportProcessing(false);
+                setImportModalOpen(false);
+                setImportFile(null);
+                setImportSendEmail(false);
+            },
+            onError: (err) => {
+                setImportProcessing(false);
+                const msg = err.file || Object.values(err)[0] || 'Gagal mengimpor file.';
+                alert(msg);
+            }
+        });
+    };
+
     // Multi-Select Handlers
     const handleSelectAll = (e) => {
         if (e.target.checked) {
@@ -1383,6 +1418,35 @@ export default function VisitorTicketsIndex({
                             }}
                         >
                             + Onsite Registration
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            startIcon={<CloudUploadIcon />}
+                            onClick={() => setImportModalOpen(true)}
+                            sx={{
+                                bgcolor: '#0284c7',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '0.82rem',
+                                px: 2,
+                                py: 1,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                boxShadow: '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
+                                '&:hover': {
+                                    bgcolor: '#0369a1',
+                                    boxShadow: '0 2px 0 #075985, 0 4px 8px rgba(2,132,199,0.2)',
+                                    transform: 'translateY(2px)',
+                                },
+                                '&:active': {
+                                    transform: 'translateY(4px)',
+                                    boxShadow: 'none',
+                                },
+                                transition: 'all 0.12s ease',
+                            }}
+                        >
+                            Import Excel / CSV
                         </Button>
 
                         <Button
@@ -3633,6 +3697,222 @@ export default function VisitorTicketsIndex({
                         </Button>
                         <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
                             {onsiteProcessing ? 'Issuing...' : 'Issue Onsite Ticket'}
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+
+            {/* MODAL 3B: IMPORT EXCEL / CSV TICKETS (ESPECIALLY TECHNICAL) */}
+            <Dialog 
+                open={importModalOpen} 
+                onClose={() => !importProcessing && setImportModalOpen(false)} 
+                maxWidth="md" 
+                fullWidth 
+                PaperProps={{ sx: { borderRadius: '20px', overflow: 'hidden' } }}
+            >
+                <form onSubmit={handleImportSubmit}>
+                    <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', bgcolor: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box sx={{ bgcolor: '#e0f2fe', color: '#0284c7', p: 1, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+                                <CloudUploadIcon sx={{ fontSize: 24 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h6" sx={{ fontWeight: 900, lineHeight: 1.2, color: '#0f172a' }}>
+                                    Import Peserta / Technical (Excel & CSV)
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
+                                    Upload data massal (misal 200 data Oral, Poster, Presenter, Invited Speaker, Judge)
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <IconButton onClick={() => setImportModalOpen(false)} disabled={importProcessing} size="small">
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </DialogTitle>
+
+                    <DialogContent sx={{ p: 3 }}>
+                        {/* Step 1: Download Template Banner */}
+                        <Box sx={{ p: 2.5, mb: 3, bgcolor: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #86efac', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+                            <Box sx={{ maxWidth: '480px' }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#166534', mb: 0.5 }}>
+                                    📥 Langkah 1: Download Format Template
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#15803d', fontSize: '0.84rem' }}>
+                                    Gunakan template resmi agar susunan kolom sesuai (Nama Lengkap, Email, No HP, Institusi, Kategori).
+                                </Typography>
+                            </Box>
+                            <Button
+                                component="a"
+                                href={route('admin.visitorTickets.importTemplate')}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="contained"
+                                startIcon={<FileDownloadIcon />}
+                                sx={{
+                                    bgcolor: '#16a34a',
+                                    color: '#ffffff',
+                                    fontWeight: 800,
+                                    fontSize: '0.82rem',
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    px: 2,
+                                    py: 0.9,
+                                    boxShadow: '0 3px 0 #15803d, 0 6px 12px rgba(22,163,74,0.2)',
+                                    '&:hover': {
+                                        bgcolor: '#15803d',
+                                    }
+                                }}
+                            >
+                                Download Template (.csv)
+                            </Button>
+                        </Box>
+
+                        {/* Guide on 5 Technical Roles */}
+                        <Box sx={{ p: 2, mb: 3, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', display: 'block', mb: 1, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                💡 Aturan Penulisan Kolom "Kategori" (5 Role Technical):
+                            </Typography>
+                            <Grid container spacing={1}>
+                                <Grid item xs={12} sm={4}>
+                                    <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
+                                        <strong>1. 🎙️ Presenter</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Presenter</code></div>
+                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: PRESENTER</div>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
+                                        <strong>2. 🗣️ Invited Speaker</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Invited Speaker</code></div>
+                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: INVITED SPEAKER</div>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
+                                        <strong>3. ⚖️ Session Chair / Judge</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Session Chair / Judge</code></div>
+                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: CHAIR / JUDGE</div>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ p: 1, bgcolor: '#f0fdfa', borderRadius: '8px', border: '1.5px solid #99f6e4', fontSize: '0.8rem' }}>
+                                        <strong style={{ color: '#0f766e' }}>4. 📢 Oral</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Oral</code></div>
+                                        <div style={{ color: '#0f766e', fontWeight: 800 }}>Badge: ORAL (Pill Hijau Emas)</div>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ p: 1, bgcolor: '#fdf4ff', borderRadius: '8px', border: '1.5px solid #f5d0fe', fontSize: '0.8rem' }}>
+                                        <strong style={{ color: '#a21caf' }}>5. 📄 Poster</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Poster</code></div>
+                                        <div style={{ color: '#a21caf', fontWeight: 800 }}>Badge: POSTER (Pill Hijau Emas)</div>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        </Box>
+
+                        {/* Step 2: Upload File Area */}
+                        <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', mb: 1 }}>
+                            📁 Langkah 2: Upload File Excel (.xlsx) atau CSV
+                        </Typography>
+                        <Box
+                            component="label"
+                            sx={{
+                                border: '2px dashed',
+                                borderColor: importFile ? '#0284c7' : '#cbd5e1',
+                                bgcolor: importFile ? '#f0f9ff' : '#fafafa',
+                                borderRadius: '16px',
+                                p: 3,
+                                textAlign: 'center',
+                                display: 'block',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    borderColor: '#0284c7',
+                                    bgcolor: '#f0f9ff',
+                                }
+                            }}
+                        >
+                            <input
+                                type="file"
+                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .xlsx, .xls, .txt"
+                                style={{ display: 'none' }}
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                        setImportFile(e.target.files[0]);
+                                    }
+                                }}
+                            />
+                            <CloudUploadIcon sx={{ fontSize: 44, color: importFile ? '#0284c7' : '#94a3b8', mb: 1 }} />
+                            {importFile ? (
+                                <Box>
+                                    <Typography variant="body1" sx={{ fontWeight: 800, color: '#0369a1' }}>
+                                        {importFile.name}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                        {(importFile.size / 1024).toFixed(1)} KB • Klik untuk ganti file
+                                    </Typography>
+                                </Box>
+                            ) : (
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#334155' }}>
+                                        Klik untuk memilih file Excel (.xlsx) atau CSV
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                                        Mendukung hingga ribuan data sekaligus (maksimal 15 MB)
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
+
+                        {/* Optional Email Checkbox */}
+                        <Box sx={{ mt: 2.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={importSendEmail}
+                                        onChange={(e) => setImportSendEmail(e.target.checked)}
+                                        size="small"
+                                        sx={{ color: '#094d42', '&.Mui-checked': { color: '#094d42' } }}
+                                    />
+                                }
+                                label={
+                                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>
+                                        Kirim notifikasi E-Tiket ke email peserta sekarang juga (Opsional)
+                                    </Typography>
+                                }
+                            />
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', mt: 0.5, px: 1 }}>
+                            *Untuk 200 data, disarankan uncheck agar import selesai instan (E-Tiket bisa dikirim massal nanti via tombol "Resend Emails").
+                        </Typography>
+                    </DialogContent>
+
+                    <DialogActions sx={{ px: 3, py: 2, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+                        <Button 
+                            onClick={() => setImportModalOpen(false)} 
+                            disabled={importProcessing} 
+                            sx={{ color: '#64748b', textTransform: 'none', fontWeight: 700 }}
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={!importFile || importProcessing}
+                            startIcon={importProcessing ? <CircularProgress size={18} color="inherit" /> : <CloudUploadIcon />}
+                            sx={{
+                                bgcolor: '#0284c7',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                px: 3,
+                                py: 1,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                '&:hover': { bgcolor: '#0369a1' }
+                            }}
+                        >
+                            {importProcessing ? 'Memproses Import...' : 'Mulai Import Data'}
                         </Button>
                     </DialogActions>
                 </form>

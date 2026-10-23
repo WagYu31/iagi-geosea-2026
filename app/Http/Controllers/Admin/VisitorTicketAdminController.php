@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use App\Mail\VisitorTicketIssued;
 use App\Mail\VisitorPaymentRejected;
 use App\Models\ActivityLog;
+use ZipArchive;
 
 class VisitorTicketAdminController extends Controller
 {
@@ -997,6 +998,424 @@ class VisitorTicketAdminController extends Controller
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
+    }
+
+    /**
+     * Download Excel / CSV template for importing visitor tickets (especially Technical roles)
+     */
+    public function downloadImportTemplate()
+    {
+        $filename = 'template_import_peserta_technical_' . date('Ymd') . '.csv';
+        $handle = fopen('php://memory', 'w');
+
+        // UTF-8 BOM so Excel opens it with proper encoding
+        fputs($handle, "\xEF\xBB\xBF");
+
+        // Header Row
+        fputcsv($handle, [
+            'Nama Lengkap',
+            'Email',
+            'Nomor HP / WhatsApp',
+            'Institusi / Perusahaan',
+            'Kategori',
+        ]);
+
+        // Sample Data Rows showcasing the 5 technical roles
+        $samples = [
+            [
+                'Dr. Budi Santoso, M.Sc.',
+                'budi.santoso@ugm.ac.id',
+                '081234567890',
+                'Universitas Gadjah Mada',
+                'Presenter',
+            ],
+            [
+                'Prof. John Smith, Ph.D.',
+                'john.smith@petrocorp.org',
+                '+62811223344',
+                'Pertamina Hulu Rokan',
+                'Invited Speaker',
+            ],
+            [
+                'Dr. Ir. Ahmad Dahlan',
+                'ahmad.dahlan@itb.ac.id',
+                '085678901234',
+                'Institut Teknologi Bandung',
+                'Session Chair / Judge',
+            ],
+            [
+                'Rian Pratama, S.T.',
+                'rian.pratama@energy.co.id',
+                '087788990011',
+                'Schlumberger Indonesia',
+                'Oral',
+            ],
+            [
+                'Siti Nurhaliza, S.Si.',
+                'siti.nurhaliza@upn.ac.id',
+                '081398765432',
+                'UPN Veteran Yogyakarta',
+                'Poster',
+            ],
+        ];
+
+        foreach ($samples as $row) {
+            fputcsv($handle, $row);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
+     * Import visitor tickets from Excel / CSV
+     */
+    public function importTickets(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:15360', // max 15MB
+            'send_email' => 'nullable',
+        ]);
+
+        $file = $request->file('file');
+        $ext = strtolower($file->getClientOriginalExtension());
+        $path = $file->getRealPath();
+
+        $rows = [];
+
+        if (in_array($ext, ['xlsx', 'xlsm'])) {
+            $rows = $this->parseXlsxFile($path);
+        } else {
+            $rows = $this->parseCsvFile($path);
+        }
+
+        if (empty($rows)) {
+            return back()->with('error', 'File Excel/CSV kosong atau format tidak dapat dibaca.');
+        }
+
+        // Process rows
+        $firstRow = array_shift($rows); // Header row
+        $colMap = $this->detectImportColumns($firstRow);
+
+        $successCount = 0;
+        $skippedCount = 0;
+        $sendEmail = $request->boolean('send_email', false);
+
+        DB::beginTransaction();
+        try {
+            foreach ($rows as $lineIdx => $row) {
+                // Skip empty row
+                if (empty(array_filter($row, fn($v) => trim((string)$v) !== ''))) {
+                    continue;
+                }
+
+                $name = trim((string)($row[$colMap['name']] ?? ''));
+                $email = trim((string)($row[$colMap['email']] ?? ''));
+                $phone = trim((string)($row[$colMap['phone']] ?? ''));
+                $institution = trim((string)($row[$colMap['institution']] ?? ''));
+                $rawCategory = trim((string)($row[$colMap['category']] ?? ''));
+
+                if (empty($name)) {
+                    $skippedCount++;
+                    continue;
+                }
+
+                $visitorType = self::normalizeVisitorType($rawCategory);
+                $ticketCode = VisitorTicket::generateTicketCode($visitorType);
+
+                $ticket = VisitorTicket::create([
+                    'registered_by_admin_id' => Auth::id(),
+                    'registration_source' => 'admin_import_excel',
+                    'visitor_name' => $name,
+                    'visitor_email' => !empty($email) ? $email : null,
+                    'visitor_phone' => !empty($phone) ? $phone : null,
+                    'visitor_institution' => !empty($institution) ? $institution : null,
+                    'ticket_code' => $ticketCode,
+                    'visitor_type' => $visitorType,
+                    'status' => 'active',
+                    'checked_in' => false,
+                    'card_printed' => false,
+                    'is_group_leader' => true,
+                ]);
+
+                if ($sendEmail && !empty($ticket->visitor_email)) {
+                    try {
+                        $this->applySmtpSettings();
+                        Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                    } catch (\Throwable $me) {
+                        Log::warning("Email send error on import ticket {$ticket->ticket_code}: " . $me->getMessage());
+                    }
+                }
+
+                $successCount++;
+            }
+
+            DB::commit();
+
+            // Record audit log
+            ActivityLog::record(
+                action: 'import_tickets_excel',
+                module: 'visitor_tickets',
+                description: "Import {$successCount} data peserta dari file {$file->getClientOriginalName()}",
+                snapshot: [
+                    'count' => $successCount,
+                    'skipped' => $skippedCount,
+                    'filename' => $file->getClientOriginalName(),
+                    'admin_name' => Auth::user()->name ?? 'Admin',
+                ]
+            );
+
+            return back()->with('success', "Berhasil mengimpor {$successCount} peserta! Tiket dan lanyard badge sudah siap dicetak.");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("Import Excel error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with('error', "Gagal mengimpor data: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Parse CSV file with auto-delimiter detection and UTF-8 BOM removal
+     */
+    private function parseCsvFile(string $path): array
+    {
+        $rows = [];
+        if (!file_exists($path)) return $rows;
+        
+        $content = file_get_contents($path);
+        // Strip UTF-8 BOM if present
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+        $lines = explode("\n", str_replace("\r\n", "\n", $content));
+
+        if (empty($lines)) return $rows;
+
+        // Auto detect delimiter from first non-empty line
+        $firstLine = '';
+        foreach ($lines as $l) {
+            if (trim($l) !== '') {
+                $firstLine = $l;
+                break;
+            }
+        }
+
+        $sep = (substr_count($firstLine, ';') > substr_count($firstLine, ',')) ? ';' : ',';
+        if (substr_count($firstLine, "\t") > substr_count($firstLine, $sep)) {
+            $sep = "\t";
+        }
+
+        foreach ($lines as $line) {
+            if (trim($line) === '') continue;
+            $data = str_getcsv($line, $sep, '"', '\\');
+            $rows[] = array_map('trim', $data);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Lightweight native XLSX file parser using ZipArchive (no external dependencies)
+     */
+    private function parseXlsxFile(string $path): array
+    {
+        if (!class_exists('ZipArchive')) {
+            return [];
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($path) !== true) {
+            return [];
+        }
+
+        $sharedStrings = [];
+        $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+        if ($sharedXml) {
+            $sXml = @simplexml_load_string($sharedXml);
+            if ($sXml && isset($sXml->si)) {
+                foreach ($sXml->si as $si) {
+                    if (isset($si->t)) {
+                        $sharedStrings[] = (string)$si->t;
+                    } elseif (isset($si->r)) {
+                        $tParts = [];
+                        foreach ($si->r as $r) { $tParts[] = (string)$r->t; }
+                        $sharedStrings[] = implode('', $tParts);
+                    } else {
+                        $sharedStrings[] = '';
+                    }
+                }
+            }
+        }
+
+        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $zip->close();
+        if (!$sheetXml) return [];
+
+        $xml = @simplexml_load_string($sheetXml);
+        if (!$xml || !isset($xml->sheetData->row)) return [];
+
+        $rows = [];
+        foreach ($xml->sheetData->row as $rowXml) {
+            $row = [];
+            foreach ($rowXml->c as $cell) {
+                $cellRef = (string)$cell['r'];
+                preg_match('/^([A-Z]+)/', strtoupper($cellRef), $m);
+                $colIdx = 0;
+                if (!empty($m[1])) {
+                    $colStr = $m[1];
+                    for ($i = 0; $i < strlen($colStr); $i++) {
+                        $colIdx = $colIdx * 26 + (ord($colStr[$i]) - ord('A') + 1);
+                    }
+                    $colIdx -= 1;
+                }
+
+                $val = (string)$cell->v;
+                $type = (string)$cell['t'];
+                if ($type === 's' && isset($sharedStrings[(int)$val])) {
+                    $val = $sharedStrings[(int)$val];
+                } elseif ($type === 'inlineStr' && isset($cell->is->t)) {
+                    $val = (string)$cell->is->t;
+                }
+                $row[$colIdx] = trim($val);
+            }
+
+            if (!empty(array_filter($row, fn($v) => trim((string)$v) !== ''))) {
+                $max = max(array_keys($row));
+                $denseRow = [];
+                for ($i = 0; $i <= $max; $i++) {
+                    $denseRow[$i] = $row[$i] ?? '';
+                }
+                $rows[] = $denseRow;
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Dynamically detect column indexes from header row
+     */
+    private function detectImportColumns(array $headerRow): array
+    {
+        $nameCol = null;
+        $emailCol = null;
+        $phoneCol = null;
+        $instCol = null;
+        $catCol = null;
+
+        foreach ($headerRow as $idx => $rawName) {
+            $col = strtolower(trim((string)$rawName));
+            if ($nameCol === null && (str_contains($col, 'name') || str_contains($col, 'nama'))) {
+                $nameCol = $idx;
+            } elseif ($emailCol === null && str_contains($col, 'mail')) {
+                $emailCol = $idx;
+            } elseif ($phoneCol === null && (str_contains($col, 'phone') || str_contains($col, 'hp') || str_contains($col, 'wa') || str_contains($col, 'telp') || str_contains($col, 'mobile') || str_contains($col, 'kontak'))) {
+                $phoneCol = $idx;
+            } elseif ($instCol === null && (str_contains($col, 'inst') || str_contains($col, 'univ') || str_contains($col, 'afiliasi') || str_contains($col, 'comp') || str_contains($col, 'perusahaan') || str_contains($col, 'lembaga') || str_contains($col, 'kampus'))) {
+                $instCol = $idx;
+            } elseif ($catCol === null && (str_contains($col, 'cat') || str_contains($col, 'kat') || str_contains($col, 'role') || str_contains($col, 'type') || str_contains($col, 'jenis'))) {
+                $catCol = $idx;
+            }
+        }
+
+        // Check if first column is numeric or 'no'
+        $firstIsIndex = false;
+        $firstCol = strtolower(trim((string)($headerRow[0] ?? '')));
+        if ($firstCol === 'no' || $firstCol === 'no.' || $firstCol === '#' || is_numeric($firstCol)) {
+            $firstIsIndex = true;
+        }
+
+        return [
+            'name' => $nameCol ?? ($firstIsIndex ? 1 : 0),
+            'email' => $emailCol ?? ($firstIsIndex ? 2 : 1),
+            'phone' => $phoneCol ?? ($firstIsIndex ? 3 : 2),
+            'institution' => $instCol ?? ($firstIsIndex ? 4 : 3),
+            'category' => $catCol ?? ($firstIsIndex ? 5 : 4),
+        ];
+    }
+
+    /**
+     * Normalize any textual category into standard system visitor_type
+     */
+    public static function normalizeVisitorType(string $input): string
+    {
+        $clean = strtolower(trim($input));
+        $clean = preg_replace('/\(.*?\)/', '', $clean);
+        $clean = trim(preg_replace('/[^a-z0-9_\-\s\/]/', '', $clean));
+
+        // 1. Oral
+        if (str_contains($clean, 'oral')) {
+            return 'oral';
+        }
+
+        // 2. Poster
+        if (str_contains($clean, 'poster')) {
+            return 'poster';
+        }
+
+        // 3. Session Chair / Judge
+        if (str_contains($clean, 'chair') || str_contains($clean, 'judge')) {
+            return 'session_chair_judge';
+        }
+
+        // 4. Invited Speaker
+        if (str_contains($clean, 'invited') || (str_contains($clean, 'speaker') && !str_contains($clean, 'keynote'))) {
+            return 'invited_speaker';
+        }
+
+        // 5. Presenter
+        if (str_contains($clean, 'presenter')) {
+            return 'presenter';
+        }
+
+        // Keynote Speaker
+        if (str_contains($clean, 'keynote')) {
+            return 'keynote_speaker';
+        }
+
+        // VIP / Exclusive
+        if (str_contains($clean, 'vip')) {
+            return 'vip';
+        }
+
+        // Committee
+        if (str_contains($clean, 'committee') || str_contains($clean, 'panitia')) {
+            return 'committee';
+        }
+
+        // Volunteer
+        if (str_contains($clean, 'volunteer') || str_contains($clean, 'relawan')) {
+            return 'student_volunteer';
+        }
+
+        // Board
+        if (str_contains($clean, 'board') || str_contains($clean, 'pengurus')) {
+            return 'board';
+        }
+
+        // Delegate / Sponsor
+        if (str_contains($clean, 'delegate') || str_contains($clean, 'sponsor')) {
+            return 'delegate';
+        }
+
+        // Participant types
+        if (str_contains($clean, 'student') || str_contains($clean, 'mahasiswa')) {
+            return 'student_undergraduate';
+        }
+        if (str_contains($clean, 'expatriate') || str_contains($clean, 'expat')) {
+            return 'non_iagi_member_expatriate';
+        }
+        if (str_contains($clean, 'member') && !str_contains($clean, 'non')) {
+            return 'iagi_member_professional';
+        }
+        if (str_contains($clean, 'professional') || str_contains($clean, 'peserta')) {
+            return 'non_iagi_member_professional';
+        }
+
+        return 'oral';
     }
 
     /**
