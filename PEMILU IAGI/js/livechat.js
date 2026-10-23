@@ -69,6 +69,9 @@
 
       <!-- Live Chat Window -->
       <div class="kpku-chat-window" id="chat-window">
+        <!-- Mobile Drawer Handle Bar -->
+        <div class="chat-drawer-handle-bar" id="chat-drawer-handle"></div>
+
         <!-- Header -->
         <div class="kpku-chat-header">
           <div class="chat-header-profile">

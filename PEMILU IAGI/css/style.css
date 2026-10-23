@@ -284,7 +284,7 @@ body::before {
 /* Main Content Area */
 .app-main {
   flex: 1;
-  padding: 12px 14px calc(var(--safe-bottom) + 80px) 14px;
+  padding: 12px 14px calc(var(--safe-bottom) + 105px) 14px;
   display: flex;
   flex-direction: column;
   gap: 12px;
