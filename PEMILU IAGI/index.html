@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- GetLayers Style Landing Page CSS -->
-  <link rel="stylesheet" href="css/landing.css?v=3.7.0">
+  <link rel="stylesheet" href="css/landing.css?v=3.8.0">
 
   <style id="affiliates-capsule-style">
     /* ==========================================================================
@@ -386,25 +386,41 @@
 
   <!-- ================= HERO SECTION (VIDEO BACKGROUND) ================= -->
   <section class="hero-section" id="portal">
-    <!-- Cinematic Video Backdrop: Video on Desktop, Lightweight HD Poster on Mobile -->
+        <!-- Cinematic Video Backdrop: Guaranteed Instant Autoplay on Mobile & Desktop -->
     <div class="hero-video-backdrop">
-      <video id="hero-bg-video" class="hero-bg-video" autoplay muted loop playsinline poster="assets/hero-bg-poster.jpg?v=665465cf" preload="none">
+      <video id="hero-bg-video" class="hero-bg-video" autoplay muted loop playsinline webkit-playsinline poster="assets/hero-bg-poster.jpg?v=665465cf" preload="auto">
+        <source src="assets/hero-bg-mobile.mp4?v=4" type="video/mp4" media="(max-width: 768px)">
+        <source src="assets/hero-bg.mp4?v=4" type="video/mp4">
       </video>
       <div class="hero-video-overlay"></div>
     </div>
     <script>
       (function() {
-        var isMobile = (window.innerWidth <= 768) || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
         var video = document.getElementById('hero-bg-video');
-        if (!isMobile && video) {
-          var src = document.createElement('source');
-          src.src = 'assets/hero-bg.mp4?v=665465cf';
-          src.type = 'video/mp4';
-          video.appendChild(src);
-          video.load();
-          video.play().catch(function() {});
-        } else if (video) {
-          video.remove();
+        if (video) {
+          video.muted = true;
+          video.defaultMuted = true;
+          video.setAttribute('playsinline', '');
+          video.setAttribute('webkit-playsinline', '');
+          var playVid = function() {
+            var p = video.play();
+            if (p && p.catch) {
+              p.catch(function() {
+                var onTouch = function() {
+                  video.play().catch(function() {});
+                  document.removeEventListener('touchstart', onTouch);
+                  document.removeEventListener('click', onTouch);
+                };
+                document.addEventListener('touchstart', onTouch, { passive: true });
+                document.addEventListener('click', onTouch, { passive: true });
+              });
+            }
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', playVid);
+          } else {
+            playVid();
+          }
         }
       })();
     </script>
@@ -506,7 +522,20 @@
   <!-- ================= CANDIDATES SPOTLIGHT SECTION (3 CALON KETUA UMUM) ================= -->
   <section class="candidates-spotlight-section">
     <div class="container">
-      <div class="candidates-pair-grid">
+      <!-- Mobile Quick Jump Pills (Visible only on mobile) -->
+      <div class="candidate-mobile-tabs" id="cand-mobile-tabs">
+        <button type="button" class="cand-tab-pill active" onclick="jumpCandidateCard(0)">
+          <span class="pill-num">01</span> Mirzam
+        </button>
+        <button type="button" class="cand-tab-pill" onclick="jumpCandidateCard(1)">
+          <span class="pill-num">02</span> Sonny
+        </button>
+        <button type="button" class="cand-tab-pill" onclick="jumpCandidateCard(2)">
+          <span class="pill-num">03</span> Hartanto
+        </button>
+      </div>
+
+      <div class="candidates-pair-grid" id="candidates-grid">
 
         <!-- CANDIDATE 01 -->
         <article class="candidate-card-showcase">
@@ -589,6 +618,17 @@
           </div>
         </article>
 
+      </div>
+
+      <!-- Mobile Dots & Next/Prev Controls -->
+      <div class="candidate-mobile-nav">
+        <button type="button" class="cand-nav-arrow" onclick="navCandidateCard(-1)" aria-label="Calon Sebelumnya">‹</button>
+        <div class="cand-dots-wrap">
+          <span class="cand-dot active" onclick="jumpCandidateCard(0)"></span>
+          <span class="cand-dot" onclick="jumpCandidateCard(1)"></span>
+          <span class="cand-dot" onclick="jumpCandidateCard(2)"></span>
+        </div>
+        <button type="button" class="cand-nav-arrow" onclick="navCandidateCard(1)" aria-label="Calon Berikutnya">›</button>
       </div>
     </div>
   </section>
@@ -1191,5 +1231,66 @@
 
 
   </script>
+<script>
+  // ==========================================
+  // MOBILE CANDIDATE HORIZONTAL SLIDER CONTROLLER
+  // ==========================================
+  let currentCandidateIndex = 0;
+  window.jumpCandidateCard = function(index) {
+    const grid = document.getElementById('candidates-grid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.candidate-card-showcase');
+    if (cards[index]) {
+      currentCandidateIndex = index;
+      cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      updateCandidateActiveUI(index);
+    }
+  };
+
+  window.navCandidateCard = function(direction) {
+    const grid = document.getElementById('candidates-grid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.candidate-card-showcase');
+    let target = currentCandidateIndex + direction;
+    if (target < 0) target = 0;
+    if (target >= cards.length) target = cards.length - 1;
+    window.jumpCandidateCard(target);
+  };
+
+  function updateCandidateActiveUI(index) {
+    document.querySelectorAll('.cand-tab-pill').forEach((pill, i) => {
+      pill.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.cand-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  }
+
+  // Sync pills & dots when user swipes with finger
+  (function() {
+    const grid = document.getElementById('candidates-grid');
+    if (!grid) return;
+    let scrollTimeout;
+    grid.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const cards = grid.querySelectorAll('.candidate-card-showcase');
+        const gridCenter = grid.scrollLeft + grid.offsetWidth / 2;
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        cards.forEach((card, i) => {
+          const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+          const diff = Math.abs(gridCenter - cardCenter);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i;
+          }
+        });
+        currentCandidateIndex = closestIndex;
+        updateCandidateActiveUI(closestIndex);
+      }, 50);
+    }, { passive: true });
+  })();
+</script>
 </body>
 </html>

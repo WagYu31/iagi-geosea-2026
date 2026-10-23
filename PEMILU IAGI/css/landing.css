@@ -500,7 +500,7 @@ body {
 
 @media (max-width: 768px) {
   .hero-bg-video {
-    display: none !important;
+    display: block !important;
   }
 }
 
@@ -1067,55 +1067,6 @@ body {
   }
 }
 
-/* Mobile Screens (<= 768px): Clean, centered 1-column cards */
-@media (max-width: 768px) {
-  .candidates-spotlight-section {
-    padding: 0 0 45px 0;
-  }
-  .candidates-pair-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 390px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  .candidate-photo-header {
-    height: 230px !important;
-  }
-  .candidate-details-body {
-    padding: 18px 16px !important;
-  }
-  .cand-name {
-    font-size: 1.15rem !important;
-    text-align: center;
-  }
-  .candidate-card-showcase {
-    max-width: 100%;
-  }
-}
-
-/* Small Mobile Screens (<= 360px): Ultra-compact fitting */
-@media (max-width: 360px) {
-  .candidates-pair-grid {
-    gap: 16px;
-    max-width: 100%;
-  }
-  .candidate-photo-header {
-    height: 190px !important;
-  }
-  .candidate-details-body {
-    padding: 14px 12px !important;
-  }
-  .cand-name {
-    font-size: 1.05rem !important;
-  }
-  .cand-btn-vision,
-  .cand-btn-video {
-    font-size: 0.72rem !important;
-    padding: 8px 6px !important;
-    gap: 4px !important;
-  }
-}
 
 .candidate-card-showcase {
   background: #FFFFFF;
@@ -2608,7 +2559,7 @@ body {
     background: url('../assets/hero-bg-poster.jpg?v=665465cf') center top / cover no-repeat !important;
   }
   .hero-bg-video {
-    display: none !important;
+    display: block !important;
   }
   .header-nav-dock {
     backdrop-filter: blur(8px) !important;
@@ -2617,3 +2568,156 @@ body {
 }
 
 
+
+
+/* ==========================================================================
+   CANDIDATE SLIDER & MOBILE LANDSCAPE CAROUSEL
+   ========================================================================== */
+.candidate-mobile-tabs {
+  display: none;
+}
+.candidate-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .candidate-mobile-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 0 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .candidate-mobile-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .cand-tab-pill {
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    color: #334155;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 6px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  .cand-tab-pill .pill-num {
+    background: #E2E8F0;
+    color: #0F172A;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 999px;
+  }
+  .cand-tab-pill.active {
+    background: #0284C7;
+    border-color: #0284C7;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    transform: translateY(-1px);
+  }
+  .cand-tab-pill.active .pill-num {
+    background: rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+  }
+
+  /* HORIZONTAL LANDSCAPE CAROUSEL (SWIPEABLE SLIDER) */
+  .candidates-pair-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    gap: 16px !important;
+    padding: 6px 20px 16px 20px !important;
+    margin: 0 -16px !important;
+    scrollbar-width: none !important;
+  }
+  .candidates-pair-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Each Card in Slider: 85% width so next card peeks invitingly */
+  .candidate-card-showcase {
+    flex: 0 0 85% !important;
+    min-width: 275px !important;
+    max-width: 330px !important;
+    scroll-snap-align: center !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(10, 25, 47, 0.1) !important;
+  }
+
+  /* Landscape Photo Header: 185px height for sleek proportions */
+  .candidate-photo-header {
+    height: 185px !important;
+    aspect-ratio: 16 / 10 !important;
+  }
+
+  .candidate-details-body {
+    padding: 16px !important;
+    gap: 10px !important;
+  }
+
+  .cand-name {
+    font-size: 1.15rem !important;
+    text-align: center;
+  }
+
+  /* Mobile Dots & Arrows Indicator */
+  .candidate-mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .cand-nav-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+  }
+  .cand-nav-arrow:hover {
+    background: #F1F5F9;
+  }
+  .cand-dots-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .cand-dot.active {
+    width: 24px;
+    border-radius: 999px;
+    background: #0284C7;
+  }
+}
