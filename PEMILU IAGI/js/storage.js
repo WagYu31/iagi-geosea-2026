@@ -158,6 +158,24 @@ class PemiluStorage {
         }
       });
 
+      // Ensure demo voter 00000 exists
+      if (!dpt.some(v => v && v.npa === '00000')) {
+        dpt.unshift({
+          npa: "00000",
+          name: "Anggota Uji Coba IAGI",
+          email: "pemilih@iagi.or.id",
+          phone: "08111581461",
+          pengda: "DKI Jakarta",
+          category: "Professional",
+          status: "AKTIF",
+          claimed: false,
+          token: null,
+          voted: false,
+          voted_at: null
+        });
+        updated = true;
+      }
+
       if (updated) {
         this.saveDPT(dpt);
       }
@@ -536,16 +554,18 @@ class PemiluStorage {
     const cleanToken = (token || '').trim().toUpperCase();
 
     // Built-in testing account for instant demonstration
-    if ((cleanNpa === '01001' || cleanNpa === 'IAGI-2024-0001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
+    if ((cleanNpa === '00000' || cleanNpa === '01001' || cleanNpa === 'IAGI-2024-0001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
       const dpt = this.getDPT();
-      let demoVoter = dpt.find(v => v.npa === '01001' || v.npa === 'IAGI-2024-0001');
-      if (demoVoter) {
-        demoVoter.claimed = true;
-        demoVoter.token = 'IAGI-2026-DEMO-2026';
-        demoVoter.voted = false; // Allow repeatable testing
-        this.saveDPT(dpt);
-        return { valid: true, voter: demoVoter };
+      let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
+      if (!demoVoter) {
+        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', voted: false, voted_at: null };
+        dpt.unshift(demoVoter);
       }
+      demoVoter.claimed = true;
+      demoVoter.token = 'IAGI-2026-DEMO-2026';
+      demoVoter.voted = false; // Allow repeatable testing
+      this.saveDPT(dpt);
+      return { valid: true, voter: demoVoter };
     }
 
     const voter = this.getVoterByNpa(cleanNpa);

@@ -152,6 +152,7 @@ const CANDIDATES = [
 
 // Sample DPT (Daftar Pemilih Tetap) Terverifikasi KPKU IAGI 2026 (Format NPA 5 Digit Angka)
 const INITIAL_DPT = [
+  { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null },
   { npa: "01001", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null },
   { npa: "01002", name: "Geologist Muda Indonesia", email: "geologist@iagi.or.id", phone: "081234567891", pengda: "Jawa Barat", category: "Student", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null },
   { npa: "01003", name: "Senior Geoscientist IAGI", email: "senior@iagi.or.id", phone: "081234567892", pengda: "Jawa Timur", category: "Professional", status: "AKTIF", claimed: false, token: null, voted: false, voted_at: null },

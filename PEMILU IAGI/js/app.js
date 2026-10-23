@@ -362,16 +362,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.autoFillDemoVote = () => {
     const dpt = window.pemiluStorage.getDPT();
-    let demoVoter = dpt.find(v => v.npa === '01001' || v.npa === 'IAGI-2024-0001');
-    if (demoVoter) {
-      demoVoter.claimed = true;
-      demoVoter.token = 'IAGI-2026-DEMO-2026';
-      demoVoter.voted = false; // Reset for repeatable test
-      window.pemiluStorage.saveDPT(dpt);
+    let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
+    if (!demoVoter) {
+      demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', voted: false, voted_at: null };
+      dpt.unshift(demoVoter);
     }
+    demoVoter.claimed = true;
+    demoVoter.token = 'IAGI-2026-DEMO-2026';
+    demoVoter.voted = false; // Reset for repeatable test
+    window.pemiluStorage.saveDPT(dpt);
+
     const npaInput = document.getElementById('vote-npa');
     const tokenInput = document.getElementById('vote-token');
-    if (npaInput) npaInput.value = '01001';
+    if (npaInput) npaInput.value = '00000';
     if (tokenInput) tokenInput.value = 'IAGI-2026-DEMO-2026';
     triggerHaptic('medium');
     if (voteFormAuth) {
