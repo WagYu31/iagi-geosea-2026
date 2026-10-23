@@ -2047,6 +2047,21 @@ body {
   color: var(--text-primary);
 }
 
+.modal-dialog.modal-pdf-mode {
+  max-width: 1020px;
+  width: 95%;
+  max-height: 94vh;
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .modal-dialog.modal-pdf-mode {
+    padding: 14px 12px;
+    width: 96%;
+    max-height: 96vh;
+  }
+}
+
 .modal-close-btn {
   position: absolute;
   top: 18px;

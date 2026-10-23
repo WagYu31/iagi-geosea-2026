@@ -1144,22 +1144,39 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
+      <!-- Action Button: View Official PDF -->
+      ${c.pdfUrl ? `
+        <div style="margin-bottom: 14px; display:flex; gap:8px;">
+          <a href="${c.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn" style="flex:1; background: linear-gradient(135deg, #0284C7, #0369A1); color: #FFF; font-size: 0.78rem; font-weight: 700; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
+            <svg style="width:15px; height:15px; fill:#FFF;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Buka Dokumen PDF Resmi ↗</span>
+          </a>
+          <a href="${c.pdfUrl}" download="${c.pdfName || 'visi-misi.pdf'}" class="btn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #FFF; font-size: 0.78rem; font-weight: 700; padding: 10px 14px; display: flex; align-items: center; justify-content: center; border-radius: 8px; text-decoration: none;">
+            <span>⬇ Unduh</span>
+          </a>
+        </div>
+      ` : ''}
+
       <div style="margin-bottom: 12px; background: rgba(9,13,22,0.6); padding: 10px; border-radius: var(--radius-sm); border-left: 3px solid ${c.accentColor};">
         <strong style="font-size: 0.75rem; color:${c.accentColor}; display:block; margin-bottom: 2px;">VISI RESMI</strong>
         <p style="font-size: 0.78rem; color: var(--text-pure); line-height:1.45;">"${c.vision}"</p>
       </div>
 
       <div style="margin-bottom: 12px;">
-        <strong style="font-size: 0.75rem; color:${c.accentColor}; display:block; margin-bottom: 4px;">4 MISI PRIORITAS</strong>
+        <strong style="font-size: 0.75rem; color:${c.accentColor}; display:block; margin-bottom: 4px;">MISI STRATEGIS</strong>
         <ul style="padding-left: 18px; font-size: 0.76rem; color: var(--text-muted); line-height: 1.45;">
           ${c.missions.map(m => `<li style="margin-bottom: 4px;">${m}</li>`).join('')}
         </ul>
       </div>
 
-      <div style="font-size: 0.74rem; color: var(--text-subtle); border-top: 1px solid var(--border-subtle); padding-top: 8px;">
-        <strong>Rekam Jejak:</strong> ${c.experience}<br>
-        <strong>Pendidikan:</strong> ${c.education}
-      </div>
+      ${c.experienceList && c.experienceList.length ? `
+        <div style="font-size: 0.74rem; color: var(--text-subtle); border-top: 1px solid var(--border-subtle); padding-top: 8px;">
+          <strong style="color:var(--text-muted); display:block; margin-bottom:4px;">Rekam Jejak:</strong>
+          <ul style="padding-left:16px; margin:0; line-height:1.4;">
+            ${c.experienceList.slice(0, 3).map(e => `<li style="margin-bottom:2px;">${e}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
     `;
 
     modalCandidateDetail.classList.add('open');
