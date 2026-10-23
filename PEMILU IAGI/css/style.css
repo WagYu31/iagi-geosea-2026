@@ -110,18 +110,19 @@ body::before {
   filter: blur(50px);
 }
 
-/* App Shell Wrapper (Mobile Frame) */
+/* App Shell Wrapper (Mobile: Full 100% Edge-to-Edge) */
 .app-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
   background: rgba(3, 22, 17, 0.78);
-  box-shadow: 0 0 90px rgba(0, 0, 0, 0.9);
-  border-left: 1px solid rgba(255, 255, 255, 0.07);
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: none;
+  border-left: none;
+  border-right: none;
   z-index: 1;
 }
 
@@ -2609,14 +2610,15 @@ body::before {
   margin-top: 8px;
 }
 
-/* Floating Bottom Navigation Dock */
+/* Floating Bottom Navigation Dock (Edge-to-Edge on Mobile) */
 .mobile-nav-dock {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   width: 100%;
-  max-width: 500px;
+  max-width: 100%;
+  transform: none;
   z-index: 45;
   background: rgba(2, 19, 15, 0.94);
   backdrop-filter: blur(28px);
