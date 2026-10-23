@@ -126,16 +126,25 @@ const CATEGORY_MAP = {
     delegate: { label: 'DELEGATE', short: 'DELEGATE' },
 };
 
+export const BADGE_VERSION = '20261023_clean_oral_poster';
+
+export function appendBadgeVersion(url) {
+    if (!url) return url;
+    if (url.includes('?v=') || url.includes('&v=')) return url;
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}v=${BADGE_VERSION}`;
+}
+
 function SingleLanyardCard({ ticket, templatePath, isBulk }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
     let rawBg = templatePath || ticket.templatePath || BADGE_TEMPLATES[visitorType] || '/images/badges/Participant.png';
 
     // Prefer high-res PNG (5x lighter & instant rendering vs 4.4MB SVG)
-    if (rawBg && rawBg.endsWith('.svg')) {
-        rawBg = rawBg.replace(/\.svg$/i, '.png');
+    if (rawBg && rawBg.includes('.svg')) {
+        rawBg = rawBg.replace(/\.svg(\?.*)?$/i, '.png$1');
     }
-    const bgImage = rawBg;
+    const bgImage = appendBadgeVersion(rawBg);
 
     const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.'));
 
@@ -295,10 +304,10 @@ export default function PrintBadge({
         const urls = new Set();
         badgeList.forEach(t => {
             let path = templatePath || t.templatePath || BADGE_TEMPLATES[t.visitor_type] || '/images/badges/Participant.png';
-            if (path && path.endsWith('.svg')) {
-                path = path.replace(/\.svg$/i, '.png');
+            if (path && path.includes('.svg')) {
+                path = path.replace(/\.svg(\?.*)?$/i, '.png$1');
             }
-            urls.add(path);
+            urls.add(appendBadgeVersion(path));
         });
 
         let isCancelled = false;
