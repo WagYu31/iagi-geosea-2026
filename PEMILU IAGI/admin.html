@@ -1991,6 +1991,8 @@
       .dpt-search-box {
         max-width: 100%;
       }
+    }
+
     /* ========================================================
        ADMIN ACCOUNTS MANAGEMENT SYSTEM (Multi-Admin Module)
        ======================================================== */
@@ -2098,6 +2100,428 @@
       background: rgba(239, 68, 68, 0.2);
       border-color: #EF4444;
       color: #FCA5A5;
+    }
+
+    /* ==========================================================================
+       PENGADUAN & LIVE CHAT ADMIN DESK STYLES
+       ========================================================================== */
+    .chat-admin-split-desk {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      min-height: 620px;
+    }
+
+    @media (max-width: 992px) {
+      .chat-admin-split-desk {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column: Ticket List */
+    .chat-tickets-pane {
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      background: rgba(2, 19, 15, 0.7);
+    }
+
+    .chat-tickets-toolbar {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-search-input {
+      width: 100%;
+      padding: 9px 14px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-search-input:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(245, 186, 66, 0.25);
+    }
+
+    .chat-filter-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chat-filter-tab {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94A3B8;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-filter-tab:hover {
+      color: #FDE68A;
+      background: rgba(245, 186, 66, 0.08);
+    }
+
+    .chat-filter-tab.active {
+      background: rgba(245, 186, 66, 0.15);
+      border-color: var(--gold-primary);
+      color: #FDE68A;
+    }
+
+    .chat-tickets-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 540px;
+    }
+
+    .chat-ticket-item {
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .chat-ticket-item:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+      transform: translateX(2px);
+    }
+
+    .chat-ticket-item.active {
+      background: rgba(245, 186, 66, 0.12);
+      border-color: rgba(245, 186, 66, 0.45);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .ticket-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(245, 186, 66, 0.2));
+      border: 1.5px solid rgba(245, 186, 66, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #FDE68A;
+      flex-shrink: 0;
+    }
+
+    .ticket-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ticket-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+
+    .ticket-user-name {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ticket-time {
+      font-size: 0.68rem;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    .ticket-preview {
+      font-size: 0.74rem;
+      color: #94A3B8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .ticket-badges-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge-ticket-status {
+      font-size: 0.64rem;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .badge-ticket-status.waiting {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #F87171;
+    }
+
+    .badge-ticket-status.answered {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+    }
+
+    .badge-ticket-npa {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      background: rgba(245, 186, 66, 0.1);
+      border: 1px solid rgba(245, 186, 66, 0.3);
+      color: #FDE68A;
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Right Column: Chat Conversation & Response */
+    .chat-conversation-pane {
+      display: flex;
+      flex-direction: column;
+      background: rgba(1, 14, 11, 0.9);
+    }
+
+    .chat-convo-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(3, 22, 17, 0.85);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chat-convo-user-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-convo-user-meta h3 {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0;
+    }
+
+    .chat-convo-user-meta p {
+      font-size: 0.72rem;
+      color: #94A3B8;
+      margin: 2px 0 0 0;
+    }
+
+    .chat-convo-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-convo-stream {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 400px;
+      min-height: 300px;
+      background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+
+    /* Admin Bubble Styling */
+    .admin-msg-bubble {
+      max-width: 82%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .admin-msg-bubble.user {
+      align-self: flex-start;
+    }
+
+    .admin-msg-bubble.bot {
+      align-self: flex-start;
+    }
+
+    .admin-msg-bubble.admin {
+      align-self: flex-end;
+    }
+
+    .admin-msg-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .admin-msg-bubble.user .admin-msg-tag {
+      color: #38BDF8;
+    }
+
+    .admin-msg-bubble.bot .admin-msg-tag {
+      color: #94A3B8;
+    }
+
+    .admin-msg-bubble.admin .admin-msg-tag {
+      color: #F5BA42;
+      text-align: right;
+    }
+
+    .admin-msg-body {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .admin-msg-bubble.user .admin-msg-body {
+      background: rgba(3, 40, 31, 0.95);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #F0FDF4;
+      border-bottom-left-radius: 2px;
+    }
+
+    .admin-msg-bubble.bot .admin-msg-body {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(100, 116, 139, 0.3);
+      color: #CBD5E1;
+      border-bottom-left-radius: 2px;
+    }
+
+    .admin-msg-bubble.admin .admin-msg-body {
+      background: linear-gradient(135deg, rgba(245, 186, 66, 0.22) 0%, rgba(180, 83, 9, 0.28) 100%);
+      border: 1.5px solid rgba(245, 186, 66, 0.55);
+      color: #FFF6D1;
+      border-bottom-right-radius: 2px;
+      box-shadow: 0 4px 14px rgba(245, 186, 66, 0.15);
+    }
+
+    .admin-msg-time {
+      font-size: 0.64rem;
+      color: #64748B;
+      font-family: var(--font-mono);
+    }
+
+    .admin-msg-bubble.admin .admin-msg-time {
+      text-align: right;
+    }
+
+    /* Quick Canned Responses Bar */
+    .chat-canned-bar {
+      padding: 8px 18px;
+      background: rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      align-items: center;
+    }
+
+    .btn-canned-chip {
+      background: rgba(245, 186, 66, 0.08);
+      border: 1px solid rgba(245, 186, 66, 0.3);
+      color: #FDE68A;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .btn-canned-chip:hover {
+      background: rgba(245, 186, 66, 0.2);
+      border-color: var(--gold-primary);
+      transform: translateY(-1px);
+    }
+
+    /* Admin Chat Input Area */
+    .chat-admin-reply-box {
+      padding: 12px 18px 16px 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: rgba(2, 19, 15, 0.95);
+    }
+
+    .chat-admin-textarea {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1.5px solid rgba(245, 186, 66, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #FFFFFF;
+      font-size: 0.85rem;
+      font-family: inherit;
+      resize: none;
+      min-height: 48px;
+      max-height: 100px;
+      outline: none;
+    }
+
+    .chat-admin-textarea:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.25);
+    }
+
+    .btn-send-admin-reply {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 100%);
+      border: 1px solid #FDE68A;
+      color: #03211A;
+      font-weight: 800;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-send-admin-reply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(245, 186, 66, 0.5);
     }
   </style>
 </head>
@@ -2387,6 +2811,15 @@
                   <span>Kelola Akun Admin</span>
                 </div>
                 <span class="sidebar-link-badge badge-emerald" id="sidebar-admin-count-badge">4</span>
+              </a>
+            </li>
+            <li>
+              <a href="#section-livechat" class="sidebar-nav-link" id="nav-link-livechat" onclick="switchAdminSection('section-livechat', event)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <span>Pengaduan Live Chat</span>
+                </div>
+                <span class="sidebar-link-badge badge-gold" id="sidebar-chat-count-badge">Live</span>
               </a>
             </li>
           </ul>
@@ -2842,6 +3275,126 @@
             <!-- Dynamically populated via renderAdminUsersTable() -->
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- ================= SECTION: PENGADUAN & LIVE CHAT HELPDESK KPKU ================= -->
+    <section id="section-livechat" class="panel-card" style="display: none;">
+      <!-- Top Header Bar of Live Chat Desk -->
+      <div class="dpt-header-strip">
+        <div class="dpt-header-left">
+          <div class="dpt-icon-badge" style="background: rgba(245, 186, 66, 0.15); border-color: rgba(245, 186, 66, 0.4); color: #F5BA42;">
+            <svg style="width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <div class="dpt-title-wrap">
+            <h2>Pusat Pengaduan & Live Chat Pemilih KPKU</h2>
+            <p>Pusat Kendali Live Chat Real-Time, Monitoring Tiket Kendala DPT/Token & Respon Panitia Resmi Pemilu IAGI 2026</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn-dpt-action" onclick="seedSampleChatTicket()" style="border-color: rgba(16, 185, 129, 0.4); color: #34D399;" title="Simulasikan pertanyaan baru dari pemilih">
+            <span>+ Simulasi Chat Masuk</span>
+          </button>
+          <button type="button" class="btn-dpt-action" onclick="refreshLiveChatAdmin()" style="border-color: rgba(245, 186, 66, 0.4); color: #F5BA42;" title="Segarkan data chat">
+            <span>🔄 Segarkan Chat</span>
+          </button>
+          <button type="button" class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" title="Kembali ke layar ringkasan pleno">
+            <span>← Kembali ke Ringkasan Pleno</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Chat Metrics Bar -->
+      <div id="chat-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Total Pengaduan:</span>
+          <strong id="stat-chat-total" style="color: #FFFFFF; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Menunggu Respon:</span>
+          <strong id="stat-chat-waiting" style="color: #F87171; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Terjawab / Ditangani:</span>
+          <strong id="stat-chat-answered" style="color: #34D399; font-size: 0.95rem;">0</strong>
+        </div>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #94A3B8;">Eskalasi WhatsApp:</span>
+          <strong id="stat-chat-wa" style="color: #4ADE80; font-size: 0.95rem;">0</strong>
+        </div>
+      </div>
+
+      <!-- Dual-Pane Live Chat Admin Desk -->
+      <div class="chat-admin-split-desk">
+        <!-- Left Pane: Ticket List -->
+        <div class="chat-tickets-pane">
+          <div class="chat-tickets-toolbar">
+            <input type="text" id="admin-chat-search" class="chat-search-input" placeholder="🔍 Cari nama, NPA, isi pesan..." oninput="handleChatSearch(this.value)">
+            <div class="chat-filter-tabs">
+              <button type="button" class="chat-filter-tab active" data-filter="all" onclick="setChatFilter('all', this)">Semua (<span id="count-tab-all">0</span>)</button>
+              <button type="button" class="chat-filter-tab" data-filter="waiting" onclick="setChatFilter('waiting', this)">Menunggu (<span id="count-tab-waiting">0</span>)</button>
+              <button type="button" class="chat-filter-tab" data-filter="answered" onclick="setChatFilter('answered', this)">Terjawab (<span id="count-tab-answered">0</span>)</button>
+            </div>
+          </div>
+          <div class="chat-tickets-list" id="admin-chat-tickets-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Right Pane: Active Ticket Conversation & Reply Box -->
+        <div class="chat-conversation-pane" id="admin-chat-convo-pane">
+          <div class="chat-convo-header">
+            <div class="chat-convo-user-meta" id="chat-active-user-meta">
+              <div class="ticket-avatar" id="active-user-avatar">?</div>
+              <div>
+                <h3 id="active-user-name">Pilih Sesi Pengaduan</h3>
+                <p id="active-user-sub">Pilih salah satu tiket di sebelah kiri untuk melihat pesan</p>
+              </div>
+            </div>
+            <div class="chat-convo-actions" id="chat-active-actions" style="display: none;">
+              <select id="chat-status-select" class="form-input" style="padding: 5px 10px; font-size: 0.74rem; width: auto; background: rgba(0,0,0,0.6);" onchange="updateActiveTicketStatus(this.value)">
+                <option value="waiting">🔴 Menunggu Respon</option>
+                <option value="answered">🟢 Terjawab / Aktif</option>
+                <option value="resolved">✓ Selesai / Ditutup</option>
+              </select>
+              <a href="#" id="btn-wa-escalate-active" target="_blank" class="btn-dpt-action" style="padding: 6px 12px; font-size: 0.74rem; text-decoration: none; border-color: rgba(37,211,102,0.5); color: #4ADE80; display: inline-flex; align-items: center; gap: 5px;">
+                <span>🟢 Buka WA</span>
+              </a>
+              <button type="button" class="btn-dpt-action" onclick="deleteActiveTicket()" style="padding: 6px 10px; font-size: 0.74rem; border-color: rgba(239,68,68,0.4); color: #F87171;" title="Hapus Sesi Chat">
+                <span>🗑️</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Message Bubbles Stream -->
+          <div class="chat-convo-stream" id="admin-chat-stream">
+            <div style="text-align: center; color: #64748B; font-size: 0.82rem; margin: auto; padding: 40px 20px;">
+              💬 Pilih tiket pengaduan di panel sebelah kiri untuk membaca dan membalas percakapan pemilih secara langsung.
+            </div>
+          </div>
+
+          <!-- Canned Responses Quick Chips -->
+          <div class="chat-canned-bar" id="chat-canned-bar" style="display: none;">
+            <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">Template Cepat:</span>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('Token')">🎟️ Panduan Token</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('DPT')">🔍 Status DPT</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('Bilik')">🗳️ Akses Bilik Suara</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('WA')">📱 Hotline WA Panitia</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('Selesai')">✓ Masalah Terselesaikan</button>
+          </div>
+
+          <!-- Admin Reply Form -->
+          <form class="chat-admin-reply-box" id="form-admin-reply" style="display: none;" onsubmit="handleSendAdminReply(event)">
+            <textarea id="admin-reply-input" class="chat-admin-textarea" placeholder="Ketik balasan resmi dari Panitia KPKU... (Tekan Enter untuk baris baru)" rows="2"></textarea>
+            <button type="submit" class="btn-send-admin-reply" id="btn-send-admin-reply">
+              <span>Kirim Balasan</span>
+              <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+        </div>
       </div>
     </section>
 
@@ -3662,6 +4215,506 @@
         }
       };
 
+      // =========================================================================
+      // PUSAT PENGADUAN & LIVE CHAT PEMILIH KPKU ADMIN CONTROLLER
+      // =========================================================================
+      const CHAT_STORAGE_KEY = 'kpku_livechat_sessions';
+      let activeChatTicketId = null;
+      let activeChatFilter = 'all';
+      let activeChatSearchQuery = '';
+
+      const DEFAULT_CHAT_SESSIONS = [
+        {
+          id: 'ticket-1',
+          userName: 'Ir. Ahmad Fauzi, S.T., M.T.',
+          userNpa: '01842',
+          userEmail: 'ahmad.fauzi@geolog.or.id',
+          userPhone: '081298765432',
+          channel: 'Portal Web Live Chat',
+          status: 'waiting',
+          startedAt: '24 Okt 2026, 01:25 WIB',
+          lastUpdated: '01:40 WIB',
+          messages: [
+            { sender: 'user', text: 'Selamat malam panitia KPKU, saya sudah mengecek email namun token surat suara belum masuk.', time: '01:25 WIB' },
+            { sender: 'bot', text: 'Tata cara Klaim Token Surat Suara Digital:\n1. Buka menu Klaim.\n2. Masukkan NPA 5-digit dan Email terdaftar.\n3. Periksa folder Inbox / Spam / Updates.', time: '01:25 WIB' },
+            { sender: 'user', text: 'Sudah saya cek di folder spam & update tetap belum masuk, mohon bantuan cek verifikasi data DPT saya panitia. NPA saya 01842.', time: '01:40 WIB' }
+          ]
+        },
+        {
+          id: 'ticket-2',
+          userName: 'Dr. Rina Kusuma Wardhani, M.Sc.',
+          userNpa: '02519',
+          userEmail: 'rina.wardhani@esdm.go.id',
+          userPhone: '081387654321',
+          channel: 'Portal Web Live Chat',
+          status: 'answered',
+          startedAt: '23 Okt 2026, 22:10 WIB',
+          lastUpdated: '22:25 WIB',
+          messages: [
+            { sender: 'user', text: 'Mohon konfirmasi apakah anggota Pengda Jawa Timur dengan NPA 02519 sudah bisa langsung klaim token malam ini?', time: '22:10 WIB' },
+            { sender: 'admin', adminName: 'Dr. Ir. Hendra Saputra, M.T. (Ketua KPKU)', text: 'Yth. Dr. Rina, betul sekali. Data DPT Pengda Jawa Timur telah terverifikasi 100% aktif. Token dapat langsung diklaim mandiri melalui menu Klaim Token di portal pemilu.', time: '22:15 WIB' },
+            { sender: 'user', text: 'Baik terima kasih banyak infonya Pak Ketua!', time: '22:25 WIB' }
+          ]
+        },
+        {
+          id: 'ticket-3',
+          userName: 'Muhammad Ilham Geovani, S.T.',
+          userNpa: '04981',
+          userEmail: 'ilham.geovani@mining.co.id',
+          userPhone: '085612345678',
+          channel: 'Portal Web Live Chat',
+          status: 'resolved',
+          startedAt: '23 Okt 2026, 20:15 WIB',
+          lastUpdated: '20:45 WIB',
+          messages: [
+            { sender: 'user', text: 'Malam panitia, apakah bilik suara bisa diakses dari browser Safari di iPhone?', time: '20:15 WIB' },
+            { sender: 'bot', text: 'Panduan menggunakan Bilik Suara Digital: Bilik suara dapat diakses dari browser modern di Desktop maupun Mobile (Chrome, Safari, Firefox, Edge).', time: '20:15 WIB' },
+            { sender: 'admin', adminName: 'Sekretariat KPKU', text: 'Halo Rekan Ilham, betul, sistem bilik suara kami responsif dan mendukung Safari iOS versi 14 ke atas dengan enkripsi TLS 1.3.', time: '20:25 WIB' },
+            { sender: 'user', text: 'Terima kasih banyak, sudah saya coba dan tampilan sangat mulus.', time: '20:45 WIB' }
+          ]
+        },
+        {
+          id: 'ticket-4',
+          userName: 'Siti Nurhaliza, S.Si., M.Eng.',
+          userNpa: '03105',
+          userEmail: 'siti.nurhaliza@geosains.ac.id',
+          userPhone: '081823456789',
+          channel: 'Portal Web Live Chat',
+          status: 'waiting',
+          startedAt: '24 Okt 2026, 01:10 WIB',
+          lastUpdated: '01:35 WIB',
+          messages: [
+            { sender: 'user', text: 'Halo admin, saya baru perpanjang iuran anggota IAGI kemarin. Kapan data DPT saya diupdate ya?', time: '01:10 WIB' },
+            { sender: 'bot', text: 'Jika Anda sudah berstatus anggota aktif IAGI namun belum terdata di DPT, silakan hubungi Panitia KPKU via WhatsApp untuk verifikasi berkas.', time: '01:10 WIB' },
+            { sender: 'user', text: 'Bisa minta bantuan nomor WhatsApp panitia yang menangani verifikasi berkas perpanjangan?', time: '01:35 WIB' }
+          ]
+        }
+      ];
+
+      function getLiveChatSessions() {
+        try {
+          const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+          if (!raw) {
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(DEFAULT_CHAT_SESSIONS));
+            return DEFAULT_CHAT_SESSIONS;
+          }
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed) || parsed.length === 0) {
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(DEFAULT_CHAT_SESSIONS));
+            return DEFAULT_CHAT_SESSIONS;
+          }
+          return parsed;
+        } catch (e) {
+          console.error('Failed reading livechat sessions', e);
+          return DEFAULT_CHAT_SESSIONS;
+        }
+      }
+      window.getLiveChatSessions = getLiveChatSessions;
+
+      function saveLiveChatSessions(sessions) {
+        try {
+          localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
+          window.dispatchEvent(new CustomEvent('kpku_chat_updated', { detail: { sessions } }));
+        } catch (e) {
+          console.error('Failed saving livechat sessions', e);
+        }
+      }
+      window.saveLiveChatSessions = saveLiveChatSessions;
+
+      function updateChatSidebarBadge() {
+        const sessions = getLiveChatSessions();
+        const waitingCount = sessions.filter(s => s.status === 'waiting').length;
+        const badge = document.getElementById('sidebar-chat-count-badge');
+        if (badge) {
+          if (waitingCount > 0) {
+            badge.innerText = `${waitingCount} Menunggu`;
+            badge.className = 'sidebar-link-badge badge-red';
+          } else {
+            badge.innerText = 'Live';
+            badge.className = 'sidebar-link-badge badge-gold';
+          }
+        }
+      }
+      window.updateChatSidebarBadge = updateChatSidebarBadge;
+
+      function renderLiveChatAdmin(preserveActive = false) {
+        const sessions = getLiveChatSessions();
+
+        // 1. Compute summary stats
+        const total = sessions.length;
+        const waiting = sessions.filter(s => s.status === 'waiting').length;
+        const answered = sessions.filter(s => s.status === 'answered' || s.status === 'resolved').length;
+        const waCount = sessions.filter(s => s.userPhone || (s.messages && s.messages.some(m => m.text && m.text.toLowerCase().includes('wa')))).length;
+
+        const statTotal = document.getElementById('stat-chat-total');
+        if (statTotal) statTotal.innerText = total;
+        const statWaiting = document.getElementById('stat-chat-waiting');
+        if (statWaiting) statWaiting.innerText = waiting;
+        const statAnswered = document.getElementById('stat-chat-answered');
+        if (statAnswered) statAnswered.innerText = answered;
+        const statWa = document.getElementById('stat-chat-wa');
+        if (statWa) statWa.innerText = waCount;
+
+        const tabAll = document.getElementById('count-tab-all');
+        if (tabAll) tabAll.innerText = total;
+        const tabWaiting = document.getElementById('count-tab-waiting');
+        if (tabWaiting) tabWaiting.innerText = waiting;
+        const tabAnswered = document.getElementById('count-tab-answered');
+        if (tabAnswered) tabAnswered.innerText = answered;
+
+        updateChatSidebarBadge();
+
+        // 2. Filter list
+        let filtered = sessions.filter(s => {
+          if (activeChatFilter === 'waiting') return s.status === 'waiting';
+          if (activeChatFilter === 'answered') return s.status === 'answered' || s.status === 'resolved';
+          return true;
+        });
+
+        if (activeChatSearchQuery) {
+          const q = activeChatSearchQuery.toLowerCase();
+          filtered = filtered.filter(s => {
+            const matchName = (s.userName || '').toLowerCase().includes(q);
+            const matchNpa = (s.userNpa || '').toLowerCase().includes(q);
+            const matchEmail = (s.userEmail || '').toLowerCase().includes(q);
+            const matchMsg = (s.messages || []).some(m => (m.text || '').toLowerCase().includes(q));
+            return matchName || matchNpa || matchEmail || matchMsg;
+          });
+        }
+
+        // 3. Render ticket list in left pane
+        const listContainer = document.getElementById('admin-chat-tickets-list');
+        if (listContainer) {
+          if (filtered.length === 0) {
+            listContainer.innerHTML = `
+              <div style="text-align: center; color: #64748B; font-size: 0.8rem; padding: 40px 14px;">
+                🔍 Tidak ada tiket pengaduan yang cocok dengan filter "${escapeHtml(activeChatFilter)}".
+              </div>
+            `;
+          } else {
+            // Determine active ticket
+            if (!activeChatTicketId || (!preserveActive && !filtered.some(f => f.id === activeChatTicketId))) {
+              activeChatTicketId = filtered[0].id;
+            }
+
+            listContainer.innerHTML = filtered.map(t => {
+              const isActive = (t.id === activeChatTicketId);
+              const lastMsg = (t.messages && t.messages.length > 0) ? t.messages[t.messages.length - 1] : { text: '-', time: '' };
+              const cleanWords = (t.userName || 'P').replace(/^(Ir\.|Dr\.|Prof\.|S\.T\.|M\.T\.|M\.Sc\.|S\.Si\.|M\.Eng\.)\s*/gi, '').trim();
+              const initials = cleanWords.slice(0, 2).toUpperCase() || 'P';
+
+              let statusBadgeHtml = '';
+              if (t.status === 'waiting') {
+                statusBadgeHtml = `<span class="badge-ticket-status waiting"><span class="chat-trigger-dot" style="position:static;display:inline-block;width:6px;height:6px;margin-right:4px;"></span>Menunggu</span>`;
+              } else if (t.status === 'resolved') {
+                statusBadgeHtml = `<span class="badge-ticket-status answered" style="background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4); color: #60A5FA;">✓ Selesai</span>`;
+              } else {
+                statusBadgeHtml = `<span class="badge-ticket-status answered">🟢 Terjawab</span>`;
+              }
+
+              return `
+                <div class="chat-ticket-item ${isActive ? 'active' : ''}" onclick="selectLiveChatTicket('${t.id}')">
+                  <div class="ticket-avatar">${initials}</div>
+                  <div class="ticket-info">
+                    <div class="ticket-top-row">
+                      <span class="ticket-user-name" title="${escapeHtml(t.userName)}">${escapeHtml(t.userName)}</span>
+                      <span class="ticket-time">${escapeHtml(t.lastUpdated || lastMsg.time || '')}</span>
+                    </div>
+                    <div class="ticket-preview">${escapeHtml(lastMsg.text || '')}</div>
+                    <div class="ticket-badges-row">
+                      ${statusBadgeHtml}
+                      <span class="badge-ticket-npa">NPA: ${escapeHtml(t.userNpa || 'N/A')}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+
+        // 4. Render active conversation pane
+        renderActiveTicketConvo();
+      }
+      window.renderLiveChatAdmin = renderLiveChatAdmin;
+
+      function renderActiveTicketConvo() {
+        const sessions = getLiveChatSessions();
+        const ticket = sessions.find(s => s.id === activeChatTicketId);
+
+        const avatarEl = document.getElementById('active-user-avatar');
+        const nameEl = document.getElementById('active-user-name');
+        const subEl = document.getElementById('active-user-sub');
+        const actionsEl = document.getElementById('chat-active-actions');
+        const statusSelect = document.getElementById('chat-status-select');
+        const btnWa = document.getElementById('btn-wa-escalate-active');
+        const cannedBar = document.getElementById('chat-canned-bar');
+        const replyForm = document.getElementById('form-admin-reply');
+        const streamEl = document.getElementById('admin-chat-stream');
+
+        if (!ticket) {
+          if (avatarEl) avatarEl.innerText = '?';
+          if (nameEl) nameEl.innerText = 'Pilih Sesi Pengaduan';
+          if (subEl) subEl.innerText = 'Pilih salah satu tiket di sebelah kiri untuk melihat percakapan';
+          if (actionsEl) actionsEl.style.display = 'none';
+          if (cannedBar) cannedBar.style.display = 'none';
+          if (replyForm) replyForm.style.display = 'none';
+          if (streamEl) {
+            streamEl.innerHTML = `
+              <div style="text-align: center; color: #64748B; font-size: 0.82rem; margin: auto; padding: 40px 20px;">
+                💬 Pilih tiket pengaduan di panel sebelah kiri untuk membaca dan membalas percakapan pemilih secara langsung.
+              </div>
+            `;
+          }
+          return;
+        }
+
+        // Active ticket exists
+        const cleanWords = (ticket.userName || 'P').replace(/^(Ir\.|Dr\.|Prof\.|S\.T\.|M\.T\.|M\.Sc\.|S\.Si\.|M\.Eng\.)\s*/gi, '').trim();
+        const initials = cleanWords.slice(0, 2).toUpperCase() || 'P';
+
+        if (avatarEl) avatarEl.innerText = initials;
+        if (nameEl) nameEl.innerText = ticket.userName;
+        if (subEl) {
+          subEl.innerText = `NPA: ${ticket.userNpa || '-'} • ${ticket.userEmail || ''} • Channel: ${ticket.channel || 'Live Web Chat'} • Sesi Dimulai: ${ticket.startedAt || '-'}`;
+        }
+        if (actionsEl) actionsEl.style.display = 'flex';
+        if (statusSelect) statusSelect.value = ticket.status || 'waiting';
+
+        if (btnWa) {
+          const waPhone = ticket.userPhone ? ticket.userPhone.replace(/^0/, '62').replace(/\D/g, '') : '628111581461';
+          const waText = encodeURIComponent(`Halo ${ticket.userName} (NPA: ${ticket.userNpa || '-'}), kami dari Panitia Pelaksana KPKU Pemilu IAGI 2026 menindaklanjuti pengaduan Live Chat Anda.`);
+          btnWa.href = `https://wa.me/${waPhone}?text=${waText}`;
+        }
+
+        if (cannedBar) cannedBar.style.display = 'flex';
+        if (replyForm) replyForm.style.display = 'flex';
+
+        // Render message bubbles in stream
+        if (streamEl) {
+          const messages = ticket.messages || [];
+          if (messages.length === 0) {
+            streamEl.innerHTML = `
+              <div style="text-align: center; color: #64748B; font-size: 0.8rem; margin: auto; padding: 20px;">
+                Belum ada pesan dalam sesi ini.
+              </div>
+            `;
+          } else {
+            streamEl.innerHTML = messages.map(m => {
+              if (m.sender === 'user') {
+                return `
+                  <div class="admin-msg-bubble user">
+                    <span class="admin-msg-tag">👤 ${escapeHtml(ticket.userName)} (Pemilih)</span>
+                    <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+                    <span class="admin-msg-time">${escapeHtml(m.time || '')}</span>
+                  </div>
+                `;
+              } else if (m.sender === 'bot') {
+                return `
+                  <div class="admin-msg-bubble bot">
+                    <span class="admin-msg-tag">🤖 KPKU Virtual Assistant (Bot)</span>
+                    <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+                    <span class="admin-msg-time">${escapeHtml(m.time || '')}</span>
+                  </div>
+                `;
+              } else {
+                // Admin official reply
+                return `
+                  <div class="admin-msg-bubble admin">
+                    <span class="admin-msg-tag">🏛️ ${escapeHtml(m.adminName || 'Panitia KPKU (Admin)')}</span>
+                    <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+                    <span class="admin-msg-time">${escapeHtml(m.time || '')} ✓ Terkirim Resmi</span>
+                  </div>
+                `;
+              }
+            }).join('');
+          }
+
+          streamEl.scrollTop = streamEl.scrollHeight;
+        }
+      }
+      window.renderActiveTicketConvo = renderActiveTicketConvo;
+
+      function selectLiveChatTicket(ticketId) {
+        activeChatTicketId = ticketId;
+        renderLiveChatAdmin(true);
+        const replyInput = document.getElementById('admin-reply-input');
+        if (replyInput) {
+          setTimeout(() => replyInput.focus(), 100);
+        }
+      }
+      window.selectLiveChatTicket = selectLiveChatTicket;
+
+      function handleSendAdminReply(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const input = document.getElementById('admin-reply-input');
+        if (!input) return;
+        const text = input.value.trim();
+        if (!text) return;
+
+        const sessions = getLiveChatSessions();
+        const ticket = sessions.find(s => s.id === activeChatTicketId);
+        if (!ticket) {
+          alert('Pilih sesi tiket pengaduan terlebih dahulu!');
+          return;
+        }
+
+        // Active admin info
+        const adminSession = window.pemiluStorage && window.pemiluStorage.getAdminSession ? window.pemiluStorage.getAdminSession() : null;
+        let adminName = 'Panitia Pelaksana KPKU';
+        if (adminSession && adminSession.name) {
+          adminName = `${adminSession.name} (${adminSession.role || 'Admin KPKU'})`;
+        }
+
+        const now = new Date();
+        const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
+
+        ticket.messages.push({
+          sender: 'admin',
+          adminName: adminName,
+          text: text,
+          time: timeStr
+        });
+
+        ticket.status = 'answered';
+        ticket.lastUpdated = timeStr;
+
+        saveLiveChatSessions(sessions);
+
+        if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+          window.pemiluStorage.addAuditLog('CHAT_REPLY', `Panitia membalas pengaduan pemilih NPA ${ticket.userNpa} (${ticket.userName}): "${text.substring(0, 45)}..."`);
+        }
+
+        input.value = '';
+        renderLiveChatAdmin(true);
+      }
+      window.handleSendAdminReply = handleSendAdminReply;
+
+      function insertCanned(type) {
+        const input = document.getElementById('admin-reply-input');
+        if (!input) return;
+        let text = '';
+        if (type === 'Token') {
+          text = 'Yth. Rekan Pemilih, mohon pastikan NPA 5-digit dan Email yang Anda masukkan telah sesuai dengan data anggota IAGI terdaftar. Token surat suara unik otomatis dikirimkan ke Email Anda (cek folder Inbox/Spam).';
+        } else if (type === 'DPT') {
+          text = 'Status hak suara Anda telah kami verifikasi di database DPT resmi KPKU. Anda berstatus AKTIF dan berhak menggunakan hak suara pada Pemilihan Ketua Umum IAGI 2026.';
+        } else if (type === 'Bilik') {
+          text = 'Bilik Suara Elektronik dapat diakses dengan memasukkan NPA 5-digit dan Token Surat Suara unik yang telah Anda klaim. Pilihan suara Anda dijamin LUBER dan berenkripsi SHA-256.';
+        } else if (type === 'WA') {
+          text = 'Untuk koordinasi berkas khusus atau verifikasi keanggotaan darurat, Anda dapat menghubungi Helpdesk WhatsApp resmi Panitia KPKU di nomor +62 811-158-1461.';
+        } else if (type === 'Selesai') {
+          text = 'Terima kasih telah berkonsultasi dengan Helpdesk KPKU Pemilu IAGI 2026. Laporan pengaduan ini telah selesai ditangani. Selamat berpartisipasi menyukseskan Pemilu IAGI 2026!';
+        }
+        input.value = text;
+        input.focus();
+      }
+      window.insertCanned = insertCanned;
+
+      function updateActiveTicketStatus(newStatus) {
+        const sessions = getLiveChatSessions();
+        const ticket = sessions.find(s => s.id === activeChatTicketId);
+        if (ticket) {
+          ticket.status = newStatus;
+          saveLiveChatSessions(sessions);
+          renderLiveChatAdmin(true);
+        }
+      }
+      window.updateActiveTicketStatus = updateActiveTicketStatus;
+
+      function deleteActiveTicket() {
+        if (!activeChatTicketId) return;
+        if (!confirm('Hapus sesi pengaduan live chat ini secara permanen?')) return;
+        let sessions = getLiveChatSessions();
+        sessions = sessions.filter(s => s.id !== activeChatTicketId);
+        saveLiveChatSessions(sessions);
+        activeChatTicketId = sessions.length > 0 ? sessions[0].id : null;
+        renderLiveChatAdmin();
+      }
+      window.deleteActiveTicket = deleteActiveTicket;
+
+      function seedSampleChatTicket() {
+        const samples = [
+          {
+            name: 'Ir. Bambang Priyanto, M.T.',
+            npa: '05128',
+            email: 'bambang.priyanto@pertamina.com',
+            phone: '081234567890',
+            msg: 'Selamat malam panitia, saya ingin menanyakan apakah ada batas waktu maksimal pemilihan di bilik suara?'
+          },
+          {
+            name: 'Dian Anggraini, S.T.',
+            npa: '04321',
+            email: 'dian.anggraini@geology.id',
+            phone: '081987654321',
+            msg: 'Halo Helpdesk KPKU, token surat suara saya terhapus tidak sengaja dari email, apakah bisa di-generate ulang?'
+          },
+          {
+            name: 'Prof. Dr. Ir. Suyono, M.Sc.',
+            npa: '01088',
+            email: 'suyono@ugm.ac.id',
+            phone: '081122334455',
+            msg: 'Panitia, saya periksa di DPT nama saya terdaftar Pengda DIY. Bagaimana cara cek profil lengkap paslon 01, 02, dan 03?'
+          }
+        ];
+        const pick = samples[Math.floor(Math.random() * samples.length)];
+        const now = new Date();
+        const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
+        const newTicket = {
+          id: 'ticket-' + Date.now(),
+          userName: pick.name,
+          userNpa: pick.npa,
+          userEmail: pick.email,
+          userPhone: pick.phone,
+          channel: 'Portal Web Live Chat',
+          status: 'waiting',
+          startedAt: '24 Okt 2026, ' + timeStr,
+          lastUpdated: timeStr,
+          messages: [
+            { sender: 'user', text: pick.msg, time: timeStr }
+          ]
+        };
+
+        const sessions = getLiveChatSessions();
+        sessions.unshift(newTicket);
+        saveLiveChatSessions(sessions);
+        activeChatTicketId = newTicket.id;
+        renderLiveChatAdmin();
+
+        if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+          window.pemiluStorage.addAuditLog('CHAT_NEW', `Pengaduan live chat baru masuk dari pemilih NPA ${pick.npa} (${pick.name})`);
+        }
+      }
+      window.seedSampleChatTicket = seedSampleChatTicket;
+
+      function refreshLiveChatAdmin() {
+        renderLiveChatAdmin(true);
+      }
+      window.refreshLiveChatAdmin = refreshLiveChatAdmin;
+
+      function handleChatSearch(query) {
+        activeChatSearchQuery = (query || '').trim();
+        renderLiveChatAdmin(true);
+      }
+      window.handleChatSearch = handleChatSearch;
+
+      function setChatFilter(filter, btn) {
+        activeChatFilter = filter;
+        document.querySelectorAll('.chat-filter-tab').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderLiveChatAdmin();
+      }
+      window.setChatFilter = setChatFilter;
+
+      // Cross-tab auto sync for Live Chat Desk
+      window.addEventListener('storage', (e) => {
+        if (e.key === CHAT_STORAGE_KEY) {
+          updateChatSidebarBadge();
+          const sec = document.getElementById('section-livechat');
+          if (sec && sec.style.display !== 'none') {
+            renderLiveChatAdmin(true);
+          }
+        }
+      });
+
       window.switchAdminSection = function(sectionId, e) {
         if (e && e.preventDefault) e.preventDefault();
 
@@ -3676,6 +4729,7 @@
         const auditSection = document.getElementById('section-audit-trail');
         const dptSection = document.getElementById('section-dpt-table');
         const adminSection = document.getElementById('section-admin-users');
+        const livechatSection = document.getElementById('section-livechat');
         const topbarTitle = document.querySelector('.topbar-title span:first-child');
         const topbarSubtitle = document.querySelector('.topbar-left p');
 
@@ -3688,7 +4742,47 @@
           }
         });
 
-        if (sectionId === 'section-admin-users') {
+        if (sectionId === 'section-livechat') {
+          // ═════════════════════════════════════════════════════════════
+          // PUSAT PENGADUAN & LIVE CHAT PEMILIH KPKU
+          // ═════════════════════════════════════════════════════════════
+          if (metricsSection) metricsSection.style.display = 'none';
+          if (mainSplitSection) mainSplitSection.style.display = 'none';
+          if (dptSection) dptSection.style.display = 'none';
+          if (plenoSection) plenoSection.style.display = 'none';
+          if (auditSection) auditSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
+
+          if (livechatSection) {
+            livechatSection.style.display = 'block';
+            livechatSection.classList.remove('section-view-fade');
+            void livechatSection.offsetWidth;
+            livechatSection.classList.add('section-view-fade');
+          }
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Pusat Pengaduan & Live Chat Pemilih KPKU';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Monitoring Pengaduan DPT/Token Pemilih • Respon Resmi Panitia & Eskalasi Real-Time';
+          }
+
+          if (typeof renderLiveChatAdmin === 'function') {
+            renderLiveChatAdmin();
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-livechat');
+          } else {
+            window.location.hash = 'section-livechat';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          const chatSearch = document.getElementById('admin-chat-search');
+          if (chatSearch) {
+            setTimeout(() => chatSearch.focus(), 250);
+          }
+        } else if (sectionId === 'section-admin-users') {
           // ═════════════════════════════════════════════════════════════
           // KELOLA AKUN ADMIN & OTORITAS KPKU
           // ═════════════════════════════════════════════════════════════
@@ -3697,6 +4791,7 @@
           if (dptSection) dptSection.style.display = 'none';
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
 
           if (adminSection) {
             adminSection.style.display = 'block';
@@ -3735,6 +4830,10 @@
           if (metricsSection) metricsSection.style.display = 'none';
           if (mainSplitSection) mainSplitSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
+          if (plenoSection) plenoSection.style.display = 'none';
+          if (auditSection) auditSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
+
           if (dptSection) {
             dptSection.style.display = 'block';
             dptSection.classList.remove('highlight-pulse');
@@ -3775,6 +4874,7 @@
           if (auditSection) auditSection.style.display = 'none';
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
@@ -3803,6 +4903,7 @@
           if (auditSection) auditSection.style.display = 'flex';
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
@@ -3833,6 +4934,7 @@
           if (auditSection) auditSection.style.display = 'flex';
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
 
           const defaultLink = document.querySelector('a[href="#section-metrics"]');
           if (defaultLink) defaultLink.classList.add('active');
@@ -3890,7 +4992,9 @@
       // Initialize view based on URL hash or default
       function initSectionFromHash() {
         const hash = window.location.hash || '';
-        if (hash.includes('section-admin-users')) {
+        if (hash.includes('section-livechat')) {
+          window.switchAdminSection('section-livechat');
+        } else if (hash.includes('section-admin-users')) {
           window.switchAdminSection('section-admin-users');
         } else if (hash.includes('section-dpt-table')) {
           window.switchAdminSection('section-dpt-table');
@@ -3973,10 +5077,17 @@
         const elMiniTurnout = document.getElementById('dpt-mini-turnout');
         if (elMiniTurnout) elMiniTurnout.innerText = `${results.turnoutPercentage}%`;
 
-        // 5. DPT Table & Admin Users Table
+        // 5. DPT Table & Admin Users Table & Live Chat
         renderDptTable();
         if (typeof renderAdminUsersTable === 'function') {
           renderAdminUsersTable();
+        }
+        if (typeof updateChatSidebarBadge === 'function') {
+          updateChatSidebarBadge();
+        }
+        const livechatSec = document.getElementById('section-livechat');
+        if (livechatSec && livechatSec.style.display !== 'none' && typeof renderLiveChatAdmin === 'function') {
+          renderLiveChatAdmin(true);
         }
       }
 

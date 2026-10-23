@@ -206,6 +206,151 @@
     }
   }
 
+  const CHAT_STORAGE_KEY = 'kpku_livechat_sessions';
+  let displayedAdminMsgCount = 0;
+
+  function getVoterIdentity() {
+    let voterName = 'Rekan Geolog (Tamu Web)';
+    let voterNpa = 'Tamu';
+    let voterEmail = '';
+    let voterPhone = '';
+
+    try {
+      const claimed = JSON.parse(localStorage.getItem('pemilu_iagi_claimed_voter') || '{}');
+      if (claimed && claimed.name) {
+        voterName = claimed.name;
+        voterNpa = claimed.npa || 'Tamu';
+        voterEmail = claimed.email || '';
+        voterPhone = claimed.phone || '';
+      } else {
+        const current = JSON.parse(localStorage.getItem('pemilu_current_user') || '{}');
+        if (current && current.name) {
+          voterName = current.name;
+          voterNpa = current.npa || 'Tamu';
+          voterEmail = current.email || '';
+          voterPhone = current.phone || '';
+        }
+      }
+    } catch (e) {}
+
+    return { voterName, voterNpa, voterEmail, voterPhone };
+  }
+
+  function syncVoterChatSession(userText, botText) {
+    try {
+      let sessions = [];
+      try {
+        sessions = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]');
+        if (!Array.isArray(sessions)) sessions = [];
+      } catch (e) { sessions = []; }
+
+      let ticketId = sessionStorage.getItem('kpku_chat_session_id');
+      let ticket = sessions.find(s => s.id === ticketId);
+
+      const identity = getVoterIdentity();
+      const now = new Date();
+      const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
+
+      if (!ticket) {
+        ticketId = 'ticket-live-' + Date.now();
+        sessionStorage.setItem('kpku_chat_session_id', ticketId);
+        ticket = {
+          id: ticketId,
+          userName: identity.voterName,
+          userNpa: identity.voterNpa,
+          userEmail: identity.voterEmail,
+          userPhone: identity.voterPhone,
+          channel: 'Live Web Chat',
+          status: 'waiting',
+          startedAt: '24 Okt 2026, ' + timeStr,
+          lastUpdated: timeStr,
+          messages: []
+        };
+        sessions.unshift(ticket);
+      } else {
+        if (ticket.userNpa === 'Tamu' && identity.voterNpa !== 'Tamu') {
+          ticket.userName = identity.voterName;
+          ticket.userNpa = identity.voterNpa;
+          ticket.userEmail = identity.voterEmail;
+          ticket.userPhone = identity.voterPhone;
+        }
+      }
+
+      if (userText) {
+        ticket.messages.push({ sender: 'user', text: userText, time: timeStr });
+        ticket.status = 'waiting';
+        ticket.lastUpdated = timeStr;
+      }
+      if (botText) {
+        ticket.messages.push({ sender: 'bot', text: botText, time: timeStr });
+      }
+
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
+    } catch (e) {
+      console.error('Error syncing voter chat to admin:', e);
+    }
+  }
+
+  function checkForAdminReplies() {
+    try {
+      const ticketId = sessionStorage.getItem('kpku_chat_session_id');
+      if (!ticketId) return;
+
+      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (!raw) return;
+      const sessions = JSON.parse(raw);
+      const ticket = sessions.find(s => s.id === ticketId);
+      if (!ticket || !ticket.messages) return;
+
+      const adminMessages = ticket.messages.filter(m => m.sender === 'admin');
+      if (adminMessages.length > displayedAdminMsgCount) {
+        for (let i = displayedAdminMsgCount; i < adminMessages.length; i++) {
+          const adm = adminMessages[i];
+          appendAdminMessage(adm.text, adm.adminName || 'Panitia KPKU (Admin)', adm.time);
+        }
+        displayedAdminMsgCount = adminMessages.length;
+
+        const win = document.getElementById('chat-window');
+        if (!win || !win.classList.contains('active')) {
+          const badge = document.getElementById('chat-unread-badge');
+          if (badge) {
+            badge.style.display = 'block';
+            badge.textContent = '1';
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error checking admin replies', e);
+    }
+  }
+
+  function appendAdminMessage(text, adminName, timeStr) {
+    const msgContainer = document.getElementById('chat-messages');
+    const typing = document.getElementById('chat-typing');
+    if (!msgContainer) return;
+
+    const div = document.createElement('div');
+    div.className = 'chat-msg bot';
+    div.style.borderLeft = '3px solid #34D399';
+    div.style.paddingLeft = '6px';
+
+    div.innerHTML = `
+      <span class="msg-sender-tag" style="color: #34D399; font-weight: 800;">🏛️ ${escapeHtml(adminName)}</span>
+      <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35);">
+        ${escapeHtml(text).replace(/\n/g, '<br>')}
+      </div>
+      <span class="msg-time">${timeStr || 'Baru saja'}</span>
+    `;
+
+    if (typing) {
+      msgContainer.insertBefore(div, typing);
+    } else {
+      msgContainer.appendChild(div);
+    }
+
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+  }
+
   function handleUserSend(text) {
     appendMessage(text, 'user');
     showTyping(true);
@@ -214,6 +359,7 @@
       showTyping(false);
       const match = findBotResponse(text);
       appendMessage(match.reply, 'bot', match.chips, match.showWA ? text : null);
+      syncVoterChatSession(text, match.reply);
     }, 600 + Math.random() * 400);
   }
 
@@ -311,8 +457,22 @@
 
   // Auto initialize on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initLiveChat);
+    document.addEventListener('DOMContentLoaded', () => {
+      initLiveChat();
+      checkForAdminReplies();
+    });
   } else {
     initLiveChat();
+    checkForAdminReplies();
   }
+
+  // Cross-tab real-time listener for admin replies
+  window.addEventListener('storage', (e) => {
+    if (e.key === CHAT_STORAGE_KEY) {
+      checkForAdminReplies();
+    }
+  });
+
+  // Periodic fallback check
+  setInterval(checkForAdminReplies, 2500);
 })();
