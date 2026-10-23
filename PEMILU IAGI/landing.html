@@ -804,8 +804,13 @@
       }
     });
 
-    // Candidate Detail & PDF Modal
-    function openCandidateModal(candId, initialTab = 'pdf') {
+    // Candidate Detail & Ultra-Fast Slide Presentation Viewer
+    let currentCandId = 1;
+    let currentSlideIndex = 1;
+    let currentSlideTotal = 23;
+    let currentSlidePrefix = '';
+
+    function openCandidateModal(candId, initialTab = 'slides') {
       const modal = document.getElementById('modal-candidate');
       const dialog = modal ? modal.querySelector('.modal-dialog') : null;
       const content = document.getElementById('modal-candidate-content');
@@ -813,28 +818,33 @@
 
       if (!candidate || !modal || !content) return;
 
+      currentCandId = candidate.id;
+      currentSlideIndex = 1;
+      currentSlideTotal = candidate.slideCount || 1;
+      currentSlidePrefix = candidate.slidePrefix || '';
+
       if (dialog) dialog.classList.add('modal-pdf-mode');
 
       content.innerHTML = `
         <!-- Header Profil Calon & Navigasi -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap;">
-          <div style="display:flex; align-items:center; gap:14px;">
-            <img src="${candidate.photo}" alt="${candidate.name}" style="width:64px; height:64px; border-radius:14px; object-fit:cover; border:2.5px solid ${candidate.accentColor}; box-shadow:0 4px 12px rgba(15,23,42,0.1); flex-shrink:0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="${candidate.photo}" alt="${candidate.name}" style="width:52px; height:52px; border-radius:12px; object-fit:cover; border:2.5px solid ${candidate.accentColor}; box-shadow:0 3px 10px rgba(15,23,42,0.12); flex-shrink:0;">
             <div>
-              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:3px;">
-                <span style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 800; background: ${candidate.accentColor}; color: #FFFFFF; padding: 2px 10px; border-radius: 999px;">NO. URUT ${candidate.number}</span>
-                <span style="font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; background: #F1F5F9; color: #1E293B; padding: 2px 10px; border-radius: 999px; border: 1px solid #CBD5E1;">${candidate.npa || ''}</span>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:2px;">
+                <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 800; background: ${candidate.accentColor}; color: #FFFFFF; padding: 2px 9px; border-radius: 999px;">NO. URUT ${candidate.number}</span>
+                <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; background: #F1F5F9; color: #1E293B; padding: 2px 9px; border-radius: 999px; border: 1px solid #CBD5E1;">${candidate.npa || ''}</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; line-height: 1.25; margin: 3px 0 0 0;">${candidate.name}</h3>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; line-height: 1.25; margin: 2px 0 0 0;">${candidate.name}</h3>
             </div>
           </div>
 
           <!-- Switch Tabs & Download PDF -->
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-right:36px;">
             <div style="display:inline-flex; background:#F1F5F9; padding:3px; border-radius:10px; border:1px solid #E2E8F0;">
-              <button type="button" id="tab-btn-pdf" onclick="switchCandidateTab('pdf')" style="border:none; background:#FFFFFF; color:#0F172A; font-weight:700; font-size:0.78rem; padding:6px 14px; border-radius:7px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; align-items:center; gap:6px; transition:all 0.2s;">
-                <svg style="width:14px; height:14px; fill:#EF4444;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <span>Dokumen PDF</span>
+              <button type="button" id="tab-btn-slides" onclick="switchCandidateTab('slides')" style="border:none; background:#FFFFFF; color:#0F172A; font-weight:700; font-size:0.78rem; padding:6px 14px; border-radius:7px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                <svg style="width:14px; height:14px; fill:#0284C7;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <span>⚡ Slide Instan</span>
               </button>
               <button type="button" id="tab-btn-text" onclick="switchCandidateTab('text')" style="border:none; background:transparent; color:#64748B; font-weight:600; font-size:0.78rem; padding:6px 14px; border-radius:7px; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                 <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
@@ -843,36 +853,57 @@
             </div>
 
             ${candidate.pdfUrl ? `
-              <a href="${candidate.pdfUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:5px; background:#0284C7; color:#FFFFFF; font-size:0.78rem; font-weight:700; padding:7px 12px; border-radius:8px; text-decoration:none; box-shadow:0 2px 6px rgba(2,132,199,0.25);">
-                <span>Layar Penuh ↗</span>
+              <a href="${candidate.pdfUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:5px; background:#0284C7; color:#FFFFFF; font-size:0.78rem; font-weight:700; padding:6px 12px; border-radius:8px; text-decoration:none; box-shadow:0 2px 6px rgba(2,132,199,0.25);">
+                <span>PDF Asli ↗</span>
               </a>
-              <a href="${candidate.pdfUrl}" download="${candidate.pdfName || 'visi-misi.pdf'}" style="display:inline-flex; align-items:center; gap:5px; background:#10B981; color:#FFFFFF; font-size:0.78rem; font-weight:700; padding:7px 12px; border-radius:8px; text-decoration:none; box-shadow:0 2px 6px rgba(16,185,129,0.25);">
-                <span>Unduh PDF ⬇</span>
+              <a href="${candidate.pdfUrl}" download="${candidate.pdfName || 'visi-misi.pdf'}" style="display:inline-flex; align-items:center; gap:5px; background:#10B981; color:#FFFFFF; font-size:0.78rem; font-weight:700; padding:6px 12px; border-radius:8px; text-decoration:none; box-shadow:0 2px 6px rgba(16,185,129,0.25);">
+                <span>Unduh ⬇</span>
               </a>
             ` : ''}
           </div>
         </div>
 
-        <!-- PANE 1: DOKUMEN PDF RESMI (DEFAULT LANGSUNG VIEW PDF) -->
-        <div id="candidate-pane-pdf" style="display:block;">
-          <div style="position:relative; width:100%; height:70vh; min-height:480px; background:#0F172A; border-radius:12px; overflow:hidden; border:1px solid #CBD5E1; box-shadow:inset 0 2px 8px rgba(0,0,0,0.35);">
-            <iframe src="${candidate.pdfUrl}#toolbar=1&navpanes=0&scrollbar=1&view=FitH" 
-                    style="width:100%; height:100%; border:none; display:block;" 
-                    title="Visi Misi ${candidate.name} PDF">
-            </iframe>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:0.8rem; color:#64748B; flex-wrap:wrap; gap:8px;">
-            <span>📄 Dokumen resmi pemaparan visi &amp; misi <strong>${candidate.name}</strong> (${candidate.pdfName || 'PDF Resmi'})</span>
-            <div style="display:flex; gap:8px;">
-              <a href="${candidate.pdfUrl}" target="_blank" rel="noopener noreferrer" style="color:#0284C7; font-weight:700; text-decoration:none;">Buka di Tab Baru ↗</a>
-              <span>•</span>
-              <a href="${candidate.pdfUrl}" download="${candidate.pdfName || 'visi-misi.pdf'}" style="color:#166534; font-weight:700; text-decoration:none;">Download File PDF ⬇</a>
+        <!-- PANE 1: ULTRA-FAST SLIDE PRESENTATION VIEWER (INSTANT LOAD) -->
+        <div id="candidate-pane-slides" style="display:block;">
+          <!-- Controls Bar -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-size:0.8rem; color:#475569; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-weight:700; color:#0F172A;">Halaman:</span>
+              <select id="slide-select-dropdown" onchange="jumpToSlide(this.value)" style="background:#FFF; border:1px solid #CBD5E1; border-radius:6px; padding:3px 8px; font-size:0.78rem; font-weight:600; color:#0F172A; cursor:pointer;">
+                ${Array.from({length: candidate.slideCount || 1}, (_, i) => `<option value="${i+1}">Slide ${i+1} dari ${candidate.slideCount}</option>`).join('')}
+              </select>
+              <span id="slide-counter-badge" style="font-family:var(--font-mono); font-size:0.74rem; background:#E2E8F0; padding:2px 8px; border-radius:6px; font-weight:700; color:#334155;">1 / ${candidate.slideCount}</span>
             </div>
+
+            <div style="display:flex; align-items:center; gap:10px; font-size:0.74rem; color:#64748B;">
+              <span>Gunakan tombol [◀] [▶] atau geser layar</span>
+              <button type="button" onclick="toggleSlideFullscreen()" style="border:none; background:#F1F5F9; color:#0F172A; font-weight:600; font-size:0.74rem; padding:4px 9px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                <span>Fullscreen</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Slide Stage -->
+          <div id="slide-viewer-stage" class="slide-viewer-stage">
+            <button type="button" id="btn-slide-prev" class="slide-nav-btn slide-nav-prev" onclick="prevSlide()" title="Slide Sebelumnya" style="opacity:0.35; pointer-events:none;">❮</button>
+            <img id="slide-viewer-img" class="slide-viewer-img" src="${candidate.slidePrefix}1.jpg" alt="Slide 1" loading="eager">
+            <button type="button" id="btn-slide-next" class="slide-nav-btn slide-nav-next" onclick="nextSlide()" title="Slide Berikutnya">❯</button>
+          </div>
+
+          <!-- Thumbnail Strip -->
+          <div class="slide-thumb-strip">
+            ${Array.from({length: candidate.slideCount || 1}, (_, i) => `
+              <div class="slide-thumb-item ${i === 0 ? 'active' : ''}" id="thumb-item-${i+1}" onclick="jumpToSlide(${i+1})">
+                <img src="${candidate.slidePrefix}${i+1}.jpg" loading="lazy" alt="Thumb ${i+1}">
+                <span class="thumb-num">${i+1}</span>
+              </div>
+            `).join('')}
           </div>
         </div>
 
         <!-- PANE 2: RINGKASAN TEKS & PROGRAM UTAMA -->
-        <div id="candidate-pane-text" style="display:none;">
+        <div id="candidate-pane-text" style="display:none; padding-top:4px;">
           <!-- Video Profil Highlight Banner -->
           ${candidate.videoUrl ? `
             <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
@@ -967,32 +998,152 @@
         </div>
 
         <!-- Footer Modal -->
-        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #E2E8F0; padding-top: 14px; margin-top: 14px;">
-          <button class="btn-gate-secondary" onclick="closeCandidateModal()" style="padding: 10px 24px;">Tutup</button>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #E2E8F0; padding-top: 12px; margin-top: 12px;">
+          <button class="btn-gate-secondary" onclick="closeCandidateModal()" style="padding: 8px 22px;">Tutup</button>
         </div>
       `;
 
       modal.classList.add('active');
+      setupSwipe();
+
       if (initialTab === 'text') {
         switchCandidateTab('text');
       } else {
-        switchCandidateTab('pdf');
+        switchCandidateTab('slides');
+      }
+
+      // Preload next slide
+      if (candidate.slideCount > 1) {
+        const nextImg = new Image();
+        nextImg.src = `${candidate.slidePrefix}2.jpg`;
       }
     }
 
+    function renderSlide(index) {
+      if (index < 1) index = 1;
+      if (index > currentSlideTotal) index = currentSlideTotal;
+      currentSlideIndex = index;
+
+      const img = document.getElementById('slide-viewer-img');
+      const counterBadge = document.getElementById('slide-counter-badge');
+      const selector = document.getElementById('slide-select-dropdown');
+      const btnPrev = document.getElementById('btn-slide-prev');
+      const btnNext = document.getElementById('btn-slide-next');
+
+      if (img) {
+        img.src = `${currentSlidePrefix}${index}.jpg`;
+      }
+      if (counterBadge) {
+        counterBadge.textContent = `${index} / ${currentSlideTotal}`;
+      }
+      if (selector) {
+        selector.value = index;
+      }
+      if (btnPrev) {
+        btnPrev.style.opacity = index === 1 ? '0.35' : '1';
+        btnPrev.style.pointerEvents = index === 1 ? 'none' : 'auto';
+      }
+      if (btnNext) {
+        btnNext.style.opacity = index === currentSlideTotal ? '0.35' : '1';
+        btnNext.style.pointerEvents = index === currentSlideTotal ? 'none' : 'auto';
+      }
+
+      // Highlight active thumbnail
+      document.querySelectorAll('.slide-thumb-item').forEach((thumb, i) => {
+        if (i + 1 === index) {
+          thumb.classList.add('active');
+          thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          thumb.classList.remove('active');
+        }
+      });
+
+      // Preload next 2 slides for 0ms instant transition
+      if (index < currentSlideTotal) {
+        const n1 = new Image();
+        n1.src = `${currentSlidePrefix}${index + 1}.jpg`;
+      }
+      if (index + 1 < currentSlideTotal) {
+        const n2 = new Image();
+        n2.src = `${currentSlidePrefix}${index + 2}.jpg`;
+      }
+    }
+
+    window.nextSlide = function() {
+      if (currentSlideIndex < currentSlideTotal) {
+        renderSlide(currentSlideIndex + 1);
+      }
+    };
+
+    window.prevSlide = function() {
+      if (currentSlideIndex > 1) {
+        renderSlide(currentSlideIndex - 1);
+      }
+    };
+
+    window.jumpToSlide = function(index) {
+      renderSlide(parseInt(index, 10));
+    };
+
+    function setupSwipe() {
+      const stage = document.getElementById('slide-viewer-stage');
+      if (!stage || stage.dataset.swipeInit) return;
+      stage.dataset.swipeInit = 'true';
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      stage.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      stage.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 40) {
+          window.nextSlide();
+        } else if (touchEndX - touchStartX > 40) {
+          window.prevSlide();
+        }
+      }, { passive: true });
+    }
+
+    window.toggleSlideFullscreen = function() {
+      const stage = document.getElementById('slide-viewer-stage');
+      if (!stage) return;
+      if (!document.fullscreenElement) {
+        stage.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    };
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('modal-candidate');
+      if (modal && modal.classList.contains('active')) {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          window.nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          window.prevSlide();
+        } else if (e.key === 'Escape') {
+          closeCandidateModal();
+        }
+      }
+    });
+
     window.switchCandidateTab = function(tab) {
-      const panePdf = document.getElementById('candidate-pane-pdf');
+      const paneSlides = document.getElementById('candidate-pane-slides');
       const paneText = document.getElementById('candidate-pane-text');
-      const tabBtnPdf = document.getElementById('tab-btn-pdf');
+      const tabBtnSlides = document.getElementById('tab-btn-slides');
       const tabBtnText = document.getElementById('tab-btn-text');
 
-      if (tab === 'pdf') {
-        if (panePdf) panePdf.style.display = 'block';
+      if (tab === 'slides') {
+        if (paneSlides) paneSlides.style.display = 'block';
         if (paneText) paneText.style.display = 'none';
-        if (tabBtnPdf) {
-          tabBtnPdf.style.background = '#FFFFFF';
-          tabBtnPdf.style.color = '#0F172A';
-          tabBtnPdf.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+        if (tabBtnSlides) {
+          tabBtnSlides.style.background = '#FFFFFF';
+          tabBtnSlides.style.color = '#0F172A';
+          tabBtnSlides.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
         }
         if (tabBtnText) {
           tabBtnText.style.background = 'transparent';
@@ -1000,17 +1151,17 @@
           tabBtnText.style.boxShadow = 'none';
         }
       } else {
-        if (panePdf) panePdf.style.display = 'none';
+        if (paneSlides) paneSlides.style.display = 'none';
         if (paneText) paneText.style.display = 'block';
         if (tabBtnText) {
           tabBtnText.style.background = '#FFFFFF';
           tabBtnText.style.color = '#0F172A';
           tabBtnText.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
         }
-        if (tabBtnPdf) {
-          tabBtnPdf.style.background = 'transparent';
-          tabBtnPdf.style.color = '#64748B';
-          tabBtnPdf.style.boxShadow = 'none';
+        if (tabBtnSlides) {
+          tabBtnSlides.style.background = 'transparent';
+          tabBtnSlides.style.color = '#64748B';
+          tabBtnSlides.style.boxShadow = 'none';
         }
       }
     };
