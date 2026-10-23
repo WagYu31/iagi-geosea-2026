@@ -1,10 +1,10 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v3.9.0';
+const CACHE_NAME = 'pemilu-iagi-2026-v4.0.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './landing.html',
   './manifest.json',
-  './css/landing.css?v=3.9.0',
+  './css/landing.css?v=4.0.0',
   './js/data.js?v=3.5.0',
   './js/storage.js?v=2.6.0',
   './js/app.js?v=2.6.0',
