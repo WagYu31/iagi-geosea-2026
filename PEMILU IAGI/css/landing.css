@@ -2660,10 +2660,26 @@ body {
     box-shadow: 0 8px 24px rgba(10, 25, 47, 0.1) !important;
   }
 
-  /* Landscape Photo Header: 185px height for sleek proportions */
+  /* Full Portrait Proportions on Mobile (No awkward face cropping) */
   .candidate-photo-header {
-    height: 185px !important;
-    aspect-ratio: 16 / 10 !important;
+    height: 260px !important;
+    aspect-ratio: auto !important;
+  }
+  .candidate-photo-header img {
+    object-fit: cover !important;
+    object-position: center 10% !important;
+  }
+  .candidate-num-pill {
+    top: 10px !important;
+    left: 10px !important;
+    font-size: 0.72rem !important;
+    padding: 4px 10px !important;
+  }
+  .candidate-npa-pill {
+    top: 10px !important;
+    right: 10px !important;
+    font-size: 0.68rem !important;
+    padding: 4px 9px !important;
   }
 
   .candidate-details-body {
