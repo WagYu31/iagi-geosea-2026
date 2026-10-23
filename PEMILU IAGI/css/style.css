@@ -125,15 +125,114 @@ body::before {
   z-index: 1;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   body {
-    padding: 24px 0;
+    padding: 20px 16px;
+    background: #021410;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.16) 0%, transparent 60%),
+      radial-gradient(circle at 10% 40%, rgba(245, 186, 66, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
   }
   .app-container {
-    min-height: calc(100vh - 48px);
+    max-width: 1240px !important;
+    width: 100%;
+    margin: 0 auto;
+    min-height: calc(100vh - 40px);
     border-radius: var(--radius-xl);
     overflow: hidden;
+    border: 1px solid rgba(245, 186, 66, 0.25);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.88), 0 0 40px rgba(16, 185, 129, 0.12);
+    border-left: 1px solid rgba(245, 186, 66, 0.25);
+    border-right: 1px solid rgba(245, 186, 66, 0.25);
+  }
+  .mobile-nav-dock {
+    display: none !important;
+  }
+  .app-main {
+    padding: 26px 36px 48px 36px !important;
+    gap: 20px;
+  }
+  .pwa-prompt-banner {
+    display: none !important;
+  }
+}
+
+/* Desktop Executive Top Navigation Bar */
+.desktop-nav-bar {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .desktop-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(3, 22, 17, 0.72);
     border: 1px solid rgba(245, 186, 66, 0.22);
+    padding: 4px 6px;
+    border-radius: var(--radius-pill);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .desktop-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94A3B8;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  .desktop-nav-item svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.2;
+    transition: transform 0.2s ease;
+  }
+
+  .desktop-nav-item:hover {
+    color: #FDE68A;
+    background: rgba(245, 186, 66, 0.1);
+    border-color: rgba(245, 186, 66, 0.25);
+  }
+
+  .desktop-nav-item:hover svg {
+    transform: translateY(-1px);
+  }
+
+  .desktop-nav-item.active {
+    color: #03211A;
+    background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 100%);
+    font-weight: 800;
+    border-color: #FDE68A;
+    box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35);
+  }
+
+  .desktop-nav-item.active svg {
+    stroke: #03211A;
+  }
+
+  .desktop-nav-item.desktop-nav-vote:not(.active) {
+    color: #FDE68A;
+    border-color: rgba(245, 186, 66, 0.38);
+    background: rgba(245, 186, 66, 0.08);
+  }
+
+  .desktop-nav-item.desktop-nav-vote:not(.active):hover {
+    background: rgba(245, 186, 66, 0.18);
+    border-color: var(--gold-primary);
   }
 }
 
@@ -2709,6 +2808,220 @@ body::before {
   margin: 12px 0;
   letter-spacing: 0.08em;
   box-shadow: 0 0 15px rgba(245, 186, 66, 0.2);
+}
+
+/* ==========================================================================
+   DESKTOP SCREEN RESPONSIVE ARCHITECTURE (LAPTOPS & MONITORS >= 769px)
+   ========================================================================== */
+@media (min-width: 769px) {
+  /* Screen 1: Beranda / Home */
+  .hero-master-card {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    grid-template-areas:
+      "body chrono"
+      "actions chrono";
+    gap: 20px;
+    align-items: center;
+  }
+  .hero-chronometer-strip {
+    grid-area: chrono;
+    margin-bottom: 0;
+    padding: 18px 20px;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    justify-content: center;
+    background: rgba(1, 15, 12, 0.85);
+    border: 1.5px solid rgba(245, 186, 66, 0.35);
+    border-radius: var(--radius-lg);
+  }
+  .hero-chronometer-strip .chrono-timer {
+    font-size: 1.35rem;
+    gap: 8px;
+    justify-content: center;
+  }
+  .hero-chronometer-strip .chrono-num {
+    font-size: 1.5rem;
+  }
+  .hero-chronometer-strip .chrono-lbl {
+    font-size: 0.68rem;
+  }
+  .hero-portal-content {
+    grid-area: body;
+  }
+  .hero-portal-title {
+    font-size: 1.7rem;
+  }
+  .hero-portal-desc {
+    font-size: 0.92rem;
+    max-width: 600px;
+  }
+  .hero-quick-actions {
+    grid-area: actions;
+    max-width: 500px;
+  }
+
+  /* 4 Steps Flow: Horizontal Row */
+  .steps-grid-2x2 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+  .step-tile {
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+  .step-tile-name {
+    font-size: 0.86rem;
+  }
+  .step-tile-sub {
+    font-size: 0.74rem;
+  }
+
+  /* Candidate Spotlight: 3 Columns Grid */
+  .candidate-swipe-track {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 18px !important;
+    overflow-x: visible !important;
+    padding-bottom: 0 !important;
+  }
+  .candidate-snap-card {
+    width: 100% !important;
+    flex: none !important;
+    padding: 16px !important;
+    border-radius: var(--radius-lg) !important;
+  }
+  .candidate-snap-img {
+    width: 68px !important;
+    height: 68px !important;
+  }
+  .candidate-snap-name {
+    font-size: 0.94rem !important;
+  }
+  .candidate-snap-title {
+    font-size: 0.74rem !important;
+  }
+
+  .helpdesk-compact-bar {
+    max-width: 680px;
+    margin: 16px auto 0 auto;
+  }
+
+  /* Screen 2: Cek DPT Online */
+  #screen-dpt {
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  #screen-dpt .card {
+    padding: 28px 36px;
+    border-radius: var(--radius-xl);
+  }
+  .dpt-search-bar {
+    max-width: 680px;
+    margin: 16px auto;
+  }
+
+  /* Screen 3: Klaim Surat Suara */
+  #screen-claim {
+    max-width: 820px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  #screen-claim .card {
+    padding: 32px 40px;
+    border-radius: var(--radius-xl);
+  }
+  #screen-claim .card-title {
+    font-size: 1.25rem;
+  }
+  #form-claim {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+    margin-top: 22px;
+  }
+  #form-claim .form-group:nth-child(1) {
+    grid-column: span 1;
+  }
+  #form-claim .form-group:nth-child(2) {
+    grid-column: span 1;
+  }
+  #form-claim .form-group:nth-child(3) {
+    grid-column: span 2;
+  }
+  #form-claim button[type="submit"] {
+    grid-column: span 2;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
+
+  /* Screen 4: Bilik Suara */
+  #screen-vote {
+    max-width: 1160px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  #vote-auth-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    border-radius: var(--radius-xl);
+  }
+  #form-vote-auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+    margin-top: 20px;
+  }
+  #form-vote-auth .form-group:nth-child(1) {
+    grid-column: span 1;
+  }
+  #form-vote-auth .form-group:nth-child(2) {
+    grid-column: span 1;
+  }
+  #form-vote-auth button[type="submit"] {
+    grid-column: span 2;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
+  .ballot-interactive-container {
+    overflow-x: visible;
+  }
+  .ballot-landscape-grid {
+    gap: 20px;
+  }
+  .ballot-col {
+    padding: 18px 16px;
+  }
+
+  /* Screen 5: Digital Receipt */
+  #screen-receipt {
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .receipt-box {
+    padding: 32px 36px;
+    border-radius: var(--radius-xl);
+  }
+
+  /* Screen 6: KPKU Command Center (Admin) */
+  #screen-admin {
+    max-width: 1140px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  #admin-pin-gate {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 38px;
+    border-radius: var(--radius-xl);
+  }
 }
 
 /* Print Specific Rules for Digital Receipt */

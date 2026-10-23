@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     admin: document.getElementById('screen-admin')
   };
 
-  const navItems = document.querySelectorAll('.nav-item');
+  const navItems = document.querySelectorAll('.nav-item, .desktop-nav-item');
 
   function navigateTo(screenId, params = {}) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -151,12 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('hashchange', handleHashChange);
 
-  // Bottom Navigation Click Handlers
+  // Navigation Click Handlers (Mobile Dock & Desktop Nav Bar)
   navItems.forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const screenId = item.getAttribute('data-screen');
-      navigateTo(screenId);
+      if (screenId) {
+        navigateTo(screenId);
+      }
     });
   });
 
