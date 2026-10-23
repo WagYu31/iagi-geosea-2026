@@ -60,15 +60,15 @@ export const BADGE_TEMPLATES = {
     delegate: '/images/badges/Sponsorship.png',
 
     // Technical
-    presenter: '/images/badges/Speaker.png',
-    invited_speaker: '/images/badges/Speaker.png',
-    session_chair_judge: '/images/badges/Moderator.png',
-    session_chair: '/images/badges/Moderator.png',
-    judge: '/images/badges/Moderator.png',
-    oral: '/images/badges/Speaker.png',
-    oral_presenter: '/images/badges/Speaker.png',
-    poster: '/images/badges/Speaker.png',
-    poster_presenter: '/images/badges/Speaker.png',
+    presenter: '/images/badges/Presenter.png',
+    invited_speaker: '/images/badges/Invited_Speaker.png',
+    session_chair_judge: '/images/badges/Session_Chair_Judge.png',
+    session_chair: '/images/badges/Session_Chair.png',
+    judge: '/images/badges/Judge.png',
+    oral: '/images/badges/Oral.png',
+    oral_presenter: '/images/badges/Oral_Presenter.png',
+    poster: '/images/badges/Poster.png',
+    poster_presenter: '/images/badges/Poster_Presenter.png',
 };
 
 const CATEGORY_MAP = {
