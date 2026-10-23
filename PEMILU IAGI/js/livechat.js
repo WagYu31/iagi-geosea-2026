@@ -88,6 +88,10 @@
             </div>
           </div>
           <div class="chat-header-actions">
+            <button type="button" class="btn-chat-restore" id="btn-chat-restore" title="Pulihkan / Cek Balasan Pengaduan Sebelumnya (Cari dengan NPA)" aria-label="Pulihkan Riwayat Chat">
+              <svg viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Cek Tiket</span>
+            </button>
             <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Panitia%20KPKU%20IAGI%202026,%20saya%20butuh%20bantuan%20terkait%20Pemilu." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Lanjut Chat di WhatsApp">
               <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
             </a>
@@ -99,6 +103,18 @@
         <div class="kpku-chat-banner">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           <span>Pusat Bantuan Resmi Panitia Pemilu Ketua Umum IAGI 2026–2029</span>
+        </div>
+
+        <!-- Restore / Recovery Panel -->
+        <div class="chat-restore-panel" id="chat-restore-panel" style="display: none;">
+          <div class="chat-restore-inner">
+            <span class="chat-restore-desc">🔍 <strong>Pulihkan Riwayat Chat & Balasan Panitia</strong><br>Masukkan NPA 5-digit atau Email untuk memuat percakapan Anda:</span>
+            <div class="chat-restore-input-group">
+              <input type="text" id="restore-npa-input" class="restore-input" placeholder="Contoh: 01842 atau email...">
+              <button type="button" class="btn-do-restore" id="btn-do-restore" onclick="window.doRestoreByNpa()">Muat Chat</button>
+            </div>
+            <div id="restore-status-msg" style="display: none; font-size: 0.72rem; padding: 2px 0;"></div>
+          </div>
         </div>
 
         <!-- Messages Stream -->
@@ -163,6 +179,33 @@
       if (win) win.classList.add('docked-above');
     }
 
+    const restoreBtn = document.getElementById('btn-chat-restore');
+    const restoreInput = document.getElementById('restore-npa-input');
+
+    if (restoreBtn) {
+      restoreBtn.addEventListener('click', () => {
+        const panel = document.getElementById('chat-restore-panel');
+        if (panel) {
+          const isHidden = (panel.style.display === 'none' || !panel.style.display);
+          panel.style.display = isHidden ? 'block' : 'none';
+          if (isHidden && restoreInput) {
+            const id = getVoterIdentity();
+            if (id.voterNpa && id.voterNpa !== 'Tamu') restoreInput.value = id.voterNpa;
+            setTimeout(() => restoreInput.focus(), 60);
+          }
+        }
+      });
+    }
+
+    if (restoreInput) {
+      restoreInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          window.doRestoreByNpa();
+        }
+      });
+    }
+
     if (trigger) {
       trigger.addEventListener('click', () => {
         toggleChatWindow(true);
@@ -207,7 +250,25 @@
   }
 
   const CHAT_STORAGE_KEY = 'kpku_livechat_sessions';
+  const ACTIVE_TICKET_KEY = 'kpku_voter_active_ticket_id';
   let displayedAdminMsgCount = 0;
+
+  function getActiveTicketId() {
+    return localStorage.getItem(ACTIVE_TICKET_KEY) || sessionStorage.getItem('kpku_chat_session_id');
+  }
+
+  function setActiveTicketId(id) {
+    if (id) {
+      localStorage.setItem(ACTIVE_TICKET_KEY, id);
+      sessionStorage.setItem('kpku_chat_session_id', id);
+    }
+  }
+
+  function extractNpaFromText(text) {
+    if (!text) return null;
+    const match = text.match(/\b\d{5}\b/);
+    return match ? match[0] : null;
+  }
 
   function getVoterIdentity() {
     let voterName = 'Rekan Geolog (Tamu Web)';
@@ -244,16 +305,21 @@
         if (!Array.isArray(sessions)) sessions = [];
       } catch (e) { sessions = []; }
 
-      let ticketId = sessionStorage.getItem('kpku_chat_session_id');
+      let ticketId = getActiveTicketId();
       let ticket = sessions.find(s => s.id === ticketId);
 
       const identity = getVoterIdentity();
+      const detectedNpa = extractNpaFromText(userText);
+      if (detectedNpa && identity.voterNpa === 'Tamu') {
+        identity.voterNpa = detectedNpa;
+      }
+
       const now = new Date();
       const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
 
       if (!ticket) {
         ticketId = 'ticket-live-' + Date.now();
-        sessionStorage.setItem('kpku_chat_session_id', ticketId);
+        setActiveTicketId(ticketId);
         ticket = {
           id: ticketId,
           userName: identity.voterName,
@@ -268,11 +334,11 @@
         };
         sessions.unshift(ticket);
       } else {
-        if (ticket.userNpa === 'Tamu' && identity.voterNpa !== 'Tamu') {
+        if ((ticket.userNpa === 'Tamu' || !ticket.userNpa) && identity.voterNpa !== 'Tamu') {
           ticket.userName = identity.voterName;
           ticket.userNpa = identity.voterNpa;
-          ticket.userEmail = identity.voterEmail;
-          ticket.userPhone = identity.voterPhone;
+          ticket.userEmail = identity.voterEmail || ticket.userEmail;
+          ticket.userPhone = identity.voterPhone || ticket.userPhone;
         }
       }
 
@@ -286,14 +352,179 @@
       }
 
       localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
+      setActiveTicketId(ticket.id);
     } catch (e) {
       console.error('Error syncing voter chat to admin:', e);
     }
   }
 
+  function renderFullChatHistory(ticket) {
+    const msgContainer = document.getElementById('chat-messages');
+    const typing = document.getElementById('chat-typing');
+    if (!msgContainer) return;
+
+    // Clear existing rendered history to prevent duplicates
+    const oldDynamic = msgContainer.querySelectorAll('.rendered-history, .chat-resume-banner');
+    oldDynamic.forEach(el => el.remove());
+
+    // Show persistent resume banner
+    const banner = document.createElement('div');
+    banner.className = 'chat-resume-banner';
+    banner.innerHTML = `<span>📂 Sesi Terhubung: ${escapeHtml(ticket.userName)} (NPA: ${escapeHtml(ticket.userNpa || 'Tamu')})</span>`;
+    if (typing) {
+      msgContainer.insertBefore(banner, typing);
+    } else {
+      msgContainer.appendChild(banner);
+    }
+
+    let adminCount = 0;
+    (ticket.messages || []).forEach(m => {
+      const div = document.createElement('div');
+      div.className = `chat-msg ${m.sender === 'user' ? 'user' : 'bot'} rendered-history`;
+
+      if (m.sender === 'user') {
+        div.innerHTML = `
+          <span class="msg-sender-tag">Anda</span>
+          <div class="msg-bubble">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+          <span class="msg-time">${escapeHtml(m.time || '')}</span>
+        `;
+      } else if (m.sender === 'bot') {
+        div.innerHTML = `
+          <span class="msg-sender-tag">KPKU Support (Bot)</span>
+          <div class="msg-bubble">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+          <span class="msg-time">${escapeHtml(m.time || '')}</span>
+        `;
+      } else {
+        // Admin official response
+        adminCount++;
+        div.style.borderLeft = '3px solid #34D399';
+        div.style.paddingLeft = '6px';
+        div.innerHTML = `
+          <span class="msg-sender-tag" style="color: #34D399; font-weight: 800;">🏛️ ${escapeHtml(m.adminName || 'Panitia KPKU (Admin)')}</span>
+          <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #F0FDF4;">
+            ${escapeHtml(m.text).replace(/\n/g, '<br>')}
+          </div>
+          <span class="msg-time">${escapeHtml(m.time || '')} ✓ Balasan Resmi</span>
+        `;
+      }
+
+      if (typing) {
+        msgContainer.insertBefore(div, typing);
+      } else {
+        msgContainer.appendChild(div);
+      }
+    });
+
+    displayedAdminMsgCount = adminCount;
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+
+    // Unread badge alert if window is closed
+    if (adminCount > 0) {
+      const win = document.getElementById('chat-window');
+      if (!win || !win.classList.contains('active')) {
+        const badge = document.getElementById('chat-unread-badge');
+        if (badge) {
+          badge.style.display = 'block';
+          badge.textContent = String(adminCount);
+        }
+      }
+    }
+  }
+
+  function restoreChatSession() {
+    try {
+      let ticketId = getActiveTicketId();
+      const identity = getVoterIdentity();
+
+      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (!raw) return;
+      let sessions = [];
+      try {
+        sessions = JSON.parse(raw);
+      } catch(e) { return; }
+      if (!Array.isArray(sessions) || sessions.length === 0) return;
+
+      let ticket = null;
+      if (ticketId) {
+        ticket = sessions.find(s => s.id === ticketId);
+      }
+
+      // Smart fallback: If no active ticket ID, but user is known by NPA, find their latest ticket
+      if (!ticket && identity && identity.voterNpa && identity.voterNpa !== 'Tamu') {
+        ticket = sessions.find(s => s.userNpa === identity.voterNpa);
+        if (ticket) {
+          setActiveTicketId(ticket.id);
+        }
+      }
+
+      if (!ticket || !ticket.messages || ticket.messages.length === 0) return;
+
+      renderFullChatHistory(ticket);
+    } catch (e) {
+      console.error('Error restoring chat session:', e);
+    }
+  }
+
+  window.doRestoreByNpa = function(customVal) {
+    const input = document.getElementById('restore-npa-input');
+    const statusMsg = document.getElementById('restore-status-msg');
+    const query = (customVal || (input ? input.value : '')).trim().toLowerCase();
+    if (!query) {
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#F87171';
+        statusMsg.innerText = 'Masukkan NPA 5-digit atau Email terlebih dahulu.';
+      }
+      return;
+    }
+
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) {
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#F87171';
+        statusMsg.innerText = 'Belum ada data pengaduan yang tersimpan di sistem.';
+      }
+      return;
+    }
+
+    let sessions = [];
+    try { sessions = JSON.parse(raw); } catch(e) {}
+    const found = sessions.find(s => {
+      const npaMatch = (s.userNpa || '').toLowerCase() === query;
+      const emailMatch = (s.userEmail || '').toLowerCase() === query;
+      const nameMatch = (s.userName || '').toLowerCase().includes(query);
+      return npaMatch || emailMatch || nameMatch;
+    });
+
+    if (!found) {
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#F87171';
+        statusMsg.innerText = 'Tidak ditemukan tiket aktif untuk "' + query + '". Silakan ketik pertanyaan langsung di bawah.';
+      }
+      return;
+    }
+
+    setActiveTicketId(found.id);
+    renderFullChatHistory(found);
+
+    if (statusMsg) {
+      statusMsg.style.display = 'block';
+      statusMsg.style.color = '#34D399';
+      const adminReplyCount = (found.messages || []).filter(m => m.sender === 'admin').length;
+      statusMsg.innerText = `✓ Berhasil memuat sesi ${found.userName} (NPA: ${found.userNpa}). ${adminReplyCount} balasan panitia tersedia.`;
+    }
+
+    const panel = document.getElementById('chat-restore-panel');
+    setTimeout(() => {
+      if (panel) panel.style.display = 'none';
+    }, 2500);
+  };
+
   function checkForAdminReplies() {
     try {
-      const ticketId = sessionStorage.getItem('kpku_chat_session_id');
+      const ticketId = getActiveTicketId();
       if (!ticketId) return;
 
       const raw = localStorage.getItem(CHAT_STORAGE_KEY);
@@ -315,7 +546,7 @@
           const badge = document.getElementById('chat-unread-badge');
           if (badge) {
             badge.style.display = 'block';
-            badge.textContent = '1';
+            badge.textContent = String(adminMessages.length);
           }
         }
       }
@@ -330,16 +561,16 @@
     if (!msgContainer) return;
 
     const div = document.createElement('div');
-    div.className = 'chat-msg bot';
+    div.className = 'chat-msg bot rendered-history';
     div.style.borderLeft = '3px solid #34D399';
     div.style.paddingLeft = '6px';
 
     div.innerHTML = `
       <span class="msg-sender-tag" style="color: #34D399; font-weight: 800;">🏛️ ${escapeHtml(adminName)}</span>
-      <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35);">
+      <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #F0FDF4;">
         ${escapeHtml(text).replace(/\n/g, '<br>')}
       </div>
-      <span class="msg-time">${timeStr || 'Baru saja'}</span>
+      <span class="msg-time">${timeStr || 'Baru saja'} ✓ Balasan Resmi</span>
     `;
 
     if (typing) {
@@ -459,11 +690,19 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initLiveChat();
+      restoreChatSession();
       checkForAdminReplies();
+      if (window.location.hash === '#chat' || window.location.hash === '#livechat') {
+        setTimeout(() => toggleChatWindow(true), 350);
+      }
     });
   } else {
     initLiveChat();
+    restoreChatSession();
     checkForAdminReplies();
+    if (window.location.hash === '#chat' || window.location.hash === '#livechat') {
+      setTimeout(() => toggleChatWindow(true), 350);
+    }
   }
 
   // Cross-tab real-time listener for admin replies

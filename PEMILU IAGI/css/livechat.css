@@ -366,6 +366,28 @@
   fill: currentColor;
 }
 
+.btn-chat-restore {
+  background: rgba(245, 186, 66, 0.12);
+  border: 1px solid rgba(245, 186, 66, 0.4);
+  color: #FDE68A;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  touch-action: manipulation;
+}
+
+.btn-chat-restore:hover {
+  background: rgba(245, 186, 66, 0.25);
+  border-color: #F5BA42;
+  color: #FFFFFF;
+}
+
 .btn-chat-close {
   width: 32px;
   height: 32px;
@@ -386,6 +408,88 @@
   background: rgba(239, 68, 68, 0.2);
   border-color: #EF4444;
   color: #EF4444;
+}
+
+/* Chat Recovery Panel */
+.chat-restore-panel {
+  background: rgba(2, 22, 17, 0.95);
+  border-bottom: 1px solid rgba(245, 186, 66, 0.25);
+  padding: 10px 14px;
+  animation: slideDownPanel 0.22s ease-out;
+}
+
+@keyframes slideDownPanel {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-restore-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-restore-desc {
+  font-size: 0.7rem;
+  color: #94A3B8;
+  line-height: 1.35;
+}
+
+.chat-restore-input-group {
+  display: flex;
+  gap: 6px;
+}
+
+.restore-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(245, 186, 66, 0.35);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-family: var(--font-mono, monospace);
+  outline: none;
+}
+
+.restore-input:focus {
+  border-color: #F5BA42;
+  box-shadow: 0 0 8px rgba(245, 186, 66, 0.25);
+}
+
+.btn-do-restore {
+  background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 100%);
+  border: none;
+  border-radius: 6px;
+  color: #021B15;
+  font-weight: 800;
+  font-size: 0.74rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-do-restore:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.chat-resume-banner {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.chat-resume-banner span {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34D399;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono, monospace);
+  display: inline-block;
 }
 
 /* Security Banner */
