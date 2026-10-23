@@ -2103,17 +2103,167 @@
     }
 
     /* ==========================================================================
-       PENGADUAN & LIVE CHAT ADMIN DESK STYLES
+       PENGADUAN & LIVE CHAT ADMIN DESK STYLES (SOVEREIGN EXECUTIVE EDITION)
        ========================================================================== */
-    .chat-admin-split-desk {
+    /* 4-Column Executive KPI Cards */
+    .chat-kpi-grid {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 16px;
-      background: rgba(0, 0, 0, 0.45);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .chat-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .chat-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chat-kpi-card {
+      background: linear-gradient(135deg, rgba(3, 27, 21, 0.75) 0%, rgba(1, 14, 11, 0.9) 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-md);
+      padding: 16px 18px;
+      position: relative;
       overflow: hidden;
-      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, border-color 0.25s;
+    }
+
+    .chat-kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      transition: background 0.3s;
+    }
+
+    .chat-kpi-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .chat-kpi-card.kpi-gold::before {
+      background: linear-gradient(90deg, #FDE68A 0%, #F5BA42 100%);
+    }
+    .chat-kpi-card.kpi-gold:hover {
+      border-color: rgba(245, 186, 66, 0.4);
+      box-shadow: 0 8px 24px rgba(245, 186, 66, 0.16);
+    }
+
+    .chat-kpi-card.kpi-red::before {
+      background: linear-gradient(90deg, #F87171 0%, #EF4444 100%);
+    }
+    .chat-kpi-card.kpi-red:hover {
+      border-color: rgba(239, 68, 68, 0.45);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.18);
+    }
+
+    .chat-kpi-card.kpi-emerald::before {
+      background: linear-gradient(90deg, #34D399 0%, #10B981 100%);
+    }
+    .chat-kpi-card.kpi-emerald:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.16);
+    }
+
+    .chat-kpi-card.kpi-wa::before {
+      background: linear-gradient(90deg, #4ADE80 0%, #25D366 100%);
+    }
+    .chat-kpi-card.kpi-wa:hover {
+      border-color: rgba(37, 211, 102, 0.4);
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.16);
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .kpi-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94A3B8;
+    }
+
+    .kpi-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .kpi-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .kpi-val {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      font-family: var(--font-display);
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+    }
+
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .beacon-pulse-red {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #EF4444;
+      box-shadow: 0 0 0 rgba(239, 68, 68, 0.6);
+      animation: pulseBeaconRed 1.8s infinite;
+    }
+
+    @keyframes pulseBeaconRed {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* Main Split Desk Container */
+    .chat-admin-split-desk {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      background: rgba(1, 12, 10, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.18);
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      min-height: 660px;
     }
 
     @media (max-width: 992px) {
@@ -2122,115 +2272,195 @@
       }
     }
 
-    /* Left Column: Ticket List */
+    /* Left Column: Ticket List Pane */
     .chat-tickets-pane {
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
-      background: rgba(2, 19, 15, 0.7);
+      background: rgba(2, 20, 16, 0.75);
     }
 
     .chat-tickets-toolbar {
-      padding: 14px 16px;
+      padding: 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      background: rgba(2, 16, 13, 0.85);
+    }
+
+    .chat-search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .chat-search-icon {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: #64748B;
+      pointer-events: none;
     }
 
     .chat-search-input {
       width: 100%;
-      padding: 9px 14px;
-      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 14px 10px 38px;
+      background: rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-sm);
+      border-radius: 10px;
       color: #FFFFFF;
       font-size: 0.82rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     .chat-search-input:focus {
       border-color: var(--gold-primary);
-      box-shadow: 0 0 10px rgba(245, 186, 66, 0.25);
+      background: rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 0 3px rgba(245, 186, 66, 0.18);
     }
 
-    .chat-filter-tabs {
+    .chat-search-input::placeholder {
+      color: #64748B;
+    }
+
+    /* Apple / Linear Segmented Filter Tab */
+    .chat-filter-segmented {
       display: flex;
-      gap: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 2px;
     }
 
     .chat-filter-tab {
+      flex: 1;
+      text-align: center;
+      border: none;
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.1);
       color: #94A3B8;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 5px 11px;
-      border-radius: var(--radius-pill);
+      padding: 7px 6px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      white-space: nowrap;
     }
 
     .chat-filter-tab:hover {
       color: #FDE68A;
-      background: rgba(245, 186, 66, 0.08);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .chat-filter-tab.active {
-      background: rgba(245, 186, 66, 0.15);
-      border-color: var(--gold-primary);
+      background: linear-gradient(135deg, rgba(245, 186, 66, 0.22) 0%, rgba(180, 83, 9, 0.22) 100%);
       color: #FDE68A;
+      border: 1px solid rgba(245, 186, 66, 0.45);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .tab-count-pill {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+    }
+
+    .chat-filter-tab.active .tab-count-pill {
+      background: rgba(245, 186, 66, 0.25);
+      color: #FFF;
     }
 
     .chat-tickets-list {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 540px;
+      max-height: 560px;
     }
 
+    .chat-tickets-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-tickets-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    /* Executive Ticket Item Card */
     .chat-ticket-item {
       padding: 12px 14px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: var(--radius-sm);
+      background: rgba(3, 25, 20, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-left: 3.5px solid rgba(148, 163, 184, 0.4);
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       gap: 12px;
       align-items: flex-start;
       position: relative;
     }
 
+    .chat-ticket-item.ticket-waiting {
+      border-left-color: #EF4444;
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.08) 0%, rgba(3, 25, 20, 0.55) 100%);
+    }
+
+    .chat-ticket-item.ticket-answered {
+      border-left-color: #10B981;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.06) 0%, rgba(3, 25, 20, 0.55) 100%);
+    }
+
+    .chat-ticket-item.ticket-resolved {
+      border-left-color: #3B82F6;
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.06) 0%, rgba(3, 25, 20, 0.55) 100%);
+    }
+
     .chat-ticket-item:hover {
-      background: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.3);
-      transform: translateX(2px);
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.35);
+      transform: translateX(3px);
     }
 
     .chat-ticket-item.active {
-      background: rgba(245, 186, 66, 0.12);
-      border-color: rgba(245, 186, 66, 0.45);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      border-color: rgba(245, 186, 66, 0.6);
+      background: linear-gradient(90deg, rgba(245, 186, 66, 0.18) 0%, rgba(2, 28, 22, 0.95) 100%);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .ticket-avatar {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(245, 186, 66, 0.2));
-      border: 1.5px solid rgba(245, 186, 66, 0.4);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.35) 0%, rgba(245, 186, 66, 0.25) 100%);
+      border: 1.5px solid rgba(245, 186, 66, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: #FDE68A;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .chat-ticket-item.active .ticket-avatar {
+      border-color: #F5BA42;
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.4);
     }
 
     .ticket-info {
@@ -2246,7 +2476,7 @@
     }
 
     .ticket-user-name {
-      font-size: 0.84rem;
+      font-size: 0.85rem;
       font-weight: 800;
       color: #FFFFFF;
       white-space: nowrap;
@@ -2267,8 +2497,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.35;
-      margin-bottom: 6px;
+      line-height: 1.4;
+      margin-bottom: 7px;
     }
 
     .ticket-badges-row {
@@ -2278,98 +2508,239 @@
       flex-wrap: wrap;
     }
 
-    .badge-ticket-status {
-      font-size: 0.64rem;
-      padding: 2px 7px;
-      border-radius: var(--radius-pill);
+    .badge-status-chip {
+      font-size: 0.62rem;
       font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
-    .badge-ticket-status.waiting {
+    .badge-status-chip.chip-waiting {
       background: rgba(239, 68, 68, 0.18);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #FCA5A5;
     }
 
-    .badge-ticket-status.answered {
+    .badge-status-chip.chip-answered {
       background: rgba(16, 185, 129, 0.18);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6EE7B7;
     }
 
-    .badge-ticket-npa {
-      font-size: 0.65rem;
+    .badge-status-chip.chip-resolved {
+      background: rgba(59, 130, 246, 0.18);
+      border: 1px solid rgba(59, 130, 246, 0.45);
+      color: #93C5FD;
+    }
+
+    .badge-npa-chip {
+      font-size: 0.64rem;
       font-family: var(--font-mono);
+      font-weight: 700;
       background: rgba(245, 186, 66, 0.1);
       border: 1px solid rgba(245, 186, 66, 0.3);
       color: #FDE68A;
-      padding: 1px 6px;
-      border-radius: var(--radius-pill);
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
     }
 
-    /* Right Column: Chat Conversation & Response */
+    /* Right Column: Chat Conversation & Executive Desk */
     .chat-conversation-pane {
       display: flex;
       flex-direction: column;
-      background: rgba(1, 14, 11, 0.9);
+      background: rgba(1, 14, 11, 0.95);
     }
 
     .chat-convo-header {
-      padding: 14px 18px;
+      padding: 16px 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(3, 22, 17, 0.85);
+      background: linear-gradient(180deg, rgba(4, 30, 24, 0.95) 0%, rgba(2, 20, 16, 0.95) 100%);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
 
     .chat-convo-user-meta {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .active-avatar-lg {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(245, 186, 66, 0.35) 100%);
+      border: 2px solid #F5BA42;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #FDE68A;
+      box-shadow: 0 0 14px rgba(245, 186, 66, 0.3);
+      flex-shrink: 0;
     }
 
     .chat-convo-user-meta h3 {
-      font-size: 0.96rem;
+      font-size: 1rem;
       font-weight: 800;
       color: #FFFFFF;
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-voter-verified {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34D399;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .chat-convo-user-meta p {
       font-size: 0.72rem;
       color: #94A3B8;
-      margin: 2px 0 0 0;
+      margin: 3px 0 0 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .chat-convo-actions {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
+    .chat-status-dropdown {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #F1F5F9;
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-status-dropdown:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 10px rgba(245, 186, 66, 0.25);
+    }
+
+    .btn-wa-action {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.18) 0%, rgba(18, 140, 126, 0.25) 100%);
+      border: 1px solid rgba(37, 211, 102, 0.5);
+      color: #4ADE80;
+      font-weight: 700;
+      font-size: 0.74rem;
+      padding: 7px 14px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-wa-action:hover {
+      background: rgba(37, 211, 102, 0.3);
+      border-color: #25D366;
+      color: #FFF;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+    }
+
+    .btn-trash-action {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #F87171;
+      padding: 7px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-trash-action:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #EF4444;
+      color: #FFF;
+    }
+
+    /* Message Stream */
     .chat-convo-stream {
       flex: 1;
       overflow-y: auto;
-      padding: 18px 20px;
+      padding: 22px 24px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-height: 400px;
-      min-height: 300px;
-      background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 0);
-      background-size: 20px 20px;
+      gap: 16px;
+      max-height: 420px;
+      min-height: 320px;
+      background-color: #010c09;
+      background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 0);
+      background-size: 24px 24px;
     }
 
-    /* Admin Bubble Styling */
+    .chat-convo-stream::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-convo-stream::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .chat-date-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+      position: relative;
+    }
+
+    .chat-date-divider span {
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94A3B8;
+      font-size: 0.64rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Message Bubbles */
     .admin-msg-bubble {
       max-width: 82%;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
 
     .admin-msg-bubble.user {
@@ -2385,10 +2756,12 @@
     }
 
     .admin-msg-tag {
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .admin-msg-bubble.user .admin-msg-tag {
@@ -2401,127 +2774,178 @@
 
     .admin-msg-bubble.admin .admin-msg-tag {
       color: #F5BA42;
-      text-align: right;
+      justify-content: flex-end;
+    }
+
+    .badge-seal-gold {
+      background: rgba(245, 186, 66, 0.18);
+      border: 1px solid rgba(245, 186, 66, 0.45);
+      color: #FDE68A;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
     }
 
     .admin-msg-body {
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 0.84rem;
-      line-height: 1.45;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.5;
     }
 
     .admin-msg-bubble.user .admin-msg-body {
-      background: rgba(3, 40, 31, 0.95);
+      background: linear-gradient(135deg, rgba(4, 38, 30, 0.95) 0%, rgba(2, 28, 22, 0.95) 100%);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: #F0FDF4;
-      border-bottom-left-radius: 2px;
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
 
     .admin-msg-bubble.bot .admin-msg-body {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(100, 116, 139, 0.3);
-      color: #CBD5E1;
-      border-bottom-left-radius: 2px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(100, 116, 139, 0.35);
+      color: #E2E8F0;
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
 
     .admin-msg-bubble.admin .admin-msg-body {
-      background: linear-gradient(135deg, rgba(245, 186, 66, 0.22) 0%, rgba(180, 83, 9, 0.28) 100%);
-      border: 1.5px solid rgba(245, 186, 66, 0.55);
-      color: #FFF6D1;
-      border-bottom-right-radius: 2px;
-      box-shadow: 0 4px 14px rgba(245, 186, 66, 0.15);
+      background: linear-gradient(135deg, rgba(245, 186, 66, 0.2) 0%, rgba(180, 83, 9, 0.28) 100%);
+      border: 1.5px solid rgba(245, 186, 66, 0.6);
+      color: #FFF9E6;
+      border-bottom-right-radius: 3px;
+      box-shadow: 0 6px 20px rgba(245, 186, 66, 0.16);
     }
 
     .admin-msg-time {
       font-size: 0.64rem;
       color: #64748B;
       font-family: var(--font-mono);
+      margin-left: 4px;
     }
 
     .admin-msg-bubble.admin .admin-msg-time {
       text-align: right;
+      color: #D4A346;
+      margin-right: 4px;
     }
 
     /* Quick Canned Responses Bar */
     .chat-canned-bar {
-      padding: 8px 18px;
-      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.45);
       border-top: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       gap: 8px;
       overflow-x: auto;
       align-items: center;
+      scrollbar-width: none;
+    }
+
+    .chat-canned-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .btn-canned-chip {
       background: rgba(245, 186, 66, 0.08);
       border: 1px solid rgba(245, 186, 66, 0.3);
       color: #FDE68A;
-      padding: 5px 12px;
-      border-radius: var(--radius-pill);
+      padding: 6px 13px;
+      border-radius: 999px;
       font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .btn-canned-chip:hover {
-      background: rgba(245, 186, 66, 0.2);
+      background: rgba(245, 186, 66, 0.22);
       border-color: var(--gold-primary);
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 186, 66, 0.2);
     }
 
-    /* Admin Chat Input Area */
+    /* Admin Chat Reply Area */
     .chat-admin-reply-box {
-      padding: 12px 18px 16px 18px;
+      padding: 14px 20px 16px 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(2, 20, 16, 0.95) 0%, rgba(1, 14, 11, 0.98) 100%);
+    }
+
+    .chat-reply-input-row {
       display: flex;
       gap: 10px;
       align-items: flex-end;
-      background: rgba(2, 19, 15, 0.95);
     }
 
     .chat-admin-textarea {
       flex: 1;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1.5px solid rgba(245, 186, 66, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1.5px solid rgba(245, 186, 66, 0.35);
+      border-radius: 10px;
+      padding: 12px 16px;
       color: #FFFFFF;
       font-size: 0.85rem;
       font-family: inherit;
       resize: none;
-      min-height: 48px;
-      max-height: 100px;
+      min-height: 52px;
+      max-height: 120px;
       outline: none;
+      line-height: 1.45;
+      transition: all 0.2s;
     }
 
     .chat-admin-textarea:focus {
       border-color: var(--gold-primary);
-      box-shadow: 0 0 12px rgba(245, 186, 66, 0.25);
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 0 3px rgba(245, 186, 66, 0.18);
+    }
+
+    .chat-reply-shortcut-tip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.68rem;
+      color: #64748B;
+      padding: 0 2px;
+    }
+
+    .chat-reply-shortcut-tip strong {
+      color: #94A3B8;
+      font-family: var(--font-mono);
     }
 
     .btn-send-admin-reply {
-      padding: 12px 20px;
-      background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 100%);
+      padding: 0 24px;
+      height: 52px;
+      background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 50%, #D97706 100%);
       border: 1px solid #FDE68A;
-      color: #03211A;
+      color: #021B15;
       font-weight: 800;
       font-size: 0.85rem;
-      border-radius: var(--radius-sm);
+      border-radius: 10px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35);
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(245, 186, 66, 0.35);
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .btn-send-admin-reply:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(245, 186, 66, 0.5);
+      box-shadow: 0 6px 20px rgba(245, 186, 66, 0.5);
     }
   </style>
 </head>
@@ -3283,20 +3707,28 @@
       <!-- Top Header Bar of Live Chat Desk -->
       <div class="dpt-header-strip">
         <div class="dpt-header-left">
-          <div class="dpt-icon-badge" style="background: rgba(245, 186, 66, 0.15); border-color: rgba(245, 186, 66, 0.4); color: #F5BA42;">
+          <div class="dpt-icon-badge" style="background: rgba(245, 186, 66, 0.15); border-color: rgba(245, 186, 66, 0.4); color: #F5BA42; box-shadow: 0 0 16px rgba(245, 186, 66, 0.2);">
             <svg style="width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
           </div>
           <div class="dpt-title-wrap">
-            <h2>Pusat Pengaduan & Live Chat Pemilih KPKU</h2>
+            <h2 style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span>Pusat Pengaduan & Live Chat Pemilih KPKU</span>
+              <span class="badge-voter-verified" style="background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.45); color: #34D399; font-size: 0.65rem; padding: 3px 9px;">
+                <span class="beacon-pulse-red" style="width: 6px; height: 6px; background: #10B981; box-shadow: 0 0 8px #10B981; margin-right: 3px;"></span>
+                LIVE MONITOR 24/7
+              </span>
+            </h2>
             <p>Pusat Kendali Live Chat Real-Time, Monitoring Tiket Kendala DPT/Token & Respon Panitia Resmi Pemilu IAGI 2026</p>
           </div>
         </div>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <button type="button" class="btn-dpt-action" onclick="seedSampleChatTicket()" style="border-color: rgba(16, 185, 129, 0.4); color: #34D399;" title="Simulasikan pertanyaan baru dari pemilih">
-            <span>+ Simulasi Chat Masuk</span>
+          <button type="button" class="btn-dpt-action" onclick="seedSampleChatTicket()" style="border-color: rgba(16, 185, 129, 0.4); color: #34D399; background: rgba(16, 185, 129, 0.08);" title="Simulasikan pertanyaan baru dari pemilih">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Simulasi Chat</span>
           </button>
-          <button type="button" class="btn-dpt-action" onclick="refreshLiveChatAdmin()" style="border-color: rgba(245, 186, 66, 0.4); color: #F5BA42;" title="Segarkan data chat">
-            <span>🔄 Segarkan Chat</span>
+          <button type="button" class="btn-dpt-action" onclick="refreshLiveChatAdmin()" style="border-color: rgba(245, 186, 66, 0.4); color: #F5BA42; background: rgba(245, 186, 66, 0.08);" title="Segarkan data chat">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>Segarkan</span>
           </button>
           <button type="button" class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" title="Kembali ke layar ringkasan pleno">
             <span>← Kembali ke Ringkasan Pleno</span>
@@ -3304,26 +3736,62 @@
         </div>
       </div>
 
-      <!-- Quick Chat Metrics Bar -->
-      <div id="chat-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #94A3B8;">Total Pengaduan:</span>
-          <strong id="stat-chat-total" style="color: #FFFFFF; font-size: 0.95rem;">0</strong>
+      <!-- 4-Column Executive KPI Cards -->
+      <div class="chat-kpi-grid">
+        <!-- Card 1: Total Pengaduan -->
+        <div class="chat-kpi-card kpi-gold">
+          <div class="kpi-header">
+            <span class="kpi-label">TOTAL PENGADUAN</span>
+            <div class="kpi-icon-wrap" style="color: #F5BA42;">
+              <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+          </div>
+          <div class="kpi-val-row">
+            <div class="kpi-val" id="stat-chat-total">0</div>
+          </div>
+          <div class="kpi-sub">Semua sesi pengaduan pemilih terdaftar</div>
         </div>
-        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #94A3B8;">Menunggu Respon:</span>
-          <strong id="stat-chat-waiting" style="color: #F87171; font-size: 0.95rem;">0</strong>
+
+        <!-- Card 2: Menunggu Respon -->
+        <div class="chat-kpi-card kpi-red">
+          <div class="kpi-header">
+            <span class="kpi-label" style="color: #FCA5A5;">MENUNGGU RESPON</span>
+            <div class="kpi-icon-wrap" style="color: #EF4444; background: rgba(239, 68, 68, 0.1);">
+              <span class="beacon-pulse-red"></span>
+            </div>
+          </div>
+          <div class="kpi-val-row">
+            <div class="kpi-val" id="stat-chat-waiting" style="color: #F87171;">0</div>
+          </div>
+          <div class="kpi-sub">Tiket aktif butuh atensi panitia</div>
         </div>
-        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #94A3B8;">Terjawab / Ditangani:</span>
-          <strong id="stat-chat-answered" style="color: #34D399; font-size: 0.95rem;">0</strong>
+
+        <!-- Card 3: Terjawab & Ditangani -->
+        <div class="chat-kpi-card kpi-emerald">
+          <div class="kpi-header">
+            <span class="kpi-label" style="color: #6EE7B7;">TERJAWAB & DITANGANI</span>
+            <div class="kpi-icon-wrap" style="color: #10B981; background: rgba(16, 185, 129, 0.1);">
+              <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-val-row">
+            <div class="kpi-val" id="stat-chat-answered" style="color: #34D399;">0</div>
+          </div>
+          <div class="kpi-sub">Solusi resmi panitia terkirim</div>
         </div>
-        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.12);"></div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="color: #94A3B8;">Eskalasi WhatsApp:</span>
-          <strong id="stat-chat-wa" style="color: #4ADE80; font-size: 0.95rem;">0</strong>
+
+        <!-- Card 4: Eskalasi WhatsApp -->
+        <div class="chat-kpi-card kpi-wa">
+          <div class="kpi-header">
+            <span class="kpi-label" style="color: #86EFAC;">ESKALASI WHATSAPP</span>
+            <div class="kpi-icon-wrap" style="color: #25D366; background: rgba(37, 211, 102, 0.1);">
+              <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.772.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.768-5.768-5.768zm0 10.518c-.895 0-1.748-.25-2.483-.715l-.178-.105-1.579.414.421-1.54-.115-.184c-.512-.816-.782-1.768-.781-2.748.001-2.733 2.225-4.956 4.958-4.956 2.732 0 4.956 2.224 4.956 4.956 0 2.733-2.224 4.958-4.956 4.958zm2.715-3.696c-.149-.075-.882-.435-1.019-.485-.137-.05-.236-.075-.336.075-.099.15-.387.485-.474.585-.088.099-.175.112-.324.037-.149-.075-.63-.232-1.201-.741-.444-.396-.744-.885-.831-1.034-.087-.149-.009-.23.065-.304.067-.067.149-.175.224-.262.075-.088.099-.149.149-.249.05-.099.025-.187-.012-.262-.037-.075-.336-.81-.461-1.11-.122-.292-.246-.252-.336-.256l-.287-.005c-.099 0-.262.037-.399.187-.137.15-.524.512-.524 1.249 0 .736.536 1.446.611 1.546.075.099 1.055 1.611 2.556 2.259.357.154.636.246.854.316.359.114.686.098.945.059.289-.043.882-.361 1.006-.709.125-.349.125-.648.087-.71-.037-.062-.136-.099-.285-.174z"></path></svg>
+            </div>
+          </div>
+          <div class="kpi-val-row">
+            <div class="kpi-val" id="stat-chat-wa" style="color: #4ADE80;">0</div>
+          </div>
+          <div class="kpi-sub">Helpdesk Darurat +62 811-158-1461</div>
         </div>
       </div>
 
@@ -3332,11 +3800,14 @@
         <!-- Left Pane: Ticket List -->
         <div class="chat-tickets-pane">
           <div class="chat-tickets-toolbar">
-            <input type="text" id="admin-chat-search" class="chat-search-input" placeholder="🔍 Cari nama, NPA, isi pesan..." oninput="handleChatSearch(this.value)">
-            <div class="chat-filter-tabs">
-              <button type="button" class="chat-filter-tab active" data-filter="all" onclick="setChatFilter('all', this)">Semua (<span id="count-tab-all">0</span>)</button>
-              <button type="button" class="chat-filter-tab" data-filter="waiting" onclick="setChatFilter('waiting', this)">Menunggu (<span id="count-tab-waiting">0</span>)</button>
-              <button type="button" class="chat-filter-tab" data-filter="answered" onclick="setChatFilter('answered', this)">Terjawab (<span id="count-tab-answered">0</span>)</button>
+            <div class="chat-search-wrap">
+              <svg class="chat-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="admin-chat-search" class="chat-search-input" placeholder="Cari nama pemilih, NPA, pesan..." oninput="handleChatSearch(this.value)">
+            </div>
+            <div class="chat-filter-segmented">
+              <button type="button" class="chat-filter-tab active" data-filter="all" onclick="setChatFilter('all', this)">Semua <span class="tab-count-pill" id="count-tab-all">0</span></button>
+              <button type="button" class="chat-filter-tab" data-filter="waiting" onclick="setChatFilter('waiting', this)">Menunggu <span class="tab-count-pill" id="count-tab-waiting">0</span></button>
+              <button type="button" class="chat-filter-tab" data-filter="answered" onclick="setChatFilter('answered', this)">Terjawab <span class="tab-count-pill" id="count-tab-answered">0</span></button>
             </div>
           </div>
           <div class="chat-tickets-list" id="admin-chat-tickets-list">
@@ -3348,23 +3819,24 @@
         <div class="chat-conversation-pane" id="admin-chat-convo-pane">
           <div class="chat-convo-header">
             <div class="chat-convo-user-meta" id="chat-active-user-meta">
-              <div class="ticket-avatar" id="active-user-avatar">?</div>
+              <div class="active-avatar-lg" id="active-user-avatar">?</div>
               <div>
                 <h3 id="active-user-name">Pilih Sesi Pengaduan</h3>
                 <p id="active-user-sub">Pilih salah satu tiket di sebelah kiri untuk melihat pesan</p>
               </div>
             </div>
             <div class="chat-convo-actions" id="chat-active-actions" style="display: none;">
-              <select id="chat-status-select" class="form-input" style="padding: 5px 10px; font-size: 0.74rem; width: auto; background: rgba(0,0,0,0.6);" onchange="updateActiveTicketStatus(this.value)">
+              <select id="chat-status-select" class="chat-status-dropdown" onchange="updateActiveTicketStatus(this.value)">
                 <option value="waiting">🔴 Menunggu Respon</option>
                 <option value="answered">🟢 Terjawab / Aktif</option>
                 <option value="resolved">✓ Selesai / Ditutup</option>
               </select>
-              <a href="#" id="btn-wa-escalate-active" target="_blank" class="btn-dpt-action" style="padding: 6px 12px; font-size: 0.74rem; text-decoration: none; border-color: rgba(37,211,102,0.5); color: #4ADE80; display: inline-flex; align-items: center; gap: 5px;">
-                <span>🟢 Buka WA</span>
+              <a href="#" id="btn-wa-escalate-active" target="_blank" class="btn-wa-action" title="Hubungi pemilih via WhatsApp">
+                <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.772.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.768-5.768-5.768zm0 10.518c-.895 0-1.748-.25-2.483-.715l-.178-.105-1.579.414.421-1.54-.115-.184c-.512-.816-.782-1.768-.781-2.748.001-2.733 2.225-4.956 4.958-4.956 2.732 0 4.956 2.224 4.956 4.956 0 2.733-2.224 4.958-4.956 4.958zm2.715-3.696c-.149-.075-.882-.435-1.019-.485-.137-.05-.236-.075-.336.075-.099.15-.387.485-.474.585-.088.099-.175.112-.324.037-.149-.075-.63-.232-1.201-.741-.444-.396-.744-.885-.831-1.034-.087-.149-.009-.23.065-.304.067-.067.149-.175.224-.262.075-.088.099-.149.149-.249.05-.099.025-.187-.012-.262-.037-.075-.336-.81-.461-1.11-.122-.292-.246-.252-.336-.256l-.287-.005c-.099 0-.262.037-.399.187-.137.15-.524.512-.524 1.249 0 .736.536 1.446.611 1.546.075.099 1.055 1.611 2.556 2.259.357.154.636.246.854.316.359.114.686.098.945.059.289-.043.882-.361 1.006-.709.125-.349.125-.648.087-.71-.037-.062-.136-.099-.285-.174z"></path></svg>
+                <span>Buka WA</span>
               </a>
-              <button type="button" class="btn-dpt-action" onclick="deleteActiveTicket()" style="padding: 6px 10px; font-size: 0.74rem; border-color: rgba(239,68,68,0.4); color: #F87171;" title="Hapus Sesi Chat">
-                <span>🗑️</span>
+              <button type="button" class="btn-trash-action" onclick="deleteActiveTicket()" title="Hapus Sesi Chat">
+                <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
             </div>
           </div>
@@ -3378,21 +3850,29 @@
 
           <!-- Canned Responses Quick Chips -->
           <div class="chat-canned-bar" id="chat-canned-bar" style="display: none;">
-            <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">Template Cepat:</span>
+            <span style="font-size: 0.7rem; color: #F5BA42; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              <span>⚡</span> Template:
+            </span>
             <button type="button" class="btn-canned-chip" onclick="insertCanned('Token')">🎟️ Panduan Token</button>
             <button type="button" class="btn-canned-chip" onclick="insertCanned('DPT')">🔍 Status DPT</button>
             <button type="button" class="btn-canned-chip" onclick="insertCanned('Bilik')">🗳️ Akses Bilik Suara</button>
-            <button type="button" class="btn-canned-chip" onclick="insertCanned('WA')">📱 Hotline WA Panitia</button>
-            <button type="button" class="btn-canned-chip" onclick="insertCanned('Selesai')">✓ Masalah Terselesaikan</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('WA')">📱 Hotline WA</button>
+            <button type="button" class="btn-canned-chip" onclick="insertCanned('Selesai')">✓ Selesai</button>
           </div>
 
           <!-- Admin Reply Form -->
           <form class="chat-admin-reply-box" id="form-admin-reply" style="display: none;" onsubmit="handleSendAdminReply(event)">
-            <textarea id="admin-reply-input" class="chat-admin-textarea" placeholder="Ketik balasan resmi dari Panitia KPKU... (Tekan Enter untuk baris baru)" rows="2"></textarea>
-            <button type="submit" class="btn-send-admin-reply" id="btn-send-admin-reply">
-              <span>Kirim Balasan</span>
-              <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
+            <div class="chat-reply-input-row">
+              <textarea id="admin-reply-input" class="chat-admin-textarea" placeholder="Ketik balasan resmi dari Panitia KPKU... (Tekan Enter untuk kirim, Shift+Enter untuk baris baru)" rows="2"></textarea>
+              <button type="submit" class="btn-send-admin-reply" id="btn-send-admin-reply">
+                <span>Kirim</span>
+                <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+            <div class="chat-reply-shortcut-tip">
+              <span>💡 Tanggapan panitia langsung tersinkronisasi ke bilik pemilih.</span>
+              <span>Kirim: <strong>Enter ↵</strong></span>
+            </div>
           </form>
         </div>
       </div>
@@ -4404,16 +4884,20 @@
               const initials = cleanWords.slice(0, 2).toUpperCase() || 'P';
 
               let statusBadgeHtml = '';
+              let statusBorderClass = 'ticket-waiting';
               if (t.status === 'waiting') {
-                statusBadgeHtml = `<span class="badge-ticket-status waiting"><span class="chat-trigger-dot" style="position:static;display:inline-block;width:6px;height:6px;margin-right:4px;"></span>Menunggu</span>`;
+                statusBorderClass = 'ticket-waiting';
+                statusBadgeHtml = `<span class="badge-status-chip chip-waiting"><span class="beacon-pulse-red" style="width:5px;height:5px;margin-right:2px;"></span>Menunggu</span>`;
               } else if (t.status === 'resolved') {
-                statusBadgeHtml = `<span class="badge-ticket-status answered" style="background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4); color: #60A5FA;">✓ Selesai</span>`;
+                statusBorderClass = 'ticket-resolved';
+                statusBadgeHtml = `<span class="badge-status-chip chip-resolved">✓ Selesai</span>`;
               } else {
-                statusBadgeHtml = `<span class="badge-ticket-status answered">🟢 Terjawab</span>`;
+                statusBorderClass = 'ticket-answered';
+                statusBadgeHtml = `<span class="badge-status-chip chip-answered">🟢 Terjawab</span>`;
               }
 
               return `
-                <div class="chat-ticket-item ${isActive ? 'active' : ''}" onclick="selectLiveChatTicket('${t.id}')">
+                <div class="chat-ticket-item ${statusBorderClass} ${isActive ? 'active' : ''}" onclick="selectLiveChatTicket('${t.id}')">
                   <div class="ticket-avatar">${initials}</div>
                   <div class="ticket-info">
                     <div class="ticket-top-row">
@@ -4423,7 +4907,7 @@
                     <div class="ticket-preview">${escapeHtml(lastMsg.text || '')}</div>
                     <div class="ticket-badges-row">
                       ${statusBadgeHtml}
-                      <span class="badge-ticket-npa">NPA: ${escapeHtml(t.userNpa || 'N/A')}</span>
+                      <span class="badge-npa-chip">NPA: ${escapeHtml(t.userNpa || 'N/A')}</span>
                     </div>
                   </div>
                 </div>
@@ -4473,9 +4957,22 @@
         const initials = cleanWords.slice(0, 2).toUpperCase() || 'P';
 
         if (avatarEl) avatarEl.innerText = initials;
-        if (nameEl) nameEl.innerText = ticket.userName;
+        if (nameEl) {
+          nameEl.innerHTML = `
+            <span>${escapeHtml(ticket.userName)}</span>
+            <span class="badge-voter-verified">✓ DPT Terverifikasi</span>
+          `;
+        }
         if (subEl) {
-          subEl.innerText = `NPA: ${ticket.userNpa || '-'} • ${ticket.userEmail || ''} • Channel: ${ticket.channel || 'Live Web Chat'} • Sesi Dimulai: ${ticket.startedAt || '-'}`;
+          subEl.innerHTML = `
+            <span>🪪 NPA: <strong>${escapeHtml(ticket.userNpa || '-')}</strong></span>
+            <span style="opacity: 0.4;">•</span>
+            <span>✉️ ${escapeHtml(ticket.userEmail || '-')}</span>
+            <span style="opacity: 0.4;">•</span>
+            <span>🌐 ${escapeHtml(ticket.channel || 'Live Web Chat')}</span>
+            <span style="opacity: 0.4;">•</span>
+            <span>🕒 Sesi: ${escapeHtml(ticket.startedAt || '-')}</span>
+          `;
         }
         if (actionsEl) actionsEl.style.display = 'flex';
         if (statusSelect) statusSelect.value = ticket.status || 'waiting';
@@ -4489,6 +4986,18 @@
         if (cannedBar) cannedBar.style.display = 'flex';
         if (replyForm) replyForm.style.display = 'flex';
 
+        // Bind Enter shortcut for quick reply
+        const replyInputEl = document.getElementById('admin-reply-input');
+        if (replyInputEl && !replyInputEl.dataset.enterBound) {
+          replyInputEl.dataset.enterBound = 'true';
+          replyInputEl.addEventListener('keydown', function(evt) {
+            if (evt.key === 'Enter' && !evt.shiftKey) {
+              evt.preventDefault();
+              handleSendAdminReply(evt);
+            }
+          });
+        }
+
         // Render message bubbles in stream
         if (streamEl) {
           const messages = ticket.messages || [];
@@ -4499,11 +5008,15 @@
               </div>
             `;
           } else {
-            streamEl.innerHTML = messages.map(m => {
+            const dateDividers = `<div class="chat-date-divider"><span>SESI LIVE RESMI KPKU • 24 OKT 2026</span></div>`;
+            const bubblesHtml = messages.map(m => {
               if (m.sender === 'user') {
                 return `
                   <div class="admin-msg-bubble user">
-                    <span class="admin-msg-tag">👤 ${escapeHtml(ticket.userName)} (Pemilih)</span>
+                    <span class="admin-msg-tag">
+                      <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(56, 189, 248, 0.2); font-size: 0.65rem;">👤</span>
+                      <span>${escapeHtml(ticket.userName)} (Pemilih)</span>
+                    </span>
                     <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
                     <span class="admin-msg-time">${escapeHtml(m.time || '')}</span>
                   </div>
@@ -4511,7 +5024,10 @@
               } else if (m.sender === 'bot') {
                 return `
                   <div class="admin-msg-bubble bot">
-                    <span class="admin-msg-tag">🤖 KPKU Virtual Assistant (Bot)</span>
+                    <span class="admin-msg-tag">
+                      <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(148, 163, 184, 0.2); font-size: 0.65rem;">🤖</span>
+                      <span>KPKU Virtual Assistant (Bot FAQ)</span>
+                    </span>
                     <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
                     <span class="admin-msg-time">${escapeHtml(m.time || '')}</span>
                   </div>
@@ -4520,13 +5036,19 @@
                 // Admin official reply
                 return `
                   <div class="admin-msg-bubble admin">
-                    <span class="admin-msg-tag">🏛️ ${escapeHtml(m.adminName || 'Panitia KPKU (Admin)')}</span>
+                    <span class="admin-msg-tag">
+                      <span class="badge-seal-gold">✓ Respon Resmi Panitia</span>
+                      <span style="color: #FDE68A;">${escapeHtml(m.adminName || 'Panitia KPKU')}</span>
+                      <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(245, 186, 66, 0.25); font-size: 0.65rem;">🏛️</span>
+                    </span>
                     <div class="admin-msg-body">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
-                    <span class="admin-msg-time">${escapeHtml(m.time || '')} ✓ Terkirim Resmi</span>
+                    <span class="admin-msg-time">✓ Terkirim ke Pemilih • ${escapeHtml(m.time || '')}</span>
                   </div>
                 `;
               }
             }).join('');
+
+            streamEl.innerHTML = dateDividers + bubblesHtml;
           }
 
           streamEl.scrollTop = streamEl.scrollHeight;
