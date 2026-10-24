@@ -96,6 +96,21 @@ class PemiluStorage {
         const parsed = JSON.parse(existingDptRaw);
         if (!Array.isArray(parsed) || parsed.length < 500) {
           shouldInit = true;
+        } else {
+          // Sinkronisasi otomatis: jika ada pemilih baru di INITIAL_DPT (misal NPA 99999), masukkan ke cache
+          const existingNpas = new Set(parsed.map(v => String(v.npa || '').trim().toUpperCase()));
+          let hasNewVoters = false;
+          cleanDpt.forEach(defVoter => {
+            const defNpa = String(defVoter.npa || '').trim().toUpperCase();
+            if (defNpa && !existingNpas.has(defNpa)) {
+              parsed.unshift(defVoter);
+              existingNpas.add(defNpa);
+              hasNewVoters = true;
+            }
+          });
+          if (hasNewVoters) {
+            localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(parsed));
+          }
         }
       } catch (e) {
         shouldInit = true;
@@ -240,7 +255,15 @@ class PemiluStorage {
     if (!npa) return null;
     const dpt = this.getDPT();
     const cleanNpa = String(npa).trim().toUpperCase();
-    return dpt.find(v => v.npa.toUpperCase() === cleanNpa) || null;
+    const found = dpt.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+    if (found) return found;
+
+    // Fallback: cek ke INITIAL_DPT resmi jika belum sinkron di localStorage
+    if (typeof INITIAL_DPT !== 'undefined') {
+      const initialMatch = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+      if (initialMatch) return initialMatch;
+    }
+    return null;
   }
 
   addVoter(voterData) {
@@ -530,12 +553,31 @@ class PemiluStorage {
 
   // --- Claim Surat Suara Engine ---
   claimSuratSuara(npa, name, email) {
-    const dpt = this.getDPT();
+    let dpt = this.getDPT();
     const cleanNpa = (npa || '').trim().toUpperCase();
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanName = (name || '').trim().toLowerCase();
 
-    const voterIndex = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    let voterIndex = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+
+    // Robust Fallback: jika belum ada di cache localStorage tetapi terdaftar di INITIAL_DPT resmi (seperti NPA 99999)
+    if (voterIndex === -1 && typeof INITIAL_DPT !== 'undefined') {
+      const initialMatch = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+      if (initialMatch) {
+        const newVoter = {
+          ...initialMatch,
+          claimed: false,
+          token: null,
+          claimed_at: null,
+          voted: false,
+          voted_at: null,
+          receipt_hash: null
+        };
+        dpt.unshift(newVoter);
+        this.saveDPT(dpt);
+        voterIndex = 0;
+      }
+    }
 
     if (voterIndex === -1) {
       return {
