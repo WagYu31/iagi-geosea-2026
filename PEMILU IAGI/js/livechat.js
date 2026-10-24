@@ -702,9 +702,12 @@
           <span class="msg-time">${escapeHtml(m.time || '')}</span>
         `;
       } else if (m.sender === 'bot') {
+        const content = (m.text && (m.text.includes('<strong>') || m.text.includes('<em>') || m.text.includes('<code>') || m.text.includes('<br>')))
+          ? m.text.replace(/\n/g, '<br>')
+          : escapeHtml(m.text).replace(/\n/g, '<br>');
         div.innerHTML = `
           <span class="msg-sender-tag">KPKU Support (Bot)</span>
-          <div class="msg-bubble">${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
+          <div class="msg-bubble">${content}</div>
           <span class="msg-time">${escapeHtml(m.time || '')}</span>
         `;
       } else {
