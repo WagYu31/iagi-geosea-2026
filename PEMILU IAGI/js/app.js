@@ -284,64 +284,63 @@ document.addEventListener('DOMContentLoaded', () => {
       showAlert(claimAlert, result.message, 'success');
       triggerHaptic('success');
 
-      // Show simulated email sheet modal so mobile user can see magic link & copy token immediately
-      showEmailSimulationModal(result.voter, result.token);
+      // Dispatch token email in background via official server API
+      try {
+        fetch('api/send_token.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            npa: result.voter.npa,
+            name: result.voter.name,
+            email: result.voter.email,
+            token: result.token
+          })
+        }).then(res => res.json()).then(data => {
+          console.log('Dispatch token email response:', data);
+        }).catch(err => {
+          console.log('Dispatch token email fetch:', err);
+        });
+      } catch (e) {}
+
+      // Show official email dispatched confirmation modal (Token is kept secret & not shown on-screen)
+      showEmailDispatchedModal(result.voter);
     });
   }
 
-  // Simulated Email Modal
+  // Official Email Dispatched Confirmation Modal
   const modalEmailSim = document.getElementById('modal-email-sim');
+  const simEmailName = document.getElementById('sim-email-name');
+  const simEmailNpa = document.getElementById('sim-email-npa');
   const simEmailRecipient = document.getElementById('sim-email-recipient');
-  const simEmailToken = document.getElementById('sim-email-token');
   const simBtnOpenVote = document.getElementById('sim-btn-open-vote');
-  const simBtnCopyCode = document.getElementById('sim-btn-copy-code');
-  const simBtnWaMe = document.getElementById('sim-btn-wa-me');
+  const simBtnOpenInbox = document.getElementById('sim-btn-open-inbox');
 
-  function showEmailSimulationModal(voter, token) {
+  function showEmailDispatchedModal(voter) {
     if (!modalEmailSim) return;
-    if (simEmailRecipient) simEmailRecipient.innerText = `${voter.name} (${voter.email})`;
-    if (simEmailToken) simEmailToken.innerText = token;
+    if (simEmailName) simEmailName.innerText = voter.name || '-';
+    if (simEmailNpa) simEmailNpa.innerText = voter.npa || '-';
+    if (simEmailRecipient) simEmailRecipient.innerText = voter.email || '-';
+
+    if (simBtnOpenInbox) {
+      simBtnOpenInbox.onclick = () => {
+        const emailLower = (voter.email || '').toLowerCase();
+        if (emailLower.includes('@gmail.com')) {
+          window.open('https://mail.google.com/mail/u/0/#search/KPKU+IAGI', '_blank');
+        } else if (emailLower.includes('@yahoo.')) {
+          window.open('https://mail.yahoo.com', '_blank');
+        } else if (emailLower.includes('@outlook.') || emailLower.includes('@hotmail.')) {
+          window.open('https://outlook.live.com', '_blank');
+        } else {
+          window.open(`mailto:${voter.email}`, '_blank');
+        }
+      };
+    }
 
     if (simBtnOpenVote) {
       simBtnOpenVote.onclick = () => {
         closeAllModals();
-        navigateTo('vote', { npa: voter.npa, code: token });
-      };
-    }
-
-    if (simBtnCopyCode) {
-      simBtnCopyCode.onclick = () => {
-        navigator.clipboard.writeText(token);
-        simBtnCopyCode.innerHTML = `
-          <svg style="width:14px;height:14px;stroke:#10B981;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span style="color:#10B981;font-weight:800;">Kode Disalin!</span>
-        `;
-        setTimeout(() => {
-          simBtnCopyCode.innerHTML = `
-            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span>Salin Kode</span>
-          `;
-        }, 2000);
-      };
-    }
-
-    if (simBtnWaMe) {
-      simBtnWaMe.onclick = () => {
-        let msg = `*KODE SURAT SUARA PEMILU IAGI 2026*\n` +
-          `━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-          `Yth. ${voter.name}\n` +
-          `NPA: ${voter.npa}\n\n` +
-          `Kode Token Anda: *${token}*\n\n` +
-          `🗳️ Tautan Bilik Suara:\n${window.location.origin + window.location.pathname}#vote\n\n` +
-          `_Harap simpan kode token unik ini untuk memberikan suara sah._`;
-        
-        let phoneParam = '';
-        if (voter.phone) {
-          let cleanPhone = voter.phone.replace(/\D/g, '');
-          if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.substring(1);
-          phoneParam = `&phone=${cleanPhone}`;
-        }
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}${phoneParam}`, '_blank');
+        // Navigasi ke bilik suara TANPA token otomatis agar pemilih memasukkan kode dari emailnya
+        navigateTo('vote', { npa: voter.npa });
       };
     }
 

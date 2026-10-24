@@ -1088,43 +1088,84 @@
       </div>
     </div>
 
-    <!-- Modal 2: Simulated Email Dispatch Sheet (Magic Link & Unique Token) -->
+    <!-- Modal 2: Official Email Dispatch Confirmation (Confidential LUBER) -->
     <div id="modal-email-sim" class="modal-overlay">
-      <div class="modal-card">
+      <div class="modal-card" style="max-width: 480px;">
         <div class="modal-header">
           <span class="modal-title" style="display:flex;align-items:center;gap:8px;">
-            <svg style="width:18px;height:18px;stroke:var(--gold-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <span>Surat Suara Resmi Terkirim</span>
+            <svg style="width:18px;height:18px;stroke:#10B981;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Surat Suara Terkirim ke Email</span>
           </span>
           <button class="btn-close-modal">&times;</button>
         </div>
 
-        <div class="email-sim-box">
-          <div style="font-size: 0.72rem; color: #94A3B8; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 10px; line-height: 1.4;">
-            <strong>Kepada:</strong> <span id="sim-email-recipient" style="color:#FFF;">-</span><br>
-            <strong>Pengirim:</strong> KPKU IAGI 2026 &lt;pemilu@iagi.or.id&gt;<br>
-            <strong>Subjek:</strong> Surat Suara Elektronik & Kode Unik Pemilu IAGI 2026
+        <div class="email-sim-box" style="padding: 18px; text-align: center;">
+          <div style="width: 52px; height: 52px; margin: 0 auto 12px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10B981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <svg style="width: 26px; height: 26px; stroke: #10B981; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           </div>
-          <p style="font-size: 0.78rem; color: #E2E8F0; line-height: 1.45;">
-            Yth. Anggota IAGI, permohonan klaim surat suara Anda telah divalidasi oleh KPKU. Gunakan kode unik sekali pakai berikut untuk mengakses bilik suara:
+
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 6px;">Klaim Surat Suara Berhasil!</h3>
+          <p style="font-size: 0.78rem; color: #94A3B8; margin: 0 0 14px; line-height: 1.45;">
+            Surat suara digital & tautan akses resmi telah dikirimkan oleh Panitia KPKU IAGI ke alamat email Anda.
           </p>
 
-          <div id="sim-email-token" class="email-token-chip">IAGI-2026-XXXX-XXXX</div>
+          <!-- Recipient Metadata Box -->
+          <div style="background: #020617; border: 1px solid #1E293B; border-radius: 10px; padding: 12px 14px; text-align: left; font-size: 0.76rem; line-height: 1.5; margin-bottom: 14px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+              <span style="color: #64748B;">Nama Pemilih:</span>
+              <strong id="sim-email-name" style="color: #FFFFFF;">-</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+              <span style="color: #64748B;">Nomor Pokok Anggota (NPA):</span>
+              <strong id="sim-email-npa" style="color: #F5BA42; font-family: var(--font-mono);">-</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+              <span style="color: #64748B;">Alamat Email:</span>
+              <strong id="sim-email-recipient" style="color: #38BDF8;">-</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-top: 1px solid #1E293B; padding-top: 5px; margin-top: 5px;">
+              <span style="color: #64748B;">Status Pengiriman:</span>
+              <span style="color: #10B981; font-weight: 700;">● Terkirim ke Inbox / Spam</span>
+            </div>
+          </div>
 
-          <div style="display: flex; gap: 10px; margin-top: 14px;">
-            <button id="sim-btn-copy-code" class="btn btn-outline" style="font-size: 0.78rem; padding: 10px; display:flex; align-items:center; gap:6px; flex: 1; justify-content: center;">
-              <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              <span id="sim-copy-text">Salin Kode</span>
+          <!-- Privacy Security Notice (LUBER) -->
+          <div style="background: rgba(245, 186, 66, 0.08); border: 1.5px solid rgba(245, 186, 66, 0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <span style="font-size: 0.95rem;">🔒</span>
+              <span style="font-size: 0.74rem; font-weight: 800; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.04em;">Kerahasiaan Asas LUBER Dijamin</span>
+            </div>
+            <p style="font-size: 0.73rem; color: #CBD5E1; line-height: 1.45; margin: 0;">
+              Demi menjamin kerahasiaan pilihan Anda, <strong>kode token surat suara TIDAK ditampilkan di layar ini</strong>. Silakan periksa email resmi Anda untuk melihat kode unik atau klik tautan langsung ke bilik suara.
+            </p>
+          </div>
+
+          <!-- Steps Guide -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; text-align: left; margin-bottom: 16px;">
+            <div style="font-size: 0.72rem; font-weight: 800; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.04em;">Langkah Selanjutnya:</div>
+            <ol style="margin: 0; padding-left: 18px; font-size: 0.75rem; color: #E2E8F0; line-height: 1.5;">
+              <li>Buka kotak masuk (Inbox) atau periksa folder <strong>Spam / Promosi</strong> pada email Anda.</li>
+              <li>Buka email dari <strong>KPKU IAGI 2026</strong>.</li>
+              <li>Salin kode token atau klik tombol tautan di dalam email untuk membuka Bilik Suara.</li>
+            </ol>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" id="sim-btn-open-inbox" class="btn btn-gold" style="font-size: 0.82rem; padding: 12px; display:flex; align-items:center; justify-content:center; gap:8px; font-weight: 800; width: 100%;">
+              <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>Buka Aplikasi Email Saya</span>
             </button>
-            <button id="sim-btn-open-vote" class="btn btn-gold" style="font-size: 0.78rem; padding: 10px; display:flex; align-items:center; gap:6px; flex: 1.2; justify-content: center;">
-              <span>Buka di Bilik Suara</span>
+            <button type="button" id="sim-btn-open-vote" class="btn btn-outline" style="font-size: 0.78rem; padding: 10px; display:flex; align-items:center; justify-content:center; gap:8px; color: #CBD5E1; width: 100%;">
+              <span>Menuju ke Bilik Suara (Masukkan Token dari Email)</span>
               <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
           </div>
 
-          <button type="button" id="sim-btn-wa-me" class="btn" style="background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.5); color: #4ADE80; font-weight: 700; font-size: 0.76rem; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
-            <span>💬 Kirim & Simpan Token ke WhatsApp</span>
-          </button>
+          <!-- Helpdesk Notice -->
+          <div style="font-size: 0.71rem; color: #94A3B8; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+            Belum menerima email dalam 5 menit? <a href="javascript:void(0)" onclick="closeAllModals(); if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }" style="color: var(--gold-secondary); text-decoration: underline; font-weight: 700; cursor: pointer;">Hubungi Helpdesk Admin KPKU</a>
+          </div>
         </div>
       </div>
     </div>
@@ -1143,10 +1184,10 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=4.1.0"></script>
-  <script src="js/storage.js?v=4.1.0"></script>
-  <script src="js/app.js?v=4.1.0"></script>
+  <script src="js/data.js?v=4.2.0"></script>
+  <script src="js/storage.js?v=4.2.0"></script>
+  <script src="js/app.js?v=4.2.0"></script>
   <!-- Official KPKU Helpdesk Live Chat Script -->
-  <script src="js/livechat.js?v=4.1.0"></script>
+  <script src="js/livechat.js?v=4.2.0"></script>
 </body>
 </html>
