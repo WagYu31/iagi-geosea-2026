@@ -1153,20 +1153,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  let isVotingLockActive = false;
+
   if (btnConfirmYes) {
     btnConfirmYes.addEventListener('click', async () => {
+      if (isVotingLockActive) return; // Strict lock against duplicate clicking
+      isVotingLockActive = true;
+
       btnConfirmYes.disabled = true;
       btnConfirmYes.innerText = 'Merekam Suara...';
 
-      const result = await window.pemiluStorage.castVote(currentVoter.npa, currentToken, selectedCandidateId);
+      if (!currentVoter || !currentToken || !selectedCandidateId) {
+        alert('Sesi bilik suara tidak valid atau telah kedaluwarsa. Silakan muat ulang halaman.');
+        btnConfirmYes.disabled = false;
+        btnConfirmYes.innerText = 'YA, SAYA YAKIN';
+        isVotingLockActive = false;
+        return;
+      }
+
+      const voterNpaToRecord = currentVoter.npa;
+      const voterTokenToRecord = currentToken;
+      const candIdToRecord = selectedCandidateId;
+
+      const result = await window.pemiluStorage.castVote(voterNpaToRecord, voterTokenToRecord, candIdToRecord);
 
       btnConfirmYes.disabled = false;
       btnConfirmYes.innerText = 'YA, SAYA YAKIN';
       if (modalDualConfirm) modalDualConfirm.classList.remove('open');
+      isVotingLockActive = false;
 
       if (!result.success) {
         alert(result.error);
         return;
+      }
+
+      // CRITICAL SECURITY ENFORCEMENT: Destroy in-memory voter credentials immediately
+      currentVoter = null;
+      currentToken = null;
+      selectedCandidateId = null;
+
+      // Clear bilik suara inputs
+      const npaInp = document.getElementById('vote-npa');
+      const tokenInp = document.getElementById('vote-token');
+      if (npaInp) npaInp.value = '';
+      if (tokenInp) tokenInp.value = '';
+
+      // Reset DOM state to lock bilik suara
+      if (voteBallotCard) voteBallotCard.style.display = 'none';
+      if (voteAuthCard) voteAuthCard.style.display = 'block';
+      if (btnSubmitVote) {
+        btnSubmitVote.disabled = true;
+        btnSubmitVote.innerText = 'Hak Suara Telah Sah Digunakan';
       }
 
       triggerHaptic('success');

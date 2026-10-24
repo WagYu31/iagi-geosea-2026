@@ -143,6 +143,34 @@ class PemiluStorage {
       };
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
     }
+
+    // Auto-sync status pemilih yang sudah mencoblos dari server KPKU
+    this.syncVotedWithServer();
+  }
+
+  async syncVotedWithServer() {
+    try {
+      if (typeof fetch === 'undefined') return;
+      const resp = await fetch('api/vote_sync.php?action=get_voted_list');
+      const data = await resp.json();
+      if (data && data.success && data.voted_npas) {
+        const dpt = this.getDPT();
+        let changed = false;
+        dpt.forEach(v => {
+          const clean = String(v.npa || '').trim().toUpperCase();
+          if (data.voted_npas[clean] && !v.voted) {
+            v.voted = true;
+            v.token = null; // Token burned permanently
+            v.voted_at = data.voted_npas[clean].voted_at || new Date().toISOString();
+            v.receipt_hash = data.voted_npas[clean].receipt_hash || 'VERIFIED';
+            changed = true;
+          }
+        });
+        if (changed) {
+          this.saveDPT(dpt);
+        }
+      }
+    } catch (e) {}
   }
 
   // --- DPT Management ---
@@ -654,7 +682,12 @@ class PemiluStorage {
     }
 
     if (voter.voted) {
-      return { valid: false, error: 'Hak suara untuk akun ini sudah digunakan. Sistem menolak pemungutan suara berulang.' };
+      const timeStr = voter.voted_at ? new Date(voter.voted_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) : '';
+      return { 
+        valid: false, 
+        alreadyVoted: true,
+        error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN${timeStr ? ' pada ' + timeStr : ''}. Sesuai asas LUBER-JURDIL, setiap anggota terdaftar hanya memiliki 1 (satu) hak suara yang tidak dapat digunakan berulang.` 
+      };
     }
 
     if (!voter.claimed || !voter.token) {
@@ -670,30 +703,77 @@ class PemiluStorage {
 
   // --- Cast Vote (Zero-Knowledge Anonymous Ballot Decoupling) ---
   async castVote(npa, token, candidateId) {
-    const verification = this.verifyVotingEligibility(npa, token);
+    const cleanNpa = String(npa || '').trim().toUpperCase();
+    const cleanToken = String(token || '').trim().toUpperCase();
+
+    // 1. Strict Eligibility Verification
+    const verification = this.verifyVotingEligibility(cleanNpa, cleanToken);
     if (!verification.valid) {
       return { success: false, error: verification.error };
     }
 
     const dpt = this.getDPT();
-    const cleanNpa = npa.trim().toUpperCase();
-    const voterIndex = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    const voterIndex = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+    if (voterIndex === -1) {
+      return { success: false, error: 'Data pemilih tidak ditemukan dalam DPT.' };
+    }
     const voter = dpt[voterIndex];
+
+    // Double check to strictly prevent double voting
+    if (voter.voted) {
+      return {
+        success: false,
+        error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN pada ${voter.voted_at || 'sesi sebelumnya'}. Sistem menolak pemungutan suara berulang demi integritas LUBER-JURDIL.`
+      };
+    }
 
     const timestamp = Date.now();
     const rawSalt = `${timestamp}-${Math.random()}`;
     const ballotHash = await generateSha256(`BALLOT-IAGI-2026-${candidateId}-${rawSalt}`);
+    const receiptHash = ballotHash.substring(0, 16).toUpperCase();
 
-    // STEP 1: Mark Voter Registry as VOTED and BURN the token
-    // (NO candidate info stored here!)
+    // 2. Atomic Server-Side Lock Check via API
+    try {
+      if (typeof fetch !== 'undefined') {
+        const srvResp = await fetch('api/vote_sync.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'cast_vote',
+            npa: cleanNpa,
+            token: cleanToken,
+            candidate_id: Number(candidateId),
+            name: voter.name,
+            receipt_hash: receiptHash,
+            full_hash: ballotHash
+          })
+        });
+        const srvData = await srvResp.json();
+        if (srvData && srvData.alreadyVoted) {
+          // If server reports already voted on another device, lock locally too!
+          voter.voted = true;
+          voter.token = null;
+          this.saveDPT(dpt);
+          return {
+            success: false,
+            error: srvData.error || `Hak suara untuk NPA ${cleanNpa} sudah digunakan di perangkat lain. Pemilihan ganda ditolak!`
+          };
+        }
+      }
+    } catch (err) {
+      console.log('Server vote sync notice:', err);
+    }
+
+    // 3. STEP 1: Mark Voter Registry as VOTED and BURN the token permanently
+    // (NO candidate info is stored with voter identity - LUBER!)
     voter.voted = true;
     voter.token = null; // Token burned immediately
     voter.voted_at = new Date(timestamp).toISOString();
-    voter.receipt_hash = ballotHash.substring(0, 16).toUpperCase();
+    voter.receipt_hash = receiptHash;
     dpt[voterIndex] = voter;
     this.saveDPT(dpt);
 
-    // STEP 2: Store purely Anonymous Ballot into Digital Ballot Box
+    // 4. STEP 2: Store purely Anonymous Ballot into Digital Ballot Box
     // (NO link, foreign key, or reference to voter identity!)
     const ballots = this.getBallots();
     ballots.push({
@@ -704,7 +784,7 @@ class PemiluStorage {
     });
     localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(ballots));
 
-    // STEP 3: Append to Audit Trail (only records that a vote took place, NOT for whom)
+    // 5. STEP 3: Append to Audit Trail
     this.addAuditLog('VOTE_RECORDED', `Surat suara sah direkam ke kotak suara berenkripsi (NPA: ${voter.npa}, Receipt: ${voter.receipt_hash})`);
 
     return {
