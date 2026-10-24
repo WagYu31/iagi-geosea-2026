@@ -176,24 +176,6 @@ class PemiluStorage {
         }
       });
 
-      // Ensure demo voter 00000 exists
-      if (!dpt.some(v => v && v.npa === '00000')) {
-        dpt.unshift({
-          npa: "00000",
-          name: "Anggota Uji Coba IAGI",
-          email: "pemilih@iagi.or.id",
-          phone: "08111581461",
-          pengda: "DKI Jakarta",
-          category: "Professional",
-          status: "AKTIF",
-          claimed: false,
-          token: null,
-          voted: false,
-          voted_at: null
-        });
-        updated = true;
-      }
-
       if (updated) {
         this.saveDPT(dpt);
       }
@@ -600,13 +582,7 @@ class PemiluStorage {
       let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
       if (!demoVoter) {
         demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
-        dpt.unshift(demoVoter);
       }
-      demoVoter.claimed = true;
-      demoVoter.token = 'IAGI-2026-DEMO-2026';
-      if (!demoVoter.claimed_at) demoVoter.claimed_at = new Date().toISOString();
-      demoVoter.voted = false; // Allow repeatable testing
-      this.saveDPT(dpt);
       return { valid: true, voter: demoVoter };
     }
 
@@ -706,8 +682,8 @@ class PemiluStorage {
     const totalVotes = ballots.length;
     const totalDPT = dpt.length;
     const totalClaimed = dpt.filter(v => v.claimed).length;
-    const turnoutPercentage = totalDPT > 0 ? ((totalVotes / totalDPT) * 100).toFixed(1) : 0;
-    const claimPercentage = totalDPT > 0 ? ((totalClaimed / totalDPT) * 100).toFixed(1) : 0;
+    const turnoutPercentage = totalDPT > 0 ? (Math.min(100, (totalVotes / totalDPT) * 100)).toFixed(1) : '0.0';
+    const claimPercentage = totalDPT > 0 ? ((totalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
 
     return {
       isSealed: settings.isSealed,
