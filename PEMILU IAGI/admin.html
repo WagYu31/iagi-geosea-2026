@@ -4681,6 +4681,11 @@
       const btnAutoPin = document.getElementById('btn-desktop-auto-pin');
       const btnLogout = document.getElementById('btn-desktop-logout');
 
+      var currentDptPage = 1;
+      var currentDptPageSize = 50;
+      window.currentDptPage = 1;
+      window.currentDptPageSize = 50;
+
       let isUnlocked = false;
       let pendingAdmin = null;
       let activeOtp = '2026';
@@ -5593,6 +5598,10 @@
             topbarSubtitle.innerText = 'Data Pemilih Terverifikasi KPKU • Status Hak Suara & Audit Token Kriptografi';
           }
 
+          if (typeof renderDptTable === 'function') {
+            renderDptTable();
+          }
+
           if (history.replaceState) {
             history.replaceState(null, '', '#section-dpt-table');
           } else {
@@ -5926,19 +5935,19 @@
         }
       }
 
-      let currentDptPage = 1;
-      let currentDptPageSize = 50;
-
       window.handleDptPageChange = function(newPage) {
         currentDptPage = newPage;
+        window.currentDptPage = newPage;
         renderDptTable();
         const tableContainer = document.querySelector('.table-container');
         if (tableContainer) tableContainer.scrollTop = 0;
       };
 
       window.handleDptPageSizeChange = function(newSize) {
-        currentDptPageSize = newSize === 'all' ? 'all' : parseInt(newSize, 10);
+        currentDptPageSize = newSize;
+        window.currentDptPageSize = newSize;
         currentDptPage = 1;
+        window.currentDptPage = 1;
         renderDptTable();
       };
 
@@ -5994,15 +6003,17 @@
         const tbody = document.getElementById('desktop-dpt-table-body');
         if (!tbody) return;
 
-        const query = (document.getElementById('desktop-dpt-search').value || '').toLowerCase();
-        const filter = document.getElementById('desktop-dpt-filter').value;
-        const dpt = window.pemiluStorage.getDPT();
+        const query = (document.getElementById('desktop-dpt-search')?.value || '').toLowerCase().trim();
+        const filter = document.getElementById('desktop-dpt-filter')?.value || 'all';
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
 
         const filtered = dpt.filter(item => {
-          const matchQuery = item.npa.toLowerCase().includes(query) || 
-                             item.name.toLowerCase().includes(query) || 
-                             item.email.toLowerCase().includes(query) ||
-                             (item.phone && item.phone.toLowerCase().includes(query));
+          if (!item) return false;
+          const npa = String(item.npa || '').toLowerCase();
+          const name = String(item.name || '').toLowerCase();
+          const email = String(item.email || '').toLowerCase();
+          const phone = String(item.phone || '').toLowerCase();
+          const matchQuery = !query || npa.includes(query) || name.includes(query) || email.includes(query) || phone.includes(query);
           if (!matchQuery) return false;
 
           if (filter === 'voted') return item.voted === true;
@@ -6015,14 +6026,18 @@
 
         // Pagination calculation
         const totalItems = filtered.length;
-        const isAll = currentDptPageSize === 'all';
-        const pageSize = isAll ? (totalItems || 1) : currentDptPageSize;
+        const curPageSize = currentDptPageSize || window.currentDptPageSize || 50;
+        const isAll = curPageSize === 'all';
+        const pageSize = isAll ? (totalItems || 1) : parseInt(curPageSize, 10);
         const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
 
-        if (currentDptPage > totalPages) currentDptPage = totalPages;
-        if (currentDptPage < 1) currentDptPage = 1;
+        let curPage = currentDptPage || window.currentDptPage || 1;
+        if (curPage > totalPages) curPage = totalPages;
+        if (curPage < 1) curPage = 1;
+        currentDptPage = curPage;
+        window.currentDptPage = curPage;
 
-        const startIdx = isAll ? 0 : (currentDptPage - 1) * pageSize;
+        const startIdx = isAll ? 0 : (curPage - 1) * pageSize;
         const endIdx = isAll ? totalItems : Math.min(startIdx + pageSize, totalItems);
         const pageItems = isAll ? filtered : filtered.slice(startIdx, endIdx);
 
@@ -6037,16 +6052,17 @@
         }
 
         // Render pagination buttons
-        renderPaginationButtons(currentDptPage, totalPages);
+        renderPaginationButtons(curPage, totalPages);
 
         if (totalItems === 0) {
           tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 28px;">Tidak ditemukan data pemilih yang sesuai kriteria pencarian. Klik <strong>+ Tambah Pemilih</strong> untuk mendaftarkan anggota baru.</td></tr>`;
-          updateBulkSelectionUI();
+          if (typeof updateBulkSelectionUI === 'function') updateBulkSelectionUI();
           return;
         }
 
         tbody.innerHTML = pageItems.map(v => {
           const isChecked = window.selectedDptNpas && window.selectedDptNpas.has(v.npa);
+          const safeName = String(v.name || '').replace(/"/g, '&quot;');
           return `
           <tr id="dpt-row-${v.npa}" class="${isChecked ? 'row-selected' : ''}">
             <td style="text-align: center; width: 44px;">
@@ -6118,13 +6134,13 @@
                 ` : ''}
 
                 <!-- Edit Button -->
-                <button type="button" class="btn-act-edit" onclick="handleOpenEditVoter('${v.npa}')" title="Edit data pemilih ${v.name}">
+                <button type="button" class="btn-act-edit" onclick="handleOpenEditVoter('${v.npa}')" title="Edit data pemilih ${safeName}">
                   <svg style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                   <span>Edit</span>
                 </button>
 
                 <!-- Delete Button -->
-                <button type="button" class="btn-action-delete" onclick="handleDeleteVoter('${v.npa}')" title="Hapus ${v.name} dari DPT">
+                <button type="button" class="btn-action-delete" onclick="handleDeleteVoter('${v.npa}')" title="Hapus ${safeName} dari DPT">
                   <svg style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                   <span>Hapus</span>
                 </button>
@@ -6133,8 +6149,10 @@
           </tr>
         `}).join('');
 
-        updateBulkSelectionUI();
+        if (typeof updateBulkSelectionUI === 'function') updateBulkSelectionUI();
       }
+
+      window.renderDptTable = renderDptTable;
 
       // Filter & Search Events
       document.getElementById('desktop-dpt-search').addEventListener('input', () => {
@@ -7828,13 +7846,16 @@
       });
 
       // Reset Demo Data
-      document.getElementById('btn-desktop-reset').addEventListener('click', () => {
-        if (confirm('Konfirmasi: Reset seluruh data DPT dan suara kembali ke kondisi awal?')) {
-          window.pemiluStorage.resetAllData();
-          refreshAll();
-          alert('Data berhasil di-reset!');
-        }
-      });
+      const btnReset = document.getElementById('btn-desktop-reset');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          if (confirm('Konfirmasi: Reset seluruh data DPT dan suara kembali ke kondisi awal?')) {
+            window.pemiluStorage.resetAllData();
+            refreshAll();
+            alert('Data berhasil di-reset!');
+          }
+        });
+      }
 
       // Export CSV
       document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
