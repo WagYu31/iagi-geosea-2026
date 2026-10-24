@@ -130,8 +130,79 @@
           </div>
         </div>
 
+        <!-- PRE-CHAT REGISTRATION FORM SCREEN -->
+        <div class="kpku-prechat-screen" id="prechat-screen" style="display: none;">
+          <div class="prechat-card">
+            <div class="prechat-badge">
+              <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+              <span>Formulir Pengaduan Pemilih</span>
+            </div>
+            <h3 class="prechat-title">Layanan Bantuan Resmi Pemilu IAGI</h3>
+            <p class="prechat-desc">
+              Mohon lengkapi <strong>Nama</strong>, <strong>NPA</strong>, dan <strong>Email</strong> agar Panitia KPKU dapat mencatat dan memverifikasi data Anda:
+            </p>
+
+            <form class="prechat-form" id="prechat-form" onsubmit="window.handlePreChatSubmit(event)">
+              <div class="prechat-field">
+                <label for="prechat-name">Nama Lengkap <span class="required-star">*</span></label>
+                <div class="prechat-input-wrap">
+                  <svg class="prechat-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <input type="text" id="prechat-name" class="prechat-input" placeholder="Contoh: Ir. Budi Santoso, M.T." required autocomplete="name">
+                </div>
+              </div>
+
+              <div class="prechat-field">
+                <label for="prechat-npa">Nomor Pokok Anggota (NPA) <span class="required-star">*</span></label>
+                <div class="prechat-input-wrap">
+                  <svg class="prechat-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="13" y2="12"></line></svg>
+                  <input type="text" id="prechat-npa" class="prechat-input font-mono" placeholder="5 digit, contoh: 01842 atau 00000" maxlength="10" required>
+                </div>
+                <span class="prechat-hint">Ketik 5 digit NPA resmi IAGI Anda, atau <strong>00000</strong> jika belum ber-NPA.</span>
+              </div>
+
+              <div class="prechat-field">
+                <label for="prechat-email">Email Terdaftar <span class="required-star">*</span></label>
+                <div class="prechat-input-wrap">
+                  <svg class="prechat-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  <input type="email" id="prechat-email" class="prechat-input" placeholder="contoh: budi@geology.id" required autocomplete="email">
+                </div>
+              </div>
+
+              <div class="prechat-field">
+                <label>Topik Bantuan</label>
+                <div class="prechat-topic-grid" id="prechat-topic-grid">
+                  <button type="button" class="prechat-topic-btn active" data-topic="Klaim Token Surat Suara">🎟️ Klaim Token</button>
+                  <button type="button" class="prechat-topic-btn" data-topic="Pemeriksaan Data DPT">🔍 Cek DPT</button>
+                  <button type="button" class="prechat-topic-btn" data-topic="Bilik Suara Digital">🗳️ Bilik Suara</button>
+                  <button type="button" class="prechat-topic-btn" data-topic="Pertanyaan Lain">💬 Bantuan Lain</button>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-prechat-submit" id="btn-prechat-submit">
+                <span>🚀 Mulai Chat & Hubungkan ke Panitia</span>
+              </button>
+
+              <div class="prechat-footer-action">
+                <span>Sudah punya tiket pengaduan?</span>
+                <button type="button" class="btn-prechat-link" onclick="window.openRestorePanel()">📂 Muat Chat Lama</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
         <!-- Messages Stream -->
-        <div class="kpku-chat-messages" id="chat-messages">
+        <div class="kpku-chat-messages" id="chat-messages" style="display: none;">
+          <!-- Voter Identity Active Banner -->
+          <div class="chat-voter-id-banner" id="chat-voter-id-banner" style="display: none;">
+            <div class="voter-id-left">
+              <div class="voter-id-icon">🪪</div>
+              <div class="voter-id-info">
+                <div class="voter-id-name" id="voter-id-display-name">-</div>
+                <div class="voter-id-sub" id="voter-id-display-sub">-</div>
+              </div>
+            </div>
+            <button type="button" class="btn-voter-id-edit" onclick="window.showPreChatForm(true)" title="Ubah Nama, NPA, atau Email">Ubah Data</button>
+          </div>
           <!-- Initial Welcome Message -->
           <div class="chat-msg bot">
             <span class="msg-sender-tag">KPKU Support</span>
@@ -245,6 +316,21 @@
         }
       });
     }
+
+    // Bind pre-chat topic selector chips
+    const topicBtns = document.querySelectorAll('.prechat-topic-btn');
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        topicBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    if (hasCompletedPreChat()) {
+      showPreChatForm(false);
+    } else {
+      showPreChatForm(true);
+    }
   }
 
   function toggleChatWindow(show) {
@@ -255,8 +341,14 @@
     if (show) {
       win.classList.add('active');
       if (overlay) overlay.classList.add('active');
-      const input = document.getElementById('chat-input');
-      if (input && window.innerWidth > 480) input.focus();
+
+      if (hasCompletedPreChat()) {
+        showPreChatForm(false);
+        const input = document.getElementById('chat-input');
+        if (input && window.innerWidth > 480) input.focus();
+      } else {
+        showPreChatForm(true);
+      }
     } else {
       win.classList.remove('active');
       if (overlay) overlay.classList.remove('active');
@@ -265,7 +357,171 @@
 
   const CHAT_STORAGE_KEY = 'kpku_livechat_sessions';
   const ACTIVE_TICKET_KEY = 'kpku_voter_active_ticket_id';
+  const VOTER_IDENTITY_KEY = 'kpku_chat_voter_identity';
+  const SESSION_ACTIVE_KEY = 'kpku_chat_in_progress';
   let displayedAdminMsgCount = 0;
+
+  function hasCompletedPreChat() {
+    try {
+      if (sessionStorage.getItem(SESSION_ACTIVE_KEY) === '1') {
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  function showPreChatForm(show) {
+    const prechatScreen = document.getElementById('prechat-screen');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+
+    if (show) {
+      try {
+        sessionStorage.removeItem(SESSION_ACTIVE_KEY);
+      } catch(e) {}
+
+      if (prechatScreen) prechatScreen.style.display = 'flex';
+      if (chatMessages) chatMessages.style.display = 'none';
+      if (chatForm) chatForm.style.display = 'none';
+
+      // Pre-fill fields with existing identity if available
+      const id = getVoterIdentity();
+      const nameInput = document.getElementById('prechat-name');
+      const npaInput = document.getElementById('prechat-npa');
+      const emailInput = document.getElementById('prechat-email');
+
+      if (nameInput && id.voterName && !id.voterName.includes('Tamu')) nameInput.value = id.voterName;
+      if (npaInput && id.voterNpa && id.voterNpa !== 'Tamu') npaInput.value = id.voterNpa;
+      if (emailInput && id.voterEmail) emailInput.value = id.voterEmail;
+
+      setTimeout(() => {
+        if (nameInput && !nameInput.value) nameInput.focus();
+        else if (npaInput && !npaInput.value) npaInput.focus();
+      }, 100);
+    } else {
+      try {
+        sessionStorage.setItem(SESSION_ACTIVE_KEY, '1');
+      } catch(e) {}
+
+      if (prechatScreen) prechatScreen.style.display = 'none';
+      if (chatMessages) chatMessages.style.display = 'flex';
+      if (chatForm) chatForm.style.display = 'flex';
+
+      updateVoterIdentityBanner();
+    }
+  }
+  window.showPreChatForm = showPreChatForm;
+
+  function updateVoterIdentityBanner() {
+    const banner = document.getElementById('chat-voter-id-banner');
+    const nameEl = document.getElementById('voter-id-display-name');
+    const subEl = document.getElementById('voter-id-display-sub');
+
+    const id = getVoterIdentity();
+    if (!banner || !id.voterName || id.voterName.includes('Tamu')) {
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+
+    if (nameEl) nameEl.textContent = '👤 ' + id.voterName;
+    if (subEl) subEl.innerHTML = `🪪 NPA: <strong>${escapeHtml(id.voterNpa || '-')}</strong> • ✉️ ${escapeHtml(id.voterEmail || '-')}`;
+    banner.style.display = 'flex';
+  }
+
+  window.handlePreChatSubmit = function(event) {
+    if (event) event.preventDefault();
+
+    const nameInput = document.getElementById('prechat-name');
+    const npaInput = document.getElementById('prechat-npa');
+    const emailInput = document.getElementById('prechat-email');
+
+    const name = (nameInput ? nameInput.value : '').trim();
+    const npa = (npaInput ? npaInput.value : '').trim();
+    const email = (emailInput ? emailInput.value : '').trim();
+
+    if (!name || name.length < 2) {
+      alert('Mohon masukkan Nama Lengkap Anda.');
+      if (nameInput) nameInput.focus();
+      return;
+    }
+    if (!npa) {
+      alert('Mohon masukkan Nomor Pokok Anggota (NPA) Anda (atau 00000).');
+      if (npaInput) npaInput.focus();
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      alert('Mohon masukkan Email valid yang terdaftar di IAGI.');
+      if (emailInput) emailInput.focus();
+      return;
+    }
+
+    const activeTopicBtn = document.querySelector('.prechat-topic-btn.active');
+    const topic = activeTopicBtn ? activeTopicBtn.dataset.topic : 'Bantuan Umum';
+
+    // 1. Save identity
+    const identityObj = {
+      name: name,
+      npa: npa,
+      email: email,
+      topic: topic,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(VOTER_IDENTITY_KEY, JSON.stringify(identityObj));
+
+    // 2. Initialize or Update session in kpku_livechat_sessions
+    let sessions = [];
+    try {
+      sessions = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]');
+      if (!Array.isArray(sessions)) sessions = [];
+    } catch(e) { sessions = []; }
+
+    const now = new Date();
+    const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' WIB';
+
+    let ticketId = getActiveTicketId();
+    let ticket = sessions.find(s => s.id === ticketId);
+
+    if (!ticket) {
+      ticketId = 'ticket-live-' + Date.now();
+      setActiveTicketId(ticketId);
+      ticket = {
+        id: ticketId,
+        userName: name,
+        userNpa: npa,
+        userEmail: email,
+        userPhone: '',
+        channel: 'Live Web Chat',
+        status: 'waiting',
+        startedAt: '24 Okt 2026, ' + timeStr,
+        lastUpdated: timeStr,
+        messages: []
+      };
+      sessions.unshift(ticket);
+    } else {
+      ticket.userName = name;
+      ticket.userNpa = npa;
+      ticket.userEmail = email;
+      ticket.status = 'waiting';
+      ticket.lastUpdated = timeStr;
+    }
+
+    // Add initial prechat registration message
+    const regMsg = `[Registrasi Bantuan Pemilu IAGI 2026]\nNama: ${name}\nNPA: ${npa}\nEmail: ${email}\nTopik: ${topic}`;
+    const botGreeting = `Halo Rekan <strong>${escapeHtml(name)}</strong>! 👋\n\nData identitas Anda telah berhasil dicatat dengan NPA: <strong>${escapeHtml(npa)}</strong> dan Email: <strong>${escapeHtml(email)}</strong>.\n\nTiket pengaduan Anda telah terhubung ke meja Panitia KPKU (Topik: <em>${escapeHtml(topic)}</em>). Silakan sampaikan pertanyaan atau kendala detail Anda di bawah:`;
+
+    ticket.messages.push({ sender: 'user', text: regMsg, time: timeStr });
+    ticket.messages.push({ sender: 'bot', text: botGreeting, time: timeStr });
+
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
+    setActiveTicketId(ticket.id);
+
+    // 3. Switch screens to active chat
+    showPreChatForm(false);
+    renderFullChatHistory(ticket);
+
+    const input = document.getElementById('chat-input');
+    if (input && window.innerWidth > 480) input.focus();
+  };
 
   function getActiveTicketId() {
     return localStorage.getItem(ACTIVE_TICKET_KEY) || sessionStorage.getItem('kpku_chat_session_id');
@@ -285,28 +541,47 @@
   }
 
   function getVoterIdentity() {
-    let voterName = 'Rekan Geolog (Tamu Web)';
-    let voterNpa = 'Tamu';
+    let voterName = '';
+    let voterNpa = '';
     let voterEmail = '';
     let voterPhone = '';
 
     try {
-      const claimed = JSON.parse(localStorage.getItem('pemilu_iagi_claimed_voter') || '{}');
-      if (claimed && claimed.name) {
-        voterName = claimed.name;
-        voterNpa = claimed.npa || 'Tamu';
-        voterEmail = claimed.email || '';
-        voterPhone = claimed.phone || '';
-      } else {
+      const saved = JSON.parse(localStorage.getItem(VOTER_IDENTITY_KEY) || '{}');
+      if (saved && saved.name) {
+        voterName = saved.name;
+        voterNpa = saved.npa || '';
+        voterEmail = saved.email || '';
+        voterPhone = saved.phone || '';
+      }
+    } catch (e) {}
+
+    if (!voterName) {
+      try {
+        const claimed = JSON.parse(localStorage.getItem('pemilu_iagi_claimed_voter') || '{}');
+        if (claimed && claimed.name) {
+          voterName = claimed.name;
+          voterNpa = claimed.npa || '';
+          voterEmail = claimed.email || '';
+          voterPhone = claimed.phone || '';
+        }
+      } catch (e) {}
+    }
+
+    if (!voterName) {
+      try {
         const current = JSON.parse(localStorage.getItem('pemilu_current_user') || '{}');
         if (current && current.name) {
           voterName = current.name;
-          voterNpa = current.npa || 'Tamu';
+          voterNpa = current.npa || '';
           voterEmail = current.email || '';
           voterPhone = current.phone || '';
         }
-      }
-    } catch (e) {}
+      } catch (e) {}
+    }
+
+    if (!voterName) voterName = 'Rekan Geolog (Tamu Web)';
+    if (!voterNpa) voterNpa = 'Tamu';
 
     return { voterName, voterNpa, voterEmail, voterPhone };
   }
@@ -521,6 +796,15 @@
     }
 
     setActiveTicketId(found.id);
+    try {
+      localStorage.setItem(VOTER_IDENTITY_KEY, JSON.stringify({
+        name: found.userName,
+        npa: found.userNpa,
+        email: found.userEmail,
+        timestamp: Date.now()
+      }));
+    } catch(e) {}
+    showPreChatForm(false);
     renderFullChatHistory(found);
 
     if (statusMsg) {
