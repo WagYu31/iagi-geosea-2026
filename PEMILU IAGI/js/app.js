@@ -268,9 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       triggerHaptic('medium');
 
-      const npa = document.getElementById('claim-npa').value.trim();
+      const npaRaw = document.getElementById('claim-npa').value.trim();
+      const npa = npaRaw.replace(/\D/g, '').slice(0, 5);
       const name = document.getElementById('claim-name').value.trim();
       const email = document.getElementById('claim-email').value.trim();
+
+      if (!npa || npa.length !== 5) {
+        showAlert(claimAlert, 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).', 'error');
+        triggerHaptic('error');
+        const npaEl = document.getElementById('claim-npa');
+        if (npaEl) { npaEl.value = npa; npaEl.focus(); }
+        return;
+      }
 
       const result = window.pemiluStorage.claimSuratSuara(npa, name, email);
 
@@ -508,8 +517,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (voteFormAuth) {
     voteFormAuth.addEventListener('submit', (e) => {
       e.preventDefault();
-      const npa = document.getElementById('vote-npa').value.trim();
+      const npaRaw = document.getElementById('vote-npa').value.trim();
       const token = document.getElementById('vote-token').value.trim();
+      const npa = npaRaw.replace(/\D/g, '').slice(0, 5);
+
+      if (!npa || npa.length !== 5) {
+        showAlert(voteAuthAlert, 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).', 'error');
+        triggerHaptic('error');
+        const npaEl = document.getElementById('vote-npa');
+        if (npaEl) { npaEl.value = npa; npaEl.focus(); }
+        return;
+      }
+
       handleVerifyVoteAuth(npa, token);
     });
   }

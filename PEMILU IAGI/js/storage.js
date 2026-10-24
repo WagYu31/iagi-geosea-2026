@@ -582,9 +582,16 @@ class PemiluStorage {
   // --- Claim Surat Suara Engine ---
   claimSuratSuara(npa, name, email) {
     let dpt = this.getDPT();
-    const cleanNpa = (npa || '').trim().toUpperCase();
+    const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanName = (name || '').trim().toLowerCase();
+
+    if (!cleanNpa || cleanNpa.length !== 5) {
+      return {
+        success: false,
+        error: 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).'
+      };
+    }
 
     let voterIndex = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
 
@@ -663,13 +670,18 @@ class PemiluStorage {
 
   // --- Verification for Voting ---
   verifyVotingEligibility(npa, token) {
-    const cleanNpa = (npa || '').trim().toUpperCase();
+    const rawNpa = String(npa || '').trim();
+    const cleanNpa = rawNpa.replace(/\D/g, '').slice(0, 5);
     const cleanToken = (token || '').trim().toUpperCase();
 
+    if (!cleanNpa || cleanNpa.length !== 5) {
+      return { valid: false, error: 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).' };
+    }
+
     // Built-in testing account for instant demonstration
-    if ((cleanNpa === '00000' || cleanNpa === '01001' || cleanNpa === 'IAGI-2024-0001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
+    if ((cleanNpa === '00000' || cleanNpa === '01001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
       const dpt = this.getDPT();
-      let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
+      let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001');
       if (!demoVoter) {
         demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
       }
@@ -703,7 +715,7 @@ class PemiluStorage {
 
   // --- Cast Vote (Zero-Knowledge Anonymous Ballot Decoupling) ---
   async castVote(npa, token, candidateId) {
-    const cleanNpa = String(npa || '').trim().toUpperCase();
+    const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
     const cleanToken = String(token || '').trim().toUpperCase();
 
     // 1. Strict Eligibility Verification

@@ -155,7 +155,7 @@
                 <label for="prechat-npa">Nomor Pokok Anggota (NPA) <span class="required-star">*</span></label>
                 <div class="prechat-input-wrap">
                   <svg class="prechat-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="13" y2="12"></line></svg>
-                  <input type="text" id="prechat-npa" class="prechat-input font-mono" placeholder="5 digit, contoh: 01842 atau 00000" maxlength="10" required>
+                  <input type="text" id="prechat-npa" class="prechat-input font-mono" placeholder="5 digit angka (contoh: 00000)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
                 </div>
                 <span class="prechat-hint">Ketik 5 digit NPA resmi IAGI Anda, atau <strong>00000</strong> jika belum ber-NPA.</span>
               </div>
@@ -283,11 +283,28 @@
     }
 
     if (restoreInput) {
+      restoreInput.addEventListener('input', function() {
+        if (/^\d+$/.test(this.value)) {
+          this.value = this.value.slice(0, 5);
+        }
+      });
       restoreInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
           window.doRestoreByNpa();
         }
+      });
+    }
+
+    const prechatNpaInput = document.getElementById('prechat-npa');
+    if (prechatNpaInput) {
+      prechatNpaInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 5);
+      });
+      prechatNpaInput.addEventListener('paste', function() {
+        setTimeout(() => {
+          this.value = this.value.replace(/\D/g, '').slice(0, 5);
+        }, 10);
       });
     }
 
@@ -436,7 +453,8 @@
     const emailInput = document.getElementById('prechat-email');
 
     const name = (nameInput ? nameInput.value : '').trim();
-    const npa = (npaInput ? npaInput.value : '').trim();
+    const rawNpa = (npaInput ? npaInput.value : '').trim();
+    const cleanNpa = rawNpa.replace(/\D/g, '').slice(0, 5);
     const email = (emailInput ? emailInput.value : '').trim();
 
     if (!name || name.length < 2) {
@@ -444,11 +462,17 @@
       if (nameInput) nameInput.focus();
       return;
     }
-    if (!npa) {
-      alert('Mohon masukkan Nomor Pokok Anggota (NPA) Anda (atau 00000).');
-      if (npaInput) npaInput.focus();
+    if (!cleanNpa || cleanNpa.length !== 5) {
+      alert('Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 01842 atau 00000).');
+      if (npaInput) {
+        npaInput.value = cleanNpa;
+        npaInput.focus();
+      }
       return;
     }
+    if (npaInput) npaInput.value = cleanNpa;
+    const npa = cleanNpa;
+
     if (!email || !email.includes('@')) {
       alert('Mohon masukkan Email valid yang terdaftar di IAGI.');
       if (emailInput) emailInput.focus();
@@ -1074,7 +1098,7 @@
       const preName = document.getElementById('prechat-name');
       const preEmail = document.getElementById('prechat-email');
 
-      if (claimNpa && preNpa && !preNpa.value.trim()) preNpa.value = claimNpa;
+      if (claimNpa && preNpa && !preNpa.value.trim()) preNpa.value = claimNpa.replace(/\D/g, '').slice(0, 5);
       if (claimName && preName && !preName.value.trim()) preName.value = claimName;
       if (claimEmail && preEmail && !preEmail.value.trim()) preEmail.value = claimEmail;
     } catch(e) {}

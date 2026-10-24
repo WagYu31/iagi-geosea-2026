@@ -52,9 +52,9 @@ if (empty($action) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ================= ACTION 1: CHECK VOTER STATUS =================
 if ($action === 'check_voter') {
-    $npa = isset($_GET['npa']) ? strtoupper(trim($_GET['npa'])) : '';
-    if (empty($npa)) {
-        echo json_encode(['success' => false, 'error' => 'NPA wajib disertakan.']);
+    $npa = isset($_GET['npa']) ? substr(preg_replace('/\D/', '', $_GET['npa']), 0, 5) : '';
+    if (strlen($npa) !== 5) {
+        echo json_encode(['success' => false, 'error' => 'NPA harus tepat 5 digit angka (contoh: 00000).']);
         exit;
     }
 
@@ -105,16 +105,16 @@ if ($action === 'cast_vote') {
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
 
-    $npa = isset($payload['npa']) ? strtoupper(trim($payload['npa'])) : '';
+    $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
     $token = isset($payload['token']) ? strtoupper(trim($payload['token'])) : '';
     $candidateId = isset($payload['candidate_id']) ? intval($payload['candidate_id']) : 0;
     $voterName = isset($payload['name']) ? trim($payload['name']) : '';
     $receiptHash = isset($payload['receipt_hash']) ? trim($payload['receipt_hash']) : '';
     $fullHash = isset($payload['full_hash']) ? trim($payload['full_hash']) : '';
 
-    if (empty($npa)) {
+    if (strlen($npa) !== 5) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'NPA tidak valid.']);
+        echo json_encode(['success' => false, 'error' => 'NPA harus tepat 5 digit angka (contoh: 00000).']);
         exit;
     }
 

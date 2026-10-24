@@ -4006,7 +4006,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">NPA IAGI (5 Digit)</label>
-                <input type="text" id="manage-admin-npa" class="form-input font-mono" placeholder="01412" maxlength="5" pattern="\d{5}">
+                <input type="text" id="manage-admin-npa" class="form-input font-mono" placeholder="01412" maxlength="5" inputmode="numeric" pattern="\d{5}" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
                 <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#94A3B8;">Tepat 5-digit angka</span>
               </div>
             </div>
