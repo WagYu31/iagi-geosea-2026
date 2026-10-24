@@ -3449,6 +3449,339 @@
         background: #F1F5F9 !important;
       }
     }
+
+    /* =========================================================================
+       21ST.DEV & TASTESKILL AESTHETICS: RANDOM CHECK & AUDIT SYSTEM
+       ========================================================================= */
+    .taste-hero-panel {
+      position: relative;
+      background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.6) 70%, rgba(2, 6, 23, 0.9) 100%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 20px !important;
+      padding: 28px !important;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      overflow: hidden;
+    }
+    .taste-hero-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), rgba(245, 186, 66, 0.5), transparent);
+    }
+    .taste-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .taste-bento-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.75), rgba(2, 6, 23, 0.88));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px 18px;
+      backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+    .taste-bento-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+    .taste-bento-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--card-accent, rgba(255, 255, 255, 0.15));
+    }
+    .taste-bento-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .taste-bento-val {
+      font-size: 1.45rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .taste-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      display: inline-block;
+      box-shadow: 0 0 8px #10B981;
+      animation: taste-pulse 2s infinite;
+    }
+    .taste-pulse-amber {
+      background: #F59E0B;
+      box-shadow: 0 0 8px #F59E0B;
+      animation: taste-pulse 2s infinite;
+    }
+    @keyframes taste-pulse {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+    .taste-toolbar {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .taste-btn-danger {
+      all: unset;
+      display: inline-flex !important;
+      width: auto !important;
+      max-width: fit-content !important;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 15px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .taste-btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.6);
+      color: #FFFFFF;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+      transform: translateY(-1px);
+    }
+    .taste-btn-ghost {
+      all: unset;
+      display: inline-flex !important;
+      width: auto !important;
+      max-width: fit-content !important;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #E2E8F0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .taste-btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .taste-btn-gold {
+      all: unset;
+      display: inline-flex !important;
+      width: auto !important;
+      max-width: fit-content !important;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 20px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #F5BA42 0%, #D97706 100%);
+      border: 1px solid rgba(245, 186, 66, 0.6);
+      color: #0F172A;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(245, 186, 66, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .taste-btn-gold:hover {
+      background: linear-gradient(135deg, #FBD38D 0%, #F5BA42 100%);
+      box-shadow: 0 6px 22px rgba(245, 186, 66, 0.5), inset 0 1px 0 #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .taste-paslon-card {
+      position: relative;
+      background: linear-gradient(165deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95));
+      border-radius: 16px;
+      border: 1px solid var(--p-border, rgba(255, 255, 255, 0.1));
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .taste-paslon-card:hover {
+      border-color: var(--p-border-hover, rgba(255, 255, 255, 0.2));
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+      transform: translateY(-2px);
+    }
+    .taste-paslon-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--p-accent, #38BDF8);
+      box-shadow: 0 0 12px var(--p-accent, #38BDF8);
+    }
+    .taste-paslon-header {
+      padding: 14px 16px;
+      background: rgba(30, 41, 59, 0.4);
+      border-bottom: 1px solid var(--p-border, rgba(255, 255, 255, 0.08));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .taste-avatar-pill {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--p-accent, #38BDF8);
+      background: var(--p-bg, rgba(56, 189, 248, 0.12));
+      border: 1px solid var(--p-border, rgba(56, 189, 248, 0.3));
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px var(--p-glow, transparent);
+    }
+    .taste-paslon-title-box {
+      min-width: 0;
+      flex: 1;
+    }
+    .taste-paslon-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.01em;
+    }
+    .taste-paslon-cand {
+      font-size: 0.72rem;
+      color: #94A3B8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .taste-chip-btn {
+      all: unset;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .taste-chip-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+    .taste-slot-empty {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .taste-slot-empty:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(15, 23, 42, 0.65);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+    .taste-slot-filled {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid var(--p-accent, #38BDF8);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+    .taste-slot-filled:hover {
+      background: rgba(30, 41, 59, 0.5);
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+    .taste-slot-btn {
+      all: unset;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 10px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38BDF8;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .taste-slot-btn:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -4675,123 +5008,152 @@
     </section>
 
     <!-- ================= SECTION: VERIFIKASI RANDOM CHECK TIMSES (04 NOV PAGI) ================= -->
-    <section id="section-random-check" class="panel-card" style="display: none;">
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap;">
+    <section id="section-random-check" class="panel-card taste-hero-panel" style="display: none;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 24px; flex-wrap: wrap;">
         <div>
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-            <span style="background: rgba(196, 181, 253, 0.15); border: 1px solid rgba(196, 181, 253, 0.4); color: #C4B5FD; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; text-transform: uppercase;">
-              Agenda 04 November 2026 · Pagi Hari
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap;">
+            <span style="background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(56, 189, 248, 0.15)); border: 1px solid rgba(168, 85, 247, 0.35); color: #D8B4FE; font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 6px;">
+              <span>✨</span>
+              <span>AGENDA 04 NOVEMBER 2026 · PAGI HARI</span>
             </span>
-            <span style="font-size: 0.72rem; color: #34D399; display: flex; align-items: center; gap: 5px;">
-              <span style="width: 7px; height: 7px; border-radius: 50%; background: #34D399; display: inline-block;"></span>
-              Uji Petik Transparansi & Validitas Audit
+            <span style="font-size: 0.74rem; color: #34D399; display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span class="taste-pulse-dot"></span>
+              Uji Petik Transparansi &amp; Validitas Audit
             </span>
           </div>
-          <h2 style="font-size: 1.45rem; font-weight: 900; color: #FFFFFF; margin: 0 0 6px 0; letter-spacing: -0.01em;">
+          <h2 style="font-size: 1.55rem; font-weight: 900; color: #FFFFFF; margin: 0 0 8px 0; letter-spacing: -0.02em;">
             Verifikasi Kesesuaian Pilihan (Random Check 5 Pemilih per Timses)
           </h2>
-          <p style="font-size: 0.84rem; color: #94A3B8; margin: 0; max-width: 820px; line-height: 1.5;">
-            Sesuai ketentuan KPKU IAGI, pada tanggal <strong>04 November pagi</strong> dilakukan verifikasi kesesuaian pilihan melalui uji petik (*random check*) terhadap <strong>5 nama pemilih</strong> yang diajukan oleh masing-masing Tim Sukses Paslon (01, 02, dan 03) untuk membuktikan integritas matematis tanpa membuka kerahasiaan pilihan (Asas Luber-Jurdil).
+          <p style="font-size: 0.84rem; color: #94A3B8; margin: 0; max-width: 840px; line-height: 1.6;">
+            Sesuai ketentuan KPKU IAGI, pada tanggal <strong>04 November pagi</strong> dilakukan verifikasi kesesuaian pilihan melalui uji petik (<em>random check</em>) terhadap <strong>5 nama pemilih</strong> yang diajukan oleh masing-masing Tim Sukses Paslon (01, 02, dan 03) untuk membuktikan integritas matematis tanpa membuka kerahasiaan pilihan (Asas Luber-Jurdil).
           </p>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="no-print">
-          <button type="button" class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" style="border-radius: 8px; padding: 10px 18px; font-size: 0.82rem; font-weight: 700;">
+          <button type="button" class="taste-btn-ghost" onclick="switchAdminSection('section-metrics', event)">
             ← Kembali ke Ringkasan
           </button>
-          <button type="button" class="btn-primary-gold" onclick="printRandomCheckReport()" style="padding: 10px 22px; font-size: 0.85rem; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;">
+          <button type="button" class="taste-btn-gold" onclick="printRandomCheckReport()">
             <svg style="width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
             <span>Cetak Berita Acara Uji Petik (PDF)</span>
           </button>
         </div>
       </div>
 
-      <!-- Quick Metrics Bar -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px;">
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px 16px;">
-          <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">Total Sampel Diajukan</div>
-          <div id="rc-stat-total-samples" style="font-size: 1.4rem; font-weight: 900; color: #FFFFFF; font-family: var(--font-mono); margin-top: 4px;">
-            15 <span style="font-size: 0.8rem; color: #94A3B8; font-weight: 600;">/ 15 Pemilih</span>
+      <!-- Quick Metrics Bento Grid -->
+      <div class="taste-bento-grid">
+        <div class="taste-bento-card" style="--card-accent: #38BDF8;">
+          <div class="taste-bento-label">
+            <span>Total Sampel Diajukan</span>
+            <span>📊</span>
+          </div>
+          <div id="rc-stat-total-samples" class="taste-bento-val">
+            0 <span style="font-size: 0.8rem; color: #94A3B8; font-weight: 600;">/ 15 Pemilih</span>
           </div>
         </div>
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 14px 16px;">
-          <div style="font-size: 0.7rem; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">Validasi Status Suara Masuk</div>
-          <div id="rc-stat-voted-count" style="font-size: 1.4rem; font-weight: 900; color: #38BDF8; font-family: var(--font-mono); margin-top: 4px;">
-            15 / 15 <span style="font-size: 0.76rem; color: #34D399; font-weight: 700;">Tercatat Sah</span>
+        <div class="taste-bento-card" style="--card-accent: #10B981;">
+          <div class="taste-bento-label">
+            <span>Status Suara Masuk</span>
+            <span>🗳️</span>
+          </div>
+          <div id="rc-stat-voted-count" class="taste-bento-val" style="color: #38BDF8;">
+            0 / 15 <span style="font-size: 0.76rem; color: #F59E0B; font-weight: 700;">Menunggu Ajuan</span>
           </div>
         </div>
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 14px 16px;">
-          <div style="font-size: 0.7rem; color: #34D399; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">Integritas Kriptografi</div>
-          <div style="font-size: 1.4rem; font-weight: 900; color: #34D399; font-family: var(--font-mono); margin-top: 4px;">
-            100% SHA-256 <span style="font-size: 0.76rem; color: #A7F3D0; font-weight: 700;">MATCH ✓</span>
+        <div class="taste-bento-card" style="--card-accent: #A855F7;">
+          <div class="taste-bento-label">
+            <span>Integritas Kriptografi</span>
+            <span>🔐</span>
+          </div>
+          <div class="taste-bento-val" style="color: #34D399;">
+            100% SHA-256 <span style="font-size: 0.72rem; color: #A7F3D0; font-weight: 700; background: rgba(16,185,129,0.15); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3);">MATCH ✓</span>
           </div>
         </div>
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 12px; padding: 14px 16px;">
-          <div style="font-size: 0.7rem; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">Kerahasiaan Suara (Luber)</div>
-          <div style="font-size: 1.25rem; font-weight: 900; color: #FDE68A; margin-top: 6px;">
+        <div class="taste-bento-card" style="--card-accent: #F5BA42;">
+          <div class="taste-bento-label">
+            <span>Kerahasiaan Suara (Luber)</span>
+            <span>🛡️</span>
+          </div>
+          <div class="taste-bento-val" style="font-size: 1.18rem; color: #FDE68A; margin-top: 3px;">
             🔒 Terenkripsi Kriptografis
           </div>
         </div>
       </div>
 
       <!-- Action Toolbar for Random Check -->
-      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;" class="no-print">
-        <div style="font-size: 0.82rem; color: #CBD5E1; display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1rem;">⚙️</span>
-          <span>Panitia dapat mengosongkan slot, mengacak ulang dari DPT, atau memvalidasi kesesuaian kriptografis.</span>
+      <div class="taste-toolbar no-print">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.3); color: #FDE68A; font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 999px; letter-spacing: 0.04em;">
+            04 NOV PAGI
+          </span>
+          <span style="font-size: 0.82rem; color: #CBD5E1;">
+            Panel Verifikasi Sampel Uji Petik KPKU IAGI
+          </span>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" onclick="clearAllRandomCheckSamples()" style="padding: 8px 14px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;" title="Kosongkan seluruh 15 slot ajuan (menunggu berkas timses 04 Nov pagi)">
+          <button type="button" class="taste-btn-danger" onclick="clearAllRandomCheckSamples()" title="Kosongkan seluruh 15 slot ajuan (menunggu berkas timses 04 Nov pagi)">
             <span>🗑️</span>
             <span>Kosongkan Semua Slot</span>
           </button>
-          <button type="button" class="btn-subtle" onclick="reShuffleRandomCheckSamples()" style="padding: 8px 16px; font-size: 0.8rem; font-weight: 700; border-radius: 8px;">
-            🎲 Acak Ulang 15 Sampel DPT
+          <button type="button" class="taste-btn-ghost" onclick="reShuffleRandomCheckSamples()">
+            <span>🎲</span>
+            <span>Acak Ulang 15 Sampel DPT</span>
           </button>
-          <button type="button" class="btn btn-gold" onclick="runRandomCheckValidation()" style="padding: 8px 18px; font-size: 0.8rem; font-weight: 800; border-radius: 8px;">
-            ✓ Jalankan Uji Kriptografi
+          <button type="button" class="taste-btn-gold" onclick="runRandomCheckValidation()">
+            <span>🛡️</span>
+            <span>Jalankan Uji Kriptografi</span>
           </button>
         </div>
       </div>
 
       <!-- 3 Timses Cards Container -->
-      <div id="random-check-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px;">
-        <!-- Dynamically rendered per Timses: Paslon 01, 02, 03 -->
+      <div id="random-check-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 24px;">
+        <!-- Dynamically rendered per Timses: Paslon 01, 02, 03 via renderRandomCheckSection() -->
       </div>
 
-      <!-- Verification Audit Statement & Signatures -->
-      <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 14px; padding: 20px 24px; margin-top: 20px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-          <div style="font-size: 0.95rem; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">
-            <span>🛡️ Pernyataan Hasil Audit Uji Petik KPKU:</span>
+      <!-- Verification Audit Statement & Official Signatures -->
+      <div style="background: linear-gradient(165deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95)); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: 16px; padding: 22px 26px; margin-top: 24px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div style="font-size: 0.98rem; font-weight: 900; color: #FFFFFF; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.25rem;">🛡️</span>
+            <span>Pernyataan Hasil Audit Uji Petik KPKU IAGI:</span>
           </div>
-          <span style="font-size: 0.72rem; color: #34D399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 800;">
+          <span style="font-size: 0.72rem; color: #34D399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 5px 12px; border-radius: 999px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+            <span class="taste-pulse-dot"></span>
             STATUS: LOLOS VERIFIKASI TANPA ANOMALI
           </span>
         </div>
-        <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.6; margin: 0 0 16px 0;">
+        <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.6; margin: 0 0 20px 0;">
           Uji petik terhadap 15 nama pemilih dari ketiga Tim Sukses membuktikan bahwa hak suara tercatat secara tepat pada tabulasi brankas kriptografi, token autentikasi telah dihanguskan satu kali pakai, tidak ada data ganda, dan pilihan pemilih terenkripsi secara matematis. Berita Acara verifikasi ini menjadi dasar sah dimulainya Sidang Pleno Terbuka pada 04 November sore.
         </p>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; border-top: 1px dashed rgba(255, 255, 255, 0.12); padding-top: 16px;">
-          <div style="text-align: center;">
-            <div style="font-size: 0.7rem; color: #94A3B8;">Saksi Timses 01</div>
-            <div style="margin: 18px auto 6px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.75rem;">✓ TERVERIFIKASI</div>
-            <div style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Timses Mirzam A.</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; border-top: 1px dashed rgba(255, 255, 255, 0.12); padding-top: 18px;">
+          <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 10px; padding: 14px 10px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Saksi Timses 01</div>
+            <div style="margin: 10px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              <span>✓</span> TERVERIFIKASI
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF;">Timses Mirzam A.</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 0.7rem; color: #94A3B8;">Saksi Timses 02</div>
-            <div style="margin: 18px auto 6px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.75rem;">✓ TERVERIFIKASI</div>
-            <div style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Timses Sonny Y.</div>
+          <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(245, 186, 66, 0.2); border-radius: 10px; padding: 14px 10px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Saksi Timses 02</div>
+            <div style="margin: 10px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              <span>✓</span> TERVERIFIKASI
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF;">Timses Sonny Y.</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 0.7rem; color: #94A3B8;">Saksi Timses 03</div>
-            <div style="margin: 18px auto 6px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.75rem;">✓ TERVERIFIKASI</div>
-            <div style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Timses Sri H.</div>
+          <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 14px 10px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Saksi Timses 03</div>
+            <div style="margin: 10px auto; font-family: var(--font-mono); color: #34D399; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              <span>✓</span> TERVERIFIKASI
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF;">Timses Sri H.</div>
           </div>
-          <div style="text-align: center;">
-            <div style="font-size: 0.7rem; color: #94A3B8;">Ketua KPKU IAGI</div>
-            <div style="margin: 18px auto 6px auto; font-family: var(--font-mono); color: #F5BA42; font-size: 0.75rem;">✓ DISAHKAN RESMI</div>
-            <div style="font-size: 0.78rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra S., M.T.</div>
+          <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(245, 186, 66, 0.4); border-radius: 10px; padding: 14px 10px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Ketua KPKU IAGI</div>
+            <div style="margin: 10px auto; font-family: var(--font-mono); color: #FDE68A; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              <span>✓</span> DISAHKAN RESMI
+            </div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF;">Dr. Ir. Hendra S., M.T.</div>
           </div>
         </div>
       </div>
@@ -9569,8 +9931,8 @@
             id: 1,
             num: '01',
             candidate: 'Dr. Mirzam Abdurrachman',
-            badgeBg: 'rgba(56, 189, 248, 0.15)',
-            badgeBorder: 'rgba(56, 189, 248, 0.4)',
+            badgeBg: 'rgba(56, 189, 248, 0.12)',
+            badgeBorder: 'rgba(56, 189, 248, 0.35)',
             badgeColor: '#38BDF8',
             accentColor: '#38BDF8',
             teamTitle: 'Tim Sukses Paslon 01',
@@ -9580,8 +9942,8 @@
             id: 2,
             num: '02',
             candidate: 'Sonny Yudhistira, M.T.',
-            badgeBg: 'rgba(245, 186, 66, 0.15)',
-            badgeBorder: 'rgba(245, 186, 66, 0.4)',
+            badgeBg: 'rgba(245, 186, 66, 0.12)',
+            badgeBorder: 'rgba(245, 186, 66, 0.35)',
             badgeColor: '#F5BA42',
             accentColor: '#F5BA42',
             teamTitle: 'Tim Sukses Paslon 02',
@@ -9591,10 +9953,10 @@
             id: 3,
             num: '03',
             candidate: 'Ir. Sri Hartanto, M.T.',
-            badgeBg: 'rgba(239, 68, 68, 0.15)',
-            badgeBorder: 'rgba(239, 68, 68, 0.4)',
-            badgeColor: '#EF4444',
-            accentColor: '#EF4444',
+            badgeBg: 'rgba(244, 63, 94, 0.12)',
+            badgeBorder: 'rgba(244, 63, 94, 0.35)',
+            badgeColor: '#F43F5E',
+            accentColor: '#F43F5E',
             teamTitle: 'Tim Sukses Paslon 03',
             witness: 'Saksi: Joko W., S.T.'
           }
@@ -9607,11 +9969,11 @@
 
           let badgeHtml = '';
           if (filledCount === 5) {
-            badgeHtml = `<span style="font-size: 0.68rem; color: #34D399; font-weight: 700; background: rgba(16,185,129,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">✓ 5 Sampel Sah</span>`;
+            badgeHtml = `<span style="font-size: 0.68rem; color: #34D399; font-weight: 800; background: rgba(16,185,129,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(16,185,129,0.3); display: inline-flex; align-items: center; gap: 5px;"><span class="taste-pulse-dot" style="width: 5px; height: 5px;"></span>5 Sampel Sah</span>`;
           } else if (filledCount === 0) {
-            badgeHtml = `<span style="font-size: 0.68rem; color: #F59E0B; font-weight: 700; background: rgba(245,158,11,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(245,158,11,0.25);">⏳ Menunggu Ajuan (0/5)</span>`;
+            badgeHtml = `<span style="font-size: 0.68rem; color: #F59E0B; font-weight: 800; background: rgba(245,158,11,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(245,158,11,0.3); display: inline-flex; align-items: center; gap: 5px;"><span class="taste-pulse-amber" style="width: 5px; height: 5px;"></span>Menunggu (0/5)</span>`;
           } else {
-            badgeHtml = `<span style="font-size: 0.68rem; color: #38BDF8; font-weight: 700; background: rgba(56,189,248,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(56,189,248,0.25);">${filledCount}/5 Terisi</span>`;
+            badgeHtml = `<span style="font-size: 0.68rem; color: #38BDF8; font-weight: 800; background: rgba(56,189,248,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.3); display: inline-flex; align-items: center; gap: 5px;"><span class="taste-pulse-dot" style="width: 5px; height: 5px; background: #38BDF8; box-shadow: 0 0 8px #38BDF8;"></span>${filledCount}/5 Terisi</span>`;
           }
 
           let slotsHtml = '';
@@ -9621,47 +9983,55 @@
               const fakeHash = 'e3b0c44' + ((idx + t.id * 17) * 9871).toString(16).slice(-6) + '...';
               const timeStr = v.voted_at ? new Date(v.voted_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : '26 Okt, 08:14 WIB';
               slotsHtml += `
-                <div class="rc-voter-row">
-                  <div style="flex: 1; padding-right: 8px;">
-                    <div style="font-weight: 800; color: #FFFFFF; font-size: 0.82rem; display: flex; align-items: center; gap: 6px;">
-                      <span>${idx + 1}.</span>
-                      <span>${v.name}</span>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #94A3B8; font-family: var(--font-mono); margin-top: 2px;">
-                      NPA: <strong style="color: #FDE68A;">${v.npa}</strong> · ${v.pengda || 'DKI Jakarta'} · ${timeStr}
+                <div class="taste-slot-filled" style="--p-accent: ${t.accentColor};">
+                  <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+                    <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 800; color: ${t.accentColor}; background: rgba(255,255,255,0.06); border-radius: 6px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      0${idx + 1}
+                    </span>
+                    <div style="min-width: 0;">
+                      <div style="font-weight: 800; color: #FFFFFF; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${v.name}
+                      </div>
+                      <div style="font-size: 0.7rem; color: #94A3B8; font-family: var(--font-mono); margin-top: 1px; display: flex; align-items: center; gap: 6px;">
+                        <span style="color: #FDE68A; background: rgba(245,186,66,0.12); padding: 0 4px; border-radius: 3px; font-weight: 700;">NPA ${v.npa}</span>
+                        <span>·</span>
+                        <span>${v.pengda || 'DKI Jakarta'}</span>
+                      </div>
                     </div>
                   </div>
-                  <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
-                    <span style="font-size: 0.68rem; color: #34D399; background: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.35); padding: 2px 6px; border-radius: 4px; font-weight: 800;">
-                      ✓ TERCATAT
+                  <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0;">
+                    <span style="font-size: 0.65rem; color: #34D399; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 2px 7px; border-radius: 4px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+                      <span class="taste-pulse-dot" style="width: 4px; height: 4px;"></span>
+                      TERCATAT
                     </span>
                     <div style="display: flex; align-items: center; gap: 6px;">
-                      <span style="font-size: 0.65rem; color: #64748B; font-family: var(--font-mono);" title="Hash Kriptografi Bukti Hak Suara">
-                        #${fakeHash}
-                      </span>
-                      <button type="button" onclick="openSwapSingleVoterModal(${t.id}, ${idx})" style="background: none; border: none; color: #38BDF8; font-size: 0.65rem; text-decoration: underline; cursor: pointer; padding: 0;" title="Ganti pemilih di slot ini">
-                        Ganti
-                      </button>
+                      <span style="font-size: 0.65rem; color: #64748B; font-family: var(--font-mono);" title="Hash Kriptografi Bukti Hak Suara">#${fakeHash}</span>
+                      <button type="button" onclick="openSwapSingleVoterModal(${t.id}, ${idx})" style="all: unset; color: #38BDF8; font-size: 0.68rem; text-decoration: underline; cursor: pointer; font-weight: 600;" title="Ganti pemilih di slot ini">Ganti</button>
                     </div>
                   </div>
                 </div>
               `;
             } else {
-              // Empty slot waiting state
+              // Empty slot waiting state (21st.dev style)
               slotsHtml += `
-                <div class="rc-voter-row" style="background: rgba(15, 23, 42, 0.4); border: 1px dashed rgba(255,255,255,0.12); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-                  <div>
-                    <div style="font-weight: 700; color: #64748B; font-size: 0.82rem; display: flex; align-items: center; gap: 6px;">
-                      <span>${idx + 1}.</span>
-                      <span style="font-style: italic; color: #94A3B8;">[ Belum Ditentukan / Menunggu Berkas ]</span>
-                    </div>
-                    <div style="font-size: 0.69rem; color: #64748B; font-family: var(--font-mono); margin-top: 2px;">
-                      NPA: ----- · Ajuan Resmi 04 Nov Pagi
+                <div class="taste-slot-empty">
+                  <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+                    <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 800; color: #64748B; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      0${idx + 1}
+                    </span>
+                    <div style="min-width: 0;">
+                      <div style="font-weight: 700; color: #94A3B8; font-size: 0.8rem; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        [ Menunggu Berkas Timses ]
+                      </div>
+                      <div style="font-size: 0.68rem; color: #64748B; font-family: var(--font-mono); margin-top: 1px;">
+                        NPA: ----- · Ajuan Resmi 04 Nov Pagi
+                      </div>
                     </div>
                   </div>
                   <div>
-                    <button type="button" onclick="openSwapSingleVoterModal(${t.id}, ${idx})" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38BDF8; font-size: 0.68rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer;" title="Isi pemilih untuk slot ${idx + 1}">
-                      + Isi Slot
+                    <button type="button" class="taste-slot-btn" onclick="openSwapSingleVoterModal(${t.id}, ${idx})" title="Isi pemilih untuk slot 0${idx + 1}">
+                      <span>+</span>
+                      <span>Isi Slot</span>
                     </button>
                   </div>
                 </div>
@@ -9670,39 +10040,42 @@
           }
 
           const statusFooterHtml = filledCount === 5
-            ? `<span style="color: #34D399; font-weight: 800;">Status: Match 100%</span>`
-            : `<span style="color: #F59E0B; font-weight: 700; font-size: 0.72rem;">Menunggu ${5 - filledCount} Nama Lagi</span>`;
+            ? `<span style="color: #34D399; font-weight: 800; display: inline-flex; align-items: center; gap: 5px;"><span class="taste-pulse-dot" style="width: 5px; height: 5px;"></span>Status: Match 100%</span>`
+            : `<span style="color: #F59E0B; font-weight: 700; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 5px;"><span class="taste-pulse-amber" style="width: 5px; height: 5px;"></span>Menunggu ${5 - filledCount} Nama Lagi</span>`;
 
           html += `
-            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid ${t.badgeBorder}; border-radius: 14px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-              <div class="timses-card-header" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border-bottom-color: ${t.badgeBorder};">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <span style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 900; color: ${t.badgeColor}; background: ${t.badgeBg}; border: 1px solid ${t.badgeBorder}; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px;">
+            <div class="taste-paslon-card" style="--p-accent: ${t.accentColor}; --p-border: ${t.badgeBorder}; --p-border-hover: ${t.accentColor}; --p-bg: ${t.badgeBg}; --p-glow: ${t.badgeBg};">
+              <div class="taste-paslon-header">
+                <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+                  <span class="taste-avatar-pill">
                     ${t.num}
                   </span>
-                  <div>
-                    <div style="font-size: 0.88rem; font-weight: 800; color: #FFFFFF;">${t.teamTitle}</div>
-                    <div style="font-size: 0.72rem; color: #94A3B8;">Caketum: ${t.candidate}</div>
+                  <div class="taste-paslon-title-box">
+                    <div class="taste-paslon-title">${t.teamTitle}</div>
+                    <div class="taste-paslon-cand">Caketum: ${t.candidate}</div>
                   </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <button type="button" onclick="openManageTimsesModal(${t.id})" style="background: rgba(255,255,255,0.08); border: 1px solid ${t.badgeBorder}; color: #FFFFFF; font-size: 0.68rem; padding: 3px 8px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Atur / ganti 5 pemilih resmi ajuan ${t.teamTitle}">
+                <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                  <button type="button" class="taste-chip-btn" onclick="openManageTimsesModal(${t.id})" title="Atur / ganti 5 pemilih resmi ajuan ${t.teamTitle}">
                     <span>✏️</span>
-                    <span>Kelola 5 Nama</span>
+                    <span>Kelola</span>
                   </button>
                   ${badgeHtml}
                 </div>
               </div>
-              <div class="timses-card-body">
-                <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center;">
-                  <span>5 Nama Pemilih Terpilih (Ajuan Timses):</span>
-                  <span style="color: ${t.badgeColor}; font-size: 0.68rem;">04 Nov Pagi</span>
+              <div style="padding: 16px; flex: 1; display: flex; flex-direction: column;">
+                <div style="font-size: 0.7rem; color: #94A3B8; margin-bottom: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; display: flex; justify-content: space-between; align-items: center;">
+                  <span>5 Nama Pemilih Terpilih:</span>
+                  <span style="color: ${t.badgeColor}; font-size: 0.68rem; font-weight: 800; background: rgba(255,255,255,0.05); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08);">04 NOV PAGI</span>
                 </div>
-                <div>
+                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
                   ${slotsHtml}
                 </div>
-                <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; font-size: 0.74rem;">
-                  <span style="color: #94A3B8;">${t.witness}</span>
+                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; font-size: 0.74rem;">
+                  <span style="color: #94A3B8; display: flex; align-items: center; gap: 5px;">
+                    <span>⚖️</span>
+                    <span>${t.witness}</span>
+                  </span>
                   ${statusFooterHtml}
                 </div>
               </div>
@@ -9713,7 +10086,12 @@
         container.innerHTML = html;
       };
 
-      // Modal Manager for 5 Timses Voters
+      // Initial render call on script load
+      try {
+        renderRandomCheckSection();
+      } catch (e) {
+        console.error('Error on initial renderRandomCheckSection:', e);
+      }
       window.openManageTimsesModal = function(timsesId) {
         const modal = document.getElementById('modal-manage-timses-voters');
         if (!modal) return;
@@ -10062,7 +10440,15 @@
         if (hash.includes('section-resume-pleno') && typeof renderResumePlenoSection === 'function') {
           renderResumePlenoSection();
         }
+        if (hash.includes('section-random-check') && typeof renderRandomCheckSection === 'function') {
+          renderRandomCheckSection();
+        }
       };
+
+      // Call on DOMContentLoaded if already on section-random-check
+      if (typeof renderRandomCheckSection === 'function') {
+        renderRandomCheckSection();
+      }
     });
   </script>
 </body>
