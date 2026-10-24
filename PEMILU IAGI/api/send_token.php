@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+date_default_timezone_set('Asia/Jakarta');
+
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
 
@@ -49,105 +51,224 @@ $displayName = !empty($name) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : 'A
 $displayNpa = !empty($npa) ? htmlspecialchars($npa, ENT_QUOTES, 'UTF-8') : '-';
 $cleanToken = htmlspecialchars($token, ENT_QUOTES, 'UTF-8');
 
+$monthsIndo = [
+    'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
+    'April' => 'April', 'May' => 'Mei', 'June' => 'Juni',
+    'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September',
+    'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+];
+$waktuKlaim = strtr(date('d F Y, H:i'), $monthsIndo) . ' WIB';
+
 $voteUrl = 'https://pemiluiagi.web.id/app.html?npa=' . urlencode($npa) . '&code=' . urlencode($token) . '#vote';
 $subject = 'Surat Suara Elektronik & Kode Unik Pemilu IAGI 2026 - NPA ' . $npa;
 
-// Email HTML Template
+// Official Logo Image URL (Live HTTPS)
+$logoUrl = 'https://pemiluiagi.web.id/assets/iagi-logo.png';
+
+// Ultra-Premium HTML Email Template (Light Canvas with Executive Emerald & Gold Branding)
 $messageHtml = <<<HTML
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="utf-8">
-  <title>Surat Suara Resmi Pemilu IAGI 2026</title>
+  <title>Surat Suara Elektronik Pemilu IAGI 2026</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    td { padding: 0; }
+    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #061512; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #061512; padding: 25px 10px;">
+<body style="margin: 0; padding: 0; background-color: #F1F5F9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1E293B;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F1F5F9; padding: 30px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Container -->
-        <table role="presentation" width="100%" max-width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; background-color: #0B241E; border: 1.5px solid #F5BA42; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <!-- Main Container Card -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; overflow: hidden; box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);">
           
-          <!-- Header -->
+          <!-- Top Gold Ribbon -->
           <tr>
-            <td style="padding: 24px; text-align: center; background: linear-gradient(180deg, #12382F 0%, #0B241E 100%); border-bottom: 1px solid rgba(245, 186, 66, 0.3);">
-              <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.15em; color: #F5BA42; text-transform: uppercase; margin-bottom: 6px;">
-                KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026–2029
-              </div>
-              <h1 style="margin: 0; font-size: 20px; font-weight: 800; color: #FFFFFF; line-height: 1.3;">
-                Surat Suara Elektronik Resmi
-              </h1>
-              <div style="font-size: 13px; color: #94A3B8; margin-top: 4px;">
-                Pemilihan Ketua Umum Pengurus Pusat Ikatan Ahli Geologi Indonesia
-              </div>
+            <td style="height: 6px; background: linear-gradient(90deg, #D97706 0%, #F5BA42 50%, #D97706 100%);"></td>
+          </tr>
+
+          <!-- Header Section with Official Logo -->
+          <tr>
+            <td style="background-color: #07221C; padding: 32px 24px; text-align: center;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom: 14px;">
+                    <img src="{$logoUrl}" alt="Logo IAGI" width="76" height="76" style="display: block; width: 76px; height: 76px; margin: 0 auto; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.18em; color: #F5BA42; text-transform: uppercase; margin-bottom: 6px;">
+                      IKATAN AHLI GEOLOGI INDONESIA (IAGI)
+                    </div>
+                    <div style="font-size: 12px; font-weight: 700; color: #94A3B8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+                      KOMISI PEMILIHAN KETUA UMUM (KPKU) 2026–2029
+                    </div>
+                    <div style="display: inline-block; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.45); color: #FDE68A; font-size: 11px; font-weight: 800; padding: 5px 14px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;">
+                      ✦ SURAT SUARA DIGITAL RESMI ✦
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
-          <!-- Body Content -->
+          <!-- Main Content Body -->
           <tr>
-            <td style="padding: 28px 24px;">
-              <p style="font-size: 15px; line-height: 1.6; color: #E2E8F0; margin-top: 0;">
-                Yth. <strong>{$displayName}</strong>,<br>
-                Nomor Pokok Anggota (NPA): <strong style="color: #F5BA42;">{$displayNpa}</strong>
+            <td style="padding: 32px 28px;">
+              <h2 style="margin: 0 0 10px 0; font-size: 21px; font-weight: 800; color: #0F172A; text-align: center; line-height: 1.35;">
+                Surat Suara Digital Anda Siap Digunakan
+              </h2>
+              <p style="margin: 0 0 24px 0; font-size: 14px; color: #64748B; text-align: center; line-height: 1.55;">
+                Permohonan hak suara Anda telah divalidasi resmi oleh Panitia KPKU IAGI dalam Daftar Pemilih Tetap (DPT). Gunakan kredensial di bawah ini untuk mengakses Bilik Suara Elektronik.
               </p>
 
-              <p style="font-size: 14px; line-height: 1.6; color: #CBD5E1;">
-                Permohonan klaim surat suara digital Anda telah berhasil divalidasi oleh Panitia KPKU IAGI. Sesuai prinsip kerahasiaan <strong>LUBER (Langsung, Umum, Bebas, Rahasia)</strong>, berikut adalah kode unik kriptografi sekali pakai untuk mengakses bilik suara:
-              </p>
-
-              <!-- Token Display Box -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0;">
+              <!-- Voter Information Card -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 24px;">
                 <tr>
-                  <td align="center" style="background-color: #040E0C; border: 2px dashed #F5BA42; border-radius: 12px; padding: 18px 12px; text-align: center;">
-                    <div style="font-size: 11px; font-weight: 700; color: #94A3B8; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;">
-                      KODE TOKEN AKSES SURAT SUARA
+                  <td style="padding: 16px 20px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="font-size: 13px; line-height: 1.6;">
+                      <tr>
+                        <td style="color: #64748B; width: 42%; padding: 4px 0;">Nama Lengkap Pemilih:</td>
+                        <td style="color: #0F172A; font-weight: 700; padding: 4px 0;">{$displayName}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #64748B; padding: 4px 0;">Nomor Pokok Anggota:</td>
+                        <td style="color: #D97706; font-weight: 800; font-family: 'Courier New', Courier, monospace; font-size: 14px; padding: 4px 0;">{$displayNpa}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #64748B; padding: 4px 0;">Status Hak Suara:</td>
+                        <td style="color: #059669; font-weight: 700; padding: 4px 0;">● Terdaftar Sah (DPT Aktif)</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #64748B; padding: 4px 0;">Waktu Penerbitan:</td>
+                        <td style="color: #475569; font-size: 12px; padding: 4px 0;">{$waktuKlaim}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- High-Security Token Certificate Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #061914; border: 2px solid #F5BA42; border-radius: 14px; margin-bottom: 28px; box-shadow: 0 6px 20px rgba(7, 34, 28, 0.2);">
+                <tr>
+                  <td style="padding: 24px 18px; text-align: center;">
+                    <div style="font-size: 11px; font-weight: 800; color: #94A3B8; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;">
+                      🔑 KODE TOKEN KRIPTOGRAFI (SEKALI PAKAI)
                     </div>
-                    <div style="font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 900; color: #F5BA42; letter-spacing: 0.1em;">
+                    
+                    <!-- Token Monospace Display -->
+                    <div style="font-family: 'Courier New', Courier, monospace, sans-serif; font-size: 26px; font-weight: 900; color: #FDE68A; letter-spacing: 3px; margin: 10px 0; text-shadow: 0 0 12px rgba(245, 186, 66, 0.4);">
                       {$cleanToken}
                     </div>
-                    <div style="font-size: 11px; color: #10B981; margin-top: 6px;">
-                      ✓ Token Aktif & Valid Sekali Pakai
+
+                    <!-- Security Pill Badges -->
+                    <div style="font-size: 11px; color: #34D399; font-weight: 700; margin-top: 8px;">
+                      ✓ Terenkripsi 128-bit &bull; Sekali Pakai &bull; Otomatis Hangus Pasca Voting
                     </div>
                   </td>
                 </tr>
               </table>
 
-              <!-- Action Button -->
+              <!-- Big Primary CTA Button -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 24px;">
                 <tr>
                   <td align="center">
-                    <a href="{$voteUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #F5BA42 0%, #D97706 100%); color: #051A15; font-size: 15px; font-weight: 800; text-decoration: none; padding: 14px 28px; border-radius: 10px; box-shadow: 0 4px 15px rgba(245, 186, 66, 0.4); text-align: center;">
-                      Buka Bilik Suara Sekarang &rarr;
-                    </a>
+                    <!-- Bulletproof Button -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td align="center" style="border-radius: 50px; background: linear-gradient(135deg, #F5BA42 0%, #D97706 100%); box-shadow: 0 6px 18px rgba(217, 119, 6, 0.38);">
+                          <a href="{$voteUrl}" target="_blank" style="display: inline-block; padding: 16px 38px; font-size: 15px; font-weight: 800; color: #071E19; text-decoration: none; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.04em;">
+                            Buka Bilik Suara Sekarang &rarr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top: 10px;">
+                    <span style="font-size: 12px; color: #64748B;">
+                      (Tautan di atas akan otomatis mengisikan token Anda ke bilik suara)
+                    </span>
                   </td>
                 </tr>
               </table>
 
-              <!-- Notice Box -->
-              <div style="background-color: rgba(15, 23, 42, 0.6); border-left: 4px solid #F5BA42; padding: 14px 16px; border-radius: 6px; margin-bottom: 20px;">
-                <div style="font-size: 13px; font-weight: 700; color: #F5BA42; margin-bottom: 4px;">
-                  ⚠️ Petunjuk Keamanan & Asas LUBER:
-                </div>
-                <ul style="font-size: 12px; color: #94A3B8; margin: 0; padding-left: 18px; line-height: 1.6;">
-                  <li>Jangan berikan kode unik ini kepada orang lain demi menjaga kemurnian pilihan Anda.</li>
-                  <li>Token langsung hangus seketika pilihan suara Anda direkam ke dalam kotak suara terenkripsi (Zero-Knowledge).</li>
-                  <li>Batas akhir pemungutan suara adalah <strong>25 Oktober 2026 pukul 18.00 WIB</strong>.</li>
-                </ul>
-              </div>
+              <!-- 3 Simple Voting Steps -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <div style="font-size: 12px; font-weight: 800; color: #0F172A; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px;">
+                      📋 3 Langkah Mudah Memberikan Suara:
+                    </div>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="font-size: 13px; line-height: 1.55; color: #334155;">
+                      <tr>
+                        <td style="width: 24px; vertical-align: top; font-weight: 800; color: #D97706;">1.</td>
+                        <td style="padding-bottom: 8px;"><strong>Buka Bilik Suara:</strong> Klik tombol emas di atas atau salin kode token secara manual ke <a href="https://pemiluiagi.web.id/app.html#vote" style="color: #0284C7; text-decoration: underline;">pemiluiagi.web.id/#vote</a>.</td>
+                      </tr>
+                      <tr>
+                        <td style="width: 24px; vertical-align: top; font-weight: 800; color: #D97706;">2.</td>
+                        <td style="padding-bottom: 8px;"><strong>Tentukan Pilihan:</strong> Pelajari profil, visi & misi Calon Ketua Umum IAGI 2026–2029 (Kandidat 01, 02, atau 03).</td>
+                      </tr>
+                      <tr>
+                        <td style="width: 24px; vertical-align: top; font-weight: 800; color: #D97706;">3.</td>
+                        <td><strong>Kunci Suara Sah:</strong> Konfirmasi coblosan Anda. Sistem akan menerbitkan Tanda Terima Kriptografi SHA-256 yang sah dan token Anda langsung hangus.</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
 
-              <p style="font-size: 12px; color: #64748B; line-height: 1.5; margin-bottom: 0;">
-                Jika tombol di atas tidak berfungsi, silakan salin tautan berikut ke browser Anda:<br>
-                <a href="{$voteUrl}" style="color: #38BDF8; word-break: break-all; text-decoration: none;">{$voteUrl}</a>
+              <!-- Security & Integrity Alert Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 12px; margin-bottom: 20px;">
+                <tr>
+                  <td style="padding: 16px 18px;">
+                    <div style="font-size: 13px; font-weight: 800; color: #92400E; margin-bottom: 6px;">
+                      🛡️ Petunjuk Keamanan & Asas LUBER-JURDIL:
+                    </div>
+                    <ul style="font-size: 12px; color: #78350F; margin: 0; padding-left: 18px; line-height: 1.6;">
+                      <li>Jaga kerahasiaan kode unik ini. Jangan serahkan kode kepada siapa pun demi menjaga kemurnian suara Anda.</li>
+                      <li>Sistem e-voting menerapkan <em>Zero-Knowledge Decoupling</em>: pilihan Anda tidak dapat dilacak kembali ke identitas Anda.</li>
+                      <li>Batas akhir pemungutan suara resmi: <strong>Minggu, 25 Oktober 2026 pukul 18.00 WIB</strong>.</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Alternative URL fallback -->
+              <p style="font-size: 11px; color: #94A3B8; line-height: 1.5; margin: 0; text-align: center;">
+                Jika tombol di atas tidak terbuka, silakan salin URL berikut ke peramban web Anda:<br>
+                <a href="{$voteUrl}" style="color: #0284C7; word-break: break-all; text-decoration: underline;">{$voteUrl}</a>
               </p>
             </td>
           </tr>
 
-          <!-- Footer -->
+          <!-- Official Secretariat Footer -->
           <tr>
-            <td style="padding: 18px 24px; background-color: #061512; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center; font-size: 11px; color: #64748B; line-height: 1.5;">
-              <strong>Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026</strong><br>
-              Gedung Sekretariat Pengurus Pusat Ikatan Ahli Geologi Indonesia<br>
-              Hotline WhatsApp: <a href="https://wa.me/628111581461" style="color: #10B981; text-decoration: none;">+62 811-158-1461</a> | Email: <a href="mailto:iagisekretariat@gmail.com" style="color: #94A3B8; text-decoration: none;">iagisekretariat@gmail.com</a>
+            <td style="background-color: #07221C; border-top: 1px solid rgba(245, 186, 66, 0.25); padding: 26px 24px; text-align: center;">
+              <div style="font-size: 12px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">
+                KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026
+              </div>
+              <div style="font-size: 11px; color: #94A3B8; line-height: 1.6; margin-bottom: 12px;">
+                Pengurus Pusat Ikatan Ahli Geologi Indonesia (PP IAGI)<br>
+                Gedung Sekretariat DPP IAGI, Jakarta Selatan
+              </div>
+
+              <div style="font-size: 12px; color: #CBD5E1; margin-bottom: 12px;">
+                💬 Bantuan & Hotline WhatsApp: <a href="https://wa.me/628111581461" target="_blank" style="color: #34D399; font-weight: 700; text-decoration: none;">+62 811-158-1461</a> &bull; 
+                ✉️ Email: <a href="mailto:iagisekretariat@gmail.com" style="color: #F5BA42; text-decoration: none;">iagisekretariat@gmail.com</a>
+              </div>
+
+              <div style="font-size: 10px; color: #64748B; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px; line-height: 1.5;">
+                Surel ini diterbitkan secara otomatis dan terenkripsi oleh Sistem Pemilu Elektronik KPKU IAGI 2026.<br>
+                Hak Cipta &copy; 2026 Ikatan Ahli Geologi Indonesia (IAGI). Hak Cipta Dilindungi Undang-Undang.
+              </div>
             </td>
           </tr>
 
