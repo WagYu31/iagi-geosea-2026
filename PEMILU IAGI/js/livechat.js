@@ -32,9 +32,13 @@
       chips: ['🗳️ Masuk Bilik Suara', '📅 Jadwal Pemilu']
     },
     {
-      keywords: ['jadwal', 'kapan', 'tanggal', 'waktu', 'jam', 'dibuka', 'ditutup'],
-      reply: 'Pemungutan Suara Elektronik (E-Voting) Pemilu IAGI 2026 dibuka resmi pada:\n📅 <strong>Senin, 26 Oktober 2026 pukul 00:01 WIB</strong> (UTC+7) secara serentak dalam rangka PIT IAGI ke-55 & GEOSEA XIX 2026.',
-      chips: ['🎟️ Cara Klaim Token', '🔍 Cek Status DPT']
+      keywords: ['jadwal', 'kapan', 'tanggal', 'waktu', 'jam', 'dibuka', 'ditutup', 'agenda', 'timeline'],
+      reply: '🗓️ <strong>Agenda & Jadwal Resmi Pemilu IAGI 2026:</strong>\n\n' +
+        '1. <strong>25 Oktober 2026 (19.00 WIB):</strong>\nSosialisasi & demonstrasi penggunaan platform pemungutan suara.\n\n' +
+        '2. <strong>26 Oktober (00.01 WIB) – 03 November 2026 (23.59 WIB):</strong>\nMasa pemungutan suara elektronik (e-voting) berlangsung serentak.\n\n' +
+        '3. <strong>04 November 2026 (Pagi):</strong>\nVerifikasi kesesuaian pilihan melalui random check terhadap 5 nama pemilih yang diajukan masing-masing timses.\n\n' +
+        '4. <strong>04 November 2026 (Sore):</strong>\nHasil pemilu ditampilkan sebagai resume satu halaman yang memuat persentase dan perolehan suara masing-masing caketum serta suara tidak terpakai (total sesuai DPT).',
+      chips: ['🗳️ Masuk Bilik Suara', '🎟️ Cara Klaim Token', '🔍 Cek Status DPT']
     },
     {
       keywords: ['wa', 'whatsapp', 'kontak', 'panitia', 'petugas', 'operator', 'hubungi', 'bantuan manual', 'helpdesk'],

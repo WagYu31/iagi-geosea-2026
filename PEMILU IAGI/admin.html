@@ -4407,7 +4407,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <span style="color: #64748B; font-weight: 600;">Target Waktu Tutup:</span>
-              <strong id="schedule-lbl-end" style="color: #CBD5E1; font-size: 0.84rem;">28 Okt 2026, 18:00 WIB</strong>
+              <strong id="schedule-lbl-end" style="color: #CBD5E1; font-size: 0.84rem;">03 Nov 2026, 23:59 WIB</strong>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255, 255, 255, 0.12); padding-top: 10px;">
               <span style="color: #94A3B8; font-weight: 700;">Sisa Hitung Mundur:</span>
@@ -5234,8 +5234,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.5.4"></script>
-  <script src="js/storage.js?v=4.5.4"></script>
+  <script src="js/data.js?v=4.5.6"></script>
+  <script src="js/storage.js?v=4.5.6"></script>
 
   <script>
     // Desktop Admin Dashboard Logic
@@ -6287,7 +6287,7 @@
           highlightScheduleModeLabels('auto');
         } else if (preset === 'official') {
           if (startInput) startInput.value = '2026-10-26T00:01';
-          if (endInput) endInput.value = '2026-10-28T18:00';
+          if (endInput) endInput.value = '2026-11-03T23:59';
           const r = document.getElementById('schedule-mode-auto');
           if (r) r.checked = true;
           highlightScheduleModeLabels('auto');
@@ -6306,7 +6306,7 @@
         const mode = selectedRadio ? selectedRadio.value : 'auto';
 
         let startTime = startInput && startInput.value ? startInput.value + ':00+07:00' : '2026-10-26T00:01:00+07:00';
-        let endTime = endInput && endInput.value ? endInput.value + ':00+07:00' : '2026-10-28T18:00:00+07:00';
+        let endTime = endInput && endInput.value ? endInput.value + ':00+07:00' : '2026-11-03T23:59:00+07:00';
         const lockedMessage = msgInput ? msgInput.value.trim() : 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.';
 
         if (window.pemiluStorage && typeof window.pemiluStorage.saveVotingSchedule === 'function') {

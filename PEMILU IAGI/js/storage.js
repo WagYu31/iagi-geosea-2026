@@ -141,11 +141,20 @@ class PemiluStorage {
         votingOpen: true,
         claimOpen: true,
         votingStartTime: '2026-10-26T00:01:00+07:00',
-        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingEndTime: '2026-11-03T23:59:00+07:00',
         votingMode: 'auto', // 'auto' | 'force_open' | 'force_locked'
         lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
       };
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
+    } else {
+      // Auto-migrate old default end date (28 Oct) to official KPKU decree (03 Nov 23:59 WIB)
+      try {
+        const cur = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || '{}');
+        if (cur.votingEndTime === '2026-10-28T18:00:00+07:00') {
+          cur.votingEndTime = '2026-11-03T23:59:00+07:00';
+          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(cur));
+        }
+      } catch (e) {}
     }
 
     // Auto-sync status pemilih yang sudah mencoblos dari server KPKU
@@ -862,7 +871,7 @@ class PemiluStorage {
       votingOpen: true,
       claimOpen: true,
       votingStartTime: '2026-10-26T00:01:00+07:00',
-      votingEndTime: '2026-10-28T18:00:00+07:00',
+      votingEndTime: '2026-11-03T23:59:00+07:00',
       votingMode: 'auto', // 'auto' | 'force_open' | 'force_locked'
       lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
     };
@@ -1344,7 +1353,7 @@ if (typeof window !== 'undefined') {
       const raw = localStorage.getItem('pemilu_iagi_settings_v2');
       const defaults = {
         votingStartTime: '2026-10-26T00:01:00+07:00',
-        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingEndTime: '2026-11-03T23:59:00+07:00',
         votingMode: 'auto',
         lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
       };
@@ -1379,7 +1388,7 @@ if (typeof window !== 'undefined') {
       const diff = target - Date.now();
       return {
         votingStartTime: '2026-10-26T00:01:00+07:00',
-        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingEndTime: '2026-11-03T23:59:00+07:00',
         votingMode: 'auto',
         lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.',
         isOpen: diff <= 0,
@@ -1388,4 +1397,48 @@ if (typeof window !== 'undefined') {
       };
     }
   };
+
+  // Ketetapan Regulasi & Jadwal Resmi KPKU Pemilu IAGI 2026
+  window.OFFICIAL_ELECTION_TIMELINE = [
+    {
+      step: '01',
+      date: '25 Oktober 2026',
+      time: 'Pukul 19.00 WIB',
+      tag: 'SOSIALISASI',
+      color: '#38BDF8',
+      icon: '📢',
+      title: 'Sosialisasi & Demonstrasi Platform',
+      desc: 'Sosialisasi dan demonstrasi teknis tata cara penggunaan platform pemungutan suara (e-voting) bagi seluruh anggota dan saksi paslon.'
+    },
+    {
+      step: '02',
+      date: '26 Okt – 03 Nov 2026',
+      time: '26 Okt 00.01 WIB s.d. 03 Nov 23.59 WIB',
+      tag: 'E-VOTING RESMI',
+      color: '#F59E0B',
+      icon: '🗳️',
+      title: 'Masa Pemungutan Suara Elektronik',
+      desc: 'Bilik suara dibuka resmi selama 9 hari penuh (24 jam non-stop). Anggota DPT dapat memberikan suara secara LUBER melalui kertas suara digital berenkripsi AES-256.'
+    },
+    {
+      step: '03',
+      date: '04 November 2026',
+      time: 'Pagi Hari (WIB)',
+      tag: 'UJI KESESUAIAN',
+      color: '#A78BFA',
+      icon: '🔍',
+      title: 'Verifikasi Pilihan (Random Check Timses)',
+      desc: 'Verifikasi transparansi dan kesesuaian pilihan melalui random check terhadap 5 nama pemilih yang diajukan oleh masing-masing timses paslon.'
+    },
+    {
+      step: '04',
+      date: '04 November 2026',
+      time: 'Sore Hari (WIB)',
+      tag: 'SIDANG PLENO',
+      color: '#34D399',
+      icon: '📊',
+      title: 'Sidang Pleno & Resume Hasil 1 Halaman',
+      desc: 'Hasil pemilu ditampilkan sebagai resume satu halaman yang memuat persentase & jumlah perolehan suara masing-masing caketum serta suara tidak terpakai (Total = 2.144 DPT).'
+    }
+  ];
 }
