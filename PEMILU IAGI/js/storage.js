@@ -5,7 +5,7 @@
  */
 
 const STORAGE_KEYS = {
-  DPT: 'pemilu_iagi_dpt_v2',
+  DPT: 'pemilu_iagi_dpt_v3',
   BALLOTS: 'pemilu_iagi_ballots_v2',
   AUDIT: 'pemilu_iagi_audit_logs_v2',
   SETTINGS: 'pemilu_iagi_settings_v2',
@@ -64,9 +64,10 @@ class PemiluStorage {
   }
 
   init() {
-    // Hapus data mock/dummy v1 dari sesi sebelumnya agar benar-benar kosong
+    // Hapus data mock/dummy v1 & v2 dari sesi sebelumnya agar ter-upgrade ke data resmi
     try {
       localStorage.removeItem('pemilu_iagi_dpt_v1');
+      localStorage.removeItem('pemilu_iagi_dpt_v2');
       localStorage.removeItem('pemilu_iagi_ballots_v1');
       localStorage.removeItem('pemilu_iagi_audit_logs_v1');
       localStorage.removeItem('pemilu_iagi_settings_v1');
@@ -79,13 +80,29 @@ class PemiluStorage {
       ...v,
       claimed: false,
       token: null,
+      claimed_at: null,
       voted: false,
       voted_at: null,
       receipt_hash: null
     }));
 
-    // Inisialisasi awal hanya jika data DPT belum pernah dibuat sama sekali (null)
-    if (localStorage.getItem(STORAGE_KEYS.DPT) === null) {
+    // Inisialisasi awal jika data DPT belum pernah dibuat sama sekali (null) atau masih menggunakan data sampel lama (< 500 pemilih)
+    const existingDptRaw = localStorage.getItem(STORAGE_KEYS.DPT);
+    let shouldInit = false;
+    if (existingDptRaw === null) {
+      shouldInit = true;
+    } else {
+      try {
+        const parsed = JSON.parse(existingDptRaw);
+        if (!Array.isArray(parsed) || parsed.length < 500) {
+          shouldInit = true;
+        }
+      } catch (e) {
+        shouldInit = true;
+      }
+    }
+
+    if (shouldInit) {
       localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(cleanDpt));
     }
 
@@ -97,7 +114,7 @@ class PemiluStorage {
     if (!localStorage.getItem(STORAGE_KEYS.AUDIT)) {
       const initialLogs = [
         { id: 'log-01', action: 'SYSTEM_BOOT', details: 'Sistem Pemilu IAGI 2026 diinisialisasi. Kotak suara kosong (0 suara terverifikasi).', timestamp: new Date().toISOString() },
-        { id: 'log-02', action: 'DPT_VERIFIED', details: 'DPT 22 pemilih aktif siap digunakan tanpa data perolehan suara sebelumnya.', timestamp: new Date().toISOString() }
+        { id: 'log-02', action: 'DPT_VERIFIED', details: 'DPT 2.143 pemilih aktif terverifikasi publikasi resmi KPKU 2026 siap digunakan.', timestamp: new Date().toISOString() }
       ];
       localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify(initialLogs));
     }
@@ -124,8 +141,10 @@ class PemiluStorage {
       }
 
       let dpt = JSON.parse(raw);
-      if (!Array.isArray(dpt)) {
-        return [];
+      if (!Array.isArray(dpt) || dpt.length < 500) {
+        const initial = (typeof INITIAL_DPT !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_DPT)) : [];
+        this.saveDPT(initial);
+        return initial;
       }
 
       // Auto-migrate legacy NPA formats (e.g. IAGI-2024-0001) to strictly 5-digit numbers
@@ -196,12 +215,13 @@ class PemiluStorage {
       ...v,
       claimed: false,
       token: null,
+      claimed_at: null,
       voted: false,
       voted_at: null,
       receipt_hash: null
     }));
     this.saveDPT(cleanDpt);
-    this.addAuditLog('DPT_RESET', 'Data DPT direset kembali ke data default template 5-digit.');
+    this.addAuditLog('DPT_RESET', 'Data DPT direset kembali ke data default template 5-digit (2.143 pemilih resmi).');
     return cleanDpt;
   }
 
