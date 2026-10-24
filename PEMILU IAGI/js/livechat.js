@@ -1055,6 +1055,33 @@
     toggleChatWindow(true);
   };
 
+  window.LiveChatWidget = {
+    open: function() {
+      toggleChatWindow(true);
+    },
+    close: function() {
+      toggleChatWindow(false);
+    }
+  };
+
+  window.openHelpdeskChat = function() {
+    try {
+      const claimNpa = document.getElementById('claim-npa')?.value?.trim();
+      const claimName = document.getElementById('claim-name')?.value?.trim();
+      const claimEmail = document.getElementById('claim-email')?.value?.trim();
+
+      const preNpa = document.getElementById('prechat-npa');
+      const preName = document.getElementById('prechat-name');
+      const preEmail = document.getElementById('prechat-email');
+
+      if (claimNpa && preNpa && !preNpa.value.trim()) preNpa.value = claimNpa;
+      if (claimName && preName && !preName.value.trim()) preName.value = claimName;
+      if (claimEmail && preEmail && !preEmail.value.trim()) preEmail.value = claimEmail;
+    } catch(e) {}
+
+    toggleChatWindow(true);
+  };
+
   window.openRestorePanel = function() {
     const panel = document.getElementById('chat-restore-panel');
     if (panel) {

@@ -376,7 +376,7 @@
 
             <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;">
               <span>ℹ️ Token tidak masuk ke email?</span>
-              <a href="javascript:void(0)" onclick="if(window.LiveChatWidget && window.LiveChatWidget.open) { window.LiveChatWidget.open(); } else { alert('Silakan hubungi Helpdesk KPKU via Live Chat di pojok kanan bawah untuk bantuan penerbitan token.'); }" style="color: var(--gold-secondary); text-decoration: underline; font-weight: 600;">Hubungi Helpdesk Admin</a>
+              <a href="javascript:void(0)" onclick="if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }" style="color: var(--gold-secondary); text-decoration: underline; font-weight: 600; cursor: pointer;">Hubungi Helpdesk Admin</a>
             </div>
           </form>
 
