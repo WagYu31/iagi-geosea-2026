@@ -1312,6 +1312,73 @@
       .disc-pct { font-size: 0.65rem; }
     }
 
+    /* Equal height pillars when 0 votes or tied */
+    .podium-columns-grid.equal-height-grid {
+      align-items: end;
+    }
+    .podium-columns-grid.equal-height-grid .podium-pillar-block {
+      height: 235px !important;
+    }
+    .podium-columns-grid.equal-height-grid .podium-avatar-wrap {
+      width: 90px !important;
+      height: 90px !important;
+      margin-bottom: -14px !important;
+    }
+    .podium-col.cand-1 .podium-pillar-block.equal-pillar {
+      background: linear-gradient(180deg, #38BDF8 0%, #0284C7 35%, #0369A1 75%, #075985 100%);
+      box-shadow: 0 16px 32px -10px rgba(2, 132, 199, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
+    }
+    .podium-col.cand-2 .podium-pillar-block.equal-pillar {
+      background: linear-gradient(180deg, #34D399 0%, #10B981 35%, #059669 75%, #047857 100%);
+      box-shadow: 0 16px 32px -10px rgba(16, 185, 129, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
+    }
+    .podium-col.cand-3 .podium-pillar-block.equal-pillar {
+      background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 35%, #D97706 75%, #B45309 100%);
+      box-shadow: 0 16px 32px -10px rgba(245, 158, 11, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
+    }
+    .podium-col.cand-1 .podium-avatar-wrap.equal-avatar {
+      border: 3.5px solid #38BDF8;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+      background: radial-gradient(circle, #0284C7 0%, #03446A 100%);
+    }
+    .podium-col.cand-2 .podium-avatar-wrap.equal-avatar {
+      border: 3.5px solid #34D399;
+      box-shadow: 0 0 18px rgba(52, 211, 153, 0.4);
+      background: radial-gradient(circle, #059669 0%, #064E3B 100%);
+    }
+    .podium-col.cand-3 .podium-avatar-wrap.equal-avatar {
+      border: 3.5px solid #FBBF24;
+      box-shadow: 0 0 18px rgba(251, 191, 36, 0.4);
+      background: radial-gradient(circle, #D97706 0%, #78350F 100%);
+    }
+    .podium-col.cand-1 .podium-avatar-rank-pill.equal-pill {
+      background: linear-gradient(135deg, #0284C7, #0369A1);
+      color: #FFFFFF;
+    }
+    .podium-col.cand-2 .podium-avatar-rank-pill.equal-pill {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #FFFFFF;
+    }
+    .podium-col.cand-3 .podium-avatar-rank-pill.equal-pill {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+    }
+    .podium-score-disc.equal-disc {
+      background: radial-gradient(circle at 50% 30%, #0F172A 0%, #020617 100%);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    @media (max-width: 640px) {
+      .podium-columns-grid.equal-height-grid .podium-pillar-block {
+        height: 185px !important;
+      }
+      .podium-columns-grid.equal-height-grid .podium-avatar-wrap {
+        width: 66px !important;
+        height: 66px !important;
+        margin-bottom: -10px !important;
+      }
+    }
+
     /* DPT Table Styles */
     .table-container {
       width: 100%;
@@ -9492,118 +9559,231 @@
           return c.photo || `assets/candidate-${c.id}.png`;
         }
 
-        // 2. Sort candidates descending by votes
-        const sorted = [...CANDIDATES].sort((a, b) => {
-          const va = results.counts[a.id] || 0;
-          const vb = results.counts[b.id] || 0;
-          if (vb !== va) return vb - va;
-          return a.number.localeCompare(b.number);
-        });
+        // 2. Analyze vote counts and tie state
+        const counts = results.counts || {};
+        const v1 = counts[1] || 0;
+        const v2 = counts[2] || 0;
+        const v3 = counts[3] || 0;
+        const allZero = (totalVotes === 0);
+        const allTied = (v1 === v2 && v2 === v3);
 
-        const rank1 = sorted[0];
-        const rank2 = sorted[1];
-        const rank3 = sorted[2];
-
-        const v1 = results.counts[rank1.id] || 0;
-        const pct1 = totalVotes > 0 ? ((v1 / totalVotes) * 100).toFixed(1) : '0.0';
-        const v2 = results.counts[rank2.id] || 0;
-        const pct2 = totalVotes > 0 ? ((v2 / totalVotes) * 100).toFixed(1) : '0.0';
-        const v3 = results.counts[rank3.id] || 0;
-        const pct3 = totalVotes > 0 ? ((v3 / totalVotes) * 100).toFixed(1) : '0.0';
-
-        // 3. Render Top 3 3D Podium (Olympic Order: 2 - 1 - 3)
         const podiumStage = document.getElementById('podium-3d-stage');
         if (podiumStage) {
-          podiumStage.innerHTML = `
-            <div class="podium-ambient-halo"></div>
+          if (allZero || allTied) {
+            // ========================================================
+            // STATE A: SEJAJAR (NILAI SAMA / 0 SUARA) - ALL EQUAL HEIGHT
+            // ========================================================
+            const cand1 = CANDIDATES.find(c => c.id === 1) || CANDIDATES[0];
+            const cand2 = CANDIDATES.find(c => c.id === 2) || CANDIDATES[1];
+            const cand3 = CANDIDATES.find(c => c.id === 3) || CANDIDATES[2];
 
-            <div class="podium-card-header">
-              <div class="podium-card-title-group">
-                <h3><span style="font-size: 1.45rem;">🏆</span> Top 3 Podium Juara</h3>
-                <p class="podium-card-subtitle">Perolehan Suara Calon Ketua Umum IAGI Periode 2026–2029 (Sidang Pleno KPKU)</p>
-              </div>
-              <div class="podium-card-badge">
-                <span style="font-size: 0.9rem;">✨</span> Live Standing
-              </div>
-            </div>
+            const p1 = totalVotes > 0 ? ((v1 / totalVotes) * 100).toFixed(1) : '0.0';
+            const p2 = totalVotes > 0 ? ((v2 / totalVotes) * 100).toFixed(1) : '0.0';
+            const p3 = totalVotes > 0 ? ((v3 / totalVotes) * 100).toFixed(1) : '0.0';
 
-            <div class="podium-columns-grid">
-              
-              <!-- Left: Rank 2 (Silver) -->
-              <div class="podium-col rank-2">
-                <div class="podium-medal-badge">
-                  <div class="medal-ribbon-tag silver">🥈 2</div>
+            podiumStage.innerHTML = `
+              <div class="podium-ambient-halo"></div>
+
+              <div class="podium-card-header">
+                <div class="podium-card-title-group">
+                  <h3><span style="font-size: 1.45rem;">🏆</span> Calon Ketua Umum IAGI 2026–2029</h3>
+                  <p class="podium-card-subtitle">${allZero ? 'Posisi Awal Sejajar · Menanti Perhitungan Suara Sidang Pleno KPKU' : `Perolehan Suara Seimbang (${v1} Suara) · Sidang Pleno KPKU`}</p>
                 </div>
-                <div class="podium-avatar-wrap silver">
-                  <img src="${getCandPhoto(rank2)}" alt="${rank2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank2.id}.png'">
-                  <span class="podium-avatar-rank-pill silver">2</span>
-                </div>
-                <div class="podium-pillar-block silver">
-                  <div class="podium-pillar-highlight"></div>
-                  <div class="podium-pillar-content">
-                    <div class="podium-cand-name">${rank2.name}</div>
-                    <div class="podium-cand-sub">${getCandAffiliation(rank2)}</div>
-                  </div>
-                  <div class="podium-score-disc silver">
-                    <span class="disc-icon">⚡</span>
-                    <span class="disc-votes">${v2}</span>
-                    <span class="disc-unit">Suara</span>
-                    <span class="disc-pct">${pct2}%</span>
-                  </div>
+                <div class="podium-card-badge" style="background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
+                  <span>⚖️ Posisi Sejajar (${allZero ? '0 Suara' : 'Imbang'})</span>
                 </div>
               </div>
 
-              <!-- Center: Rank 1 (Gold - Tallest & Floating Crown/Trophy) -->
-              <div class="podium-col rank-1">
-                <div class="podium-crown-trophy-floater">
-                  <div class="floating-crown">👑</div>
-                  <div class="floating-trophy">🏆</div>
-                </div>
-                <div class="podium-avatar-wrap gold">
-                  <img src="${getCandPhoto(rank1)}" alt="${rank1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank1.id}.png'">
-                  <span class="podium-avatar-rank-pill gold">1</span>
-                </div>
-                <div class="podium-pillar-block gold">
-                  <div class="podium-pillar-highlight"></div>
-                  <div class="podium-pillar-content">
-                    <div class="podium-cand-name">${rank1.name}</div>
-                    <div class="podium-cand-sub">${getCandAffiliation(rank1)}</div>
+              <!-- Equal Height Columns Grid (Sejajar Horisontal 01 - 02 - 03) -->
+              <div class="podium-columns-grid equal-height-grid">
+                
+                <!-- Calon 01 (Left) -->
+                <div class="podium-col cand-1">
+                  <div class="podium-medal-badge">
+                    <div class="medal-ribbon-tag" style="background: linear-gradient(135deg, #38BDF8, #0284C7); color: #FFF; border: 2px solid #BAE6FD;">01</div>
                   </div>
-                  <div class="podium-score-disc gold">
-                    <span class="disc-icon">⭐</span>
-                    <span class="disc-votes">${v1}</span>
-                    <span class="disc-unit">Suara</span>
-                    <span class="disc-pct">${pct1}%</span>
+                  <div class="podium-avatar-wrap equal-avatar">
+                    <img src="${getCandPhoto(cand1)}" alt="${cand1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-1.png'">
+                    <span class="podium-avatar-rank-pill equal-pill">01</span>
                   </div>
+                  <div class="podium-pillar-block equal-pillar">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${cand1.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(cand1)}</div>
+                    </div>
+                    <div class="podium-score-disc equal-disc">
+                      <span class="disc-icon">⚖️</span>
+                      <span class="disc-votes">${v1}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${p1}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Calon 02 (Center) -->
+                <div class="podium-col cand-2">
+                  <div class="podium-crown-trophy-floater" style="margin-bottom: 4px;">
+                    <div class="floating-trophy" style="font-size: 2.3rem;">🏆</div>
+                  </div>
+                  <div class="podium-avatar-wrap equal-avatar">
+                    <img src="${getCandPhoto(cand2)}" alt="${cand2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-2.png'">
+                    <span class="podium-avatar-rank-pill equal-pill">02</span>
+                  </div>
+                  <div class="podium-pillar-block equal-pillar">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${cand2.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(cand2)}</div>
+                    </div>
+                    <div class="podium-score-disc equal-disc">
+                      <span class="disc-icon">⚖️</span>
+                      <span class="disc-votes">${v2}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${p2}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Calon 03 (Right) -->
+                <div class="podium-col cand-3">
+                  <div class="podium-medal-badge">
+                    <div class="medal-ribbon-tag" style="background: linear-gradient(135deg, #FBBF24, #D97706); color: #FFF; border: 2px solid #FDE68A;">03</div>
+                  </div>
+                  <div class="podium-avatar-wrap equal-avatar">
+                    <img src="${getCandPhoto(cand3)}" alt="${cand3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-3.png'">
+                    <span class="podium-avatar-rank-pill equal-pill">03</span>
+                  </div>
+                  <div class="podium-pillar-block equal-pillar">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${cand3.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(cand3)}</div>
+                    </div>
+                    <div class="podium-score-disc equal-disc">
+                      <span class="disc-icon">⚖️</span>
+                      <span class="disc-votes">${v3}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${p3}%</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            `;
+          } else {
+            // ========================================================
+            // STATE B: DYNAMIC OLYMPIC PODIUM (SUDAH ADA YANG UNGGUL)
+            // ========================================================
+            const sorted = [...CANDIDATES].sort((a, b) => {
+              const va = results.counts[a.id] || 0;
+              const vb = results.counts[b.id] || 0;
+              if (vb !== va) return vb - va;
+              return a.number.localeCompare(b.number);
+            });
+
+            const rank1 = sorted[0];
+            const rank2 = sorted[1];
+            const rank3 = sorted[2];
+
+            const sv1 = results.counts[rank1.id] || 0;
+            const sp1 = totalVotes > 0 ? ((sv1 / totalVotes) * 100).toFixed(1) : '0.0';
+            const sv2 = results.counts[rank2.id] || 0;
+            const sp2 = totalVotes > 0 ? ((sv2 / totalVotes) * 100).toFixed(1) : '0.0';
+            const sv3 = results.counts[rank3.id] || 0;
+            const sp3 = totalVotes > 0 ? ((sv3 / totalVotes) * 100).toFixed(1) : '0.0';
+
+            podiumStage.innerHTML = `
+              <div class="podium-ambient-halo"></div>
+
+              <div class="podium-card-header">
+                <div class="podium-card-title-group">
+                  <h3><span style="font-size: 1.45rem;">🏆</span> Top 3 Podium Juara</h3>
+                  <p class="podium-card-subtitle">Perolehan Suara Calon Ketua Umum IAGI Periode 2026–2029 (Sidang Pleno KPKU)</p>
+                </div>
+                <div class="podium-card-badge">
+                  <span style="font-size: 0.9rem;">✨</span> Live Standing
                 </div>
               </div>
 
-              <!-- Right: Rank 3 (Bronze) -->
-              <div class="podium-col rank-3">
-                <div class="podium-medal-badge">
-                  <div class="medal-ribbon-tag bronze">🥉 3</div>
-                </div>
-                <div class="podium-avatar-wrap bronze">
-                  <img src="${getCandPhoto(rank3)}" alt="${rank3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank3.id}.png'">
-                  <span class="podium-avatar-rank-pill bronze">3</span>
-                </div>
-                <div class="podium-pillar-block bronze">
-                  <div class="podium-pillar-highlight"></div>
-                  <div class="podium-pillar-content">
-                    <div class="podium-cand-name">${rank3.name}</div>
-                    <div class="podium-cand-sub">${getCandAffiliation(rank3)}</div>
+              <div class="podium-columns-grid">
+                
+                <!-- Left: Rank 2 (Silver) -->
+                <div class="podium-col rank-2">
+                  <div class="podium-medal-badge">
+                    <div class="medal-ribbon-tag silver">🥈 2</div>
                   </div>
-                  <div class="podium-score-disc bronze">
-                    <span class="disc-icon">🚀</span>
-                    <span class="disc-votes">${v3}</span>
-                    <span class="disc-unit">Suara</span>
-                    <span class="disc-pct">${pct3}%</span>
+                  <div class="podium-avatar-wrap silver">
+                    <img src="${getCandPhoto(rank2)}" alt="${rank2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank2.id}.png'">
+                    <span class="podium-avatar-rank-pill silver">2</span>
+                  </div>
+                  <div class="podium-pillar-block silver">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${rank2.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(rank2)}</div>
+                    </div>
+                    <div class="podium-score-disc silver">
+                      <span class="disc-icon">⚡</span>
+                      <span class="disc-votes">${sv2}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${sp2}%</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-            </div>
-          `;
+                <!-- Center: Rank 1 (Gold - Tallest & Floating Crown/Trophy) -->
+                <div class="podium-col rank-1">
+                  <div class="podium-crown-trophy-floater">
+                    <div class="floating-crown">👑</div>
+                    <div class="floating-trophy">🏆</div>
+                  </div>
+                  <div class="podium-avatar-wrap gold">
+                    <img src="${getCandPhoto(rank1)}" alt="${rank1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank1.id}.png'">
+                    <span class="podium-avatar-rank-pill gold">1</span>
+                  </div>
+                  <div class="podium-pillar-block gold">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${rank1.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(rank1)}</div>
+                    </div>
+                    <div class="podium-score-disc gold">
+                      <span class="disc-icon">⭐</span>
+                      <span class="disc-votes">${sv1}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${sp1}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Rank 3 (Bronze) -->
+                <div class="podium-col rank-3">
+                  <div class="podium-medal-badge">
+                    <div class="medal-ribbon-tag bronze">🥉 3</div>
+                  </div>
+                  <div class="podium-avatar-wrap bronze">
+                    <img src="${getCandPhoto(rank3)}" alt="${rank3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank3.id}.png'">
+                    <span class="podium-avatar-rank-pill bronze">3</span>
+                  </div>
+                  <div class="podium-pillar-block bronze">
+                    <div class="podium-pillar-highlight"></div>
+                    <div class="podium-pillar-content">
+                      <div class="podium-cand-name">${rank3.name}</div>
+                      <div class="podium-cand-sub">${getCandAffiliation(rank3)}</div>
+                    </div>
+                    <div class="podium-score-disc bronze">
+                      <span class="disc-icon">🚀</span>
+                      <span class="disc-votes">${sv3}</span>
+                      <span class="disc-unit">Suara</span>
+                      <span class="disc-pct">${sp3}%</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            `;
+          }
         }
 
         // 4. Render Classic Bars Container
