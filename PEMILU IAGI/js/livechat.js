@@ -155,7 +155,7 @@
                 <label for="prechat-npa">Nomor Pokok Anggota (NPA) <span class="required-star">*</span></label>
                 <div class="prechat-input-wrap">
                   <svg class="prechat-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="13" y2="12"></line></svg>
-                  <input type="text" id="prechat-npa" class="prechat-input font-mono" placeholder="5 digit angka (contoh: 00000)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
+                  <input type="text" id="prechat-npa" class="prechat-input font-mono" placeholder="5 digit angka (contoh: 00000)" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
                 </div>
                 <span class="prechat-hint">Ketik 5 digit NPA resmi IAGI Anda, atau <strong>00000</strong> jika belum ber-NPA.</span>
               </div>

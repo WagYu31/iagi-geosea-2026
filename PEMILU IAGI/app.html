@@ -353,7 +353,7 @@
           <form id="form-claim" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
-              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
@@ -407,7 +407,7 @@
           <form id="form-vote-auth" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA)</label>
-              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="\d{5}" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
@@ -1189,10 +1189,10 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=4.5.0"></script>
-  <script src="js/storage.js?v=4.5.0"></script>
-  <script src="js/app.js?v=4.5.0"></script>
+  <script src="js/data.js?v=4.5.1"></script>
+  <script src="js/storage.js?v=4.5.1"></script>
+  <script src="js/app.js?v=4.5.1"></script>
   <!-- Official KPKU Helpdesk Live Chat Script -->
-  <script src="js/livechat.js?v=4.5.0"></script>
+  <script src="js/livechat.js?v=4.5.1"></script>
 </body>
 </html>
