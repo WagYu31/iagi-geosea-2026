@@ -1,14 +1,14 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v4.5.4';
+const CACHE_NAME = 'pemilu-iagi-2026-v4.5.5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './landing.html',
   './manifest.json',
-  './css/landing.css?v=4.5.4',
-  './js/data.js?v=4.5.4',
-  './js/storage.js?v=4.5.4',
-  './js/app.js?v=4.5.4',
-  './js/livechat.js?v=4.5.4',
+  './css/landing.css?v=4.5.5',
+  './js/data.js?v=4.5.5',
+  './js/storage.js?v=4.5.5',
+  './js/app.js?v=4.5.5',
+  './js/livechat.js?v=4.5.5',
   './assets/iagi-logo.png',
   './assets/candidate-1.jpg',
   './assets/candidate-2.jpg',
