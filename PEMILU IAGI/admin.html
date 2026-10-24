@@ -1902,6 +1902,78 @@
       background: rgba(239, 68, 68, 0.09) !important;
     }
 
+    /* Voter having an unresolved helpdesk problem (Tagged in DPT Table) */
+    tr.row-has-issue {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.26) 0%, rgba(239, 68, 68, 0.10) 100%) !important;
+      border-left: 5px solid #EF4444 !important;
+      box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.2) !important;
+    }
+    tr.row-has-issue td {
+      border-bottom-color: rgba(239, 68, 68, 0.38) !important;
+    }
+    tr.row-has-issue:hover {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.34) 0%, rgba(239, 68, 68, 0.16) 100%) !important;
+    }
+
+    .badge-dpt-issue {
+      background: rgba(239, 68, 68, 0.24);
+      border: 1px solid #EF4444;
+      color: #FCA5A5;
+      font-size: 0.67rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+      transition: all 0.2s ease;
+    }
+    .badge-dpt-issue:hover {
+      background: rgba(239, 68, 68, 0.42);
+      border-color: #F87171;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .badge-dpt-resolved {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    .btn-act-chat-issue {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #EF4444;
+      color: #FCA5A5;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .btn-act-chat-issue:hover {
+      background: #EF4444;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+    }
+
     /* Table Action Buttons Group (Komplit & Elegan) */
     .row-actions-group {
       display: inline-flex;
@@ -2729,6 +2801,60 @@
     .chat-status-dropdown:focus {
       border-color: var(--gold-primary);
       box-shadow: 0 0 10px rgba(245, 186, 66, 0.25);
+    }
+
+    /* Live Chat Header Status Action Pills / Toggle Buttons */
+    .chat-status-toggle-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 3px;
+    }
+    .btn-status-toggle {
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #94A3B8;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .btn-status-toggle:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .btn-status-toggle.active.toggle-waiting {
+      background: rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
+      border-color: #EF4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+    .btn-status-toggle.active.toggle-process {
+      background: rgba(245, 186, 66, 0.35);
+      color: #FDE68A;
+      border-color: #F5BA42;
+      box-shadow: 0 0 12px rgba(245, 186, 66, 0.4);
+    }
+    .btn-status-toggle.active.toggle-resolved {
+      background: rgba(16, 185, 129, 0.35);
+      color: #6EE7B7;
+      border-color: #10B981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .badge-status-chip.chip-process {
+      background: rgba(245, 186, 66, 0.2);
+      border: 1px solid #F5BA42;
+      color: #FDE68A;
     }
 
     .btn-wa-action {
@@ -3933,11 +4059,19 @@
               </div>
             </div>
             <div class="chat-convo-actions" id="chat-active-actions" style="display: none;">
-              <select id="chat-status-select" class="chat-status-dropdown" onchange="updateActiveTicketStatus(this.value)">
-                <option value="waiting">🔴 Menunggu Respon</option>
-                <option value="answered">🟢 Terjawab / Aktif</option>
-                <option value="resolved">✓ Selesai / Ditutup</option>
-              </select>
+              <!-- Direct One-Click Status Toggles (Waiting vs Proses vs Selesai) -->
+              <div class="chat-status-toggle-wrap" id="chat-status-toggle-wrap">
+                <button type="button" class="btn-status-toggle toggle-waiting" id="btn-toggle-waiting" onclick="updateActiveTicketStatus('waiting')" title="Tandai tiket masih dalam status WAITING / pemilih ada kendala">
+                  <span class="beacon-pulse-red" style="width:6px;height:6px;margin-right:2px;"></span>
+                  <span>🔴 Waiting</span>
+                </button>
+                <button type="button" class="btn-status-toggle toggle-process" id="btn-toggle-process" onclick="updateActiveTicketStatus('process')" title="Tandai pengaduan sedang dalam penanganan / proses">
+                  <span>🟡 Sedang Proses</span>
+                </button>
+                <button type="button" class="btn-status-toggle toggle-resolved" id="btn-toggle-resolved" onclick="updateActiveTicketStatus('resolved')" title="Tandai pengaduan telah selesai ditangani panitia">
+                  <span>✓ Selesai Proses</span>
+                </button>
+              </div>
               <a href="#" id="btn-wa-escalate-active" target="_blank" class="btn-wa-action" title="Hubungi pemilih via WhatsApp">
                 <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.772.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.768-5.768-5.768zm0 10.518c-.895 0-1.748-.25-2.483-.715l-.178-.105-1.579.414.421-1.54-.115-.184c-.512-.816-.782-1.768-.781-2.748.001-2.733 2.225-4.956 4.958-4.956 2.732 0 4.956 2.224 4.956 4.956 0 2.733-2.224 4.958-4.956 4.958zm2.715-3.696c-.149-.075-.882-.435-1.019-.485-.137-.05-.236-.075-.336.075-.099.15-.387.485-.474.585-.088.099-.175.112-.324.037-.149-.075-.63-.232-1.201-.741-.444-.396-.744-.885-.831-1.034-.087-.149-.009-.23.065-.304.067-.067.149-.175.224-.262.075-.088.099-.149.149-.249.05-.099.025-.187-.012-.262-.037-.075-.336-.81-.461-1.11-.122-.292-.246-.252-.336-.256l-.287-.005c-.099 0-.262.037-.399.187-.137.15-.524.512-.524 1.249 0 .736.536 1.446.611 1.546.075.099 1.055 1.611 2.556 2.259.357.154.636.246.854.316.359.114.686.098.945.059.289-.043.882-.361 1.006-.709.125-.349.125-.648.087-.71-.037-.062-.136-.099-.285-.174z"></path></svg>
                 <span>Buka WA</span>
@@ -5115,13 +5249,13 @@
               let statusBorderClass = 'ticket-waiting';
               if (t.status === 'waiting') {
                 statusBorderClass = 'ticket-waiting';
-                statusBadgeHtml = `<span class="badge-status-chip chip-waiting"><span class="beacon-pulse-red" style="width:5px;height:5px;margin-right:2px;"></span>Menunggu</span>`;
+                statusBadgeHtml = `<span class="badge-status-chip chip-waiting"><span class="beacon-pulse-red" style="width:5px;height:5px;margin-right:2px;"></span>🔴 Waiting</span>`;
               } else if (t.status === 'resolved') {
                 statusBorderClass = 'ticket-resolved';
-                statusBadgeHtml = `<span class="badge-status-chip chip-resolved">✓ Selesai</span>`;
+                statusBadgeHtml = `<span class="badge-status-chip chip-resolved">✓ Selesai Proses</span>`;
               } else {
-                statusBorderClass = 'ticket-answered';
-                statusBadgeHtml = `<span class="badge-status-chip chip-answered">🟢 Terjawab</span>`;
+                statusBorderClass = 'ticket-process';
+                statusBadgeHtml = `<span class="badge-status-chip chip-process">🟡 Sedang Proses</span>`;
               }
 
               return `
@@ -5203,7 +5337,16 @@
           `;
         }
         if (actionsEl) actionsEl.style.display = 'flex';
-        if (statusSelect) statusSelect.value = ticket.status || 'waiting';
+
+        // Update active status toggle buttons
+        const currentStatus = ticket.status || 'waiting';
+        const btnToggleWaiting = document.getElementById('btn-toggle-waiting');
+        const btnToggleProcess = document.getElementById('btn-toggle-process');
+        const btnToggleResolved = document.getElementById('btn-toggle-resolved');
+
+        if (btnToggleWaiting) btnToggleWaiting.classList.toggle('active', currentStatus === 'waiting');
+        if (btnToggleProcess) btnToggleProcess.classList.toggle('active', currentStatus === 'process' || currentStatus === 'answered');
+        if (btnToggleResolved) btnToggleResolved.classList.toggle('active', currentStatus === 'resolved');
 
         if (btnWa) {
           const waPhone = ticket.userPhone ? ticket.userPhone.replace(/^0/, '62').replace(/\D/g, '') : '628111581461';
@@ -5366,6 +5509,16 @@
           ticket.status = newStatus;
           saveLiveChatSessions(sessions);
           renderLiveChatAdmin(true);
+
+          if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+            const statusLabel = newStatus === 'resolved' ? 'SELESAI PROSES' : (newStatus === 'process' ? 'SEDANG PROSES' : 'WAITING (KENDALA)');
+            window.pemiluStorage.addAuditLog('CHAT_STATUS_CHANGE', `Panitia mengubah status tiket NPA ${ticket.userNpa || '-'} (${ticket.userName || '-'}) menjadi "${statusLabel}"`);
+          }
+
+          // Instantly sync DPT table so row-has-issue is updated in real time
+          if (typeof renderDptTable === 'function') {
+            renderDptTable();
+          }
         }
       }
       window.updateActiveTicketStatus = updateActiveTicketStatus;
@@ -6061,11 +6214,32 @@
           return;
         }
 
+        const allChatSessions = (typeof getLiveChatSessions === 'function') ? getLiveChatSessions() : [];
+        const sessionsByNpa = {};
+        const sessionsByEmail = {};
+        allChatSessions.forEach(s => {
+          if (s.userNpa && s.userNpa !== 'Tamu' && s.userNpa !== '-') {
+            sessionsByNpa[String(s.userNpa).trim()] = s;
+          }
+          if (s.userEmail) {
+            sessionsByEmail[String(s.userEmail).trim().toLowerCase()] = s;
+          }
+        });
+
         tbody.innerHTML = pageItems.map(v => {
           const isChecked = window.selectedDptNpas && window.selectedDptNpas.has(v.npa);
           const safeName = String(v.name || '').replace(/"/g, '&quot;');
+
+          const voterNpaKey = String(v.npa || '').trim();
+          const voterEmailKey = String(v.email || '').trim().toLowerCase();
+          const chatTicket = sessionsByNpa[voterNpaKey] || sessionsByEmail[voterEmailKey];
+
+          const isUnresolvedIssue = chatTicket && chatTicket.status !== 'resolved';
+          const isResolvedIssue = chatTicket && chatTicket.status === 'resolved';
+          const rowIssueClass = isUnresolvedIssue ? 'row-has-issue' : '';
+
           return `
-          <tr id="dpt-row-${v.npa}" class="${isChecked ? 'row-selected' : ''}">
+          <tr id="dpt-row-${v.npa}" class="${isChecked ? 'row-selected' : ''} ${rowIssueClass}">
             <td style="text-align: center; width: 44px;">
               <input type="checkbox" class="dpt-row-check" value="${v.npa}" ${isChecked ? 'checked' : ''} onchange="handleRowCheckChange('${v.npa}')" style="width: 16px; height: 16px; cursor: pointer; accent-color: #EF4444;">
             </td>
@@ -6077,6 +6251,22 @@
             <td>
               <div style="font-weight: 700; color: #FFFFFF; font-size: 0.85rem;">${v.name}</div>
               <div style="font-size: 0.68rem; color: #64748B; margin-top: 2px;">Terdaftar Resmi KPKU</div>
+              ${isUnresolvedIssue ? `
+                <div style="margin-top: 5px;">
+                  <span class="badge-dpt-issue" onclick="switchAdminSection('section-livechat'); selectLiveChatTicket('${chatTicket.id}')" title="Klik untuk langsung buka ruang chat kendala pemilih ini">
+                    <span class="beacon-pulse-red" style="width: 7px; height: 7px; background: #EF4444; box-shadow: 0 0 8px #EF4444; animation: pulseBeaconRed 1.5s infinite; display: inline-block;"></span>
+                    <span>🚨 ADA MASALAH (${chatTicket.status === 'process' ? 'SEDANG PROSES' : 'WAITING'})</span>
+                  </span>
+                </div>
+              ` : ''}
+              ${isResolvedIssue ? `
+                <div style="margin-top: 4px;">
+                  <span class="badge-dpt-resolved" onclick="switchAdminSection('section-livechat'); selectLiveChatTicket('${chatTicket.id}')" title="Pengaduan pemilih ini telah selesai diproses">
+                    <span>✓</span>
+                    <span>Chat Selesai</span>
+                  </span>
+                </div>
+              ` : ''}
             </td>
             <td>
               <div style="font-family: var(--font-mono); font-size: 0.74rem; color: #CBD5E1; display: flex; align-items: center; gap: 5px;">
@@ -6120,6 +6310,14 @@
             </td>
             <td style="text-align: center;">
               <div class="row-actions-group">
+                <!-- Chat Issue Button if voter has unresolved issue -->
+                ${isUnresolvedIssue ? `
+                  <button type="button" class="btn-act-chat-issue" onclick="switchAdminSection('section-livechat'); selectLiveChatTicket('${chatTicket.id}')" title="Buka Live Chat Pengaduan User Ini">
+                    <span>💬</span>
+                    <span>Buka Chat</span>
+                  </button>
+                ` : ''}
+
                 <!-- WhatsApp Button -->
                 <button type="button" class="btn-act-wa" onclick="handleSendWhatsApp('${v.npa}')" title="Kirim Surat Suara & Token via WhatsApp Resmi">
                   <span>💬</span>
