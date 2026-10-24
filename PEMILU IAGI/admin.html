@@ -4038,6 +4038,10 @@
             <option value="not_voted">⏳ Belum Memilih</option>
             <option value="claimed">🔑 Token Terbit (Belum Vote)</option>
             <option value="unclaimed">Belum Ada Token</option>
+            <option value="timses_any">🏷️ Semua Ajuan Timses (15 Pemilih)</option>
+            <option value="timses_1">🏷️ Ajuan Timses 01 (Dr. Mirzam)</option>
+            <option value="timses_2">🏷️ Ajuan Timses 02 (Sonny Y.)</option>
+            <option value="timses_3">🏷️ Ajuan Timses 03 (Ir. Sri H.)</option>
           </select>
         </div>
 
@@ -5244,6 +5248,19 @@
               <input type="tel" id="add-voter-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
             </div>
 
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Status Afiliasi / Ajuan Tim Sukses</span>
+                <span class="helper" style="color: #F5BA42;">Uji Petik 04 Nov Pagi</span>
+              </label>
+              <select id="add-voter-timses" class="form-input" style="background: rgba(15,23,42,0.9); color: #FFF;">
+                <option value="0">Netral / Anggota Umum DPT</option>
+                <option value="1">🔵 Ajuan Tim Sukses Paslon 01 (Dr. Mirzam Abdurrachman)</option>
+                <option value="2">🟡 Ajuan Tim Sukses Paslon 02 (Sonny Yudhistira, M.T.)</option>
+                <option value="3">🔴 Ajuan Tim Sukses Paslon 03 (Ir. Sri Hartanto, M.T.)</option>
+              </select>
+            </div>
+
             <div style="font-size: 0.72rem; color: #94A3B8; line-height: 1.4; margin-top: 10px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
               ℹ️ Setelah disimpan, anggota langsung bisa mengecek hak suara dan menerima token via tombol <strong>Kirim WA</strong> atau klaim mandiri di bilik suara portal.
             </div>
@@ -5622,6 +5639,19 @@
               </label>
               <input type="tel" id="edit-voter-phone" class="form-input font-mono" placeholder="Contoh: 081234567890">
             </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Status Afiliasi / Ajuan Tim Sukses</span>
+                <span class="helper" style="color: #F5BA42;">Uji Petik 04 Nov Pagi</span>
+              </label>
+              <select id="edit-voter-timses" class="form-input" style="background: rgba(15,23,42,0.9); color: #FFF;">
+                <option value="0">Netral / Anggota Umum DPT</option>
+                <option value="1">🔵 Ajuan Tim Sukses Paslon 01 (Dr. Mirzam Abdurrachman)</option>
+                <option value="2">🟡 Ajuan Tim Sukses Paslon 02 (Sonny Yudhistira, M.T.)</option>
+                <option value="3">🔴 Ajuan Tim Sukses Paslon 03 (Ir. Sri Hartanto, M.T.)</option>
+              </select>
+            </div>
           </div>
 
           <div class="admin-modal-footer">
@@ -5631,6 +5661,44 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: KELOLA 5 NAMA PEMILIH AJUAN TIMSES ================= -->
+    <div id="modal-manage-timses-voters" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 680px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span id="modal-timses-icon" style="font-size: 1.2rem;">✏️</span>
+            <span id="modal-timses-title">Kelola 5 Nama Pemilih Ajuan Tim Sukses</span>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeManageTimsesModal()">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            Sesuai ketentuan KPKU IAGI, pada tanggal <strong>04 November pagi</strong> saksi timses mengajukan 5 nama pemilih resmi untuk uji petik kesesuaian hak suara. Anda dapat memilih langsung anggota dari DPT untuk setiap slot di bawah ini.
+          </div>
+
+          <input type="hidden" id="modal-timses-target-id" value="1">
+          <div id="modal-timses-slots-container" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- 5 Slots rendered via JS -->
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
+            <button type="button" class="btn btn-subtle" onclick="shuffleCurrentTimsesSlots()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #FFF;">
+              🎲 Acak 5 Pemilih Otomatis dari DPT
+            </button>
+            <button type="button" class="btn btn-subtle" onclick="syncFromDptTaggedTimses()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #FFF;">
+              🔄 Muat dari Pemilih Berlabel Timses
+            </button>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-subtle" onclick="closeManageTimsesModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
+          <button type="button" class="btn" onclick="saveManageTimsesSlots()" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFFFFF; font-size: 0.8rem; padding: 8px 20px; font-weight: 700; border: 1px solid #34D399; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+            💾 Simpan 5 Nama Ajuan ✓
+          </button>
+        </div>
       </div>
     </div>
 
@@ -5690,8 +5758,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.5.6"></script>
-  <script src="js/storage.js?v=4.5.6"></script>
+  <script src="js/data.js?v=4.5.9"></script>
+  <script src="js/storage.js?v=4.5.9"></script>
 
   <script>
     // Desktop Admin Dashboard Logic
@@ -7486,6 +7554,10 @@
           if (filter === 'not_voted') return item.voted !== true;
           if (filter === 'claimed') return item.claimed === true && !item.voted;
           if (filter === 'unclaimed') return !item.claimed;
+          if (filter === 'timses_any') return Number(item.timses) > 0;
+          if (filter === 'timses_1') return Number(item.timses) === 1;
+          if (filter === 'timses_2') return Number(item.timses) === 2;
+          if (filter === 'timses_3') return Number(item.timses) === 3;
 
           return true;
         });
@@ -7562,7 +7634,12 @@
             </td>
             <td>
               <div style="font-weight: 700; color: #FFFFFF; font-size: 0.85rem;">${v.name}</div>
-              <div style="font-size: 0.68rem; color: #64748B; margin-top: 2px;">Terdaftar Resmi KPKU</div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 3px;">
+                <span style="font-size: 0.68rem; color: #64748B;">Terdaftar Resmi KPKU</span>
+                ${Number(v.timses) === 1 ? `<span style="font-size: 0.65rem; color: #38BDF8; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); padding: 1px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><span>🏷️</span><span>Ajuan Timses 01</span></span>` : ''}
+                ${Number(v.timses) === 2 ? `<span style="font-size: 0.65rem; color: #F5BA42; background: rgba(245,186,66,0.15); border: 1px solid rgba(245,186,66,0.35); padding: 1px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><span>🏷️</span><span>Ajuan Timses 02</span></span>` : ''}
+                ${Number(v.timses) === 3 ? `<span style="font-size: 0.65rem; color: #EF4444; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); padding: 1px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><span>🏷️</span><span>Ajuan Timses 03</span></span>` : ''}
+              </div>
               ${isUnresolvedIssue ? `
                 <div style="margin-top: 5px;">
                   <span class="badge-dpt-issue" onclick="switchAdminSection('section-livechat'); selectLiveChatTicket('${chatTicket.id}')" title="Klik untuk langsung buka ruang chat kendala pemilih ini">
@@ -8078,6 +8155,7 @@
         const phone = (document.getElementById('add-voter-phone')?.value || '').trim();
         const pengda = (document.getElementById('add-voter-pengda')?.value || '').trim();
         const category = (document.getElementById('add-voter-category')?.value || 'Professional').trim();
+        const timses = parseInt(document.getElementById('add-voter-timses')?.value || '0', 10);
 
         if (!npa || !name || !email) {
           alertEl.style.display = 'block';
@@ -8097,7 +8175,7 @@
           return;
         }
 
-        const res = window.pemiluStorage.addVoter({ npa, name, email, phone, pengda, category });
+        const res = window.pemiluStorage.addVoter({ npa, name, email, phone, pengda, category, timses });
         if (!res.success) {
           alertEl.style.display = 'block';
           alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -8158,6 +8236,9 @@
         if (document.getElementById('edit-voter-category')) {
           document.getElementById('edit-voter-category').value = voter.category || 'Professional';
         }
+        if (document.getElementById('edit-voter-timses')) {
+          document.getElementById('edit-voter-timses').value = voter.timses || 0;
+        }
 
         // Status pill
         const pill = document.getElementById('edit-voter-status-pill');
@@ -8191,6 +8272,7 @@
         const phone = (document.getElementById('edit-voter-phone')?.value || '').trim();
         const pengda = (document.getElementById('edit-voter-pengda')?.value || '').trim();
         const category = (document.getElementById('edit-voter-category')?.value || 'Professional').trim();
+        const timses = parseInt(document.getElementById('edit-voter-timses')?.value || '0', 10);
 
         if (!npa || !name || !email) {
           if (alertEl) {
@@ -8214,7 +8296,7 @@
           return;
         }
 
-        const res = window.pemiluStorage.updateVoter(oldNpa, { npa, name, email, phone, pengda, category });
+        const res = window.pemiluStorage.updateVoter(oldNpa, { npa, name, email, phone, pengda, category, timses });
         if (!res.success) {
           if (alertEl) {
             alertEl.style.display = 'block';
@@ -9399,19 +9481,38 @@
 
       function initRandomCheckSamples() {
         if (!window.pemiluStorage) return;
+        // 1. Check if samples are already saved in storage
+        const saved = window.pemiluStorage.getRandomCheckSamples ? window.pemiluStorage.getRandomCheckSamples() : null;
+        if (saved && Array.isArray(saved[1]) && Array.isArray(saved[2]) && Array.isArray(saved[3]) && saved[1].length === 5 && saved[2].length === 5 && saved[3].length === 5) {
+          randomCheckSamples = saved;
+          return;
+        }
+
         const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
         if (!dpt.length) return;
 
-        // Try to pick voted voters first, otherwise any DPT voters
-        const voted = dpt.filter(v => v.voted);
-        const pool = voted.length >= 15 ? voted : dpt;
+        // Check if there are voters already tagged with timses in DPT
+        const t1 = dpt.filter(v => Number(v.timses) === 1);
+        const t2 = dpt.filter(v => Number(v.timses) === 2);
+        const t3 = dpt.filter(v => Number(v.timses) === 3);
 
-        // Shuffle
-        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        if (t1.length >= 5 && t2.length >= 5 && t3.length >= 5) {
+          randomCheckSamples[1] = t1.slice(0, 5);
+          randomCheckSamples[2] = t2.slice(0, 5);
+          randomCheckSamples[3] = t3.slice(0, 5);
+        } else {
+          // Exclude special testing NPA 99999 if possible
+          const pool = dpt.filter(v => v.npa !== '99999');
+          const shuffled = [...pool].sort(() => 0.5 - Math.random());
+          randomCheckSamples[1] = shuffled.slice(0, 5);
+          randomCheckSamples[2] = shuffled.slice(5, 10);
+          randomCheckSamples[3] = shuffled.slice(10, 15);
+        }
 
-        randomCheckSamples[1] = shuffled.slice(0, 5);
-        randomCheckSamples[2] = shuffled.slice(5, 10);
-        randomCheckSamples[3] = shuffled.slice(10, 15);
+        // Save samples & automatically tag the voters in DPT!
+        if (window.pemiluStorage.saveRandomCheckSamples) {
+          window.pemiluStorage.saveRandomCheckSamples(randomCheckSamples);
+        }
       }
 
       window.renderRandomCheckSection = function() {
@@ -9473,13 +9574,20 @@
                     <div style="font-size: 0.72rem; color: #94A3B8;">Caketum: ${t.candidate}</div>
                   </div>
                 </div>
-                <span style="font-size: 0.68rem; color: #34D399; font-weight: 700; background: rgba(16,185,129,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">
-                  5 Sampel Sah
-                </span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button type="button" onclick="openManageTimsesModal(${t.id})" style="background: rgba(255,255,255,0.08); border: 1px solid ${t.badgeBorder}; color: #FFFFFF; font-size: 0.68rem; padding: 3px 8px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Atur / ganti 5 pemilih resmi ajuan ${t.teamTitle}">
+                    <span>✏️</span>
+                    <span>Kelola 5 Nama</span>
+                  </button>
+                  <span style="font-size: 0.68rem; color: #34D399; font-weight: 700; background: rgba(16,185,129,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">
+                    5 Sampel Sah
+                  </span>
+                </div>
               </div>
               <div class="timses-card-body">
-                <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-                  5 Nama Pemilih Terpilih (Sesuai Ajuan Timses):
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center;">
+                  <span>5 Nama Pemilih Terpilih (Ajuan Timses):</span>
+                  <span style="color: ${t.badgeColor}; font-size: 0.68rem;">04 Nov Pagi</span>
                 </div>
                 <div>
                   ${voters.map((v, idx) => {
@@ -9487,7 +9595,7 @@
                     const timeStr = v.voted_at ? new Date(v.voted_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : '26 Okt, 08:14 WIB';
                     return `
                       <div class="rc-voter-row">
-                        <div>
+                        <div style="flex: 1; padding-right: 8px;">
                           <div style="font-weight: 800; color: #FFFFFF; font-size: 0.82rem; display: flex; align-items: center; gap: 6px;">
                             <span>${idx + 1}.</span>
                             <span>${v.name}</span>
@@ -9496,12 +9604,17 @@
                             NPA: <strong style="color: #FDE68A;">${v.npa}</strong> · ${v.pengda || 'DKI Jakarta'} · ${timeStr}
                           </div>
                         </div>
-                        <div style="text-align: right;">
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
                           <span style="font-size: 0.68rem; color: #34D399; background: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.35); padding: 2px 6px; border-radius: 4px; font-weight: 800;">
                             ✓ TERCATAT
                           </span>
-                          <div style="font-size: 0.65rem; color: #64748B; font-family: var(--font-mono); margin-top: 3px;" title="Hash Kriptografi Bukti Hak Suara">
-                            #${fakeHash}
+                          <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 0.65rem; color: #64748B; font-family: var(--font-mono);" title="Hash Kriptografi Bukti Hak Suara">
+                              #${fakeHash}
+                            </span>
+                            <button type="button" onclick="openSwapSingleVoterModal(${t.id}, ${idx})" style="background: none; border: none; color: #38BDF8; font-size: 0.65rem; text-decoration: underline; cursor: pointer; padding: 0;" title="Ganti pemilih di slot ini">
+                              Ganti
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -9520,10 +9633,161 @@
         container.innerHTML = html;
       };
 
+      // Modal Manager for 5 Timses Voters
+      window.openManageTimsesModal = function(timsesId) {
+        const modal = document.getElementById('modal-manage-timses-voters');
+        if (!modal) return;
+        document.getElementById('modal-timses-target-id').value = timsesId;
+        const timsesNames = {
+          1: 'Tim Sukses Paslon 01 (Dr. Mirzam Abdurrachman)',
+          2: 'Tim Sukses Paslon 02 (Sonny Yudhistira, M.T.)',
+          3: 'Tim Sukses Paslon 03 (Ir. Sri Hartanto, M.T.)'
+        };
+        const icons = { 1: '🔵', 2: '🟡', 3: '🔴' };
+        document.getElementById('modal-timses-icon').innerText = icons[timsesId] || '✏️';
+        document.getElementById('modal-timses-title').innerText = `Kelola 5 Nama: ${timsesNames[timsesId]}`;
+
+        renderTimsesModalSlots(timsesId);
+        modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      window.closeManageTimsesModal = function() {
+        const modal = document.getElementById('modal-manage-timses-voters');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      function renderTimsesModalSlots(timsesId) {
+        const container = document.getElementById('modal-timses-slots-container');
+        if (!container) return;
+        const currentVoters = randomCheckSamples[timsesId] || [];
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+
+        let html = '';
+        for (let i = 0; i < 5; i++) {
+          const v = currentVoters[i] || {};
+          html += `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div style="font-weight: 800; color: #F5BA42; font-size: 0.85rem; width: 65px;">
+                Slot ${i + 1}
+              </div>
+              <div style="flex: 1;">
+                <input type="text" id="timses-slot-input-${i}" class="form-input font-mono" value="${v.npa ? v.npa + ' - ' + v.name : ''}" placeholder="Ketik NPA atau Nama dari DPT..." list="dpt-datalist-voters" style="font-size: 0.82rem; padding: 6px 10px;">
+              </div>
+              <button type="button" class="btn btn-subtle" onclick="pickRandomSingleSlot(${timsesId}, ${i})" style="font-size: 0.72rem; padding: 6px 10px; background: rgba(255,255,255,0.06); color: #94A3B8;" title="Acak pemilih lain untuk slot ini">
+                🎲 Acak
+              </button>
+            </div>
+          `;
+        }
+
+        // Add datalist for quick autocomplete
+        html += `<datalist id="dpt-datalist-voters">`;
+        dpt.slice(0, 300).forEach(item => {
+          html += `<option value="${item.npa} - ${item.name} (${item.pengda || 'DKI'})"></option>`;
+        });
+        html += `</datalist>`;
+
+        container.innerHTML = html;
+      }
+
+      window.pickRandomSingleSlot = function(timsesId, slotIdx) {
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        if (!dpt.length) return;
+        const input = document.getElementById(`timses-slot-input-${slotIdx}`);
+        const randomVoter = dpt[Math.floor(Math.random() * dpt.length)];
+        if (input && randomVoter) {
+          input.value = `${randomVoter.npa} - ${randomVoter.name}`;
+        }
+      };
+
+      window.shuffleCurrentTimsesSlots = function() {
+        const timsesId = parseInt(document.getElementById('modal-timses-target-id').value, 10);
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const pool = dpt.filter(v => v.npa !== '99999');
+        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        for (let i = 0; i < 5; i++) {
+          const input = document.getElementById(`timses-slot-input-${i}`);
+          if (input && shuffled[i]) {
+            input.value = `${shuffled[i].npa} - ${shuffled[i].name}`;
+          }
+        }
+      };
+
+      window.syncFromDptTaggedTimses = function() {
+        const timsesId = parseInt(document.getElementById('modal-timses-target-id').value, 10);
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const tagged = dpt.filter(v => Number(v.timses) === timsesId);
+        if (!tagged.length) {
+          alert(`Belum ada pemilih di DPT yang ditandai sebagai Timses 0${timsesId}. Anda dapat menandai pemilih lewat tombol Edit di tabel DPT.`);
+          return;
+        }
+        for (let i = 0; i < 5; i++) {
+          const input = document.getElementById(`timses-slot-input-${i}`);
+          if (input && tagged[i]) {
+            input.value = `${tagged[i].npa} - ${tagged[i].name}`;
+          }
+        }
+      };
+
+      window.saveManageTimsesSlots = function() {
+        const timsesId = parseInt(document.getElementById('modal-timses-target-id').value, 10);
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const newVoters = [];
+
+        for (let i = 0; i < 5; i++) {
+          const val = (document.getElementById(`timses-slot-input-${i}`)?.value || '').trim();
+          const npaMatch = val.match(/\b(\d{5})\b/);
+          if (npaMatch) {
+            const found = dpt.find(v => v.npa === npaMatch[1]);
+            if (found) newVoters.push(found);
+          }
+        }
+
+        if (newVoters.length < 5) {
+          alert('Mohon lengkapi seluruh 5 slot nama pemilih ajuan timses dengan memilih anggota resmi dari DPT.');
+          return;
+        }
+
+        randomCheckSamples[timsesId] = newVoters;
+        if (window.pemiluStorage.saveRandomCheckSamples) {
+          window.pemiluStorage.saveRandomCheckSamples(randomCheckSamples);
+        }
+
+        renderRandomCheckSection();
+        renderDptTable();
+        closeManageTimsesModal();
+        alert(`✓ 5 Nama pemilih ajuan Tim Sukses Paslon 0${timsesId} berhasil disimpan dan disinkronkan ke DPT!`);
+      };
+
+      window.openSwapSingleVoterModal = function(timsesId, idx) {
+        const currentVoter = (randomCheckSamples[timsesId] && randomCheckSamples[timsesId][idx]) || {};
+        const newNpa = prompt(`Ganti Pemilih Slot ${idx + 1} (${currentVoter.name || 'Slot Kosong'}):\n\nMasukkan 5 Digit NPA anggota baru dari DPT (contoh: 01234):`);
+        if (!newNpa) return;
+
+        const cleanNpa = newNpa.replace(/\D/g, '').slice(0, 5);
+        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const found = dpt.find(v => v.npa === cleanNpa);
+        if (!found) {
+          alert(`NPA "${cleanNpa}" tidak ditemukan dalam Daftar Pemilih Tetap (DPT)!`);
+          return;
+        }
+
+        randomCheckSamples[timsesId][idx] = found;
+        if (window.pemiluStorage.saveRandomCheckSamples) {
+          window.pemiluStorage.saveRandomCheckSamples(randomCheckSamples);
+        }
+
+        renderRandomCheckSection();
+        renderDptTable();
+        alert(`✓ Slot ${idx + 1} Timses 0${timsesId} berhasil diganti ke: NPA ${found.npa} (${found.name})!`);
+      };
+
       window.reShuffleRandomCheckSamples = function() {
+        localStorage.removeItem('pemilu_iagi_random_check_samples_v1');
         initRandomCheckSamples();
         renderRandomCheckSection();
-        alert('✓ Berhasil mengacak 15 nama pemilih baru dari DPT secara proporsional untuk ketiga timses!');
+        renderDptTable();
+        alert('✓ Berhasil mengacak 15 nama pemilih baru dari DPT secara proporsional untuk ketiga timses dan menyinkronkan label di DPT!');
       };
 
       window.runRandomCheckValidation = function() {

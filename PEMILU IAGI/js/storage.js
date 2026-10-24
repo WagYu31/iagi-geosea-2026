@@ -346,6 +346,7 @@ class PemiluStorage {
       pengda: cleanPengda,
       category: cleanCategory,
       status: 'AKTIF',
+      timses: Number(voterData.timses) || 0,
       claimed: false,
       token: null,
       voted: false,
@@ -423,7 +424,7 @@ class PemiluStorage {
     return this.deleteMultipleVoters(npas);
   }
 
-  updateVoter(oldNpa, { npa, name, email, phone, pengda, category } = {}) {
+  updateVoter(oldNpa, { npa, name, email, phone, pengda, category, timses } = {}) {
     const cleanOldNpa = (oldNpa || '').trim().toUpperCase();
     const cleanNewNpa = (npa || '').trim().toUpperCase();
     const dpt = this.getDPT();
@@ -448,9 +449,10 @@ class PemiluStorage {
     if (phone !== undefined) voter.phone = (phone || '').trim();
     if (pengda && pengda.trim()) voter.pengda = pengda.trim();
     if (category && category.trim()) voter.category = category.trim();
+    if (timses !== undefined) voter.timses = Number(timses) || 0;
 
     this.saveDPT(dpt);
-    this.addAuditLog('DPT_UPDATED', `Data pemilih diperbarui: NPA ${voter.npa} (${voter.name}), Pengda ${voter.pengda}`);
+    this.addAuditLog('DPT_UPDATED', `Data pemilih diperbarui: NPA ${voter.npa} (${voter.name}), Pengda ${voter.pengda}${voter.timses ? ', Afiliasi Timses ' + voter.timses : ''}`);
     return { success: true, voter };
   }
 
@@ -1332,12 +1334,53 @@ class PemiluStorage {
     localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify(logs));
   }
 
+  // --- Random Check (04 Nov Pagi) Ajuan Timses Storage & Sync ---
+  getRandomCheckSamples() {
+    try {
+      const raw = localStorage.getItem('pemilu_iagi_random_check_samples_v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed[1]) && Array.isArray(parsed[2]) && Array.isArray(parsed[3])) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  saveRandomCheckSamples(samples) {
+    try {
+      localStorage.setItem('pemilu_iagi_random_check_samples_v1', JSON.stringify(samples));
+      // Auto synchronize timses field into DPT database
+      const dpt = this.getDPT();
+      let changed = false;
+      const timsesMap = {};
+      [1, 2, 3].forEach(tId => {
+        (samples[tId] || []).forEach(v => {
+          if (v && v.npa) timsesMap[String(v.npa).trim().toUpperCase()] = tId;
+        });
+      });
+      dpt.forEach(v => {
+        const npaKey = String(v.npa || '').trim().toUpperCase();
+        const expectedTimses = timsesMap[npaKey] || 0;
+        if ((v.timses || 0) !== expectedTimses) {
+          v.timses = expectedTimses;
+          changed = true;
+        }
+      });
+      if (changed) {
+        this.saveDPT(dpt);
+      }
+    } catch (e) {}
+  }
+
   // --- Reset Functionality for Testing ---
   resetAllData() {
     localStorage.removeItem(STORAGE_KEYS.DPT);
     localStorage.removeItem(STORAGE_KEYS.BALLOTS);
     localStorage.removeItem(STORAGE_KEYS.AUDIT);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+    localStorage.removeItem('pemilu_iagi_random_check_samples_v1');
     this.init();
     return true;
   }
