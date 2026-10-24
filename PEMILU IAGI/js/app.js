@@ -460,7 +460,91 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  let voteLockInterval = null;
+
+  function updateVoteLockedCountdown() {
+    const countdownEl = document.getElementById('vote-locked-countdown');
+    const openingEl = document.getElementById('vote-locked-opening-time');
+    const msgEl = document.getElementById('vote-locked-message');
+    const lockCard = document.getElementById('vote-locked-card');
+
+    const config = typeof window.getVotingScheduleConfig === 'function'
+      ? window.getVotingScheduleConfig()
+      : (window.pemiluStorage ? window.pemiluStorage.getSettings() : { votingStartTime: '2026-10-26T00:01:00+07:00', votingMode: 'auto' });
+
+    const isLive = window.pemiluStorage && typeof window.pemiluStorage.isVotingOpen === 'function'
+      ? window.pemiluStorage.isVotingOpen()
+      : false;
+
+    if (isLive) {
+      if (lockCard) lockCard.style.display = 'none';
+      if (voteLockInterval) {
+        clearInterval(voteLockInterval);
+        voteLockInterval = null;
+      }
+      setupVotingScreen();
+      return;
+    }
+
+    if (msgEl && config.lockedMessage) {
+      msgEl.textContent = config.lockedMessage;
+    }
+
+    const targetDate = new Date(config.votingStartTime || '2026-10-26T00:01:00+07:00');
+    if (openingEl && !isNaN(targetDate.getTime())) {
+      openingEl.textContent = targetDate.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }) + ' • ' + String(targetDate.getHours()).padStart(2, '0') + ':' + String(targetDate.getMinutes()).padStart(2, '0') + ' WIB';
+    }
+
+    const diff = targetDate.getTime() - Date.now();
+    if (diff <= 0) {
+      if (countdownEl) countdownEl.innerHTML = '<span style="color:#34D399;">00H : 00J : 00M : 00D (SEDANG DIBUKA)</span>';
+      setTimeout(() => {
+        setupVotingScreen();
+      }, 1000);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const pad = n => String(n).padStart(2, '0');
+    if (countdownEl) {
+      countdownEl.innerText = `${pad(days)}H : ${pad(hours)}J : ${pad(minutes)}M : ${pad(seconds)}D`;
+    }
+  }
+
   function setupVotingScreen(params = {}) {
+    const isVotingOpen = window.pemiluStorage && typeof window.pemiluStorage.isVotingOpen === 'function'
+      ? window.pemiluStorage.isVotingOpen()
+      : true;
+
+    const voteLockedCard = document.getElementById('vote-locked-card');
+
+    if (!isVotingOpen) {
+      if (voteAuthCard) voteAuthCard.style.display = 'none';
+      if (voteBallotCard) voteBallotCard.style.display = 'none';
+      if (voteLockedCard) {
+        voteLockedCard.style.display = 'block';
+        updateVoteLockedCountdown();
+        if (!voteLockInterval) {
+          voteLockInterval = setInterval(updateVoteLockedCountdown, 1000);
+        }
+      }
+      return;
+    } else {
+      if (voteLockedCard) voteLockedCard.style.display = 'none';
+      if (voteLockInterval) {
+        clearInterval(voteLockInterval);
+        voteLockInterval = null;
+      }
+    }
+
     // Reset state
     selectedCandidateId = null;
     if (btnSubmitVote) {
@@ -1670,6 +1754,16 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeAllModals();
     });
+  });
+
+  // Real-time synchronization when admin changes voting schedule in another tab
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'pemilu_iagi_settings_v2') {
+      const curHash = window.location.hash.replace('#', '');
+      if (curHash === 'vote') {
+        setupVotingScreen();
+      }
+    }
   });
 
   // Initial routing based on URL

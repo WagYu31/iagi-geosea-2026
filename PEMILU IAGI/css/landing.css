@@ -326,6 +326,87 @@ body {
   box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5);
 }
 
+/* Locked state for Bilik Suara button (Gambar 2 saat hitung mundur belum habis) */
+.btn-header-member.is-locked {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.18) 100%) !important;
+  color: #FDE68A !important;
+  border: 1px dashed rgba(245, 158, 11, 0.55) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+  cursor: not-allowed !important;
+  opacity: 0.9;
+  position: relative;
+}
+
+.btn-header-member.is-locked:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.32) 0%, rgba(180, 83, 9, 0.26) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.85) !important;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25) !important;
+}
+
+/* Unlocked state for Bilik Suara button (Gambar 2 saat hitung mundur sudah habis) */
+.btn-header-member.is-unlocked {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.65), 0 4px 18px rgba(245, 158, 11, 0.4) !important;
+  animation: pulseUnlockedGlow 2.5s infinite ease-in-out !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+@keyframes pulseUnlockedGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.45), 0 4px 18px rgba(245, 158, 11, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(245, 158, 11, 0.9), 0 6px 26px rgba(245, 158, 11, 0.6);
+  }
+}
+
+/* Modal Bilik Suara Terkunci */
+.modal-voting-locked-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 19, 43, 0.84);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.modal-voting-locked-card {
+  background: linear-gradient(180deg, #131E3A 0%, #0B132B 100%);
+  border: 1px solid rgba(245, 158, 11, 0.38);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.22);
+  border-radius: 20px;
+  max-width: 490px;
+  width: 100%;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  animation: modalCardPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.locked-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.28);
+}
+
 .btn-header-admin {
   background: rgba(255, 255, 255, 0.1);
   color: #FFFFFF;

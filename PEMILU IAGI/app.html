@@ -390,6 +390,34 @@
       <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
       <section id="screen-vote" class="screen">
         
+        <!-- Locked Countdown Barrier (Shown when voting is not yet open) -->
+        <div id="vote-locked-card" class="card" style="display: none; background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(245, 186, 66, 0.35); text-align: center; padding: 32px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+          <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 2px dashed #F5BA42; display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; margin-bottom: 14px;">
+            🔒
+          </div>
+          <h3 style="font-size: 1.3rem; font-weight: 900; color: #FFFFFF; margin: 0 0 8px 0;">Bilik Suara Belum Dibuka</h3>
+          <p id="vote-locked-message" style="font-size: 0.86rem; color: #CBD5E1; line-height: 1.55; max-width: 480px; margin: 0 auto 16px auto;">
+            Sesuai jadwal resmi KPKU IAGI, bilik suara pemilihan elektronik akan aktif otomatis setelah hitung mundur selesai.
+          </p>
+          
+          <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 16px 20px; display: inline-block; margin-bottom: 20px; min-width: 260px;">
+            <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Waktu Pembukaan Resmi</div>
+            <div id="vote-locked-opening-time" style="font-size: 0.98rem; font-weight: 800; color: #F5BA42;">26 Oktober 2026 • 00:01 WIB</div>
+            <div id="vote-locked-countdown" style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 900; color: #38BDF8; margin-top: 8px; letter-spacing: 0.05em;">
+              -- H : -- J : -- M : -- D
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn btn-secondary" style="display: inline-flex; width: auto; padding: 10px 22px;">
+              <span>Kembali ke Beranda</span>
+            </a>
+            <a href="#claim" data-nav="claim" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 10px 22px;">
+              <span>Klaim Token Surat Suara</span>
+            </a>
+          </div>
+        </div>
+
         <!-- Step 1: Auth Verification Form (Hidden if auto-verified via magic link) -->
         <div id="vote-auth-card" class="card card-gold">
           <div class="card-header-flex">
@@ -1189,10 +1217,10 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=4.5.3"></script>
-  <script src="js/storage.js?v=4.5.3"></script>
-  <script src="js/app.js?v=4.5.3"></script>
+  <script src="js/data.js?v=4.5.4"></script>
+  <script src="js/storage.js?v=4.5.4"></script>
+  <script src="js/app.js?v=4.5.4"></script>
   <!-- Official KPKU Helpdesk Live Chat Script -->
-  <script src="js/livechat.js?v=4.5.3"></script>
+  <script src="js/livechat.js?v=4.5.4"></script>
 </body>
 </html>

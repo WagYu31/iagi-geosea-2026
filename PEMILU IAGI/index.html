@@ -352,9 +352,11 @@
 
       <!-- Right: Direct CTA Buttons -->
       <div class="header-actions">
-        <a href="app.html#vote" class="btn-header-member">
-          <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-          <span>Bilik Suara (Pemilih)</span>
+        <a href="app.html#vote" class="btn-header-member btn-bilik-member" id="btn-header-member-desktop" title="Bilik Suara Pemilih">
+          <span class="btn-bilik-icon">
+            <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </span>
+          <span class="btn-bilik-text">Bilik Suara (Pemilih)</span>
         </a>
         <a href="admin.html" class="btn-header-admin">
           <svg style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -376,9 +378,11 @@
       <span>➜</span>
     </a>
     <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
-    <a href="app.html#vote" class="btn-header-member" style="justify-content: center; width: 100%; padding: 12px;">
-      <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-      <span>Masuk Sebagai Anggota (Bilik Suara)</span>
+    <a href="app.html#vote" class="btn-header-member btn-bilik-member" id="btn-header-member-mobile" style="justify-content: center; width: 100%; padding: 12px;">
+      <span class="btn-bilik-icon">
+        <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      </span>
+      <span class="btn-bilik-text">Masuk Sebagai Anggota (Bilik Suara)</span>
     </a>
     <a href="admin.html" class="btn-header-admin" style="justify-content: center; width: 100%; padding: 12px; margin-top: 6px;">
       <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -449,11 +453,11 @@
         Satu pintu gerbang resmi untuk seluruh peserta pemilih dan panitia pelaksana. Berbasis web responsif mutakhir yang dapat langsung digunakan dari smartphone maupun monitor komputer tanpa instalasi aplikasi tambahan.
       </p>
 
-      <!-- Live Chronometer Capsule Bar -->
-      <div class="hero-chrono-capsule" title="Hitung Mundur Pembukaan Bilik Suara: 26 Oktober 2026 pukul 00.01 WIB">
+      <!-- Live Chronometer Capsule Bar (Gambar 1) -->
+      <div class="hero-chrono-capsule" id="hero-chrono-capsule" title="Hitung Mundur Pembukaan Bilik Suara: 26 Oktober 2026 pukul 00.01 WIB">
         <div class="chrono-tag">
           <span class="live-dot"></span>
-          <span>LIVE VOTING</span>
+          <span id="chrono-tag-label">LIVE VOTING</span>
         </div>
         <div class="chrono-units-wrap">
           <div class="chrono-item"><span id="landing-days" class="chrono-val">00</span><span class="chrono-lbl">H</span></div>
@@ -464,6 +468,16 @@
           <span class="chrono-sep">:</span>
           <div class="chrono-item"><span id="landing-secs" class="chrono-val">00</span><span class="chrono-lbl">D</span></div>
         </div>
+      </div>
+
+      <!-- Bilik Suara Direct CTA Button (Gambar 2) -->
+      <div class="hero-chrono-cta-wrap" style="margin-top: 14px; display: flex; justify-content: center; width: 100%;">
+        <a href="app.html#vote" class="btn-header-member btn-bilik-member btn-hero-bilik-suara" id="btn-hero-bilik-suara" style="padding: 12px 28px; font-size: 0.95rem; border-radius: 999px; max-width: 440px; width: 100%; justify-content: center;">
+          <span class="btn-bilik-icon">
+            <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </span>
+          <span class="btn-bilik-text">Masuk Sebagai Anggota (Bilik Suara)</span>
+        </a>
       </div>
 
       <!-- ================= AFFILIATED ORGANIZATIONS & PENGDA LOGO CAPSULE ================= -->
@@ -720,34 +734,143 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=4.1.0"></script>
+  <script src="js/data.js?v=4.5.4"></script>
+  <script src="js/storage.js?v=4.5.4"></script>
   <script>
-    // Live Countdown Dimulainya Pemilihan
+    // Live Countdown & Bilik Suara Locking Synchronizer (Gambar 1 -> Gambar 2)
     function updateLandingCountdown() {
-      // Target: 26 Oktober 2026 pukul 00.01 WIB (UTC+7)
-      const targetDate = new Date("2026-10-26T00:01:00+07:00").getTime();
-      const now = new Date().getTime();
-      const diff = targetDate - now;
+      const schedule = (typeof window.getVotingScheduleConfig === 'function') 
+        ? window.getVotingScheduleConfig() 
+        : { isOpen: false, diff: new Date("2026-10-26T00:01:00+07:00").getTime() - Date.now(), votingStartTime: "2026-10-26T00:01:00+07:00", lockedMessage: "Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai." };
 
-      if (diff > 0) {
+      const diff = schedule.diff;
+      const isOpen = schedule.isOpen;
+
+      const daysEl = document.getElementById('landing-days');
+      const hoursEl = document.getElementById('landing-hours');
+      const minsEl = document.getElementById('landing-mins');
+      const secsEl = document.getElementById('landing-secs');
+      const tagLabel = document.getElementById('chrono-tag-label');
+      const capsule = document.getElementById('hero-chrono-capsule');
+
+      if (!isOpen && diff > 0) {
+        // COUNTDOWN MASIH BERJALAN - STATUS TERKUNCI (GAMBAR 1 AKTIF, GAMBAR 2 TERKUNCI)
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-        document.getElementById('landing-days').textContent = String(days).padStart(2, '0');
-        document.getElementById('landing-hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('landing-mins').textContent = String(mins).padStart(2, '0');
-        document.getElementById('landing-secs').textContent = String(secs).padStart(2, '0');
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minsEl) minsEl.textContent = String(mins).padStart(2, '0');
+        if (secsEl) secsEl.textContent = String(secs).padStart(2, '0');
+
+        if (tagLabel) tagLabel.textContent = "LIVE VOTING";
+        if (capsule) capsule.title = "Hitung Mundur Pembukaan Bilik Suara: " + new Date(schedule.votingStartTime).toLocaleString('id-ID');
+
+        // Terapkan status terkunci pada semua tombol Bilik Suara (Gambar 2)
+        setBilikButtonsState(false, schedule);
       } else {
-        document.getElementById('landing-days').textContent = "00";
-        document.getElementById('landing-hours').textContent = "00";
-        document.getElementById('landing-mins').textContent = "00";
-        document.getElementById('landing-secs').textContent = "00";
+        // WAKTU HABIS ATAU DIBUKA ADMIN - STATUS TERBUKA (GAMBAR 2 BISA DIKLIK)
+        if (daysEl) daysEl.textContent = "00";
+        if (hoursEl) hoursEl.textContent = "00";
+        if (minsEl) minsEl.textContent = "00";
+        if (secsEl) secsEl.textContent = "00";
+
+        if (tagLabel) tagLabel.innerHTML = '<span style="color:#10B981;font-weight:800;">BILIK SUARA DIBUKA</span>';
+        if (capsule) capsule.title = "Bilik Suara Resmi Telah Dibuka! Silakan masuk untuk memberikan suara.";
+
+        // Terapkan status aktif/terbuka pada semua tombol Bilik Suara (Gambar 2)
+        setBilikButtonsState(true, schedule);
       }
     }
+
+    function setBilikButtonsState(isOpen, schedule) {
+      const buttons = document.querySelectorAll('.btn-bilik-member, .btn-header-member');
+      buttons.forEach(btn => {
+        if (btn.classList.contains('btn-header-admin')) return;
+
+        const iconEl = btn.querySelector('.btn-bilik-icon');
+        const textEl = btn.querySelector('.btn-bilik-text') || btn.querySelector('span:not(.btn-bilik-icon)');
+        const isDesktop = btn.id === 'btn-header-member-desktop';
+
+        if (isOpen) {
+          // BISA DI-KLIK (WAKTU HITUNG MUNDUR HABIS)
+          btn.classList.remove('is-locked');
+          btn.classList.add('is-unlocked');
+          btn.setAttribute('title', 'Bilik suara telah dibuka! Klik untuk masuk dan memberikan suara.');
+          btn.onclick = null;
+          if (iconEl) {
+            iconEl.innerHTML = '<svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>';
+          }
+          if (textEl) {
+            textEl.textContent = isDesktop ? 'Bilik Suara (Pemilih)' : 'Masuk Sebagai Anggota (Bilik Suara)';
+          }
+        } else {
+          // TERKUNCI (WAKTU HITUNG MUNDUR BELUM HABIS)
+          btn.classList.remove('is-unlocked');
+          btn.classList.add('is-locked');
+          btn.setAttribute('title', 'Bilik suara dibuka saat hitung mundur selesai.');
+          btn.onclick = function(e) {
+            e.preventDefault();
+            openVotingLockedModal(schedule);
+          };
+          if (iconEl) {
+            iconEl.innerHTML = '<svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+          }
+          if (textEl) {
+            textEl.textContent = isDesktop ? 'Bilik Suara (Terkunci)' : 'Masuk Sebagai Anggota (Bilik Suara Terkunci)';
+          }
+        }
+      });
+    }
+
+    function openVotingLockedModal(schedule) {
+      const modal = document.getElementById('modal-voting-locked');
+      if (!modal) return;
+      const targetDateEl = document.getElementById('modal-locked-target-date');
+      const countdownEl = document.getElementById('modal-locked-countdown');
+      const msgEl = document.getElementById('modal-locked-msg');
+
+      if (schedule) {
+        if (targetDateEl && schedule.votingStartTime) {
+          const d = new Date(schedule.votingStartTime);
+          targetDateEl.textContent = d.toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) + ' WIB';
+        }
+        if (countdownEl && schedule.diff) {
+          const d = Math.floor(schedule.diff / (1000 * 60 * 60 * 24));
+          const h = Math.floor((schedule.diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const m = Math.floor((schedule.diff % (1000 * 60 * 60)) / (1000 * 60));
+          const s = Math.floor((schedule.diff % (1000 * 60)) / 1000);
+          countdownEl.textContent = `${d} Hari, ${h} Jam, ${m} Menit, ${s} Detik`;
+        }
+        if (msgEl && schedule.lockedMessage) {
+          msgEl.textContent = schedule.lockedMessage;
+        }
+      }
+
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVotingLockedModal() {
+      const modal = document.getElementById('modal-voting-locked');
+      if (modal) modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    window.closeVotingLockedModal = closeVotingLockedModal;
+
     setInterval(updateLandingCountdown, 1000);
     updateLandingCountdown();
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'pemilu_iagi_settings_v2') {
+        updateLandingCountdown();
+      }
+    });
+    window.addEventListener('pemilu:schedule-updated', function() {
+      updateLandingCountdown();
+    });
 
     // ==========================================================================
     // CHOREOGRAPHY: PROFESSIONAL SCROLL REVEAL OBSERVER
@@ -1315,7 +1438,44 @@
     }, { passive: true });
   })();
 </script>
+<!-- Modal Notifikasi Bilik Suara Belum Dibuka (Terkunci) -->
+<div id="modal-voting-locked" class="modal-voting-locked-backdrop" style="display: none;" onclick="if(event.target===this)closeVotingLockedModal()">
+  <div class="modal-voting-locked-card" role="dialog" aria-modal="true" aria-labelledby="locked-modal-title">
+    <div class="locked-icon-badge">
+      <svg style="width: 32px; height: 32px; stroke: #F59E0B; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <h3 id="locked-modal-title" style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 800; color: #FFFFFF;">Bilik Suara Belum Dibuka</h3>
+    <p id="modal-locked-msg" style="margin: 0 0 18px 0; font-size: 0.86rem; color: #94A3B8; line-height: 1.55;">
+      Sesuai regulasi resmi Komisi Pemilihan Ketua Umum (KPKU) IAGI, bilik suara pemilihan e-voting akan dibuka secara otomatis saat hitung mundur selesai.
+    </p>
+
+    <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 14px; padding: 14px; margin-bottom: 22px; text-align: left;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+        <span style="font-size: 0.72rem; color: #F59E0B; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Jadwal Pembukaan Resmi:</span>
+        <span style="font-size: 0.68rem; color: #34D399; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 4px;">WIB / UTC+7</span>
+      </div>
+      <div id="modal-locked-target-date" style="font-size: 0.95rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono, monospace);">26 Oktober 2026 · 00:01 WIB</div>
+      <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <span>Sisa Waktu Hitung Mundur:</span>
+        <strong id="modal-locked-countdown" style="color: #38BDF8; font-family: var(--font-mono, monospace);">--</strong>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+      <button type="button" class="btn-modal-dismiss" onclick="closeVotingLockedModal()" style="padding: 10px 22px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #FFFFFF; border: 1px solid rgba(255,255,255,0.18); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;">
+        Tutup
+      </button>
+      <a href="app.html#dpt" style="padding: 10px 22px; border-radius: 999px; background: linear-gradient(135deg, #0284C7, #0369A1); color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(2,132,199,0.35);">
+        <span>🔍 Cek DPT Anda</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- Official KPKU Helpdesk Live Chat Script -->
-<script src="js/livechat.js?v=4.0.0"></script>
+<script src="js/livechat.js?v=4.5.4"></script>
 </body>
 </html>

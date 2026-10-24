@@ -294,6 +294,21 @@ body {
   box-shadow: 0 6px 22px rgba(245, 186, 66, 0.38);
 }
 
+.btn-header-member.is-locked {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.18) 100%) !important;
+  color: #FDE68A !important;
+  border: 1px dashed rgba(245, 158, 11, 0.55) !important;
+  cursor: not-allowed !important;
+  opacity: 0.9;
+}
+
+.btn-header-member.is-unlocked {
+  background: var(--gold-gradient) !important;
+  color: #06110D !important;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.65), 0 4px 18px rgba(245, 158, 11, 0.4) !important;
+  cursor: pointer !important;
+}
+
 .btn-header-admin {
   background: rgba(255, 255, 255, 0.06);
   color: #FFFFFF;

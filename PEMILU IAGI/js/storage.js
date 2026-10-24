@@ -139,7 +139,11 @@ class PemiluStorage {
         isSealed: true, // Sealed mode active by default
         adminPin: '2026',
         votingOpen: true,
-        claimOpen: true
+        claimOpen: true,
+        votingStartTime: '2026-10-26T00:01:00+07:00',
+        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingMode: 'auto', // 'auto' | 'force_open' | 'force_locked'
+        lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
       };
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
     }
@@ -852,11 +856,62 @@ class PemiluStorage {
 
   // --- Settings & KPKU Controls ---
   getSettings() {
+    const defaults = {
+      isSealed: true,
+      adminPin: '2026',
+      votingOpen: true,
+      claimOpen: true,
+      votingStartTime: '2026-10-26T00:01:00+07:00',
+      votingEndTime: '2026-10-28T18:00:00+07:00',
+      votingMode: 'auto', // 'auto' | 'force_open' | 'force_locked'
+      lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
+    };
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || { isSealed: true, adminPin: '2026', votingOpen: true, claimOpen: true };
+      const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+      if (!raw) return defaults;
+      return { ...defaults, ...JSON.parse(raw) };
     } catch (e) {
-      return { isSealed: true, adminPin: '2026', votingOpen: true, claimOpen: true };
+      return defaults;
     }
+  }
+
+  isVotingOpen() {
+    const settings = this.getSettings();
+    if (settings.votingMode === 'force_open') return true;
+    if (settings.votingMode === 'force_locked') return false;
+
+    const now = Date.now();
+    const start = new Date(settings.votingStartTime || '2026-10-26T00:01:00+07:00').getTime();
+    const end = new Date(settings.votingEndTime || '2026-10-28T18:00:00+07:00').getTime();
+
+    return now >= start && now <= end;
+  }
+
+  getVotingDiffMs() {
+    const settings = this.getSettings();
+    if (settings.votingMode === 'force_open') return 0;
+    if (settings.votingMode === 'force_locked') return 86400000;
+
+    const now = Date.now();
+    const start = new Date(settings.votingStartTime || '2026-10-26T00:01:00+07:00').getTime();
+    return Math.max(0, start - now);
+  }
+
+  saveVotingSchedule({ startTime, endTime, mode, lockedMessage } = {}) {
+    const current = this.getSettings();
+    const updated = {
+      ...current,
+      ...(startTime ? { votingStartTime: startTime } : {}),
+      ...(endTime ? { votingEndTime: endTime } : {}),
+      ...(mode ? { votingMode: mode } : {}),
+      ...(lockedMessage !== undefined ? { lockedMessage } : {})
+    };
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+    this.addAuditLog('SCHEDULE_UPDATED', `Jadwal Bilik Suara diperbarui: Mulai=${updated.votingStartTime}, Selesai=${updated.votingEndTime}, Mode=${updated.votingMode}`);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('pemilu:schedule-updated', { detail: updated }));
+    }
+    return updated;
   }
 
   updateSettings(newSettings) {
@@ -1281,3 +1336,56 @@ class PemiluStorage {
 
 // Global instance
 window.pemiluStorage = new PemiluStorage();
+
+// Universal Helper for all views & scripts
+if (typeof window !== 'undefined') {
+  window.getVotingScheduleConfig = function() {
+    try {
+      const raw = localStorage.getItem('pemilu_iagi_settings_v2');
+      const defaults = {
+        votingStartTime: '2026-10-26T00:01:00+07:00',
+        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingMode: 'auto',
+        lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.'
+      };
+      const parsed = raw ? JSON.parse(raw) : {};
+      const config = { ...defaults, ...parsed };
+
+      const now = Date.now();
+      const start = new Date(config.votingStartTime).getTime();
+      const end = new Date(config.votingEndTime).getTime();
+      let isOpen = false;
+      let diff = 0;
+
+      if (config.votingMode === 'force_open') {
+        isOpen = true;
+        diff = 0;
+      } else if (config.votingMode === 'force_locked') {
+        isOpen = false;
+        diff = 86400000;
+      } else {
+        diff = start - now;
+        isOpen = diff <= 0 && now <= end;
+      }
+
+      return {
+        ...config,
+        isOpen,
+        diff: Math.max(0, diff),
+        targetTimestamp: start
+      };
+    } catch (e) {
+      const target = new Date('2026-10-26T00:01:00+07:00').getTime();
+      const diff = target - Date.now();
+      return {
+        votingStartTime: '2026-10-26T00:01:00+07:00',
+        votingEndTime: '2026-10-28T18:00:00+07:00',
+        votingMode: 'auto',
+        lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.',
+        isOpen: diff <= 0,
+        diff: Math.max(0, diff),
+        targetTimestamp: target
+      };
+    }
+  };
+}

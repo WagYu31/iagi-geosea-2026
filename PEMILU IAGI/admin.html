@@ -3453,6 +3453,15 @@
                 <span class="sidebar-link-badge badge-gold" id="sidebar-chat-count-badge">Live</span>
               </a>
             </li>
+            <li>
+              <a href="#section-schedule" class="sidebar-nav-link" id="nav-link-schedule" onclick="switchAdminSection('section-schedule', event)">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F5BA42" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>Jadwal & Bilik Suara</span>
+                </div>
+                <span class="sidebar-link-badge" id="sidebar-schedule-badge" style="background: rgba(245, 186, 66, 0.15); color: #F5BA42; border: 1px solid rgba(245, 186, 66, 0.35);">Waktu</span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -4115,6 +4124,201 @@
               <span>Kirim: <strong>Enter ↵</strong></span>
             </div>
           </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION: PENGATURAN JADWAL & WAKTU BILIK SUARA ================= -->
+    <section id="section-schedule" class="panel-card" style="display: none;">
+      <!-- Top Header Strip -->
+      <div class="dpt-header-strip">
+        <div class="dpt-header-left">
+          <div class="dpt-icon-badge" style="background: rgba(245, 186, 66, 0.15); border-color: rgba(245, 186, 66, 0.4); color: #F5BA42; box-shadow: 0 0 16px rgba(245, 186, 66, 0.2);">
+            <svg style="width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div class="dpt-title-wrap">
+            <h2 style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span>Pengaturan Jadwal & Waktu Bilik Suara</span>
+              <span id="badge-schedule-live-status" class="badge-voter-verified" style="background: rgba(245, 186, 66, 0.18); border-color: rgba(245, 186, 66, 0.45); color: #FDE68A; font-size: 0.65rem; padding: 3px 9px;">
+                <span class="beacon-pulse-red" style="width: 6px; height: 6px; background: #F5BA42; box-shadow: 0 0 8px #F5BA42; margin-right: 3px;"></span>
+                <span>STATUS: MEMUAT...</span>
+              </span>
+            </h2>
+            <p>Atur Jadwal Hitung Mundur Pembukaan Bilik Suara Pemilu IAGI 2026 & Kontrol Akses Pemilih (Sinkronisasi Gambar 1 & Gambar 2)</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn-dpt-action" onclick="refreshScheduleAdmin()" style="border-color: rgba(245, 186, 66, 0.4); color: #F5BA42; background: rgba(245, 186, 66, 0.08);" title="Segarkan Status">
+            <svg style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>Segarkan</span>
+          </button>
+          <button type="button" class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)" title="Kembali ke layar ringkasan pleno">
+            <span>← Kembali ke Ringkasan Pleno</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status & Preview Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 18px 0;">
+        <!-- Status Card -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px; position: relative; overflow: hidden;">
+          <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px;">Status Akses Bilik Suara</div>
+          <div id="schedule-active-banner" style="display: flex; align-items: center; gap: 8px; font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: #FDE68A;">
+            <span id="schedule-active-icon">🔒</span>
+            <span id="schedule-active-text">BILIK SUARA TERKUNCI</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 12px;" id="schedule-active-desc">
+            Pemilih belum dapat masuk ke bilik suara. Tombol Gambar 2 terkunci dan menampilkan modal hitung mundur.
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 12px; font-family: var(--font-mono, monospace); font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #64748B;">Target Buka:</span>
+              <strong id="schedule-lbl-start" style="color: #F5BA42;">26 Okt 2026, 00:01 WIB</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #64748B;">Target Tutup:</span>
+              <strong id="schedule-lbl-end" style="color: #CBD5E1;">28 Okt 2026, 18:00 WIB</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">
+              <span style="color: #64748B;">Sisa Hitung Mundur:</span>
+              <strong id="schedule-lbl-diff" style="color: #38BDF8;">--</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Simulation Preview Card (Gambar 1 & Gambar 2) -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: center; position: relative;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="font-size: 0.72rem; color: #F5BA42; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+              <span>👁️ Pratinjau Tampilan Pemilih (Live Preview)</span>
+            </div>
+            <span style="font-size: 0.65rem; color: #94A3B8; background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 4px;">Gambar 1 & Gambar 2</span>
+          </div>
+
+          <!-- Preview Gambar 1: Chrono Capsule -->
+          <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+            <div class="hero-chrono-capsule" id="admin-preview-chrono" style="margin: 0; transform: scale(0.92); transform-origin: center;">
+              <div class="chrono-tag">
+                <span class="live-dot" id="admin-preview-dot"></span>
+                <span id="admin-preview-tag-text">LIVE VOTING</span>
+              </div>
+              <div class="chrono-units-wrap">
+                <div class="chrono-item"><span id="admin-preview-days" class="chrono-val">00</span><span class="chrono-lbl">H</span></div>
+                <span class="chrono-sep">:</span>
+                <div class="chrono-item"><span id="admin-preview-hours" class="chrono-val">00</span><span class="chrono-lbl">J</span></div>
+                <span class="chrono-sep">:</span>
+                <div class="chrono-item"><span id="admin-preview-mins" class="chrono-val">00</span><span class="chrono-lbl">M</span></div>
+                <span class="chrono-sep">:</span>
+                <div class="chrono-item"><span id="admin-preview-secs" class="chrono-val">00</span><span class="chrono-lbl">D</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview Gambar 2: Button -->
+          <div style="display: flex; justify-content: center; width: 100%;">
+            <div id="admin-preview-btn-member" class="btn-header-member is-locked" style="width: 100%; max-width: 360px; justify-content: center; padding: 10px 18px; font-size: 0.85rem; border-radius: 999px; transition: all 0.3s ease;">
+              <span id="admin-preview-btn-icon">🔒</span>
+              <span id="admin-preview-btn-text">Masuk Sebagai Anggota (Bilik Suara Terkunci)</span>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 10px; font-size: 0.68rem; color: #64748B;">
+            *Simulasi real-time sesuai konfigurasi waktu yang sedang aktif.
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuration Form -->
+      <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 20px; margin-top: 14px;">
+        <h3 style="margin: 0 0 16px 0; font-size: 0.95rem; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">
+          <span>⚙️ Formulir Konfigurasi Waktu & Mode Akses</span>
+        </h3>
+
+        <!-- Mode Bilik Suara Selection -->
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 8px;">Mode Bilik Suara:</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+            <label id="lbl-mode-auto" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(245,186,66,0.3); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+              <input type="radio" name="schedule-mode" id="schedule-mode-auto" value="auto" checked onchange="handleScheduleModeChange('auto')" style="margin-top: 3px; accent-color: #F5BA42;">
+              <div>
+                <div style="font-size: 0.84rem; font-weight: 700; color: #FFFFFF;">⏱️ Mode Otomatis</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">Mengikuti hitung mundur jam target. Terbuka saat timer = 0.</div>
+              </div>
+            </label>
+            <label id="lbl-mode-open" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+              <input type="radio" name="schedule-mode" id="schedule-mode-open" value="force_open" onchange="handleScheduleModeChange('force_open')" style="margin-top: 3px; accent-color: #10B981;">
+              <div>
+                <div style="font-size: 0.84rem; font-weight: 700; color: #34D399;">⚡ Paksa Buka Sekarang</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">Bilik suara langsung aktif & tombol bisa diklik seketika.</div>
+              </div>
+            </label>
+            <label id="lbl-mode-locked" style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+              <input type="radio" name="schedule-mode" id="schedule-mode-locked" value="force_locked" onchange="handleScheduleModeChange('force_locked')" style="margin-top: 3px; accent-color: #EF4444;">
+              <div>
+                <div style="font-size: 0.84rem; font-weight: 700; color: #EF4444;">🔒 Paksa Kunci Sekarang</div>
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 2px;">Bilik suara darurat terkunci, tombol tidak bisa diklik.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Datetime Pickers Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div>
+            <label for="schedule-start-input" style="display: block; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;">
+              Waktu Mulai Voting (Target Countdown Gambar 1):
+            </label>
+            <input type="datetime-local" id="schedule-start-input" class="form-input font-mono" style="padding: 10px 14px; font-size: 0.88rem; width: 100%; border-color: rgba(245, 186, 66, 0.4); background: rgba(0,0,0,0.4); color: #FDE68A;">
+            <div style="font-size: 0.7rem; color: #64748B; margin-top: 4px;">Zona Waktu: WIB (UTC+7). Menentukan kapan hitung mundur berakhir.</div>
+          </div>
+          <div>
+            <label for="schedule-end-input" style="display: block; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;">
+              Waktu Penutupan Bilik Suara:
+            </label>
+            <input type="datetime-local" id="schedule-end-input" class="form-input font-mono" style="padding: 10px 14px; font-size: 0.88rem; width: 100%; border-color: rgba(255, 255, 255, 0.2); background: rgba(0,0,0,0.4); color: #FFFFFF;">
+            <div style="font-size: 0.7rem; color: #64748B; margin-top: 4px;">Zona Waktu: WIB (UTC+7). Batas akhir penerimaan surat suara.</div>
+          </div>
+        </div>
+
+        <!-- Locked Message Customization -->
+        <div style="margin-bottom: 20px;">
+          <label for="schedule-locked-msg-input" style="display: block; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;">
+            Pesan Informasi Saat Bilik Suara Terkunci (Modal Pop-Up):
+          </label>
+          <input type="text" id="schedule-locked-msg-input" class="form-input" style="padding: 10px 14px; font-size: 0.85rem; width: 100%;" value="Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.">
+        </div>
+
+        <!-- Quick Preset Buttons -->
+        <div style="margin-bottom: 24px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 0.76rem; font-weight: 700; color: #94A3B8; margin-bottom: 8px;">Tombol Pintas Aksi Cepat (1-Klik Tanpa Perlu Ketik Manual):</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-dpt-action" onclick="applySchedulePreset('now')" style="border-color: rgba(16, 185, 129, 0.45); color: #34D399; background: rgba(16, 185, 129, 0.1);" title="Langsung buka bilik suara sekarang juga untuk uji coba">
+              <span>⚡ Buka Sekarang (Uji Coba Langsung)</span>
+            </button>
+            <button type="button" class="btn-dpt-action" onclick="applySchedulePreset('2min')" style="border-color: rgba(56, 189, 248, 0.45); color: #38BDF8; background: rgba(56, 189, 248, 0.1);" title="Set hitung mundur 2 menit dari sekarang">
+              <span>⏱️ Hitung Mundur 2 Menit</span>
+            </button>
+            <button type="button" class="btn-dpt-action" onclick="applySchedulePreset('1hour')" style="border-color: rgba(245, 186, 66, 0.45); color: #F5BA42; background: rgba(245, 186, 66, 0.1);" title="Set hitung mundur 1 jam dari sekarang">
+              <span>⏱️ Hitung Mundur 1 Jam</span>
+            </button>
+            <button type="button" class="btn-dpt-action" onclick="applySchedulePreset('tomorrow')" style="border-color: rgba(255, 255, 255, 0.2); color: #CBD5E1; background: rgba(255, 255, 255, 0.05);" title="Set hitung mundur 1 hari dari sekarang">
+              <span>📅 Hitung Mundur 1 Hari</span>
+            </button>
+            <button type="button" class="btn-dpt-action" onclick="applySchedulePreset('official')" style="border-color: rgba(245, 186, 66, 0.6); color: #FDE68A; background: rgba(245, 186, 66, 0.15);" title="Kembalikan ke jadwal resmi 26 Oktober 2026 pukul 00.01 WIB">
+              <span>🏆 Reset ke Jadwal Resmi KPKU</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 12px; align-items: center; justify-content: flex-end; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div id="schedule-save-alert" style="display: none; font-size: 0.8rem; padding: 8px 14px; border-radius: 8px; font-weight: 700;"></div>
+          <button type="button" class="btn-dpt-back" onclick="switchAdminSection('section-metrics', event)">
+            Batal
+          </button>
+          <button type="button" class="btn-primary-gold" onclick="saveVotingScheduleAdmin()" style="padding: 11px 26px; font-size: 0.88rem; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.4);">
+            <span>💾</span>
+            <span>Simpan Pengaturan Jadwal</span>
+          </button>
         </div>
       </div>
     </section>
@@ -4784,8 +4988,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.1.0"></script>
-  <script src="js/storage.js?v=4.1.0"></script>
+  <script src="js/data.js?v=4.5.4"></script>
+  <script src="js/storage.js?v=4.5.4"></script>
 
   <script>
     // Desktop Admin Dashboard Logic
@@ -5616,7 +5820,274 @@
             renderLiveChatAdmin(true);
           }
         }
+        if (e.key === 'pemilu_iagi_settings_v2') {
+          updateScheduleLivePreview();
+        }
       });
+
+      // ═════════════════════════════════════════════════════════════
+      // MODUL PENGATURAN JADWAL & WAKTU BILIK SUARA (GAMBAR 1 & 2)
+      // ═════════════════════════════════════════════════════════════
+      let schedulePreviewTimer = null;
+
+      function renderScheduleAdmin() {
+        const settings = (window.pemiluStorage && typeof window.pemiluStorage.getSettings === 'function')
+          ? window.pemiluStorage.getSettings()
+          : { votingStartTime: '2026-10-26T00:01:00+07:00', votingEndTime: '2026-10-28T18:00:00+07:00', votingMode: 'auto', lockedMessage: 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.' };
+
+        // Populate Form Inputs
+        const startInput = document.getElementById('schedule-start-input');
+        const endInput = document.getElementById('schedule-end-input');
+        const msgInput = document.getElementById('schedule-locked-msg-input');
+
+        if (startInput && settings.votingStartTime) {
+          try {
+            const d = new Date(settings.votingStartTime);
+            const localIso = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            startInput.value = localIso;
+          } catch(e) {}
+        }
+
+        if (endInput && settings.votingEndTime) {
+          try {
+            const d = new Date(settings.votingEndTime);
+            const localIso = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            endInput.value = localIso;
+          } catch(e) {}
+        }
+
+        if (msgInput) {
+          msgInput.value = settings.lockedMessage || 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.';
+        }
+
+        const mode = settings.votingMode || 'auto';
+        const radio = document.getElementById('schedule-mode-' + (mode === 'force_open' ? 'open' : (mode === 'force_locked' ? 'locked' : 'auto')));
+        if (radio) radio.checked = true;
+        highlightScheduleModeLabels(mode);
+
+        updateScheduleLivePreview();
+
+        if (schedulePreviewTimer) clearInterval(schedulePreviewTimer);
+        schedulePreviewTimer = setInterval(updateScheduleLivePreview, 1000);
+      }
+      window.renderScheduleAdmin = renderScheduleAdmin;
+      window.refreshScheduleAdmin = renderScheduleAdmin;
+
+      function highlightScheduleModeLabels(mode) {
+        const lblAuto = document.getElementById('lbl-mode-auto');
+        const lblOpen = document.getElementById('lbl-mode-open');
+        const lblLocked = document.getElementById('lbl-mode-locked');
+
+        if (lblAuto) {
+          lblAuto.style.borderColor = mode === 'auto' ? '#F5BA42' : 'rgba(255,255,255,0.1)';
+          lblAuto.style.background = mode === 'auto' ? 'rgba(245,186,66,0.14)' : 'rgba(0,0,0,0.3)';
+        }
+        if (lblOpen) {
+          lblOpen.style.borderColor = mode === 'force_open' ? '#10B981' : 'rgba(255,255,255,0.1)';
+          lblOpen.style.background = mode === 'force_open' ? 'rgba(16,185,129,0.14)' : 'rgba(0,0,0,0.3)';
+        }
+        if (lblLocked) {
+          lblLocked.style.borderColor = mode === 'force_locked' ? '#EF4444' : 'rgba(255,255,255,0.1)';
+          lblLocked.style.background = mode === 'force_locked' ? 'rgba(239,68,68,0.14)' : 'rgba(0,0,0,0.3)';
+        }
+      }
+      window.handleScheduleModeChange = function(mode) {
+        highlightScheduleModeLabels(mode);
+        updateScheduleLivePreview();
+      };
+
+      function updateScheduleLivePreview() {
+        const config = (typeof window.getVotingScheduleConfig === 'function') 
+          ? window.getVotingScheduleConfig() 
+          : { isOpen: false, diff: 0, votingStartTime: '2026-10-26T00:01:00+07:00', votingEndTime: '2026-10-28T18:00:00+07:00' };
+
+        const isOpen = config.isOpen;
+        const diff = config.diff;
+
+        const lblStart = document.getElementById('schedule-lbl-start');
+        const lblEnd = document.getElementById('schedule-lbl-end');
+        const lblDiff = document.getElementById('schedule-lbl-diff');
+        const bannerIcon = document.getElementById('schedule-active-icon');
+        const bannerText = document.getElementById('schedule-active-text');
+        const bannerDesc = document.getElementById('schedule-active-desc');
+        const badgeLive = document.getElementById('badge-schedule-live-status');
+        const sidebarBadge = document.getElementById('sidebar-schedule-badge');
+
+        if (lblStart) lblStart.textContent = new Date(config.votingStartTime).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) + ' WIB';
+        if (lblEnd) lblEnd.textContent = new Date(config.votingEndTime).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) + ' WIB';
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        if (lblDiff) {
+          lblDiff.textContent = isOpen ? 'Waktu Buka Tiba (00:00:00)' : `${days}H : ${hours}J : ${mins}M : ${secs}D`;
+        }
+
+        if (isOpen) {
+          if (bannerIcon) bannerIcon.textContent = '🟢';
+          if (bannerText) {
+            bannerText.textContent = 'BILIK SUARA TERBUKA (AKTIF)';
+            bannerText.style.color = '#34D399';
+          }
+          if (bannerDesc) bannerDesc.textContent = 'Bilik suara pemilihan sedang terbuka resmi. Tombol Gambar 2 aktif berkilau dan pemilih dapat langsung masuk untuk mencoblos.';
+          if (badgeLive) {
+            badgeLive.innerHTML = '<span class="beacon-pulse-red" style="width: 6px; height: 6px; background: #10B981; box-shadow: 0 0 8px #10B981; margin-right: 3px;"></span><span>STATUS: TERBUKA</span>';
+            badgeLive.style.borderColor = 'rgba(16,185,129,0.45)';
+            badgeLive.style.color = '#34D399';
+          }
+          if (sidebarBadge) {
+            sidebarBadge.textContent = 'Buka';
+            sidebarBadge.style.color = '#34D399';
+            sidebarBadge.style.borderColor = 'rgba(16,185,129,0.4)';
+            sidebarBadge.style.background = 'rgba(16,185,129,0.15)';
+          }
+        } else {
+          if (bannerIcon) bannerIcon.textContent = '🔒';
+          if (bannerText) {
+            bannerText.textContent = 'BILIK SUARA TERKUNCI';
+            bannerText.style.color = '#FDE68A';
+          }
+          if (bannerDesc) bannerDesc.textContent = 'Pemilih belum dapat masuk ke bilik suara. Tombol Gambar 2 terkunci dan menampilkan modal hitung mundur saat diklik.';
+          if (badgeLive) {
+            badgeLive.innerHTML = '<span class="beacon-pulse-red" style="width: 6px; height: 6px; background: #F5BA42; box-shadow: 0 0 8px #F5BA42; margin-right: 3px;"></span><span>STATUS: TERKUNCI</span>';
+            badgeLive.style.borderColor = 'rgba(245,186,66,0.45)';
+            badgeLive.style.color = '#FDE68A';
+          }
+          if (sidebarBadge) {
+            sidebarBadge.textContent = 'Kunci';
+            sidebarBadge.style.color = '#F5BA42';
+            sidebarBadge.style.borderColor = 'rgba(245,186,66,0.4)';
+            sidebarBadge.style.background = 'rgba(245,186,66,0.15)';
+          }
+        }
+
+        // Live Simulation Card (Gambar 1 Preview)
+        const pDays = document.getElementById('admin-preview-days');
+        const pHours = document.getElementById('admin-preview-hours');
+        const pMins = document.getElementById('admin-preview-mins');
+        const pSecs = document.getElementById('admin-preview-secs');
+        const pTag = document.getElementById('admin-preview-tag-text');
+        const pDot = document.getElementById('admin-preview-dot');
+
+        if (pDays) pDays.textContent = isOpen ? '00' : String(days).padStart(2, '0');
+        if (pHours) pHours.textContent = isOpen ? '00' : String(hours).padStart(2, '0');
+        if (pMins) pMins.textContent = isOpen ? '00' : String(mins).padStart(2, '0');
+        if (pSecs) pSecs.textContent = isOpen ? '00' : String(secs).padStart(2, '0');
+
+        if (pTag) {
+          pTag.textContent = isOpen ? 'BILIK SUARA DIBUKA' : 'LIVE VOTING';
+          pTag.style.color = isOpen ? '#10B981' : '#38BDF8';
+        }
+        if (pDot) {
+          pDot.style.background = isOpen ? '#10B981' : '#38BDF8';
+          pDot.style.boxShadow = isOpen ? '0 0 8px #10B981' : '0 0 8px #38BDF8';
+        }
+
+        // Live Simulation Card (Gambar 2 Preview)
+        const pBtn = document.getElementById('admin-preview-btn-member');
+        const pBtnIcon = document.getElementById('admin-preview-btn-icon');
+        const pBtnText = document.getElementById('admin-preview-btn-text');
+
+        if (pBtn) {
+          if (isOpen) {
+            pBtn.classList.remove('is-locked');
+            pBtn.classList.add('is-unlocked');
+            if (pBtnIcon) pBtnIcon.innerHTML = '☑';
+            if (pBtnText) pBtnText.textContent = 'Masuk Sebagai Anggota (Bilik Suara)';
+          } else {
+            pBtn.classList.remove('is-unlocked');
+            pBtn.classList.add('is-locked');
+            if (pBtnIcon) pBtnIcon.innerHTML = '🔒';
+            if (pBtnText) pBtnText.textContent = 'Masuk Sebagai Anggota (Bilik Suara Terkunci)';
+          }
+        }
+      }
+
+      window.applySchedulePreset = function(preset) {
+        const startInput = document.getElementById('schedule-start-input');
+        const endInput = document.getElementById('schedule-end-input');
+        const now = new Date();
+
+        if (preset === 'now') {
+          const past = new Date(now.getTime() - 60000);
+          const future = new Date(now.getTime() + (2 * 86400000));
+          if (startInput) startInput.value = new Date(past.getTime() - (past.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          if (endInput) endInput.value = new Date(future.getTime() - (future.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          const r = document.getElementById('schedule-mode-auto');
+          if (r) r.checked = true;
+          highlightScheduleModeLabels('auto');
+        } else if (preset === '2min') {
+          const target = new Date(now.getTime() + (2 * 60000));
+          const future = new Date(now.getTime() + (2 * 86400000));
+          if (startInput) startInput.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          if (endInput) endInput.value = new Date(future.getTime() - (future.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          const r = document.getElementById('schedule-mode-auto');
+          if (r) r.checked = true;
+          highlightScheduleModeLabels('auto');
+        } else if (preset === '1hour') {
+          const target = new Date(now.getTime() + (3600000));
+          const future = new Date(now.getTime() + (2 * 86400000));
+          if (startInput) startInput.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          if (endInput) endInput.value = new Date(future.getTime() - (future.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          const r = document.getElementById('schedule-mode-auto');
+          if (r) r.checked = true;
+          highlightScheduleModeLabels('auto');
+        } else if (preset === 'tomorrow') {
+          const target = new Date(now.getTime() + (86400000));
+          const future = new Date(now.getTime() + (3 * 86400000));
+          if (startInput) startInput.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          if (endInput) endInput.value = new Date(future.getTime() - (future.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          const r = document.getElementById('schedule-mode-auto');
+          if (r) r.checked = true;
+          highlightScheduleModeLabels('auto');
+        } else if (preset === 'official') {
+          if (startInput) startInput.value = '2026-10-26T00:01';
+          if (endInput) endInput.value = '2026-10-28T18:00';
+          const r = document.getElementById('schedule-mode-auto');
+          if (r) r.checked = true;
+          highlightScheduleModeLabels('auto');
+        }
+
+        saveVotingScheduleAdmin();
+      };
+
+      window.saveVotingScheduleAdmin = function() {
+        const startInput = document.getElementById('schedule-start-input');
+        const endInput = document.getElementById('schedule-end-input');
+        const msgInput = document.getElementById('schedule-locked-msg-input');
+        const alertEl = document.getElementById('schedule-save-alert');
+
+        const selectedRadio = document.querySelector('input[name="schedule-mode"]:checked');
+        const mode = selectedRadio ? selectedRadio.value : 'auto';
+
+        let startTime = startInput && startInput.value ? startInput.value + ':00+07:00' : '2026-10-26T00:01:00+07:00';
+        let endTime = endInput && endInput.value ? endInput.value + ':00+07:00' : '2026-10-28T18:00:00+07:00';
+        const lockedMessage = msgInput ? msgInput.value.trim() : 'Bilik suara pemilihan resmi akan dibuka secara otomatis saat hitung mundur selesai.';
+
+        if (window.pemiluStorage && typeof window.pemiluStorage.saveVotingSchedule === 'function') {
+          window.pemiluStorage.saveVotingSchedule({
+            startTime,
+            endTime,
+            mode,
+            lockedMessage
+          });
+        }
+
+        updateScheduleLivePreview();
+
+        if (alertEl) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+          alertEl.style.color = '#34D399';
+          alertEl.style.border = '1px solid rgba(16, 185, 129, 0.35)';
+          alertEl.textContent = '✓ Pengaturan jadwal berhasil disimpan & diterapkan ke seluruh portal!';
+          setTimeout(() => {
+            alertEl.style.display = 'none';
+          }, 3500);
+        }
+      };
 
       window.switchAdminSection = function(sectionId, e) {
         if (e && e.preventDefault) e.preventDefault();
@@ -5633,6 +6104,7 @@
         const dptSection = document.getElementById('section-dpt-table');
         const adminSection = document.getElementById('section-admin-users');
         const livechatSection = document.getElementById('section-livechat');
+        const scheduleSection = document.getElementById('section-schedule');
         const topbarTitle = document.querySelector('.topbar-title span:first-child');
         const topbarSubtitle = document.querySelector('.topbar-left p');
 
@@ -5645,7 +6117,43 @@
           }
         });
 
-        if (sectionId === 'section-livechat') {
+        if (sectionId === 'section-schedule') {
+          // ═════════════════════════════════════════════════════════════
+          // PENGATURAN JADWAL & WAKTU BILIK SUARA
+          // ═════════════════════════════════════════════════════════════
+          if (metricsSection) metricsSection.style.display = 'none';
+          if (mainSplitSection) mainSplitSection.style.display = 'none';
+          if (dptSection) dptSection.style.display = 'none';
+          if (plenoSection) plenoSection.style.display = 'none';
+          if (auditSection) auditSection.style.display = 'none';
+          if (adminSection) adminSection.style.display = 'none';
+          if (livechatSection) livechatSection.style.display = 'none';
+
+          if (scheduleSection) {
+            scheduleSection.style.display = 'block';
+            scheduleSection.classList.remove('section-view-fade');
+            void scheduleSection.offsetWidth;
+            scheduleSection.classList.add('section-view-fade');
+          }
+
+          if (topbarTitle) {
+            topbarTitle.innerText = 'Pengaturan Jadwal & Waktu Bilik Suara';
+          }
+          if (topbarSubtitle) {
+            topbarSubtitle.innerText = 'Kontrol Hitung Mundur Pembukaan Bilik Suara & Akses Tombol Pemilih (Gambar 1 & Gambar 2)';
+          }
+
+          if (typeof renderScheduleAdmin === 'function') {
+            renderScheduleAdmin();
+          }
+
+          if (history.replaceState) {
+            history.replaceState(null, '', '#section-schedule');
+          } else {
+            window.location.hash = 'section-schedule';
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (sectionId === 'section-livechat') {
           // ═════════════════════════════════════════════════════════════
           // PUSAT PENGADUAN & LIVE CHAT PEMILIH KPKU
           // ═════════════════════════════════════════════════════════════
@@ -5655,6 +6163,7 @@
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           if (livechatSection) {
             livechatSection.style.display = 'block';
@@ -5695,6 +6204,7 @@
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'none';
           if (livechatSection) livechatSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           if (adminSection) {
             adminSection.style.display = 'block';
@@ -5736,6 +6246,7 @@
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'none';
           if (livechatSection) livechatSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           if (dptSection) {
             dptSection.style.display = 'block';
@@ -5782,6 +6293,7 @@
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
           if (livechatSection) livechatSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
@@ -5811,6 +6323,7 @@
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
           if (livechatSection) livechatSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           if (topbarTitle) {
             topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
@@ -5842,6 +6355,7 @@
           if (dptSection) dptSection.style.display = 'none';
           if (adminSection) adminSection.style.display = 'none';
           if (livechatSection) livechatSection.style.display = 'none';
+          if (scheduleSection) scheduleSection.style.display = 'none';
 
           const defaultLink = document.querySelector('a[href="#section-metrics"]');
           if (defaultLink) defaultLink.classList.add('active');
@@ -5899,7 +6413,9 @@
       // Initialize view based on URL hash or default
       function initSectionFromHash() {
         const hash = window.location.hash || '';
-        if (hash.includes('section-livechat')) {
+        if (hash.includes('section-schedule')) {
+          window.switchAdminSection('section-schedule');
+        } else if (hash.includes('section-livechat')) {
           window.switchAdminSection('section-livechat');
         } else if (hash.includes('section-admin-users')) {
           window.switchAdminSection('section-admin-users');
@@ -5995,6 +6511,9 @@
         const livechatSec = document.getElementById('section-livechat');
         if (livechatSec && livechatSec.style.display !== 'none' && typeof renderLiveChatAdmin === 'function') {
           renderLiveChatAdmin(true);
+        }
+        if (typeof updateScheduleLivePreview === 'function') {
+          updateScheduleLivePreview();
         }
       }
 
