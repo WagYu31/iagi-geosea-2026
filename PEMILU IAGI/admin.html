@@ -6158,10 +6158,16 @@
 
           <!-- Input Pemilih (NPA/Nama) -->
           <div>
-            <label style="display: block; font-size: 0.76rem; color: #94A3B8; font-weight: 700; margin-bottom: 6px; text-transform: uppercase;">
-              1. Pilih Pemilih dari DPT (Ketik 5 Digit NPA atau Nama):
-            </label>
-            <input type="text" id="edit-slot-voter-input" list="dpt-datalist-voters" class="font-mono" placeholder="Ketik NPA (contoh: 04479) atau nama pemilih..." style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-size: 0.88rem !important; padding: 10px 14px !important; border-radius: 8px !important; outline: none !important;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label style="font-size: 0.76rem; color: #94A3B8; font-weight: 700; text-transform: uppercase;">
+                1. Pilih Pemilih dari DPT (Ketik 5 Digit NPA atau Nama):
+              </label>
+              <span style="font-size: 0.7rem; color: #34D399; font-weight: 700; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); padding: 1px 7px; border-radius: 4px;">
+                ⚡ Sinkron DPT Real-Time
+              </span>
+            </div>
+            <input type="text" id="edit-slot-voter-input" list="dpt-datalist-voters" oninput="handleEditSlotVoterInput(this.value)" class="font-mono" placeholder="Ketik 5 digit NPA (contoh: 04479) atau nama dari DPT..." style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-size: 0.88rem !important; padding: 10px 14px !important; border-radius: 8px !important; outline: none !important;">
+            <div id="edit-slot-voter-feedback" style="display: none; font-size: 0.76rem; margin-top: 6px; padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;"></div>
           </div>
 
           <!-- Pilihan Status Hak Suara -->
@@ -6214,6 +6220,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Global DPT Autocomplete Datalist (2.144 Pemilih) -->
+    <datalist id="dpt-datalist-voters"></datalist>
 
     <!-- ================= MODAL 7: ANIMASI CEKLIS SUKSES (HAPUS BERHASIL) ================= -->
     <div id="modal-success-check" class="admin-success-overlay" onclick="handleSuccessDismiss(event)">
@@ -10383,14 +10392,10 @@
           `;
         }
 
-        // Add datalist for quick autocomplete
-        html += `<datalist id="dpt-datalist-voters">`;
-        dpt.forEach(item => {
-          html += `<option value="${item.npa} - ${item.name} (${item.pengda || 'DKI Jakarta'})"></option>`;
-        });
-        html += `</datalist>`;
-
         container.innerHTML = html;
+        if (typeof ensureDptDatalist === 'function') {
+          ensureDptDatalist();
+        }
       }
 
       window.pickRandomSingleSlot = function(timsesId, slotIdx) {
@@ -10506,10 +10511,105 @@
         }
       };
 
+      // Ensure DPT Datalist exists and is populated with all 2,144 voters
+      function ensureDptDatalist() {
+        let datalist = document.getElementById('dpt-datalist-voters');
+        if (!datalist) {
+          datalist = document.createElement('datalist');
+          datalist.id = 'dpt-datalist-voters';
+          document.body.appendChild(datalist);
+        }
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        if (datalist.children.length !== dpt.length && dpt.length > 0) {
+          let opts = '';
+          dpt.forEach(item => {
+            const voteStr = item.voted ? '✓ Sudah Vote' : '⏳ Belum Vote';
+            opts += `<option value="${item.npa} - ${item.name} (${item.pengda || 'DKI Jakarta'}) [${voteStr}]"></option>`;
+          });
+          datalist.innerHTML = opts;
+        }
+      }
+
+      // Live search & auto-fill feedback from DPT
+      window.handleEditSlotVoterInput = function(val) {
+        const feedback = document.getElementById('edit-slot-voter-feedback');
+        if (!feedback) return;
+
+        const query = (val || '').trim();
+        if (!query) {
+          feedback.style.display = 'none';
+          feedback.innerHTML = '';
+          return;
+        }
+
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        let found = null;
+        const npaMatch = query.match(/\b(\d{5})\b/);
+        if (npaMatch) {
+          found = dpt.find(v => v.npa === npaMatch[1]);
+        }
+        if (!found) {
+          const clean = query.toLowerCase();
+          found = dpt.find(v => clean.includes((v.name || '').toLowerCase())) ||
+                  dpt.find(v => (v.name || '').toLowerCase().includes(clean)) ||
+                  dpt.find(v => (v.npa || '').includes(clean));
+        }
+
+        if (found) {
+          const isVoted = found.voted === true;
+          const timsesTag = Number(found.timses) === 1 ? '<span style="color: #38BDF8; font-weight: 700;">🏷️ Ajuan Timses 01</span>' :
+                            Number(found.timses) === 2 ? '<span style="color: #F5BA42; font-weight: 700;">🏷️ Ajuan Timses 02</span>' :
+                            Number(found.timses) === 3 ? '<span style="color: #EF4444; font-weight: 700;">🏷️ Ajuan Timses 03</span>' :
+                            '<span style="color: #94A3B8;">Belum terikat ajuan timses</span>';
+
+          feedback.style.display = 'block';
+          feedback.style.background = 'rgba(16, 185, 129, 0.12)';
+          feedback.style.border = '1px solid rgba(16, 185, 129, 0.35)';
+          feedback.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <div style="font-weight: 800; color: #34D399; font-size: 0.82rem; display: flex; align-items: center; gap: 6px;">
+                <span>✓ DPT Ditemukan:</span>
+                <span style="color: #FFFFFF;">${found.name}</span>
+              </div>
+              <span style="font-family: monospace; font-size: 0.72rem; font-weight: 700; color: #FDE68A; background: rgba(0,0,0,0.35); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(245,186,66,0.3);">NPA ${found.npa}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span>Pengda: <strong style="color: #E2E8F0;">${found.pengda || 'DKI Jakarta'}</strong></span>
+              <span>·</span>
+              <span>Hak Suara DPT: <strong style="color: ${isVoted ? '#34D399' : '#F59E0B'};">${isVoted ? '✓ Sudah Menggunakan Hak Suara' : '⏳ Belum Memilih'}</strong></span>
+              <span>·</span>
+              <span>${timsesTag}</span>
+            </div>
+          `;
+
+          // Synchronize radio button status hak suara directly with actual DPT data
+          const radioYes = document.getElementById('status-voted-yes');
+          const radioNo = document.getElementById('status-voted-no');
+          if (radioYes && radioNo) {
+            radioYes.checked = isVoted;
+            radioNo.checked = !isVoted;
+          }
+        } else if (query.length >= 2) {
+          feedback.style.display = 'block';
+          feedback.style.background = 'rgba(245, 158, 11, 0.12)';
+          feedback.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+          feedback.innerHTML = `
+            <div style="color: #FCD34D; font-size: 0.75rem; display: flex; align-items: center; gap: 6px;">
+              <span>🔍</span>
+              <span>Mencari di antara <strong>2.144 DPT</strong>... Ketik 5 digit NPA (misal: <code>04479</code>) atau nama pemilih.</span>
+            </div>
+          `;
+        } else {
+          feedback.style.display = 'none';
+        }
+      };
+
       // Modal Single Slot: Buka modal atur pemilih, status hak suara, dan pilihan caketum
       window.openSwapSingleVoterModal = function(timsesId, idx) {
         const modal = document.getElementById('modal-edit-single-slot');
         if (!modal) return;
+
+        ensureDptDatalist();
 
         document.getElementById('edit-slot-timses-id').value = timsesId;
         document.getElementById('edit-slot-idx').value = idx;
@@ -10552,7 +10652,15 @@
           candSelect.value = String(candVal);
         }
 
+        handleEditSlotVoterInput(input ? input.value : '');
+
         modal.style.setProperty('display', 'flex', 'important');
+        if (input) {
+          setTimeout(() => {
+            input.focus();
+            input.select();
+          }, 100);
+        }
       };
 
       window.closeEditSingleSlotModal = function() {
@@ -10572,6 +10680,7 @@
 
         renderRandomCheckSection();
         if (typeof renderDptTable === 'function') renderDptTable();
+        if (typeof refreshAll === 'function') refreshAll();
         closeEditSingleSlotModal();
         alert(`✓ Slot 0${idx + 1} Timses 0${timsesId} telah dikosongkan.`);
       };
@@ -10588,7 +10697,7 @@
           return;
         }
 
-        const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
         let found = null;
         const npaMatch = inputVal.match(/\b(\d{5})\b/);
         if (npaMatch) {
@@ -10596,30 +10705,51 @@
         }
         if (!found) {
           const clean = inputVal.toLowerCase();
-          found = dpt.find(v => clean.includes(v.name.toLowerCase()));
+          found = dpt.find(v => clean.includes((v.name || '').toLowerCase())) ||
+                  dpt.find(v => (v.name || '').toLowerCase().includes(clean)) ||
+                  dpt.find(v => (v.npa || '').includes(clean));
         }
 
         if (!found) {
-          alert(`Pemilih "${inputVal}" tidak ditemukan dalam DPT!`);
+          alert(`Pemilih "${inputVal}" tidak ditemukan dalam Daftar Pemilih Tetap (DPT)! Silakan pilih dari opsi autocomplete yang tersedia.`);
           return;
         }
 
+        // Sinkronisasi dua arah ke database DPT:
+        found.voted = isVoted;
+        if (isVoted && !found.voted_at) {
+          found.voted_at = new Date().toISOString();
+        }
+        found.pilihan_caketum = candChoice;
+        found.timses = timsesId;
+
         const voterObj = Object.assign({}, found, {
           voted: isVoted,
-          pilihan_caketum: candChoice
+          pilihan_caketum: candChoice,
+          timses: timsesId
         });
 
         if (!randomCheckSamples[timsesId]) randomCheckSamples[timsesId] = [];
         randomCheckSamples[timsesId][idx] = voterObj;
 
+        // Simpan sampel dan database DPT
         if (window.pemiluStorage && window.pemiluStorage.saveRandomCheckSamples) {
           window.pemiluStorage.saveRandomCheckSamples(randomCheckSamples);
+        }
+        if (window.pemiluStorage && window.pemiluStorage.saveDPT) {
+          window.pemiluStorage.saveDPT(dpt);
         }
 
         renderRandomCheckSection();
         if (typeof renderDptTable === 'function') renderDptTable();
+        if (typeof refreshAll === 'function') refreshAll();
         closeEditSingleSlotModal();
-        alert(`✓ Slot 0${idx + 1} Timses 0${timsesId} berhasil disimpan!\n• Pemilih: ${found.name} (NPA ${found.npa})\n• Status Hak Suara: ${isVoted ? 'Terpakai' : 'Belum Memilih'}\n• Pilihan Caketum: Paslon 0${candChoice}`);
+        alert(`✓ Slot 0${idx + 1} Tim Sukses Paslon 0${timsesId} berhasil disimpan & disinkronkan ke DPT!\n\n` +
+              `• Pemilih: ${found.name} (NPA ${found.npa})\n` +
+              `• Pengda: ${found.pengda || 'DKI Jakarta'}\n` +
+              `• Status Hak Suara: ${isVoted ? '✓ Sudah Terpakai (Tercatat Sah)' : '⏳ Belum Memilih'}\n` +
+              `• Pilihan Caketum: Paslon 0${candChoice}\n` +
+              `• Sinkronisasi DPT: Tersemat label "Ajuan Timses 0${timsesId}" pada tabel DPT.`);
       };
 
       window.clearAllRandomCheckSamples = function() {
@@ -10785,6 +10915,9 @@
       // Call on DOMContentLoaded if already on section-random-check
       if (typeof renderRandomCheckSection === 'function') {
         renderRandomCheckSection();
+      }
+      if (typeof ensureDptDatalist === 'function') {
+        ensureDptDatalist();
       }
     });
   </script>
