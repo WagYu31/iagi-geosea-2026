@@ -844,538 +844,544 @@
       box-shadow: 0 2px 8px rgba(245, 186, 66, 0.2);
     }
 
-    /* Podium Stage Card */
+    /* =========================================================================
+       ULTRA-PREMIUM BROADCAST LEADERBOARD DECK (PLENO IAGI 2026)
+       ========================================================================= */
     .podium-stage-card {
       position: relative;
-      background: radial-gradient(circle at 50% 25%, rgba(245, 186, 66, 0.12) 0%, rgba(15, 23, 42, 0.65) 55%, rgba(10, 16, 26, 0.95) 100%);
-      border: 1px solid rgba(245, 186, 66, 0.25);
-      border-radius: 24px;
-      padding: 24px 20px 20px;
+      background: radial-gradient(ellipse at 50% -10%, rgba(56, 189, 248, 0.08) 0%, rgba(2, 22, 18, 0.9) 45%, rgba(1, 12, 10, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 26px 22px 22px;
       overflow: hidden;
-      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      margin-bottom: 20px;
-      perspective: 1200px;
+      box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px;
     }
 
-    /* Ambient Spotlight Halo behind center podium */
     .podium-ambient-halo {
       position: absolute;
-      top: -60px;
+      top: -80px;
       left: 50%;
       transform: translateX(-50%);
-      width: 480px;
+      width: 580px;
       height: 380px;
-      background: radial-gradient(circle, rgba(245, 186, 66, 0.22) 0%, rgba(245, 186, 66, 0.04) 50%, transparent 75%);
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, rgba(56, 189, 248, 0.05) 45%, transparent 70%);
       pointer-events: none;
-      filter: blur(28px);
+      filter: blur(35px);
       z-index: 0;
     }
 
     .podium-card-header {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       margin-bottom: 24px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 16px;
     }
 
     .podium-card-title-group h3 {
-      margin: 0 0 4px;
+      margin: 0 0 5px;
       font-size: 1.25rem;
-      font-weight: 900;
+      font-weight: 800;
       color: #FFFFFF;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .podium-card-subtitle {
       margin: 0;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #94A3B8;
       line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .podium-card-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(245, 186, 66, 0.12);
-      border: 1px solid rgba(245, 186, 66, 0.4);
-      color: #FBBF24;
-      padding: 6px 14px;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+      padding: 7px 16px;
       border-radius: 9999px;
       font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      box-shadow: 0 0 14px rgba(245, 186, 66, 0.2);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
 
-    /* Grid Layout: 3 Columns in Olympic order (Rank 2, Rank 1, Rank 3) */
-    .podium-columns-grid {
+    .beacon-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+      animation: pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* 3-Column Broadcast Grid */
+    .broadcast-leader-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      max-width: 980px;
+      margin: 0 auto;
+      align-items: stretch;
+    }
+
+    /* Individual Candidate Broadcast Card */
+    .broadcast-cand-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.75) 0%, rgba(10, 16, 26, 0.92) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 22px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .broadcast-cand-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    /* Glowing Top Edge Line for Candidate Identity */
+    .card-accent-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      border-radius: 22px 22px 0 0;
+    }
+
+    .broadcast-cand-card.cand-1 .card-accent-bar {
+      background: linear-gradient(90deg, #38BDF8, #0284C7, #38BDF8);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+    }
+    .broadcast-cand-card.cand-2 .card-accent-bar {
+      background: linear-gradient(90deg, #34D399, #10B981, #34D399);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+    }
+    .broadcast-cand-card.cand-3 .card-accent-bar {
+      background: linear-gradient(90deg, #FBBF24, #F59E0B, #FBBF24);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+    }
+
+    /* Subtle ambient color glow within card */
+    .card-ambient-tint {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+      transition: opacity 0.3s ease;
+    }
+
+    .broadcast-cand-card:hover .card-ambient-tint {
+      opacity: 0.22;
+    }
+
+    .broadcast-cand-card.cand-1 .card-ambient-tint {
+      background: radial-gradient(ellipse at 50% 0%, #0284C7 0%, transparent 70%);
+    }
+    .broadcast-cand-card.cand-2 .card-ambient-tint {
+      background: radial-gradient(ellipse at 50% 0%, #10B981 0%, transparent 70%);
+    }
+    .broadcast-cand-card.cand-3 .card-ambient-tint {
+      background: radial-gradient(ellipse at 50% 0%, #F59E0B 0%, transparent 70%);
+    }
+
+    /* Card Top Header: Single Elegant Number Badge */
+    .card-header-badge-row {
       position: relative;
       z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 1.15fr 1fr;
-      align-items: end;
-      gap: 16px;
-      padding-top: 15px;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .podium-col {
+      width: 100%;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      position: relative;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin-bottom: 14px;
     }
 
-    .podium-col:hover {
-      transform: translateY(-6px);
-    }
-
-    /* Floating Crown & Trophy above Rank 1 */
-    .podium-crown-trophy-floater {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 8px;
-      animation: floatTrophyCrown 3.2s ease-in-out infinite;
-    }
-
-    .floating-crown {
-      font-size: 2.2rem;
-      line-height: 1;
-      filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5));
-      margin-bottom: -4px;
-    }
-
-    .floating-trophy {
-      font-size: 2.5rem;
-      line-height: 1;
-      filter: drop-shadow(0 6px 14px rgba(245, 186, 66, 0.6));
-    }
-
-    @keyframes floatTrophyCrown {
-      0%, 100% {
-        transform: translateY(0px) scale(1);
-      }
-      50% {
-        transform: translateY(-8px) scale(1.04);
-      }
-    }
-
-    /* Floating Medals for Rank 2 & 3 */
-    .podium-medal-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 8px;
-      animation: floatMedal 3.8s ease-in-out infinite;
-    }
-
-    .podium-col.rank-3 .podium-medal-badge {
-      animation-delay: 0.6s;
-    }
-
-    @keyframes floatMedal {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-
-    .medal-ribbon-tag {
+    .cand-num-badge {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 0.85rem;
-      font-weight: 900;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .broadcast-cand-card.cand-1 .cand-num-badge {
+      background: rgba(2, 132, 199, 0.18);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .broadcast-cand-card.cand-2 .cand-num-badge {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34D399;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+    }
+    .broadcast-cand-card.cand-3 .cand-num-badge {
+      background: rgba(245, 158, 11, 0.18);
+      color: #FBBF24;
+      border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+
+    .cand-verified-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    /* Candidate Portrait Styling (Studio Frame) */
+    .card-portrait-wrap {
       position: relative;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      z-index: 1;
+      width: 96px;
+      height: 96px;
+      margin-bottom: 14px;
     }
 
-    .medal-ribbon-tag.silver {
-      background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
-      color: #0F172A;
-      border: 2px solid #FFFFFF;
-    }
-
-    .medal-ribbon-tag.bronze {
-      background: linear-gradient(135deg, #FB923C 0%, #C2410C 100%);
-      color: #FFFFFF;
-      border: 2px solid #FED7AA;
-    }
-
-    /* Avatar Wrappers */
-    .podium-avatar-wrap {
-      position: relative;
+    .portrait-halo-glow {
+      position: absolute;
+      inset: -6px;
       border-radius: 50%;
-      margin-bottom: -16px;
-      z-index: 3;
-      transition: transform 0.3s ease;
+      filter: blur(10px);
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
     }
 
-    .podium-col:hover .podium-avatar-wrap {
-      transform: scale(1.05);
+    .broadcast-cand-card:hover .portrait-halo-glow {
+      opacity: 0.6;
     }
 
-    .podium-avatar-wrap.gold {
-      width: 104px;
-      height: 104px;
-      border: 4px solid #F59E0B;
-      box-shadow: 0 0 24px rgba(245, 158, 11, 0.55), inset 0 0 12px rgba(245, 158, 11, 0.3);
-      background: radial-gradient(circle, #0284C7 0%, #03446A 100%);
+    .broadcast-cand-card.cand-1 .portrait-halo-glow { background: #0284C7; }
+    .broadcast-cand-card.cand-2 .portrait-halo-glow { background: #10B981; }
+    .broadcast-cand-card.cand-3 .portrait-halo-glow { background: #F59E0B; }
+
+    .portrait-ring-border {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
     }
 
-    .podium-avatar-wrap.silver {
-      width: 88px;
-      height: 88px;
-      border: 3.5px solid #E2E8F0;
-      box-shadow: 0 0 18px rgba(226, 232, 240, 0.4);
-      background: radial-gradient(circle, #059669 0%, #064E3B 100%);
+    .broadcast-cand-card.cand-1 .portrait-ring-border {
+      background: linear-gradient(135deg, #38BDF8, #0369A1);
+    }
+    .broadcast-cand-card.cand-2 .portrait-ring-border {
+      background: linear-gradient(135deg, #34D399, #047857);
+    }
+    .broadcast-cand-card.cand-3 .portrait-ring-border {
+      background: linear-gradient(135deg, #FBBF24, #B45309);
     }
 
-    .podium-avatar-wrap.bronze {
-      width: 82px;
-      height: 82px;
-      border: 3.5px solid #F97316;
-      box-shadow: 0 0 18px rgba(249, 115, 22, 0.4);
-      background: radial-gradient(circle, #D97706 0%, #78350F 100%);
-    }
-
-    .podium-avatar-img {
+    .portrait-image-el {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top center;
       border-radius: 50%;
+      background: #0F172A;
       display: block;
     }
 
-    /* Number badge overlapping avatar bottom-right */
-    .podium-avatar-rank-pill {
-      position: absolute;
-      bottom: -2px;
-      right: -2px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 900;
-      font-family: var(--font-mono);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
-      border: 2px solid #FFFFFF;
-      z-index: 4;
-    }
-
-    .podium-avatar-rank-pill.gold {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: #FFFFFF;
-    }
-
-    .podium-avatar-rank-pill.silver {
-      background: linear-gradient(135deg, #94A3B8, #475569);
-      color: #FFFFFF;
-    }
-
-    .podium-avatar-rank-pill.bronze {
-      background: linear-gradient(135deg, #EA580C, #9A3412);
-      color: #FFFFFF;
-    }
-
-    /* 3D Pillar Blocks */
-    .podium-pillar-block {
-      width: 100%;
-      border-radius: 22px 22px 14px 14px;
+    /* Candidate Information */
+    .card-cand-meta {
       position: relative;
+      z-index: 1;
+      margin-bottom: 18px;
+      width: 100%;
+    }
+
+    .cand-name-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 6px;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .cand-affiliation-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      color: #94A3B8;
+      font-weight: 600;
+    }
+
+    /* Sleek Telemetry Data Block */
+    .card-telemetry-block {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 14px 12px 12px;
+      margin-top: auto;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .telemetry-row-top {
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 10px 14px;
-      text-align: center;
-      z-index: 2;
-      overflow: hidden;
+      margin-bottom: 6px;
     }
 
-    .podium-pillar-block.gold {
-      height: 275px;
-      background: linear-gradient(180deg, #FCD34D 0%, #F59E0B 30%, #D97706 72%, #92400E 100%);
-      box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.5), inset 0 3px 3px rgba(255, 255, 255, 0.7), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
+    .telemetry-tag-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748B;
     }
 
-    .podium-pillar-block.silver {
-      height: 220px;
-      background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 25%, #94A3B8 75%, #475569 100%);
-      box-shadow: 0 16px 32px -10px rgba(148, 163, 184, 0.4), inset 0 3px 3px rgba(255, 255, 255, 0.8), inset 0 -4px 6px rgba(0, 0, 0, 0.3);
-    }
-
-    .podium-pillar-block.bronze {
-      height: 180px;
-      background: linear-gradient(180deg, #FDBA74 0%, #FB923C 25%, #EA580C 72%, #7C2D12 100%);
-      box-shadow: 0 14px 28px -10px rgba(234, 88, 12, 0.4), inset 0 3px 3px rgba(255, 255, 255, 0.6), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
-    }
-
-    /* Glossy top bevel reflection */
-    .podium-pillar-highlight {
-      position: absolute;
-      top: 0;
-      left: 10%;
-      right: 10%;
-      height: 6px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-      border-radius: 9999px;
-      pointer-events: none;
-    }
-
-    .podium-pillar-content {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      padding: 0 4px;
-    }
-
-    .podium-cand-name {
-      font-size: 0.96rem;
-      font-weight: 800;
-      line-height: 1.25;
-      margin-bottom: 4px;
-      letter-spacing: -0.01em;
-      word-break: break-word;
-    }
-
-    .podium-pillar-block.gold .podium-cand-name {
-      color: #FFFFFF;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
-    }
-
-    .podium-pillar-block.silver .podium-cand-name {
-      color: #0F172A;
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-    }
-
-    .podium-pillar-block.bronze .podium-cand-name {
-      color: #FFFFFF;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
-    }
-
-    .podium-cand-sub {
-      font-size: 0.72rem;
-      font-weight: 600;
-      line-height: 1.3;
-      letter-spacing: 0.01em;
-    }
-
-    .podium-pillar-block.gold .podium-cand-sub {
-      color: rgba(255, 255, 255, 0.92);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .podium-pillar-block.silver .podium-cand-sub {
-      color: #334155;
-    }
-
-    .podium-pillar-block.bronze .podium-cand-sub {
-      color: rgba(255, 255, 255, 0.92);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Score Orb Discs inside Pillars (Iconic badge from Image 2) */
-    .podium-score-disc {
-      position: relative;
-      z-index: 1;
-      width: 90%;
-      max-width: 130px;
-      border-radius: 9999px;
-      padding: 10px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
-      margin-top: auto;
-    }
-
-    .podium-score-disc.gold {
-      background: radial-gradient(circle at 50% 30%, #542207 0%, #2A0E03 100%);
-      border: 2px solid #FDE68A;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(245, 158, 11, 0.3);
-    }
-
-    .podium-score-disc.silver {
-      background: radial-gradient(circle at 50% 30%, #1E293B 0%, #0B1120 100%);
-      border: 2px solid #F1F5F9;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(148, 163, 184, 0.3);
-    }
-
-    .podium-score-disc.bronze {
-      background: radial-gradient(circle at 50% 30%, #541908 0%, #250903 100%);
-      border: 2px solid #FED7AA;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(249, 115, 22, 0.3);
-    }
-
-    .disc-icon {
-      font-size: 1.05rem;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-
-    .disc-votes {
+    .telemetry-pct-pill {
       font-family: var(--font-mono);
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: #FFFFFF;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
     }
 
-    .disc-unit {
-      font-size: 0.68rem;
-      color: #CBD5E1;
+    .broadcast-cand-card.cand-1 .telemetry-pct-pill {
+      background: rgba(2, 132, 199, 0.15);
+      color: #38BDF8;
+    }
+    .broadcast-cand-card.cand-2 .telemetry-pct-pill {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+    }
+    .broadcast-cand-card.cand-3 .telemetry-pct-pill {
+      background: rgba(245, 158, 11, 0.15);
+      color: #FBBF24;
+    }
+
+    .telemetry-counter-wrap {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .telemetry-big-number {
+      font-family: var(--font-mono);
+      font-size: 2.3rem;
+      font-weight: 900;
+      line-height: 1;
+      color: #FFFFFF;
+      letter-spacing: -0.03em;
+    }
+
+    .telemetry-unit-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #94A3B8;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-weight: 700;
-      margin-top: 1px;
     }
 
-    .disc-pct {
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: #38BDF8;
-      margin-top: 2px;
+    .telemetry-progress-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 10px;
     }
 
-    .podium-score-disc.gold .disc-pct {
+    .telemetry-progress-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .broadcast-cand-card.cand-1 .telemetry-progress-fill {
+      background: linear-gradient(90deg, #0284C7, #38BDF8);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+    .broadcast-cand-card.cand-2 .telemetry-progress-fill {
+      background: linear-gradient(90deg, #059669, #34D399);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+    }
+    .broadcast-cand-card.cand-3 .telemetry-progress-fill {
+      background: linear-gradient(90deg, #D97706, #FBBF24);
+      box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+    }
+
+    .telemetry-audit-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.67rem;
+      color: #64748B;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* =========================================================================
+       DYNAMIC OLYMPIC PODIUM TIERS (STATE B: WHEN VOTES ARE TALLIED)
+       ========================================================================= */
+    .broadcast-leader-grid.olympic-mode {
+      align-items: end;
+    }
+
+    .broadcast-cand-card.rank-gold {
+      order: 2;
+      transform: translateY(-14px);
+      border: 1.5px solid rgba(245, 158, 11, 0.55);
+      background: linear-gradient(180deg, rgba(30, 24, 15, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+      box-shadow: 0 26px 60px -12px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 243, 199, 0.35);
+    }
+
+    .broadcast-cand-card.rank-silver {
+      order: 1;
+      border: 1.5px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 18px 40px -12px rgba(148, 163, 184, 0.2);
+    }
+
+    .broadcast-cand-card.rank-bronze {
+      order: 3;
+      border: 1.5px solid rgba(234, 88, 12, 0.35);
+      box-shadow: 0 16px 36px -12px rgba(234, 88, 12, 0.2);
+    }
+
+    /* Rank Crown Header Banner for Winner in State B */
+    .rank-winner-banner {
+      width: 100%;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3), rgba(245, 158, 11, 0.2));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 10px;
+      padding: 6px 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       color: #FDE68A;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
     }
 
-    .podium-score-disc.silver .disc-pct {
-      color: #BAE6FD;
+    .rank-tier-banner {
+      width: 100%;
+      border-radius: 10px;
+      padding: 5px 10px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
-    .podium-score-disc.bronze .disc-pct {
+    .rank-tier-banner.silver {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #E2E8F0;
+    }
+
+    .rank-tier-banner.bronze {
+      background: rgba(234, 88, 12, 0.15);
+      border: 1px solid rgba(234, 88, 12, 0.3);
       color: #FDBA74;
     }
 
-    /* Mobile Responsive rules for 3D Podium */
-    @media (max-width: 640px) {
-      .podium-stage-card {
-        padding: 16px 8px 14px;
-        border-radius: 18px;
+    @media (max-width: 860px) {
+      .broadcast-leader-grid {
+        gap: 10px;
       }
-      .podium-columns-grid {
-        gap: 6px;
-        padding-top: 10px;
+      .broadcast-cand-card {
+        padding: 16px 10px 14px;
       }
-      .podium-avatar-wrap.gold {
-        width: 76px;
-        height: 76px;
-        margin-bottom: -12px;
+      .card-portrait-wrap {
+        width: 80px;
+        height: 80px;
       }
-      .podium-avatar-wrap.silver {
-        width: 66px;
-        height: 66px;
-        margin-bottom: -10px;
+      .cand-name-title {
+        font-size: 0.92rem;
       }
-      .podium-avatar-wrap.bronze {
-        width: 60px;
-        height: 60px;
-        margin-bottom: -8px;
+      .cand-affiliation-chip {
+        font-size: 0.65rem;
+        padding: 2px 7px;
       }
-      .floating-crown { font-size: 1.7rem; }
-      .floating-trophy { font-size: 1.9rem; }
-      .podium-pillar-block.gold { height: 230px; padding: 18px 4px 10px; }
-      .podium-pillar-block.silver { height: 185px; padding: 14px 4px 8px; }
-      .podium-pillar-block.bronze { height: 155px; padding: 12px 4px 8px; }
-      .podium-cand-name { font-size: 0.78rem; }
-      .podium-cand-sub { font-size: 0.62rem; }
-      .podium-score-disc {
-        width: 98%;
-        padding: 6px 3px;
-        border-radius: 14px;
+      .telemetry-big-number {
+        font-size: 1.8rem;
       }
-      .disc-icon { font-size: 0.85rem; }
-      .disc-votes { font-size: 0.95rem; }
-      .disc-unit { font-size: 0.58rem; }
-      .disc-pct { font-size: 0.65rem; }
     }
 
-    /* Equal height pillars when 0 votes or tied */
-    .podium-columns-grid.equal-height-grid {
-      align-items: end;
-    }
-    .podium-columns-grid.equal-height-grid .podium-pillar-block {
-      height: 235px !important;
-    }
-    .podium-columns-grid.equal-height-grid .podium-avatar-wrap {
-      width: 90px !important;
-      height: 90px !important;
-      margin-bottom: -14px !important;
-    }
-    .podium-col.cand-1 .podium-pillar-block.equal-pillar {
-      background: linear-gradient(180deg, #38BDF8 0%, #0284C7 35%, #0369A1 75%, #075985 100%);
-      box-shadow: 0 16px 32px -10px rgba(2, 132, 199, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
-    }
-    .podium-col.cand-2 .podium-pillar-block.equal-pillar {
-      background: linear-gradient(180deg, #34D399 0%, #10B981 35%, #059669 75%, #047857 100%);
-      box-shadow: 0 16px 32px -10px rgba(16, 185, 129, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
-    }
-    .podium-col.cand-3 .podium-pillar-block.equal-pillar {
-      background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 35%, #D97706 75%, #B45309 100%);
-      box-shadow: 0 16px 32px -10px rgba(245, 158, 11, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.7);
-    }
-    .podium-col.cand-1 .podium-avatar-wrap.equal-avatar {
-      border: 3.5px solid #38BDF8;
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
-      background: radial-gradient(circle, #0284C7 0%, #03446A 100%);
-    }
-    .podium-col.cand-2 .podium-avatar-wrap.equal-avatar {
-      border: 3.5px solid #34D399;
-      box-shadow: 0 0 18px rgba(52, 211, 153, 0.4);
-      background: radial-gradient(circle, #059669 0%, #064E3B 100%);
-    }
-    .podium-col.cand-3 .podium-avatar-wrap.equal-avatar {
-      border: 3.5px solid #FBBF24;
-      box-shadow: 0 0 18px rgba(251, 191, 36, 0.4);
-      background: radial-gradient(circle, #D97706 0%, #78350F 100%);
-    }
-    .podium-col.cand-1 .podium-avatar-rank-pill.equal-pill {
-      background: linear-gradient(135deg, #0284C7, #0369A1);
-      color: #FFFFFF;
-    }
-    .podium-col.cand-2 .podium-avatar-rank-pill.equal-pill {
-      background: linear-gradient(135deg, #10B981, #059669);
-      color: #FFFFFF;
-    }
-    .podium-col.cand-3 .podium-avatar-rank-pill.equal-pill {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: #FFFFFF;
-    }
-    .podium-score-disc.equal-disc {
-      background: radial-gradient(circle at 50% 30%, #0F172A 0%, #020617 100%);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    }
     @media (max-width: 640px) {
-      .podium-columns-grid.equal-height-grid .podium-pillar-block {
-        height: 185px !important;
+      .broadcast-leader-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
       }
-      .podium-columns-grid.equal-height-grid .podium-avatar-wrap {
-        width: 66px !important;
-        height: 66px !important;
-        margin-bottom: -10px !important;
+      .broadcast-cand-card.rank-gold {
+        order: 1;
+        transform: none;
+      }
+      .broadcast-cand-card.rank-silver {
+        order: 2;
+      }
+      .broadcast-cand-card.rank-bronze {
+        order: 3;
+      }
+      .card-portrait-wrap {
+        width: 84px;
+        height: 84px;
       }
     }
 
@@ -5777,7 +5783,7 @@
             </div>
             <div class="pleno-toggle-group">
               <button type="button" id="btn-toggle-podium" class="btn-toggle-pleno active" onclick="setPlenoViewMode('podium')">
-                <span>🏆 3D Podium Juara</span>
+                <span>🏛️ Papan Telemetri</span>
               </button>
               <button type="button" id="btn-toggle-bars" class="btn-toggle-pleno" onclick="setPlenoViewMode('bars')">
                 <span>📊 Bar Klasik</span>
@@ -9586,85 +9592,153 @@
 
               <div class="podium-card-header">
                 <div class="podium-card-title-group">
-                  <h3><span style="font-size: 1.45rem;">🏛️</span> Calon Ketua Umum IAGI 2026–2029</h3>
-                  <p class="podium-card-subtitle">${allZero ? 'Posisi Awal Sejajar · Menanti Perhitungan Suara Sidang Pleno KPKU' : `Perolehan Suara Seimbang (${v1} Suara) · Sidang Pleno KPKU`}</p>
+                  <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M4 10l8-6 8 6"/>
+                    </svg>
+                    Calon Ketua Umum IAGI 2026–2029
+                  </h3>
+                  <p class="podium-card-subtitle">
+                    <span>${allZero ? 'Posisi Awal Sejajar · Menanti Hasil Sidang Pleno Terbuka KPKU' : `Perolehan Suara Seimbang (${v1.toLocaleString('id-ID')} Suara) · Terverifikasi Kriptografis LUBER`}</span>
+                  </p>
                 </div>
-                <div class="podium-card-badge" style="background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
-                  <span>⚖️ Posisi Sejajar (${allZero ? '0 Suara' : 'Imbang'})</span>
+                <div class="podium-card-badge">
+                  <div class="beacon-pulse-dot"></div>
+                  <span>${allZero ? 'STANDAR AWAL (0 SUARA)' : 'HASIL SEIMBANG'}</span>
                 </div>
               </div>
 
-              <!-- Equal Height Columns Grid (Sejajar Horisontal 01 - 02 - 03) -->
-              <div class="podium-columns-grid equal-height-grid">
+              <!-- 3-Column Executive Broadcast Grid (Equal Height Monolith Cards) -->
+              <div class="broadcast-leader-grid">
                 
-                <!-- Calon 01 (Left) -->
-                <div class="podium-col cand-1">
-                  <div class="podium-medal-badge">
-                    <div class="medal-ribbon-tag" style="background: linear-gradient(135deg, #38BDF8, #0284C7); color: #FFF; border: 2px solid #BAE6FD;">01</div>
+                <!-- Calon 01 -->
+                <div class="broadcast-cand-card cand-1">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge">NO. 01</div>
+                    <div class="cand-verified-label">✓ Terverifikasi</div>
                   </div>
-                  <div class="podium-avatar-wrap equal-avatar">
-                    <img src="${getCandPhoto(cand1)}" alt="${cand1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-1.png'">
-                    <span class="podium-avatar-rank-pill equal-pill">01</span>
-                  </div>
-                  <div class="podium-pillar-block equal-pillar">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${cand1.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(cand1)}</div>
-                    </div>
-                    <div class="podium-score-disc equal-disc">
-                      <span class="disc-icon">⚖️</span>
-                      <span class="disc-votes">${v1}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${p1}%</span>
+                  
+                  <div class="card-portrait-wrap">
+                    <div class="portrait-halo-glow"></div>
+                    <div class="portrait-ring-border">
+                      <img src="${getCandPhoto(cand1)}" alt="${cand1.name}" class="portrait-image-el" onerror="this.src='assets/candidate-1.png'">
                     </div>
                   </div>
-                </div>
-
-                <!-- Calon 02 (Center) -->
-                <div class="podium-col cand-2">
-                  <div class="podium-medal-badge">
-                    <div class="medal-ribbon-tag" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFF; border: 2px solid #A7F3D0;">02</div>
-                  </div>
-                  <div class="podium-avatar-wrap equal-avatar">
-                    <img src="${getCandPhoto(cand2)}" alt="${cand2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-2.png'">
-                    <span class="podium-avatar-rank-pill equal-pill">02</span>
-                  </div>
-                  <div class="podium-pillar-block equal-pillar">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${cand2.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(cand2)}</div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title">${cand1.name}</h4>
+                    <div class="cand-affiliation-chip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      ${getCandAffiliation(cand1)}
                     </div>
-                    <div class="podium-score-disc equal-disc">
-                      <span class="disc-icon">⚖️</span>
-                      <span class="disc-votes">${v2}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${p2}%</span>
+                  </div>
+                  
+                  <div class="card-telemetry-block">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label">Akumulasi Suara</span>
+                      <span class="telemetry-pct-pill">${p1}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number">${v1.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${p1}%;"></div>
+                    </div>
+                    <div class="telemetry-audit-status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <span>Kotak Suara Tersegel SHA-256</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Calon 03 (Right) -->
-                <div class="podium-col cand-3">
-                  <div class="podium-medal-badge">
-                    <div class="medal-ribbon-tag" style="background: linear-gradient(135deg, #FBBF24, #D97706); color: #FFF; border: 2px solid #FDE68A;">03</div>
+                <!-- Calon 02 -->
+                <div class="broadcast-cand-card cand-2">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge">NO. 02</div>
+                    <div class="cand-verified-label">✓ Terverifikasi</div>
                   </div>
-                  <div class="podium-avatar-wrap equal-avatar">
-                    <img src="${getCandPhoto(cand3)}" alt="${cand3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-3.png'">
-                    <span class="podium-avatar-rank-pill equal-pill">03</span>
-                  </div>
-                  <div class="podium-pillar-block equal-pillar">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${cand3.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(cand3)}</div>
+                  
+                  <div class="card-portrait-wrap">
+                    <div class="portrait-halo-glow"></div>
+                    <div class="portrait-ring-border">
+                      <img src="${getCandPhoto(cand2)}" alt="${cand2.name}" class="portrait-image-el" onerror="this.src='assets/candidate-2.png'">
                     </div>
-                    <div class="podium-score-disc equal-disc">
-                      <span class="disc-icon">⚖️</span>
-                      <span class="disc-votes">${v3}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${p3}%</span>
+                  </div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title">${cand2.name}</h4>
+                    <div class="cand-affiliation-chip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      ${getCandAffiliation(cand2)}
+                    </div>
+                  </div>
+                  
+                  <div class="card-telemetry-block">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label">Akumulasi Suara</span>
+                      <span class="telemetry-pct-pill">${p2}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number">${v2.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${p2}%;"></div>
+                    </div>
+                    <div class="telemetry-audit-status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <span>Kotak Suara Tersegel SHA-256</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Calon 03 -->
+                <div class="broadcast-cand-card cand-3">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge">NO. 03</div>
+                    <div class="cand-verified-label">✓ Terverifikasi</div>
+                  </div>
+                  
+                  <div class="card-portrait-wrap">
+                    <div class="portrait-halo-glow"></div>
+                    <div class="portrait-ring-border">
+                      <img src="${getCandPhoto(cand3)}" alt="${cand3.name}" class="portrait-image-el" onerror="this.src='assets/candidate-3.png'">
+                    </div>
+                  </div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title">${cand3.name}</h4>
+                    <div class="cand-affiliation-chip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      ${getCandAffiliation(cand3)}
+                    </div>
+                  </div>
+                  
+                  <div class="card-telemetry-block">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label">Akumulasi Suara</span>
+                      <span class="telemetry-pct-pill">${p3}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number">${v3.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${p3}%;"></div>
+                    </div>
+                    <div class="telemetry-audit-status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <span>Kotak Suara Tersegel SHA-256</span>
                     </div>
                   </div>
                 </div>
@@ -9673,7 +9747,7 @@
             `;
           } else {
             // ========================================================
-            // STATE B: DYNAMIC OLYMPIC PODIUM (SUDAH ADA YANG UNGGUL)
+            // STATE B: DYNAMIC OLYMPIC STANDING (SUDAH ADA YANG UNGGUL)
             // ========================================================
             const sorted = [...CANDIDATES].sort((a, b) => {
               const va = results.counts[a.id] || 0;
@@ -9698,85 +9772,156 @@
 
               <div class="podium-card-header">
                 <div class="podium-card-title-group">
-                  <h3><span style="font-size: 1.45rem;">🏆</span> Top 3 Podium Juara</h3>
-                  <p class="podium-card-subtitle">Perolehan Suara Calon Ketua Umum IAGI Periode 2026–2029 (Sidang Pleno KPKU)</p>
+                  <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Klasemen Perolehan Suara Calon Ketua Umum IAGI
+                  </h3>
+                  <p class="podium-card-subtitle">
+                    <span>Perhitungan Suara Sidang Pleno Terbuka KPKU · Terverifikasi Kriptografis LUBER</span>
+                  </p>
                 </div>
-                <div class="podium-card-badge">
-                  <span style="font-size: 0.9rem;">✨</span> Live Standing
+                <div class="podium-card-badge" style="border-color: rgba(245, 158, 11, 0.4); color: #FBBF24;">
+                  <div class="beacon-pulse-dot" style="background:#FBBF24; box-shadow: 0 0 8px #FBBF24;"></div>
+                  <span>LIVE STANDING</span>
                 </div>
               </div>
 
-              <div class="podium-columns-grid">
+              <div class="broadcast-leader-grid olympic-mode">
                 
-                <!-- Left: Rank 2 (Silver) -->
-                <div class="podium-col rank-2">
-                  <div class="podium-medal-badge">
-                    <div class="medal-ribbon-tag silver">🥈 2</div>
+                <!-- Rank 2: Silver (Left) -->
+                <div class="broadcast-cand-card cand-${rank2.id} rank-silver">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="rank-tier-banner silver">
+                    <span>🥈 PERINGKAT 2</span>
                   </div>
-                  <div class="podium-avatar-wrap silver">
-                    <img src="${getCandPhoto(rank2)}" alt="${rank2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank2.id}.png'">
-                    <span class="podium-avatar-rank-pill silver">2</span>
+
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge">NO. 0${rank2.id}</div>
+                    <div class="cand-verified-label">✓ Terverifikasi</div>
                   </div>
-                  <div class="podium-pillar-block silver">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${rank2.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(rank2)}</div>
+                  
+                  <div class="card-portrait-wrap">
+                    <div class="portrait-halo-glow"></div>
+                    <div class="portrait-ring-border">
+                      <img src="${getCandPhoto(rank2)}" alt="${rank2.name}" class="portrait-image-el" onerror="this.src='assets/candidate-${rank2.id}.png'">
                     </div>
-                    <div class="podium-score-disc silver">
-                      <span class="disc-icon">⚡</span>
-                      <span class="disc-votes">${sv2}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${sp2}%</span>
+                  </div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title">${rank2.name}</h4>
+                    <div class="cand-affiliation-chip">${getCandAffiliation(rank2)}</div>
+                  </div>
+                  
+                  <div class="card-telemetry-block">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label">Akumulasi Suara</span>
+                      <span class="telemetry-pct-pill">${sp2}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number">${sv2.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${sp2}%;"></div>
+                    </div>
+                    <div class="telemetry-audit-status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span>Audit Trail Terverifikasi</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Center: Rank 1 (Gold - Tallest & Floating Crown/Trophy) -->
-                <div class="podium-col rank-1">
-                  <div class="podium-crown-trophy-floater">
-                    <div class="floating-crown">👑</div>
-                    <div class="floating-trophy">🏆</div>
+                <!-- Rank 1: Gold Leader (Center) -->
+                <div class="broadcast-cand-card cand-${rank1.id} rank-gold">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="rank-winner-banner">
+                    <span style="font-size: 1rem;">👑</span>
+                    <span>PERINGKAT 1 · SUARA TERBANYAK</span>
                   </div>
-                  <div class="podium-avatar-wrap gold">
-                    <img src="${getCandPhoto(rank1)}" alt="${rank1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank1.id}.png'">
-                    <span class="podium-avatar-rank-pill gold">1</span>
+
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge" style="background: rgba(245, 158, 11, 0.25); color: #FDE68A; border-color: rgba(245, 158, 11, 0.5);">NO. 0${rank1.id}</div>
+                    <div class="cand-verified-label" style="color: #FBBF24;">✓ Memimpin Pleno</div>
                   </div>
-                  <div class="podium-pillar-block gold">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${rank1.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(rank1)}</div>
+                  
+                  <div class="card-portrait-wrap" style="width: 106px; height: 106px;">
+                    <div class="portrait-halo-glow" style="opacity: 0.7; background: #F59E0B;"></div>
+                    <div class="portrait-ring-border" style="padding: 3.5px; background: linear-gradient(135deg, #FDE68A, #F59E0B, #B45309);">
+                      <img src="${getCandPhoto(rank1)}" alt="${rank1.name}" class="portrait-image-el" onerror="this.src='assets/candidate-${rank1.id}.png'">
                     </div>
-                    <div class="podium-score-disc gold">
-                      <span class="disc-icon">⭐</span>
-                      <span class="disc-votes">${sv1}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${sp1}%</span>
+                  </div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title" style="font-size: 1.15rem; color: #FFFBEB;">${rank1.name}</h4>
+                    <div class="cand-affiliation-chip" style="border-color: rgba(245, 158, 11, 0.3); color: #FDE68A;">${getCandAffiliation(rank1)}</div>
+                  </div>
+                  
+                  <div class="card-telemetry-block" style="background: rgba(15, 23, 42, 0.75); border-color: rgba(245, 158, 11, 0.25);">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label" style="color: #FBBF24;">Akumulasi Suara Tertinggi</span>
+                      <span class="telemetry-pct-pill" style="background: rgba(245, 158, 11, 0.25); color: #FDE68A;">${sp1}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number" style="color: #FFFBEB; font-size: 2.6rem;">${sv1.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label" style="color: #FDE68A;">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${sp1}%; background: linear-gradient(90deg, #F59E0B, #FDE68A); box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);"></div>
+                    </div>
+                    <div class="telemetry-audit-status" style="color: #FDE68A;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      <span>Pemimpin Suara Pleno Sementara</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Right: Rank 3 (Bronze) -->
-                <div class="podium-col rank-3">
-                  <div class="podium-medal-badge">
-                    <div class="medal-ribbon-tag bronze">🥉 3</div>
+                <!-- Rank 3: Bronze (Right) -->
+                <div class="broadcast-cand-card cand-${rank3.id} rank-bronze">
+                  <div class="card-accent-bar"></div>
+                  <div class="card-ambient-tint"></div>
+                  
+                  <div class="rank-tier-banner bronze">
+                    <span>🥉 PERINGKAT 3</span>
                   </div>
-                  <div class="podium-avatar-wrap bronze">
-                    <img src="${getCandPhoto(rank3)}" alt="${rank3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank3.id}.png'">
-                    <span class="podium-avatar-rank-pill bronze">3</span>
+
+                  <div class="card-header-badge-row">
+                    <div class="cand-num-badge">NO. 0${rank3.id}</div>
+                    <div class="cand-verified-label">✓ Terverifikasi</div>
                   </div>
-                  <div class="podium-pillar-block bronze">
-                    <div class="podium-pillar-highlight"></div>
-                    <div class="podium-pillar-content">
-                      <div class="podium-cand-name">${rank3.name}</div>
-                      <div class="podium-cand-sub">${getCandAffiliation(rank3)}</div>
+                  
+                  <div class="card-portrait-wrap">
+                    <div class="portrait-halo-glow"></div>
+                    <div class="portrait-ring-border">
+                      <img src="${getCandPhoto(rank3)}" alt="${rank3.name}" class="portrait-image-el" onerror="this.src='assets/candidate-${rank3.id}.png'">
                     </div>
-                    <div class="podium-score-disc bronze">
-                      <span class="disc-icon">🚀</span>
-                      <span class="disc-votes">${sv3}</span>
-                      <span class="disc-unit">Suara</span>
-                      <span class="disc-pct">${sp3}%</span>
+                  </div>
+                  
+                  <div class="card-cand-meta">
+                    <h4 class="cand-name-title">${rank3.name}</h4>
+                    <div class="cand-affiliation-chip">${getCandAffiliation(rank3)}</div>
+                  </div>
+                  
+                  <div class="card-telemetry-block">
+                    <div class="telemetry-row-top">
+                      <span class="telemetry-tag-label">Akumulasi Suara</span>
+                      <span class="telemetry-pct-pill">${sp3}%</span>
+                    </div>
+                    <div class="telemetry-counter-wrap">
+                      <span class="telemetry-big-number">${sv3.toLocaleString('id-ID')}</span>
+                      <span class="telemetry-unit-label">Suara</span>
+                    </div>
+                    <div class="telemetry-progress-track">
+                      <div class="telemetry-progress-fill" style="width: ${sp3}%;"></div>
+                    </div>
+                    <div class="telemetry-audit-status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span>Audit Trail Terverifikasi</span>
                     </div>
                   </div>
                 </div>
