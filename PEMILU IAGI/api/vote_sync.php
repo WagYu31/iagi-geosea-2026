@@ -283,6 +283,34 @@ if ($action === 'clear_ballots') {
         }
     }
 
+    // Proteksi Honeypot Trap Server: Jika robot otomatis mengirim parameter jebakan
+    if (!empty($payload['official_org_website_url']) || !empty($payload['trap_field']) || !empty($payload['website_url'])) {
+        if (!isset($lockouts[$clientIp])) {
+            $lockouts[$clientIp] = ['fails' => 5, 'lock_until' => $now + (15 * 60), 'first_fail' => $now];
+        } else {
+            $lockouts[$clientIp]['lock_until'] = $now + (15 * 60);
+            $lockouts[$clientIp]['fails'] = 5;
+        }
+        writeJsonFile($lockoutFile, $lockouts);
+
+        $auditLogs = readJsonFile($auditFile, []);
+        $auditLogs[] = [
+            'id' => 'sec-' . bin2hex(random_bytes(4)),
+            'action' => 'BOT_HONEYPOT_BLOCKED',
+            'details' => "Robot otomatis terdeteksi via Honeypot trap dari IP {$clientIp}. Akses IP dibekukan 15 menit.",
+            'ip' => $clientIp,
+            'timestamp' => date('c')
+        ];
+        writeJsonFile($auditFile, $auditLogs);
+
+        http_response_code(429);
+        echo json_encode([
+            'success' => false,
+            'error' => '⛔ Aktivitas bot otomatis terdeteksi. Akses IP Anda diblokir selama 15 menit.'
+        ]);
+        exit;
+    }
+
     // Validasi Dual-Key Otoritas Pleno: 312226 (atau master PIN 2026)
     $isPinValid = ($adminPin === '312226' || $adminPin === '2026');
 

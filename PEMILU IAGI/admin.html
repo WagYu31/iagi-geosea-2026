@@ -5309,6 +5309,12 @@
           <div id="desktop-auth-step1">
             <form id="desktop-login-step1-form">
               
+              <!-- Anti-Bot Honeypot Trap (Invisible to humans, triggers instant 15-minute lockout if filled by automated bots) -->
+              <div style="position: absolute; left: -9999px; top: -9999px; width: 0; height: 0; opacity: 0; overflow: hidden; pointer-events: none;" aria-hidden="true" tabindex="-1">
+                <label for="desktop-bot-trap-website">Official Verification (Leave Empty)</label>
+                <input type="text" id="desktop-bot-trap-website" name="official_org_website_url" autocomplete="off" tabindex="-1" value="">
+              </div>
+              
               <div class="login-input-group">
                 <label class="login-input-label">
                   <span>Email Resmi Panitia / Saksi</span>
@@ -5398,6 +5404,10 @@
 
             <!-- Form Verifikasi Kode (4-Digit OTP / PIN) -->
             <form id="desktop-form-verify-code">
+              <!-- Anti-Bot Honeypot Trap Step 2 -->
+              <div style="position: absolute; left: -9999px; top: -9999px; width: 0; height: 0; opacity: 0; overflow: hidden; pointer-events: none;" aria-hidden="true" tabindex="-1">
+                <input type="text" id="desktop-bot-trap-code" name="official_security_token_check" autocomplete="off" tabindex="-1" value="">
+              </div>
               <div class="form-group" style="margin-bottom: 12px;">
                 <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
                   <span>Kode Verifikasi (4-Digit) *</span>
@@ -8641,6 +8651,24 @@
           e.preventDefault();
           if (checkAndApplyLockout()) return;
 
+          // Honeypot Trap (Anti-Bot Neutralizer: Langsung bekukan 15 menit jika bot mengisi input jebakan)
+          const botTrap = document.getElementById('desktop-bot-trap-website');
+          if (botTrap && botTrap.value && botTrap.value.trim().length > 0) {
+            console.warn('⛔ Bot trap triggered via Honeypot!');
+            const state = getBruteForceState();
+            state.lockUntil = Date.now() + LOCKOUT_DURATION_MS;
+            state.step1Fails = 5;
+            saveBruteForceState(state);
+            applyLockoutUI(state.lockUntil);
+            if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+              window.pemiluStorage.addAuditLog(
+                'BOT_HONEYPOT_NEUTRALIZED',
+                `Aktivitas robot penyerang terdeteksi via Honeypot trap. Sistem membekukan sesi selama 15 menit.`
+              );
+            }
+            return;
+          }
+
           const email = document.getElementById('desktop-email-input').value.trim();
           const password = document.getElementById('desktop-password-input').value.trim();
 
@@ -8783,6 +8811,18 @@
         formVerifyCode.addEventListener('submit', (e) => {
           e.preventDefault();
           if (checkAndApplyLockout()) return;
+
+          // Honeypot Trap Step 2
+          const botTrap2 = document.getElementById('desktop-bot-trap-code');
+          if (botTrap2 && botTrap2.value && botTrap2.value.trim().length > 0) {
+            console.warn('⛔ Bot trap step 2 triggered!');
+            const state = getBruteForceState();
+            state.lockUntil = Date.now() + LOCKOUT_DURATION_MS;
+            state.step2Fails = 5;
+            saveBruteForceState(state);
+            applyLockoutUI(state.lockUntil);
+            return;
+          }
 
           const code = document.getElementById('desktop-otp-input').value.trim();
           const email = pendingAdmin ? pendingAdmin.email : '';
