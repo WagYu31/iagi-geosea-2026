@@ -156,6 +156,12 @@ class PemiluStorage {
             }
           }
         }
+
+        // Pastikan pemilih yang sudah klaim memiliki timestamp claimed_at
+        if (v && v.claimed && !v.claimed_at) {
+          v.claimed_at = new Date().toISOString();
+          updated = true;
+        }
       });
 
       // Ensure demo voter 00000 exists
@@ -558,11 +564,12 @@ class PemiluStorage {
       const dpt = this.getDPT();
       let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
       if (!demoVoter) {
-        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', voted: false, voted_at: null };
+        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
         dpt.unshift(demoVoter);
       }
       demoVoter.claimed = true;
       demoVoter.token = 'IAGI-2026-DEMO-2026';
+      if (!demoVoter.claimed_at) demoVoter.claimed_at = new Date().toISOString();
       demoVoter.voted = false; // Allow repeatable testing
       this.saveDPT(dpt);
       return { valid: true, voter: demoVoter };

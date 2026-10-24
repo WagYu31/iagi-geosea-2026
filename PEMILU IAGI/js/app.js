@@ -1465,7 +1465,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tableBody) return;
     const dpt = window.pemiluStorage.getDPT();
 
-    tableBody.innerHTML = dpt.map(v => `
+    tableBody.innerHTML = dpt.map(v => {
+      let claimTimeStr = '';
+      if (v.claimed && v.claimed_at) {
+        try {
+          const d = new Date(v.claimed_at);
+          claimTimeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ' WIB';
+        } catch(e) {}
+      }
+      return `
       <tr style="border-bottom: 1px solid var(--border-subtle); font-size: 0.72rem;">
         <td style="padding: 8px 6px; font-family: var(--font-mono); color: var(--gold-primary);">${v.npa}</td>
         <td style="padding: 8px 6px; font-weight: 600; color: var(--text-pure);">${v.name}</td>
@@ -1473,12 +1481,12 @@ document.addEventListener('DOMContentLoaded', () => {
           ${v.voted 
             ? '<span style="color: #F87171; font-weight: 700;">✓ VOTED</span>' 
             : v.claimed 
-              ? '<span style="color: #FBBF24; font-weight: 600;">TOKEN: ' + v.token + '</span>' 
+              ? '<span style="color: #FBBF24; font-weight: 600;">TOKEN: ' + v.token + (claimTimeStr ? '<br><span style="color: #34D399; font-size: 0.65rem; font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 2px; margin-top: 2px;">🕒 ' + claimTimeStr + '</span>' : '') + '</span>' 
               : '<span style="color: #34D399;">Belum Klaim</span>'
           }
         </td>
       </tr>
-    `).join('');
+    `}).join('');
   }
 
   function renderAdminAuditTrail() {

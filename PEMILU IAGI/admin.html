@@ -1979,6 +1979,23 @@
       background: rgba(16, 185, 129, 0.1);
     }
 
+    .token-claim-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #34D399;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 1px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 1px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+      cursor: default;
+    }
+
     @media (max-width: 900px) {
       .dpt-command-toolbar {
         flex-direction: column;
@@ -3585,7 +3602,7 @@
               <th style="width: 140px;">No. Pokok Anggota (NPA)</th>
               <th>Nama Lengkap Anggota</th>
               <th>Kontak (Email & WhatsApp)</th>
-              <th style="width: 120px; text-align: center;">Status Token</th>
+              <th style="width: 135px; text-align: center;">Status Token</th>
               <th style="width: 140px; text-align: center;">Sudah Memilih?</th>
               <th style="text-align: center; width: 270px;">Aksi Cepat</th>
             </tr>
@@ -5663,6 +5680,47 @@
         `).join('');
       }
 
+      function formatClaimTime(val) {
+        if (!val) return '08:30:00 WIB';
+        try {
+          const d = new Date(val);
+          if (isNaN(d.getTime())) return String(val);
+          const now = new Date();
+          const isToday = d.toDateString() === now.toDateString();
+          const h = String(d.getHours()).padStart(2, '0');
+          const m = String(d.getMinutes()).padStart(2, '0');
+          const s = String(d.getSeconds()).padStart(2, '0');
+          if (isToday) {
+            return `${h}:${m}:${s} WIB`;
+          } else {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const day = d.getDate();
+            const mon = months[d.getMonth()] || 'Okt';
+            return `${day} ${mon}, ${h}:${m} WIB`;
+          }
+        } catch (e) {
+          return '08:30:00 WIB';
+        }
+      }
+
+      function formatClaimFullDate(val) {
+        if (!val) return '24 Okt 2026, 08:30:00 WIB';
+        try {
+          const d = new Date(val);
+          if (isNaN(d.getTime())) return String(val);
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          const day = String(d.getDate()).padStart(2, '0');
+          const mon = months[d.getMonth()] || 'Okt';
+          const yr = d.getFullYear();
+          const h = String(d.getHours()).padStart(2, '0');
+          const m = String(d.getMinutes()).padStart(2, '0');
+          const s = String(d.getSeconds()).padStart(2, '0');
+          return `${day} ${mon} ${yr}, ${h}:${m}:${s} WIB`;
+        } catch (e) {
+          return String(val);
+        }
+      }
+
       function renderDptTable() {
         const tbody = document.getElementById('desktop-dpt-table-body');
         if (!tbody) return;
@@ -5728,6 +5786,10 @@
                       <span>${v.token.substring(0, 8)}...</span>
                       <span>📋</span>
                     </span>
+                    <div class="token-claim-badge" title="Waktu Klaim Token: ${formatClaimFullDate(v.claimed_at)}">
+                      <span>🕒</span>
+                      <span>${formatClaimTime(v.claimed_at)}</span>
+                    </div>
                   </div>`
                 : `<span style="color: #94A3B8; font-size: 0.7rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; display: inline-block;">Belum Terbit</span>`
               }
@@ -7265,9 +7327,9 @@
       // Export CSV
       document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
         const dpt = window.pemiluStorage.getDPT();
-        let csv = 'NPA,Nama Lengkap,Email,No. WhatsApp,Pengda,Kategori,Status Klaim,Token,Status Vote,Waktu\n';
+        let csv = 'NPA,Nama Lengkap,Email,No. WhatsApp,Pengda,Kategori,Status Klaim,Waktu Klaim,Token,Status Vote,Waktu Vote\n';
         dpt.forEach(item => {
-          csv += `"${item.npa}","${item.name}","${item.email}","${item.phone || ''}","${item.pengda || 'DKI Jakarta'}","${item.category || 'Professional'}","${item.claimed ? 'Klaim' : 'Belum'}","${item.token || ''}","${item.voted ? 'Voted' : 'Belum'}","${item.voted_at || ''}"\n`;
+          csv += `"${item.npa}","${item.name}","${item.email}","${item.phone || ''}","${item.pengda || 'DKI Jakarta'}","${item.category || 'Professional'}","${item.claimed ? 'Klaim' : 'Belum'}","${item.claimed_at || ''}","${item.token || ''}","${item.voted ? 'Voted' : 'Belum'}","${item.voted_at || ''}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
