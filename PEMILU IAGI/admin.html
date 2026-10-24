@@ -5566,7 +5566,7 @@
           <div class="sidebar-group-title">Aksi & Kontrol Sidang</div>
           <ul class="sidebar-nav-list">
             <li>
-              <button type="button" class="sidebar-nav-link" onclick="document.getElementById('btn-toggle-vault-desktop').click()">
+              <button type="button" class="sidebar-nav-link" onclick="window.toggleVault()">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F5BA42"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                   <span>Buka / Kunci Brankas</span>
@@ -5746,7 +5746,7 @@
             <button type="button" class="btn" onclick="confirmClearBallotBox()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(239, 68, 68, 0.12); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Kosongkan seluruh suara testing & kembalikan ke 0 Suara untuk Hari-H">
               <span>🧹 Kosongkan Suara (0)</span>
             </button>
-            <button id="btn-toggle-vault-desktop" class="btn btn-gold" style="font-size: 0.78rem; padding: 6px 14px;">
+            <button type="button" id="btn-toggle-vault-desktop" class="btn btn-gold" onclick="window.toggleVault()" style="font-size: 0.78rem; padding: 6px 14px;">
               <span>Buka Segel Pleno</span>
             </button>
           </div>
@@ -9477,6 +9477,9 @@
           unsealedView.style.display = 'none';
           btnToggle.innerHTML = `<span>🔓 Buka Segel Pleno</span>`;
           btnToggle.className = 'btn btn-gold';
+          btnToggle.style.background = '';
+          btnToggle.style.color = '';
+          btnToggle.style.border = '';
           vaultIndicator.className = 'badge-status-pill sealed';
           vaultIndicator.innerText = '🔒 VAULT: BERSEGEL DIGITAL';
         } else {
@@ -9484,6 +9487,9 @@
           unsealedView.style.display = 'block';
           btnToggle.innerHTML = `<span>🔒 Kunci Segel Kembali</span>`;
           btnToggle.className = 'btn btn-subtle';
+          btnToggle.style.background = 'rgba(245, 158, 11, 0.12)';
+          btnToggle.style.color = '#FDE68A';
+          btnToggle.style.border = '1px solid rgba(245, 158, 11, 0.4)';
           vaultIndicator.className = 'badge-status-pill unsealed';
           vaultIndicator.innerText = '🔓 VAULT: TERBUKA (PLENO)';
           renderCandidateTallies(results);
@@ -9525,6 +9531,7 @@
           updateScheduleLivePreview();
         }
       }
+      window.refreshAll = refreshAll;
 
       window.setPlenoViewMode = function(mode) {
         localStorage.setItem('iagi_pleno_view_mode', mode);
@@ -11978,32 +11985,75 @@
         formManageAdmin.addEventListener('submit', handleSaveAdmin);
       }
 
-      // Toggle Vault
+      // Toggle Vault KPKU (Buka Segel Pleno / Kunci Segel Kembali)
       window.toggleVault = function(forceState) {
+        if (!window.pemiluStorage) return;
         const settings = window.pemiluStorage.getSettings();
         const nextState = typeof forceState === 'boolean' ? forceState : !settings.isSealed;
-        window.pemiluStorage.updateSettings({ isSealed: nextState });
-        refreshAll();
-      };
-
-      // Check if URL specifies unsealed mode directly (e.g. ?unsealed=1 or #unsealed)
-      if (new URLSearchParams(window.location.search).get('unsealed') === '1' || window.location.hash.includes('unsealed')) {
-        window.pemiluStorage.updateSettings({ isSealed: false });
-      }
-
-      document.getElementById('btn-toggle-vault-desktop').addEventListener('click', () => {
-        const settings = window.pemiluStorage.getSettings();
-        const nextState = !settings.isSealed;
 
         if (nextState === false) {
-          if (!confirm('PERINGATAN PLENO KPKU:\nApakah Anda yakin ingin MEMBUKA SEGEL perolehan suara? Aksi ini akan menampilkan hasil quick count secara terbuka di layar pleno.')) {
-            return;
+          // Hendak MEMBUKA segel pleno
+          const ok = confirm('PERINGATAN PLENO KPKU:\n\nApakah Anda yakin ingin MEMBUKA SEGEL perolehan suara?\n\nAksi ini akan membuka brankas kriptografi dan menampilkan tabulasi hasil quick count secara terbuka di layar pleno.');
+          if (!ok) return;
+        } else {
+          // Hendak MENYEGEL KEMBALI
+          const ok = confirm('KONFIRMASI KUNCI SEGEL KEMBALI:\n\nApakah Anda yakin ingin MENYEGEL KEMBALI brankas perolehan suara?\n\nHasil perolehan suara akan dikunci kembali dan disembunyikan di bawah perlindungan segel kriptografi.');
+          if (!ok) return;
+
+          // Hapus parameter unsealed dari URL jika ada agar tidak re-trigger saat refresh/polling
+          try {
+            const url = new URL(window.location.href);
+            let urlChanged = false;
+            if (url.searchParams.has('unsealed')) {
+              url.searchParams.delete('unsealed');
+              urlChanged = true;
+            }
+            let hash = window.location.hash || '';
+            if (hash.includes('unsealed')) {
+              hash = hash.replace(/[\?&]?unsealed(=1)?/g, '').replace('#unsealed', '#section-metrics');
+              urlChanged = true;
+            }
+            if (urlChanged) {
+              window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + (hash || '#section-metrics'));
+            }
+          } catch (e) {
+            console.warn('URL clean failed:', e);
           }
         }
 
         window.pemiluStorage.updateSettings({ isSealed: nextState });
-        refreshAll();
-      });
+        if (typeof refreshAll === 'function') {
+          refreshAll();
+        } else if (typeof window.refreshAll === 'function') {
+          window.refreshAll();
+        }
+
+        if (nextState === true) {
+          alert('🔒 BRANKAS BERHASIL DISEGEL KEMBALI!\n\nPerolehan suara telah ditutup dan diamankan kembali dengan enkripsi kriptografi AES-256.');
+        } else {
+          alert('🔓 SEGEL BRANKAS TELAH RESMI DIBUKA!\n\nTabulasi perolehan suara Calon Ketua Umum kini terbuka dan dapat disaksikan bersama.');
+        }
+      };
+
+      // Check if URL specifies unsealed mode directly (only on first explicit load, do not lock user out from re-sealing)
+      if (new URLSearchParams(window.location.search).get('unsealed') === '1' || window.location.hash.includes('unsealed')) {
+        try {
+          const url = new URL(window.location.href);
+          if (url.searchParams.has('unsealed')) {
+            url.searchParams.delete('unsealed');
+            window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + window.location.hash);
+          }
+        } catch (e) {}
+        window.pemiluStorage.updateSettings({ isSealed: false });
+      }
+
+      const btnToggleVaultDesktop = document.getElementById('btn-toggle-vault-desktop');
+      if (btnToggleVaultDesktop) {
+        btnToggleVaultDesktop.onclick = function(e) {
+          if (e) e.preventDefault();
+          window.toggleVault();
+        };
+      }
 
       // Reset Demo Data
       const btnReset = document.getElementById('btn-desktop-reset');
