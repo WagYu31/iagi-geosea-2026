@@ -314,12 +314,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const simEmailRecipient = document.getElementById('sim-email-recipient');
   const simBtnOpenVote = document.getElementById('sim-btn-open-vote');
   const simBtnOpenInbox = document.getElementById('sim-btn-open-inbox');
+  const simBtnResendEmail = document.getElementById('sim-btn-resend-email');
+  const simResendLabel = document.getElementById('sim-resend-label');
+  const simResendAlert = document.getElementById('sim-resend-alert');
+  let resendCooldownTimer = null;
 
   function showEmailDispatchedModal(voter) {
     if (!modalEmailSim) return;
     if (simEmailName) simEmailName.innerText = voter.name || '-';
     if (simEmailNpa) simEmailNpa.innerText = voter.npa || '-';
     if (simEmailRecipient) simEmailRecipient.innerText = voter.email || '-';
+    if (simResendAlert) simResendAlert.style.display = 'none';
 
     if (simBtnOpenInbox) {
       simBtnOpenInbox.onclick = () => {
@@ -341,6 +346,69 @@ document.addEventListener('DOMContentLoaded', () => {
         closeAllModals();
         // Navigasi ke bilik suara TANPA token otomatis agar pemilih memasukkan kode dari emailnya
         navigateTo('vote', { npa: voter.npa });
+      };
+    }
+
+    if (simBtnResendEmail) {
+      // Reset state if not on active cooldown
+      if (!resendCooldownTimer) {
+        simBtnResendEmail.disabled = false;
+        if (simResendLabel) simResendLabel.innerText = 'Kirim Ulang Token ke Email';
+      }
+
+      simBtnResendEmail.onclick = async () => {
+        if (simBtnResendEmail.disabled) return;
+
+        simBtnResendEmail.disabled = true;
+        if (simResendLabel) simResendLabel.innerText = 'Mengirim Ulang Surel...';
+
+        try {
+          const currentVoter = window.pemiluStorage ? window.pemiluStorage.getVoterByNpa(voter.npa) : voter;
+          const tokenToSend = (currentVoter && currentVoter.token) ? currentVoter.token : voter.token;
+
+          await fetch('api/send_token.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              npa: voter.npa,
+              name: voter.name,
+              email: voter.email,
+              token: tokenToSend
+            })
+          });
+
+          if (simResendAlert) {
+            simResendAlert.style.display = 'block';
+            simResendAlert.style.background = 'rgba(16, 185, 129, 0.15)';
+            simResendAlert.style.border = '1px solid #10B981';
+            simResendAlert.style.color = '#34D399';
+            simResendAlert.innerHTML = `✓ Surel berhasil dikirim ulang ke <b>${voter.email}</b>! Periksa Inbox & Spam.`;
+          }
+          triggerHaptic('success');
+        } catch (e) {
+          if (simResendAlert) {
+            simResendAlert.style.display = 'block';
+            simResendAlert.style.background = 'rgba(245, 186, 66, 0.15)';
+            simResendAlert.style.border = '1px solid #F5BA42';
+            simResendAlert.style.color = '#FDE68A';
+            simResendAlert.innerHTML = `Permintaan kirim ulang diproses ke <b>${voter.email}</b>.`;
+          }
+        }
+
+        // 30 seconds cooldown to prevent accidental duplicate clicks
+        let cooldown = 30;
+        if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+        resendCooldownTimer = setInterval(() => {
+          cooldown--;
+          if (cooldown <= 0) {
+            clearInterval(resendCooldownTimer);
+            resendCooldownTimer = null;
+            simBtnResendEmail.disabled = false;
+            if (simResendLabel) simResendLabel.innerText = 'Kirim Ulang Token ke Email';
+          } else {
+            if (simResendLabel) simResendLabel.innerText = `Kirim Ulang Lagi (${cooldown}s)`;
+          }
+        }, 1000);
       };
     }
 
