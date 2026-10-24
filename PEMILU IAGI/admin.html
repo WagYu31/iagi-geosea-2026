@@ -5746,7 +5746,7 @@
             <button type="button" class="btn" onclick="confirmClearBallotBox()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(239, 68, 68, 0.12); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Kosongkan seluruh suara testing & kembalikan ke 0 Suara untuk Hari-H">
               <span>🧹 Kosongkan Suara (0)</span>
             </button>
-            <button type="button" id="btn-toggle-vault-desktop" class="btn btn-gold" onclick="window.toggleVault()" style="font-size: 0.78rem; padding: 6px 14px;">
+            <button type="button" id="btn-toggle-vault-desktop" class="btn btn-gold" onclick="window.toggleVault()" style="font-size: 0.78rem; padding: 6px 14px; cursor: pointer; position: relative; z-index: 5;">
               <span>Buka Segel Pleno</span>
             </button>
           </div>
@@ -7910,6 +7910,93 @@
   <script src="js/storage.js?v=4.5.9"></script>
 
   <script>
+    // =========================================================================
+    // GLOBAL VAULT TOGGLE HANDLER (Instant, Zero-Blocking, Direct Storage + DOM)
+    // =========================================================================
+    window.toggleVault = function(forceState) {
+      try {
+        const store = window.pemiluStorage;
+        const currentSettings = store ? store.getSettings() : { isSealed: true };
+        const nextState = typeof forceState === 'boolean' ? forceState : !currentSettings.isSealed;
+
+        // 1. Update Storage
+        if (store && typeof store.updateSettings === 'function') {
+          store.updateSettings({ isSealed: nextState });
+        } else {
+          try {
+            const cur = JSON.parse(localStorage.getItem('pemilu_iagi_settings_v2') || '{}');
+            cur.isSealed = nextState;
+            localStorage.setItem('pemilu_iagi_settings_v2', JSON.stringify(cur));
+          } catch (e) {}
+        }
+
+        // 2. Direct DOM update (Guaranteed instant UI reaction)
+        const sealedView = document.getElementById('vault-sealed-view');
+        const unsealedView = document.getElementById('vault-unsealed-view');
+        const btnToggle = document.getElementById('btn-toggle-vault-desktop');
+        const vaultIndicator = document.getElementById('vault-status-indicator');
+
+        if (nextState === true) {
+          // KUNCI SEGEL (Sealed)
+          if (sealedView) sealedView.style.display = 'block';
+          if (unsealedView) unsealedView.style.display = 'none';
+          if (btnToggle) {
+            btnToggle.innerHTML = '<span>🔓 Buka Segel Pleno</span>';
+            btnToggle.className = 'btn btn-gold';
+            btnToggle.style.background = '';
+            btnToggle.style.color = '';
+            btnToggle.style.border = '';
+            btnToggle.setAttribute('onclick', 'window.toggleVault(false)');
+          }
+          if (vaultIndicator) {
+            vaultIndicator.className = 'badge-status-pill sealed';
+            vaultIndicator.innerText = '🔒 VAULT: BERSEGEL DIGITAL';
+          }
+        } else {
+          // BUKA SEGEL (Unsealed)
+          if (sealedView) sealedView.style.display = 'none';
+          if (unsealedView) unsealedView.style.display = 'block';
+          if (btnToggle) {
+            btnToggle.innerHTML = '<span>🔒 Kunci Segel Kembali</span>';
+            btnToggle.className = 'btn btn-subtle';
+            btnToggle.style.background = 'rgba(245, 158, 11, 0.12)';
+            btnToggle.style.color = '#FDE68A';
+            btnToggle.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+            btnToggle.setAttribute('onclick', 'window.toggleVault(true)');
+          }
+          if (vaultIndicator) {
+            vaultIndicator.className = 'badge-status-pill unsealed';
+            vaultIndicator.innerText = '🔓 VAULT: TERBUKA (PLENO)';
+          }
+        }
+
+        // 3. Clean any URL parameters
+        try {
+          const url = new URL(window.location.href);
+          let changed = false;
+          if (url.searchParams.has('unsealed')) {
+            url.searchParams.delete('unsealed');
+            changed = true;
+          }
+          let hash = window.location.hash || '';
+          if (hash.includes('unsealed')) {
+            hash = hash.replace(/[\?&]?unsealed(=1)?/g, '').replace('#unsealed', '#section-metrics');
+            changed = true;
+          }
+          if (changed) {
+            window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + (hash || '#section-metrics'));
+          }
+        } catch (e) {}
+
+        // 4. Call refreshAll if available
+        if (typeof window.refreshAll === 'function') {
+          window.refreshAll();
+        }
+      } catch (err) {
+        console.error('Error in window.toggleVault:', err);
+      }
+    };
+
     // Desktop Admin Dashboard Logic
     document.addEventListener('DOMContentLoaded', () => {
       const pinModal = document.getElementById('desktop-admin-pin-modal');
@@ -11985,68 +12072,7 @@
         formManageAdmin.addEventListener('submit', handleSaveAdmin);
       }
 
-      // Toggle Vault KPKU (Buka Segel Pleno / Kunci Segel Kembali)
-      window.toggleVault = function(forceState) {
-        if (!window.pemiluStorage) return;
-        const settings = window.pemiluStorage.getSettings();
-        const nextState = typeof forceState === 'boolean' ? forceState : !settings.isSealed;
-
-        if (nextState === false) {
-          // Hendak MEMBUKA segel pleno
-          const ok = confirm('PERINGATAN PLENO KPKU:\n\nApakah Anda yakin ingin MEMBUKA SEGEL perolehan suara?\n\nAksi ini akan membuka brankas kriptografi dan menampilkan tabulasi hasil quick count secara terbuka di layar pleno.');
-          if (!ok) return;
-        } else {
-          // Hendak MENYEGEL KEMBALI
-          const ok = confirm('KONFIRMASI KUNCI SEGEL KEMBALI:\n\nApakah Anda yakin ingin MENYEGEL KEMBALI brankas perolehan suara?\n\nHasil perolehan suara akan dikunci kembali dan disembunyikan di bawah perlindungan segel kriptografi.');
-          if (!ok) return;
-
-          // Hapus parameter unsealed dari URL jika ada agar tidak re-trigger saat refresh/polling
-          try {
-            const url = new URL(window.location.href);
-            let urlChanged = false;
-            if (url.searchParams.has('unsealed')) {
-              url.searchParams.delete('unsealed');
-              urlChanged = true;
-            }
-            let hash = window.location.hash || '';
-            if (hash.includes('unsealed')) {
-              hash = hash.replace(/[\?&]?unsealed(=1)?/g, '').replace('#unsealed', '#section-metrics');
-              urlChanged = true;
-            }
-            if (urlChanged) {
-              window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + (hash || '#section-metrics'));
-            }
-          } catch (e) {
-            console.warn('URL clean failed:', e);
-          }
-        }
-
-        window.pemiluStorage.updateSettings({ isSealed: nextState });
-        if (typeof refreshAll === 'function') {
-          refreshAll();
-        } else if (typeof window.refreshAll === 'function') {
-          window.refreshAll();
-        }
-
-        if (nextState === true) {
-          alert('🔒 BRANKAS BERHASIL DISEGEL KEMBALI!\n\nPerolehan suara telah ditutup dan diamankan kembali dengan enkripsi kriptografi AES-256.');
-        } else {
-          alert('🔓 SEGEL BRANKAS TELAH RESMI DIBUKA!\n\nTabulasi perolehan suara Calon Ketua Umum kini terbuka dan dapat disaksikan bersama.');
-        }
-      };
-
-      // Check if URL specifies unsealed mode directly (only on first explicit load, do not lock user out from re-sealing)
-      if (new URLSearchParams(window.location.search).get('unsealed') === '1' || window.location.hash.includes('unsealed')) {
-        try {
-          const url = new URL(window.location.href);
-          if (url.searchParams.has('unsealed')) {
-            url.searchParams.delete('unsealed');
-            window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') + window.location.hash);
-          }
-        } catch (e) {}
-        window.pemiluStorage.updateSettings({ isSealed: false });
-      }
-
+      // Link Vault desktop button directly
       const btnToggleVaultDesktop = document.getElementById('btn-toggle-vault-desktop');
       if (btnToggleVaultDesktop) {
         btnToggleVaultDesktop.onclick = function(e) {
