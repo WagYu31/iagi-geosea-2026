@@ -796,6 +796,522 @@
       transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    /* ========================================================
+       TOP 3 3D PODIUM LEADERBOARD (GAMIFIED OLYMPIC STAGE)
+       ======================================================== */
+    .pleno-view-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pleno-toggle-group {
+      display: inline-flex;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 4px;
+    }
+
+    .btn-toggle-pleno {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-toggle-pleno:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-toggle-pleno.active {
+      background: linear-gradient(135deg, rgba(245, 186, 66, 0.25), rgba(217, 119, 6, 0.35));
+      color: #FDE68A;
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      box-shadow: 0 2px 8px rgba(245, 186, 66, 0.2);
+    }
+
+    /* Podium Stage Card */
+    .podium-stage-card {
+      position: relative;
+      background: radial-gradient(circle at 50% 25%, rgba(245, 186, 66, 0.12) 0%, rgba(15, 23, 42, 0.65) 55%, rgba(10, 16, 26, 0.95) 100%);
+      border: 1px solid rgba(245, 186, 66, 0.25);
+      border-radius: 24px;
+      padding: 24px 20px 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      margin-bottom: 20px;
+      perspective: 1200px;
+    }
+
+    /* Ambient Spotlight Halo behind center podium */
+    .podium-ambient-halo {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 480px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(245, 186, 66, 0.22) 0%, rgba(245, 186, 66, 0.04) 50%, transparent 75%);
+      pointer-events: none;
+      filter: blur(28px);
+      z-index: 0;
+    }
+
+    .podium-card-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .podium-card-title-group h3 {
+      margin: 0 0 4px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .podium-card-subtitle {
+      margin: 0;
+      font-size: 0.78rem;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
+
+    .podium-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 186, 66, 0.12);
+      border: 1px solid rgba(245, 186, 66, 0.4);
+      color: #FBBF24;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      box-shadow: 0 0 14px rgba(245, 186, 66, 0.2);
+    }
+
+    /* Grid Layout: 3 Columns in Olympic order (Rank 2, Rank 1, Rank 3) */
+    .podium-columns-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      align-items: end;
+      gap: 16px;
+      padding-top: 15px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .podium-col:hover {
+      transform: translateY(-6px);
+    }
+
+    /* Floating Crown & Trophy above Rank 1 */
+    .podium-crown-trophy-floater {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
+      animation: floatTrophyCrown 3.2s ease-in-out infinite;
+    }
+
+    .floating-crown {
+      font-size: 2.2rem;
+      line-height: 1;
+      filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5));
+      margin-bottom: -4px;
+    }
+
+    .floating-trophy {
+      font-size: 2.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 14px rgba(245, 186, 66, 0.6));
+    }
+
+    @keyframes floatTrophyCrown {
+      0%, 100% {
+        transform: translateY(0px) scale(1);
+      }
+      50% {
+        transform: translateY(-8px) scale(1.04);
+      }
+    }
+
+    /* Floating Medals for Rank 2 & 3 */
+    .podium-medal-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
+      animation: floatMedal 3.8s ease-in-out infinite;
+    }
+
+    .podium-col.rank-3 .podium-medal-badge {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes floatMedal {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .medal-ribbon-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 900;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .medal-ribbon-tag.silver {
+      background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
+      color: #0F172A;
+      border: 2px solid #FFFFFF;
+    }
+
+    .medal-ribbon-tag.bronze {
+      background: linear-gradient(135deg, #FB923C 0%, #C2410C 100%);
+      color: #FFFFFF;
+      border: 2px solid #FED7AA;
+    }
+
+    /* Avatar Wrappers */
+    .podium-avatar-wrap {
+      position: relative;
+      border-radius: 50%;
+      margin-bottom: -16px;
+      z-index: 3;
+      transition: transform 0.3s ease;
+    }
+
+    .podium-col:hover .podium-avatar-wrap {
+      transform: scale(1.05);
+    }
+
+    .podium-avatar-wrap.gold {
+      width: 104px;
+      height: 104px;
+      border: 4px solid #F59E0B;
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.55), inset 0 0 12px rgba(245, 158, 11, 0.3);
+      background: radial-gradient(circle, #0284C7 0%, #03446A 100%);
+    }
+
+    .podium-avatar-wrap.silver {
+      width: 88px;
+      height: 88px;
+      border: 3.5px solid #E2E8F0;
+      box-shadow: 0 0 18px rgba(226, 232, 240, 0.4);
+      background: radial-gradient(circle, #059669 0%, #064E3B 100%);
+    }
+
+    .podium-avatar-wrap.bronze {
+      width: 82px;
+      height: 82px;
+      border: 3.5px solid #F97316;
+      box-shadow: 0 0 18px rgba(249, 115, 22, 0.4);
+      background: radial-gradient(circle, #D97706 0%, #78350F 100%);
+    }
+
+    .podium-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 50%;
+      display: block;
+    }
+
+    /* Number badge overlapping avatar bottom-right */
+    .podium-avatar-rank-pill {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+      border: 2px solid #FFFFFF;
+      z-index: 4;
+    }
+
+    .podium-avatar-rank-pill.gold {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+    }
+
+    .podium-avatar-rank-pill.silver {
+      background: linear-gradient(135deg, #94A3B8, #475569);
+      color: #FFFFFF;
+    }
+
+    .podium-avatar-rank-pill.bronze {
+      background: linear-gradient(135deg, #EA580C, #9A3412);
+      color: #FFFFFF;
+    }
+
+    /* 3D Pillar Blocks */
+    .podium-pillar-block {
+      width: 100%;
+      border-radius: 22px 22px 14px 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 10px 14px;
+      text-align: center;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .podium-pillar-block.gold {
+      height: 275px;
+      background: linear-gradient(180deg, #FCD34D 0%, #F59E0B 30%, #D97706 72%, #92400E 100%);
+      box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.5), inset 0 3px 3px rgba(255, 255, 255, 0.7), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .podium-pillar-block.silver {
+      height: 220px;
+      background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 25%, #94A3B8 75%, #475569 100%);
+      box-shadow: 0 16px 32px -10px rgba(148, 163, 184, 0.4), inset 0 3px 3px rgba(255, 255, 255, 0.8), inset 0 -4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-pillar-block.bronze {
+      height: 180px;
+      background: linear-gradient(180deg, #FDBA74 0%, #FB923C 25%, #EA580C 72%, #7C2D12 100%);
+      box-shadow: 0 14px 28px -10px rgba(234, 88, 12, 0.4), inset 0 3px 3px rgba(255, 255, 255, 0.6), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Glossy top bevel reflection */
+    .podium-pillar-highlight {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 6px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    .podium-pillar-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 0 4px;
+    }
+
+    .podium-cand-name {
+      font-size: 0.96rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+      word-break: break-word;
+    }
+
+    .podium-pillar-block.gold .podium-cand-name {
+      color: #FFFFFF;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .podium-pillar-block.silver .podium-cand-name {
+      color: #0F172A;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .podium-pillar-block.bronze .podium-cand-name {
+      color: #FFFFFF;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .podium-cand-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+
+    .podium-pillar-block.gold .podium-cand-sub {
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-pillar-block.silver .podium-cand-sub {
+      color: #334155;
+    }
+
+    .podium-pillar-block.bronze .podium-cand-sub {
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Score Orb Discs inside Pillars (Iconic badge from Image 2) */
+    .podium-score-disc {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 130px;
+      border-radius: 9999px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+      margin-top: auto;
+    }
+
+    .podium-score-disc.gold {
+      background: radial-gradient(circle at 50% 30%, #542207 0%, #2A0E03 100%);
+      border: 2px solid #FDE68A;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .podium-score-disc.silver {
+      background: radial-gradient(circle at 50% 30%, #1E293B 0%, #0B1120 100%);
+      border: 2px solid #F1F5F9;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(148, 163, 184, 0.3);
+    }
+
+    .podium-score-disc.bronze {
+      background: radial-gradient(circle at 50% 30%, #541908 0%, #250903 100%);
+      border: 2px solid #FED7AA;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(249, 115, 22, 0.3);
+    }
+
+    .disc-icon {
+      font-size: 1.05rem;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .disc-votes {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .disc-unit {
+      font-size: 0.68rem;
+      color: #CBD5E1;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .disc-pct {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #38BDF8;
+      margin-top: 2px;
+    }
+
+    .podium-score-disc.gold .disc-pct {
+      color: #FDE68A;
+    }
+
+    .podium-score-disc.silver .disc-pct {
+      color: #BAE6FD;
+    }
+
+    .podium-score-disc.bronze .disc-pct {
+      color: #FDBA74;
+    }
+
+    /* Mobile Responsive rules for 3D Podium */
+    @media (max-width: 640px) {
+      .podium-stage-card {
+        padding: 16px 8px 14px;
+        border-radius: 18px;
+      }
+      .podium-columns-grid {
+        gap: 6px;
+        padding-top: 10px;
+      }
+      .podium-avatar-wrap.gold {
+        width: 76px;
+        height: 76px;
+        margin-bottom: -12px;
+      }
+      .podium-avatar-wrap.silver {
+        width: 66px;
+        height: 66px;
+        margin-bottom: -10px;
+      }
+      .podium-avatar-wrap.bronze {
+        width: 60px;
+        height: 60px;
+        margin-bottom: -8px;
+      }
+      .floating-crown { font-size: 1.7rem; }
+      .floating-trophy { font-size: 1.9rem; }
+      .podium-pillar-block.gold { height: 230px; padding: 18px 4px 10px; }
+      .podium-pillar-block.silver { height: 185px; padding: 14px 4px 8px; }
+      .podium-pillar-block.bronze { height: 155px; padding: 12px 4px 8px; }
+      .podium-cand-name { font-size: 0.78rem; }
+      .podium-cand-sub { font-size: 0.62rem; }
+      .podium-score-disc {
+        width: 98%;
+        padding: 6px 3px;
+        border-radius: 14px;
+      }
+      .disc-icon { font-size: 0.85rem; }
+      .disc-votes { font-size: 0.95rem; }
+      .disc-unit { font-size: 0.58rem; }
+      .disc-pct { font-size: 0.65rem; }
+    }
+
     /* DPT Table Styles */
     .table-container {
       width: 100%;
@@ -5182,12 +5698,36 @@
 
         <!-- State 2: Unsealed Live Tallies -->
         <div id="vault-unsealed-view" style="display: none;">
-          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 18px; font-size: 0.8rem; color: #34D399; display: flex; align-items: center; gap: 8px;">
+          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #34D399; display: flex; align-items: center; gap: 8px;">
             <svg style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
             <span>Segel Sidang Pleno Terbuka telah DIBUKA. Hasil Quick Count terverifikasi secara matematis & audit trail LUBER.</span>
           </div>
 
-          <div id="candidate-tallies-container">
+          <!-- View Switcher Controls -->
+          <div class="pleno-view-control-bar">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.76rem; color: #94A3B8; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">MODE TAMPILAN:</span>
+            </div>
+            <div class="pleno-toggle-group">
+              <button type="button" id="btn-toggle-podium" class="btn-toggle-pleno active" onclick="setPlenoViewMode('podium')">
+                <span>🏆 3D Podium Juara</span>
+              </button>
+              <button type="button" id="btn-toggle-bars" class="btn-toggle-pleno" onclick="setPlenoViewMode('bars')">
+                <span>📊 Bar Klasik</span>
+              </button>
+              <button type="button" id="btn-toggle-both" class="btn-toggle-pleno" onclick="setPlenoViewMode('both')">
+                <span>⚡ Keduanya</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Top 3 3D Podium Stage Container -->
+          <div id="podium-3d-stage" class="podium-stage-card">
+            <!-- Dynamically rendered by renderCandidateTallies() -->
+          </div>
+
+          <!-- Classic Progress Bar List Container -->
+          <div id="candidate-tallies-container" style="display: none;">
             <!-- Dynamically populated by JS -->
           </div>
         </div>
@@ -8913,40 +9453,195 @@
         }
       }
 
-      function renderCandidateTallies(results) {
-        const container = document.getElementById('candidate-tallies-container');
-        if (!container) return;
+      window.setPlenoViewMode = function(mode) {
+        localStorage.setItem('iagi_pleno_view_mode', mode);
+        const podiumEl = document.getElementById('podium-3d-stage');
+        const barsEl = document.getElementById('candidate-tallies-container');
+        const btnPodium = document.getElementById('btn-toggle-podium');
+        const btnBars = document.getElementById('btn-toggle-bars');
+        const btnBoth = document.getElementById('btn-toggle-both');
 
+        if (btnPodium) btnPodium.classList.toggle('active', mode === 'podium');
+        if (btnBars) btnBars.classList.toggle('active', mode === 'bars');
+        if (btnBoth) btnBoth.classList.toggle('active', mode === 'both');
+
+        if (mode === 'podium') {
+          if (podiumEl) podiumEl.style.display = 'block';
+          if (barsEl) barsEl.style.display = 'none';
+        } else if (mode === 'bars') {
+          if (podiumEl) podiumEl.style.display = 'none';
+          if (barsEl) barsEl.style.display = 'block';
+        } else {
+          if (podiumEl) podiumEl.style.display = 'block';
+          if (barsEl) barsEl.style.display = 'block';
+        }
+      };
+
+      function renderCandidateTallies(results) {
         const totalVotes = results.totalVotes || 0;
 
-        container.innerHTML = CANDIDATES.map(c => {
-          const votes = results.counts[c.id] || 0;
-          const pct = totalVotes > 0 ? ((votes / totalVotes) * 100).toFixed(1) : 0;
+        // 1. Helper function for candidate affiliation
+        function getCandAffiliation(c) {
+          if (c.id === 1) return `ITB • ${c.npa}`;
+          if (c.id === 2) return `PHR • ${c.npa}`;
+          if (c.id === 3) return `Medco • ${c.npa}`;
+          return c.npa || '';
+        }
 
-          return `
-            <div class="candidate-tally-item">
-              <div class="candidate-header-flex">
-                <div class="candidate-info-group">
-                  <div class="candidate-number-badge" style="border-color:${c.accentColor}; color:${c.accentColor};">
-                    ${c.number}
-                  </div>
-                  <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #FFFFFF;">${c.name}</h4>
-                    <span style="font-size: 0.74rem; color: #94A3B8;">NPA: ${c.npa || ''}</span>
-                  </div>
-                </div>
-                <div style="text-align: right;">
-                  <span style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 900; color: ${c.accentColor};">${votes}</span>
-                  <span style="font-size: 0.8rem; color: #94A3B8; margin-left: 4px;">Suara</span>
-                  <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: #FFFFFF;">${pct}%</div>
-                </div>
+        function getCandPhoto(c) {
+          return c.photo || `assets/candidate-${c.id}.png`;
+        }
+
+        // 2. Sort candidates descending by votes
+        const sorted = [...CANDIDATES].sort((a, b) => {
+          const va = results.counts[a.id] || 0;
+          const vb = results.counts[b.id] || 0;
+          if (vb !== va) return vb - va;
+          return a.number.localeCompare(b.number);
+        });
+
+        const rank1 = sorted[0];
+        const rank2 = sorted[1];
+        const rank3 = sorted[2];
+
+        const v1 = results.counts[rank1.id] || 0;
+        const pct1 = totalVotes > 0 ? ((v1 / totalVotes) * 100).toFixed(1) : '0.0';
+        const v2 = results.counts[rank2.id] || 0;
+        const pct2 = totalVotes > 0 ? ((v2 / totalVotes) * 100).toFixed(1) : '0.0';
+        const v3 = results.counts[rank3.id] || 0;
+        const pct3 = totalVotes > 0 ? ((v3 / totalVotes) * 100).toFixed(1) : '0.0';
+
+        // 3. Render Top 3 3D Podium (Olympic Order: 2 - 1 - 3)
+        const podiumStage = document.getElementById('podium-3d-stage');
+        if (podiumStage) {
+          podiumStage.innerHTML = `
+            <div class="podium-ambient-halo"></div>
+
+            <div class="podium-card-header">
+              <div class="podium-card-title-group">
+                <h3><span style="font-size: 1.45rem;">🏆</span> Top 3 Podium Juara</h3>
+                <p class="podium-card-subtitle">Perolehan Suara Calon Ketua Umum IAGI Periode 2026–2029 (Sidang Pleno KPKU)</p>
               </div>
-              <div class="progress-bar-track">
-                <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${c.accentColor}, #F8E08E);"></div>
+              <div class="podium-card-badge">
+                <span style="font-size: 0.9rem;">✨</span> Live Standing
               </div>
             </div>
+
+            <div class="podium-columns-grid">
+              
+              <!-- Left: Rank 2 (Silver) -->
+              <div class="podium-col rank-2">
+                <div class="podium-medal-badge">
+                  <div class="medal-ribbon-tag silver">🥈 2</div>
+                </div>
+                <div class="podium-avatar-wrap silver">
+                  <img src="${getCandPhoto(rank2)}" alt="${rank2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank2.id}.png'">
+                  <span class="podium-avatar-rank-pill silver">2</span>
+                </div>
+                <div class="podium-pillar-block silver">
+                  <div class="podium-pillar-highlight"></div>
+                  <div class="podium-pillar-content">
+                    <div class="podium-cand-name">${rank2.name}</div>
+                    <div class="podium-cand-sub">${getCandAffiliation(rank2)}</div>
+                  </div>
+                  <div class="podium-score-disc silver">
+                    <span class="disc-icon">⚡</span>
+                    <span class="disc-votes">${v2}</span>
+                    <span class="disc-unit">Suara</span>
+                    <span class="disc-pct">${pct2}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Center: Rank 1 (Gold - Tallest & Floating Crown/Trophy) -->
+              <div class="podium-col rank-1">
+                <div class="podium-crown-trophy-floater">
+                  <div class="floating-crown">👑</div>
+                  <div class="floating-trophy">🏆</div>
+                </div>
+                <div class="podium-avatar-wrap gold">
+                  <img src="${getCandPhoto(rank1)}" alt="${rank1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank1.id}.png'">
+                  <span class="podium-avatar-rank-pill gold">1</span>
+                </div>
+                <div class="podium-pillar-block gold">
+                  <div class="podium-pillar-highlight"></div>
+                  <div class="podium-pillar-content">
+                    <div class="podium-cand-name">${rank1.name}</div>
+                    <div class="podium-cand-sub">${getCandAffiliation(rank1)}</div>
+                  </div>
+                  <div class="podium-score-disc gold">
+                    <span class="disc-icon">⭐</span>
+                    <span class="disc-votes">${v1}</span>
+                    <span class="disc-unit">Suara</span>
+                    <span class="disc-pct">${pct1}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Rank 3 (Bronze) -->
+              <div class="podium-col rank-3">
+                <div class="podium-medal-badge">
+                  <div class="medal-ribbon-tag bronze">🥉 3</div>
+                </div>
+                <div class="podium-avatar-wrap bronze">
+                  <img src="${getCandPhoto(rank3)}" alt="${rank3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank3.id}.png'">
+                  <span class="podium-avatar-rank-pill bronze">3</span>
+                </div>
+                <div class="podium-pillar-block bronze">
+                  <div class="podium-pillar-highlight"></div>
+                  <div class="podium-pillar-content">
+                    <div class="podium-cand-name">${rank3.name}</div>
+                    <div class="podium-cand-sub">${getCandAffiliation(rank3)}</div>
+                  </div>
+                  <div class="podium-score-disc bronze">
+                    <span class="disc-icon">🚀</span>
+                    <span class="disc-votes">${v3}</span>
+                    <span class="disc-unit">Suara</span>
+                    <span class="disc-pct">${pct3}%</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           `;
-        }).join('');
+        }
+
+        // 4. Render Classic Bars Container
+        const container = document.getElementById('candidate-tallies-container');
+        if (container) {
+          container.innerHTML = CANDIDATES.map(c => {
+            const votes = results.counts[c.id] || 0;
+            const pct = totalVotes > 0 ? ((votes / totalVotes) * 100).toFixed(1) : 0;
+
+            return `
+              <div class="candidate-tally-item">
+                <div class="candidate-header-flex">
+                  <div class="candidate-info-group">
+                    <div class="candidate-number-badge" style="border-color:${c.accentColor}; color:${c.accentColor};">
+                      ${c.number}
+                    </div>
+                    <div>
+                      <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #FFFFFF;">${c.name}</h4>
+                      <span style="font-size: 0.74rem; color: #94A3B8;">${getCandAffiliation(c)}</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <span style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 900; color: ${c.accentColor};">${votes}</span>
+                    <span style="font-size: 0.8rem; color: #94A3B8; margin-left: 4px;">Suara</span>
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: #FFFFFF;">${pct}%</div>
+                  </div>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${c.accentColor}, #F8E08E);"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // 5. Apply saved view mode
+        const savedMode = localStorage.getItem('iagi_pleno_view_mode') || 'podium';
+        setPlenoViewMode(savedMode);
       }
 
       function renderAuditLogs() {
@@ -10959,6 +11654,18 @@
       }
 
       // Toggle Vault
+      window.toggleVault = function(forceState) {
+        const settings = window.pemiluStorage.getSettings();
+        const nextState = typeof forceState === 'boolean' ? forceState : !settings.isSealed;
+        window.pemiluStorage.updateSettings({ isSealed: nextState });
+        refreshAll();
+      };
+
+      // Check if URL specifies unsealed mode directly (e.g. ?unsealed=1 or #unsealed)
+      if (new URLSearchParams(window.location.search).get('unsealed') === '1' || window.location.hash.includes('unsealed')) {
+        window.pemiluStorage.updateSettings({ isSealed: false });
+      }
+
       document.getElementById('btn-toggle-vault-desktop').addEventListener('click', () => {
         const settings = window.pemiluStorage.getSettings();
         const nextState = !settings.isSealed;

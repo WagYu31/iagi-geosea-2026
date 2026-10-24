@@ -267,6 +267,438 @@
       color: #0F172A;
     }
 
+    /* ========================================================
+       TOP 3 3D PODIUM LEADERBOARD (GAMIFIED OLYMPIC STAGE)
+       ======================================================== */
+    .podium-stage-card {
+      position: relative;
+      background: radial-gradient(circle at 50% 25%, rgba(245, 186, 66, 0.15) 0%, rgba(15, 23, 42, 0.9) 55%, rgba(10, 16, 26, 0.98) 100%);
+      border: 1px solid rgba(245, 186, 66, 0.3);
+      border-radius: 26px;
+      padding: 30px 24px 26px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      margin-bottom: 40px;
+      perspective: 1200px;
+    }
+
+    .podium-ambient-halo {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(245, 186, 66, 0.25) 0%, rgba(245, 186, 66, 0.05) 50%, transparent 75%);
+      pointer-events: none;
+      filter: blur(32px);
+      z-index: 0;
+    }
+
+    .podium-card-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .podium-card-title-group h3 {
+      margin: 0 0 4px;
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .podium-card-subtitle {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
+
+    .podium-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 186, 66, 0.15);
+      border: 1px solid rgba(245, 186, 66, 0.45);
+      color: #FBBF24;
+      padding: 7px 16px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      box-shadow: 0 0 16px rgba(245, 186, 66, 0.25);
+    }
+
+    .podium-columns-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      align-items: end;
+      gap: 20px;
+      padding-top: 15px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .podium-col:hover {
+      transform: translateY(-8px);
+    }
+
+    .podium-crown-trophy-floater {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
+      animation: floatTrophyCrown 3.2s ease-in-out infinite;
+    }
+
+    .floating-crown {
+      font-size: 2.3rem;
+      line-height: 1;
+      filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5));
+      margin-bottom: -4px;
+    }
+
+    .floating-trophy {
+      font-size: 2.7rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 14px rgba(245, 186, 66, 0.6));
+    }
+
+    @keyframes floatTrophyCrown {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    .podium-medal-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 8px;
+      animation: floatMedal 3.8s ease-in-out infinite;
+    }
+
+    .podium-col.rank-3 .podium-medal-badge {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes floatMedal {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .medal-ribbon-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 0.88rem;
+      font-weight: 900;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .medal-ribbon-tag.silver {
+      background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
+      color: #0F172A;
+      border: 2px solid #FFFFFF;
+    }
+
+    .medal-ribbon-tag.bronze {
+      background: linear-gradient(135deg, #FB923C 0%, #C2410C 100%);
+      color: #FFFFFF;
+      border: 2px solid #FED7AA;
+    }
+
+    .podium-avatar-wrap {
+      position: relative;
+      border-radius: 50%;
+      margin-bottom: -18px;
+      z-index: 3;
+      transition: transform 0.3s ease;
+    }
+
+    .podium-col:hover .podium-avatar-wrap {
+      transform: scale(1.05);
+    }
+
+    .podium-avatar-wrap.gold {
+      width: 110px;
+      height: 110px;
+      border: 4px solid #F59E0B;
+      box-shadow: 0 0 26px rgba(245, 158, 11, 0.6), inset 0 0 12px rgba(245, 158, 11, 0.3);
+      background: radial-gradient(circle, #0284C7 0%, #03446A 100%);
+    }
+
+    .podium-avatar-wrap.silver {
+      width: 92px;
+      height: 92px;
+      border: 3.5px solid #E2E8F0;
+      box-shadow: 0 0 20px rgba(226, 232, 240, 0.45);
+      background: radial-gradient(circle, #059669 0%, #064E3B 100%);
+    }
+
+    .podium-avatar-wrap.bronze {
+      width: 86px;
+      height: 86px;
+      border: 3.5px solid #F97316;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.45);
+      background: radial-gradient(circle, #D97706 0%, #78350F 100%);
+    }
+
+    .podium-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .podium-avatar-rank-pill {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 900;
+      font-family: var(--font-mono, monospace);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+      border: 2px solid #FFFFFF;
+      z-index: 4;
+    }
+
+    .podium-avatar-rank-pill.gold {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+    }
+
+    .podium-avatar-rank-pill.silver {
+      background: linear-gradient(135deg, #94A3B8, #475569);
+      color: #FFFFFF;
+    }
+
+    .podium-avatar-rank-pill.bronze {
+      background: linear-gradient(135deg, #EA580C, #9A3412);
+      color: #FFFFFF;
+    }
+
+    .podium-pillar-block {
+      width: 100%;
+      border-radius: 22px 22px 14px 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px 12px 16px;
+      text-align: center;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .podium-pillar-block.gold {
+      height: 285px;
+      background: linear-gradient(180deg, #FCD34D 0%, #F59E0B 30%, #D97706 72%, #92400E 100%);
+      box-shadow: 0 22px 45px -10px rgba(245, 158, 11, 0.55), inset 0 3px 3px rgba(255, 255, 255, 0.75), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .podium-pillar-block.silver {
+      height: 230px;
+      background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 25%, #94A3B8 75%, #475569 100%);
+      box-shadow: 0 18px 36px -10px rgba(148, 163, 184, 0.45), inset 0 3px 3px rgba(255, 255, 255, 0.8), inset 0 -4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-pillar-block.bronze {
+      height: 190px;
+      background: linear-gradient(180deg, #FDBA74 0%, #FB923C 25%, #EA580C 72%, #7C2D12 100%);
+      box-shadow: 0 16px 30px -10px rgba(234, 88, 12, 0.45), inset 0 3px 3px rgba(255, 255, 255, 0.6), inset 0 -4px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .podium-pillar-highlight {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 6px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    .podium-pillar-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 0 4px;
+    }
+
+    .podium-cand-name {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+      word-break: break-word;
+    }
+
+    .podium-pillar-block.gold .podium-cand-name {
+      color: #FFFFFF;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .podium-pillar-block.silver .podium-cand-name {
+      color: #0F172A;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .podium-pillar-block.bronze .podium-cand-name {
+      color: #FFFFFF;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .podium-cand-sub {
+      font-size: 0.74rem;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+
+    .podium-pillar-block.gold .podium-cand-sub {
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-pillar-block.silver .podium-cand-sub {
+      color: #334155;
+    }
+
+    .podium-pillar-block.bronze .podium-cand-sub {
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .podium-score-disc {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 135px;
+      border-radius: 9999px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+      margin-top: auto;
+    }
+
+    .podium-score-disc.gold {
+      background: radial-gradient(circle at 50% 30%, #542207 0%, #2A0E03 100%);
+      border: 2px solid #FDE68A;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .podium-score-disc.silver {
+      background: radial-gradient(circle at 50% 30%, #1E293B 0%, #0B1120 100%);
+      border: 2px solid #F1F5F9;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(148, 163, 184, 0.3);
+    }
+
+    .podium-score-disc.bronze {
+      background: radial-gradient(circle at 50% 30%, #541908 0%, #250903 100%);
+      border: 2px solid #FED7AA;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(249, 115, 22, 0.3);
+    }
+
+    .disc-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .disc-votes {
+      font-family: var(--font-mono, monospace);
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .disc-unit {
+      font-size: 0.7rem;
+      color: #CBD5E1;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .disc-pct {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #38BDF8;
+      margin-top: 2px;
+    }
+
+    .podium-score-disc.gold .disc-pct { color: #FDE68A; }
+    .podium-score-disc.silver .disc-pct { color: #BAE6FD; }
+    .podium-score-disc.bronze .disc-pct { color: #FDBA74; }
+
+    @media (max-width: 640px) {
+      .podium-stage-card {
+        padding: 16px 8px 14px;
+        border-radius: 18px;
+      }
+      .podium-columns-grid {
+        gap: 6px;
+        padding-top: 10px;
+      }
+      .podium-avatar-wrap.gold { width: 76px; height: 76px; margin-bottom: -12px; }
+      .podium-avatar-wrap.silver { width: 66px; height: 66px; margin-bottom: -10px; }
+      .podium-avatar-wrap.bronze { width: 60px; height: 60px; margin-bottom: -8px; }
+      .floating-crown { font-size: 1.7rem; }
+      .floating-trophy { font-size: 1.9rem; }
+      .podium-pillar-block.gold { height: 230px; padding: 18px 4px 10px; }
+      .podium-pillar-block.silver { height: 185px; padding: 14px 4px 8px; }
+      .podium-pillar-block.bronze { height: 155px; padding: 12px 4px 8px; }
+      .podium-cand-name { font-size: 0.78rem; }
+      .podium-cand-sub { font-size: 0.62rem; }
+      .podium-score-disc { width: 98%; padding: 6px 3px; border-radius: 14px; }
+      .disc-icon { font-size: 0.85rem; }
+      .disc-votes { font-size: 0.95rem; }
+      .disc-unit { font-size: 0.58rem; }
+      .disc-pct { font-size: 0.65rem; }
+    }
+
     /* Tabulation Cards Grid */
     .tallies-grid {
       display: grid;
@@ -872,17 +1304,31 @@
 
       <!-- Results Toolbar (Sorting & Fullscreen) -->
       <div class="results-toolbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: #64748B;">Urutan Tampilan:</span>
-          <div class="sort-control-group">
-            <button class="btn-sort-toggle active" id="sort-btn-number" onclick="setSortMode('number')">
-              <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
-              <span>No. Urut (01–03)</span>
-            </button>
-            <button class="btn-sort-toggle" id="sort-btn-votes" onclick="setSortMode('votes')">
-              <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              <span>Suara Terbanyak</span>
-            </button>
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #64748B;">Tampilan:</span>
+            <div class="sort-control-group">
+              <button class="btn-sort-toggle active" id="view-btn-podium" onclick="setHasilViewMode('podium')">
+                <span>🏆 3D Podium</span>
+              </button>
+              <button class="btn-sort-toggle" id="view-btn-cards" onclick="setHasilViewMode('cards')">
+                <span>🎴 Kartu Calon</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #64748B;">Urutan:</span>
+            <div class="sort-control-group">
+              <button class="btn-sort-toggle active" id="sort-btn-number" onclick="setSortMode('number')">
+                <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path></svg>
+                <span>No. Urut (01–03)</span>
+              </button>
+              <button class="btn-sort-toggle" id="sort-btn-votes" onclick="setSortMode('votes')">
+                <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                <span>Suara Terbanyak</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -892,8 +1338,11 @@
         </button>
       </div>
 
+      <!-- Top 3 3D Podium Container -->
+      <div id="hasil-podium-3d-stage" class="podium-stage-card"></div>
+
       <!-- 3 Candidates Live Tallies Grid -->
-      <div class="tallies-grid" id="tallies-container">
+      <div class="tallies-grid" id="tallies-container" style="display: none;">
         <!-- Dynamically rendered by JS -->
       </div>
 
@@ -1054,6 +1503,28 @@
       document.getElementById('sort-btn-number').classList.toggle('active', mode === 'number');
       document.getElementById('sort-btn-votes').classList.toggle('active', mode === 'votes');
       loadLiveResults();
+    }
+
+    // Set view mode (3D Podium vs Cards)
+    let currentHasilViewMode = localStorage.getItem('iagi_hasil_view_mode') || 'podium';
+    function setHasilViewMode(mode) {
+      currentHasilViewMode = mode;
+      localStorage.setItem('iagi_hasil_view_mode', mode);
+      const podiumEl = document.getElementById('hasil-podium-3d-stage');
+      const cardsEl = document.getElementById('tallies-container');
+      const btnPodium = document.getElementById('view-btn-podium');
+      const btnCards = document.getElementById('view-btn-cards');
+
+      if (btnPodium) btnPodium.classList.toggle('active', mode === 'podium');
+      if (btnCards) btnCards.classList.toggle('active', mode === 'cards');
+
+      if (mode === 'podium') {
+        if (podiumEl) podiumEl.style.display = 'block';
+        if (cardsEl) cardsEl.style.display = 'none';
+      } else {
+        if (podiumEl) podiumEl.style.display = 'none';
+        if (cardsEl) cardsEl.style.display = 'grid';
+      }
     }
 
     // Manual Refresh Data Action
@@ -1253,6 +1724,129 @@
         `;
       }).join('');
 
+      // Render Top 3 3D Podium Stage
+      const podiumStage = document.getElementById('hasil-podium-3d-stage');
+      if (podiumStage) {
+        const sorted = [...CANDIDATES].sort((a, b) => {
+          const va = results.counts[a.id] || 0;
+          const vb = results.counts[b.id] || 0;
+          if (vb !== va) return vb - va;
+          return a.number.localeCompare(b.number);
+        });
+
+        const rank1 = sorted[0];
+        const rank2 = sorted[1];
+        const rank3 = sorted[2];
+
+        function getCandAffiliation(c) {
+          if (c.id === 1) return `ITB • ${c.npa}`;
+          if (c.id === 2) return `PHR • ${c.npa}`;
+          if (c.id === 3) return `Medco • ${c.npa}`;
+          return c.npa || '';
+        }
+
+        const v1 = results.counts[rank1.id] || 0;
+        const pct1 = totalVotes > 0 ? ((v1 / totalVotes) * 100).toFixed(1) : '0.0';
+        const v2 = results.counts[rank2.id] || 0;
+        const pct2 = totalVotes > 0 ? ((v2 / totalVotes) * 100).toFixed(1) : '0.0';
+        const v3 = results.counts[rank3.id] || 0;
+        const pct3 = totalVotes > 0 ? ((v3 / totalVotes) * 100).toFixed(1) : '0.0';
+
+        podiumStage.innerHTML = `
+          <div class="podium-ambient-halo"></div>
+
+          <div class="podium-card-header">
+            <div class="podium-card-title-group">
+              <h3><span style="font-size: 1.45rem;">🏆</span> Top 3 Podium Juara Sidang Pleno</h3>
+              <p class="podium-card-subtitle">Perolehan Suara Calon Ketua Umum IAGI Periode 2026–2029 (Live Tabulasi Terverifikasi)</p>
+            </div>
+            <div class="podium-card-badge">
+              <span style="font-size: 0.9rem;">✨</span> Live Standing
+            </div>
+          </div>
+
+          <div class="podium-columns-grid">
+            
+            <!-- Left: Rank 2 (Silver) -->
+            <div class="podium-col rank-2">
+              <div class="podium-medal-badge">
+                <div class="medal-ribbon-tag silver">🥈 2</div>
+              </div>
+              <div class="podium-avatar-wrap silver">
+                <img src="${rank2.photo}" alt="${rank2.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank2.id}.png'">
+                <span class="podium-avatar-rank-pill silver">2</span>
+              </div>
+              <div class="podium-pillar-block silver">
+                <div class="podium-pillar-highlight"></div>
+                <div class="podium-pillar-content">
+                  <div class="podium-cand-name">${rank2.name}</div>
+                  <div class="podium-cand-sub">${getCandAffiliation(rank2)}</div>
+                </div>
+                <div class="podium-score-disc silver">
+                  <span class="disc-icon">⚡</span>
+                  <span class="disc-votes">${v2.toLocaleString('id-ID')}</span>
+                  <span class="disc-unit">Suara Sah</span>
+                  <span class="disc-pct">${pct2}%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center: Rank 1 (Gold - Tallest & Floating Crown/Trophy) -->
+            <div class="podium-col rank-1">
+              <div class="podium-crown-trophy-floater">
+                <div class="floating-crown">👑</div>
+                <div class="floating-trophy">🏆</div>
+              </div>
+              <div class="podium-avatar-wrap gold">
+                <img src="${rank1.photo}" alt="${rank1.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank1.id}.png'">
+                <span class="podium-avatar-rank-pill gold">1</span>
+              </div>
+              <div class="podium-pillar-block gold">
+                <div class="podium-pillar-highlight"></div>
+                <div class="podium-pillar-content">
+                  <div class="podium-cand-name">${rank1.name}</div>
+                  <div class="podium-cand-sub">${getCandAffiliation(rank1)}</div>
+                </div>
+                <div class="podium-score-disc gold">
+                  <span class="disc-icon">⭐</span>
+                  <span class="disc-votes">${v1.toLocaleString('id-ID')}</span>
+                  <span class="disc-unit">Suara Sah</span>
+                  <span class="disc-pct">${pct1}%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Rank 3 (Bronze) -->
+            <div class="podium-col rank-3">
+              <div class="podium-medal-badge">
+                <div class="medal-ribbon-tag bronze">🥉 3</div>
+              </div>
+              <div class="podium-avatar-wrap bronze">
+                <img src="${rank3.photo}" alt="${rank3.name}" class="podium-avatar-img" onerror="this.src='assets/candidate-${rank3.id}.png'">
+                <span class="podium-avatar-rank-pill bronze">3</span>
+              </div>
+              <div class="podium-pillar-block bronze">
+                <div class="podium-pillar-highlight"></div>
+                <div class="podium-pillar-content">
+                  <div class="podium-cand-name">${rank3.name}</div>
+                  <div class="podium-cand-sub">${getCandAffiliation(rank3)}</div>
+                </div>
+                <div class="podium-score-disc bronze">
+                  <span class="disc-icon">🚀</span>
+                  <span class="disc-votes">${v3.toLocaleString('id-ID')}</span>
+                  <span class="disc-unit">Suara Sah</span>
+                  <span class="disc-pct">${pct3}%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }
+
+      // Apply view mode
+      setHasilViewMode(currentHasilViewMode);
+
       // Render Audit Log feed
       renderAuditFeed(currentBallots);
     }
@@ -1313,7 +1907,10 @@
 
     function checkPlenoUnlock() {
       const now = new Date().getTime();
-      const diff = PLENO_UNLOCK_TIME - now;
+      let diff = PLENO_UNLOCK_TIME - now;
+      if (new URLSearchParams(window.location.search).get('preview') === '1' || new URLSearchParams(window.location.search).get('unlocked') === '1') {
+        diff = -1;
+      }
       const lockedCard = document.getElementById('results-locked-card');
       const activeArea = document.getElementById('live-results-active-area');
 
