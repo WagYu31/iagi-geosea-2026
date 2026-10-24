@@ -41,6 +41,11 @@
       reply: 'Anda dapat langsung berinteraksi dengan <strong>Petugas Panitia Pelaksana KPKU</strong> via WhatsApp resmi untuk verifikasi data khusus atau bantuan darurat:',
       showWA: true,
       chips: ['🔍 Cek Status DPT', '🎟️ Cara Klaim Token']
+    },
+    {
+      keywords: ['muat chat', 'pulihkan', 'riwayat', 'cek tiket', 'tiket saya', 'balasan saya', 'lihat balasan', 'baca balasan'],
+      reply: '📂 <strong>Fitur Muat Riwayat Chat & Balasan Panitia:</strong>\nUntuk memuat percakapan sebelumnya atau melihat balasan dari Panitia:\n1. Masukkan <strong>NPA 5-digit</strong> Anda (contoh: <code>01842</code>) pada panel di atas atau langsung ketikkan di chat ini.\n2. Sistem akan otomatis memulihkan seluruh riwayat chat dan balasan resmi panitia.\n\nJika belum pernah mengajukan pengaduan, silakan langsung sampaikan pertanyaan Anda di bawah ini.',
+      chips: ['🔍 Cek Status DPT', '🎟️ Cara Klaim Token', '🟢 Hubungi Panitia via WA']
     }
   ];
 
@@ -88,9 +93,9 @@
             </div>
           </div>
           <div class="chat-header-actions">
-            <button type="button" class="btn-chat-restore" id="btn-chat-restore" title="Pulihkan / Cek Balasan Pengaduan Sebelumnya (Cari dengan NPA)" aria-label="Pulihkan Riwayat Chat">
-              <svg viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <span>Cek Tiket</span>
+            <button type="button" class="btn-chat-restore" id="btn-chat-restore" title="Muat / Pulihkan Riwayat Chat & Balasan Panitia (Cari dengan NPA)" aria-label="Muat Chat">
+              <svg viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <span>Muat Chat</span>
             </button>
             <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Panitia%20KPKU%20IAGI%202026,%20saya%20butuh%20bantuan%20terkait%20Pemilu." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Lanjut Chat di WhatsApp">
               <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
@@ -108,12 +113,20 @@
         <!-- Restore / Recovery Panel -->
         <div class="chat-restore-panel" id="chat-restore-panel" style="display: none;">
           <div class="chat-restore-inner">
-            <span class="chat-restore-desc">🔍 <strong>Pulihkan Riwayat Chat & Balasan Panitia</strong><br>Masukkan NPA 5-digit atau Email untuk memuat percakapan Anda:</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="chat-restore-desc" style="font-weight: 700; color: #FDE68A; font-size: 0.78rem;">
+                📂 Muat Riwayat Chat & Balasan Panitia
+              </span>
+              <button type="button" onclick="document.getElementById('chat-restore-panel').style.display='none'" style="background:none; border:none; color:#94A3B8; font-size:1.2rem; cursor:pointer; line-height:1; padding:0 4px;" aria-label="Tutup Panel">&times;</button>
+            </div>
+            <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 8px; line-height: 1.35;">
+              Masukkan <strong>NPA 5-digit</strong> atau <strong>Email</strong> Anda untuk memuat percakapan & balasan resmi admin:
+            </div>
             <div class="chat-restore-input-group">
               <input type="text" id="restore-npa-input" class="restore-input" placeholder="Contoh: 01842 atau email...">
               <button type="button" class="btn-do-restore" id="btn-do-restore" onclick="window.doRestoreByNpa()">Muat Chat</button>
             </div>
-            <div id="restore-status-msg" style="display: none; font-size: 0.72rem; padding: 2px 0;"></div>
+            <div id="restore-status-msg" style="display: none; font-size: 0.74rem; padding: 4px 0; font-weight: 600;"></div>
           </div>
         </div>
 
@@ -127,6 +140,7 @@
               <br><br>
               Ada yang bisa kami bantu terkait Cek DPT, Klaim Token Surat Suara, atau Masuk Bilik Suara?
               <div class="chat-quick-chips">
+                <button type="button" class="chat-chip highlight" onclick="window.sendChatQuery('Muat Chat')">📂 Muat Chat / Cek Tiket</button>
                 <button type="button" class="chat-chip" onclick="window.sendChatQuery('Cek DPT')">🔍 Cek Status DPT</button>
                 <button type="button" class="chat-chip" onclick="window.sendChatQuery('Klaim Token')">🎟️ Cara Klaim Token</button>
                 <button type="button" class="chat-chip" onclick="window.sendChatQuery('Bilik Suara')">🗳️ Masuk Bilik Suara</button>
@@ -583,14 +597,85 @@
   }
 
   function handleUserSend(text) {
-    appendMessage(text, 'user');
+    const trimmed = (text || '').trim();
+    if (!trimmed) return;
+
+    appendMessage(trimmed, 'user');
     showTyping(true);
 
     setTimeout(() => {
       showTyping(false);
-      const match = findBotResponse(text);
-      appendMessage(match.reply, 'bot', match.chips, match.showWA ? text : null);
-      syncVoterChatSession(text, match.reply);
+
+      const lower = trimmed.toLowerCase();
+      const detectedNpa = extractNpaFromText(trimmed);
+
+      // Check if user specifically asked to Muat Chat / restore
+      const isRestoreQuery = lower.includes('muat chat') || 
+                             lower.includes('pulihkan') || 
+                             lower.includes('cek tiket') || 
+                             lower.includes('riwayat') || 
+                             lower.includes('baca balasan') || 
+                             lower.includes('lihat balasan');
+
+      if (isRestoreQuery) {
+        // Automatically open the restore panel for convenient user input
+        const panel = document.getElementById('chat-restore-panel');
+        if (panel) panel.style.display = 'block';
+
+        // Check if we can auto-restore right now
+        let ticketId = getActiveTicketId();
+        const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+        let sessions = [];
+        try { sessions = JSON.parse(raw || '[]'); } catch(e) {}
+
+        let ticket = null;
+        if (ticketId) ticket = sessions.find(s => s.id === ticketId);
+        if (!ticket && detectedNpa) ticket = sessions.find(s => s.userNpa === detectedNpa);
+
+        if (ticket && ticket.messages && ticket.messages.length > 0) {
+          setActiveTicketId(ticket.id);
+          renderFullChatHistory(ticket);
+          const adminReplyCount = (ticket.messages || []).filter(m => m.sender === 'admin').length;
+          const reply = `📂 <strong>Riwayat Percakapan Anda Berhasil Dimuat!</strong>\nSesi untuk <strong>${escapeHtml(ticket.userName)}</strong> (NPA: ${escapeHtml(ticket.userNpa || 'Tamu')}) telah aktif kembali.\n\n${adminReplyCount > 0 ? `✓ <strong>${adminReplyCount} balasan resmi dari Panitia KPKU</strong> telah ditampilkan di atas.` : 'Belum ada balasan baru dari admin. Tim Panitia sedang meninjau pesan Anda.'}\n\nAda hal lain yang dapat kami bantu?`;
+          appendMessage(reply, 'bot', ['🟢 Hubungi Panitia via WA', '🎟️ Cara Klaim Token', '🗳️ Masuk Bilik Suara']);
+          return;
+        } else {
+          const reply = `📂 <strong>Fitur Muat Riwayat Chat & Balasan Panitia</strong>\n\nUntuk memuat percakapan atau melihat balasan dari Panitia:\n1. Masukkan <strong>NPA 5-digit</strong> Anda (contoh: <code>01842</code>) pada panel di atas atau langsung ketikkan di chat ini.\n2. Sistem akan otomatis menghubungkan Anda dengan tiket pengaduan aktif.\n\nJika ini adalah pengaduan baru, silakan ketik pertanyaan Anda secara langsung.`;
+          appendMessage(reply, 'bot', ['🔍 Cek Status DPT', '🎟️ Cara Klaim Token', '🟢 Hubungi Panitia via WA']);
+          return;
+        }
+      }
+
+      // Check if user entered a 5-digit NPA directly (e.g. "01842" or "npa 01842")
+      if (detectedNpa && (trimmed.length <= 12 || /^\s*(npa\s*)?\d{5}\s*$/i.test(trimmed))) {
+        const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+        let sessions = [];
+        try { sessions = JSON.parse(raw || '[]'); } catch(e) {}
+        const found = sessions.find(s => (s.userNpa || '') === detectedNpa);
+
+        if (found) {
+          setActiveTicketId(found.id);
+          renderFullChatHistory(found);
+          const adminReplyCount = (found.messages || []).filter(m => m.sender === 'admin').length;
+          const reply = `✓ <strong>Tiket Ditemukan & Berhasil Dimuat!</strong>\nRiwayat pengaduan untuk <strong>${escapeHtml(found.userName)}</strong> (NPA: ${escapeHtml(found.userNpa)}) telah dipulihkan di atas.\n\n${adminReplyCount > 0 ? `✓ <strong>${adminReplyCount} balasan resmi Panitia KPKU</strong> tersedia.` : 'Status: Menunggu respon panitia.'}\nSilakan lanjutkan pesan Anda atau hubungi panitia melalui WhatsApp.`;
+          appendMessage(reply, 'bot', ['🟢 Hubungi Panitia via WA', '🎟️ Cara Klaim Token', '🗳️ Masuk Bilik Suara']);
+          syncVoterChatSession(trimmed, reply);
+          return;
+        } else {
+          // Associate future messages with this detected NPA
+          const identity = getVoterIdentity();
+          identity.voterNpa = detectedNpa;
+          const reply = `NPA <strong>${escapeHtml(detectedNpa)}</strong> telah dicatat untuk sesi percakapan Anda.\nBelum ada riwayat pengaduan sebelumnya untuk NPA ini. Silakan sampaikan pertanyaan atau kendala Anda di bawah, Panitia KPKU siap membantu!`;
+          appendMessage(reply, 'bot', ['🎟️ Cara Klaim Token', '🔍 Cek Status DPT', '🟢 Hubungi Panitia via WA']);
+          syncVoterChatSession(trimmed, reply);
+          return;
+        }
+      }
+
+      // Normal bot matching
+      const match = findBotResponse(trimmed);
+      appendMessage(match.reply, 'bot', match.chips, match.showWA ? trimmed : null);
+      syncVoterChatSession(trimmed, match.reply);
     }, 600 + Math.random() * 400);
   }
 
@@ -684,6 +769,19 @@
 
   window.openKPKULiveChat = function() {
     toggleChatWindow(true);
+  };
+
+  window.openRestorePanel = function() {
+    const panel = document.getElementById('chat-restore-panel');
+    if (panel) {
+      panel.style.display = 'block';
+      const restoreInput = document.getElementById('restore-npa-input');
+      if (restoreInput) {
+        const id = getVoterIdentity();
+        if (id.voterNpa && id.voterNpa !== 'Tamu') restoreInput.value = id.voterNpa;
+        setTimeout(() => restoreInput.focus(), 80);
+      }
+    }
   };
 
   // Auto initialize on DOM ready
