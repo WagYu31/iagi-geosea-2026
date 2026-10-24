@@ -3838,6 +3838,46 @@
       color: #FFFFFF;
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
+    .dpt-filter-pill {
+      all: unset;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #94A3B8;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 2px 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .dpt-filter-pill:hover,
+    .dpt-filter-pill.active {
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .dpt-picker-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .dpt-picker-item:hover {
+      background: rgba(56, 189, 248, 0.14);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateX(2px);
+    }
+    .dpt-picker-item.selected {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -6156,17 +6196,58 @@
             Slot ajuan untuk <strong>Tim Sukses Paslon 01</strong>
           </div>
 
-          <!-- Input Pemilih (NPA/Nama) -->
+          <!-- Input & Picker Pemilih DPT (Bisa Diketik atau Dipilih dari Daftar Dropdown) -->
           <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
               <label style="font-size: 0.76rem; color: #94A3B8; font-weight: 700; text-transform: uppercase;">
-                1. Pilih Pemilih dari DPT (Ketik 5 Digit NPA atau Nama):
+                1. Pilih Pemilih dari DPT (Ketik atau Pilih Daftar):
               </label>
-              <span style="font-size: 0.7rem; color: #34D399; font-weight: 700; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); padding: 1px 7px; border-radius: 4px;">
-                ⚡ Sinkron DPT Real-Time
-              </span>
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <button type="button" id="btn-toggle-picker-mode" onclick="toggleVoterInputMode()" style="all: unset; display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; color: #38BDF8; font-weight: 700; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.35); padding: 3px 8px; border-radius: 6px; cursor: pointer; transition: all 0.15s ease;" title="Ganti antara mode ketik pencarian atau mode dropdown pilihan">
+                  <span id="picker-mode-icon">📋</span>
+                  <span id="picker-mode-text">Pilih dari Dropdown</span>
+                </button>
+                <button type="button" onclick="pickRandomSlotVoter()" style="all: unset; display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; color: #FDE68A; font-weight: 700; background: rgba(245,186,66,0.12); border: 1px solid rgba(245,186,66,0.35); padding: 3px 8px; border-radius: 6px; cursor: pointer;" title="Pilih acak 1 pemilih dari DPT">
+                  <span>🎲</span>
+                  <span>Acak</span>
+                </button>
+              </div>
             </div>
-            <input type="text" id="edit-slot-voter-input" list="dpt-datalist-voters" oninput="handleEditSlotVoterInput(this.value)" class="font-mono" placeholder="Ketik 5 digit NPA (contoh: 04479) atau nama dari DPT..." style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-size: 0.88rem !important; padding: 10px 14px !important; border-radius: 8px !important; outline: none !important;">
+
+            <!-- Mode 1: Ketik & Cari (dengan Combobox Dropdown Panel) -->
+            <div id="voter-input-mode-text" style="position: relative;">
+              <div style="position: relative;">
+                <input type="text" id="edit-slot-voter-input" oninput="handleEditSlotVoterInput(this.value)" onfocus="openDptPickerDropdown()" class="font-mono" placeholder="🔍 Ketik 5 digit NPA (contoh: 04479) atau nama pemilih..." style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-size: 0.88rem !important; padding: 10px 40px 10px 14px !important; border-radius: 8px !important; outline: none !important;">
+                <button type="button" onclick="toggleDptPickerDropdown()" style="all: unset; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 0.8rem; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center;" title="Tampilkan / sembunyikan daftar pemilih DPT">
+                  <span id="dpt-picker-chevron">▼</span>
+                </button>
+              </div>
+
+              <!-- Panel Dropdown Card List (21st.dev style combobox) -->
+              <div id="dpt-picker-dropdown-panel" style="display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 999; margin-top: 4px; background: rgba(11, 20, 27, 0.98); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.7); backdrop-filter: blur(14px); padding: 10px; max-height: 220px; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px; gap: 6px; flex-wrap: wrap;">
+                  <span style="font-size: 0.72rem; color: #94A3B8; font-weight: 700;">
+                    DAFTAR <strong id="dpt-picker-count" style="color: #38BDF8;">2.144 PEMILIH DPT</strong>:
+                  </span>
+                  <div style="display: flex; gap: 4px; align-items: center;">
+                    <button type="button" class="dpt-filter-pill active" onclick="setPickerStatusFilter('all', this)">Semua</button>
+                    <button type="button" class="dpt-filter-pill" onclick="setPickerStatusFilter('not_voted', this)">⏳ Belum Vote</button>
+                    <button type="button" class="dpt-filter-pill" onclick="setPickerStatusFilter('voted', this)">✓ Sudah Vote</button>
+                    <button type="button" onclick="closeDptPickerDropdown()" style="all: unset; color: #94A3B8; font-size: 0.75rem; padding: 2px 6px; cursor: pointer; border-radius: 4px;" title="Tutup">✕</button>
+                  </div>
+                </div>
+                <div id="dpt-picker-items-container" style="overflow-y: auto; max-height: 200px; display: flex; flex-direction: column; gap: 4px; padding-right: 2px;"></div>
+              </div>
+            </div>
+
+            <!-- Mode 2: Dropdown Select Langsung (Tampil Semua 2.144 DPT) -->
+            <div id="voter-input-mode-select" style="display: none;">
+              <select id="edit-slot-voter-select" onchange="handleSelectVoterChange(this.value)" style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(56, 189, 248, 0.45) !important; color: #FFFFFF !important; font-size: 0.85rem !important; padding: 10px 14px !important; border-radius: 8px !important; outline: none !important;">
+                <option value="">-- Pilih Pemilih Langsung dari Daftar DPT (2.144 Anggota) --</option>
+              </select>
+            </div>
+
+            <!-- Kartu Feedback Live DPT -->
             <div id="edit-slot-voter-feedback" style="display: none; font-size: 0.76rem; margin-top: 6px; padding: 8px 12px; border-radius: 6px; transition: all 0.2s ease;"></div>
           </div>
 
@@ -10530,12 +10611,211 @@
         }
       }
 
+      // Populate native <select id="edit-slot-voter-select">
+      function populateVoterSelectDropdown() {
+        const select = document.getElementById('edit-slot-voter-select');
+        if (!select) return;
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        if (select.children.length > 1 && select.children.length === dpt.length + 1) return;
+
+        let html = '<option value="">-- Pilih Pemilih Langsung dari Daftar DPT (2.144 Anggota) --</option>';
+        dpt.forEach(item => {
+          const voteStatus = item.voted ? '✓ Sudah Vote' : '⏳ Belum Vote';
+          const timsesTag = Number(item.timses) === 1 ? ' [Ajuan T1]' :
+                            Number(item.timses) === 2 ? ' [Ajuan T2]' :
+                            Number(item.timses) === 3 ? ' [Ajuan T3]' : '';
+          html += `<option value="${item.npa}">${item.npa} - ${item.name} (${item.pengda || 'DKI Jakarta'}) [${voteStatus}]${timsesTag}</option>`;
+        });
+        select.innerHTML = html;
+      }
+
+      // Switch between Text/Combobox mode and Native Dropdown mode
+      let isDropdownMode = false;
+      window.toggleVoterInputMode = function() {
+        isDropdownMode = !isDropdownMode;
+        const modeText = document.getElementById('voter-input-mode-text');
+        const modeSelect = document.getElementById('voter-input-mode-select');
+        const btnIcon = document.getElementById('picker-mode-icon');
+        const btnText = document.getElementById('picker-mode-text');
+
+        if (isDropdownMode) {
+          if (modeText) modeText.style.display = 'none';
+          if (modeSelect) modeSelect.style.display = 'block';
+          if (btnIcon) btnIcon.innerText = '🔍';
+          if (btnText) btnText.innerText = 'Ganti ke Mode Ketik';
+          populateVoterSelectDropdown();
+          const textVal = document.getElementById('edit-slot-voter-input')?.value || '';
+          const npaMatch = textVal.match(/\b(\d{5})\b/);
+          if (npaMatch) {
+            document.getElementById('edit-slot-voter-select').value = npaMatch[1];
+          }
+        } else {
+          if (modeText) modeText.style.display = 'block';
+          if (modeSelect) modeSelect.style.display = 'none';
+          if (btnIcon) btnIcon.innerText = '📋';
+          if (btnText) btnText.innerText = 'Pilih dari Dropdown';
+        }
+      };
+
+      // Dropdown Picker Filter & Toggle Controls
+      let currentPickerFilter = 'all';
+
+      window.setPickerStatusFilter = function(status, btn) {
+        currentPickerFilter = status;
+        document.querySelectorAll('.dpt-filter-pill').forEach(el => el.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        const inputVal = (document.getElementById('edit-slot-voter-input')?.value || '').trim();
+        renderDptPickerList(inputVal, currentPickerFilter);
+      };
+
+      window.openDptPickerDropdown = function() {
+        const panel = document.getElementById('dpt-picker-dropdown-panel');
+        if (!panel) return;
+        panel.style.display = 'flex';
+        const chevron = document.getElementById('dpt-picker-chevron');
+        if (chevron) chevron.innerText = '▲';
+        const inputVal = (document.getElementById('edit-slot-voter-input')?.value || '').trim();
+        renderDptPickerList(inputVal, currentPickerFilter);
+      };
+
+      window.closeDptPickerDropdown = function() {
+        const panel = document.getElementById('dpt-picker-dropdown-panel');
+        if (panel) panel.style.display = 'none';
+        const chevron = document.getElementById('dpt-picker-chevron');
+        if (chevron) chevron.innerText = '▼';
+      };
+
+      window.toggleDptPickerDropdown = function() {
+        const panel = document.getElementById('dpt-picker-dropdown-panel');
+        if (!panel) return;
+        if (panel.style.display === 'none' || !panel.style.display) {
+          openDptPickerDropdown();
+        } else {
+          closeDptPickerDropdown();
+        }
+      };
+
+      window.selectVoterFromPicker = function(npa) {
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        const found = dpt.find(v => v.npa === npa);
+        if (!found) return;
+
+        const input = document.getElementById('edit-slot-voter-input');
+        if (input) {
+          input.value = `${found.npa} - ${found.name} (${found.pengda || 'DKI Jakarta'})`;
+        }
+        const select = document.getElementById('edit-slot-voter-select');
+        if (select) {
+          select.value = found.npa;
+        }
+        handleEditSlotVoterInput(found.npa);
+        closeDptPickerDropdown();
+      };
+
+      window.handleSelectVoterChange = function(npa) {
+        if (!npa) return;
+        selectVoterFromPicker(npa);
+      };
+
+      window.pickRandomSlotVoter = function() {
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        const pool = dpt.filter(v => v.npa !== '99999');
+        if (!pool.length) return;
+        const randomVoter = pool[Math.floor(Math.random() * pool.length)];
+        selectVoterFromPicker(randomVoter.npa);
+      };
+
+      window.renderDptPickerList = function(searchQuery = '', statusFilter = 'all') {
+        const container = document.getElementById('dpt-picker-items-container');
+        if (!container) return;
+
+        const dpt = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') ? window.pemiluStorage.getDPT() : [];
+        const q = (searchQuery || '').toLowerCase().trim();
+
+        const filtered = dpt.filter(item => {
+          if (!item) return false;
+          if (statusFilter === 'voted' && item.voted !== true) return false;
+          if (statusFilter === 'not_voted' && item.voted === true) return false;
+
+          if (!q) return true;
+          const npa = String(item.npa || '').toLowerCase();
+          const name = String(item.name || '').toLowerCase();
+          const pengda = String(item.pengda || '').toLowerCase();
+          return npa.includes(q) || name.includes(q) || pengda.includes(q);
+        });
+
+        const countEl = document.getElementById('dpt-picker-count');
+        if (countEl) {
+          countEl.innerText = `${filtered.length.toLocaleString('id-ID')} / ${dpt.length.toLocaleString('id-ID')} DPT`;
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; color: #94A3B8; font-size: 0.76rem; padding: 16px;">
+              Tidak ada data pemilih yang sesuai kriteria "${searchQuery}".
+            </div>
+          `;
+          return;
+        }
+
+        const displayItems = filtered.slice(0, 70);
+        const currentInput = (document.getElementById('edit-slot-voter-input')?.value || '');
+
+        let html = '';
+        displayItems.forEach(v => {
+          const isSelected = currentInput.includes(v.npa);
+          const isVoted = v.voted === true;
+          const timsesBadge = Number(v.timses) === 1 ? '<span style="font-size: 0.6rem; color: #38BDF8; background: rgba(56,189,248,0.15); padding: 1px 5px; border-radius: 3px; font-weight: 700;">Timses 01</span>' :
+                              Number(v.timses) === 2 ? '<span style="font-size: 0.6rem; color: #F5BA42; background: rgba(245,186,66,0.15); padding: 1px 5px; border-radius: 3px; font-weight: 700;">Timses 02</span>' :
+                              Number(v.timses) === 3 ? '<span style="font-size: 0.6rem; color: #EF4444; background: rgba(239,68,68,0.15); padding: 1px 5px; border-radius: 3px; font-weight: 700;">Timses 03</span>' : '';
+
+          html += `
+            <div class="dpt-picker-item ${isSelected ? 'selected' : ''}" onclick="selectVoterFromPicker('${v.npa}')" title="Pilih ${v.name} (NPA ${v.npa})">
+              <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                <span style="font-family: monospace; font-weight: 800; color: #F5BA42; background: rgba(245,186,66,0.12); padding: 2px 6px; border-radius: 4px; font-size: 0.74rem; flex-shrink: 0;">
+                  ${v.npa}
+                </span>
+                <div style="min-width: 0;">
+                  <div style="font-weight: 700; color: #FFFFFF; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${v.name}
+                  </div>
+                  <div style="font-size: 0.68rem; color: #94A3B8; display: flex; align-items: center; gap: 5px;">
+                    <span>${v.pengda || 'DKI Jakarta'}</span>
+                    ${timsesBadge}
+                  </div>
+                </div>
+              </div>
+              <div style="flex-shrink: 0; text-align: right;">
+                ${isVoted 
+                  ? `<span style="font-size: 0.64rem; color: #34D399; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><span>✓</span><span>Sudah Vote</span></span>` 
+                  : `<span style="font-size: 0.64rem; color: #F59E0B; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><span>⏳</span><span>Belum Vote</span></span>`
+                }
+              </div>
+            </div>
+          `;
+        });
+
+        if (filtered.length > 70) {
+          html += `
+            <div style="text-align: center; color: #64748B; font-size: 0.7rem; padding: 6px; font-style: italic;">
+              Menampilkan 70 dari ${filtered.length.toLocaleString('id-ID')} pemilih. Ketik NPA / Nama untuk menyaring lebih spesifik.
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
+      };
+
       // Live search & auto-fill feedback from DPT
       window.handleEditSlotVoterInput = function(val) {
         const feedback = document.getElementById('edit-slot-voter-feedback');
         if (!feedback) return;
 
         const query = (val || '').trim();
+        if (typeof renderDptPickerList === 'function') {
+          renderDptPickerList(query, currentPickerFilter);
+        }
+
         if (!query) {
           feedback.style.display = 'none';
           feedback.innerHTML = '';
@@ -10589,6 +10869,10 @@
             radioYes.checked = isVoted;
             radioNo.checked = !isVoted;
           }
+
+          // Sync select if exists
+          const select = document.getElementById('edit-slot-voter-select');
+          if (select) select.value = found.npa;
         } else if (query.length >= 2) {
           feedback.style.display = 'block';
           feedback.style.background = 'rgba(245, 158, 11, 0.12)';
@@ -10610,6 +10894,7 @@
         if (!modal) return;
 
         ensureDptDatalist();
+        populateVoterSelectDropdown();
 
         document.getElementById('edit-slot-timses-id').value = timsesId;
         document.getElementById('edit-slot-idx').value = idx;
@@ -10640,6 +10925,11 @@
           input.value = currentVoter && currentVoter.npa ? `${currentVoter.npa} - ${currentVoter.name} (${currentVoter.pengda || 'DKI Jakarta'})` : '';
         }
 
+        const select = document.getElementById('edit-slot-voter-select');
+        if (select && currentVoter && currentVoter.npa) {
+          select.value = currentVoter.npa;
+        }
+
         const isVoted = currentVoter ? (currentVoter.voted !== false) : true;
         const radioYes = document.getElementById('status-voted-yes');
         const radioNo = document.getElementById('status-voted-no');
@@ -10653,9 +10943,10 @@
         }
 
         handleEditSlotVoterInput(input ? input.value : '');
+        renderDptPickerList('', currentPickerFilter);
 
         modal.style.setProperty('display', 'flex', 'important');
-        if (input) {
+        if (input && !isDropdownMode) {
           setTimeout(() => {
             input.focus();
             input.select();
@@ -10664,6 +10955,7 @@
       };
 
       window.closeEditSingleSlotModal = function() {
+        closeDptPickerDropdown();
         const modal = document.getElementById('modal-edit-single-slot');
         if (modal) modal.style.setProperty('display', 'none', 'important');
       };
@@ -10688,7 +10980,12 @@
       window.saveCurrentSingleSlotModal = function() {
         const timsesId = parseInt(document.getElementById('edit-slot-timses-id').value, 10);
         const idx = parseInt(document.getElementById('edit-slot-idx').value, 10);
-        const inputVal = (document.getElementById('edit-slot-voter-input')?.value || '').trim();
+        let inputVal = (document.getElementById('edit-slot-voter-input')?.value || '').trim();
+        const selectVal = (document.getElementById('edit-slot-voter-select')?.value || '').trim();
+        if (!inputVal && selectVal) {
+          inputVal = selectVal;
+        }
+
         const isVoted = document.getElementById('status-voted-yes')?.checked ?? true;
         const candChoice = parseInt(document.getElementById('edit-slot-candidate-select')?.value || String(timsesId), 10);
 
@@ -10711,7 +11008,7 @@
         }
 
         if (!found) {
-          alert(`Pemilih "${inputVal}" tidak ditemukan dalam Daftar Pemilih Tetap (DPT)! Silakan pilih dari opsi autocomplete yang tersedia.`);
+          alert(`Pemilih "${inputVal}" tidak ditemukan dalam Daftar Pemilih Tetap (DPT)! Silakan pilih dari opsi dropdown atau ketik NPA yang valid.`);
           return;
         }
 
