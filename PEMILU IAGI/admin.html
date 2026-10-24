@@ -5675,8 +5675,16 @@
           <button type="button" class="admin-modal-close" onclick="closeManageTimsesModal()">✕</button>
         </div>
         <div class="admin-modal-body">
-          <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
-            Sesuai ketentuan KPKU IAGI, pada tanggal <strong>04 November pagi</strong> saksi timses mengajukan 5 nama pemilih resmi untuk uji petik kesesuaian hak suara. Anda dapat memilih langsung anggota dari DPT untuk setiap slot di bawah ini.
+          <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.82rem; color: #E2E8F0; line-height: 1.5;">
+            <div style="font-weight: 800; color: #F5BA42; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              <span>💡</span>
+              <span>CARA MENGISI 5 NAMA PEMILIH AJUAN TIMSES:</span>
+            </div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.78rem; color: #CBD5E1;">
+              <li><strong>Paling Cepat (Otomatis):</strong> Klik tombol <strong style="color: #FDE68A;">🎲 Acak 5 Pemilih Otomatis</strong> di bawah untuk langsung mengisi 5 pemilih acak dari DPT.</li>
+              <li><strong>Sesuai Berkas Timses (Manual):</strong> Ketik <strong>5 digit NPA</strong> atau Nama anggota pada kolom Slot 1 s/d 5 di bawah. Anda juga bisa klik tombol <strong>🎲 Acak</strong> di samping slot untuk menukar orang tertentu.</li>
+              <li>Klik <strong>💾 Simpan 5 Nama Ajuan</strong> untuk mengesahkan dan otomatis memberi tanda label timses di Tabel DPT.</li>
+            </ul>
           </div>
 
           <input type="hidden" id="modal-timses-target-id" value="1">
@@ -5684,18 +5692,20 @@
             <!-- 5 Slots rendered via JS -->
           </div>
 
-          <div style="margin-top: 14px; display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
-            <button type="button" class="btn btn-subtle" onclick="shuffleCurrentTimsesSlots()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #FFF;">
-              🎲 Acak 5 Pemilih Otomatis dari DPT
+          <div style="margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button type="button" onclick="shuffleCurrentTimsesSlots()" style="padding: 10px 14px; border-radius: 8px; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+              🎲 Acak 5 Pemilih Otomatis
             </button>
-            <button type="button" class="btn btn-subtle" onclick="syncFromDptTaggedTimses()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #FFF;">
-              🔄 Muat dari Pemilih Berlabel Timses
+            <button type="button" onclick="syncFromDptTaggedTimses()" style="padding: 10px 14px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #7DD3FC; font-size: 0.8rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+              🔄 Muat dari Tag DPT
             </button>
           </div>
         </div>
-        <div class="admin-modal-footer">
-          <button type="button" class="btn btn-subtle" onclick="closeManageTimsesModal()" style="font-size: 0.8rem; padding: 8px 16px;">Batal</button>
-          <button type="button" class="btn" onclick="saveManageTimsesSlots()" style="background: linear-gradient(135deg, #10B981, #059669); color: #FFFFFF; font-size: 0.8rem; padding: 8px 20px; font-weight: 700; border: 1px solid #34D399; box-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+        <div class="admin-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" onclick="closeManageTimsesModal()" style="padding: 10px 18px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2); color: #CBD5E1; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+            Batal
+          </button>
+          <button type="button" onclick="saveManageTimsesSlots()" style="padding: 10px 22px; border-radius: 8px; background: linear-gradient(135deg, #10B981, #059669); color: #FFFFFF; font-size: 0.82rem; font-weight: 800; border: 1px solid #34D399; box-shadow: 0 4px 14px rgba(16,185,129,0.35); cursor: pointer;">
             💾 Simpan 5 Nama Ajuan ✓
           </button>
         </div>
@@ -9638,6 +9648,12 @@
         const modal = document.getElementById('modal-manage-timses-voters');
         if (!modal) return;
         document.getElementById('modal-timses-target-id').value = timsesId;
+
+        // Ensure samples are loaded & initialized (never empty)
+        if (!randomCheckSamples[timsesId] || randomCheckSamples[timsesId].length < 5) {
+          initRandomCheckSamples();
+        }
+
         const timsesNames = {
           1: 'Tim Sukses Paslon 01 (Dr. Mirzam Abdurrachman)',
           2: 'Tim Sukses Paslon 02 (Sonny Yudhistira, M.T.)',
@@ -9659,31 +9675,43 @@
       function renderTimsesModalSlots(timsesId) {
         const container = document.getElementById('modal-timses-slots-container');
         if (!container) return;
-        const currentVoters = randomCheckSamples[timsesId] || [];
+        let currentVoters = randomCheckSamples[timsesId] || [];
         const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
+
+        // If empty, auto-pick 5 voters right now so slots are never empty
+        if (!currentVoters.length || currentVoters.length < 5) {
+          const pool = dpt.filter(v => v.npa !== '99999');
+          const shuffled = [...pool].sort(() => 0.5 - Math.random());
+          currentVoters = shuffled.slice(0, 5);
+          randomCheckSamples[timsesId] = currentVoters;
+        }
 
         let html = '';
         for (let i = 0; i < 5; i++) {
           const v = currentVoters[i] || {};
+          const displayVal = v.npa ? `${v.npa} - ${v.name} (${v.pengda || 'DKI Jakarta'})` : '';
           html += `
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-              <div style="font-weight: 800; color: #F5BA42; font-size: 0.85rem; width: 65px;">
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 14px; display: grid; grid-template-columns: 70px 1fr auto; align-items: center; gap: 12px;">
+              <div style="font-weight: 800; color: #F5BA42; font-size: 0.88rem;">
                 Slot ${i + 1}
               </div>
-              <div style="flex: 1;">
-                <input type="text" id="timses-slot-input-${i}" class="form-input font-mono" value="${v.npa ? v.npa + ' - ' + v.name : ''}" placeholder="Ketik NPA atau Nama dari DPT..." list="dpt-datalist-voters" style="font-size: 0.82rem; padding: 6px 10px;">
+              <div style="min-width: 0;">
+                <input type="text" id="timses-slot-input-${i}" class="font-mono" value="${displayVal}" placeholder="🔍 Ketik 5 digit NPA atau Nama dari DPT..." list="dpt-datalist-voters" style="width: 100% !important; box-sizing: border-box !important; background: rgba(2, 18, 14, 0.95) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-size: 0.88rem !important; padding: 10px 14px !important; border-radius: 8px !important; outline: none !important;">
               </div>
-              <button type="button" class="btn btn-subtle" onclick="pickRandomSingleSlot(${timsesId}, ${i})" style="font-size: 0.72rem; padding: 6px 10px; background: rgba(255,255,255,0.06); color: #94A3B8;" title="Acak pemilih lain untuk slot ini">
-                🎲 Acak
-              </button>
+              <div>
+                <button type="button" onclick="pickRandomSingleSlot(${timsesId}, ${i})" style="width: auto !important; padding: 9px 15px !important; border-radius: 8px !important; background: rgba(245, 186, 66, 0.15) !important; border: 1px solid rgba(245, 186, 66, 0.45) !important; color: #FDE68A !important; font-size: 0.78rem !important; font-weight: 800 !important; cursor: pointer !important; white-space: nowrap !important; display: inline-flex !important; align-items: center !important; gap: 5px !important;" title="Pilih acak pemilih lain untuk slot ini">
+                  <span>🎲</span>
+                  <span>Acak</span>
+                </button>
+              </div>
             </div>
           `;
         }
 
         // Add datalist for quick autocomplete
         html += `<datalist id="dpt-datalist-voters">`;
-        dpt.slice(0, 300).forEach(item => {
-          html += `<option value="${item.npa} - ${item.name} (${item.pengda || 'DKI'})"></option>`;
+        dpt.forEach(item => {
+          html += `<option value="${item.npa} - ${item.name} (${item.pengda || 'DKI Jakarta'})"></option>`;
         });
         html += `</datalist>`;
 
@@ -9694,9 +9722,12 @@
         const dpt = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
         if (!dpt.length) return;
         const input = document.getElementById(`timses-slot-input-${slotIdx}`);
-        const randomVoter = dpt[Math.floor(Math.random() * dpt.length)];
+        const pool = dpt.filter(v => v.npa !== '99999');
+        const randomVoter = pool[Math.floor(Math.random() * pool.length)];
         if (input && randomVoter) {
-          input.value = `${randomVoter.npa} - ${randomVoter.name}`;
+          input.value = `${randomVoter.npa} - ${randomVoter.name} (${randomVoter.pengda || 'DKI Jakarta'})`;
+          input.style.borderColor = '#10B981';
+          setTimeout(() => { input.style.borderColor = 'rgba(255, 255, 255, 0.25)'; }, 600);
         }
       };
 
@@ -9708,9 +9739,16 @@
         for (let i = 0; i < 5; i++) {
           const input = document.getElementById(`timses-slot-input-${i}`);
           if (input && shuffled[i]) {
-            input.value = `${shuffled[i].npa} - ${shuffled[i].name}`;
+            input.value = `${shuffled[i].npa} - ${shuffled[i].name} (${shuffled[i].pengda || 'DKI Jakarta'})`;
+            input.style.borderColor = '#10B981';
           }
         }
+        setTimeout(() => {
+          for (let i = 0; i < 5; i++) {
+            const input = document.getElementById(`timses-slot-input-${i}`);
+            if (input) input.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          }
+        }, 600);
       };
 
       window.syncFromDptTaggedTimses = function() {
@@ -9724,7 +9762,7 @@
         for (let i = 0; i < 5; i++) {
           const input = document.getElementById(`timses-slot-input-${i}`);
           if (input && tagged[i]) {
-            input.value = `${tagged[i].npa} - ${tagged[i].name}`;
+            input.value = `${tagged[i].npa} - ${tagged[i].name} (${tagged[i].pengda || 'DKI Jakarta'})`;
           }
         }
       };
@@ -9740,11 +9778,15 @@
           if (npaMatch) {
             const found = dpt.find(v => v.npa === npaMatch[1]);
             if (found) newVoters.push(found);
+          } else {
+            const cleanVal = val.toLowerCase();
+            const foundByName = dpt.find(v => cleanVal.includes(v.name.toLowerCase()));
+            if (foundByName) newVoters.push(foundByName);
           }
         }
 
         if (newVoters.length < 5) {
-          alert('Mohon lengkapi seluruh 5 slot nama pemilih ajuan timses dengan memilih anggota resmi dari DPT.');
+          alert('Mohon lengkapi seluruh 5 slot nama pemilih ajuan timses dengan memilih atau mengetik NPA 5-digit anggota dari DPT.');
           return;
         }
 
