@@ -242,4 +242,48 @@ if ($action === 'get_results') {
     exit;
 }
 
+// ================= ACTION 5: CLEAR BALLOTS & RESET VOTES (ADMIN AUTHORIZED) =================
+if ($action === 'clear_ballots') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+    $adminPin = isset($payload['admin_pin']) ? $payload['admin_pin'] : '';
+
+    if ($adminPin !== '2026') {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'PIN Otoritas KPKU tidak valid!']);
+        exit;
+    }
+
+    $fpLock = @fopen($lockFile, 'c+');
+    if ($fpLock && @flock($fpLock, LOCK_EX)) {
+        writeJsonFile($ballotsFile, []);
+        $voters = readJsonFile($votersFile, []);
+        foreach ($voters as $k => $v) {
+            $voters[$k]['voted'] = false;
+            $voters[$k]['voted_at'] = null;
+            $voters[$k]['receipt_hash'] = null;
+            $voters[$k]['claimed'] = false;
+            $voters[$k]['claimed_at'] = null;
+            $voters[$k]['token'] = null;
+        }
+        writeJsonFile($votersFile, $voters);
+
+        $auditLogs = readJsonFile($auditFile, []);
+        $auditLogs[] = [
+            'id' => 'audit-' . bin2hex(random_bytes(4)),
+            'action' => 'BALLOT_BOX_PURGED',
+            'details' => 'Kotak suara server resmi dikosongkan (0 suara). Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.',
+            'timestamp' => date('c')
+        ];
+        writeJsonFile($auditFile, $auditLogs);
+
+        flock($fpLock, LOCK_UN);
+        fclose($fpLock);
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Kotak suara server berhasil dikosongkan (0 suara).']);
+    exit;
+}
+
 echo json_encode(['success' => true, 'service' => 'KPKU IAGI 2026 Vote Sync API', 'status' => 'ONLINE']);

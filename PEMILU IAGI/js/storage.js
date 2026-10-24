@@ -1384,6 +1384,38 @@ class PemiluStorage {
     this.init();
     return true;
   }
+
+  // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact) ---
+  async clearBallotsAndResetVotes() {
+    localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
+    try {
+      const dpt = this.getDPT();
+      dpt.forEach(v => {
+        v.voted = false;
+        v.voted_at = null;
+        v.receipt_hash = null;
+        v.claimed = false;
+        v.claimed_at = null;
+        v.token = null;
+      });
+      this.saveDPT(dpt);
+    } catch (e) {
+      console.error('Error resetting DPT votes:', e);
+    }
+
+    try {
+      if (typeof fetch !== 'undefined') {
+        await fetch('api/vote_sync.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'clear_ballots', admin_pin: '2026' })
+        });
+      }
+    } catch (e) {}
+
+    this.addAuditLog('BALLOT_BOX_PURGED', 'Kotak suara resmi dikosongkan (0 suara) oleh Panitia KPKU. Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.');
+    return true;
+  }
 }
 
 // Global instance

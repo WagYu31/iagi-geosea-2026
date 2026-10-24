@@ -5001,6 +5001,15 @@
                 </div>
               </button>
             </li>
+            <li>
+              <button type="button" class="sidebar-nav-link" onclick="confirmClearBallotBox()" style="color: #F87171;" title="Kosongkan seluruh suara simulasi/testing ke 0 Suara untuk persiapan Hari-H">
+                <div class="sidebar-link-left">
+                  <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  <span>Kosongkan Kotak Suara</span>
+                </div>
+                <span style="font-size:0.7rem; color:#F87171; font-weight: 800;">0</span>
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -5144,9 +5153,14 @@
             <span>Sidang Pleno: Perolehan Suara Calon Ketua Umum</span>
           </div>
 
-          <button id="btn-toggle-vault-desktop" class="btn btn-gold" style="font-size: 0.78rem; padding: 6px 14px;">
-            <span>Buka Segel Pleno</span>
-          </button>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="btn" onclick="confirmClearBallotBox()" style="font-size: 0.76rem; padding: 6px 12px; background: rgba(239, 68, 68, 0.12); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Kosongkan seluruh suara testing & kembalikan ke 0 Suara untuk Hari-H">
+              <span>🧹 Kosongkan Suara (0)</span>
+            </button>
+            <button id="btn-toggle-vault-desktop" class="btn btn-gold" style="font-size: 0.78rem; padding: 6px 14px;">
+              <span>Buka Segel Pleno</span>
+            </button>
+          </div>
         </div>
 
         <!-- State 1: Sealed Vault Mode -->
@@ -10970,6 +10984,38 @@
           }
         });
       }
+
+      // Kosongkan Kotak Suara (Reset Suara ke 0 Tanpa Merusak DPT)
+      window.confirmClearBallotBox = async function() {
+        const pin = prompt('KONFIRMASI PENGOSONGAN KOTAK SUARA (RESET KE 0):\n\n' +
+          'Aksi ini akan menghapus seluruh suara simulasi/testing dan mengembalikan kotak suara ke 0 Suara.\n' +
+          'Data DPT (2.144 pemilih) akan tetap utuh dan dipulihkan seluruh hak suaranya agar siap untuk Hari-H.\n\n' +
+          'Masukkan PIN Otoritas KPKU (default: 2026):');
+        if (!pin) return;
+        if (pin.trim() !== '2026') {
+          alert('❌ PIN Otoritas KPKU salah! Pengosongan kotak suara dibatalkan.');
+          return;
+        }
+
+        if (confirm('PERINGATAN TERAKHIR PANITIA KPKU:\n\n' +
+          'Apakah Anda yakin ingin mengosongkan kotak suara sekarang?\n' +
+          '• Total Suara Masuk akan kembali menjadi 0 Suara (0.0% Partisipasi).\n' +
+          '• Seluruh 2.144 DPT dipulihkan hak suaranya.\n' +
+          '• Kotak suara menjadi FRESH & BERSIH untuk Pemilihan Resmi.')) {
+          
+          if (window.pemiluStorage && typeof window.pemiluStorage.clearBallotsAndResetVotes === 'function') {
+            await window.pemiluStorage.clearBallotsAndResetVotes();
+          }
+          if (typeof refreshAll === 'function') refreshAll();
+          if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
+          
+          alert('✓ KOTAK SUARA BERHASIL DIKOSONGKAN!\n\n' +
+            '• Total Suara Masuk: 0 Suara\n' +
+            '• Partisipasi: 0.0%\n' +
+            '• DPT Terdaftar: 2.144 Pemilih (100% Hak Suara Siap Digunakan)\n\n' +
+            'Sistem siap untuk pemungutan suara resmi Pemilu IAGI 2026.');
+        }
+      };
 
       // Export CSV
       document.getElementById('btn-export-dpt-csv').addEventListener('click', () => {
