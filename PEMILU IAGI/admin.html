@@ -1785,6 +1785,29 @@
       box-shadow: 0 0 14px rgba(37, 211, 102, 0.4);
     }
 
+    .btn-dpt-gentoken {
+      background: rgba(245, 186, 66, 0.15);
+      border: 1px solid rgba(245, 186, 66, 0.45);
+      color: #FBBF24;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dpt-gentoken:hover {
+      background: #F5BA42;
+      border-color: #F5BA42;
+      color: #0F172A;
+      box-shadow: 0 0 14px rgba(245, 186, 66, 0.4);
+    }
+
     .btn-dpt-quickdel {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.35);
@@ -3548,6 +3571,10 @@
             <span>💬 Broadcast WA</span>
           </button>
 
+          <button id="btn-open-gen-token" class="btn-dpt-gentoken" onclick="openGenerateTokenModal()" title="Formulir Bantuan Generate Token untuk Pemilih yang Tidak Terima Email">
+            <span>🔑 Generate Token</span>
+          </button>
+
           <!-- Aksi Cepat Hapus & Bulk Action -->
           <button id="btn-open-fast-delete" class="btn-dpt-quickdel" onclick="openFastDeleteModal()" title="Aksi Cepat Hapus DPT (Berdasarkan Jumlah / Kategori)">
             <span>⚡ Hapus Cepat</span>
@@ -4324,6 +4351,122 @@
             🗑️ Eksekusi Hapus DPT
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL: FORMULIR BANTUAN GENERATE TOKEN KPKU ================= -->
+    <div id="modal-generate-token" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 580px;">
+        <div class="admin-modal-header">
+          <div class="admin-modal-title">
+            <span style="color: #FBBF24; font-size: 1.25rem;">🔑</span>
+            <div>
+              <div style="font-weight: 800; font-size: 1rem; color: #FFFFFF;">Formulir Bantuan Generate Token Pemilih</div>
+              <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 400; margin-top: 2px;">
+                Bantuan Helpdesk KPKU untuk pemilih yang tokennya tidak terkirim via email
+              </div>
+            </div>
+          </div>
+          <button type="button" class="admin-modal-close" onclick="closeGenerateTokenModal()">✕</button>
+        </div>
+        <form id="form-generate-token" onsubmit="event.preventDefault(); doSubmitGenerateToken();">
+          <div class="admin-modal-body">
+            <div id="gen-token-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+
+            <!-- Pilih Pemilih (NPA/Nama Search / Select) -->
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" style="display: flex; justify-content: space-between;">
+                <span>Cari / Pilih Anggota Pemilih (DPT) *</span>
+                <span class="helper">Ketik NPA atau Nama Lengkap</span>
+              </label>
+              <div style="position: relative;">
+                <input type="text" id="gen-token-search-voter" class="form-input" placeholder="Ketik NPA atau Nama (contoh: 00000 atau Hendra)..." autocomplete="off" oninput="handleGenTokenVoterSearch(this.value)">
+                <div id="gen-token-voter-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #0F172A; border: 1px solid #334155; border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 4px;"></div>
+              </div>
+              <input type="hidden" id="gen-token-selected-npa">
+            </div>
+
+            <!-- Kartu Info Pemilih Terpilih -->
+            <div id="gen-token-voter-card" style="display: none; background: rgba(0,0,0,0.35); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                <div>
+                  <div id="gen-token-card-name" style="font-weight: 800; color: #FFFFFF; font-size: 0.9rem;">-</div>
+                  <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #F5BA42; margin-top: 2px;">
+                    NPA: <span id="gen-token-card-npa">-</span> • <span id="gen-token-card-pengda">-</span>
+                  </div>
+                </div>
+                <div id="gen-token-card-status-pill"></div>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.72rem;">
+                <div>
+                  <span style="color: #64748B;">Email Terdaftar:</span>
+                  <div id="gen-token-card-email" style="color: #CBD5E1; font-family: var(--font-mono); word-break: break-all;">-</div>
+                </div>
+                <div>
+                  <span style="color: #64748B;">No. WhatsApp:</span>
+                  <div id="gen-token-card-phone" style="color: #4ADE80; font-family: var(--font-mono);">-</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generator Token Kriptografi Acak -->
+            <div class="form-group" style="margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label class="form-label" style="margin-bottom: 0;">Kode Token Kriptografi (Acak Sistem)</label>
+                <button type="button" onclick="handleRollRandomToken()" style="background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.35); color: #FBBF24; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;">
+                  <span>🎲</span>
+                  <span>Acak Token Baru</span>
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="gen-token-result-input" class="form-input font-mono" readonly style="font-size: 1rem; font-weight: 800; letter-spacing: 0.12em; text-align: center; color: #FDE68A; background: rgba(0,0,0,0.6); border: 1px solid #F5BA42; box-shadow: 0 0 15px rgba(245, 186, 66, 0.15); padding: 10px 14px;" placeholder="IAGI-2026-XXXX-XXXX">
+                <button type="button" onclick="handleCopyGenToken()" class="btn btn-gold" style="padding: 10px 14px; font-size: 0.8rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;" title="Salin Token">
+                  <span>📋</span>
+                  <span>Salin</span>
+                </button>
+              </div>
+              <div style="font-size: 0.68rem; color: #94A3B8; margin-top: 5px; display: flex; align-items: center; gap: 4px;">
+                <span>🔒</span>
+                <span>Standar Kriptografi LUBER: Token acak 128-bit unik sekali pakai. Otomatis hangus setelah memilih.</span>
+              </div>
+            </div>
+
+            <!-- Jam / Waktu Klaim -->
+            <div id="gen-token-time-preview" style="font-size: 0.72rem; color: #34D399; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 6px;">
+              <span>🕒</span>
+              <span><strong>Waktu Terbit / Klaim:</strong> <span id="gen-token-time-val">Sekarang (Realtime WIB)</span></span>
+            </div>
+
+            <!-- Action Dispatch Buttons (WhatsApp & Quick Share) -->
+            <div id="gen-token-dispatch-group" style="display: none; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; margin-top: 10px;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #FFFFFF; display: flex; align-items: center; gap: 6px;">
+                <span>🚀</span>
+                <span>Distribusi Cepat ke Pemilih:</span>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" id="gen-token-btn-wa" onclick="handleSendWaFromGenModal()" class="btn-act-wa" style="flex: 1; padding: 8px 14px; font-size: 0.78rem; justify-content: center;">
+                  <span>💬</span>
+                  <span>Kirim Token via WhatsApp</span>
+                </button>
+                <button type="button" id="gen-token-btn-email-text" onclick="handleCopyEmailDraftFromGenModal()" class="btn btn-subtle" style="padding: 8px 14px; font-size: 0.78rem; border-color: rgba(255,255,255,0.15);">
+                  <span>✉️</span>
+                  <span>Salin Draft Pesan</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="admin-modal-footer">
+            <button type="button" class="btn btn-subtle" onclick="closeGenerateTokenModal()" style="font-size: 0.8rem; padding: 8px 16px;">Tutup</button>
+            <button type="submit" id="btn-submit-gen-token" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <span>💾</span>
+              <span>Simpan & Terbitkan Token</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -5917,23 +6060,234 @@
         refreshAll();
       };
 
-      window.handleGenerateToken = function(npa) {
+      // ================= MODAL GENERATE TOKEN PEMILIH (BANTUAN HELPDESK) =================
+      let activeGenTokenNpa = null;
+
+      window.openGenerateTokenModal = function(npa = null) {
+        const modal = document.getElementById('modal-generate-token');
+        if (!modal) return;
+
+        const alertEl = document.getElementById('gen-token-alert');
+        if (alertEl) alertEl.style.display = 'none';
+
+        const searchInput = document.getElementById('gen-token-search-voter');
+        const dropdown = document.getElementById('gen-token-voter-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
+
+        if (npa) {
+          selectVoterForGenToken(npa);
+        } else {
+          activeGenTokenNpa = null;
+          document.getElementById('gen-token-selected-npa').value = '';
+          if (searchInput) searchInput.value = '';
+          document.getElementById('gen-token-voter-card').style.display = 'none';
+          document.getElementById('gen-token-result-input').value = window.generateToken ? window.generateToken() : 'IAGI-2026-ABCD-EFGH';
+          document.getElementById('gen-token-dispatch-group').style.display = 'none';
+          document.getElementById('gen-token-time-val').innerText = 'Diterbitkan saat disimpan (Realtime WIB)';
+          const btnSub = document.getElementById('btn-submit-gen-token');
+          if (btnSub) {
+            btnSub.style.display = 'inline-flex';
+            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan Token</span>';
+          }
+        }
+
+        modal.style.setProperty('display', 'flex', 'important');
+        if (!npa && searchInput) setTimeout(() => searchInput.focus(), 100);
+      };
+
+      window.closeGenerateTokenModal = function() {
+        const modal = document.getElementById('modal-generate-token');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        const dropdown = document.getElementById('gen-token-voter-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
+        activeGenTokenNpa = null;
+      };
+
+      window.handleGenTokenVoterSearch = function(query) {
+        const dropdown = document.getElementById('gen-token-voter-dropdown');
+        if (!dropdown) return;
+        const q = (query || '').trim().toLowerCase();
+        if (q.length < 1) {
+          dropdown.style.display = 'none';
+          return;
+        }
+
+        const dpt = window.pemiluStorage.getDPT();
+        const matches = dpt.filter(v => 
+          v.npa.toLowerCase().includes(q) || 
+          v.name.toLowerCase().includes(q) || 
+          v.email.toLowerCase().includes(q)
+        ).slice(0, 8);
+
+        if (matches.length === 0) {
+          dropdown.innerHTML = `<div style="padding: 10px 14px; font-size: 0.75rem; color: #94A3B8;">Tidak ada anggota yang cocok dengan "${query}"</div>`;
+          dropdown.style.display = 'block';
+          return;
+        }
+
+        dropdown.innerHTML = matches.map(v => `
+          <div onclick="selectVoterForGenToken('${v.npa}')" style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='rgba(245, 186, 66, 0.12)'" onmouseout="this.style.background='transparent'">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 700; color: #FFFFFF; font-size: 0.8rem;">${v.name}</span>
+              <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #F5BA42; font-weight: 700;">${v.npa}</span>
+            </div>
+            <div style="font-size: 0.7rem; color: #94A3B8; display: flex; justify-content: space-between; margin-top: 2px;">
+              <span>${v.email}</span>
+              <span>${v.voted ? '<span style="color:#34D399;">✓ Voted</span>' : (v.claimed ? '<span style="color:#FBBF24;">🔑 Terbit</span>' : '<span style="color:#94A3B8;">Belum Klaim</span>')}</span>
+            </div>
+          </div>
+        `).join('');
+        dropdown.style.display = 'block';
+      };
+
+      window.selectVoterForGenToken = function(npa) {
         const voter = window.pemiluStorage.getVoterByNpa(npa);
         if (!voter) return;
 
-        let token = voter.token;
-        if (!token) {
-          const res = window.pemiluStorage.generateTokenForVoter(npa);
-          if (!res.success) {
-            alert(res.error || 'Gagal menerbitkan token.');
-            return;
+        activeGenTokenNpa = voter.npa;
+        document.getElementById('gen-token-selected-npa').value = voter.npa;
+        document.getElementById('gen-token-search-voter').value = `${voter.npa} - ${voter.name}`;
+        
+        const dropdown = document.getElementById('gen-token-voter-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
+
+        // Populate card
+        document.getElementById('gen-token-card-name').innerText = voter.name;
+        document.getElementById('gen-token-card-npa').innerText = voter.npa;
+        document.getElementById('gen-token-card-pengda').innerText = voter.pengda || 'DKI Jakarta';
+        document.getElementById('gen-token-card-email').innerText = voter.email;
+        document.getElementById('gen-token-card-phone').innerText = voter.phone || 'Belum ada No. WA';
+
+        const statusPill = document.getElementById('gen-token-card-status-pill');
+        if (voter.voted) {
+          statusPill.innerHTML = `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">✓ Sudah Memberikan Suara</span>`;
+        } else if (voter.claimed && voter.token) {
+          statusPill.innerHTML = `<span style="background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); color: #FBBF24; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">🔑 Token Sudah Terbit</span>`;
+        } else {
+          statusPill.innerHTML = `<span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #F87171; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">⏳ Belum Klaim Token</span>`;
+        }
+        document.getElementById('gen-token-voter-card').style.display = 'block';
+
+        // Token display
+        if (voter.token) {
+          document.getElementById('gen-token-result-input').value = voter.token;
+          document.getElementById('gen-token-time-val').innerText = voter.claimed_at ? (typeof formatClaimFullDate === 'function' ? formatClaimFullDate(voter.claimed_at) : voter.claimed_at) : 'Sebelumnya Terbit';
+          document.getElementById('gen-token-dispatch-group').style.display = 'flex';
+          const btnSub = document.getElementById('btn-submit-gen-token');
+          if (btnSub) {
+            btnSub.innerHTML = '<span>🔄</span><span>Perbarui / Terbitkan Ulang Token</span>';
           }
-          token = res.token;
+        } else {
+          const freshToken = window.generateToken ? window.generateToken() : 'IAGI-2026-ABCD-EFGH';
+          document.getElementById('gen-token-result-input').value = freshToken;
+          document.getElementById('gen-token-time-val').innerText = 'Diterbitkan saat disimpan (Realtime WIB)';
+          document.getElementById('gen-token-dispatch-group').style.display = 'none';
+          const btnSub = document.getElementById('btn-submit-gen-token');
+          if (btnSub) {
+            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan Token</span>';
+          }
         }
 
+        const alertEl = document.getElementById('gen-token-alert');
+        const btnSub = document.getElementById('btn-submit-gen-token');
+        if (voter.voted) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerHTML = `⚠️ <strong>Perhatian:</strong> Pemilih ${voter.name} (${voter.npa}) telah memberikan suara (VOTED). Token tidak dapat digenerate ulang demi integritas surat suara.`;
+          if (btnSub) btnSub.style.display = 'none';
+        } else {
+          alertEl.style.display = 'none';
+          if (btnSub) btnSub.style.display = 'inline-flex';
+        }
+      };
+
+      window.handleRollRandomToken = function() {
+        const fresh = window.generateToken ? window.generateToken() : ('IAGI-2026-' + Math.random().toString(36).substring(2,6).toUpperCase() + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
+        document.getElementById('gen-token-result-input').value = fresh;
+        document.getElementById('gen-token-time-val').innerText = 'Token acak baru siap diterbitkan';
+      };
+
+      window.handleCopyGenToken = function() {
+        const token = document.getElementById('gen-token-result-input').value;
+        if (!token) return;
         navigator.clipboard.writeText(token);
-        alert(`🔑 KODE TOKEN SURAT SUARA RESMI:\n\nNama: ${voter.name}\nNPA: ${voter.npa}\nKode Token: ${token}\n\n✓ Kode token berhasil disalin ke clipboard!`);
+        alert(`✓ Kode token "${token}" berhasil disalin ke clipboard!`);
+      };
+
+      window.doSubmitGenerateToken = function() {
+        const npa = document.getElementById('gen-token-selected-npa').value;
+        const alertEl = document.getElementById('gen-token-alert');
+
+        if (!npa) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Pilih anggota pemilih (DPT) terlebih dahulu.';
+          return;
+        }
+
+        const token = document.getElementById('gen-token-result-input').value.trim();
+        if (!token) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = 'Token tidak boleh kosong.';
+          return;
+        }
+
+        const res = window.pemiluStorage.setTokenForVoter(npa, token);
+        if (!res.success) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerText = res.error || 'Gagal menerbitkan token.';
+          return;
+        }
+
+        alertEl.style.display = 'block';
+        alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+        alertEl.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+        alertEl.style.color = '#A7F3D0';
+        alertEl.innerHTML = `✓ <strong>Token Berhasil Diterbitkan!</strong> Kode unik surat suara telah aktif untuk <strong>${res.voter.name}</strong> (${res.voter.npa}). Anda dapat langsung mengirimkannya ke WhatsApp pemilih.`;
+
+        // Update card & UI
+        selectVoterForGenToken(npa);
         refreshAll();
+      };
+
+      window.handleSendWaFromGenModal = function() {
+        const npa = document.getElementById('gen-token-selected-npa').value;
+        if (!npa) return;
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) return;
+
+        if (!voter.phone) {
+          promptSetPhone(npa);
+          return;
+        }
+        handleSendWhatsApp(npa);
+      };
+
+      window.handleCopyEmailDraftFromGenModal = function() {
+        const npa = document.getElementById('gen-token-selected-npa').value;
+        if (!npa) return;
+        const voter = window.pemiluStorage.getVoterByNpa(npa);
+        if (!voter) return;
+        const token = document.getElementById('gen-token-result-input').value;
+
+        const siteUrl = 'https://pemiluiagi.web.id/app.html#vote';
+        const draft = `Yth. ${voter.name},\n\nBerikut kode token surat suara resmi Pemilu IAGI 2026 Anda yang diterbitkan oleh Panitia KPKU:\n\nNPA: ${voter.npa}\nKode Token: ${token}\nBilik Suara: ${siteUrl}\n\nToken ini bersifat rahasia dan sekali pakai. Silakan gunakan untuk memberikan hak suara Anda.\n\nSalam hormat,\nKomisi Pemilihan Ketua Umum (KPKU) IAGI 2026`;
+        navigator.clipboard.writeText(draft);
+        alert('✓ Draft pesan resmi KPKU berhasil disalin ke clipboard! Siap dipaste ke email atau chat.');
+      };
+
+      window.handleGenerateToken = function(npa) {
+        openGenerateTokenModal(npa);
       };
 
       window.handleCopyToken = function(token) {

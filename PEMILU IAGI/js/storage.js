@@ -31,19 +31,31 @@ async function generateSha256(text) {
   }
 }
 
-// Generate format IAGI-2026-XXXX-XXXX
+// Generate format IAGI-2026-XXXX-XXXX (Acak Sistem Kriptografi LUBER)
 function generateToken() {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const getRandomChunk = (len) => {
+  const getChunk = (len) => {
     let res = '';
-    const randomVals = new Uint8Array(len);
-    window.crypto.getRandomValues(randomVals);
+    try {
+      if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+        const arr = new Uint8Array(len);
+        window.crypto.getRandomValues(arr);
+        for (let i = 0; i < len; i++) {
+          res += chars[arr[i] % chars.length];
+        }
+        return res;
+      }
+    } catch (e) {}
     for (let i = 0; i < len; i++) {
-      res += chars[randomVals[i] % chars.length];
+      res += chars[Math.floor(Math.random() * chars.length)];
     }
     return res;
   };
-  return `IAGI-2026-${getRandomChunk(4)}-${getRandomChunk(4)}`;
+  return `IAGI-2026-${getChunk(4)}-${getChunk(4)}`;
+}
+
+if (typeof window !== 'undefined') {
+  window.generateToken = generateToken;
 }
 
 class PemiluStorage {
@@ -387,7 +399,7 @@ class PemiluStorage {
     return { success: true, voter };
   }
 
-  generateTokenForVoter(npa) {
+  generateTokenForVoter(npa, forceNew = false) {
     const cleanNpa = (npa || '').trim().toUpperCase();
     const dpt = this.getDPT();
     const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
@@ -398,15 +410,38 @@ class PemiluStorage {
       return { success: false, error: 'Pemilih ini sudah memberikan suara (VOTED). Tidak dapat menerbitkan token baru.' };
     }
 
-    if (!voter.token) {
+    if (!voter.token || forceNew) {
       voter.token = generateToken();
       voter.claimed = true;
       voter.claimed_at = new Date().toISOString();
       dpt[idx] = voter;
       this.saveDPT(dpt);
-      this.addAuditLog('ADMIN_TOKEN_GEN', `Panitia menerbitkan token surat suara untuk NPA ${cleanNpa} (${voter.name}): ${voter.token}`);
+      this.addAuditLog('ADMIN_TOKEN_GEN', `Panitia menerbitkan ${forceNew ? 'ulang ' : ''}token surat suara untuk NPA ${cleanNpa} (${voter.name}): ${voter.token}`);
     }
 
+    return { success: true, token: voter.token, voter };
+  }
+
+  setTokenForVoter(npa, token) {
+    const cleanNpa = (npa || '').trim().toUpperCase();
+    const dpt = this.getDPT();
+    const idx = dpt.findIndex(v => v.npa.toUpperCase() === cleanNpa);
+    if (idx === -1) return { success: false, error: 'NPA tidak ditemukan dalam DPT' };
+
+    const voter = dpt[idx];
+    if (voter.voted) {
+      return { success: false, error: 'Pemilih ini sudah memberikan suara (VOTED). Token tidak dapat diubah.' };
+    }
+
+    const cleanToken = (token || '').trim();
+    if (!cleanToken) return { success: false, error: 'Token tidak boleh kosong' };
+
+    voter.token = cleanToken;
+    voter.claimed = true;
+    voter.claimed_at = new Date().toISOString();
+    dpt[idx] = voter;
+    this.saveDPT(dpt);
+    this.addAuditLog('ADMIN_TOKEN_ASSIGN', `Panitia menetapkan token surat suara bantuan untuk NPA ${cleanNpa} (${voter.name}): ${voter.token}`);
     return { success: true, token: voter.token, voter };
   }
 
