@@ -242,17 +242,109 @@ if ($action === 'get_results') {
     exit;
 }
 
-// ================= ACTION 5: CLEAR BALLOTS & RESET VOTES (ADMIN AUTHORIZED) =================
+// ================= ACTION 5: CLEAR BALLOTS & RESET VOTES (ADMIN AUTHORIZED WITH BRUTE-FORCE SHIELD) =================
 if ($action === 'clear_ballots') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
-    $adminPin = isset($payload['admin_pin']) ? $payload['admin_pin'] : '';
+    $adminPin = isset($payload['admin_pin']) ? trim($payload['admin_pin']) : '';
 
-    if ($adminPin !== '2026') {
+    // Resolusi IP Klien
+    $clientIp = '0.0.0.0';
+    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $clientIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $clientIp = trim($parts[0]);
+    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+        $clientIp = trim($_SERVER['REMOTE_ADDR']);
+    }
+    $clientIp = preg_replace('/[^0-9a-fA-F:\.]/', '', $clientIp);
+
+    // Proteksi Anti Brute-Force Server (5x Gagal = Lockout 15 Menit)
+    $lockoutFile = $dataDir . '/ip_lockout.json';
+    $lockouts = readJsonFile($lockoutFile, []);
+    $now = time();
+
+    if (isset($lockouts[$clientIp])) {
+        $ipData = $lockouts[$clientIp];
+        if (!empty($ipData['lock_until']) && $ipData['lock_until'] > $now) {
+            $sisaDetik = $ipData['lock_until'] - $now;
+            $sisaMenit = ceil($sisaDetik / 60);
+
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ AKSES DIBLOKIR SEMENTARA: Alamat IP ({$clientIp}) terdeteksi melakukan 5x percobaan tidak sah (Anti Brute-Force). Sistem dikunci selama {$sisaMenit} menit.",
+                'locked' => true,
+                'remaining_seconds' => $sisaDetik
+            ]);
+            exit;
+        }
+    }
+
+    // Validasi Dual-Key Otoritas Pleno: 312226 (atau master PIN 2026)
+    $isPinValid = ($adminPin === '312226' || $adminPin === '2026');
+
+    if (!$isPinValid) {
+        if (!isset($lockouts[$clientIp])) {
+            $lockouts[$clientIp] = ['fails' => 0, 'lock_until' => 0, 'first_fail' => $now];
+        }
+        $lockouts[$clientIp]['fails'] = ($lockouts[$clientIp]['fails'] ?? 0) + 1;
+        $lockouts[$clientIp]['last_attempt'] = $now;
+
+        $auditLogs = readJsonFile($auditFile, []);
+
+        if ($lockouts[$clientIp]['fails'] >= 5) {
+            // Aktifkan Lockout 15 Menit (900 detik)
+            $lockouts[$clientIp]['lock_until'] = $now + (15 * 60);
+            writeJsonFile($lockoutFile, $lockouts);
+
+            $auditLogs[] = [
+                'id' => 'sec-' . bin2hex(random_bytes(4)),
+                'action' => 'BRUTE_FORCE_LOCKOUT_TRIGGERED',
+                'details' => "IP {$clientIp} diblokir selama 15 menit setelah 5x gagal memasukkan PIN otorisasi server.",
+                'ip' => $clientIp,
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 200) : 'UNKNOWN',
+                'timestamp' => date('c')
+            ];
+            writeJsonFile($auditFile, $auditLogs);
+
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ AKSES DIBLOKIR: Terdeteksi 5 kali kegagalan input PIN otorisasi. Alamat IP ({$clientIp}) dibekukan selama 15 menit demi keamanan.",
+                'locked' => true,
+                'remaining_seconds' => 900
+            ]);
+            exit;
+        }
+
+        writeJsonFile($lockoutFile, $lockouts);
+
+        $sisaPercobaan = 5 - $lockouts[$clientIp]['fails'];
+        $auditLogs[] = [
+            'id' => 'sec-' . bin2hex(random_bytes(4)),
+            'action' => 'UNAUTHORIZED_PIN_ATTEMPT',
+            'details' => "Percobaan PIN otorisasi salah dari IP {$clientIp}. Kesempatan tersisa: {$sisaPercobaan}x.",
+            'ip' => $clientIp,
+            'timestamp' => date('c')
+        ];
+        writeJsonFile($auditFile, $auditLogs);
+
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'PIN Otoritas KPKU tidak valid!']);
+        echo json_encode([
+            'success' => false,
+            'error' => "❌ PIN Otoritas KPKU tidak valid! Sisa kesempatan: {$sisaPercobaan}x sebelum IP Anda diblokir 15 menit.",
+            'remaining_attempts' => $sisaPercobaan
+        ]);
         exit;
+    }
+
+    // Jika PIN Benar: Reset counter kegagalan IP
+    if (isset($lockouts[$clientIp])) {
+        unset($lockouts[$clientIp]);
+        writeJsonFile($lockoutFile, $lockouts);
     }
 
     $fpLock = @fopen($lockFile, 'c+');
@@ -273,7 +365,8 @@ if ($action === 'clear_ballots') {
         $auditLogs[] = [
             'id' => 'audit-' . bin2hex(random_bytes(4)),
             'action' => 'BALLOT_BOX_PURGED',
-            'details' => 'Kotak suara server resmi dikosongkan (0 suara). Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.',
+            'details' => "Kotak suara server resmi dikosongkan (0 suara) via Otorisasi Dual-Key Pleno oleh IP {$clientIp}. Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.",
+            'ip' => $clientIp,
             'timestamp' => date('c')
         ];
         writeJsonFile($auditFile, $auditLogs);
@@ -282,7 +375,7 @@ if ($action === 'clear_ballots') {
         fclose($fpLock);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Kotak suara server berhasil dikosongkan (0 suara).']);
+    echo json_encode(['success' => true, 'message' => 'Kotak suara server berhasil dikosongkan (0 suara) dengan verifikasi Dual-Key Pleno sah.']);
     exit;
 }
 

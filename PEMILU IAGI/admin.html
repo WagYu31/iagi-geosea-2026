@@ -8126,6 +8126,91 @@
       }, 1000);
     };
 
+    // =========================================================================
+    // VAULT UNSEAL BRUTE-FORCE LOCKOUT GUARDIAN (5X GAGAL = KUNCI 15 MENIT)
+    // =========================================================================
+    const VAULT_LOCKOUT_KEY = 'kpku_vault_unseal_guard';
+    let vaultLockoutInterval = null;
+
+    function checkVaultUnsealLockout() {
+      try {
+        const raw = localStorage.getItem(VAULT_LOCKOUT_KEY);
+        if (!raw) return false;
+        const guard = JSON.parse(raw);
+        const now = Date.now();
+        if (guard.lockUntil && guard.lockUntil > now) {
+          applyVaultLockoutUI(guard.lockUntil);
+          return true;
+        } else if (guard.lockUntil && guard.lockUntil <= now) {
+          localStorage.removeItem(VAULT_LOCKOUT_KEY);
+          clearVaultLockoutUI();
+          return false;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    function applyVaultLockoutUI(lockUntil) {
+      const input = document.getElementById('unseal-vault-pin');
+      const submitBtn = document.getElementById('btn-submit-unseal-vault');
+      const alertEl = document.getElementById('unseal-vault-alert');
+      if (input) input.disabled = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        submitBtn.style.cursor = 'not-allowed';
+      }
+      if (vaultLockoutInterval) clearInterval(vaultLockoutInterval);
+      function updateTimer() {
+        const rem = Math.max(0, Math.ceil((lockUntil - Date.now()) / 1000));
+        if (rem <= 0) {
+          clearInterval(vaultLockoutInterval);
+          clearVaultLockoutUI();
+          localStorage.removeItem(VAULT_LOCKOUT_KEY);
+          if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+            alertEl.style.border = '1px solid #10B981';
+            alertEl.style.color = '#6EE7B7';
+            alertEl.innerText = '✅ Waktu penguncian 15 menit telah berakhir. Silakan masukkan sandi resmi pleno (312226).';
+          }
+          return;
+        }
+        const m = Math.floor(rem / 60).toString().padStart(2, '0');
+        const s = (rem % 60).toString().padStart(2, '0');
+        if (alertEl) {
+          alertEl.style.display = 'block';
+          alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertEl.style.border = '1.5px solid #EF4444';
+          alertEl.style.color = '#FCA5A5';
+          alertEl.innerHTML = `
+            <div style="font-weight: 800; color: #EF4444; margin-bottom: 4px;">⛔ AKSES SEGEL DIBLOKIR SEMENTARA</div>
+            <div style="font-size: 0.74rem;">Terdeteksi <b>5 kali kesalahan sandi pleno berturut-turut</b>. Pembukaan brankas ditangguhkan selama <b>15 Menit</b> demi keamanan pleno.</div>
+            <div style="margin-top: 8px; font-family: monospace; font-size: 0.88rem; font-weight: bold; color: #FDE68A; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 4px; display: inline-block;">
+              ⏳ Kunci segel dibuka dalam: <b>${m}:${s}</b>
+            </div>
+          `;
+        }
+      }
+      updateTimer();
+      vaultLockoutInterval = setInterval(updateTimer, 1000);
+    }
+
+    function clearVaultLockoutUI() {
+      if (vaultLockoutInterval) {
+        clearInterval(vaultLockoutInterval);
+        vaultLockoutInterval = null;
+      }
+      const input = document.getElementById('unseal-vault-pin');
+      const submitBtn = document.getElementById('btn-submit-unseal-vault');
+      if (input) input.disabled = false;
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+      }
+    }
+
     window.openUnsealVaultModal = function() {
       const modal = document.getElementById('modal-unseal-vault-auth');
       if (modal) {
@@ -8140,7 +8225,8 @@
           alertEl.innerText = '';
         }
         modal.style.setProperty('display', 'flex', 'important');
-        setTimeout(() => { if (input) input.focus(); }, 150);
+        checkVaultUnsealLockout();
+        setTimeout(() => { if (input && !input.disabled) input.focus(); }, 150);
       } else {
         const pin = prompt('OTORISASI DUAL-KEY KPKU (BUKA SEGEL PLENO):\n\nMasukkan Sandi Otoritas Sidang Pleno Terbuka (312226):');
         if (!pin) return;
@@ -8174,25 +8260,54 @@
 
     window.handleConfirmUnsealVault = function(e) {
       if (e) e.preventDefault();
+      if (checkVaultUnsealLockout()) return;
+
       const input = document.getElementById('unseal-vault-pin');
       const alertEl = document.getElementById('unseal-vault-alert');
       const enteredPin = (input ? input.value : '').trim();
 
       // Validasi Sandi Resmi Pleno: 312226 (atau master PIN 2026)
       if (enteredPin === '312226' || enteredPin === '2026') {
+        localStorage.removeItem(VAULT_LOCKOUT_KEY);
+        clearVaultLockoutUI();
         window.closeUnsealVaultModal();
         // Langsung mulai hitung mundur sinematik 10 - 0!
         window.startUnsealCountdown();
       } else {
-        if (alertEl) {
-          alertEl.style.display = 'block';
-          alertEl.innerText = '❌ Sandi Otoritas Pleno Salah! Silakan masukkan sandi resmi (312226).';
+        let guard = { fails: 0, lockUntil: 0 };
+        try {
+          guard = JSON.parse(localStorage.getItem(VAULT_LOCKOUT_KEY) || '{"fails":0,"lockUntil":0}');
+        } catch(e) {}
+        guard.fails = (guard.fails || 0) + 1;
+
+        if (guard.fails >= 5) {
+          guard.lockUntil = Date.now() + (15 * 60 * 1000); // 15 menit
+          localStorage.setItem(VAULT_LOCKOUT_KEY, JSON.stringify(guard));
+          applyVaultLockoutUI(guard.lockUntil);
+
+          if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+            window.pemiluStorage.addAuditLog(
+              'VAULT_BRUTE_FORCE_BLOCKED',
+              'Terdeteksi 5x kesalahan sandi buka segel pleno. Akses pembukaan brankas dikunci ketat selama 15 menit.'
+            );
+          }
+          return;
         } else {
-          alert('❌ Sandi Otoritas Pleno Salah! Silakan periksa kembali sandi resmi (312226).');
-        }
-        if (input) {
-          input.focus();
-          input.select();
+          localStorage.setItem(VAULT_LOCKOUT_KEY, JSON.stringify(guard));
+          const sisa = 5 - guard.fails;
+          if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = 'rgba(239, 68, 68, 0.15)';
+            alertEl.style.border = '1px solid #EF4444';
+            alertEl.style.color = '#FCA5A5';
+            alertEl.innerHTML = `❌ <b>Sandi Otoritas Pleno Salah!</b><br>Sisa kesempatan: <b>${sisa}x</b> sebelum akses segel diblokir 15 menit.`;
+          } else {
+            alert(`❌ Sandi Otoritas Pleno Salah! Sisa kesempatan: ${sisa}x sebelum akses segel diblokir 15 menit.`);
+          }
+          if (input) {
+            input.focus();
+            input.select();
+          }
         }
       }
     };
@@ -8368,18 +8483,179 @@
         });
       }
 
+      // =========================================================================
+      // BRUTE-FORCE LOCKOUT GUARDIAN (5X GAGAL = KUNCI 15 MENIT)
+      // =========================================================================
+      const BRUTE_FORCE_KEY = 'kpku_admin_bruteforce_guard';
+      const MAX_LOGIN_ATTEMPTS = 5;
+      const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 menit (900.000 ms)
+
+      let lockoutTimerInterval = null;
+
+      function getBruteForceState() {
+        try {
+          const raw = localStorage.getItem(BRUTE_FORCE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        return { step1Fails: 0, step2Fails: 0, lockUntil: 0 };
+      }
+
+      function saveBruteForceState(state) {
+        try {
+          localStorage.setItem(BRUTE_FORCE_KEY, JSON.stringify(state));
+        } catch(e) {}
+      }
+
+      function checkAndApplyLockout() {
+        const state = getBruteForceState();
+        const now = Date.now();
+        if (state.lockUntil && state.lockUntil > now) {
+          applyLockoutUI(state.lockUntil);
+          return true;
+        } else if (state.lockUntil && state.lockUntil <= now) {
+          resetBruteForceState();
+          clearLockoutUI();
+          return false;
+        }
+        return false;
+      }
+
+      function applyLockoutUI(lockUntil) {
+        const inpEmail = document.getElementById('desktop-email-input');
+        const inpPwd = document.getElementById('desktop-password-input');
+        const btnStep1 = document.getElementById('btn-submit-desktop-step1');
+        const inpOtp = document.getElementById('desktop-otp-input');
+        const btnStep2 = document.querySelector('#desktop-form-verify-code button[type="submit"]');
+
+        if (inpEmail) inpEmail.disabled = true;
+        if (inpPwd) inpPwd.disabled = true;
+        if (btnStep1) {
+          btnStep1.disabled = true;
+          btnStep1.style.opacity = '0.5';
+          btnStep1.style.cursor = 'not-allowed';
+        }
+        if (inpOtp) inpOtp.disabled = true;
+        if (btnStep2) {
+          btnStep2.disabled = true;
+          btnStep2.style.opacity = '0.5';
+          btnStep2.style.cursor = 'not-allowed';
+        }
+
+        if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
+
+        function updateCountdown() {
+          const rem = Math.max(0, Math.ceil((lockUntil - Date.now()) / 1000));
+          if (rem <= 0) {
+            clearInterval(lockoutTimerInterval);
+            resetBruteForceState();
+            clearLockoutUI();
+            showAlert('Waktu penguncian 15 menit telah berakhir. Akses form login dipulihkan.', 'success');
+            return;
+          }
+          const m = Math.floor(rem / 60).toString().padStart(2, '0');
+          const s = (rem % 60).toString().padStart(2, '0');
+
+          if (pinAlert) {
+            pinAlert.style.display = 'block';
+            pinAlert.className = 'alert-box alert-error';
+            pinAlert.innerHTML = `
+              <div style="font-weight: 800; font-size: 0.85rem; color: #EF4444; display: flex; align-items: center; gap: 6px;">
+                <span>⛔ AKSES DIBLOKIR SEMENTARA (BRUTE-FORCE DETECTED)</span>
+              </div>
+              <div style="font-size: 0.74rem; color: #FCA5A5; margin-top: 4px; line-height: 1.4;">
+                Terdeteksi <b>5 kali percobaan login tidak sah</b>. Demi keamanan Command Center KPKU, sistem dikunci ketat selama <b>15 Menit</b>.
+              </div>
+              <div style="margin-top: 8px; font-family: monospace; font-size: 0.88rem; font-weight: 800; color: #FDE68A; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 4px; display: inline-block;">
+                ⏳ Akses dibuka kembali dalam: <span id="span-lockout-timer">${m}:${s}</span>
+              </div>
+            `;
+          }
+        }
+
+        updateCountdown();
+        lockoutTimerInterval = setInterval(updateCountdown, 1000);
+      }
+
+      function clearLockoutUI() {
+        if (lockoutTimerInterval) {
+          clearInterval(lockoutTimerInterval);
+          lockoutTimerInterval = null;
+        }
+        const inpEmail = document.getElementById('desktop-email-input');
+        const inpPwd = document.getElementById('desktop-password-input');
+        const btnStep1 = document.getElementById('btn-submit-desktop-step1');
+        const inpOtp = document.getElementById('desktop-otp-input');
+        const btnStep2 = document.querySelector('#desktop-form-verify-code button[type="submit"]');
+
+        if (inpEmail) inpEmail.disabled = false;
+        if (inpPwd) inpPwd.disabled = false;
+        if (btnStep1) {
+          btnStep1.disabled = false;
+          btnStep1.style.opacity = '1';
+          btnStep1.style.cursor = 'pointer';
+        }
+        if (inpOtp) inpOtp.disabled = false;
+        if (btnStep2) {
+          btnStep2.disabled = false;
+          btnStep2.style.opacity = '1';
+          btnStep2.style.cursor = 'pointer';
+        }
+      }
+
+      function resetBruteForceState() {
+        saveBruteForceState({ step1Fails: 0, step2Fails: 0, lockUntil: 0 });
+      }
+
+      function recordBruteForceFail(step = 1, email = '') {
+        const state = getBruteForceState();
+        if (step === 1) state.step1Fails = (state.step1Fails || 0) + 1;
+        if (step === 2) state.step2Fails = (state.step2Fails || 0) + 1;
+
+        const totalFails = Math.max(state.step1Fails || 0, state.step2Fails || 0);
+
+        if (totalFails >= MAX_LOGIN_ATTEMPTS) {
+          state.lockUntil = Date.now() + LOCKOUT_DURATION_MS;
+          saveBruteForceState(state);
+          applyLockoutUI(state.lockUntil);
+
+          if (window.pemiluStorage && typeof window.pemiluStorage.addAuditLog === 'function') {
+            window.pemiluStorage.addAuditLog(
+              'BRUTE_FORCE_LOCKOUT',
+              `Akses login admin diblokir 15 menit: Terdeteksi 5x percobaan tidak sah pada akun (${email || 'unknown'}).`
+            );
+          }
+          return { locked: true, remaining: 0 };
+        } else {
+          saveBruteForceState(state);
+          const remaining = MAX_LOGIN_ATTEMPTS - totalFails;
+          return { locked: false, remaining };
+        }
+      }
+
+      // Inisialisasi status penguncian saat startup
+      checkAndApplyLockout();
+
       // Step 1: Submit email & password
       if (formStep1) {
         formStep1.addEventListener('submit', (e) => {
           e.preventDefault();
+          if (checkAndApplyLockout()) return;
+
           const email = document.getElementById('desktop-email-input').value.trim();
           const password = document.getElementById('desktop-password-input').value.trim();
 
           const validation = window.pemiluStorage.validateAdminCredentials(email, password);
           if (!validation.success) {
-            showAlert(validation.error, 'error');
+            const failRes = recordBruteForceFail(1, email);
+            if (failRes.locked) return;
+            showAlert(`❌ Password salah! Sisa percobaan: ${failRes.remaining}x sebelum sistem dikunci 15 menit.`, 'error');
             return;
           }
+
+          // Reset kegagalan Step 1 jika sukses
+          const curState = getBruteForceState();
+          curState.step1Fails = 0;
+          saveBruteForceState(curState);
 
           pendingAdmin = validation.admin;
           activeOtp = window.pemiluStorage.generateAdminOtp(email, 4) || '2026';
@@ -8506,6 +8782,8 @@
       if (formVerifyCode) {
         formVerifyCode.addEventListener('submit', (e) => {
           e.preventDefault();
+          if (checkAndApplyLockout()) return;
+
           const code = document.getElementById('desktop-otp-input').value.trim();
           const email = pendingAdmin ? pendingAdmin.email : '';
 
@@ -8518,14 +8796,23 @@
           const pinCheck = window.pemiluStorage.verifyAdminSecurityPin(code, email);
 
           if (otpCheck.success || pinCheck.success) {
+            resetBruteForceState();
+            clearLockoutUI();
             completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
           } else {
-            showAlert('Kode verifikasi atau PIN Keamanan 4-digit salah.', 'error');
+            const failRes = recordBruteForceFail(2, email);
+            if (failRes.locked) {
+              sessionStorage.removeItem('kpku_admin_otp');
+              return;
+            }
+            showAlert(`❌ Kode verifikasi atau PIN salah! Sisa percobaan: ${failRes.remaining}x sebelum akun diblokir 15 menit.`, 'error');
           }
         });
       }
 
       function completeLogin(admin) {
+        resetBruteForceState();
+        clearLockoutUI();
         window.pemiluStorage.setAdminSession(admin);
         isUnlocked = true;
         if (pinModal) {
@@ -9824,12 +10111,12 @@
       initSectionFromHash();
       window.addEventListener('hashchange', initSectionFromHash);
 
-      // Auto-unlock check if session active or demo hash
-      const activeSession = window.pemiluStorage.getAdminSession();
-      if (activeSession && activeSession.authenticated) {
-        completeLogin(activeSession);
-      } else if (window.location.hash.includes('unlocked') || window.location.search.includes('unlocked')) {
-        completeLogin({ name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+      // Session verification check upon loading
+      if (!checkAndApplyLockout()) {
+        const activeSession = window.pemiluStorage.getAdminSession();
+        if (activeSession && activeSession.authenticated) {
+          completeLogin(activeSession);
+        }
       }
 
       // Render Functions

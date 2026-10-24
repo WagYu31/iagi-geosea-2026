@@ -1408,7 +1408,7 @@ class PemiluStorage {
         await fetch('api/vote_sync.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'clear_ballots', admin_pin: '2026' })
+          body: JSON.stringify({ action: 'clear_ballots', admin_pin: '312226' })
         });
       }
     } catch (e) {}

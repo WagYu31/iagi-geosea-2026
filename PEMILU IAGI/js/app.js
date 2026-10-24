@@ -1439,19 +1439,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Anti-Brute-Force Guard Helper for app.js
+  const BRUTE_FORCE_KEY = 'kpku_admin_bruteforce_guard';
+  function isBruteForceLocked() {
+    try {
+      const guard = JSON.parse(localStorage.getItem(BRUTE_FORCE_KEY) || '{}');
+      if (guard.lockUntil && guard.lockUntil > Date.now()) {
+        const remSec = Math.ceil((guard.lockUntil - Date.now()) / 1000);
+        const m = Math.floor(remSec / 60);
+        const s = remSec % 60;
+        showAlert(adminLoginAlert, `⛔ AKSES DIBLOKIR: Terdeteksi 5x percobaan gagal. Sistem dikunci selama ${m}m ${s}s demi keamanan.`, 'error');
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  function recordAppBruteFail(email) {
+    try {
+      const guard = JSON.parse(localStorage.getItem(BRUTE_FORCE_KEY) || '{"step1Fails":0,"step2Fails":0,"lockUntil":0}');
+      guard.step1Fails = (guard.step1Fails || 0) + 1;
+      if (guard.step1Fails >= 5) {
+        guard.lockUntil = Date.now() + (15 * 60 * 1000);
+        localStorage.setItem(BRUTE_FORCE_KEY, JSON.stringify(guard));
+        showAlert(adminLoginAlert, '⛔ AKSES DIBLOKIR: Terdeteksi 5x kegagalan login. Sistem dikunci ketat selama 15 menit.', 'error');
+        return { locked: true, remaining: 0 };
+      } else {
+        localStorage.setItem(BRUTE_FORCE_KEY, JSON.stringify(guard));
+        return { locked: false, remaining: 5 - guard.step1Fails };
+      }
+    } catch (e) {
+      return { locked: false, remaining: 4 };
+    }
+  }
+
   // Step 1: Submit Email & Password
   if (formStep1) {
     formStep1.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isBruteForceLocked()) return;
+
       const email = document.getElementById('admin-email-input').value.trim();
       const password = document.getElementById('admin-password-input').value.trim();
 
       const validation = window.pemiluStorage.validateAdminCredentials(email, password);
       if (!validation.success) {
-        showAlert(adminLoginAlert, validation.error, 'error');
+        const fail = recordAppBruteFail(email);
+        if (!fail.locked) {
+          showAlert(adminLoginAlert, `❌ Password salah! Sisa percobaan: ${fail.remaining}x sebelum sistem dikunci 15 menit.`, 'error');
+        }
         triggerHaptic('error');
         return;
       }
+
+      // Reset step 1 fails on success
+      try {
+        const g = JSON.parse(localStorage.getItem(BRUTE_FORCE_KEY) || '{}');
+        g.step1Fails = 0;
+        localStorage.setItem(BRUTE_FORCE_KEY, JSON.stringify(g));
+      } catch(e) {}
 
       currentPendingAdmin = validation.admin;
       currentActiveOtp = window.pemiluStorage.generateAdminOtp(email) || '842026';
@@ -1520,14 +1566,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formVerifyOtp) {
     formVerifyOtp.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isBruteForceLocked()) return;
+
       const otp = document.getElementById('admin-otp-input').value.trim();
       const email = currentPendingAdmin ? currentPendingAdmin.email : '';
 
       const res = window.pemiluStorage.verifyAdminOtp(email, otp);
       if (res.success) {
+        localStorage.removeItem(BRUTE_FORCE_KEY);
         completeAdminLogin(currentPendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
       } else {
-        showAlert(adminLoginAlert, res.error || 'Kode OTP salah.', 'error');
+        const fail = recordAppBruteFail(email);
+        if (!fail.locked) {
+          showAlert(adminLoginAlert, `❌ Kode OTP salah! Sisa percobaan: ${fail.remaining}x.`, 'error');
+        }
         triggerHaptic('error');
       }
     });
@@ -1537,18 +1589,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formVerifyPin) {
     formVerifyPin.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isBruteForceLocked()) return;
+
       const pin = document.getElementById('admin-2fa-pin-input').value.trim();
-      const res = window.pemiluStorage.verifyAdminSecurityPin(pin);
+      const email = currentPendingAdmin ? currentPendingAdmin.email : '';
+      const res = window.pemiluStorage.verifyAdminSecurityPin(pin, email);
       if (res.success) {
+        localStorage.removeItem(BRUTE_FORCE_KEY);
         completeAdminLogin(currentPendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
       } else {
-        showAlert(adminLoginAlert, res.error || 'PIN Keamanan salah.', 'error');
+        const fail = recordAppBruteFail(email);
+        if (!fail.locked) {
+          showAlert(adminLoginAlert, `❌ PIN Keamanan salah! Sisa percobaan: ${fail.remaining}x.`, 'error');
+        }
         triggerHaptic('error');
       }
     });
   }
 
   function completeAdminLogin(admin) {
+    localStorage.removeItem(BRUTE_FORCE_KEY);
     window.pemiluStorage.setAdminSession(admin);
     isAdminAuthenticated = true;
     if (adminPinGate) adminPinGate.style.display = 'none';
