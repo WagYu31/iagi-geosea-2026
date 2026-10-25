@@ -80,9 +80,17 @@ export default function Footer({ settings, auth }) {
                 </Box>
             )}
 
-            {/* Partners Section */}
+            {/* Pre Event Section */}
             {settings.partners && settings.partners.length > 0 && (
-                <Box id="partners" sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(180deg, #f0fdf9 0%, #ecfdf5 50%, #e8f5f0 100%)' }}>
+                <Box
+                    id="pre-event"
+                    sx={{
+                        py: { xs: 6, sm: 8 },
+                        background: 'linear-gradient(180deg, #f0fdf9 0%, #ecfdf5 50%, #e8f5f0 100%)',
+                        position: 'relative',
+                    }}
+                >
+                    <span id="partners" style={{ position: 'absolute', top: '-80px', visibility: 'hidden' }} />
                     <Container maxWidth="lg">
                         <ScrollReveal variant="fadeUp" duration={700}>
                             <Typography
@@ -97,7 +105,7 @@ export default function Footer({ settings, auth }) {
                                     mb: 1,
                                 }}
                             >
-                                OUR PARTNERS
+                                {settings.partners_label || 'PRE-EVENT'}
                             </Typography>
                             <Typography
                                 component="h2"
@@ -111,7 +119,7 @@ export default function Footer({ settings, auth }) {
                                     letterSpacing: '0.02em',
                                 }}
                             >
-                                Event Partners
+                                {settings.partners_title || 'Pre Event'}
                             </Typography>
                         </ScrollReveal>
 
@@ -170,7 +178,7 @@ export default function Footer({ settings, auth }) {
                                 fontStyle: 'italic',
                             }}
                         >
-                            Click the poster to visit our partner's website
+                            Click the poster to visit pre-event website
                         </Typography>
                     </Container>
                 </Box>

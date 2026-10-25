@@ -38,7 +38,7 @@ const navItems = [
     { label: 'Resources', target: 'resources' },
     { label: 'Speakers', target: 'speakers' },
     { label: 'Schedule', target: 'schedule' },
-    { label: 'Event Partners', target: 'partners' },
+    { label: 'Pre Event', target: 'pre-event' },
     { label: 'FAQ', target: 'faq' },
     { label: 'Contact', target: 'venue' },
 ];

@@ -3827,12 +3827,12 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                     </CardContent>
                                 </Card>
 
-                                {/* Event Partners Section */}
+                                {/* Pre Event Section */}
                                 <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                             <Typography variant="h6" sx={{ color: '#1abc9c' }}>
-                                                Event Partners
+                                                Pre Event
                                             </Typography>
                                             <Button
                                                 variant="contained"
@@ -3840,12 +3840,12 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                 onClick={addPartner}
                                                 sx={{ backgroundColor: '#1abc9c' }}
                                             >
-                                                Add Partner
+                                                Add Pre Event
                                             </Button>
                                         </Box>
 
                                         <Alert severity="info" sx={{ mb: 3 }}>
-                                            Upload partner posters with name and link URL. These will appear on the landing page as clickable poster cards.
+                                            Upload poster Pre Event beserta judul dan link URL (misal: Geo Energy Run, Gobar IAGI). Poster ini akan tampil di landing page pada section Pre Event.
                                         </Alert>
 
                                         <Grid container spacing={2}>
@@ -3939,7 +3939,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                     '&:hover': { backgroundColor: '#16a085' },
                                                 }}
                                             >
-                                                {savingPartners ? 'Saving...' : 'Save Partners'}
+                                                {savingPartners ? 'Saving...' : 'Save Pre Event'}
                                             </Button>
                                         </Box>
                                     </CardContent>
