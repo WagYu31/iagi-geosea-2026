@@ -1793,6 +1793,75 @@
       flex-shrink: 0;
     }
 
+    /* ISO/IEC 27002 · 27017 · 27018 Security Compliance */
+    .visual-iso-strip {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(245, 186, 66, 0.25);
+    }
+    .visual-iso-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #F5BA42;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .visual-iso-badges {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .iso-chip {
+      background: rgba(245, 186, 66, 0.08);
+      border: 1px solid rgba(245, 186, 66, 0.3);
+      border-radius: 6px;
+      padding: 6px 4px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .iso-chip:hover {
+      background: rgba(245, 186, 66, 0.16);
+      border-color: rgba(245, 186, 66, 0.6);
+      transform: translateY(-1px);
+    }
+    .iso-chip-code {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      display: block;
+      line-height: 1.2;
+    }
+    .iso-chip-label {
+      font-size: 0.58rem;
+      color: #94A3B8;
+      display: block;
+      margin-top: 2px;
+      line-height: 1.1;
+    }
+    .admin-login-iso-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 8px 12px;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: #A7F3D0;
+      line-height: 1.35;
+    }
+    .admin-login-iso-footer strong {
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+    }
+
     @media (max-width: 860px) {
       .pin-modal-card {
         grid-template-columns: 1fr;
@@ -5433,6 +5502,15 @@
             <span>Kembali ke Portal Landing Page</span>
           </a>
         </div>
+
+        <!-- Security & ISO/IEC Standard Compliance Notice -->
+        <div class="admin-login-iso-footer">
+          <svg style="width: 16px; height: 16px; stroke: #10B981; fill: none; stroke-width: 2.2; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <div>
+            <span style="color: #6EE7B7; font-weight: 700;">Standar Keamanan Siber & Privasi:</span><br>
+            <strong>ISO/IEC 27002</strong> · <strong>ISO/IEC 27017</strong> · <strong>ISO/IEC 27018</strong>
+          </div>
+        </div>
       </div>
 
       <!-- Right Pane: Visual Artwork / Showcase (Image 2 right half) -->
@@ -5470,6 +5548,28 @@
           <div class="visual-feature-row">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             <span>4.280+ Anggota Terdaftar dalam DPT Resmi</span>
+          </div>
+
+          <!-- ISO Security Strip -->
+          <div class="visual-iso-strip">
+            <div class="visual-iso-title">
+              <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Kepatuhan Standar Siber & Cloud Internasional</span>
+            </div>
+            <div class="visual-iso-badges">
+              <div class="iso-chip" title="ISO/IEC 27002: Information Security Controls">
+                <span class="iso-chip-code">ISO 27002</span>
+                <span class="iso-chip-label">Security Controls</span>
+              </div>
+              <div class="iso-chip" title="ISO/IEC 27017: Cloud Services Security">
+                <span class="iso-chip-code">ISO 27017</span>
+                <span class="iso-chip-label">Cloud Security</span>
+              </div>
+              <div class="iso-chip" title="ISO/IEC 27018: Protection of Personally Identifiable Information in Cloud">
+                <span class="iso-chip-code">ISO 27018</span>
+                <span class="iso-chip-label">PII Protection</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

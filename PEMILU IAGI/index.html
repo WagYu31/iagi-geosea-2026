@@ -310,13 +310,6 @@
       }
     }
   </style>
-
-  <script>
-    // Forward legacy deep links directly to mobile app
-    if (window.location.hash && ['#vote', '#home', '#dpt', '#claim', '#admin'].includes(window.location.hash)) {
-      window.location.replace('app.html' + window.location.hash);
-    }
-  </script>
 </head>
 <body>
 
@@ -345,9 +338,11 @@
         </div>
       </a>
 
+      <!-- Center: Pill Navigation Dock -->
       <nav class="header-nav-dock" aria-label="Navigasi Utama">
         <a href="#portal" class="nav-pill-link active">Portal</a>
         <a href="#caketum" class="nav-pill-link">Profil Kandidat</a>
+        <a href="#keamanan" class="nav-pill-link">Keamanan & ISO</a>
       </nav>
 
       <!-- Right: Direct CTA Buttons -->
@@ -377,6 +372,7 @@
       <span>Profil Calon Ketua Umum (Caketum)</span>
       <span>➜</span>
     </a>
+    
     <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
     <a href="app.html#vote" class="btn-header-member btn-bilik-member" id="btn-header-member-mobile" style="justify-content: center; width: 100%; padding: 12px;">
       <span class="btn-bilik-icon">
@@ -649,6 +645,85 @@
     </div>
   </section>
 
+  <!-- ================= STANDAR KEAMANAN & PRIVASI SIBER (ISO/IEC) ================= -->
+  <section class="security-standards-section" id="keamanan">
+    <div class="container">
+      <div class="section-head-center">
+        <div class="section-eyebrow" style="color: #059669; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25);">
+          <svg style="width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>STANDAR KEPATUHAN & PRIVASI SIBER</span>
+        </div>
+        <h2 class="section-title">Keamanan Sistem Berstandar <span style="background: linear-gradient(135deg, #0284C7 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ISO/IEC</span></h2>
+        <p class="section-desc">
+          Platform Pemilihan Elektronik (E-Voting) Ketua Umum IAGI 2026 dibangun dan dioperasikan sesuai tiga pilar standar keamanan informasi, komputasi awan, dan perlindungan privasi data pemilih berstandar global.
+        </p>
+      </div>
+
+      <div class="security-standards-grid">
+        <!-- Card 1: ISO/IEC 27002 -->
+        <div class="sec-standard-card">
+          <div class="sec-card-top">
+            <span class="sec-iso-tag">KONTROL KEAMANAN INFORMASI</span>
+            <div class="sec-iso-code">ISO/IEC 27002</div>
+          </div>
+          <h3 class="sec-card-name">Information Security Controls</h3>
+          <p class="sec-card-desc">
+            Panduan komprehensif pengendalian keamanan informasi organisasi: mencakup tata kelola kriptografi berkekuatan tinggi (AES-256 & SHA-256), manajemen kontrol akses hak suara berbasis peran (RBAC), serta audit trail digital immutable.
+          </p>
+          <div class="sec-card-badges">
+            <span class="sec-pill">Kriptografi AES-256 & SHA-256</span>
+            <span class="sec-pill">Audit Trail Kriptografis Immutable</span>
+            <span class="sec-pill">Otentikasi 2FA Multi-Faktor Panitia</span>
+          </div>
+        </div>
+
+        <!-- Card 2: ISO/IEC 27017 -->
+        <div class="sec-standard-card highlighted">
+          <div class="sec-card-top">
+            <span class="sec-iso-tag highlight">INFRASTRUKTUR CLOUD</span>
+            <div class="sec-iso-code">ISO/IEC 27017</div>
+          </div>
+          <h3 class="sec-card-name">Cloud Services Security Controls</h3>
+          <p class="sec-card-desc">
+            Standar internasional keamanan komputasi awan (cloud computing): menjamin proteksi isolasi data pemilih di server cloud, mitigasi serangan DDoS dan Brute-Force, monitoring lalu lintas real-time, serta ketersediaan sistem berkeandalan tinggi (high availability).
+          </p>
+          <div class="sec-card-badges">
+            <span class="sec-pill">Cloud Tenant Isolation</span>
+            <span class="sec-pill">Anti-Brute Force Protection</span>
+            <span class="sec-pill">Real-Time Cloud Synchronization</span>
+          </div>
+        </div>
+
+        <!-- Card 3: ISO/IEC 27018 -->
+        <div class="sec-standard-card">
+          <div class="sec-card-top">
+            <span class="sec-iso-tag">PRIVASI DATA PRIBADI (PII)</span>
+            <div class="sec-iso-code">ISO/IEC 27018</div>
+          </div>
+          <h3 class="sec-card-name">Protection of PII in Public Cloud</h3>
+          <p class="sec-card-desc">
+            Standar perlindungan data pribadi (Personally Identifiable Information / PII) dalam layanan cloud publik: penyamaran identitas email pemilih (<em>masked email</em>), kerahasiaan nomor NPA, serta pemisahan identitas dengan token suara demi asas LUBER & JURDIL.
+          </p>
+          <div class="sec-card-badges">
+            <span class="sec-pill">Proteksi PII 2.144 Pemilih</span>
+            <span class="sec-pill">Masked Email Display Protection</span>
+            <span class="sec-pill">Kerahasiaan Suara Anonim & Rahasia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust Seal Bar -->
+      <div class="security-trust-seal-bar">
+        <div class="seal-icon">
+          <svg style="width:22px; height:22px; stroke:#10B981; fill:none; stroke-width:2.2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+        </div>
+        <div class="seal-text">
+          <strong>Jaminan Asas LUBER & JURDIL:</strong> Seluruh surat suara yang dikirimkan melalui bilik suara e-voting dienkripsi secara independen tanpa dapat dilacak kembali ke identitas pemilih (<em>Secret Ballot Guarantee</em>), sesuai mandat Konstitusi IAGI & standar ISO/IEC 27002, 27017, dan 27018.
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= FOOTER ================= -->
   <footer class="landing-footer">
     <div class="container">
@@ -672,6 +747,7 @@
           <h4>Akses Langsung</h4>
           <ul class="footer-links">
             <li><a href="#caketum"><svg class="footer-link-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>Profil Calon</a></li>
+            <li><a href="#keamanan"><svg class="footer-link-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>Keamanan & ISO</a></li>
             <li><a href="app.html#vote"><svg class="footer-link-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>Bilik Suara</a></li>
             <li><a href="app.html#dpt"><svg class="footer-link-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>Cek DPT Online</a></li>
             <li><a href="app.html#claim"><svg class="footer-link-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>Klaim Token</a></li>
@@ -713,6 +789,9 @@
           © 2026 KPKU IAGI. Hak Cipta Dilindungi Undang-Undang.
         </div>
         <div class="footer-bottom-meta">
+          <span class="footer-version-tag" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: #059669; font-weight: 800;">
+            🛡️ ISO/IEC 27002 · 27017 · 27018
+          </span>
           <span class="footer-version-tag">v4.0.0 Mobile-Optimized</span>
           <span class="footer-status-pill">
             <span class="pulse-live-dot"></span>

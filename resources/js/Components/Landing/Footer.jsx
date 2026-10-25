@@ -511,8 +511,8 @@ export default function Footer({ settings, auth }) {
                             © 2026 PIT IAGI-GEOSEA XIX. All rights reserved.
                         </Typography>
                         {/* ISO Compliance Badges */}
-                        <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
-                            {['ISO 9241', 'ISO 40500'].map((label) => (
+                        <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                            {['ISO/IEC 27002', 'ISO/IEC 27017', 'ISO/IEC 27018', 'ISO 9241', 'ISO 40500'].map((label) => (
                                 <Box key={label} sx={{
                                     px: 1, py: 0.3, borderRadius: '4px',
                                     bgcolor: 'rgba(77,212,172,0.08)',
