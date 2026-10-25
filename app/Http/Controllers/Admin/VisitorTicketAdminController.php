@@ -546,7 +546,8 @@ class VisitorTicketAdminController extends Controller
             'student_undergraduate' => 'TKT-STUD',
             // Technical
             'presenter' => 'TKT-PRS',
-            'invited_speaker' => 'TKT-ISPK',
+            'invited_speaker' => 'TKT-STUD',
+            'student' => 'TKT-STUD',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
@@ -802,14 +803,15 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_professional' => '/images/badges/Participant.png',
             'iagi_member_expatriate' => '/images/badges/Participant.png',
             'non_iagi_member_expatriate' => '/images/badges/Participant.png',
-            'student_undergraduate' => '/images/badges/Participant.png',
+            'student_undergraduate' => '/images/badges/Student.png',
+            'student' => '/images/badges/Student.png',
             'student_postgraduate' => '/images/badges/Participant.png',
             'general_ticket' => '/images/badges/Participant.png',
             'exclusive' => '/images/badges/VIP.png',
             'non_exclusive' => '/images/badges/Visitor.png',
             // Technical
             'presenter' => '/images/badges/Presenter.png',
-            'invited_speaker' => '/images/badges/Invited_Speaker.png',
+            'invited_speaker' => '/images/badges/Student.png',
             'session_chair_judge' => '/images/badges/Session_Chair_Judge.png',
             'session_chair' => '/images/badges/Session_Chair.png',
             'judge' => '/images/badges/Judge.png',
@@ -820,7 +822,7 @@ class VisitorTicketAdminController extends Controller
         ];
 
         $path = $map[$type] ?? '/images/badges/Participant.png';
-        return $path . '?v=20261023_oral_poster_presentation';
+        return $path . '?v=20261025_student_badge';
     }
 
     /**
@@ -1504,7 +1506,8 @@ class VisitorTicketAdminController extends Controller
                     'student_undergraduate' => 'TKT-STUD',
                     // Technical
                     'presenter' => 'TKT-PRS',
-                    'invited_speaker' => 'TKT-ISPK',
+                    'invited_speaker' => 'TKT-STUD',
+                    'student' => 'TKT-STUD',
                     'session_chair_judge' => 'TKT-JDG',
                     'session_chair' => 'TKT-JDG',
                     'judge' => 'TKT-JDG',
@@ -1698,7 +1701,8 @@ class VisitorTicketAdminController extends Controller
             'student_undergraduate' => 'TKT-STUD',
             // Technical
             'presenter' => 'TKT-PRS',
-            'invited_speaker' => 'TKT-ISPK',
+            'invited_speaker' => 'TKT-STUD',
+            'student' => 'TKT-STUD',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',

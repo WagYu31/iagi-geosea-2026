@@ -129,11 +129,18 @@ const CATEGORY_META = {
         border: '#86efac',
     },
     invited_speaker: {
-        label: 'Invited Speaker',
-        shortLabel: 'INVITED SPEAKER',
-        bg: '#fdf2f8',
-        color: '#9d174d',
-        border: '#fbcfe8',
+        label: 'Student',
+        shortLabel: 'STUDENT',
+        bg: '#ecfdf5',
+        color: '#004C23',
+        border: '#a7f3d0',
+    },
+    student: {
+        label: 'Student',
+        shortLabel: 'STUDENT',
+        bg: '#ecfdf5',
+        color: '#004C23',
+        border: '#a7f3d0',
     },
     session_chair_judge: {
         label: 'Session Chair / Judge',
@@ -329,6 +336,7 @@ const CATEGORY_PRICES = {
     'delegate': 0,
     'presenter': 0,
     'invited_speaker': 0,
+    'student': 0,
     'session_chair_judge': 0,
     'session_chair': 0,
     'judge': 0,
@@ -1761,7 +1769,7 @@ export default function VisitorTicketsIndex({
                                     2. TECHNICAL
                                 </ListSubheader>
                                 <MenuItem value="presenter" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎙️ Presenter</MenuItem>
-                                <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🗣️ Invited Speaker</MenuItem>
+                                <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🎓 Student</MenuItem>
                                 <MenuItem value="session_chair_judge" sx={{ pl: 3, fontSize: '0.82rem' }}>3. ⚖️ Session Chair / Judge</MenuItem>
                                 <MenuItem value="oral" sx={{ pl: 3, fontSize: '0.82rem' }}>4. 📢 Oral</MenuItem>
                                 <MenuItem value="poster" sx={{ pl: 3, fontSize: '0.82rem' }}>5. 📑 Poster</MenuItem>
@@ -3450,10 +3458,10 @@ export default function VisitorTicketsIndex({
                                                         </MenuItem>
                                                         <MenuItem value="invited_speaker" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#9d174d', fontSize: '0.82rem' }}>
-                                                                    2. 🗣️ Invited Speaker
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#004C23', fontSize: '0.82rem' }}>
+                                                                    2. 🎓 Student
                                                                 </Typography>
-                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#fdf2f8', color: '#9d174d', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
+                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#ecfdf5', color: '#004C23', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
                                                         <MenuItem value="session_chair_judge" sx={{ pl: 2.5, py: 1 }}>
@@ -3608,7 +3616,7 @@ export default function VisitorTicketsIndex({
                                         2. TECHNICAL
                                     </ListSubheader>
                                     <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎙️ Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
+                                    <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🎓 Student (Invited / Free)</MenuItem>
                                     <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
                                     <MenuItem value="oral" sx={{ pl: 3 }}>4. 📢 Oral (Invited / Free)</MenuItem>
                                     <MenuItem value="poster" sx={{ pl: 3 }}>5. 📑 Poster (Invited / Free)</MenuItem>
@@ -3721,7 +3729,7 @@ export default function VisitorTicketsIndex({
                                     Import Peserta / Technical (Excel & CSV)
                                 </Typography>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
-                                    Upload data massal (misal 200 data Oral, Poster, Presenter, Invited Speaker, Judge)
+                                    Upload data massal (misal 200 data Oral, Poster, Presenter, Student, Judge)
                                 </Typography>
                             </Box>
                         </Box>
@@ -3782,9 +3790,9 @@ export default function VisitorTicketsIndex({
                                 </Grid>
                                 <Grid item xs={12} sm={4}>
                                     <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
-                                        <strong>2. 🗣️ Invited Speaker</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Invited Speaker</code></div>
-                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: INVITED SPEAKER</div>
+                                        <strong>2. 🎓 Student</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Student</code></div>
+                                        <div style={{ color: '#004C23', fontWeight: 700 }}>Badge: STUDENT</div>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={4}>
@@ -5174,7 +5182,7 @@ export default function VisitorTicketsIndex({
 
                 {[
                     { type: 'presenter', label: '1. 🎙️ Presenter', code: 'TKT-PRS', color: '#15803d' },
-                    { type: 'invited_speaker', label: '2. 🗣️ Invited Speaker', code: 'TKT-ISPK', color: '#9d174d' },
+                    { type: 'invited_speaker', label: '2. 🎓 Student', code: 'TKT-STUD', color: '#004C23' },
                     { type: 'session_chair_judge', label: '3. ⚖️ Session Chair / Judge', code: 'TKT-JDG', color: '#0e7490' },
                     { type: 'oral', label: '4. 📢 Oral', code: 'TKT-ORL', color: '#0f766e' },
                     { type: 'poster', label: '5. 📑 Poster', code: 'TKT-PST', color: '#a21caf' },

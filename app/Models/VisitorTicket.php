@@ -94,7 +94,8 @@ class VisitorTicket extends Model
             'student_undergraduate' => 'TKT-STUD',
             // Technical
             'presenter' => 'TKT-PRS',
-            'invited_speaker' => 'TKT-ISPK',
+            'invited_speaker' => 'TKT-STUD',
+            'student' => 'TKT-STUD',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
@@ -131,7 +132,8 @@ class VisitorTicket extends Model
 
             // 2. Technical
             'presenter' => 'Presenter',
-            'invited_speaker' => 'Invited Speaker',
+            'invited_speaker' => 'Student',
+            'student' => 'Student',
             'session_chair_judge' => 'Session Chair / Judge',
             'session_chair' => 'Session Chair',
             'judge' => 'Judge',

@@ -63,7 +63,8 @@ const CATEGORY_MAP = {
 
     // 2. Technical
     presenter: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#f0fdf4', color: '#15803d', border: '#86efac' },
-    invited_speaker: { label: 'Invited Speaker', shortLabel: 'INVITED SPEAKER', badge: 'INVITED SPEAKER', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
+    invited_speaker: { label: 'Student', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    student: { label: 'Student', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
     session_chair_judge: { label: 'Session Chair / Judge', shortLabel: 'CHAIR / JUDGE', badge: 'SESSION CHAIR / JUDGE', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
     session_chair: { label: 'Session Chair', shortLabel: 'CHAIR', badge: 'SESSION CHAIR', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
     judge: { label: 'Judge', shortLabel: 'JUDGE', badge: 'JUDGE', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },

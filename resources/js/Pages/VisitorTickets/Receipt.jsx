@@ -50,7 +50,8 @@ const CATEGORY_MAP = {
 
     // 2. Technical
     presenter: { label: 'Presenter', badge: 'PRESENTER' },
-    invited_speaker: { label: 'Invited Speaker', badge: 'INVITED SPEAKER' },
+    invited_speaker: { label: 'Student', badge: 'STUDENT' },
+    student: { label: 'Student', badge: 'STUDENT' },
     session_chair_judge: { label: 'Session Chair / Judge', badge: 'SESSION CHAIR / JUDGE' },
     session_chair: { label: 'Session Chair', badge: 'SESSION CHAIR' },
     judge: { label: 'Judge', badge: 'JUDGE' },

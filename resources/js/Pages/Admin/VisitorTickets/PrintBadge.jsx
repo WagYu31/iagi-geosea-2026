@@ -22,7 +22,8 @@ export const BADGE_TEMPLATES = {
     non_iagi_member_professional: '/images/badges/Participant.png',
     iagi_member_expatriate: '/images/badges/Participant.png',
     non_iagi_member_expatriate: '/images/badges/Participant.png',
-    student_undergraduate: '/images/badges/Participant.png',
+    student_undergraduate: '/images/badges/Student.png',
+    student: '/images/badges/Student.png',
 
     // 2. Visitor
     non_exclusive: '/images/badges/Visitor.png',
@@ -61,7 +62,7 @@ export const BADGE_TEMPLATES = {
 
     // Technical
     presenter: '/images/badges/Presenter.png',
-    invited_speaker: '/images/badges/Invited_Speaker.png',
+    invited_speaker: '/images/badges/Student.png',
     session_chair_judge: '/images/badges/Session_Chair_Judge.png',
     session_chair: '/images/badges/Session_Chair.png',
     judge: '/images/badges/Judge.png',
@@ -81,7 +82,8 @@ const CATEGORY_MAP = {
 
     // 2. Technical
     presenter: { label: 'PRESENTER', short: 'PRESENTER' },
-    invited_speaker: { label: 'INVITED SPEAKER', short: 'INVITED SPEAKER' },
+    invited_speaker: { label: 'STUDENT', short: 'STUDENT' },
+    student: { label: 'STUDENT', short: 'STUDENT' },
     session_chair_judge: { label: 'SESSION CHAIR / JUDGE', short: 'CHAIR / JUDGE' },
     session_chair: { label: 'SESSION CHAIR', short: 'SESSION CHAIR' },
     judge: { label: 'JUDGE', short: 'JUDGE' },
@@ -126,7 +128,7 @@ const CATEGORY_MAP = {
     delegate: { label: 'DELEGATE', short: 'DELEGATE' },
 };
 
-export const BADGE_VERSION = '20261023_oral_poster_presentation';
+export const BADGE_VERSION = '20261025_student_badge';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
