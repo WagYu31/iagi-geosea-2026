@@ -49,16 +49,16 @@ const CATEGORY_MAP = {
     student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT UNDERGRADUATE' },
 
     // 2. Technical
-    student: { label: 'Student', badge: 'STUDENT' },
-    presenter: { label: 'Student', badge: 'STUDENT' },
+    presenter: { label: 'Presenter', badge: 'PRESENTER' },
+    student: { label: 'Presenter', badge: 'PRESENTER' },
     invited_speaker: { label: 'Invited Speaker', badge: 'INVITED SPEAKER' },
     session_chair_judge: { label: 'Session Chair / Judge', badge: 'SESSION CHAIR / JUDGE' },
     session_chair: { label: 'Session Chair', badge: 'SESSION CHAIR' },
     judge: { label: 'Judge', badge: 'JUDGE' },
-    oral: { label: 'Oral Presenter', badge: 'ORAL PRESENTER' },
-    oral_presenter: { label: 'Oral Presenter', badge: 'ORAL PRESENTER' },
-    poster: { label: 'Poster Presenter', badge: 'POSTER PRESENTER' },
-    poster_presenter: { label: 'Poster Presenter', badge: 'POSTER PRESENTER' },
+    oral: { label: 'Presenter', badge: 'PRESENTER' },
+    oral_presenter: { label: 'Presenter', badge: 'PRESENTER' },
+    poster: { label: 'Presenter', badge: 'PRESENTER' },
+    poster_presenter: { label: 'Presenter', badge: 'PRESENTER' },
 
     // 3. Visitor
     non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },

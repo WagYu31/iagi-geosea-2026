@@ -545,16 +545,16 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             // Technical
-            'student' => 'TKT-STUD',
-            'presenter' => 'TKT-STUD',
+            'student' => 'TKT-PRS',
+            'presenter' => 'TKT-PRS',
             'invited_speaker' => 'TKT-ISPK',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
-            'oral' => 'TKT-ORL',
-            'oral_presenter' => 'TKT-ORL',
-            'poster' => 'TKT-PST',
-            'poster_presenter' => 'TKT-PST',
+            'oral' => 'TKT-PRS',
+            'oral_presenter' => 'TKT-PRS',
+            'poster' => 'TKT-PRS',
+            'poster_presenter' => 'TKT-PRS',
         ];
 
         $newPrice = $paidCategories[$newType] ?? 0;
@@ -810,16 +810,16 @@ class VisitorTicketAdminController extends Controller
             'exclusive' => '/images/badges/VIP.png',
             'non_exclusive' => '/images/badges/Visitor.png',
             // Technical
-            'student' => '/images/badges/Student.png',
-            'presenter' => '/images/badges/Student.png',
+            'student' => '/images/badges/Presenter.png',
+            'presenter' => '/images/badges/Presenter.png',
             'invited_speaker' => '/images/badges/Invited_Speaker.png',
             'session_chair_judge' => '/images/badges/Session_Chair_Judge.png',
             'session_chair' => '/images/badges/Session_Chair.png',
             'judge' => '/images/badges/Judge.png',
-            'oral' => '/images/badges/Oral_Presenter.png',
-            'oral_presenter' => '/images/badges/Oral_Presenter.png',
-            'poster' => '/images/badges/Poster_Presenter.png',
-            'poster_presenter' => '/images/badges/Poster_Presenter.png',
+            'oral' => '/images/badges/Presenter.png',
+            'oral_presenter' => '/images/badges/Presenter.png',
+            'poster' => '/images/badges/Presenter.png',
+            'poster_presenter' => '/images/badges/Presenter.png',
         ];
 
         $path = $map[$type] ?? '/images/badges/Participant.png';
@@ -1349,29 +1349,19 @@ class VisitorTicketAdminController extends Controller
         $clean = preg_replace('/\(.*?\)/', '', $clean);
         $clean = trim(preg_replace('/[^a-z0-9_\-\s\/]/', '', $clean));
 
-        // 1. Oral
-        if (str_contains($clean, 'oral')) {
-            return 'oral';
+        // 1. Presenter (Presenter / Oral / Poster)
+        if (str_contains($clean, 'presenter') || str_contains($clean, 'oral') || str_contains($clean, 'poster')) {
+            return 'presenter';
         }
 
-        // 2. Poster
-        if (str_contains($clean, 'poster')) {
-            return 'poster';
-        }
-
-        // 3. Session Chair / Judge
+        // 2. Session Chair / Judge
         if (str_contains($clean, 'chair') || str_contains($clean, 'judge')) {
             return 'session_chair_judge';
         }
 
-        // 4. Invited Speaker
+        // 3. Invited Speaker
         if (str_contains($clean, 'invited') || (str_contains($clean, 'speaker') && !str_contains($clean, 'keynote'))) {
             return 'invited_speaker';
-        }
-
-        // 5. Presenter
-        if (str_contains($clean, 'presenter')) {
-            return 'presenter';
         }
 
         // Keynote Speaker
@@ -1507,16 +1497,16 @@ class VisitorTicketAdminController extends Controller
                     'non_iagi_member_expatriate' => 'TKT-NEXP',
                     'student_undergraduate' => 'TKT-STUD',
                     // Technical
-                    'student' => 'TKT-STUD',
-                    'presenter' => 'TKT-STUD',
+                    'student' => 'TKT-PRS',
+                    'presenter' => 'TKT-PRS',
                     'invited_speaker' => 'TKT-ISPK',
                     'session_chair_judge' => 'TKT-JDG',
                     'session_chair' => 'TKT-JDG',
                     'judge' => 'TKT-JDG',
-                    'oral' => 'TKT-ORL',
-                    'oral_presenter' => 'TKT-ORL',
-                    'poster' => 'TKT-PST',
-                    'poster_presenter' => 'TKT-PST',
+                    'oral' => 'TKT-PRS',
+                    'oral_presenter' => 'TKT-PRS',
+                    'poster' => 'TKT-PRS',
+                    'poster_presenter' => 'TKT-PRS',
                 ];
 
                 // 1. Delete removed tickets safely
@@ -1707,16 +1697,16 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             // Technical
-            'student' => 'TKT-STUD',
-            'presenter' => 'TKT-STUD',
+            'student' => 'TKT-PRS',
+            'presenter' => 'TKT-PRS',
             'invited_speaker' => 'TKT-ISPK',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
-            'oral' => 'TKT-ORL',
-            'oral_presenter' => 'TKT-ORL',
-            'poster' => 'TKT-PST',
-            'poster_presenter' => 'TKT-PST',
+            'oral' => 'TKT-PRS',
+            'oral_presenter' => 'TKT-PRS',
+            'poster' => 'TKT-PRS',
+            'poster_presenter' => 'TKT-PRS',
         ];
 
         $newCode = $ticket->ticket_code;

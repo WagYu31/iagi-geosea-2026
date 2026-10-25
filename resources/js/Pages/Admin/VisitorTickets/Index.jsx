@@ -121,16 +121,16 @@ const CATEGORY_META = {
     },
 
     // 2. Technical (Free / Invited)
-    student: {
-        label: 'Student',
-        shortLabel: 'STUDENT',
+    presenter: {
+        label: 'Presenter',
+        shortLabel: 'PRESENTER',
         bg: '#ecfdf5',
         color: '#004C23',
         border: '#a7f3d0',
     },
-    presenter: {
-        label: 'Student',
-        shortLabel: 'STUDENT',
+    student: {
+        label: 'Presenter',
+        shortLabel: 'PRESENTER',
         bg: '#ecfdf5',
         color: '#004C23',
         border: '#a7f3d0',
@@ -1769,12 +1769,12 @@ export default function VisitorTicketsIndex({
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     2. TECHNICAL
                                 </ListSubheader>
-                                <MenuItem value="student" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎓 Student</MenuItem>
-                                <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student</MenuItem>
+                                <MenuItem value="presenter" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎓 Presenter</MenuItem>
+                                <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter</MenuItem>
                                 <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🗣️ Invited Speaker</MenuItem>
                                 <MenuItem value="session_chair_judge" sx={{ pl: 3, fontSize: '0.82rem' }}>3. ⚖️ Session Chair / Judge</MenuItem>
-                                <MenuItem value="oral" sx={{ pl: 3, fontSize: '0.82rem' }}>4. 📢 Oral Presenter</MenuItem>
-                                <MenuItem value="poster" sx={{ pl: 3, fontSize: '0.82rem' }}>5. 📑 Poster Presenter</MenuItem>
+                                <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter</MenuItem>
+                                <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter</MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     3. VISITOR
@@ -3498,15 +3498,15 @@ export default function VisitorTicketsIndex({
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             2. TECHNICAL (FREE / INVITED)
                                                         </ListSubheader>
-                                                        <MenuItem value="student" sx={{ pl: 2.5, py: 1 }}>
+                                                        <MenuItem value="presenter" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                                                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#004C23', fontSize: '0.82rem' }}>
-                                                                    1. 🎓 Student
+                                                                    1. 🎓 Presenter
                                                                 </Typography>
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#ecfdf5', color: '#004C23', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
-                                                        <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student</MenuItem>
+                                                        <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter</MenuItem>
                                                         <MenuItem value="invited_speaker" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                                                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#9d174d', fontSize: '0.82rem' }}>
@@ -3523,22 +3523,8 @@ export default function VisitorTicketsIndex({
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#ecfeff', color: '#0e7490', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
-                                                        <MenuItem value="oral" sx={{ pl: 2.5, py: 1 }}>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#0f766e', fontSize: '0.82rem' }}>
-                                                                    4. 📢 Oral Presenter
-                                                                </Typography>
-                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#f0fdfa', color: '#0f766e', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
-                                                            </Box>
-                                                        </MenuItem>
-                                                        <MenuItem value="poster" sx={{ pl: 2.5, py: 1 }}>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#a21caf', fontSize: '0.82rem' }}>
-                                                                    5. 📑 Poster Presenter
-                                                                </Typography>
-                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#fdf4ff', color: '#a21caf', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
-                                                            </Box>
-                                                        </MenuItem>
+                                                        <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter</MenuItem>
+                                                        <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter</MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             3. VISITOR PASS
@@ -3666,12 +3652,12 @@ export default function VisitorTicketsIndex({
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. TECHNICAL
                                     </ListSubheader>
-                                    <MenuItem value="student" sx={{ pl: 3 }}>1. 🎓 Student (Invited / Free)</MenuItem>
-                                    <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student (Invited / Free)</MenuItem>
+                                    <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
+                                    <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
                                     <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
                                     <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
-                                    <MenuItem value="oral" sx={{ pl: 3 }}>4. 📢 Oral Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="poster" sx={{ pl: 3 }}>5. 📑 Poster Presenter (Invited / Free)</MenuItem>
+                                    <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter (Invited / Free)</MenuItem>
+                                    <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter (Invited / Free)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         3. VISITOR
@@ -3827,17 +3813,17 @@ export default function VisitorTicketsIndex({
                             </Button>
                         </Box>
 
-                        {/* Guide on 5 Technical Roles */}
+                        {/* Guide on Technical Roles */}
                         <Box sx={{ p: 2, mb: 3, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#475569', display: 'block', mb: 1, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                💡 Aturan Penulisan Kolom "Kategori" (5 Role Technical):
+                                💡 Aturan Penulisan Kolom "Kategori" (Role Technical):
                             </Typography>
                             <Grid container spacing={1}>
                                 <Grid item xs={12} sm={4}>
                                     <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
-                                        <strong>1. 🎓 Student</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Student</code></div>
-                                        <div style={{ color: '#004C23', fontWeight: 700 }}>Badge: STUDENT</div>
+                                        <strong>1. 🎓 Presenter</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Presenter</code></div>
+                                        <div style={{ color: '#004C23', fontWeight: 700 }}>Badge: PRESENTER</div>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={4}>
@@ -3852,20 +3838,6 @@ export default function VisitorTicketsIndex({
                                         <strong>3. ⚖️ Session Chair / Judge</strong>
                                         <div style={{ color: '#64748b' }}>Tulis: <code>Session Chair / Judge</code></div>
                                         <div style={{ color: '#0e7490', fontWeight: 700 }}>Badge: CHAIR / JUDGE</div>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ p: 1, bgcolor: '#f0fdfa', borderRadius: '8px', border: '1.5px solid #99f6e4', fontSize: '0.8rem' }}>
-                                        <strong style={{ color: '#0f766e' }}>4. 📢 Oral Presenter</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Oral</code> / <code>Oral Presenter</code></div>
-                                        <div style={{ color: '#0f766e', fontWeight: 800 }}>Badge: ORAL PRESENTER</div>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ p: 1, bgcolor: '#fdf4ff', borderRadius: '8px', border: '1.5px solid #f5d0fe', fontSize: '0.8rem' }}>
-                                        <strong style={{ color: '#a21caf' }}>5. 📑 Poster Presenter</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Poster</code> / <code>Poster Presenter</code></div>
-                                        <div style={{ color: '#a21caf', fontWeight: 800 }}>Badge: POSTER PRESENTER</div>
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -5240,11 +5212,9 @@ export default function VisitorTicketsIndex({
                 </ListSubheader>
 
                 {[
-                    { type: 'student', label: '1. 🎓 Student', code: 'TKT-STUD', color: '#004C23' },
+                    { type: 'presenter', label: '1. 🎓 Presenter', code: 'TKT-PRS', color: '#004C23' },
                     { type: 'invited_speaker', label: '2. 🗣️ Invited Speaker', code: 'TKT-ISPK', color: '#9d174d' },
                     { type: 'session_chair_judge', label: '3. ⚖️ Session Chair / Judge', code: 'TKT-JDG', color: '#0e7490' },
-                    { type: 'oral', label: '4. 📢 Oral Presenter', code: 'TKT-ORL', color: '#0f766e' },
-                    { type: 'poster', label: '5. 📑 Poster Presenter', code: 'TKT-PST', color: '#a21caf' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}

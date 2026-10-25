@@ -93,16 +93,16 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             // Technical
-            'student' => 'TKT-STUD',
-            'presenter' => 'TKT-STUD',
+            'student' => 'TKT-PRS',
+            'presenter' => 'TKT-PRS',
             'invited_speaker' => 'TKT-ISPK',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
-            'oral' => 'TKT-ORL',
-            'oral_presenter' => 'TKT-ORL',
-            'poster' => 'TKT-PST',
-            'poster_presenter' => 'TKT-PST',
+            'oral' => 'TKT-PRS',
+            'oral_presenter' => 'TKT-PRS',
+            'poster' => 'TKT-PRS',
+            'poster_presenter' => 'TKT-PRS',
         ];
 
         $prefix = $prefixMap[$type] ?? 'TKT-VIS';
@@ -131,16 +131,16 @@ class VisitorTicket extends Model
             'student_undergraduate' => 'Student Undergraduate',
 
             // 2. Technical
-            'student' => 'Student',
-            'presenter' => 'Student',
+            'student' => 'Presenter',
+            'presenter' => 'Presenter',
             'invited_speaker' => 'Invited Speaker',
             'session_chair_judge' => 'Session Chair / Judge',
             'session_chair' => 'Session Chair',
             'judge' => 'Judge',
-            'oral' => 'Oral Presenter',
-            'oral_presenter' => 'Oral Presenter',
-            'poster' => 'Poster Presenter',
-            'poster_presenter' => 'Poster Presenter',
+            'oral' => 'Presenter',
+            'oral_presenter' => 'Presenter',
+            'poster' => 'Presenter',
+            'poster_presenter' => 'Presenter',
 
             // 3. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',

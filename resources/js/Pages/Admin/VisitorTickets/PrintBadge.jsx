@@ -61,16 +61,16 @@ export const BADGE_TEMPLATES = {
     delegate: '/images/badges/Sponsorship.png',
 
     // Technical
-    student: '/images/badges/Student.png',
-    presenter: '/images/badges/Student.png',
+    student: '/images/badges/Presenter.png',
+    presenter: '/images/badges/Presenter.png',
     invited_speaker: '/images/badges/Invited_Speaker.png',
     session_chair_judge: '/images/badges/Session_Chair_Judge.png',
     session_chair: '/images/badges/Session_Chair.png',
     judge: '/images/badges/Judge.png',
-    oral: '/images/badges/Oral_Presenter.png',
-    oral_presenter: '/images/badges/Oral_Presenter.png',
-    poster: '/images/badges/Poster_Presenter.png',
-    poster_presenter: '/images/badges/Poster_Presenter.png',
+    oral: '/images/badges/Presenter.png',
+    oral_presenter: '/images/badges/Presenter.png',
+    poster: '/images/badges/Presenter.png',
+    poster_presenter: '/images/badges/Presenter.png',
 };
 
 const CATEGORY_MAP = {
@@ -82,16 +82,16 @@ const CATEGORY_MAP = {
     student_undergraduate: { label: 'PARTICIPANT: STUDENT UNDERGRADUATE', short: 'STUDENT' },
 
     // 2. Technical
-    student: { label: 'STUDENT', short: 'STUDENT' },
-    presenter: { label: 'STUDENT', short: 'STUDENT' },
+    student: { label: 'PRESENTER', short: 'PRESENTER' },
+    presenter: { label: 'PRESENTER', short: 'PRESENTER' },
     invited_speaker: { label: 'INVITED SPEAKER', short: 'INVITED SPEAKER' },
     session_chair_judge: { label: 'SESSION CHAIR / JUDGE', short: 'CHAIR / JUDGE' },
     session_chair: { label: 'SESSION CHAIR', short: 'SESSION CHAIR' },
     judge: { label: 'JUDGE', short: 'JUDGE' },
-    oral: { label: 'ORAL PRESENTER', short: 'ORAL PRESENTER' },
-    oral_presenter: { label: 'ORAL PRESENTER', short: 'ORAL PRESENTER' },
-    poster: { label: 'POSTER PRESENTER', short: 'POSTER PRESENTER' },
-    poster_presenter: { label: 'POSTER PRESENTER', short: 'POSTER PRESENTER' },
+    oral: { label: 'PRESENTER', short: 'PRESENTER' },
+    oral_presenter: { label: 'PRESENTER', short: 'PRESENTER' },
+    poster: { label: 'PRESENTER', short: 'PRESENTER' },
+    poster_presenter: { label: 'PRESENTER', short: 'PRESENTER' },
 
     // 3. Visitor
     non_exclusive: { label: 'VISITOR PASS', short: 'VISITOR' },

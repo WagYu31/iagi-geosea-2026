@@ -220,9 +220,9 @@ const CATEGORY_MAP = {
         tagColor: '#047857',
     },
     // Technical Categories
-    student: {
-        label: 'Student',
-        badge: 'STUDENT',
+    presenter: {
+        label: 'Presenter',
+        badge: 'PRESENTER',
         gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
         border: '#094d42',
         shadow: 'rgba(9, 77, 66, 0.25)',
@@ -230,9 +230,9 @@ const CATEGORY_MAP = {
         tagBg: '#dcfce7',
         tagColor: '#15803d',
     },
-    presenter: {
-        label: 'Student',
-        badge: 'STUDENT',
+    student: {
+        label: 'Presenter',
+        badge: 'PRESENTER',
         gradient: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 100%)',
         border: '#094d42',
         shadow: 'rgba(9, 77, 66, 0.25)',

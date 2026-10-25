@@ -62,16 +62,16 @@ const CATEGORY_MAP = {
     student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT UNDERGRADUATE', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
 
     // 2. Technical
-    student: { label: 'Student', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
-    presenter: { label: 'Student', shortLabel: 'STUDENT', badge: 'STUDENT', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    presenter: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    student: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
     invited_speaker: { label: 'Invited Speaker', shortLabel: 'INVITED SPEAKER', badge: 'INVITED SPEAKER', bg: '#fdf2f8', color: '#9d174d', border: '#fbcfe8' },
     session_chair_judge: { label: 'Session Chair / Judge', shortLabel: 'CHAIR / JUDGE', badge: 'SESSION CHAIR / JUDGE', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
     session_chair: { label: 'Session Chair', shortLabel: 'CHAIR', badge: 'SESSION CHAIR', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
     judge: { label: 'Judge', shortLabel: 'JUDGE', badge: 'JUDGE', bg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
-    oral: { label: 'Oral Presenter', shortLabel: 'ORAL PRESENTER', badge: 'ORAL PRESENTER', bg: '#f0fdfa', color: '#0f766e', border: '#99f6e4' },
-    oral_presenter: { label: 'Oral Presenter', shortLabel: 'ORAL PRESENTER', badge: 'ORAL PRESENTER', bg: '#f0fdfa', color: '#0f766e', border: '#99f6e4' },
-    poster: { label: 'Poster Presenter', shortLabel: 'POSTER PRESENTER', badge: 'POSTER PRESENTER', bg: '#fdf4ff', color: '#a21caf', border: '#f5d0fe' },
-    poster_presenter: { label: 'Poster Presenter', shortLabel: 'POSTER PRESENTER', badge: 'POSTER PRESENTER', bg: '#fdf4ff', color: '#a21caf', border: '#f5d0fe' },
+    oral: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    oral_presenter: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    poster: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
+    poster_presenter: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },
 
     // 3. Visitor
     non_exclusive: { label: 'Visitor Pass (Free)', shortLabel: 'VISITOR', badge: 'VISITOR PASS (FREE)', bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
