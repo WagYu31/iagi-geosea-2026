@@ -71,14 +71,13 @@ class RestoreYogaCommand extends Command
             if ($price > 0) {
                 $pay = VisitorPayment::create([
                     'payment_code' => 'INV-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
-                    'payer_name' => $name,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'institution' => $institution,
+                    'pic_name' => $name,
+                    'pic_email' => $email,
+                    'pic_phone' => $phone,
+                    'pic_institution' => $institution,
                     'total_amount' => $price,
-                    'payment_status' => 'verified',
+                    'status' => 'verified',
                     'is_mixed_category' => false,
-                    'registration_type' => 'single',
                 ]);
                 $payId = $pay->id;
             }

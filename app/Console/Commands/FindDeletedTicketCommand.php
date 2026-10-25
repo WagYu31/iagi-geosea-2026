@@ -146,17 +146,17 @@ class FindDeletedTicketCommand extends Command
         // 3. Search in visitor_payments table
         $this->comment("\n3. Memeriksa tabel visitor_payments...");
         $payments = VisitorPayment::where(function ($q) use ($query) {
-            $q->where('email', 'like', "%{$query}%")
-              ->orWhere('payer_name', 'like', "%{$query}%")
-              ->orWhere('phone', 'like', "%{$query}%")
+            $q->where('pic_email', 'like', "%{$query}%")
               ->orWhere('pic_name', 'like', "%{$query}%")
-              ->orWhere('pic_email', 'like', "%{$query}%");
+              ->orWhere('pic_phone', 'like', "%{$query}%")
+              ->orWhere('payment_code', 'like', "%{$query}%")
+              ->orWhere('debt_notes', 'like', "%{$query}%");
         })->get();
 
         if ($payments->isNotEmpty()) {
             $this->info("ℹ️  Ditemukan " . $payments->count() . " data di tabel visitor_payments:");
             foreach ($payments as $p) {
-                $this->line("   - [{$p->payment_code}] {$p->payer_name} ({$p->email}) - Rp " . number_format($p->total_amount, 0, ',', '.') . " - Status: {$p->payment_status}");
+                $this->line("   - [{$p->payment_code}] {$p->pic_name} ({$p->pic_email}) - Rp " . number_format($p->total_amount, 0, ',', '.') . " - Status: {$p->status}");
             }
         } else {
             $this->line("   Tidak ada data di tabel visitor_payments.");
@@ -215,14 +215,13 @@ class FindDeletedTicketCommand extends Command
                 if ($price > 0) {
                     $pay = VisitorPayment::create([
                         'payment_code' => 'INV-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(2))),
-                        'payer_name' => 'Yoga Adriana',
-                        'email' => 'yoga@unpad.ac.id',
-                        'phone' => '+62 812-2166-8872',
-                        'institution' => 'Universitas Padjadjaran (UNPAD)',
+                        'pic_name' => 'Yoga Adriana',
+                        'pic_email' => 'yoga@unpad.ac.id',
+                        'pic_phone' => '+62 812-2166-8872',
+                        'pic_institution' => 'Universitas Padjadjaran (UNPAD)',
                         'total_amount' => $price,
-                        'payment_status' => 'verified',
+                        'status' => 'verified',
                         'is_mixed_category' => false,
-                        'registration_type' => 'single',
                     ]);
                     $payId = $pay->id;
                 }
