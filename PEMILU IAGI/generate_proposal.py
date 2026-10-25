@@ -1424,11 +1424,11 @@ html_content = f"""<!DOCTYPE html>
                         Ketentuan Pembayaran (Payment Terms)
                     </h3>
                     <ul style="margin: 0; padding-left: 14px; font-size: 7.1pt; color: #475569; line-height: 1.45;">
-                        <li><strong>Termin 1 (Uang Muka / DP 50%): Rp 3.500.000,-</strong><br>
-                            Mencakup aktivasi repositori mandiri, setup arsitektur kriptografi Zero-Knowledge, konfigurasi modul DPT, integrasi dual-channel dispatcher, dan deployment server mandiri.
+                        <li><strong>Termin 1 (Uang Muka / DP - Telah Diterima): Rp 3.978.054,-</strong><br>
+                            Mencakup aktivasi repositori mandiri, domain & cloud hosting, setup awal arsitektur sistem, dan konfigurasi modul DPT resmi.
                         </li>
-                        <li><strong>Termin 2 (Pelunasan Akhir 50%): Rp 3.500.000,-</strong><br>
-                            Pelunasan sisa 50% dibayarkan setelah gladi bersih sistem bersama Panitia KPKU selesai, uji penetrasi keamanan lolos, dan sistem dinyatakan siap tayang (*Go-Live Ready*).
+                        <li><strong>Termin 2 (Pelunasan Akhir saat Pleno): Rp 3.021.946,-</strong><br>
+                            Pelunasan sisa biaya jasa & implementasi keamanan siber dibayarkan setelah gladi bersih sistem bersama Panitia KPKU selesai dan sistem dinyatakan siap tayang (*Go-Live Ready*).
                         </li>
                     </ul>
                 </div>
