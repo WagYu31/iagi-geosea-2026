@@ -20,6 +20,11 @@
       --admin-panel-hover: rgba(3, 30, 24, 0.95);
       --admin-gold: #F5BA42;
       --admin-emerald: #10B981;
+      --gold-primary: #F5BA42;
+      --gold-gradient: linear-gradient(135deg, #FDE68A 0%, #F5BA42 50%, #D97706 100%);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
     }
 
     html {
@@ -111,16 +116,18 @@
 
     /* Admin Profile Card in Sidebar */
     .sidebar-admin-profile {
-      margin: 16px 14px;
-      padding: 14px;
-      background: rgba(245, 186, 66, 0.05);
-      border: 1px solid rgba(245, 186, 66, 0.22);
-      border-radius: var(--radius-md);
+      margin: 14px 14px 12px;
+      padding: 12px 14px;
+      background: rgba(245, 186, 66, 0.06);
+      border: 1px solid rgba(245, 186, 66, 0.28);
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       position: relative;
-      overflow: hidden;
+      flex-shrink: 0 !important;
+      min-height: 74px;
+      box-sizing: border-box;
     }
 
     .sidebar-admin-profile::before {
@@ -131,6 +138,7 @@
       width: 3px;
       height: 100%;
       background: var(--gold-gradient);
+      border-radius: 14px 0 0 14px;
     }
 
     .admin-profile-header {
@@ -8927,8 +8935,13 @@
         }
 
         const adminNameEl = document.getElementById('desktop-admin-name');
-        if (adminNameEl) {
-          adminNameEl.innerText = `${admin.name} (${admin.role})`;
+        const adminRoleEl = document.querySelector('.admin-info-role');
+        if (adminNameEl && admin.name) {
+          adminNameEl.innerText = admin.name;
+          adminNameEl.title = admin.name;
+        }
+        if (adminRoleEl && admin.role) {
+          adminRoleEl.innerText = admin.role;
         }
 
         const avatarEl = document.getElementById('sidebar-admin-avatar');
