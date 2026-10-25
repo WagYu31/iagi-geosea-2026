@@ -562,7 +562,7 @@ body {
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
-  background: url('../assets/hero-bg-poster.jpg?v=665465cf') center top / cover no-repeat;
+  background: url('../assets/hero-bg-poster.jpg?v=4a1ad365') center top / cover no-repeat;
 }
 
 .hero-bg-video {
@@ -2859,7 +2859,7 @@ body {
 /* Mobile Performance & Smooth 60fps Optimization */
 @media (max-width: 768px) {
   .hero-video-backdrop {
-    background: url('../assets/hero-bg-poster.jpg?v=665465cf') center top / cover no-repeat !important;
+    background: url('../assets/hero-bg-poster.jpg?v=4a1ad365') center top / cover no-repeat !important;
   }
   .hero-bg-video {
     display: block !important;
