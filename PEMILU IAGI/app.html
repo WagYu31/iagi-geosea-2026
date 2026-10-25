@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Taste-Skill Mobile PWA Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=4.5.8">
+  <link rel="stylesheet" href="css/style.css?v=4.6.0">
   <!-- Official KPKU Helpdesk Live Chat Stylesheet -->
   <link rel="stylesheet" href="css/livechat.css?v=4.5.8">
 </head>
@@ -348,37 +348,43 @@
           </div>
 
           <!-- Jaminan Keamanan & Perlindungan Privasi Data DPT (ISO/IEC Compliance) -->
-          <div class="dpt-iso-security-banner">
-            <div class="dpt-iso-header">
-              <div class="dpt-iso-shield">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          <div class="dpt-iso-security-banner" style="background: linear-gradient(135deg, rgba(2, 35, 28, 0.75) 0%, rgba(1, 18, 14, 0.85) 100%); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+              <div style="width: 32px; height: 32px; border-radius: 9px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#34D399" stroke-width="2.2" style="width: 18px; height: 18px; max-width: 18px; max-height: 18px; display: block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
               </div>
-              <div class="dpt-iso-title-wrap">
-                <div class="dpt-iso-badge-tag">JAMINAN PRIVASI DATA PEMILIH & SIBER</div>
-                <h4 class="dpt-iso-heading">Perlindungan Data DPT Berstandar Internasional ISO/IEC</h4>
-                <p class="dpt-iso-desc">
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.06em; color: #6EE7B7; text-transform: uppercase; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 8px; border-radius: 999px; margin-bottom: 5px;">JAMINAN PRIVASI DATA PEMILIH & SIBER</div>
+                <h4 style="margin: 0 0 4px 0; font-size: 0.88rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em;">Perlindungan Data DPT Berstandar Internasional ISO/IEC</h4>
+                <p style="margin: 0; font-size: 0.76rem; color: #94A3B8; line-height: 1.45;">
                   Data 2.144 Anggota Terdaftar dikelola sesuai kepatuhan standar keamanan informasi global untuk menjamin hak pilih dan privasi anggota:
                 </p>
               </div>
             </div>
 
-            <div class="dpt-iso-grid">
-              <div class="dpt-iso-item">
-                <span class="dpt-iso-code">ISO/IEC 27018</span>
-                <span class="dpt-iso-item-title">Proteksi Data Pribadi (PII)</span>
-                <p class="dpt-iso-item-desc">Penyamaran email pemilih (<em>masked email</em>), penguncian NPA resmi, dan enkripsi data anggota di cloud.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #F5BA42; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27018</span>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Proteksi Data Pribadi (PII)</span>
+                </div>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Penyamaran email pemilih (<em>masked email</em>), penguncian NPA resmi, dan enkripsi data anggota di cloud.</p>
               </div>
 
-              <div class="dpt-iso-item">
-                <span class="dpt-iso-code">ISO/IEC 27017</span>
-                <span class="dpt-iso-item-title">Keamanan Cloud Terpadu</span>
-                <p class="dpt-iso-item-desc">Infrastruktur cloud berintegritas tinggi dengan proteksi isolasi data pemilih dari akses tak berwenang.</p>
+              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #34D399; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27017</span>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Keamanan Cloud Terpadu</span>
+                </div>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Infrastruktur cloud berintegritas tinggi dengan proteksi isolasi data pemilih dari akses tak berwenang.</p>
               </div>
 
-              <div class="dpt-iso-item">
-                <span class="dpt-iso-code">ISO/IEC 27002</span>
-                <span class="dpt-iso-item-title">Kontrol Akses & Audit Trail</span>
-                <p class="dpt-iso-item-desc">Sistem kontrol verifikasi berlapis dan audit trail kriptografis yang tidak dapat dimanipulasi.</p>
+              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #60A5FA; background: rgba(96, 165, 250, 0.15); border: 1px solid rgba(96, 165, 250, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27002</span>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Kontrol Akses & Audit Trail</span>
+                </div>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Sistem kontrol verifikasi berlapis dan audit trail kriptografis yang tidak dapat dimanipulasi.</p>
               </div>
             </div>
           </div>
@@ -901,7 +907,7 @@
           <!-- Header Card -->
           <div class="card-header-flex">
             <div class="card-icon-frame">
-              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;display:block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
             <div>
               <div class="card-title">KPKU Command Center</div>
