@@ -5387,9 +5387,8 @@
               <div class="login-input-group">
                 <label class="login-input-label">
                   <span>Email Resmi Panitia / Saksi</span>
-                  <span style="color: var(--gold-secondary); font-size: 0.72rem; font-family: var(--font-mono);">admin.kpku@iagi.or.id</span>
                 </label>
-                <input type="email" id="desktop-email-input" class="login-input-field" placeholder="admin.kpku@iagi.or.id" required>
+                <input type="email" id="desktop-email-input" class="login-input-field" placeholder="Masukkan email resmi Anda" required autocomplete="username">
               </div>
 
               <div class="login-input-group">
@@ -8567,16 +8566,6 @@
         btnTogglePwd.addEventListener('click', () => {
           const inp = document.getElementById('desktop-password-input');
           if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
-        });
-      }
-
-      // Quick fill Step 1
-      if (btnQuickFill) {
-        btnQuickFill.addEventListener('click', () => {
-          const em = document.getElementById('desktop-email-input');
-          const pw = document.getElementById('desktop-password-input');
-          if (em) em.value = 'admin.kpku@iagi.or.id';
-          if (pw) pw.value = 'admin';
         });
       }
 

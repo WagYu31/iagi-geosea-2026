@@ -1689,17 +1689,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Quick fill account
-  const btnQuickFillAccount = document.getElementById('btn-quick-fill-admin-account');
-  if (btnQuickFillAccount) {
-    btnQuickFillAccount.addEventListener('click', () => {
-      const emailInput = document.getElementById('admin-email-input');
-      const pwdInput = document.getElementById('admin-password-input');
-      if (emailInput) emailInput.value = 'admin.kpku@iagi.or.id';
-      if (pwdInput) pwdInput.value = 'admin';
-      triggerHaptic('light');
-    });
-  }
+
 
   // Anti-Brute-Force Guard Helper for app.js
   const BRUTE_FORCE_KEY = 'kpku_admin_bruteforce_guard';
