@@ -70,14 +70,20 @@ class RestoreYogaCommand extends Command
             $payId = null;
             if ($price > 0) {
                 $pay = VisitorPayment::create([
-                    'payment_code' => 'INV-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
+                    'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
+                    'payment_method' => 'cash_onsite',
+                    'total_members' => 1,
+                    'price_per_ticket' => $price,
+                    'unique_code' => 0,
+                    'total_amount' => $price,
+                    'status' => 'approved',
+                    'verified_at' => now(),
                     'pic_name' => $name,
                     'pic_email' => $email,
                     'pic_phone' => $phone,
                     'pic_institution' => $institution,
-                    'total_amount' => $price,
-                    'status' => 'verified',
                     'is_mixed_category' => false,
+                    'notes' => 'Restored via CLI',
                 ]);
                 $payId = $pay->id;
             }
@@ -86,7 +92,7 @@ class RestoreYogaCommand extends Command
 
             $ticket = VisitorTicket::create([
                 'payment_id' => $payId,
-                'registration_source' => 'restored_command',
+                'registration_source' => 'admin_onsite',
                 'visitor_name' => $name,
                 'visitor_email' => $email,
                 'visitor_phone' => $phone,

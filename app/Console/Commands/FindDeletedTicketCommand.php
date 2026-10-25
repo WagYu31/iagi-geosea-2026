@@ -214,21 +214,27 @@ class FindDeletedTicketCommand extends Command
                 $payId = null;
                 if ($price > 0) {
                     $pay = VisitorPayment::create([
-                        'payment_code' => 'INV-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(2))),
+                        'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
+                        'payment_method' => 'cash_onsite',
+                        'total_members' => 1,
+                        'price_per_ticket' => $price,
+                        'unique_code' => 0,
+                        'total_amount' => $price,
+                        'status' => 'approved',
+                        'verified_at' => now(),
                         'pic_name' => 'Yoga Adriana',
                         'pic_email' => 'yoga@unpad.ac.id',
                         'pic_phone' => '+62 812-2166-8872',
                         'pic_institution' => 'Universitas Padjadjaran (UNPAD)',
-                        'total_amount' => $price,
-                        'status' => 'verified',
                         'is_mixed_category' => false,
+                        'notes' => 'Restored via CLI',
                     ]);
                     $payId = $pay->id;
                 }
 
                 $newTicket = VisitorTicket::create([
                     'payment_id' => $payId,
-                    'registration_source' => 'restored_onsite_terminal',
+                    'registration_source' => 'admin_onsite',
                     'visitor_name' => 'Yoga Adriana',
                     'visitor_email' => 'yoga@unpad.ac.id',
                     'visitor_phone' => '+62 812-2166-8872',
@@ -301,7 +307,7 @@ class FindDeletedTicketCommand extends Command
             $ticket = VisitorTicket::create([
                 'payment_id' => $paymentId,
                 'registered_by_admin_id' => $t['registered_by_admin_id'] ?? null,
-                'registration_source' => $t['registration_source'] ?? 'restored_from_trash',
+                'registration_source' => in_array($t['registration_source'] ?? '', ['online_self', 'admin_onsite']) ? $t['registration_source'] : 'admin_onsite',
                 'visitor_name' => $name,
                 'visitor_email' => $email,
                 'visitor_phone' => $t['visitor_phone'] ?? ($t['phone'] ?? null),
