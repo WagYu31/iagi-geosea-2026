@@ -171,80 +171,342 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ================= MODUL 1: CEK DPT ONLINE =================
+  // ================= MODUL 1: CEK DPT ONLINE (SOVEREIGN ENGINE) =================
   const dptSearchInput = document.getElementById('dpt-search-input');
+  const dptSearchClear = document.getElementById('dpt-search-clear');
   const dptResultsContainer = document.getElementById('dpt-results-container');
-  const dptTotalCountEl = document.getElementById('dpt-total-count');
+  const dptResultsSummary = document.getElementById('dpt-results-summary');
+  const dptResetFiltersBtn = document.getElementById('dpt-reset-filters');
+  const dptPengdaSelect = document.getElementById('dpt-pengda-select');
+  const dptLoadMoreWrap = document.getElementById('dpt-load-more-wrap');
+  const btnDptLoadMore = document.getElementById('btn-dpt-load-more');
 
-  function renderDptScreen() {
-    const dpt = window.pemiluStorage.getDPT();
-    if (dptTotalCountEl) dptTotalCountEl.innerText = `${dpt.length} Anggota Terdaftar`;
-    renderDptList(dpt.slice(0, 10)); // Show top 10 initially
+  // Stats elements
+  const dptStatTotal = document.getElementById('dpt-stat-total');
+  const dptStatClaimed = document.getElementById('dpt-stat-claimed');
+  const dptStatVoted = document.getElementById('dpt-stat-voted');
+  const dptStatPengda = document.getElementById('dpt-stat-pengda');
+  const dptChipCountAll = document.getElementById('dpt-chip-count-all');
+
+  // DPT State
+  let dptFilterState = {
+    query: '',
+    status: 'all', // 'all', 'unclaimed', 'claimed', 'voted'
+    pengda: 'all',
+    page: 1,
+    pageSize: 15
+  };
+
+  function getInitials(name) {
+    if (!name) return 'IAGI';
+    const clean = name.replace(/^(Dr\.|Prof\.|Ir\.|H\.|Hj\.|Drs\.|Hj\s)/gi, '').trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  function renderDptList(voters) {
+  function getAvatarGradient(name) {
+    let hash = 0;
+    for (let i = 0; i < (name || '').length; i++) {
+      hash = (name.charCodeAt(i) + ((hash << 5) - hash)) & 0xffffffff;
+    }
+    const palettes = [
+      'linear-gradient(135deg, #064E3B 0%, #059669 100%)',
+      'linear-gradient(135deg, #0C4A6E 0%, #0284C7 100%)',
+      'linear-gradient(135deg, #1E1B4B 0%, #4F46E5 100%)',
+      'linear-gradient(135deg, #312E81 0%, #0D9488 100%)',
+      'linear-gradient(135deg, #78350F 0%, #D97706 100%)',
+      'linear-gradient(135deg, #831843 0%, #DB2777 100%)',
+      'linear-gradient(135deg, #14532D 0%, #16A34A 100%)',
+    ];
+    return palettes[Math.abs(hash) % palettes.length];
+  }
+
+  function initDptPengdaDropdown(dpt) {
+    if (!dptPengdaSelect || dptPengdaSelect.options.length > 1) return;
+    const pengdaSet = new Set();
+    dpt.forEach(v => {
+      if (v.pengda && v.pengda.trim() && v.pengda !== 'IAGI') {
+        pengdaSet.add(v.pengda.trim());
+      }
+    });
+    const sorted = Array.from(pengdaSet).sort((a, b) => a.localeCompare(b));
+    sorted.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = `Pengda ${p}`;
+      dptPengdaSelect.appendChild(opt);
+    });
+  }
+
+  function getFilteredDPT() {
+    const dpt = window.pemiluStorage.getDPT();
+    const q = dptFilterState.query.toLowerCase().trim();
+    const status = dptFilterState.status;
+    const pengda = dptFilterState.pengda;
+
+    return dpt.filter(v => {
+      // 1. Text Search Filter
+      if (q) {
+        const matchName = (v.name || '').toLowerCase().includes(q);
+        const matchNpa = (v.npa || '').toLowerCase().includes(q);
+        const matchPengda = (v.pengda || '').toLowerCase().includes(q);
+        const matchEmail = (v.email || '').toLowerCase().includes(q);
+        if (!matchName && !matchNpa && !matchPengda && !matchEmail) return false;
+      }
+
+      // 2. Status Filter
+      if (status === 'unclaimed') {
+        if (v.voted || v.claimed) return false;
+      } else if (status === 'claimed') {
+        if (!v.claimed || v.voted) return false;
+      } else if (status === 'voted') {
+        if (!v.voted) return false;
+      }
+
+      // 3. Pengda Filter
+      if (pengda !== 'all') {
+        if ((v.pengda || '').trim().toLowerCase() !== pengda.toLowerCase()) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function updateDptStats() {
+    const dpt = window.pemiluStorage.getDPT();
+    const total = dpt.length;
+    const claimedCount = dpt.filter(v => v.claimed && !v.voted).length;
+    const votedCount = dpt.filter(v => v.voted).length;
+    
+    // Unique Pengda
+    const pengdaSet = new Set(dpt.map(v => (v.pengda || 'Pusat').trim()));
+
+    if (dptStatTotal) dptStatTotal.innerText = total.toLocaleString('id-ID');
+    if (dptStatClaimed) dptStatClaimed.innerText = claimedCount.toLocaleString('id-ID');
+    if (dptStatVoted) dptStatVoted.innerText = votedCount.toLocaleString('id-ID');
+    if (dptStatPengda) dptStatPengda.innerText = Math.max(18, pengdaSet.size).toString();
+    if (dptChipCountAll) dptChipCountAll.innerText = total.toLocaleString('id-ID');
+  }
+
+  function renderDptScreen() {
+    updateDptStats();
+    const dpt = window.pemiluStorage.getDPT();
+    initDptPengdaDropdown(dpt);
+    dptFilterState.page = 1;
+    renderDptResults();
+  }
+
+  function renderDptResults() {
     if (!dptResultsContainer) return;
-    if (voters.length === 0) {
+    const filtered = getFilteredDPT();
+    const totalFiltered = filtered.length;
+    const visibleCount = dptFilterState.page * dptFilterState.pageSize;
+    const paginated = filtered.slice(0, visibleCount);
+
+    // Update results summary text
+    if (dptResultsSummary) {
+      if (totalFiltered === 0) {
+        dptResultsSummary.innerText = '0 pemilih ditemukan';
+      } else {
+        const displayed = Math.min(visibleCount, totalFiltered);
+        dptResultsSummary.innerText = `Menampilkan ${displayed.toLocaleString('id-ID')} dari ${totalFiltered.toLocaleString('id-ID')} pemilih terdaftar`;
+      }
+    }
+
+    // Toggle reset filters button
+    const hasFilter = dptFilterState.query || dptFilterState.status !== 'all' || dptFilterState.pengda !== 'all';
+    if (dptResetFiltersBtn) {
+      dptResetFiltersBtn.style.display = hasFilter ? 'inline-block' : 'none';
+    }
+
+    // Handle empty state
+    if (totalFiltered === 0) {
       dptResultsContainer.innerHTML = `
-        <div style="text-align:center; padding: 28px; color: var(--text-muted); font-size: 0.85rem;">
-          <div style="margin-bottom: 10px;">
-            <svg style="width:36px;height:36px;stroke:var(--gold-text);fill:none;stroke-width:1.5;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <div style="text-align:center; padding: 36px 16px; background: rgba(3, 20, 16, 0.7); border: 1px dashed rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); margin-top: 10px;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(245, 186, 66, 0.12); border: 1.5px solid rgba(245, 186, 66, 0.35); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto;">
+            <svg style="width:26px;height:26px;stroke:var(--gold-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
-          Tidak ditemukan data anggota yang cocok dengan kata kunci pencarian.<br>
-          <span style="font-size: 0.74rem; color: var(--text-subtle); margin-top:4px; display:inline-block;">Pastikan pengetikan Nama lengkap atau NPA sudah sesuai.</span>
+          <h4 style="font-size: 1rem; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">Data Anggota Tidak Ditemukan</h4>
+          <p style="font-size: 0.78rem; color: #94A3B8; max-width: 420px; margin: 0 auto 16px auto; line-height: 1.5;">
+            Tidak ditemukan data yang cocok dengan kriteria pencarian Anda. Pastikan ejaan Nama lengkap atau 5-digit NPA sudah tepat.
+          </p>
+          <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.78rem;" onclick="resetDptFilters()">
+              <span>Reset Pencarian</span>
+            </button>
+            <a href="https://wa.me/628111581461?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
+              <span>Hubungi Helpdesk WhatsApp</span>
+            </a>
+          </div>
         </div>
       `;
+      if (dptLoadMoreWrap) dptLoadMoreWrap.style.display = 'none';
       return;
     }
 
-    dptResultsContainer.innerHTML = voters.map(v => {
-      let statusBadge = '<span class="badge-status badge-unclaimed">✓ Belum Klaim</span>';
+    // Render Voter Cards
+    dptResultsContainer.innerHTML = paginated.map(v => {
+      let statusPill = '<span class="dpt-status-pill dpt-status-unclaimed">⏳ Belum Klaim</span>';
+      let actionBtn = `
+        <button class="btn-voter-claim" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}', '${v.email}')" title="Klaim Surat Suara & Token">
+          <span>Klaim Token</span>
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      `;
+
       if (v.voted) {
-        statusBadge = '<span class="badge-status badge-voted">✓ Sudah Memilih</span>';
+        statusPill = '<span class="dpt-status-pill dpt-status-voted"><svg style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:3;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Sudah Memilih</span>';
+        actionBtn = `
+          <span class="voter-voted-badge">
+            <svg style="width:13px;height:13px;stroke:#10B981;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Suara Tercatat</span>
+          </span>
+        `;
       } else if (v.claimed) {
-        statusBadge = '<span class="badge-status badge-claimed">✓ Token Aktif</span>';
+        statusPill = '<span class="dpt-status-pill dpt-status-claimed"><svg style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5"></path></svg> Token Aktif</span>';
+        actionBtn = `
+          <button class="btn-voter-vote" onclick="navigateTo('vote')" title="Buka Bilik Suara">
+            <span>Bilik Suara</span>
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </button>
+        `;
       }
 
-      // Mask email for privacy (e.g. ab***@gmail.com)
+      // Mask email for privacy (e.g. ad***@yahoo.com)
       const emailParts = (v.email || '').split('@');
       const maskedEmail = emailParts.length === 2 
         ? `${emailParts[0].substring(0, 2)}***@${emailParts[1]}` 
-        : '***';
+        : (v.email ? '***' : '-');
+
+      const initials = getInitials(v.name);
+      const avatarBg = getAvatarGradient(v.name);
+      const pengdaName = (v.pengda && v.pengda !== 'IAGI') ? `Pengda ${v.pengda}` : 'Pengda Pusat / IAGI';
 
       return `
-        <div class="dpt-result-card">
-          <div class="dpt-header">
-            <span class="dpt-name">${v.name}</span>
-            <span class="dpt-npa">${v.npa}</span>
-          </div>
-          <div class="dpt-meta">
-            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Pengda ${v.pengda || 'Pusat'}</span>
-            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> ${maskedEmail}</span>
-            <span style="display:inline-flex;align-items:center;gap:4px;"><svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg> ${v.category || 'Anggota'}</span>
-            ${statusBadge}
-          </div>
-          ${!v.voted ? `
-            <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
-              <button class="btn btn-subtle btn-sm-action" style="width: auto; padding: 6px 14px; font-size: 0.74rem;" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}', '${v.email}')">
-                <span>Klaim Surat Suara</span>
-                <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </button>
+        <div class="dpt-voter-card">
+          <div class="dpt-voter-left">
+            <div class="dpt-avatar-wrap">
+              <div class="dpt-avatar" style="background: ${avatarBg};">
+                ${initials}
+              </div>
+              <div class="dpt-avatar-verified">✓</div>
             </div>
-          ` : ''}
+
+            <div class="dpt-voter-info">
+              <div class="dpt-voter-name-row">
+                <span class="dpt-voter-name">${v.name}</span>
+                <span class="dpt-npa-badge">NPA ${v.npa}</span>
+              </div>
+
+              <div class="dpt-voter-meta">
+                <span class="dpt-meta-item">
+                  <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  ${pengdaName}
+                </span>
+                <span class="dpt-meta-item">
+                  <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  ${maskedEmail}
+                </span>
+                <span class="dpt-meta-item">
+                  <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                  ${v.category || 'Professional'}
+                </span>
+                ${statusPill}
+              </div>
+            </div>
+          </div>
+
+          <div class="dpt-voter-actions">
+            ${actionBtn}
+          </div>
         </div>
       `;
     }).join('');
+
+    // Load More Visibility
+    if (dptLoadMoreWrap && btnDptLoadMore) {
+      if (visibleCount < totalFiltered) {
+        const remaining = totalFiltered - visibleCount;
+        dptLoadMoreWrap.style.display = 'block';
+        btnDptLoadMore.innerHTML = `
+          <span>Tampilkan 15 Pemilih Berikutnya (Sisa ${remaining.toLocaleString('id-ID')})</span>
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        `;
+      } else {
+        dptLoadMoreWrap.style.display = 'none';
+      }
+    }
   }
 
+  // Search input events
   if (dptSearchInput) {
     dptSearchInput.addEventListener('input', (e) => {
-      const q = e.target.value;
-      if (!q.trim()) {
-        renderDptScreen();
-        return;
+      dptFilterState.query = e.target.value;
+      dptFilterState.page = 1;
+      if (dptSearchClear) {
+        dptSearchClear.style.display = dptFilterState.query ? 'flex' : 'none';
       }
-      const results = window.pemiluStorage.findVoter(q);
-      renderDptList(results);
+      renderDptResults();
+    });
+  }
+
+  if (dptSearchClear) {
+    dptSearchClear.addEventListener('click', () => {
+      if (dptSearchInput) dptSearchInput.value = '';
+      dptFilterState.query = '';
+      dptFilterState.page = 1;
+      dptSearchClear.style.display = 'none';
+      renderDptResults();
+      dptSearchInput?.focus();
+    });
+  }
+
+  // Filter chips events
+  document.querySelectorAll('.dpt-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      document.querySelectorAll('.dpt-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      dptFilterState.status = chip.getAttribute('data-filter') || 'all';
+      dptFilterState.page = 1;
+      renderDptResults();
+    });
+  });
+
+  // Pengda select events
+  if (dptPengdaSelect) {
+    dptPengdaSelect.addEventListener('change', (e) => {
+      dptFilterState.pengda = e.target.value;
+      dptFilterState.page = 1;
+      renderDptResults();
+    });
+  }
+
+  // Reset filters handler
+  window.resetDptFilters = () => {
+    dptFilterState.query = '';
+    dptFilterState.status = 'all';
+    dptFilterState.pengda = 'all';
+    dptFilterState.page = 1;
+    if (dptSearchInput) dptSearchInput.value = '';
+    if (dptSearchClear) dptSearchClear.style.display = 'none';
+    if (dptPengdaSelect) dptPengdaSelect.value = 'all';
+    document.querySelectorAll('.dpt-chip').forEach(c => {
+      if (c.getAttribute('data-filter') === 'all') c.classList.add('active');
+      else c.classList.remove('active');
+    });
+    renderDptResults();
+  };
+
+  if (dptResetFiltersBtn) {
+    dptResetFiltersBtn.addEventListener('click', window.resetDptFilters);
+  }
+
+  // Load more button
+  if (btnDptLoadMore) {
+    btnDptLoadMore.addEventListener('click', () => {
+      dptFilterState.page++;
+      renderDptResults();
     });
   }
 
