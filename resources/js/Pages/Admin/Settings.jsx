@@ -3804,7 +3804,45 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                             />
                                                         </Button>
 
+                                                        {/* Company Name */}
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Company Name"
+                                                            value={sponsor.name || ''}
+                                                            onChange={(e) => updateSponsor(index, 'name', e.target.value)}
+                                                            size="small"
+                                                            sx={{ mb: 1.5 }}
+                                                        />
 
+                                                        {/* Sponsorship Item Category */}
+                                                        <FormControl fullWidth size="small" sx={{ mb: 1.5 }}>
+                                                            <InputLabel>Sponsorship Item</InputLabel>
+                                                            <Select
+                                                                value={sponsor.category || 'Other'}
+                                                                label="Sponsorship Item"
+                                                                onChange={(e) => updateSponsor(index, 'category', e.target.value)}
+                                                            >
+                                                                <MenuItem value="Main Event Diamond">Main Event Diamond</MenuItem>
+                                                                <MenuItem value="Main Event Bronze">Main Event Bronze</MenuItem>
+                                                                <MenuItem value="IAGI President Election">IAGI President Election</MenuItem>
+                                                                <MenuItem value="Ice Breaking Night">Ice Breaking Night</MenuItem>
+                                                                <MenuItem value="Keynote/Plenary">Keynote/Plenary</MenuItem>
+                                                                <MenuItem value="Technical Sessions">Technical Sessions</MenuItem>
+                                                                <MenuItem value="Lanyard & Name Tag">Lanyard & Name Tag</MenuItem>
+                                                                <MenuItem value="Exhibition">Exhibition</MenuItem>
+                                                                <MenuItem value="Other">Other</MenuItem>
+                                                            </Select>
+                                                        </FormControl>
+
+                                                        {/* Website URL */}
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Website URL"
+                                                            value={sponsor.website || ''}
+                                                            onChange={(e) => updateSponsor(index, 'website', e.target.value)}
+                                                            size="small"
+                                                            placeholder="https://..."
+                                                        />
                                                     </Card>
                                                 </Grid>
                                             ))}

@@ -10,35 +10,139 @@ interface SponsorItem {
   level?: string;
 }
 
-const getCategoryBadge = (category?: string, level?: string) => {
-  const cat = (category || level || 'PARTNER').toLowerCase();
-  if (cat.includes('platinum')) {
+interface BadgeStyle {
+  label: string;
+  shortLabel: string;
+  className: string;
+  style: React.CSSProperties;
+}
+
+const getCategoryBadge = (category?: string, level?: string): BadgeStyle => {
+  const cat = (category || level || 'OTHER').trim();
+  const lower = cat.toLowerCase();
+
+  // 1. Main Event Diamond
+  if (lower.includes('diamond')) {
     return {
-      label: 'PLATINUM',
-      className: 'bg-slate-900 text-amber-300 border-slate-700 font-black shadow-xs',
+      label: 'MAIN EVENT DIAMOND',
+      shortLabel: 'DIAMOND',
+      className: 'font-extrabold shadow-sm',
+      style: {
+        backgroundColor: '#1d4ed8',
+        color: '#ffffff',
+        borderColor: '#3b82f6',
+      },
     };
   }
-  if (cat.includes('gold')) {
+
+  // 2. Main Event Bronze
+  if (lower.includes('bronze')) {
     return {
-      label: 'GOLD',
-      className: 'bg-amber-100/90 text-amber-900 border-amber-300 font-extrabold shadow-2xs',
+      label: 'MAIN EVENT BRONZE',
+      shortLabel: 'BRONZE',
+      className: 'font-extrabold shadow-sm',
+      style: {
+        backgroundColor: '#78350f',
+        color: '#fef3c7',
+        borderColor: '#92400e',
+      },
     };
   }
-  if (cat.includes('silver')) {
+
+  // 3. IAGI President Election
+  if (lower.includes('president') || lower.includes('election')) {
     return {
-      label: 'SILVER',
-      className: 'bg-slate-100 text-slate-700 border-slate-300 font-bold',
+      label: 'IAGI PRESIDENT ELECTION',
+      shortLabel: 'PRESIDENT ELECTION',
+      className: 'font-extrabold shadow-sm',
+      style: {
+        backgroundColor: '#b91c1c',
+        color: '#ffffff',
+        borderColor: '#dc2626',
+      },
     };
   }
-  if (cat.includes('supporting')) {
+
+  // 4. Ice Breaking Night
+  if (lower.includes('ice') || lower.includes('breaking')) {
     return {
-      label: 'SUPPORTING',
-      className: 'bg-teal-50 text-teal-800 border-teal-200 font-bold',
+      label: 'ICE BREAKING NIGHT',
+      shortLabel: 'ICE BREAKING',
+      className: 'font-extrabold shadow-sm',
+      style: {
+        backgroundColor: '#1d4ed8',
+        color: '#ffffff',
+        borderColor: '#2563eb',
+      },
     };
   }
+
+  // 5. Technical Sessions
+  if (lower.includes('technical')) {
+    return {
+      label: 'TECHNICAL SESSIONS',
+      shortLabel: 'TECHNICAL SESSIONS',
+      className: 'font-extrabold shadow-2xs',
+      style: {
+        backgroundColor: '#e0f2fe',
+        color: '#0369a1',
+        borderColor: '#7dd3fc',
+      },
+    };
+  }
+
+  // 6. Lanyard & Name Tag
+  if (lower.includes('lanyard') || lower.includes('name tag') || lower.includes('tag')) {
+    return {
+      label: 'LANYARD & NAME TAG',
+      shortLabel: 'LANYARD & PASS',
+      className: 'font-extrabold shadow-2xs',
+      style: {
+        backgroundColor: '#f3e8ff',
+        color: '#6b21a8',
+        borderColor: '#d8b4fe',
+      },
+    };
+  }
+
+  // 7. Keynote/Plenary
+  if (lower.includes('keynote') || lower.includes('plenary')) {
+    return {
+      label: 'KEYNOTE / PLENARY',
+      shortLabel: 'KEYNOTE / PLENARY',
+      className: 'font-bold shadow-sm',
+      style: {
+        backgroundColor: '#1e293b',
+        color: '#ffffff',
+        borderColor: '#334155',
+      },
+    };
+  }
+
+  // 8. Exhibition
+  if (lower.includes('exhibition') || lower.includes('booth')) {
+    return {
+      label: 'EXHIBITION',
+      shortLabel: 'EXHIBITION',
+      className: 'font-bold shadow-sm',
+      style: {
+        backgroundColor: '#334155',
+        color: '#ffffff',
+        borderColor: '#475569',
+      },
+    };
+  }
+
+  // 9. Other / Default
   return {
-    label: (category || level || 'PARTNER').toUpperCase(),
-    className: 'bg-teal-50 text-teal-700 border-teal-200/60 font-extrabold',
+    label: cat.toUpperCase(),
+    shortLabel: cat.toUpperCase(),
+    className: 'font-semibold',
+    style: {
+      backgroundColor: '#f1f5f9',
+      color: '#475569',
+      borderColor: '#cbd5e1',
+    },
   };
 };
 
@@ -313,8 +417,11 @@ export default function SponsorSpotlight({
                   {(() => {
                     const badge = getCategoryBadge(sponsor.category, sponsor.level);
                     return (
-                      <span className={`text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${badge.className}`}>
-                        {badge.label}
+                      <span
+                        className={`text-[9px] sm:text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${badge.className}`}
+                        style={badge.style}
+                      >
+                        {badge.shortLabel}
                       </span>
                     );
                   })()}
@@ -370,15 +477,11 @@ export default function SponsorSpotlight({
             const activeBadge = getCategoryBadge(currentSponsor.category, currentSponsor.level);
             return (
               <div
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2 border shadow-xs"
-                style={{
-                  backgroundColor: activeBadge.label === 'PLATINUM' ? '#0f172a' : activeBadge.label === 'GOLD' ? '#fef3c7' : activeBadge.label === 'SILVER' ? '#f1f5f9' : '#f0fdf4',
-                  color: activeBadge.label === 'PLATINUM' ? '#fde047' : activeBadge.label === 'GOLD' ? '#92400e' : activeBadge.label === 'SILVER' ? '#334155' : '#166534',
-                  borderColor: activeBadge.label === 'PLATINUM' ? '#334155' : activeBadge.label === 'GOLD' ? '#fde68a' : activeBadge.label === 'SILVER' ? '#cbd5e1' : '#bbf7d0',
-                }}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2 border shadow-xs ${activeBadge.className}`}
+                style={activeBadge.style}
               >
                 <span>★</span>
-                <span>{activeBadge.label} SPONSOR</span>
+                <span>{activeBadge.label}</span>
               </div>
             );
           })()}
