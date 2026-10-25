@@ -451,7 +451,7 @@ export default function Receipt({
                                             );
                                         })}
                                         {/* Breakdown Rows */}
-                                        {payment.unique_code > 0 && (
+                                        {Number(payment.unique_code || 0) > 0 && (
                                             <>
                                                 <TableRow sx={{ bgcolor: '#fafafa' }}>
                                                     <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>

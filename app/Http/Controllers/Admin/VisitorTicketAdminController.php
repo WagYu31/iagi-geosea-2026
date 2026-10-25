@@ -1468,6 +1468,7 @@ class VisitorTicketAdminController extends Controller
                 'pic_email' => 'nullable|email|max:150',
                 'pic_phone' => 'nullable|string|max:50',
                 'pic_institution' => 'nullable|string|max:150',
+                'unique_code' => 'nullable|integer|min:0|max:9999',
             ]);
 
             return DB::transaction(function () use ($request, $ticket) {
@@ -1639,9 +1640,14 @@ class VisitorTicketAdminController extends Controller
                         'pic_institution' => $picInstitution ?? $payment->pic_institution,
                     ];
 
+                    $uniqueCode = $request->has('unique_code')
+                        ? (int) $request->input('unique_code')
+                        : (int) ($payment->unique_code ?? 0);
+
+                    $updatePayment['unique_code'] = $uniqueCode;
+
                     if ($request->boolean('recalculate_total', true)) {
                         $subtotal = $paymentTickets->sum('individual_price');
-                        $uniqueCode = (int) ($payment->unique_code ?? 0);
                         if ($subtotal > 0) {
                             $updatePayment['total_amount'] = $subtotal + $uniqueCode;
                         }
@@ -1740,11 +1746,19 @@ class VisitorTicketAdminController extends Controller
 
         if ($ticket->payment_id && $ticket->payment) {
             $subtotal = $ticket->payment->tickets()->sum('individual_price');
-            $uniqueCode = (int) ($ticket->payment->unique_code ?? 0);
+            $uniqueCode = $request->has('unique_code')
+                ? (int) $request->input('unique_code')
+                : (int) ($ticket->payment->unique_code ?? 0);
+
+            $paymentUpdates = [];
+            if ($request->has('unique_code')) {
+                $paymentUpdates['unique_code'] = $uniqueCode;
+            }
             if ($subtotal > 0) {
-                $ticket->payment->update([
-                    'total_amount' => $subtotal + $uniqueCode,
-                ]);
+                $paymentUpdates['total_amount'] = $subtotal + $uniqueCode;
+            }
+            if (!empty($paymentUpdates)) {
+                $ticket->payment->update($paymentUpdates);
             }
         }
 

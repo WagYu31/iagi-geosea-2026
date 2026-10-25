@@ -481,15 +481,15 @@ export default function VisitorTicketsIndex({
         pic_name: '',
         pic_email: '',
         pic_phone: '',
-        pic_institution: '',
         sync_pic_with_primary: true,
         recalculate_total: true,
+        unique_code: 0,
         members: [],
         removed_ticket_ids: [],
     });
 
     const liveEditSubtotal = (editData.members || []).reduce((acc, m) => acc + (CATEGORY_PRICES[m.visitor_type] || 0), 0);
-    const liveEditUniqueCode = Number(editModal.ticket?.payment?.unique_code || 0);
+    const liveEditUniqueCode = Number(editData.unique_code !== undefined ? editData.unique_code : (editModal.ticket?.payment?.unique_code || 0));
     const liveEditTotal = liveEditSubtotal > 0 ? (liveEditSubtotal + liveEditUniqueCode) : 0;
 
     const searchTimer = useRef(null);
@@ -899,6 +899,7 @@ export default function VisitorTicketsIndex({
             pic_email: ticket.payment?.pic_email || primaryMember?.visitor_email || '',
             pic_phone: ticket.payment?.pic_phone || primaryMember?.visitor_phone || '',
             pic_institution: ticket.payment?.pic_institution || primaryMember?.visitor_institution || '',
+            unique_code: Number(ticket.payment?.unique_code || 0),
             sync_pic_with_primary: true,
             recalculate_total: true,
             members: mappedMembers,
@@ -2304,9 +2305,29 @@ export default function VisitorTicketsIndex({
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     {t.payment ? (
                                                         <Box>
-                                                            <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
-                                                                Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
-                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexWrap: 'nowrap' }}>
+                                                                <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                                                                    Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
+                                                                </Typography>
+                                                                {Number(t.payment.unique_code || 0) > 0 && (
+                                                                    <Tooltip title={`Termasuk Kode Unik Transfer: +Rp ${Number(t.payment.unique_code).toLocaleString('id-ID')}`} arrow>
+                                                                        <Chip
+                                                                            label={`+${t.payment.unique_code}`}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                height: 17,
+                                                                                fontSize: '0.58rem',
+                                                                                fontWeight: 900,
+                                                                                bgcolor: '#eff6ff',
+                                                                                color: '#1d4ed8',
+                                                                                border: '1px solid #bfdbfe',
+                                                                                px: 0.2,
+                                                                                cursor: 'help',
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                )}
+                                                            </Box>
                                                             <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
                                                                 <Tooltip title="Klik untuk ubah status pembayaran (Approved, Pending, Rejected)" arrow>
                                                                     <Chip
@@ -2815,7 +2836,10 @@ export default function VisitorTicketsIndex({
                                             {detailModal.ticket.payment.receipt_no || detailModal.ticket.receipt_no || 'Receipt Available'}
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: detailModal.ticket.payment.is_debt ? '#78350f' : '#166534', fontWeight: 600, display: 'block' }}>
-                                            Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong> ({detailModal.ticket.payment.status.toUpperCase()})
+                                            Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong>
+                                            {Number(detailModal.ticket.payment.unique_code || 0) > 0 && (
+                                                <span> &bull; Kode Unik: <strong style={{ color: '#1d4ed8' }}>+{detailModal.ticket.payment.unique_code}</strong></span>
+                                            )} ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
                                         {detailModal.ticket.payment.is_mixed_category && (
                                             <Box sx={{ mt: 1, p: 1.2, bgcolor: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
@@ -3062,6 +3086,31 @@ export default function VisitorTicketsIndex({
                                             </Typography>
                                         }
                                     />
+                                </Box>
+
+                                {/* KODE UNIK TRANSFER INPUT */}
+                                <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                    <Box sx={{ minWidth: 160 }}>
+                                        <TextField
+                                            label="Kode Unik Transfer"
+                                            type="number"
+                                            size="small"
+                                            value={editData.unique_code ?? 0}
+                                            onChange={(e) => setEditData('unique_code', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                            }}
+                                            sx={{ bgcolor: '#ffffff', width: 160 }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ flex: 1, minWidth: 200 }}>
+                                        <Typography variant="caption" sx={{ color: '#334155', display: 'block', fontWeight: 800 }}>
+                                            Kode Unik Transfer: <span style={{ color: '#1d4ed8' }}>+{liveEditUniqueCode}</span>
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
+                                            Subtotal: <strong>Rp {liveEditSubtotal.toLocaleString('id-ID')}</strong> + Kode Unik: <strong>Rp {liveEditUniqueCode.toLocaleString('id-ID')}</strong> = Estimasi Total: <strong style={{ color: '#094d42' }}>Rp {liveEditTotal.toLocaleString('id-ID')}</strong>
+                                        </Typography>
+                                    </Box>
                                 </Box>
 
                                 {!editData.sync_pic_with_primary && (
@@ -4293,9 +4342,16 @@ export default function VisitorTicketsIndex({
 
                         <DialogActions sx={{ p: 2, px: 2.5, justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1.5 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706', fontSize: '0.9rem' }}>
-                                    IDR {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
-                                </Typography>
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 900, color: '#d97706', fontSize: '0.9rem' }}>
+                                        IDR {Number(proofModal.payment.total_amount || 0).toLocaleString('id-ID')}
+                                    </Typography>
+                                    {Number(proofModal.payment.unique_code || 0) > 0 && (
+                                        <Typography variant="caption" sx={{ color: '#1d4ed8', fontWeight: 800, display: 'block', fontSize: '0.68rem' }}>
+                                            Termasuk Kode Unik: +{proofModal.payment.unique_code}
+                                        </Typography>
+                                    )}
+                                </Box>
                                 <Button
                                     component="a"
                                     href={route('visitor.receipt.show', proofModal.payment.payment_code)}
