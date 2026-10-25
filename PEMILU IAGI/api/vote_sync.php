@@ -19,7 +19,11 @@ date_default_timezone_set('Asia/Jakarta');
 
 $dataDir = __DIR__ . '/data';
 if (!is_dir($dataDir)) {
-    @mkdir($dataDir, 0777, true);
+    @mkdir($dataDir, 0755, true);
+}
+$dataHtaccess = $dataDir . '/.htaccess';
+if (!file_exists($dataHtaccess)) {
+    @file_put_contents($dataHtaccess, "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n    Order deny,allow\n    Deny from all\n</IfModule>\n");
 }
 
 $votersFile = $dataDir . '/voters_status.json';
@@ -311,8 +315,8 @@ if ($action === 'clear_ballots') {
         exit;
     }
 
-    // Validasi Dual-Key Otoritas Pleno: 312226 (atau master PIN 2026)
-    $isPinValid = ($adminPin === '312226' || $adminPin === '2026');
+    // Validasi Dual-Key Otoritas Pleno: 312226
+    $isPinValid = ($adminPin === '312226');
 
     if (!$isPinValid) {
         if (!isset($lockouts[$clientIp])) {

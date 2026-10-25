@@ -1,0 +1,12 @@
+# Protect sensitive files from direct download
+<FilesMatch "\.(json|lock|log|csv|bak|sql|env)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+Options -Indexes

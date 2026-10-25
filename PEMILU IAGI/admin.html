@@ -5473,7 +5473,7 @@
               <div class="form-group" style="margin-bottom: 12px;">
                 <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
                   <span>Kode Verifikasi (4-Digit) *</span>
-                  <span id="desktop-demo-otp-hint" class="helper" style="color: var(--gold-secondary); font-size: 0.7rem;">Default PIN: 2026</span>
+                  <span id="desktop-demo-otp-hint" class="helper" style="color: #6EE7B7; font-size: 0.7rem;">2FA OTP Aktif (10 Menit)</span>
                 </label>
                 <input type="text" id="desktop-otp-input" class="form-input font-mono" placeholder="••••" maxlength="4" pattern="\d{4}" style="letter-spacing: 0.45em; text-align: center; font-size: 1.5rem; font-weight: 800; padding: 10px; background: rgba(0,0,0,0.35);" required autocomplete="one-time-code">
                 <span class="helper" style="display: block; margin-top: 6px; font-size: 0.72rem; color: #94A3B8;">
@@ -8791,9 +8791,9 @@
           }
 
           const hint = document.getElementById('desktop-demo-otp-hint');
-          if (hint) hint.innerText = `Kode OTP: ${activeOtp} | PIN: ${pendingAdmin.securityPin || '2026'}`;
+          if (hint) hint.innerText = '2FA OTP Aktif (Kedaluwarsa 10 Menit)';
 
-          showAlert(`Kredensial valid. Silakan pilih opsi verifikasi: WhatsApp (Fonnte Gateway) atau Email Resmi.`, 'info');
+          showAlert(`Kredensial valid. Silakan kirim OTP via WhatsApp atau Email Resmi Panitia.`, 'info');
         });
       }
 
@@ -8853,9 +8853,9 @@
               boxWaStatus.style.background = 'rgba(239, 68, 68, 0.15)';
               boxWaStatus.style.border = '1px solid rgba(239, 68, 68, 0.4)';
               boxWaStatus.style.color = '#FCA5A5';
-              boxWaStatus.innerHTML = `⚠️ Gagal kirim WA Fonnte: ${res.error}<br><span style="font-size: 0.72rem;">(Gunakan kode cadangan: <b>${activeOtp}</b> atau PIN Akun: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+              boxWaStatus.innerHTML = `⚠️ Gagal kirim WA Fonnte: ${res.error}<br><span style="font-size: 0.72rem;">Silakan periksa nomor WhatsApp atau gunakan opsi pengiriman Email resmi.</span>`;
             }
-            showAlert(`Koneksi WhatsApp Gateway terkendala: ${res.error}. Anda dapat menggunakan kode OTP cadangan atau PIN.`, 'warning');
+            showAlert(`Koneksi WhatsApp Gateway terkendala: ${res.error}. Silakan gunakan opsi verifikasi Email Resmi.`, 'warning');
           }
         });
       }
@@ -8869,18 +8869,9 @@
             boxEmailStatus.style.background = 'rgba(16, 185, 129, 0.15)';
             boxEmailStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
             boxEmailStatus.style.color = '#6EE7B7';
-            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id'}</b>.<br><span style="font-size: 0.72rem; opacity: 0.9;">Kode OTP Email Anda: <b>${activeOtp}</b> (atau PIN: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id'}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa kotak masuk atau spam email resmi Anda untuk mengambil kode.</span>`;
           }
-          showAlert(`Kode OTP 4-Digit telah dikirim ke email ${pendingAdmin ? pendingAdmin.email : ''}!`, 'success');
-        });
-      }
-
-      // Auto fill PIN button
-      if (btnAutoPin) {
-        btnAutoPin.addEventListener('click', () => {
-          const inp = document.getElementById('desktop-otp-input');
-          const pinVal = (pendingAdmin && pendingAdmin.securityPin) ? pendingAdmin.securityPin : '2026';
-          if (inp) inp.value = pinVal;
+          showAlert(`Kode OTP 4-Digit telah dikirim ke email resmi ${pendingAdmin ? pendingAdmin.email : ''}!`, 'success');
         });
       }
 

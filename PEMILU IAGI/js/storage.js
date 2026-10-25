@@ -1189,9 +1189,6 @@ class PemiluStorage {
 
     const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
     if (!found) {
-      if (cleanEmail === 'admin.kpku@iagi.or.id' && (cleanPass === 'admin' || cleanPass === 'admin2026')) {
-        return { success: true, admin: { email: cleanEmail, name: 'Panitia KPKU 2026', role: 'Ketua Panitia', securityPin: '2026', phone: '085771593522' } };
-      }
       return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
     }
 
@@ -1199,7 +1196,7 @@ class PemiluStorage {
       return { success: false, error: 'Akun admin ini berstatus NON-AKTIF / ditangguhkan. Hubungi Ketua KPKU.' };
     }
 
-    if (found.password !== cleanPass && cleanPass !== 'admin' && cleanPass !== 'admin2026') {
+    if (found.password !== cleanPass) {
       return { success: false, error: 'Password salah. Silakan periksa kembali kata sandi Anda.' };
     }
 
