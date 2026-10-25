@@ -889,7 +889,7 @@
               <div class="form-group" style="margin-bottom: 12px;">
                 <label class="form-label">
                   <span>Password Akun *</span>
-                  <span class="helper">Default Demo: admin</span>
+                  <span class="helper">Otoritas Panitia KPKU</span>
                 </label>
                 <div style="position: relative;">
                   <input type="password" id="admin-password-input" class="form-input" placeholder="Masukkan password" required>
@@ -899,13 +899,7 @@
                 </div>
               </div>
 
-              <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                <button type="button" id="btn-quick-fill-admin-account" class="btn btn-subtle" style="width: 100%; font-size: 0.74rem; padding: 8px 12px; border: 1px dashed rgba(245, 186, 66, 0.4); color: var(--gold-secondary); justify-content: center;">
-                  ⚡ Isi Akun Admin Demo (admin.kpku@iagi.or.id)
-                </button>
-              </div>
-
-              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold" style="width: 100%; justify-content: center;">
+              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold" style="width: 100%; justify-content: center; margin-top: 10px;">
                 <span>Lanjut ke Verifikasi Masuk</span>
                 <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
               </button>
@@ -932,18 +926,11 @@
             <!-- View A: OTP Email -->
             <div id="view-2fa-otp">
               <form id="form-verify-otp">
-                <div class="form-group" style="margin-bottom: 10px;">
+                <div class="form-group" style="margin-bottom: 12px;">
                   <label class="form-label">
                     <span>Kode Verifikasi OTP 6-Digit</span>
-                    <span id="demo-otp-hint" class="helper" style="color: var(--gold-secondary);">Demo OTP: 842026</span>
                   </label>
                   <input type="text" id="admin-otp-input" class="form-input font-mono" placeholder="Contoh: 842026" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                  <button type="button" id="btn-auto-fill-otp" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
-                    ⚡ Masukkan OTP Otomatis
-                  </button>
                 </div>
 
                 <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
@@ -956,18 +943,11 @@
             <!-- View B: Security PIN -->
             <div id="view-2fa-pin" style="display: none;">
               <form id="form-verify-pin">
-                <div class="form-group" style="margin-bottom: 10px;">
+                <div class="form-group" style="margin-bottom: 12px;">
                   <label class="form-label">
                     <span>PIN Keamanan Panitia (4-Digit)</span>
-                    <span class="helper">PIN Default: 2026</span>
                   </label>
                   <input type="password" id="admin-2fa-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                  <button type="button" id="btn-auto-fill-pin" class="btn btn-subtle" style="width: 100%; font-size: 0.72rem; padding: 6px 10px; border: 1px dashed rgba(245, 186, 66, 0.35); color: var(--gold-secondary); justify-content: center;">
-                    ⚡ Masukkan PIN Otomatis (2026)
-                  </button>
                 </div>
 
                 <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
