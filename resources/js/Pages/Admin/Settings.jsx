@@ -1186,6 +1186,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             ? speakersFromDB
             : [{ name: '', title: '', photo: '', institution: '' }]
     );
+    const [speakerFilterTab, setSpeakerFilterTab] = useState('ALL'); // 'ALL' | 'Day 1' | 'Day 2'
     const [speakersDescription, setSpeakersDescription] = useState(
         getSettingValue('keynote_speakers_description', 'Distinguished experts bridging the gap between geological science and practical sustainability.')
     );
@@ -1528,6 +1529,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Kementerian ESDM',
             session: 'Special Keynote Speech',
             role: 'Special Keynote',
+            day: 'Day 1',
             photo: '/images/speakers/yuliot-tanjung.jpg',
         },
         {
@@ -1536,6 +1538,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Pemda D.I. Yogyakarta',
             session: 'Special Keynote Speech',
             role: 'Special Keynote',
+            day: 'Day 1',
             photo: '/images/speakers/sri-sultan-hb-x.jpg',
         },
         {
@@ -1544,6 +1547,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Ikatan Ahli Geologi Indonesia (IAGI)',
             session: 'CEO Forum',
             role: 'Moderator',
+            day: 'Day 1',
             photo: '/images/speakers/stj-budi-santoso.jpg',
         },
         {
@@ -1552,6 +1556,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'MIND ID',
             session: 'CEO Forum',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '/images/speakers/maroef-sjamsoeddin.jpg',
         },
         {
@@ -1560,6 +1565,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'PT Pertamina Hulu Energi (PHE)',
             session: 'CEO Forum',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1568,6 +1574,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'PT Geo Dipa Energi',
             session: 'CEO Forum',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '/images/speakers/yudistian-yunis.jpg',
         },
         {
@@ -1576,6 +1583,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'SKK Migas',
             session: 'Special Session',
             role: 'Keynote Speaker',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1584,6 +1592,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Badan Geologi Kementerian ESDM',
             session: 'Special Session',
             role: 'Moderator',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1592,6 +1601,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'MedcoEnergi',
             session: 'Special Session',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1600,6 +1610,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'PT Energi Mega Persada Tbk',
             session: 'Special Session',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1608,6 +1619,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Pertamina Hulu Energi',
             session: 'Special Session',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1616,6 +1628,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'MGEI',
             session: 'Panel Discussion 1',
             role: 'Moderator',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1624,6 +1637,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Ditjen Minerba ESDM',
             session: 'Panel Discussion 1',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1632,6 +1646,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             institution: 'Mubadala Energy',
             session: 'Panel Discussion 1',
             role: 'Speaker / Panelist',
+            day: 'Day 1',
             photo: '',
         },
         {
@@ -1766,46 +1781,51 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
             return {
                 ...official,
+                day: official.day || 'Day 1',
                 photo: existing && existing.photo ? existing.photo : (official.photo || ''),
             };
         });
         setSpeakers(merged);
     };
 
-    // Load 15 official speakers from poster Day 1
+    // Load 15 official speakers from poster Day 1 (keeps Day 2 speakers intact)
     const loadOfficialDay1Speakers = () => {
         if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
-            if (!confirm('Apakah Anda ingin memuat 15 Pembicara Day 1 sesuai poster resmi?')) {
+            if (!confirm('Apakah Anda ingin memuat 15 Pembicara Day 1 sesuai poster resmi? Pembicara Day 2 dan foto yang sudah ada tidak akan hilang.')) {
                 return;
             }
         }
-        const merged = DAY1_OFFICIAL_SPEAKERS.map(official => {
+        const existingDay2 = speakers.filter(s => s.day === 'Day 2');
+        const mergedDay1 = DAY1_OFFICIAL_SPEAKERS.map(official => {
             const cleanName = official.name.replace('*', '').toLowerCase().trim();
             const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
             return {
                 ...official,
+                day: 'Day 1',
                 photo: existing && existing.photo ? existing.photo : (official.photo || ''),
             };
         });
-        setSpeakers(merged);
+        setSpeakers([...mergedDay1, ...existingDay2]);
     };
 
-    // Load 10 official speakers from poster Day 2
+    // Load 10 official speakers from poster Day 2 (keeps Day 1 speakers intact)
     const loadOfficialDay2Speakers = () => {
         if (speakers.length > 0 && speakers.some(s => s.name && s.name.trim() !== '')) {
-            if (!confirm('Apakah Anda ingin memuat 10 Pembicara Day 2 sesuai poster resmi?')) {
+            if (!confirm('Apakah Anda ingin memuat 10 Pembicara Day 2 sesuai poster resmi? Pembicara Day 1 dan foto yang sudah ada tidak akan hilang.')) {
                 return;
             }
         }
-        const merged = DAY2_OFFICIAL_SPEAKERS.map(official => {
+        const existingDay1 = speakers.filter(s => (s.day || 'Day 1') !== 'Day 2');
+        const mergedDay2 = DAY2_OFFICIAL_SPEAKERS.map(official => {
             const cleanName = official.name.replace('*', '').toLowerCase().trim();
             const existing = speakers.find(s => s.name && s.name.toLowerCase().includes(cleanName));
             return {
                 ...official,
+                day: 'Day 2',
                 photo: existing && existing.photo ? existing.photo : (official.photo || ''),
             };
         });
-        setSpeakers(merged);
+        setSpeakers([...existingDay1, ...mergedDay2]);
     };
 
     // Remove speaker
@@ -1970,6 +1990,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
             const formData = new FormData();
             formData.append('photo', file);
             formData.append('index', index);
+            formData.append('speakers', JSON.stringify(speakers));
 
             const response = await axios.post(route('admin.settings.uploadSpeakerPhoto'), formData, {
                 headers: {
@@ -3296,9 +3317,75 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                             sx={{ mb: 3 }}
                                         />
 
+                                        {/* Filter Tabs for Day 1 / Day 2 / Semua */}
+                                        <Box sx={{ mb: 2.5, p: 1.5, borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5 }}>
+                                            <Stack direction="row" spacing={1} flexWrap="wrap">
+                                                <Button
+                                                    size="small"
+                                                    variant={speakerFilterTab === 'ALL' ? 'contained' : 'outlined'}
+                                                    onClick={() => setSpeakerFilterTab('ALL')}
+                                                    sx={{
+                                                        bgcolor: speakerFilterTab === 'ALL' ? '#0d9488' : 'transparent',
+                                                        color: speakerFilterTab === 'ALL' ? '#ffffff' : (isDark ? '#cbd5e1' : '#475569'),
+                                                        borderColor: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1',
+                                                        fontWeight: 700,
+                                                        textTransform: 'none',
+                                                        borderRadius: '8px',
+                                                        height: 36,
+                                                    }}
+                                                >
+                                                    Semua ({speakers.length})
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    variant={speakerFilterTab === 'Day 1' ? 'contained' : 'outlined'}
+                                                    onClick={() => setSpeakerFilterTab('Day 1')}
+                                                    sx={{
+                                                        bgcolor: speakerFilterTab === 'Day 1' ? '#0d9488' : 'transparent',
+                                                        color: speakerFilterTab === 'Day 1' ? '#ffffff' : (isDark ? '#cbd5e1' : '#475569'),
+                                                        borderColor: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1',
+                                                        fontWeight: 700,
+                                                        textTransform: 'none',
+                                                        borderRadius: '8px',
+                                                        height: 36,
+                                                    }}
+                                                >
+                                                    📅 Day 1 — 3 Nov ({speakers.filter(s => (s.day || 'Day 1') === 'Day 1').length})
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    variant={speakerFilterTab === 'Day 2' ? 'contained' : 'outlined'}
+                                                    onClick={() => setSpeakerFilterTab('Day 2')}
+                                                    sx={{
+                                                        bgcolor: speakerFilterTab === 'Day 2' ? '#2563eb' : 'transparent',
+                                                        color: speakerFilterTab === 'Day 2' ? '#ffffff' : (isDark ? '#cbd5e1' : '#475569'),
+                                                        borderColor: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1',
+                                                        fontWeight: 700,
+                                                        textTransform: 'none',
+                                                        borderRadius: '8px',
+                                                        height: 36,
+                                                    }}
+                                                >
+                                                    📅 Day 2 — 4 Nov ({speakers.filter(s => s.day === 'Day 2').length})
+                                                </Button>
+                                            </Stack>
+                                            <Typography variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b', fontWeight: 500 }}>
+                                                💡 Day 1 & Day 2 tersimpan bersamaan di database (tidak akan saling menghapus)
+                                            </Typography>
+                                        </Box>
+
                                         <Grid container spacing={2}>
-                                            {speakers.map((speaker, index) => (
-                                                <Grid item xs={12} sm={6} md={3} key={index}>
+                                            {speakers
+                                                .map((speaker, realIndex) => ({ ...speaker, realIndex }))
+                                                .filter(speaker => {
+                                                    if (speakerFilterTab === 'Day 1') return (speaker.day || 'Day 1') === 'Day 1';
+                                                    if (speakerFilterTab === 'Day 2') return speaker.day === 'Day 2';
+                                                    return true;
+                                                })
+                                                .map((speaker) => {
+                                                    const index = speaker.realIndex;
+                                                    return (
+                                                        <Grid item xs={12} sm={6} md={3} key={index}>
                                                     <Card
                                                         draggable
                                                         onDragStart={(e) => {
@@ -3611,7 +3698,8 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                         />
                                                     </Card>
                                                 </Grid>
-                                            ))}
+                                            );
+                                        })}
                                         </Grid>
 
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>

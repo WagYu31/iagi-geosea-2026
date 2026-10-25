@@ -176,6 +176,12 @@ class LandingPageSettingController extends Controller
             );
 
             $speakers = json_decode($setting->value, true) ?: [];
+            if ($request->filled('speakers')) {
+                $clientSpeakers = is_array($request->speakers) ? $request->speakers : json_decode($request->speakers, true);
+                if (is_array($clientSpeakers) && !empty($clientSpeakers)) {
+                    $speakers = $clientSpeakers;
+                }
+            }
             $index = (int) $request->index;
 
             if (!isset($speakers[$index])) {
