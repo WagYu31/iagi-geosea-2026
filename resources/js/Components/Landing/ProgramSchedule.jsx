@@ -36,8 +36,20 @@ export const SCHEDULE_DAYS = [
         dayNumber: 'Pre-Event',
         dateStr: 'Monday, 2 November 2026',
         shortDate: 'Mon, 2 Nov',
-        badge: 'Ice Breaking Night',
+        badge: 'GOBAR & Ice Breaking Night',
         events: [
+            {
+                time: '13:00 – 17:30',
+                title: 'GOBAR IAGI (Golf Bareng)',
+                subtitle: 'Turnamen Golf Bareng IAGI di Merapi Golf Yogyakarta (Tee Off 13:00 WIB – Selesai 17:30 WIB). Fasilitas: Golf Cart, Green Fee, Lunch, dan Cool Box.',
+                track: 'all',
+                badge: 'General & GEOSEA',
+                generalTopic: 'GOBAR IAGI – Golf Bareng (Tee Off 13:00 – 17:30 WIB)',
+                geoseaTopic: 'GOBAR IAGI – Pre-Event Golf Tournament (Tee Off 13:00 – 17:30 WIB)',
+                category: 'Sports & Social',
+                location: 'Merapi Golf Yogyakarta',
+                highlight: true,
+            },
             {
                 time: '18:30 – 21:00',
                 title: 'Ice Breaking Night (Invitation Only)',
