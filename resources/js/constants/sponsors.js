@@ -19,7 +19,7 @@ export const DEFAULT_SPONSORS = [
         name: 'Halliburton',
         category: 'platinum',
         level: 'Platinum',
-        logo: '/images/sponsors/halliburton.jpg',
+        logo: '/images/sponsors/halliburton.png',
         website: 'https://www.halliburton.com',
         order: 2,
     },
