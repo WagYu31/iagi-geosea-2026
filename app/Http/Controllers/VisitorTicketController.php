@@ -636,10 +636,12 @@ class VisitorTicketController extends Controller
         $settings = LandingPageSetting::whereIn('key', [
             'visitor_event_date',
             'visitor_event_venue',
+            'sponsors',
         ])->pluck('value', 'key');
 
         $eventDate = $settings['visitor_event_date'] ?? '3-5 November 2026';
         $eventVenue = $settings['visitor_event_venue'] ?? 'Royal Ambarrukmo Yogyakarta';
+        $sponsors = isset($settings['sponsors']) ? json_decode($settings['sponsors'], true) : [];
 
         // Fetch companion group tickets if any
         $groupTickets = [];
@@ -654,6 +656,7 @@ class VisitorTicketController extends Controller
             'groupTickets' => $groupTickets,
             'eventDate' => $eventDate,
             'eventVenue' => $eventVenue,
+            'sponsors' => $sponsors,
         ]);
     }
 

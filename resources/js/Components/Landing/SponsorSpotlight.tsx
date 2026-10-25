@@ -7,7 +7,40 @@ interface SponsorItem {
   logo?: string;
   website?: string;
   category?: string;
+  level?: string;
 }
+
+const getCategoryBadge = (category?: string, level?: string) => {
+  const cat = (category || level || 'PARTNER').toLowerCase();
+  if (cat.includes('platinum')) {
+    return {
+      label: 'PLATINUM',
+      className: 'bg-slate-900 text-amber-300 border-slate-700 font-black shadow-xs',
+    };
+  }
+  if (cat.includes('gold')) {
+    return {
+      label: 'GOLD',
+      className: 'bg-amber-100/90 text-amber-900 border-amber-300 font-extrabold shadow-2xs',
+    };
+  }
+  if (cat.includes('silver')) {
+    return {
+      label: 'SILVER',
+      className: 'bg-slate-100 text-slate-700 border-slate-300 font-bold',
+    };
+  }
+  if (cat.includes('supporting')) {
+    return {
+      label: 'SUPPORTING',
+      className: 'bg-teal-50 text-teal-800 border-teal-200 font-bold',
+    };
+  }
+  return {
+    label: (category || level || 'PARTNER').toUpperCase(),
+    className: 'bg-teal-50 text-teal-700 border-teal-200/60 font-extrabold',
+  };
+};
 
 interface SponsorSpotlightProps {
   sponsors: SponsorItem[];
@@ -277,9 +310,14 @@ export default function SponsorSpotlight({
                   <span className="font-mono text-xs font-bold text-slate-400 bg-slate-100/90 px-2.5 py-0.5 rounded-md shadow-2xs">
                     {itemNumber}
                   </span>
-                  <span className="text-[10px] font-extrabold tracking-wider uppercase text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200/60">
-                    PARTNER
-                  </span>
+                  {(() => {
+                    const badge = getCategoryBadge(sponsor.category, sponsor.level);
+                    return (
+                      <span className={`text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${badge.className}`}>
+                        {badge.label}
+                      </span>
+                    );
+                  })()}
                 </div>
 
                 {/* Center Logo Area */}
@@ -327,6 +365,23 @@ export default function SponsorSpotlight({
           <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1.5">
             DRAG · SWIPE · ARROW KEYS
           </div>
+
+          {(() => {
+            const activeBadge = getCategoryBadge(currentSponsor.category, currentSponsor.level);
+            return (
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2 border shadow-xs"
+                style={{
+                  backgroundColor: activeBadge.label === 'PLATINUM' ? '#0f172a' : activeBadge.label === 'GOLD' ? '#fef3c7' : activeBadge.label === 'SILVER' ? '#f1f5f9' : '#f0fdf4',
+                  color: activeBadge.label === 'PLATINUM' ? '#fde047' : activeBadge.label === 'GOLD' ? '#92400e' : activeBadge.label === 'SILVER' ? '#334155' : '#166534',
+                  borderColor: activeBadge.label === 'PLATINUM' ? '#334155' : activeBadge.label === 'GOLD' ? '#fde68a' : activeBadge.label === 'SILVER' ? '#cbd5e1' : '#bbf7d0',
+                }}
+              >
+                <span>★</span>
+                <span>{activeBadge.label} SPONSOR</span>
+              </div>
+            );
+          })()}
 
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
             {currentSponsor.name || 'Official Partner'}

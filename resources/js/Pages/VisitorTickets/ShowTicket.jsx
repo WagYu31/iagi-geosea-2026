@@ -24,6 +24,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { DEFAULT_SPONSORS } from '../../constants/sponsors';
 
 const CATEGORY_MAP = {
     // Invited Categories
@@ -326,7 +327,9 @@ export default function ShowTicket({
     groupTickets = [],
     eventDate = '3-5 November 2026',
     eventVenue = 'Royal Ambarrukmo Yogyakarta',
+    sponsors = [],
 }) {
+    const displaySponsors = (sponsors && sponsors.length > 0) ? sponsors : DEFAULT_SPONSORS;
     const categoryInfo = CATEGORY_MAP[ticket.visitor_type] || CATEGORY_MAP.non_exclusive;
     const isCheckedIn = ticket.checked_in;
     const isExclusive = ticket.visitor_type === 'exclusive' || ticket.visitor_type === 'vip';
@@ -564,6 +567,86 @@ export default function ShowTicket({
                             <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontWeight: 600 }}>
                                 📅 {eventDate} &bull; Present this QR Code to the gate scanner staff upon entering the venue.
                             </Typography>
+                        </Box>
+
+                        {/* Official Event Sponsors & Supporting Partners */}
+                        <Box sx={{ mt: 2.5, pt: 2, borderTop: '1px dashed #cbd5e1', textAlign: 'center' }}>
+                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 2, py: 0.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '1px solid #e2e8f0', mb: 1.5 }}>
+                                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#0d7a6a' }} />
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        color: '#475569',
+                                        fontWeight: 800,
+                                        letterSpacing: '0.12em',
+                                        fontSize: '0.65rem',
+                                        textTransform: 'uppercase',
+                                    }}
+                                >
+                                    Official Event Sponsors &amp; Supporting Partners
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: { xs: 1, sm: 1.25 },
+                                    px: 0.5,
+                                }}
+                            >
+                                {displaySponsors.map((sp, idx) => (
+                                    <Box
+                                        key={sp.id || idx}
+                                        component="a"
+                                        href={sp.website || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title={`${sp.name} (${sp.level || sp.category || 'Sponsor'})`}
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            p: 0.8,
+                                            bgcolor: '#ffffff',
+                                            borderRadius: '8px',
+                                            border: '1px solid #e2e8f0',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                                            transition: 'all 0.2s ease',
+                                            height: { xs: 34, sm: 38 },
+                                            minWidth: { xs: 58, sm: 70 },
+                                            maxWidth: { xs: 85, sm: 100 },
+                                            textDecoration: 'none',
+                                            '&:hover': {
+                                                transform: 'translateY(-2px)',
+                                                boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+                                                borderColor: '#0d7a6a',
+                                            },
+                                            '@media print': {
+                                                boxShadow: 'none',
+                                                border: '1px solid #cbd5e1',
+                                            }
+                                        }}
+                                    >
+                                        <Box
+                                            component="img"
+                                            src={sp.logo}
+                                            alt={sp.name}
+                                            sx={{
+                                                maxHeight: { xs: 22, sm: 26 },
+                                                maxWidth: '100%',
+                                                objectFit: 'contain',
+                                                filter: 'grayscale(20%)',
+                                                transition: 'filter 0.2s ease',
+                                                '&:hover': { filter: 'none' },
+                                                '@media print': { filter: 'none' },
+                                            }}
+                                            loading="lazy"
+                                        />
+                                    </Box>
+                                ))}
+                            </Box>
                         </Box>
                     </Box>
                 </Box>

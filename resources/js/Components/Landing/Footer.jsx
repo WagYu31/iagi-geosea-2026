@@ -13,6 +13,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SponsorSpotlight from './SponsorSpotlight';
 import ScrollReveal from './ScrollReveal';
+import { DEFAULT_SPONSORS } from '../../constants/sponsors';
 
 const SocialIcon = ({ type }) => {
     const icons = {
@@ -55,8 +56,8 @@ export default function Footer({ settings, auth }) {
     const hero = settings.hero_text || {};
     const social = settings.social_media || {};
 
-    // Sponsors marquee
-    const sponsors = settings.sponsors && settings.sponsors.length > 0 ? settings.sponsors : [];
+    // Sponsors marquee & spotlight
+    const sponsors = (settings.sponsors && settings.sponsors.length > 0) ? settings.sponsors : DEFAULT_SPONSORS;
     const duplicatedSponsors = sponsors.length > 0 ? [...sponsors, ...sponsors, ...sponsors] : [];
 
     return (
