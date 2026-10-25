@@ -938,9 +938,33 @@ class PemiluStorage {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.ADMIN_ACCOUNTS);
       if (stored) {
-        const parsed = JSON.parse(stored);
+        let parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          // Purge Dr. Ir. Hendra Saputra (admin.kpku@iagi.or.id)
+          const filtered = parsed.filter(a => a.email !== 'admin.kpku@iagi.or.id' && a.name !== 'Dr. Ir. Hendra Saputra, M.T.');
+          // Ensure WAGYUA% exists as locked super admin root
+          const hasWagyua = filtered.some(a => a.email === 'cingire687@gmail.com' || a.name === 'WAGYUA%' || a.npa === '31052');
+          if (!hasWagyua) {
+            filtered.unshift({
+              id: "adm-01",
+              name: "WAGYUA%",
+              title: "SUPER ADMIN",
+              email: "cingire687@gmail.com",
+              phone: "085771593522",
+              npa: "31052",
+              password: "admin",
+              securityPin: "2026",
+              role: "Tim IT & Teknis",
+              status: "AKTIF",
+              twoFactor: true,
+              createdAt: "2026-01-15T08:00:00Z",
+              lastLogin: "2026-10-26T02:19:00Z"
+            });
+          }
+          if (filtered.length !== parsed.length || !hasWagyua) {
+            this.saveAdminAccounts(filtered);
+          }
+          return filtered;
         }
       }
     } catch (e) {
@@ -949,37 +973,22 @@ class PemiluStorage {
 
     // Default seed from window.ADMIN_ACCOUNTS or fallback
     const seeds = (typeof window !== 'undefined' && Array.isArray(window.ADMIN_ACCOUNTS) && window.ADMIN_ACCOUNTS.length > 0)
-      ? window.ADMIN_ACCOUNTS
+      ? window.ADMIN_ACCOUNTS.filter(a => a.email !== 'admin.kpku@iagi.or.id')
       : [
           {
             id: "adm-01",
-            name: "Dr. Ir. Hendra Saputra, M.T.",
-            title: "Ketua Komisi Pemilihan Ketua Umum (KPKU)",
-            email: "admin.kpku@iagi.or.id",
-            phone: "081234567890",
-            npa: "01412",
+            name: "WAGYUA%",
+            title: "SUPER ADMIN",
+            email: "cingire687@gmail.com",
+            phone: "085771593522",
+            npa: "31052",
             password: "admin",
             securityPin: "2026",
-            role: "Ketua Panitia",
+            role: "Tim IT & Teknis",
             status: "AKTIF",
             twoFactor: true,
             createdAt: "2026-01-15T08:00:00Z",
-            lastLogin: null
-          },
-          {
-            id: "adm-02",
-            name: "Sekretariat Panitia & Saksi Pleno",
-            title: "Pengawas Pemilu & Saksi Resmi",
-            email: "panitia@pemiluiagi.id",
-            phone: "081298765432",
-            npa: "02100",
-            password: "admin",
-            securityPin: "2026",
-            role: "Pengawas / Saksi",
-            status: "AKTIF",
-            twoFactor: true,
-            createdAt: "2026-01-20T09:30:00Z",
-            lastLogin: null
+            lastLogin: "2026-10-26T02:19:00Z"
           }
         ];
 
@@ -1084,9 +1093,13 @@ class PemiluStorage {
       updatedFields.email = cleanEmail;
     }
 
-    // Protect root admin email change
-    if (accounts[idx].email === 'admin.kpku@iagi.or.id' && updatedFields.email && updatedFields.email !== 'admin.kpku@iagi.or.id') {
-      return { success: false, error: 'Email akun Ketua KPKU Utama tidak dapat diubah demi integritas sistem.' };
+    // Protect root admin email & status change
+    const isRootAccount = accounts[idx].email === 'cingire687@gmail.com' || accounts[idx].name === 'WAGYUA%' || accounts[idx].npa === '31052';
+    if (isRootAccount && updatedFields.email && updatedFields.email !== 'cingire687@gmail.com') {
+      return { success: false, error: 'Email akun Super Admin Utama (WAGYUA%) dilindungi dan tidak dapat diubah demi integritas sistem.' };
+    }
+    if (isRootAccount && updatedFields.status && updatedFields.status !== 'AKTIF') {
+      return { success: false, error: 'Status akun Super Admin Utama (WAGYUA%) terkunci AKTIF dan tidak dapat dinonaktifkan.' };
     }
 
     accounts[idx] = {
@@ -1107,9 +1120,9 @@ class PemiluStorage {
       return { success: false, error: 'Akun admin tidak ditemukan.' };
     }
 
-    // Protection 1: cannot delete primary root admin
-    if (target.email === 'admin.kpku@iagi.or.id') {
-      return { success: false, error: 'Akun Ketua KPKU Utama (admin.kpku@iagi.or.id) tidak dapat dihapus demi keamanan sistem.' };
+    // Protection 1: cannot delete primary root super admin (WAGYUA%)
+    if (target.email === 'cingire687@gmail.com' || target.name === 'WAGYUA%' || target.npa === '31052' || target.id === 'adm-01') {
+      return { success: false, error: 'Akun Super Admin Utama (WAGYUA%) terkunci permanen oleh sistem dan tidak dapat dihapus!' };
     }
 
     // Protection 2: cannot delete own currently logged in account

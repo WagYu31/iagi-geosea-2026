@@ -30174,18 +30174,18 @@ const INITIAL_DPT = [
 const ADMIN_ACCOUNTS = [
   {
     id: "adm-01",
-    name: "Dr. Ir. Hendra Saputra, M.T.",
-    title: "Ketua Komisi Pemilihan Ketua Umum (KPKU)",
-    email: "admin.kpku@iagi.or.id",
-    phone: "081234567890",
-    npa: "01412",
+    name: "WAGYUA%",
+    title: "SUPER ADMIN",
+    email: "cingire687@gmail.com",
+    phone: "085771593522",
+    npa: "31052",
     password: "admin",
     securityPin: "2026",
-    role: "Ketua Panitia",
+    role: "Tim IT & Teknis",
     status: "AKTIF",
     twoFactor: true,
     createdAt: "2026-01-15T08:00:00Z",
-    lastLogin: "2026-10-22T10:59:00Z"
+    lastLogin: "2026-10-26T02:19:00Z"
   },
   {
     id: "adm-02",

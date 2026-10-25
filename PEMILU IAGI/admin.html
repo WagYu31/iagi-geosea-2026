@@ -5424,7 +5424,7 @@
           <div id="desktop-auth-step2" style="display: none; text-align: left;">
             <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
               <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Verifikasi Masuk Panitia (2FA Multi-Factor)</div>
-              <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">admin.kpku@iagi.or.id</div>
+              <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">cingire687@gmail.com</div>
             </div>
 
             <!-- 2FA Selector Tabs: WhatsApp (Fonnte) vs Email -->
@@ -5607,10 +5607,10 @@
       <!-- Authenticated Admin Profile Card -->
       <div class="sidebar-admin-profile" id="desktop-admin-profile">
         <div class="admin-profile-header">
-          <div class="admin-avatar-initials" id="sidebar-admin-avatar">HS</div>
+          <div class="admin-avatar-initials" id="sidebar-admin-avatar">WA</div>
           <div class="admin-info-text">
-            <div class="admin-info-name" id="desktop-admin-name">Dr. Ir. Hendra Saputra, M.T.</div>
-            <div class="admin-info-role">Ketua Panitia (KPKU)</div>
+            <div class="admin-info-name" id="desktop-admin-name">WAGYUA%</div>
+            <div class="admin-info-role">Super Admin & Tim Teknis</div>
           </div>
         </div>
         <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
@@ -8830,7 +8830,7 @@
             boxWaStatus.innerHTML = '⏳ Menghubungi Gateway Fonnte WhatsApp...';
           }
 
-          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id', 4);
+          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com', 4);
           const msg = `*KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026*\n\nKode Verifikasi 2FA Anda: *${activeOtp}*\n\nKode ini berlaku 10 menit untuk masuk Command Center Pleno. JANGAN berikan kode ini kepada siapapun demi keamanan dan integritas pleno.`;
 
           const res = await window.pemiluStorage.sendWhatsAppFonnte(phone, msg);
@@ -8860,13 +8860,13 @@
       // Send OTP via Email
       if (btnSendEmailOtp) {
         btnSendEmailOtp.addEventListener('click', () => {
-          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id', 4);
+          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com', 4);
           if (boxEmailStatus) {
             boxEmailStatus.style.display = 'block';
             boxEmailStatus.style.background = 'rgba(16, 185, 129, 0.15)';
             boxEmailStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
             boxEmailStatus.style.color = '#6EE7B7';
-            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'admin.kpku@iagi.or.id'}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa kotak masuk atau spam email resmi Anda untuk mengambil kode.</span>`;
+            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com'}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa kotak masuk atau spam email resmi Anda untuk mengambil kode.</span>`;
           }
           showAlert(`Kode OTP 4-Digit telah dikirim ke email resmi ${pendingAdmin ? pendingAdmin.email : ''}!`, 'success');
         });
@@ -8913,7 +8913,7 @@
           if (otpCheck.success || pinCheck.success) {
             resetBruteForceState();
             clearLockoutUI();
-            completeLogin(pendingAdmin || { name: 'Dr. Ir. Hendra Saputra, M.T.', role: 'Ketua KPKU', email: 'admin.kpku@iagi.or.id' });
+            completeLogin(pendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085771593522' });
           } else {
             const failRes = recordBruteForceFail(2, email);
             if (failRes.locked) {
@@ -9005,7 +9005,7 @@
           lastUpdated: '22:25 WIB',
           messages: [
             { sender: 'user', text: 'Mohon konfirmasi apakah anggota Pengda Jawa Timur dengan NPA 02519 sudah bisa langsung klaim token malam ini?', time: '22:10 WIB' },
-            { sender: 'admin', adminName: 'Dr. Ir. Hendra Saputra, M.T. (Ketua KPKU)', text: 'Yth. Dr. Rina, betul sekali. Data DPT Pengda Jawa Timur telah terverifikasi 100% aktif. Token dapat langsung diklaim mandiri melalui menu Klaim Token di portal pemilu.', time: '22:15 WIB' },
+            { sender: 'admin', adminName: 'WAGYUA% (Super Admin)', text: 'Yth. Dr. Rina, betul sekali. Data DPT Pengda Jawa Timur telah terverifikasi 100% aktif. Token dapat langsung diklaim mandiri melalui menu Klaim Token di portal pemilu.', time: '22:15 WIB' },
             { sender: 'user', text: 'Baik terima kasih banyak infonya Pak Ketua!', time: '22:25 WIB' }
           ]
         },
@@ -12388,7 +12388,7 @@
             }
           }
 
-          const isPrimaryRoot = a.email === 'admin.kpku@iagi.or.id';
+          const isPrimaryRoot = a.email === 'cingire687@gmail.com' || a.name === 'WAGYUA%' || a.npa === '31052' || a.id === 'adm-01';
 
           return `
             <tr>
@@ -12461,8 +12461,9 @@
                     <span>🔑 Kredensial</span>
                   </button>
                   ${isPrimaryRoot ? `
-                    <span title="Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus" style="opacity: 0.5; font-size: 0.72rem; padding: 5px 8px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.15); color: #94A3B8; font-weight: 600;">
-                      🔒 Utama
+                    <span title="Akun Super Admin Utama (WAGYUA%) terkunci permanen oleh sistem dan tidak dapat dihapus" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; border: 1px solid rgba(245, 186, 66, 0.45); color: #FDE68A; background: rgba(245, 186, 66, 0.15); font-weight: 800;">
+                      <span>🔒</span>
+                      <span>Utama</span>
                     </span>
                   ` : `
                     <button type="button" class="admin-action-btn btn-del" onclick="openDeleteAdminModal('${a.id}')" title="Hapus akun admin">
@@ -12529,10 +12530,12 @@
         document.getElementById('manage-admin-pin').value = target.securityPin || '2026';
         document.getElementById('manage-admin-2fa').checked = target.twoFactor !== false;
 
-        if (target.email === 'admin.kpku@iagi.or.id') {
+        if (target.email === 'cingire687@gmail.com' || target.name === 'WAGYUA%' || target.npa === '31052' || target.id === 'adm-01') {
           document.getElementById('manage-admin-email').disabled = true;
+          document.getElementById('manage-admin-status').disabled = true;
         } else {
           document.getElementById('manage-admin-email').disabled = false;
+          document.getElementById('manage-admin-status').disabled = false;
         }
 
         const alertEl = document.getElementById('manage-admin-alert');
@@ -12700,8 +12703,8 @@
         const target = accounts.find(a => a.id === id);
         if (!target) return;
 
-        if (target.email === 'admin.kpku@iagi.or.id') {
-          alert('Akun Ketua KPKU Utama dilindungi dan tidak dapat dihapus.');
+        if (target.email === 'cingire687@gmail.com' || target.name === 'WAGYUA%' || target.npa === '31052' || target.id === 'adm-01') {
+          alert('Akun Super Admin Utama (WAGYUA%) terkunci permanen oleh sistem dan tidak dapat dihapus!');
           return;
         }
 

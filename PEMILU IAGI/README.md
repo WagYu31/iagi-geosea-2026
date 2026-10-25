@@ -67,12 +67,21 @@ npx -y serve -p 8088
 
 ---
 
+## 🛡️ Kredensial Super Admin & KPKU Command Center
+
+- **Nama**: `WAGYUA%`
+- **Email**: `cingire687@gmail.com`
+- **NPA**: `31052`
+- **No. HP**: `085771593522`
+- **Password**: `wagyua5`
+- **PIN Keamanan 2FA**: `2026`
+- **Kode OTP Sim**: `123456`
+
+---
+
 ## 📱 Data Uji Coba (Demo Testing DPT)
 
-Anda dapat menggunakan akun uji coba berikut untuk mencoba alur klaim dan pemungutan suara:
-- **NPA**: `IAGI-1998-0412`
-  - **Nama**: `Dr. Ir. Hendra Saputra, M.T.`
-  - **Email**: `hendra.saputra@migas.co.id`
+Anda dapat menggunakan akun pemilih uji coba berikut untuk mencoba alur klaim dan pemungutan suara:
 - **NPA**: `IAGI-2024-0001`
   - **Nama**: `Anggota Uji Coba IAGI`
   - **Email**: `pemilih@iagi.or.id`
@@ -80,3 +89,4 @@ Anda dapat menggunakan akun uji coba berikut untuk mencoba alur klaim dan pemung
   - **Nama**: `Geologist Muda Indonesia`
   - **Email**: `geologist@iagi.or.id`
 - **PIN Admin KPKU**: `2026`
+
