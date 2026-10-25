@@ -93,9 +93,9 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             // Technical
-            'presenter' => 'TKT-PRS',
-            'invited_speaker' => 'TKT-STUD',
             'student' => 'TKT-STUD',
+            'presenter' => 'TKT-STUD',
+            'invited_speaker' => 'TKT-ISPK',
             'session_chair_judge' => 'TKT-JDG',
             'session_chair' => 'TKT-JDG',
             'judge' => 'TKT-JDG',
@@ -131,16 +131,16 @@ class VisitorTicket extends Model
             'student_undergraduate' => 'Student Undergraduate',
 
             // 2. Technical
-            'presenter' => 'Presenter',
-            'invited_speaker' => 'Student',
             'student' => 'Student',
+            'presenter' => 'Student',
+            'invited_speaker' => 'Invited Speaker',
             'session_chair_judge' => 'Session Chair / Judge',
             'session_chair' => 'Session Chair',
             'judge' => 'Judge',
-            'oral' => 'Oral',
-            'oral_presenter' => 'Oral',
-            'poster' => 'Poster',
-            'poster_presenter' => 'Poster',
+            'oral' => 'Oral Presenter',
+            'oral_presenter' => 'Oral Presenter',
+            'poster' => 'Poster Presenter',
+            'poster_presenter' => 'Poster Presenter',
 
             // 3. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',

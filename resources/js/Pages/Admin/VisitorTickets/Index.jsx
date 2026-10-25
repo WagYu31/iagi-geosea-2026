@@ -121,26 +121,26 @@ const CATEGORY_META = {
     },
 
     // 2. Technical (Free / Invited)
-    presenter: {
-        label: 'Presenter',
-        shortLabel: 'PRESENTER',
-        bg: '#f0fdf4',
-        color: '#15803d',
-        border: '#86efac',
-    },
-    invited_speaker: {
-        label: 'Student',
-        shortLabel: 'STUDENT',
-        bg: '#ecfdf5',
-        color: '#004C23',
-        border: '#a7f3d0',
-    },
     student: {
         label: 'Student',
         shortLabel: 'STUDENT',
         bg: '#ecfdf5',
         color: '#004C23',
         border: '#a7f3d0',
+    },
+    presenter: {
+        label: 'Student',
+        shortLabel: 'STUDENT',
+        bg: '#ecfdf5',
+        color: '#004C23',
+        border: '#a7f3d0',
+    },
+    invited_speaker: {
+        label: 'Invited Speaker',
+        shortLabel: 'INVITED SPEAKER',
+        bg: '#fdf2f8',
+        color: '#9d174d',
+        border: '#fbcfe8',
     },
     session_chair_judge: {
         label: 'Session Chair / Judge',
@@ -164,29 +164,29 @@ const CATEGORY_META = {
         border: '#a5f3fc',
     },
     oral: {
-        label: 'Oral',
-        shortLabel: 'ORAL',
+        label: 'Oral Presenter',
+        shortLabel: 'ORAL PRESENTER',
         bg: '#f0fdfa',
         color: '#0f766e',
         border: '#99f6e4',
     },
     oral_presenter: {
-        label: 'Oral',
-        shortLabel: 'ORAL',
+        label: 'Oral Presenter',
+        shortLabel: 'ORAL PRESENTER',
         bg: '#f0fdfa',
         color: '#0f766e',
         border: '#99f6e4',
     },
     poster: {
-        label: 'Poster',
-        shortLabel: 'POSTER',
+        label: 'Poster Presenter',
+        shortLabel: 'POSTER PRESENTER',
         bg: '#fdf4ff',
         color: '#a21caf',
         border: '#f5d0fe',
     },
     poster_presenter: {
-        label: 'Poster',
-        shortLabel: 'POSTER',
+        label: 'Poster Presenter',
+        shortLabel: 'POSTER PRESENTER',
         bg: '#fdf4ff',
         color: '#a21caf',
         border: '#f5d0fe',
@@ -1768,11 +1768,12 @@ export default function VisitorTicketsIndex({
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     2. TECHNICAL
                                 </ListSubheader>
-                                <MenuItem value="presenter" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎙️ Presenter</MenuItem>
-                                <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🎓 Student</MenuItem>
+                                <MenuItem value="student" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎓 Student</MenuItem>
+                                <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student</MenuItem>
+                                <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🗣️ Invited Speaker</MenuItem>
                                 <MenuItem value="session_chair_judge" sx={{ pl: 3, fontSize: '0.82rem' }}>3. ⚖️ Session Chair / Judge</MenuItem>
-                                <MenuItem value="oral" sx={{ pl: 3, fontSize: '0.82rem' }}>4. 📢 Oral</MenuItem>
-                                <MenuItem value="poster" sx={{ pl: 3, fontSize: '0.82rem' }}>5. 📑 Poster</MenuItem>
+                                <MenuItem value="oral" sx={{ pl: 3, fontSize: '0.82rem' }}>4. 📢 Oral Presenter</MenuItem>
+                                <MenuItem value="poster" sx={{ pl: 3, fontSize: '0.82rem' }}>5. 📑 Poster Presenter</MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     3. VISITOR
@@ -3448,20 +3449,21 @@ export default function VisitorTicketsIndex({
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             2. TECHNICAL (FREE / INVITED)
                                                         </ListSubheader>
-                                                        <MenuItem value="presenter" sx={{ pl: 2.5, py: 1 }}>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#15803d', fontSize: '0.82rem' }}>
-                                                                    1. 🎙️ Presenter
-                                                                </Typography>
-                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#f0fdf4', color: '#15803d', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
-                                                            </Box>
-                                                        </MenuItem>
-                                                        <MenuItem value="invited_speaker" sx={{ pl: 2.5, py: 1 }}>
+                                                        <MenuItem value="student" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                                                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#004C23', fontSize: '0.82rem' }}>
-                                                                    2. 🎓 Student
+                                                                    1. 🎓 Student
                                                                 </Typography>
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#ecfdf5', color: '#004C23', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
+                                                        <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student</MenuItem>
+                                                        <MenuItem value="invited_speaker" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#9d174d', fontSize: '0.82rem' }}>
+                                                                    2. 🗣️ Invited Speaker
+                                                                </Typography>
+                                                                <Chip label="Free" size="small" sx={{ bgcolor: '#fdf2f8', color: '#9d174d', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
                                                         <MenuItem value="session_chair_judge" sx={{ pl: 2.5, py: 1 }}>
@@ -3475,7 +3477,7 @@ export default function VisitorTicketsIndex({
                                                         <MenuItem value="oral" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                                                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#0f766e', fontSize: '0.82rem' }}>
-                                                                    4. 📢 Oral
+                                                                    4. 📢 Oral Presenter
                                                                 </Typography>
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#f0fdfa', color: '#0f766e', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
@@ -3483,7 +3485,7 @@ export default function VisitorTicketsIndex({
                                                         <MenuItem value="poster" sx={{ pl: 2.5, py: 1 }}>
                                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                                                                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#a21caf', fontSize: '0.82rem' }}>
-                                                                    5. 📑 Poster
+                                                                    5. 📑 Poster Presenter
                                                                 </Typography>
                                                                 <Chip label="Free" size="small" sx={{ bgcolor: '#fdf4ff', color: '#a21caf', fontWeight: 900, height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
@@ -3615,11 +3617,12 @@ export default function VisitorTicketsIndex({
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. TECHNICAL
                                     </ListSubheader>
-                                    <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎙️ Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🎓 Student (Invited / Free)</MenuItem>
+                                    <MenuItem value="student" sx={{ pl: 3 }}>1. 🎓 Student (Invited / Free)</MenuItem>
+                                    <MenuItem value="presenter" sx={{ display: 'none' }}>1. 🎓 Student (Invited / Free)</MenuItem>
+                                    <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
                                     <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
-                                    <MenuItem value="oral" sx={{ pl: 3 }}>4. 📢 Oral (Invited / Free)</MenuItem>
-                                    <MenuItem value="poster" sx={{ pl: 3 }}>5. 📑 Poster (Invited / Free)</MenuItem>
+                                    <MenuItem value="oral" sx={{ pl: 3 }}>4. 📢 Oral Presenter (Invited / Free)</MenuItem>
+                                    <MenuItem value="poster" sx={{ pl: 3 }}>5. 📑 Poster Presenter (Invited / Free)</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         3. VISITOR
@@ -3783,37 +3786,37 @@ export default function VisitorTicketsIndex({
                             <Grid container spacing={1}>
                                 <Grid item xs={12} sm={4}>
                                     <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
-                                        <strong>1. 🎙️ Presenter</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Presenter</code></div>
-                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: PRESENTER</div>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} sm={4}>
-                                    <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
-                                        <strong>2. 🎓 Student</strong>
+                                        <strong>1. 🎓 Student</strong>
                                         <div style={{ color: '#64748b' }}>Tulis: <code>Student</code></div>
                                         <div style={{ color: '#004C23', fontWeight: 700 }}>Badge: STUDENT</div>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={4}>
                                     <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
+                                        <strong>2. 🗣️ Invited Speaker</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Invited Speaker</code></div>
+                                        <div style={{ color: '#9d174d', fontWeight: 700 }}>Badge: INVITED SPEAKER</div>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Box sx={{ p: 1, bgcolor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.8rem' }}>
                                         <strong>3. ⚖️ Session Chair / Judge</strong>
                                         <div style={{ color: '#64748b' }}>Tulis: <code>Session Chair / Judge</code></div>
-                                        <div style={{ color: '#094d42', fontWeight: 700 }}>Badge: CHAIR / JUDGE</div>
+                                        <div style={{ color: '#0e7490', fontWeight: 700 }}>Badge: CHAIR / JUDGE</div>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Box sx={{ p: 1, bgcolor: '#f0fdfa', borderRadius: '8px', border: '1.5px solid #99f6e4', fontSize: '0.8rem' }}>
-                                        <strong style={{ color: '#0f766e' }}>4. 📢 Oral</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Oral</code></div>
-                                        <div style={{ color: '#0f766e', fontWeight: 800 }}>Badge: ORAL (Pill Hijau Emas)</div>
+                                        <strong style={{ color: '#0f766e' }}>4. 📢 Oral Presenter</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Oral</code> / <code>Oral Presenter</code></div>
+                                        <div style={{ color: '#0f766e', fontWeight: 800 }}>Badge: ORAL PRESENTER</div>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Box sx={{ p: 1, bgcolor: '#fdf4ff', borderRadius: '8px', border: '1.5px solid #f5d0fe', fontSize: '0.8rem' }}>
-                                        <strong style={{ color: '#a21caf' }}>5. 📄 Poster</strong>
-                                        <div style={{ color: '#64748b' }}>Tulis: <code>Poster</code></div>
-                                        <div style={{ color: '#a21caf', fontWeight: 800 }}>Badge: POSTER (Pill Hijau Emas)</div>
+                                        <strong style={{ color: '#a21caf' }}>5. 📑 Poster Presenter</strong>
+                                        <div style={{ color: '#64748b' }}>Tulis: <code>Poster</code> / <code>Poster Presenter</code></div>
+                                        <div style={{ color: '#a21caf', fontWeight: 800 }}>Badge: POSTER PRESENTER</div>
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -5181,11 +5184,11 @@ export default function VisitorTicketsIndex({
                 </ListSubheader>
 
                 {[
-                    { type: 'presenter', label: '1. 🎙️ Presenter', code: 'TKT-PRS', color: '#15803d' },
-                    { type: 'invited_speaker', label: '2. 🎓 Student', code: 'TKT-STUD', color: '#004C23' },
+                    { type: 'student', label: '1. 🎓 Student', code: 'TKT-STUD', color: '#004C23' },
+                    { type: 'invited_speaker', label: '2. 🗣️ Invited Speaker', code: 'TKT-ISPK', color: '#9d174d' },
                     { type: 'session_chair_judge', label: '3. ⚖️ Session Chair / Judge', code: 'TKT-JDG', color: '#0e7490' },
-                    { type: 'oral', label: '4. 📢 Oral', code: 'TKT-ORL', color: '#0f766e' },
-                    { type: 'poster', label: '5. 📑 Poster', code: 'TKT-PST', color: '#a21caf' },
+                    { type: 'oral', label: '4. 📢 Oral Presenter', code: 'TKT-ORL', color: '#0f766e' },
+                    { type: 'poster', label: '5. 📑 Poster Presenter', code: 'TKT-PST', color: '#a21caf' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}
