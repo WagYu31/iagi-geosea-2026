@@ -309,6 +309,15 @@ const CATEGORY_META = {
         color: '#065f46',
         border: '#a7f3d0',
     },
+
+    // 12. Student Crowd
+    student_crowd: {
+        label: 'Student Crowd',
+        shortLabel: 'STUDENT CROWD',
+        bg: '#f0fdf4',
+        color: '#15803d',
+        border: '#86efac',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
@@ -334,6 +343,7 @@ const CATEGORY_PRICES = {
     'sponsorship': 0,
     'sponsor': 0,
     'delegate': 0,
+    'student_crowd': 0,
     'presenter': 0,
     'invited_speaker': 0,
     'student': 0,
@@ -1793,6 +1803,7 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
                                 <MenuItem value="board" sx={{ fontSize: '0.82rem' }}>10. 🎖️ Board (Invited / Free)</MenuItem>
                                 <MenuItem value="sponsorship" sx={{ fontSize: '0.82rem' }}>11. 💎 Delegate (Invited / Free)</MenuItem>
+                                <MenuItem value="student_crowd" sx={{ fontSize: '0.82rem' }}>12. 🎓 Student Crowd (Invited / Free)</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -3550,6 +3561,7 @@ export default function VisitorTicketsIndex({
                                                         <MenuItem value="student_volunteer" sx={{ pl: 2.5, py: 0.8 }}>9. 🤝 Student Volunteer (Free)</MenuItem>
                                                         <MenuItem value="board" sx={{ pl: 2.5, py: 0.8 }}>10. 🎖️ Board (Free)</MenuItem>
                                                         <MenuItem value="sponsorship" sx={{ pl: 2.5, py: 0.8 }}>11. 💎 Delegate (Free)</MenuItem>
+                                                        <MenuItem value="student_crowd" sx={{ pl: 2.5, py: 0.8 }}>12. 🎓 Student Crowd (Free)</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
@@ -3676,6 +3688,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
                                     <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
                                     <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
+                                    <MenuItem value="student_crowd">12. 🎓 Student Crowd (Invited / Free)</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -5271,6 +5284,7 @@ export default function VisitorTicketsIndex({
                     { type: 'student_volunteer', label: '9. 🤝 Volunteer', code: 'TKT-VOL' },
                     { type: 'board', label: '10. 🎖️ Board', code: 'TKT-BRD' },
                     { type: 'sponsorship', label: '11. 💎 Delegate', code: 'TKT-DLG' },
+                    { type: 'student_crowd', label: '12. 🎓 Student Crowd', code: 'TKT-CRWD' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}

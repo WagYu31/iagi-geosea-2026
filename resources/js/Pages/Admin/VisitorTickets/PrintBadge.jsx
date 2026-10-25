@@ -60,6 +60,9 @@ export const BADGE_TEMPLATES = {
     sponsor: '/images/badges/Sponsorship.png',
     delegate: '/images/badges/Sponsorship.png',
 
+    // 12. Student Crowd
+    student_crowd: '/images/badges/Student.png',
+
     // Technical
     student: '/images/badges/Presenter.png',
     presenter: '/images/badges/Presenter.png',
@@ -127,6 +130,9 @@ const CATEGORY_MAP = {
     sponsorship: { label: 'DELEGATE', short: 'DELEGATE' },
     sponsor: { label: 'DELEGATE', short: 'DELEGATE' },
     delegate: { label: 'DELEGATE', short: 'DELEGATE' },
+
+    // 13. Student Crowd
+    student_crowd: { label: 'STUDENT CROWD', short: 'STUDENT CROWD' },
 };
 
 export const BADGE_VERSION = '20261025_student_badge';

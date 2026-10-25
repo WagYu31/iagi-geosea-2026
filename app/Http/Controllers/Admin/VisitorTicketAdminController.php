@@ -537,6 +537,7 @@ class VisitorTicketAdminController extends Controller
             'sponsorship' => 'TKT-SPN',
             'sponsor' => 'TKT-SPN',
             'delegate' => 'TKT-DLG',
+            'student_crowd' => 'TKT-CRWD',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
@@ -799,6 +800,7 @@ class VisitorTicketAdminController extends Controller
             'sponsorship' => '/images/badges/Sponsorship.png',
             'sponsor' => '/images/badges/Sponsorship.png',
             'delegate' => '/images/badges/Sponsorship.png',
+            'student_crowd' => '/images/badges/Student.png',
             'iagi_member_professional' => '/images/badges/Participant.png',
             'non_iagi_member_professional' => '/images/badges/Participant.png',
             'iagi_member_expatriate' => '/images/badges/Participant.png',
@@ -1394,6 +1396,11 @@ class VisitorTicketAdminController extends Controller
             return 'delegate';
         }
 
+        // Student Crowd
+        if (str_contains($clean, 'crowd')) {
+            return 'student_crowd';
+        }
+
         // Participant types
         if (str_contains($clean, 'student') || str_contains($clean, 'mahasiswa')) {
             return 'student_undergraduate';
@@ -1489,6 +1496,7 @@ class VisitorTicketAdminController extends Controller
                     'sponsorship' => 'TKT-SPN',
                     'sponsor' => 'TKT-SPN',
                     'delegate' => 'TKT-DLG',
+                    'student_crowd' => 'TKT-CRWD',
                     'non_exclusive' => 'TKT-VIS',
                     'exclusive' => 'TKT-EXC',
                     'iagi_member_professional' => 'TKT-IPRO',
@@ -1689,6 +1697,7 @@ class VisitorTicketAdminController extends Controller
             'sponsorship' => 'TKT-SPN',
             'sponsor' => 'TKT-SPN',
             'delegate' => 'TKT-DLG',
+            'student_crowd' => 'TKT-CRWD',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',

@@ -158,6 +158,16 @@ const CATEGORY_MAP = {
         tagBg: '#ecfdf5',
         tagColor: '#065f46',
     },
+    student_crowd: {
+        label: 'Student Crowd',
+        badge: 'STUDENT CROWD',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        border: '#10b981',
+        shadow: 'rgba(16, 185, 129, 0.25)',
+        textColor: '#059669',
+        tagBg: '#ecfdf5',
+        tagColor: '#047857',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',
