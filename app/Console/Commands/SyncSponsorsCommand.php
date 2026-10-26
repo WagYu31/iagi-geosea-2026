@@ -41,7 +41,7 @@ class SyncSponsorsCommand extends Command
         'name' => 'Pertamina Hulu Energi',
         'category' => 'Main Event Diamond',
         'level' => 'Diamond',
-        'logo' => '/images/sponsors/pertamina.png',
+        'logo' => '/images/sponsors/pertamina_phe.png',
         'website' => 'https://phe.pertamina.com',
         'order' => 1,
             ],
