@@ -294,12 +294,21 @@ class SyncSponsorsCommand extends Command
             ],
             [
                 'id' => 26,
+                'name' => 'PT Bukit Raya Sekawan',
+                'category' => 'Other',
+                'level' => 'Other',
+                'logo' => '/images/sponsors/bukit_raya_sekawan.png',
+                'website' => 'https://bukitrayasekawan.com',
+                'order' => 26,
+            ],
+            [
+                'id' => 27,
                 'name' => 'SKK Migas',
                 'category' => 'Institutional Partner',
                 'level' => 'Institutional Partner',
                 'logo' => '/images/sponsors/skk_migas.webp',
                 'website' => 'https://www.skkmigas.go.id',
-                'order' => 26,
+                'order' => 27,
             ],
         ];
 
