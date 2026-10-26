@@ -565,11 +565,12 @@ export default function SponsorSpotlight({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* NEW ROW: WELCOME OUR EXHIBITORS                               */}
+      {/* NEW ROW: WELCOME OUR EXHIBITORS (Infinite Running Marquee)    */}
       {/* ------------------------------------------------------------- */}
       {finalExhibitors && finalExhibitors.length > 0 && (
-        <div className="max-w-6xl mx-auto mt-16 md:mt-24 pt-12 border-t border-slate-200/90 px-6 relative z-10">
-          <div className="text-center mb-8 sm:mb-12">
+        <div className="w-full mt-16 md:mt-24 pt-12 border-t border-slate-200/90 relative z-10 overflow-hidden">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-10 px-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-extrabold tracking-widest uppercase mb-3 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
               OFFICIAL EXHIBITION
@@ -582,49 +583,94 @@ export default function SponsorSpotlight({
             </p>
           </div>
 
-          {/* Exhibitor Cards Showcase */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 max-w-6xl mx-auto">
-            {finalExhibitors.map((exhibitor, idx) => (
-              <div
-                key={exhibitor.id || idx}
-                className="w-[260px] sm:w-[300px] h-[320px] sm:h-[350px] rounded-[26px] bg-white p-6 sm:p-7 flex flex-col items-center justify-between shadow-[0_12px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/90 hover:border-teal-500/50 hover:shadow-[0_20px_50px_-10px_rgba(13,148,136,0.22)] hover:-translate-y-1 transition-all duration-300 group"
-              >
-                {/* Top Row: Index Badge & Exhibition Pill */}
-                <div className="w-full flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-slate-400 bg-slate-100/90 px-2.5 py-0.5 rounded-md">
-                    0{idx + 1}
-                  </span>
-                  <span
-                    className="text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full border font-bold shadow-2xs"
-                    style={{
-                      backgroundColor: '#334155',
-                      color: '#ffffff',
-                      borderColor: '#475569',
-                    }}
+          {/* Marquee Wrapper with Edge Gradients & Pause-on-Hover */}
+          <div className="relative w-full overflow-hidden py-4">
+            {/* Left Fade Gradient */}
+            <div
+              className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-32 z-20"
+              style={{
+                background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%)',
+              }}
+            />
+
+            {/* Right Fade Gradient */}
+            <div
+              className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-20"
+              style={{
+                background: 'linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%)',
+              }}
+            />
+
+            {/* Continuous Marquee Track */}
+            <div
+              className="flex items-center gap-5 sm:gap-7 w-max will-change-transform"
+              style={{
+                animation: 'exhibitorsMarquee 32s linear infinite',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.animationPlayState = 'paused';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.animationPlayState = 'running';
+              }}
+            >
+              {[...finalExhibitors, ...finalExhibitors, ...finalExhibitors, ...finalExhibitors].map((exhibitor, idx) => {
+                const itemIndex = (idx % finalExhibitors.length) + 1;
+                return (
+                  <div
+                    key={`${exhibitor.id || idx}-${idx}`}
+                    className="w-[240px] sm:w-[280px] h-[145px] sm:h-[160px] rounded-[22px] bg-white p-4 sm:p-5 flex flex-col justify-between shadow-[0_6px_25px_-4px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-teal-500/60 hover:shadow-[0_14px_35px_-8px_rgba(13,148,136,0.20)] hover:-translate-y-1 transition-all duration-300 group/card shrink-0 cursor-pointer"
                   >
-                    EXHIBITION
-                  </span>
-                </div>
+                    {/* Top Row: Index Badge & Exhibition Pill */}
+                    <div className="w-full flex items-center justify-between">
+                      <span className="font-mono text-[11px] font-bold text-slate-400 bg-slate-100/90 px-2 py-0.5 rounded-md">
+                        {itemIndex < 10 ? `0${itemIndex}` : itemIndex}
+                      </span>
+                      <span
+                        className="text-[9px] tracking-wider uppercase px-2 py-0.5 rounded-full border font-bold shadow-2xs"
+                        style={{
+                          backgroundColor: '#334155',
+                          color: '#ffffff',
+                          borderColor: '#475569',
+                        }}
+                      >
+                        EXHIBITION
+                      </span>
+                    </div>
 
-                {/* Center Logo */}
-                <div className="w-full flex-1 flex items-center justify-center my-3 overflow-hidden p-3">
-                  <img
-                    src={exhibitor.logo}
-                    alt={exhibitor.name}
-                    className="max-w-[90%] max-h-[140px] sm:max-h-[160px] object-contain drop-shadow-xs transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
+                    {/* Center Logo */}
+                    <div className="w-full flex-1 flex items-center justify-center my-1 overflow-hidden p-2">
+                      <img
+                        src={exhibitor.logo}
+                        alt={exhibitor.name}
+                        className="max-w-[88%] max-h-[58px] sm:max-h-[68px] object-contain drop-shadow-xs transition-transform duration-300 group-hover/card:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
 
-                {/* Bottom Name */}
-                <div className="w-full pt-3 border-t border-slate-100 text-center">
-                  <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-snug line-clamp-1">
-                    {exhibitor.name}
-                  </p>
-                </div>
-              </div>
-            ))}
+                    {/* Bottom Name */}
+                    <div className="w-full pt-2 border-t border-slate-100 text-center">
+                      <p className="text-xs sm:text-[13px] font-bold text-slate-800 leading-tight line-clamp-1">
+                        {exhibitor.name}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Marquee Keyframes */}
+          <style>{`
+            @keyframes exhibitorsMarquee {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+          `}</style>
         </div>
       )}
     </div>
