@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ExternalLink, Building2 } from 'lucide-react';
+import { DEFAULT_EXHIBITORS } from '../../constants/sponsors';
 
 interface SponsorItem {
   id?: number | string;
@@ -164,14 +165,18 @@ interface SponsorSpotlightProps {
   sponsors: SponsorItem[];
   title?: string;
   description?: string;
+  exhibitors?: SponsorItem[];
 }
 
 export default function SponsorSpotlight({
   sponsors = [],
   title = 'SUPPORTED BY :',
   description = '',
+  exhibitors,
 }: SponsorSpotlightProps) {
   if (!sponsors || sponsors.length === 0) return null;
+
+  const finalExhibitors = exhibitors && exhibitors.length > 0 ? exhibitors : DEFAULT_EXHIBITORS;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -558,6 +563,70 @@ export default function SponsorSpotlight({
           </button>
         </div>
       </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* NEW ROW: WELCOME OUR EXHIBITORS                               */}
+      {/* ------------------------------------------------------------- */}
+      {finalExhibitors && finalExhibitors.length > 0 && (
+        <div className="max-w-6xl mx-auto mt-16 md:mt-24 pt-12 border-t border-slate-200/90 px-6 relative z-10">
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-extrabold tracking-widest uppercase mb-3 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+              OFFICIAL EXHIBITION
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+              WELCOME OUR EXHIBITORS :
+            </h2>
+            <p className="text-sm md:text-base text-slate-500 max-w-xl mx-auto mt-2">
+              Meet our distinguished exhibition partners at 55th PIT IAGI - GEOSEA XIX 2026
+            </p>
+          </div>
+
+          {/* Exhibitor Cards Showcase */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 max-w-4xl mx-auto">
+            {finalExhibitors.map((exhibitor, idx) => (
+              <div
+                key={exhibitor.id || idx}
+                className="w-[260px] sm:w-[300px] h-[320px] sm:h-[350px] rounded-[26px] bg-white p-6 sm:p-7 flex flex-col items-center justify-between shadow-[0_12px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/90 hover:border-teal-500/50 hover:shadow-[0_20px_50px_-10px_rgba(13,148,136,0.22)] hover:-translate-y-1 transition-all duration-300 group"
+              >
+                {/* Top Row: Index Badge & Exhibition Pill */}
+                <div className="w-full flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-slate-400 bg-slate-100/90 px-2.5 py-0.5 rounded-md">
+                    0{idx + 1}
+                  </span>
+                  <span
+                    className="text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full border font-bold shadow-2xs"
+                    style={{
+                      backgroundColor: '#334155',
+                      color: '#ffffff',
+                      borderColor: '#475569',
+                    }}
+                  >
+                    EXHIBITION
+                  </span>
+                </div>
+
+                {/* Center Logo */}
+                <div className="w-full flex-1 flex items-center justify-center my-3 overflow-hidden p-3">
+                  <img
+                    src={exhibitor.logo}
+                    alt={exhibitor.name}
+                    className="max-w-[90%] max-h-[140px] sm:max-h-[160px] object-contain drop-shadow-xs transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Bottom Name */}
+                <div className="w-full pt-3 border-t border-slate-100 text-center">
+                  <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-snug line-clamp-1">
+                    {exhibitor.name}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
