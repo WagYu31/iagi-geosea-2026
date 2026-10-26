@@ -583,7 +583,7 @@ export default function SponsorSpotlight({
           </div>
 
           {/* Exhibitor Cards Showcase */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 max-w-4xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 max-w-6xl mx-auto">
             {finalExhibitors.map((exhibitor, idx) => (
               <div
                 key={exhibitor.id || idx}
