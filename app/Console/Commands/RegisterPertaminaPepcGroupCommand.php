@@ -18,7 +18,11 @@ class RegisterPertaminaPepcGroupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'register:pertamina-pepc {--approve : Langsung setujui (approve) status tiket dan pembayaran}';
+    protected $signature = 'register:pertamina-pepc 
+                            {--approve : Langsung setujui (approve) status tiket dan pembayaran}
+                            {--pic-email= : Email PIC / HRD Pertamina untuk invoice}
+                            {--pic-name= : Nama PIC / HRD (default: PT Pertamina EP Cepu (HC TAL))}
+                            {--pic-phone= : Nomor WhatsApp / Telepon PIC}';
 
     /**
      * The console command description.
@@ -57,12 +61,12 @@ class RegisterPertaminaPepcGroupCommand extends Command
             @copy($proofPath, $pubStoragePath);
         }
 
-        // PIC Details
+        // PIC Details (Terpisah dari Peserta, untuk HRD / penerima invoice)
         $picData = [
             'institution' => 'PT Pertamina EP Cepu (HC TAL) - M. Reza Ramadhan',
-            'name' => 'PT Pertamina EP Cepu (HC TAL)',
-            'email' => 'ferdy.phe@pertamina.com',
-            'phone' => '08111464449',
+            'name' => $this->option('pic-name') ?: 'PT Pertamina EP Cepu (HC TAL)',
+            'email' => $this->option('pic-email') ?: 'ferdy.phe@pertamina.com',
+            'phone' => $this->option('pic-phone') ?: '08111464449',
         ];
 
         // 4 Participants (All Non-Member Professional @ IDR 4,000,000)
