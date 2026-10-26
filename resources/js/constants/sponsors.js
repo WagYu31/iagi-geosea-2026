@@ -29,259 +29,272 @@ export const DEFAULT_SPONSORS = [
     },
 
     // =========================================================================
-    // 2. MAIN EVENT BRONZE
+    // 2. MAIN EVENT SILVER
     // =========================================================================
     {
         id: 3,
+        name: 'PT Geo Dipa Energi (Persero)',
+        category: 'Main Event Silver',
+        level: 'Silver',
+        logo: '/images/sponsors/geodipa.png',
+        website: 'https://geodipa.co.id',
+        order: 3,
+    },
+
+    // =========================================================================
+    // 3. MAIN EVENT BRONZE
+    // =========================================================================
+    {
+        id: 4,
         name: 'Halliburton Indonesia',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/halliburton.png',
         website: 'https://www.halliburton.com',
-        order: 3,
+        order: 4,
     },
     {
-        id: 4,
+        id: 5,
         name: 'SLB Indonesia',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/slb.png',
         website: 'https://www.slb.com',
-        order: 4,
+        order: 5,
     },
     {
-        id: 5,
+        id: 6,
         name: 'PT Energi Mega Persada Tbk',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/emp.png',
         website: 'https://www.emp.id',
-        order: 5,
+        order: 6,
     },
     {
-        id: 6,
+        id: 7,
         name: 'PT Geo Fix Indonesia',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/geofix.png',
         website: 'https://www.geofix-id.com',
-        order: 6,
+        order: 7,
     },
     {
-        id: 7,
+        id: 8,
         name: 'BAUER Pratama Indonesia',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/bauer_pratama.png',
         website: 'https://www.bauer.de',
-        order: 7,
+        order: 8,
     },
     {
-        id: 8,
+        id: 9,
         name: 'Husky CNOOC Madura Limited',
         category: 'Main Event Bronze',
         level: 'Bronze',
         logo: '/images/sponsors/hcml.png',
         website: 'https://www.hcml.co.id',
-        order: 8,
+        order: 9,
     },
 
     // =========================================================================
-    // 3. IAGI PRESIDENT ELECTION
+    // 4. IAGI PRESIDENT ELECTION
     // =========================================================================
     {
-        id: 9,
+        id: 10,
         name: 'PT Pelsart Tambang Kencana',
         category: 'IAGI President Election',
         level: 'President Election',
         logo: '/images/sponsors/pelsart.png',
         website: 'https://ptkgold.co.id',
-        order: 9,
+        order: 10,
     },
 
     // =========================================================================
-    // 4. ICE BREAKING NIGHT
+    // 5. ICE BREAKING NIGHT
     // =========================================================================
     {
-        id: 10,
+        id: 11,
         name: 'PT Raharsa',
         category: 'Ice Breaking Night',
         level: 'Ice Breaking Night',
         logo: '/images/sponsors/raharsa.png',
         website: 'https://raharsa.com',
-        order: 10,
+        order: 11,
     },
 
     // =========================================================================
-    // 5. KEYNOTE / PLENARY SESSION
+    // 6. KEYNOTE / PLENARY SESSION
     // =========================================================================
     {
-        id: 11,
+        id: 12,
         name: 'Geo Sumberdaya alam',
         category: 'Keynote/Plenary',
         level: 'Keynote/Plenary',
         logo: '/images/sponsors/geo_sumber_daya.jpg',
         website: 'https://geosumberdaya.com',
-        order: 11,
+        order: 12,
     },
 
     // =========================================================================
-    // 6. TECHNICAL SESSIONS
+    // 7. TECHNICAL SESSIONS
     // =========================================================================
     {
-        id: 12,
+        id: 13,
         name: 'PT Supreme Energy',
         category: 'Technical Sessions',
         level: 'Technical Sessions',
         logo: '/images/sponsors/supreme_energy.png',
         website: 'https://www.supreme-energy.com',
-        order: 12,
+        order: 13,
     },
 
     // =========================================================================
-    // 7. LANYARD & NAME TAG
+    // 8. LANYARD & NAME TAG
     // =========================================================================
     {
-        id: 13,
+        id: 14,
         name: 'Prime Natuna Energy',
         category: 'Lanyard & Name Tag',
         level: 'Lanyard & Name Tag',
         logo: '/images/sponsors/skk_prime_natuna.png',
         website: 'https://www.skkmigas.go.id',
-        order: 13,
+        order: 14,
     },
 
     // =========================================================================
-    // 8. EXHIBITION
+    // 9. EXHIBITION
     // =========================================================================
     {
-        id: 14,
+        id: 15,
         name: 'Promising Geophysic Malaysia',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/promising_geophysics.jpg',
         website: 'https://promisinggeophysics.com',
-        order: 14,
+        order: 15,
     },
     {
-        id: 15,
+        id: 16,
         name: 'PT Wahana Kerja Indonesia (Waskpro)',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/wahana_kerja.png',
         website: 'https://waskpro.com',
-        order: 15,
+        order: 16,
     },
     {
-        id: 16,
+        id: 17,
         name: 'PT Jakindo Perkasa',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/jakindo.png',
         website: 'https://www.jakindoperkasa.com',
-        order: 16,
+        order: 17,
     },
     {
-        id: 17,
+        id: 18,
         name: 'PT Geoservices',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/geoservices.png',
         website: 'https://geoservices.co.id',
-        order: 17,
+        order: 18,
     },
     {
-        id: 18,
+        id: 19,
         name: 'Badan Geologi (ESDM)',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/kementerian_esdm.png',
         website: 'https://geologi.esdm.go.id',
-        order: 18,
+        order: 19,
     },
     {
-        id: 19,
+        id: 20,
         name: 'Geonest',
         category: 'Exhibition',
         level: 'Exhibition',
         logo: '/images/sponsors/geonest.png',
         website: 'https://geonest-software.com',
-        order: 19,
+        order: 20,
     },
 
     // =========================================================================
-    // 9. OTHER & SUPPORTING PARTNERS
+    // 10. OTHER & SUPPORTING PARTNERS
     // =========================================================================
     {
-        id: 20,
+        id: 21,
         name: 'EnQuest EP Ltd',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/enquest.png',
         website: 'https://www.enquest.com',
-        order: 20,
+        order: 21,
     },
     {
-        id: 21,
+        id: 22,
         name: 'PT DMT Exploration Engineering Consulting Indonesia',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/dmt.png',
         website: 'https://www.dmt-group.com',
-        order: 21,
+        order: 22,
     },
     {
-        id: 22,
+        id: 23,
         name: 'Kageo Trisakti',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/geosakti.png',
         website: 'https://geologi.ftke.trisakti.ac.id',
-        order: 22,
+        order: 23,
     },
     {
-        id: 23,
+        id: 24,
         name: 'PT Cita Mineral Investindo Tbk (CITA)',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/cita_mineral.png',
         website: 'https://citamineral.com',
-        order: 23,
+        order: 24,
     },
     {
-        id: 24,
+        id: 25,
         name: 'Kageo Gadjah Mada',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/kageogama.png',
         website: 'https://kageogama.org',
-        order: 24,
+        order: 25,
     },
     {
-        id: 25,
+        id: 26,
         name: 'PT Indo Bara Pratama',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/indo_bara_pratama.jpg',
         website: 'https://indobarapratama.com',
-        order: 25,
+        order: 26,
     },
     {
-        id: 26,
+        id: 27,
         name: 'PT Bukit Raya Sekawan',
         category: 'Other',
         level: 'Other',
         logo: '/images/sponsors/bukit_raya_sekawan.png',
         website: 'https://bukitrayasekawan.com',
-        order: 26,
+        order: 27,
     },
     {
-        id: 27,
+        id: 28,
         name: 'SKK Migas',
         category: 'Institutional Partner',
         level: 'Institutional Partner',
         logo: '/images/sponsors/skk_migas.webp',
         website: 'https://www.skkmigas.go.id',
-        order: 27,
+        order: 28,
     },
 ];

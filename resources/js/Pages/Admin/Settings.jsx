@@ -3823,6 +3823,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                                 onChange={(e) => updateSponsor(index, 'category', e.target.value)}
                                                             >
                                                                 <MenuItem value="Main Event Diamond">Main Event Diamond</MenuItem>
+                                                                <MenuItem value="Main Event Silver">Main Event Silver</MenuItem>
                                                                 <MenuItem value="Main Event Bronze">Main Event Bronze</MenuItem>
                                                                 <MenuItem value="IAGI President Election">IAGI President Election</MenuItem>
                                                                 <MenuItem value="Ice Breaking Night">Ice Breaking Night</MenuItem>

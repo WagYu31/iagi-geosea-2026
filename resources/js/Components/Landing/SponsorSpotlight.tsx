@@ -35,7 +35,21 @@ const getCategoryBadge = (category?: string, level?: string): BadgeStyle => {
     };
   }
 
-  // 2. Main Event Bronze
+  // 2. Main Event Silver
+  if (lower.includes('silver')) {
+    return {
+      label: 'MAIN EVENT SILVER',
+      shortLabel: 'SILVER',
+      className: 'font-extrabold shadow-sm',
+      style: {
+        backgroundColor: '#475569',
+        color: '#f8fafc',
+        borderColor: '#94a3b8',
+      },
+    };
+  }
+
+  // 3. Main Event Bronze
   if (lower.includes('bronze')) {
     return {
       label: 'MAIN EVENT BRONZE',
