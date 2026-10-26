@@ -244,7 +244,7 @@ class SyncSponsorsCommand extends Command
         'name' => 'Geonest',
         'category' => 'Exhibition',
         'level' => 'Exhibition',
-        'logo' => '/images/sponsors/geonest.png',
+        'logo' => '/images/sponsors/geonest_full.png',
         'website' => 'https://geonest-software.com',
         'order' => 20,
             ],
