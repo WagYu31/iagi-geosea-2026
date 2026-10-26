@@ -491,7 +491,7 @@ export default function VisitorTicketsIndex({
         pic_name: '',
         pic_email: '',
         pic_phone: '',
-        sync_pic_with_primary: true,
+        sync_pic_with_primary: false,
         recalculate_total: true,
         unique_code: 0,
         members: [],
@@ -910,7 +910,7 @@ export default function VisitorTicketsIndex({
             pic_phone: ticket.payment?.pic_phone || primaryMember?.visitor_phone || '',
             pic_institution: ticket.payment?.pic_institution || primaryMember?.visitor_institution || '',
             unique_code: Number(ticket.payment?.unique_code || 0),
-            sync_pic_with_primary: true,
+            sync_pic_with_primary: false,
             recalculate_total: true,
             members: mappedMembers,
             removed_ticket_ids: [],
@@ -3054,34 +3054,7 @@ export default function VisitorTicketsIndex({
 
                                 <Divider sx={{ my: 1.2, borderColor: '#f1f5f9' }} />
 
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                size="small"
-                                                checked={editData.sync_pic_with_primary}
-                                                onChange={(e) => {
-                                                    const checked = e.target.checked;
-                                                    setEditData(prev => ({
-                                                        ...prev,
-                                                        sync_pic_with_primary: checked,
-                                                        ...(checked && prev.members[0] ? {
-                                                            pic_name: prev.members[0].visitor_name,
-                                                            pic_email: prev.members[0].visitor_email,
-                                                            pic_phone: prev.members[0].visitor_phone,
-                                                            pic_institution: prev.members[0].visitor_institution,
-                                                        } : {})
-                                                    }));
-                                                }}
-                                                sx={{ color: '#094d42', '&.Mui-checked': { color: '#094d42' } }}
-                                            />
-                                        }
-                                        label={
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.78rem' }}>
-                                                Auto-sync PIC Invoice dengan Primary Registrant / Group Leader
-                                            </Typography>
-                                        }
-                                    />
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 1 }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
@@ -3124,46 +3097,101 @@ export default function VisitorTicketsIndex({
                                     </Box>
                                 </Box>
 
-                                {!editData.sync_pic_with_primary && (
-                                    <Grid container spacing={1.5} sx={{ mt: 1 }}>
+                                {/* DEDICATED PIC / HRD / CORPORATE INVOICING SECTION */}
+                                <Box sx={{ mt: 2, p: 2, bgcolor: '#ffffff', borderRadius: '12px', border: '1.5px solid #cbd5e1', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <span>🏢 Data PIC / HRD Perusahaan (Penerima Invoice & Administrasi)</span>
+                                            </Typography>
+                                            <Chip
+                                                label="Terpisah dari Peserta Delegasi"
+                                                size="small"
+                                                sx={{ bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', fontWeight: 800, fontSize: '0.68rem', height: 22 }}
+                                            />
+                                        </Box>
+                                        <Button
+                                            size="small"
+                                            variant="outlined"
+                                            onClick={() => {
+                                                if (editData.members && editData.members[0]) {
+                                                    setEditData(prev => ({
+                                                        ...prev,
+                                                        pic_name: prev.members[0].visitor_name || '',
+                                                        pic_email: prev.members[0].visitor_email || '',
+                                                        pic_phone: prev.members[0].visitor_phone || '',
+                                                        pic_institution: prev.members[0].visitor_institution || '',
+                                                        sync_pic_with_primary: false,
+                                                    }));
+                                                }
+                                            }}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontSize: '0.72rem',
+                                                fontWeight: 700,
+                                                borderColor: '#cbd5e1',
+                                                color: '#475569',
+                                                py: 0.3,
+                                                px: 1.2,
+                                                '&:hover': { borderColor: '#094d42', color: '#094d42', bgcolor: '#f0fdf4' }
+                                            }}
+                                        >
+                                            📋 Salin dari Peserta #1
+                                        </Button>
+                                    </Box>
+
+                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 1.5, fontSize: '0.74rem', lineHeight: 1.5 }}>
+                                        Kontak ini adalah <strong>PIC / HRD / Finance Perusahaan</strong> yang menerima tagihan invoice resmi, kwitansi, dan menangani revisi administrasi kantor (berdiri sendiri, terpisah dari 4 peserta delegasi).
+                                    </Typography>
+
+                                    <Grid container spacing={1.5}>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                label="PIC Name"
+                                                label="Nama PIC / HRD *"
                                                 size="small"
                                                 fullWidth
-                                                value={editData.pic_name}
+                                                value={editData.pic_name || ''}
                                                 onChange={(e) => setEditData('pic_name', e.target.value)}
+                                                placeholder="cth: M. Reza Ramadhan / HRD"
+                                                sx={{ bgcolor: '#ffffff' }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                label="PIC Email"
+                                                label="Email PIC / HRD (Untuk Invoice & Bukti Resmi) *"
                                                 size="small"
                                                 fullWidth
-                                                value={editData.pic_email}
+                                                value={editData.pic_email || ''}
                                                 onChange={(e) => setEditData('pic_email', e.target.value)}
+                                                placeholder="cth: hrd.pepc@pertamina.com"
+                                                helperText="Invoice & dokumen konfirmasi verifikasi dikirimkan ke email ini"
+                                                sx={{ bgcolor: '#ffffff' }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                label="PIC Phone / WhatsApp"
+                                                label="WhatsApp / Telepon PIC"
                                                 size="small"
                                                 fullWidth
-                                                value={editData.pic_phone}
+                                                value={editData.pic_phone || ''}
                                                 onChange={(e) => setEditData('pic_phone', e.target.value)}
+                                                placeholder="cth: 0812xxxxxxxx"
+                                                sx={{ bgcolor: '#ffffff' }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
-                                                label="PIC Institution / Company"
+                                                label="Instansi / Departemen Perusahaan *"
                                                 size="small"
                                                 fullWidth
-                                                value={editData.pic_institution}
+                                                value={editData.pic_institution || ''}
                                                 onChange={(e) => setEditData('pic_institution', e.target.value)}
+                                                placeholder="cth: PT Pertamina EP Cepu (HC TAL)"
+                                                sx={{ bgcolor: '#ffffff' }}
                                             />
                                         </Grid>
                                     </Grid>
-                                )}
+                                </Box>
                             </Box>
                         )}
 

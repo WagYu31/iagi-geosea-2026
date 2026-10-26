@@ -1623,7 +1623,8 @@ class VisitorTicketAdminController extends Controller
                     $picPhone = $request->input('pic_phone');
                     $picInstitution = $request->input('pic_institution');
 
-                    if ($request->boolean('sync_pic_with_primary', true) && $primaryTicket) {
+                    // Only sync if explicitly requested (default: false to preserve corporate HRD data)
+                    if ($request->boolean('sync_pic_with_primary', false) && $primaryTicket) {
                         $picName = $primaryTicket->visitor_name;
                         $picEmail = $primaryTicket->visitor_email;
                         $picPhone = $primaryTicket->visitor_phone;
@@ -1632,10 +1633,10 @@ class VisitorTicketAdminController extends Controller
 
                     $updatePayment = [
                         'total_members' => $totalMembers,
-                        'pic_name' => $picName ?? $payment->pic_name,
-                        'pic_email' => $picEmail ?? $payment->pic_email,
-                        'pic_phone' => $picPhone ?? $payment->pic_phone,
-                        'pic_institution' => $picInstitution ?? $payment->pic_institution,
+                        'pic_name' => !empty($picName) ? $picName : $payment->pic_name,
+                        'pic_email' => !empty($picEmail) ? $picEmail : $payment->pic_email,
+                        'pic_phone' => !empty($picPhone) ? $picPhone : $payment->pic_phone,
+                        'pic_institution' => !empty($picInstitution) ? $picInstitution : $payment->pic_institution,
                     ];
 
                     $uniqueCode = $request->has('unique_code')
