@@ -3823,57 +3823,212 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                         <Grid container spacing={2}>
                                             {sponsors.map((sponsor, index) => (
                                                 <Grid item xs={12} sm={6} md={4} key={index}>
-                                                    <Card variant="outlined" sx={{ p: 2, position: 'relative' }}>
-                                                        {/* Delete Button */}
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => removeSponsor(index)}
-                                                            sx={{ position: 'absolute', top: 8, right: 8 }}
-                                                        >
-                                                            <DeleteIcon fontSize="small" />
-                                                        </IconButton>
+                                                    <Card
+                                                        draggable
+                                                        onDragStart={(e) => {
+                                                            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                                                                e.preventDefault();
+                                                                return;
+                                                            }
+                                                            e.dataTransfer.setData('text/plain', String(index));
+                                                            e.dataTransfer.effectAllowed = 'move';
+                                                            setDraggedSponsorIndex(index);
+                                                        }}
+                                                        onDragOver={(e) => {
+                                                            e.preventDefault();
+                                                            e.dataTransfer.dropEffect = 'move';
+                                                            if (dragOverSponsorSlot !== index) {
+                                                                setDragOverSponsorSlot(index);
+                                                            }
+                                                        }}
+                                                        onDragLeave={() => {
+                                                            if (dragOverSponsorSlot === index) {
+                                                                setDragOverSponsorSlot(null);
+                                                            }
+                                                        }}
+                                                        onDrop={(e) => {
+                                                            const fromIdxStr = e.dataTransfer.getData('text/plain');
+                                                            const fromIdx = fromIdxStr !== '' ? parseInt(fromIdxStr, 10) : draggedSponsorIndex;
+                                                            if (!isNaN(fromIdx) && fromIdx !== null && fromIdx !== index && fromIdx < sponsors.length) {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                const updated = [...sponsors];
+                                                                const [movedItem] = updated.splice(fromIdx, 1);
+                                                                updated.splice(index, 0, movedItem);
+                                                                setSponsors(updated);
+                                                            }
+                                                            setDraggedSponsorIndex(null);
+                                                            setDragOverSponsorSlot(null);
+                                                        }}
+                                                        onDragEnd={() => {
+                                                            setDraggedSponsorIndex(null);
+                                                            setDragOverSponsorSlot(null);
+                                                        }}
+                                                        sx={{
+                                                            p: 2,
+                                                            position: 'relative',
+                                                            borderRadius: '12px',
+                                                            border: dragOverSponsorSlot === index
+                                                                ? '2px dashed #1abc9c'
+                                                                : `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                                                            bgcolor: dragOverSponsorSlot === index
+                                                                ? (isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9')
+                                                                : (isDark ? 'rgba(255,255,255,0.02)' : '#ffffff'),
+                                                            opacity: draggedSponsorIndex === index ? 0.4 : 1,
+                                                            transition: 'all 0.2s ease',
+                                                            boxShadow: dragOverSponsorSlot === index
+                                                                ? '0 8px 24px rgba(26,188,156,0.25)'
+                                                                : (isDark ? '0 4px 12px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.04)'),
+                                                        }}
+                                                    >
+                                                        {/* Card Header with Drag Handle & Delete */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                                            <Tooltip title="Tahan & geser untuk mengubah urutan sponsor">
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, cursor: 'grab', userSelect: 'none' }}>
+                                                                    <DragIndicatorIcon sx={{ color: '#1abc9c', fontSize: '1.25rem' }} />
+                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? '#fff' : '#1e293b' }}>
+                                                                        #{index + 1}
+                                                                    </Typography>
+                                                                    <Chip
+                                                                        label={sponsor.category || 'Other'}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 20,
+                                                                            fontSize: '0.65rem',
+                                                                            fontWeight: 700,
+                                                                            bgcolor: isDark ? 'rgba(26,188,156,0.15)' : '#e6fcf5',
+                                                                            color: isDark ? '#2dd4bf' : '#0d9488',
+                                                                        }}
+                                                                    />
+                                                                </Box>
+                                                            </Tooltip>
+                                                            <IconButton
+                                                                size="small"
+                                                                color="error"
+                                                                onClick={() => removeSponsor(index)}
+                                                                sx={{ p: 0.5, bgcolor: isDark ? 'rgba(239,68,68,0.1)' : '#fee2e2', '&:hover': { bgcolor: '#fca5a5' } }}
+                                                                title="Hapus Sponsor"
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Box>
 
-                                                        {/* Logo Preview */}
+                                                        {/* Drag & Drop Logo Preview Area */}
                                                         <Box
+                                                            onDragOver={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSponsorDragOverFileIndex(index);
+                                                            }}
+                                                            onDragEnter={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSponsorDragOverFileIndex(index);
+                                                            }}
+                                                            onDragLeave={() => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSponsorDragOverFileIndex(null);
+                                                            }}
+                                                            onDrop={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSponsorDragOverFileIndex(null);
+                                                                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                                                                    handleSponsorLogoUpload(index, e.dataTransfer.files[0]);
+                                                                }
+                                                            }}
+                                                            onClick={() => {
+                                                                const fileInput = document.getElementById(`sponsor-file-${index}`);
+                                                                if (fileInput) fileInput.click();
+                                                            }}
                                                             sx={{
                                                                 width: '100%',
                                                                 height: 150,
-                                                                backgroundColor: '#f5f5f5',
-                                                                borderRadius: 1,
+                                                                backgroundColor: sponsorDragOverFileIndex === index
+                                                                    ? (isDark ? 'rgba(26,188,156,0.2)' : '#e6fcf5')
+                                                                    : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                                                borderRadius: '10px',
+                                                                border: sponsorDragOverFileIndex === index
+                                                                    ? '2px dashed #1abc9c'
+                                                                    : `2px dashed ${sponsor.logo ? 'transparent' : (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1')}`,
                                                                 mb: 2,
                                                                 display: 'flex',
+                                                                flexDirection: 'column',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
+                                                                cursor: 'pointer',
+                                                                position: 'relative',
                                                                 overflow: 'hidden',
+                                                                transition: 'all 0.2s ease',
                                                                 backgroundImage: sponsor.logo ? `url(${sponsor.logo})` : 'none',
                                                                 backgroundSize: 'contain',
                                                                 backgroundPosition: 'center',
                                                                 backgroundRepeat: 'no-repeat',
+                                                                '&:hover': {
+                                                                    borderColor: '#1abc9c',
+                                                                    backgroundColor: isDark ? 'rgba(26,188,156,0.08)' : '#f0fdf9',
+                                                                    '& .sponsor-logo-hover': { opacity: 1 },
+                                                                },
                                                             }}
                                                         >
                                                             {!sponsor.logo && (
-                                                                <Typography variant="caption" color="text.secondary">
-                                                                    No Logo
-                                                                </Typography>
+                                                                <Box sx={{ textAlign: 'center', p: 1, pointerEvents: 'none' }}>
+                                                                    <CloudUploadIcon sx={{ fontSize: '2rem', color: sponsorDragOverFileIndex === index ? '#1abc9c' : '#94a3b8', mb: 0.5 }} />
+                                                                    <Typography variant="caption" sx={{ display: 'block', color: c.textMuted, fontWeight: 600 }}>
+                                                                        {sponsorDragOverFileIndex === index ? 'Drop logo di sini' : 'Drag & drop logo atau klik'}
+                                                                    </Typography>
+                                                                </Box>
+                                                            )}
+                                                            {sponsor.logo && (
+                                                                <Box
+                                                                    className="sponsor-logo-hover"
+                                                                    sx={{
+                                                                        position: 'absolute',
+                                                                        inset: 0,
+                                                                        bgcolor: 'rgba(0,0,0,0.55)',
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        opacity: 0,
+                                                                        transition: 'opacity 0.2s ease',
+                                                                        color: '#fff',
+                                                                        gap: 0.5,
+                                                                    }}
+                                                                >
+                                                                    <CloudUploadIcon sx={{ fontSize: '1.75rem' }} />
+                                                                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                                                        Ganti Logo
+                                                                    </Typography>
+                                                                </Box>
                                                             )}
                                                         </Box>
 
-                                                        {/* Upload Button */}
+                                                        {/* Hidden File Input & Upload Button */}
+                                                        <input
+                                                            id={`sponsor-file-${index}`}
+                                                            type="file"
+                                                            hidden
+                                                            accept="image/*"
+                                                            onChange={(e) => {
+                                                                if (e.target.files && e.target.files[0]) {
+                                                                    handleSponsorLogoUpload(index, e.target.files[0]);
+                                                                }
+                                                            }}
+                                                        />
                                                         <Button
                                                             fullWidth
                                                             variant="outlined"
-                                                            component="label"
                                                             startIcon={<UploadFileIcon />}
+                                                            onClick={() => {
+                                                                const fileInput = document.getElementById(`sponsor-file-${index}`);
+                                                                if (fileInput) fileInput.click();
+                                                            }}
                                                             disabled={uploading}
-                                                            sx={{ mb: 2 }}
+                                                            sx={{ mb: 2, borderRadius: '8px' }}
                                                         >
-                                                            Upload Logo
-                                                            <input
-                                                                type="file"
-                                                                hidden
-                                                                accept="image/*"
-                                                                onChange={(e) => handleSponsorLogoUpload(index, e.target.files[0])}
-                                                            />
+                                                            {sponsor.logo ? 'Change Logo' : 'Upload Logo'}
                                                         </Button>
 
                                                         {/* Company Name */}
