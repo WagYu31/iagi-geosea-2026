@@ -559,13 +559,35 @@ export default function GateScanner({
         }
     };
 
-    // Auto-start camera when page loads
+    // Auto-start camera when page loads if permission is already granted, and listen for user changes
     useEffect(() => {
-        const timer = setTimeout(() => {
-            startCamera();
-        }, 600);
+        let isMounted = true;
+        const checkAndStart = async () => {
+            try {
+                if (navigator?.permissions?.query) {
+                    const status = await navigator.permissions.query({ name: 'camera' });
+                    if (status.state === 'granted') {
+                        if (isMounted) startCamera();
+                    }
+                    // Auto-start as soon as user grants permission in Chrome popup
+                    status.onchange = () => {
+                        if (status.state === 'granted' && isMounted) {
+                            setCameraError(null);
+                            startCamera();
+                        }
+                    };
+                } else {
+                    startCamera();
+                }
+            } catch (e) {
+                startCamera();
+            }
+        };
+
+        const timer = setTimeout(checkAndStart, 500);
 
         return () => {
+            isMounted = false;
             clearTimeout(timer);
             if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
                 html5QrCodeRef.current.stop().catch(console.error);
