@@ -90,6 +90,51 @@
       color: #FDE68A !important;
     }
 
+    /* Scoped Executive Layout for Modal Generate Token */
+    #modal-generate-token .admin-modal-dialog {
+      max-width: 650px !important;
+      width: 95% !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border-radius: 22px !important;
+    }
+    #modal-generate-token .admin-modal-footer {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      flex-direction: row !important;
+      gap: 12px !important;
+      padding: 16px 24px !important;
+      box-sizing: border-box !important;
+    }
+    #modal-generate-token .admin-modal-footer button,
+    #modal-generate-token .admin-modal-footer .btn {
+      width: auto !important;
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+      white-space: nowrap !important;
+      box-sizing: border-box !important;
+    }
+    #modal-generate-token .admin-modal-footer > div {
+      width: auto !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 10px !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+    }
+    #modal-generate-token #gen-token-result-input {
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    #modal-generate-token #btn-copy-gen-token {
+      width: auto !important;
+      flex: 0 0 auto !important;
+      box-sizing: border-box !important;
+    }
+
     html {
       scroll-behavior: smooth;
     }
@@ -7771,7 +7816,7 @@
 
     <!-- ================= MODAL: FORMULIR BANTUAN GENERATE TOKEN KPKU ================= -->
     <div id="modal-generate-token" class="admin-modal-backdrop" style="display: none !important;">
-      <div class="admin-modal-dialog" style="max-width: 610px; border-radius: 22px; border: 1.5px solid rgba(245, 186, 66, 0.4); box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 50px rgba(245, 186, 66, 0.15); background: #061510;">
+      <div class="admin-modal-dialog" style="max-width: 650px; width: 95%; border-radius: 22px; border: 1.5px solid rgba(245, 186, 66, 0.4); box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 50px rgba(245, 186, 66, 0.15); background: #061510; box-sizing: border-box; overflow: hidden;">
         <div class="admin-modal-header" style="padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0, 0, 0, 0.25);">
           <div class="admin-modal-title" style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.35); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; box-shadow: 0 0 20px rgba(245, 186, 66, 0.2);">
@@ -7807,7 +7852,7 @@
             <div id="gen-token-voter-card" style="display: none; background: linear-gradient(135deg, rgba(2, 26, 20, 0.85) 0%, rgba(1, 14, 11, 0.95) 100%); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                 <div>
-                  <div id="gen-token-card-name" style="font-weight: 800; color: #FFFFFF; font-size: 1.1rem; letter-spacing: -0.01em;">-</div>
+                  <div id="gen-token-card-name" style="font-weight: 800; color: #FFFFFF; font-size: 1.15rem; letter-spacing: -0.01em;">-</div>
                   <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #F5BA42; font-weight: 700; margin-top: 3px;">
                     NPA: <span id="gen-token-card-npa">-</span> • <span id="gen-token-card-pengda">-</span>
                   </div>
@@ -7815,14 +7860,14 @@
                 <div id="gen-token-card-status-pill"></div>
               </div>
               
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.35); border-radius: 10px; padding: 12px 14px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; padding: 12px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;">
                 <div>
-                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Email Terdaftar:</span>
-                  <div id="gen-token-card-email" style="color: #38BDF8; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; word-break: break-all; margin-top: 2px;">-</div>
+                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Email Terdaftar:</span>
+                  <div id="gen-token-card-email" style="color: #38BDF8; font-size: 0.88rem; font-weight: 700; word-break: break-all;">-</div>
                 </div>
                 <div>
-                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">No. WhatsApp:</span>
-                  <div id="gen-token-card-phone" style="color: #4ADE80; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; margin-top: 2px;">-</div>
+                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">No. WhatsApp:</span>
+                  <div id="gen-token-card-phone" style="color: #4ADE80; font-size: 0.88rem; font-weight: 700;">-</div>
                 </div>
               </div>
             </div>
@@ -7837,9 +7882,11 @@
                 </button>
               </div>
 
-              <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="gen-token-result-input" class="font-mono" readonly style="flex: 1; height: 50px; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.14em; text-align: center; color: #FDE68A; background: #03140F; border: 1.5px solid #F5BA42; border-radius: 12px; box-shadow: 0 0 25px rgba(245, 186, 66, 0.18); padding: 0 16px; font-family: var(--font-mono); outline: none;" placeholder="IAGI-2026-XXXX-XXXX">
-                <button type="button" onclick="handleCopyGenToken()" class="btn btn-gold" style="height: 50px; padding: 0 20px; font-size: 0.84rem; font-weight: 800; border-radius: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 16px rgba(245, 186, 66, 0.25);" title="Salin Token">
+              <div style="display: flex; gap: 10px; align-items: stretch;">
+                <div style="flex: 1; min-width: 0;">
+                  <input type="text" id="gen-token-result-input" class="font-mono" readonly style="width: 100%; height: 50px; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.08em; text-align: center; color: #FDE68A; background: #03140F; border: 1.5px solid #F5BA42; border-radius: 12px; box-shadow: 0 0 20px rgba(245, 186, 66, 0.15); padding: 0 14px; font-family: var(--font-mono); outline: none; box-sizing: border-box;" placeholder="IAGI-2026-XXXX-XXXX">
+                </div>
+                <button type="button" id="btn-copy-gen-token" onclick="handleCopyGenToken()" class="btn btn-gold" style="width: auto !important; flex: 0 0 auto; height: 50px; padding: 0 22px; font-size: 0.85rem; font-weight: 800; border-radius: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(245, 186, 66, 0.25); cursor: pointer; box-sizing: border-box;" title="Salin Kode Token">
                   <span>📋</span>
                   <span>Salin</span>
                 </button>
@@ -7896,18 +7943,18 @@
 
           </div>
 
-          <div class="admin-modal-footer" style="padding: 18px 24px; background: rgba(0,0,0,0.35); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-            <button type="button" class="btn" onclick="closeGenerateTokenModal()" style="height: 44px; padding: 0 20px; font-size: 0.84rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+          <div class="admin-modal-footer" style="padding: 16px 24px; background: rgba(0,0,0,0.35); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px; box-sizing: border-box;">
+            <button type="button" class="btn" onclick="closeGenerateTokenModal()" style="width: auto !important; flex: 0 0 auto; height: 42px; padding: 0 20px; font-size: 0.84rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-sizing: border-box;">
               Tutup
             </button>
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;">
-              <button type="button" id="btn-submit-gen-token-email" onclick="handleSaveAndSendEmail()" class="btn" style="height: 44px; padding: 0 18px; font-size: 0.84rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; width: auto !important; flex: 0 0 auto; box-sizing: border-box;">
+              <button type="button" id="btn-submit-gen-token-email" onclick="handleSaveAndSendEmail()" class="btn" style="width: auto !important; flex: 0 0 auto; height: 42px; padding: 0 16px; font-size: 0.82rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s; box-sizing: border-box;">
                 <span>📧</span>
                 <span>Kirim ke Email</span>
               </button>
-              <button type="submit" id="btn-submit-gen-token" class="btn btn-gold" style="height: 44px; padding: 0 22px; font-size: 0.85rem; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.25); cursor: pointer; white-space: nowrap;">
+              <button type="submit" id="btn-submit-gen-token" class="btn btn-gold" style="width: auto !important; flex: 0 0 auto; height: 42px; padding: 0 20px; font-size: 0.84rem; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.25); cursor: pointer; white-space: nowrap; box-sizing: border-box;">
                 <span>💾</span>
-                <span>Simpan & Terbitkan Token</span>
+                <span>Simpan & Terbitkan</span>
               </button>
             </div>
           </div>
@@ -11405,7 +11452,7 @@
           const btnSub = document.getElementById('btn-submit-gen-token');
           if (btnSub) {
             btnSub.style.display = 'inline-flex';
-            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan Token</span>';
+            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan</span>';
           }
         }
 
@@ -11536,7 +11583,7 @@
           document.getElementById('gen-token-dispatch-group').style.display = 'flex';
           const btnSub = document.getElementById('btn-submit-gen-token');
           if (btnSub) {
-            btnSub.innerHTML = '<span>🔄</span><span>Perbarui / Terbitkan Ulang Token</span>';
+            btnSub.innerHTML = '<span>🔄</span><span>Terbitkan Ulang</span>';
           }
         } else {
           const freshToken = window.generateToken ? window.generateToken() : 'IAGI-2026-ABCD-EFGH';
@@ -11545,7 +11592,7 @@
           document.getElementById('gen-token-dispatch-group').style.display = 'none';
           const btnSub = document.getElementById('btn-submit-gen-token');
           if (btnSub) {
-            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan Token</span>';
+            btnSub.innerHTML = '<span>💾</span><span>Simpan & Terbitkan</span>';
           }
         }
 
