@@ -211,6 +211,8 @@ export default function GateScanner({
     const [processing, setProcessing] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [facingMode, setFacingMode] = useState('environment'); // 'environment' or 'user'
+    const [availableCameras, setAvailableCameras] = useState([]);
+    const [selectedCameraId, setSelectedCameraId] = useState('');
     const [scanResult, setScanResult] = useState(null);
     const [recentScans, setRecentScans] = useState([]);
     const [cameraError, setCameraError] = useState(null);
@@ -442,40 +444,111 @@ export default function GateScanner({
         }
     };
 
-    const startCamera = async (mode = facingMode) => {
+    const startCamera = async (specificModeOrId = null) => {
         setCameraError(null);
         try {
             if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
-                await html5QrCodeRef.current.stop();
+                try {
+                    await html5QrCodeRef.current.stop();
+                } catch (e) {
+                    console.warn('Error stopping previous camera:', e);
+                }
             }
 
             if (!html5QrCodeRef.current) {
                 html5QrCodeRef.current = new Html5Qrcode('qr-reader');
             }
 
+            const qrConfig = {
+                fps: 15,
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                    const qrboxSize = Math.floor(minEdge * 0.75);
+                    return {
+                        width: Math.min(qrboxSize, 260),
+                        height: Math.min(qrboxSize, 260),
+                    };
+                },
+            };
+
+            const qrSuccessCallback = (decodedText) => {
+                processTicketCheckIn(decodedText, false);
+            };
+
+            // If a specific camera device ID or mode was provided
+            if (specificModeOrId && typeof specificModeOrId === 'string' && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
+                await html5QrCodeRef.current.start(
+                    specificModeOrId,
+                    qrConfig,
+                    qrSuccessCallback,
+                    () => {}
+                );
+                setSelectedCameraId(specificModeOrId);
+                setScanning(true);
+                return;
+            }
+
+            // Strategy 1: Enumerate camera devices first (avoids OverconstrainedError on MacBooks/laptops)
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                if (devices && devices.length > 0) {
+                    setAvailableCameras(devices);
+                    // On mobile, prefer rear camera if found; on laptop/desktop, use available webcam
+                    const preferred = (specificModeOrId === 'user') 
+                        ? devices.find(d => d.label?.toLowerCase().includes('front') || d.label?.toLowerCase().includes('user') || d.label?.toLowerCase().includes('facetime')) || devices[0]
+                        : devices.find(d => d.label?.toLowerCase().includes('back') || d.label?.toLowerCase().includes('rear') || d.label?.toLowerCase().includes('environment')) || devices[0];
+
+                    await html5QrCodeRef.current.start(
+                        preferred.id,
+                        qrConfig,
+                        qrSuccessCallback,
+                        () => {}
+                    );
+                    setSelectedCameraId(preferred.id);
+                    setScanning(true);
+                    return;
+                }
+            } catch (enumErr) {
+                console.warn('Camera enumeration fallback...', enumErr);
+            }
+
+            // Strategy 2: Try with facingMode 'environment' (phones/tablets rear camera)
+            try {
+                await html5QrCodeRef.current.start(
+                    { facingMode: specificModeOrId || facingMode },
+                    qrConfig,
+                    qrSuccessCallback,
+                    () => {}
+                );
+                setFacingMode(specificModeOrId || facingMode);
+                setScanning(true);
+                return;
+            } catch (envErr) {
+                console.warn('FacingMode start failed, trying alternate user facingMode...', envErr);
+            }
+
+            // Strategy 3: Try with facingMode 'user' (front camera / laptop webcam)
             await html5QrCodeRef.current.start(
-                { facingMode: mode },
-                {
-                    fps: 15,
-                    qrbox: (viewfinderWidth, viewfinderHeight) => {
-                        const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                        const qrboxSize = Math.floor(minEdge * 0.75);
-                        return {
-                            width: Math.min(qrboxSize, 260),
-                            height: Math.min(qrboxSize, 260),
-                        };
-                    },
-                },
-                (decodedText) => {
-                    processTicketCheckIn(decodedText, false);
-                },
+                { facingMode: 'user' },
+                qrConfig,
+                qrSuccessCallback,
                 () => {}
             );
-
+            setFacingMode('user');
             setScanning(true);
+
         } catch (err) {
             console.error('Camera start error:', err);
-            setCameraError('Failed to access camera. Please make sure camera permission is granted or use USB Barcode Scanner.');
+            const errStr = String(err?.message || err);
+            if (errStr.includes('NotAllowedError') || errStr.includes('Permission') || errStr.includes('permission')) {
+                setCameraError('Izin akses kamera belum diberikan / diblokir di browser. Silakan klik ikon gembok / kamera di sebelah kiri alamat website (address bar), pilih "Izinkan / Allow" untuk Kamera, lalu refresh halaman.');
+            } else if (errStr.includes('NotFoundError') || errStr.includes('DevicesNotFoundError')) {
+                setCameraError('Kamera tidak ditemukan pada perangkat ini. Pastikan webcam terpasang atau gunakan USB Barcode Scanner Gun.');
+            } else if (errStr.includes('NotReadableError') || errStr.includes('TrackStartError')) {
+                setCameraError('Kamera sedang digunakan oleh aplikasi lain (seperti Zoom, Google Meet, dll). Tutup aplikasi tersebut lalu coba lagi.');
+            } else {
+                setCameraError(`Gagal mengakses kamera (${errStr}). Pastikan izin kamera aktif atau gunakan USB Barcode Scanner Gun.`);
+            }
             setScanning(false);
         }
     };
@@ -492,15 +565,29 @@ export default function GateScanner({
     };
 
     const toggleCameraFacing = async () => {
-        const nextMode = facingMode === 'environment' ? 'user' : 'environment';
-        setFacingMode(nextMode);
-        if (scanning) {
-            await startCamera(nextMode);
+        if (availableCameras.length > 1) {
+            const currentIndex = availableCameras.findIndex(c => c.id === selectedCameraId);
+            const nextIndex = (currentIndex + 1) % availableCameras.length;
+            const nextCam = availableCameras[nextIndex];
+            setSelectedCameraId(nextCam.id);
+            await startCamera(nextCam.id);
+        } else {
+            const nextMode = facingMode === 'environment' ? 'user' : 'environment';
+            setFacingMode(nextMode);
+            if (scanning) {
+                await startCamera(nextMode);
+            }
         }
     };
 
+    // Auto-start camera when page loads
     useEffect(() => {
+        const timer = setTimeout(() => {
+            startCamera();
+        }, 600);
+
         return () => {
+            clearTimeout(timer);
             if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
                 html5QrCodeRef.current.stop().catch(console.error);
             }
@@ -860,7 +947,7 @@ export default function GateScanner({
                                         variant="contained"
                                         fullWidth
                                         startIcon={<CameraAltIcon />}
-                                        onClick={() => startCamera(facingMode)}
+                                        onClick={() => startCamera(selectedCameraId || facingMode)}
                                         sx={{
                                             background: 'linear-gradient(180deg, #10b981 0%, #059669 100%)',
                                             color: '#ffffff',
