@@ -447,27 +447,36 @@ export default function GateScanner({
     const startCamera = async (specificModeOrId = null) => {
         setCameraError(null);
         try {
-            if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+            if (html5QrCodeRef.current) {
                 try {
-                    await html5QrCodeRef.current.stop();
+                    if (html5QrCodeRef.current.isScanning) {
+                        await html5QrCodeRef.current.stop();
+                    }
+                    await html5QrCodeRef.current.clear();
                 } catch (e) {
-                    console.warn('Error stopping previous camera:', e);
+                    console.warn('Error clearing previous camera instance:', e);
                 }
             }
 
-            if (!html5QrCodeRef.current) {
-                html5QrCodeRef.current = new Html5Qrcode('qr-reader');
+            // Quick permission/hardware check via native getUserMedia
+            if (navigator?.mediaDevices?.getUserMedia) {
+                try {
+                    const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    testStream.getTracks().forEach(track => track.stop());
+                } catch (permErr) {
+                    console.warn('getUserMedia test failed:', permErr);
+                    throw permErr;
+                }
             }
+
+            html5QrCodeRef.current = new Html5Qrcode('qr-reader');
 
             const qrConfig = {
                 fps: 15,
                 qrbox: (viewfinderWidth, viewfinderHeight) => {
-                    const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                    const qrboxSize = Math.floor(minEdge * 0.75);
-                    return {
-                        width: Math.min(qrboxSize, 260),
-                        height: Math.min(qrboxSize, 260),
-                    };
+                    const minEdge = Math.min(viewfinderWidth || 300, viewfinderHeight || 300);
+                    const size = Math.max(160, Math.min(Math.floor(minEdge * 0.75), 250));
+                    return { width: size, height: size };
                 },
             };
 
