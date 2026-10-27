@@ -354,6 +354,14 @@ class PemiluStorage {
           v.claimed_at = new Date().toISOString();
           updated = true;
         }
+
+        // Auto-fix typo / alias email untuk NPA 03457 (Dr. Mirzam Abdurrachman)
+        if (v && String(v.npa || '').trim() === '03457') {
+          if (v.email !== 'mirzam@itb.ac.id') {
+            v.email = 'mirzam@itb.ac.id';
+            updated = true;
+          }
+        }
       });
 
       if (updated) {
@@ -760,10 +768,14 @@ class PemiluStorage {
 
     // Fuzzy check name or exact email check
     if (voter.email && voter.email.trim() !== '') {
-      if (voter.email.toLowerCase() !== cleanEmail) {
+      const vEmail = voter.email.toLowerCase().trim();
+      const vEmailNorm = vEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
+      const inputEmailNorm = cleanEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
+
+      if (vEmail !== cleanEmail && vEmailNorm !== inputEmailNorm) {
         // Fallback: cek jika email di INITIAL_DPT sudah diperbarui dan cocok dengan input
         const initV = (typeof INITIAL_DPT !== 'undefined') ? INITIAL_DPT.find(x => String(x.npa || '').trim().toUpperCase() === cleanNpa) : null;
-        if (initV && initV.email && initV.email.trim().toLowerCase() === cleanEmail) {
+        if (initV && initV.email && (initV.email.trim().toLowerCase() === cleanEmail || initV.email.trim().toLowerCase().replace('@gl.itb.ac.id', '@itb.ac.id') === inputEmailNorm)) {
           voter.email = cleanEmail;
           dpt[voterIndex].email = cleanEmail;
           this.saveDPT(dpt);
@@ -773,6 +785,11 @@ class PemiluStorage {
             error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
           };
         }
+      } else if (vEmail !== cleanEmail && vEmailNorm === inputEmailNorm) {
+        // Auto-update to user's canonical input email
+        voter.email = cleanEmail;
+        dpt[voterIndex].email = cleanEmail;
+        this.saveDPT(dpt);
       }
     } else {
       // Jika di DPT email belum terdaftar, verifikasi kecocokan nama

@@ -5503,7 +5503,7 @@ const INITIAL_DPT = [
   {
     "npa": "03457",
     "name": "Mirzam Abdurrachman",
-    "email": "mirzam@gL.itb.ac.id",
+    "email": "mirzam@itb.ac.id",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
