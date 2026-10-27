@@ -44,6 +44,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import CheckIcon from '@mui/icons-material/Check';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import { DEFAULT_SPONSORS } from '../../constants/sponsors';
 
 function TabPanel({ children, value, index }) {
     return (
@@ -1231,7 +1232,11 @@ export default function Settings({ settings, submissionSettings, pricing: initia
     const [speakersDescription, setSpeakersDescription] = useState(
         getSettingValue('keynote_speakers_description', 'Distinguished experts bridging the gap between geological science and practical sustainability.')
     );
-    const [sponsors, setSponsors] = useState(getSettingValue('sponsors', []));
+    const [sponsors, setSponsors] = useState(() => {
+        const val = getSettingValue('sponsors', []);
+        return (Array.isArray(val) && val.length > 0) ? val : DEFAULT_SPONSORS;
+    });
+    const [sponsorsFilterTab, setSponsorsFilterTab] = useState('ALL'); // 'ALL' | 'EXHIBITORS' | 'SPONSORS'
     const [sponsorsDescription, setSponsorsDescription] = useState(
         getSettingValue('sponsors_description', 'Empowering the future of geological science through strategic partnerships.')
     );
@@ -2416,7 +2421,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
     // Add sponsor
     const addSponsor = () => {
-        setSponsors([...sponsors, { name: '', logo: '', tier: 'gold' }]);
+        setSponsors([...sponsors, { name: '', logo: '', category: 'Exhibition', website: '' }]);
     };
 
     // Remove sponsor

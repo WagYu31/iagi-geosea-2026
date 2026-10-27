@@ -176,7 +176,19 @@ export default function SponsorSpotlight({
 }: SponsorSpotlightProps) {
   if (!sponsors || sponsors.length === 0) return null;
 
-  const finalExhibitors = exhibitors && exhibitors.length > 0 ? exhibitors : DEFAULT_EXHIBITORS;
+  // Derive exhibitors dynamically from sponsors list (mitra dengan kategori Exhibition)
+  const dynamicExhibitors = sponsors.filter(
+    (s) =>
+      (s.category && s.category.toLowerCase().includes('exhibit')) ||
+      (s.level && s.level.toLowerCase().includes('exhibit'))
+  );
+
+  const finalExhibitors =
+    exhibitors && exhibitors.length > 0
+      ? exhibitors
+      : dynamicExhibitors.length > 0
+      ? dynamicExhibitors
+      : DEFAULT_EXHIBITORS;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -640,12 +652,16 @@ export default function SponsorSpotlight({
 
                     {/* Center Logo */}
                     <div className="w-full flex-1 flex items-center justify-center my-1 overflow-hidden p-2">
-                      <img
-                        src={exhibitor.logo}
-                        alt={exhibitor.name}
-                        className="max-w-[88%] max-h-[58px] sm:max-h-[68px] object-contain drop-shadow-xs transition-transform duration-300 group-hover/card:scale-105"
-                        loading="lazy"
-                      />
+                      {exhibitor.logo ? (
+                        <img
+                          src={exhibitor.logo}
+                          alt={exhibitor.name}
+                          className="max-w-[88%] max-h-[58px] sm:max-h-[68px] object-contain drop-shadow-xs transition-transform duration-300 group-hover/card:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-slate-400 text-center">{exhibitor.name}</span>
+                      )}
                     </div>
 
                     {/* Bottom Name */}
