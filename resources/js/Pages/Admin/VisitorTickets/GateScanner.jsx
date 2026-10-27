@@ -458,17 +458,6 @@ export default function GateScanner({
                 }
             }
 
-            // Quick permission/hardware check via native getUserMedia
-            if (navigator?.mediaDevices?.getUserMedia) {
-                try {
-                    const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    testStream.getTracks().forEach(track => track.stop());
-                } catch (permErr) {
-                    console.warn('getUserMedia test failed:', permErr);
-                    throw permErr;
-                }
-            }
-
             html5QrCodeRef.current = new Html5Qrcode('qr-reader');
 
             const qrConfig = {
