@@ -112,6 +112,7 @@ function SidebarLayout({ children }) {
   const isAdmin = auth.user?.role?.toLowerCase() === 'admin';
   const isReviewer = auth.user?.role?.toLowerCase() === 'reviewer';
   const isJuri = auth.user?.role?.toLowerCase() === 'juri';
+  const isScanner = auth.user?.role?.toLowerCase() === 'scanner' || auth.user?.role?.toLowerCase() === 'scaner';
 
   // Menu visibility map: menu text → visibility key
   const menuVisibilityMap = {
@@ -119,7 +120,11 @@ function SidebarLayout({ children }) {
     'Certificates': 'certificates',
   };
 
-  const menuItems = isAdmin ? [
+  const menuItems = isScanner ? [
+    { text: 'Visitor Tickets', icon: <ConfirmationNumberIcon />, href: route('admin.visitorTickets'), color: '#10b981' },
+    { text: 'Gate Scanner', icon: <QrCodeScannerIcon />, href: route('admin.gateScanner'), color: '#06b6d4' },
+    { text: 'Profile', icon: <PersonIcon />, href: route('profile.edit'), color: '#64748b' },
+  ] : isAdmin ? [
     { text: 'Admin Dashboard', icon: <DashboardIcon />, href: route('admin.dashboard'), color: '#059669' },
     { text: 'Manage Submissions', icon: <ArticleIcon />, href: route('admin.submissions'), color: '#2563eb' },
     { text: 'Manage Payments', icon: <PaymentIcon />, href: route('admin.payments'), color: '#ea580c' },
@@ -350,7 +355,7 @@ function SidebarLayout({ children }) {
         {menuItems.map((item, idx) => {
           const active = isActive(item.href);
           const outlineIcon = outlineIconMap[item.text] || item.icon;
-          const isProtectedMenu = item.text === 'Visitor Tickets';
+          const isProtectedMenu = !isScanner && item.text === 'Visitor Tickets';
 
           const handleMenuClick = (e) => {
             if (isProtectedMenu) {

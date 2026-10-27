@@ -120,6 +120,10 @@ class TwoFactorOtpController extends Controller
         ]);
 
         // Role-based redirection
+        if (in_array(strtolower($user->role), ['scanner', 'scaner'])) {
+            return redirect()->intended(route('admin.visitorTickets', absolute: false));
+        }
+
         if (strtolower($user->role) === 'admin') {
             return redirect()->intended(route('admin.dashboard', absolute: false));
         }

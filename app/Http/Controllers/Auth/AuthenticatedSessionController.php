@@ -73,6 +73,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (in_array(strtolower($user->role), ['scanner', 'scaner'])) {
+            return redirect()->intended(route('admin.visitorTickets', absolute: false));
+        }
+
         if (strtolower($user->role) === 'reviewer') {
             return redirect()->intended(route('reviewer.dashboard', absolute: false));
         }

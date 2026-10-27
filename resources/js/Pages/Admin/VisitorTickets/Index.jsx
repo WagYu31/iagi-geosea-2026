@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import { useTheme } from '@mui/material/styles';
 import { QRCodeSVG } from 'qrcode.react';
@@ -371,10 +371,16 @@ export default function VisitorTicketsIndex({
     const currentPage = tickets.current_page || 1;
     const lastPage = tickets.last_page || 1;
 
+    const { auth } = usePage().props;
+    const isScanner = auth?.user?.role?.toLowerCase() === 'scanner' || auth?.user?.role?.toLowerCase() === 'scaner';
+
     // Passcode Security for Visitor Tickets (Password: del08)
     const VISITOR_TICKETS_PASSCODE = 'del08';
     const [isUnlocked, setIsUnlocked] = useState(() => {
         if (typeof window !== 'undefined') {
+            if (auth?.user?.role?.toLowerCase() === 'scanner' || auth?.user?.role?.toLowerCase() === 'scaner') {
+                return true;
+            }
             return sessionStorage.getItem('visitor_tickets_unlocked') === 'true';
         }
         return false;
@@ -1292,7 +1298,7 @@ export default function VisitorTicketsIndex({
                         </DialogContent>
                         <DialogActions sx={{ px: 2, pb: 2, display: 'flex', gap: 1.5, justifyContent: 'center' }}>
                             <Button
-                                onClick={() => router.visit(route('admin.dashboard'))}
+                                onClick={() => router.visit(isScanner ? route('admin.gateScanner') : route('admin.dashboard'))}
                                 variant="outlined"
                                 sx={{
                                     borderRadius: '10px',

@@ -189,81 +189,85 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Storage::disk('public')->download($certificate->file_path, $certificate->label . '.' . pathinfo($certificate->file_path, PATHINFO_EXTENSION));
     })->name('certificates.download');
 
-    // Admin routes
-    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-        // Dashboard
-        Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
-        Route::get('/visitor-analytics', [App\Http\Controllers\AdminController::class, 'visitorAnalytics'])->name('visitor-analytics');
-        Route::get('/submission-analytics', [App\Http\Controllers\AdminController::class, 'submissionAnalytics'])->name('submission-analytics');
+    // Admin & Scanner routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Visitor Tickets & Gate Scanner Management (Accessible by Admin and Scanner)
+        Route::middleware(['role:admin,scanner,scaner'])->group(function () {
+            Route::get('/visitor-tickets', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'index'])->name('visitorTickets');
+            Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
+            Route::patch('/visitor-tickets/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketStatus'])->name('visitorTickets.quickStatus');
+            Route::patch('/visitor-tickets/{id}/quick-category', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketCategory'])->name('visitorTickets.quickCategory');
+            Route::patch('/visitor-tickets/payment/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentStatus'])->name('visitorTickets.quickPaymentStatus');
+            Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
+            Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
+            Route::post('/visitor-tickets/payment/{id}/update-proof', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentProof'])->name('visitorTickets.updatePaymentProof');
+            Route::patch('/visitor-tickets/payment/{id}/toggle-debt', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleDebt'])->name('visitorTickets.toggleDebt');
+            Route::patch('/visitor-tickets/{id}/toggle-checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleCheckIn'])->name('visitorTickets.toggleCheckIn');
+            Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
+            Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');
+            Route::post('/visitor-tickets/{id}/resend-email', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmail'])->name('visitorTickets.resendEmail');
+            Route::post('/visitor-tickets/resend-emails-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmailsBulk'])->name('visitorTickets.resendEmailsBulk');
+            Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
+            Route::get('/visitor-tickets/print-badges-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadgesBulk'])->name('visitorTickets.printBadgesBulk');
+            Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
+            Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
+            Route::get('/visitor-tickets/import-template', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'downloadImportTemplate'])->name('visitorTickets.importTemplate');
+            Route::post('/visitor-tickets/import', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'importTickets'])->name('visitorTickets.import');
+            Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');
+            Route::post('/gate-scanner/checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'processCheckIn'])->name('gateScanner.checkin');
+            Route::post('/settings/save-visitor-ticket-settings', [App\Http\Controllers\LandingPageSettingController::class, 'saveVisitorTicketSettings'])->name('settings.saveVisitorTickets');
+            Route::post('/settings/upload-visitor-lanyard-template', [App\Http\Controllers\LandingPageSettingController::class, 'uploadVisitorLanyardTemplate'])->name('settings.uploadVisitorLanyardTemplate');
+        });
 
-        // Submissions Management
-        Route::get('/submissions', [App\Http\Controllers\AdminController::class, 'submissions'])->name('submissions');
-        Route::patch('/submissions/{id}/status', [App\Http\Controllers\AdminController::class, 'updateSubmissionStatus'])->name('submissions.updateStatus');
-        Route::post('/submissions/bulk-update', [App\Http\Controllers\AdminController::class, 'bulkUpdateStatus'])->name('submissions.bulkUpdate');
-        Route::post('/submissions/{id}/assign-reviewer', [App\Http\Controllers\AdminController::class, 'assignReviewer'])->name('submissions.assignReviewer');
-        Route::delete('/submissions/{submissionId}/reviewer/{reviewerId}', [App\Http\Controllers\AdminController::class, 'removeReviewer'])->name('submissions.removeReviewer');
-        Route::delete('/submissions/{id}', [App\Http\Controllers\AdminController::class, 'deleteSubmission'])->name('submissions.delete');
-        Route::post('/submissions/{id}/approve-deletion', [App\Http\Controllers\AdminController::class, 'approveDeletion'])->name('submissions.approveDeletion');
-        Route::post('/submissions/{id}/reject-deletion', [App\Http\Controllers\AdminController::class, 'rejectDeletion'])->name('submissions.rejectDeletion');
-        Route::get('/submissions/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('submissions.export');
-        Route::get('/submissions/export-files', [App\Http\Controllers\AdminController::class, 'exportAllFiles'])->name('submissions.exportFiles');
-        Route::get('/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('export');
+        // Admin Only routes (strictly restricted to role:admin)
+        Route::middleware(['role:admin'])->group(function () {
+            // Dashboard
+            Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+            Route::get('/visitor-analytics', [App\Http\Controllers\AdminController::class, 'visitorAnalytics'])->name('visitor-analytics');
+            Route::get('/submission-analytics', [App\Http\Controllers\AdminController::class, 'submissionAnalytics'])->name('submission-analytics');
 
-        // Payments Management
-        Route::get('/payments', [App\Http\Controllers\AdminController::class, 'payments'])->name('payments');
-        Route::patch('/payments/{id}/verify', [App\Http\Controllers\AdminController::class, 'verifyPayment'])->name('payments.verify');
-        Route::patch('/payments/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectPayment'])->name('payments.reject');
-        Route::delete('/payments/{id}', [App\Http\Controllers\AdminController::class, 'deletePayment'])->name('payments.delete');
-        Route::get('/payments/export', [App\Http\Controllers\AdminController::class, 'exportPayments'])->name('payments.export');
+            // Submissions Management
+            Route::get('/submissions', [App\Http\Controllers\AdminController::class, 'submissions'])->name('submissions');
+            Route::patch('/submissions/{id}/status', [App\Http\Controllers\AdminController::class, 'updateSubmissionStatus'])->name('submissions.updateStatus');
+            Route::post('/submissions/bulk-update', [App\Http\Controllers\AdminController::class, 'bulkUpdateStatus'])->name('submissions.bulkUpdate');
+            Route::post('/submissions/{id}/assign-reviewer', [App\Http\Controllers\AdminController::class, 'assignReviewer'])->name('submissions.assignReviewer');
+            Route::delete('/submissions/{submissionId}/reviewer/{reviewerId}', [App\Http\Controllers\AdminController::class, 'removeReviewer'])->name('submissions.removeReviewer');
+            Route::delete('/submissions/{id}', [App\Http\Controllers\AdminController::class, 'deleteSubmission'])->name('submissions.delete');
+            Route::post('/submissions/{id}/approve-deletion', [App\Http\Controllers\AdminController::class, 'approveDeletion'])->name('submissions.approveDeletion');
+            Route::post('/submissions/{id}/reject-deletion', [App\Http\Controllers\AdminController::class, 'rejectDeletion'])->name('submissions.rejectDeletion');
+            Route::get('/submissions/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('submissions.export');
+            Route::get('/submissions/export-files', [App\Http\Controllers\AdminController::class, 'exportAllFiles'])->name('submissions.exportFiles');
+            Route::get('/export', [App\Http\Controllers\AdminController::class, 'exportSubmissions'])->name('export');
 
-        // Users Management
-        Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
-        Route::post('/users', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
-        Route::patch('/users/{id}/role', [App\Http\Controllers\AdminController::class, 'updateUserRole'])->name('users.updateRole');
-        Route::patch('/users/{id}/password', [App\Http\Controllers\AdminController::class, 'updatePassword'])->name('users.updatePassword');
-        Route::patch('/users/{id}/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('users.updateProfile');
-        Route::patch('/users/{id}/toggle-verification', [App\Http\Controllers\AdminController::class, 'toggleVerification'])->name('users.toggleVerification');
-        Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
-        Route::get('/users/export', [App\Http\Controllers\AdminController::class, 'exportUsers'])->name('users.export');
+            // Payments Management
+            Route::get('/payments', [App\Http\Controllers\AdminController::class, 'payments'])->name('payments');
+            Route::patch('/payments/{id}/verify', [App\Http\Controllers\AdminController::class, 'verifyPayment'])->name('payments.verify');
+            Route::patch('/payments/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectPayment'])->name('payments.reject');
+            Route::delete('/payments/{id}', [App\Http\Controllers\AdminController::class, 'deletePayment'])->name('payments.delete');
+            Route::get('/payments/export', [App\Http\Controllers\AdminController::class, 'exportPayments'])->name('payments.export');
 
-        // Scores Management
-        Route::get('/scores', [App\Http\Controllers\AdminController::class, 'scores'])->name('scores');
+            // Users Management
+            Route::get('/users', [App\Http\Controllers\AdminController::class, 'users'])->name('users');
+            Route::post('/users', [App\Http\Controllers\AdminController::class, 'createUser'])->name('users.create');
+            Route::patch('/users/{id}/role', [App\Http\Controllers\AdminController::class, 'updateUserRole'])->name('users.updateRole');
+            Route::patch('/users/{id}/password', [App\Http\Controllers\AdminController::class, 'updatePassword'])->name('users.updatePassword');
+            Route::patch('/users/{id}/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('users.updateProfile');
+            Route::patch('/users/{id}/toggle-verification', [App\Http\Controllers\AdminController::class, 'toggleVerification'])->name('users.toggleVerification');
+            Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+            Route::get('/users/export', [App\Http\Controllers\AdminController::class, 'exportUsers'])->name('users.export');
 
-        // Presentation Scores Management (Juri)
-        Route::get('/presentation-scores', [App\Http\Controllers\AdminController::class, 'presentationScores'])->name('presentation-scores');
-        Route::post('/submissions/{id}/assign-juri', [App\Http\Controllers\AdminController::class, 'assignJuri'])->name('submissions.assignJuri');
-        Route::delete('/submissions/{submissionId}/juri/{juriId}', [App\Http\Controllers\AdminController::class, 'removeJuri'])->name('submissions.removeJuri');
+            // Scores Management
+            Route::get('/scores', [App\Http\Controllers\AdminController::class, 'scores'])->name('scores');
 
-        // Certificates Management
-        Route::get('/certificates', [App\Http\Controllers\AdminController::class, 'certificates'])->name('certificates');
-        Route::post('/certificates/{submissionId}', [App\Http\Controllers\AdminController::class, 'uploadCertificate'])->name('certificates.upload');
-        Route::delete('/certificates/{id}', [App\Http\Controllers\AdminController::class, 'deleteCertificate'])->name('certificates.delete');
+            // Presentation Scores Management (Juri)
+            Route::get('/presentation-scores', [App\Http\Controllers\AdminController::class, 'presentationScores'])->name('presentation-scores');
+            Route::post('/submissions/{id}/assign-juri', [App\Http\Controllers\AdminController::class, 'assignJuri'])->name('submissions.assignJuri');
+            Route::delete('/submissions/{submissionId}/juri/{juriId}', [App\Http\Controllers\AdminController::class, 'removeJuri'])->name('submissions.removeJuri');
 
-        // Visitor Tickets & Gate Scanner Management
-        Route::get('/visitor-tickets', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'index'])->name('visitorTickets');
-        Route::post('/visitor-tickets/onsite', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'storeOnsite'])->name('visitorTickets.onsite');
-        Route::patch('/visitor-tickets/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketStatus'])->name('visitorTickets.quickStatus');
-        Route::patch('/visitor-tickets/{id}/quick-category', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateTicketCategory'])->name('visitorTickets.quickCategory');
-        Route::patch('/visitor-tickets/payment/{id}/quick-status', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentStatus'])->name('visitorTickets.quickPaymentStatus');
-        Route::patch('/visitor-tickets/payment/{id}/verify', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'verifyPayment'])->name('visitorTickets.verifyPayment');
-        Route::patch('/visitor-tickets/payment/{id}/reject', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'rejectPayment'])->name('visitorTickets.rejectPayment');
-        Route::post('/visitor-tickets/payment/{id}/update-proof', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updatePaymentProof'])->name('visitorTickets.updatePaymentProof');
-        Route::patch('/visitor-tickets/payment/{id}/toggle-debt', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleDebt'])->name('visitorTickets.toggleDebt');
-        Route::patch('/visitor-tickets/{id}/toggle-checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'toggleCheckIn'])->name('visitorTickets.toggleCheckIn');
-        Route::put('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'updateVisitor'])->name('visitorTickets.update');
-        Route::delete('/visitor-tickets/{id}', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'destroyVisitor'])->name('visitorTickets.destroy');
-        Route::post('/visitor-tickets/{id}/resend-email', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmail'])->name('visitorTickets.resendEmail');
-        Route::post('/visitor-tickets/resend-emails-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'resendEmailsBulk'])->name('visitorTickets.resendEmailsBulk');
-        Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
-        Route::get('/visitor-tickets/print-badges-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadgesBulk'])->name('visitorTickets.printBadgesBulk');
-        Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
-        Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
-        Route::get('/visitor-tickets/import-template', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'downloadImportTemplate'])->name('visitorTickets.importTemplate');
-        Route::post('/visitor-tickets/import', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'importTickets'])->name('visitorTickets.import');
-        Route::get('/gate-scanner', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'gateScanner'])->name('gateScanner');
-        Route::post('/gate-scanner/checkin', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'processCheckIn'])->name('gateScanner.checkin');
-        Route::post('/settings/save-visitor-ticket-settings', [App\Http\Controllers\LandingPageSettingController::class, 'saveVisitorTicketSettings'])->name('settings.saveVisitorTickets');
-        Route::post('/settings/upload-visitor-lanyard-template', [App\Http\Controllers\LandingPageSettingController::class, 'uploadVisitorLanyardTemplate'])->name('settings.uploadVisitorLanyardTemplate');
+            // Certificates Management
+            Route::get('/certificates', [App\Http\Controllers\AdminController::class, 'certificates'])->name('certificates');
+            Route::post('/certificates/{submissionId}', [App\Http\Controllers\AdminController::class, 'uploadCertificate'])->name('certificates.upload');
+            Route::delete('/certificates/{id}', [App\Http\Controllers\AdminController::class, 'deleteCertificate'])->name('certificates.delete');
 
         // Activity & Audit Logs
         Route::get('/logs', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'index'])->name('logs');

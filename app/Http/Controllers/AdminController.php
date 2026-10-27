@@ -1019,7 +1019,7 @@ class AdminController extends Controller
     public function updateUserRole(Request $request, $id)
     {
         $request->validate([
-            'role' => 'required|in:Author,Admin,Reviewer,Juri',
+            'role' => 'required|in:Author,Admin,Reviewer,Juri,Scanner,Scaner',
         ]);
 
         $user = User::findOrFail($id);
@@ -1271,7 +1271,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:Author,Admin,Reviewer,Juri',
+            'role' => 'required|in:Author,Admin,Reviewer,Juri,Scanner,Scaner',
             'affiliation' => $request->role === 'Reviewer' ? 'required|string|max:255' : 'nullable|string|max:255',
             'whatsapp' => $request->role === 'Admin' ? 'required|string|max:25' : 'nullable|string|max:25',
         ], [

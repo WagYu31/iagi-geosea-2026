@@ -127,6 +127,8 @@ export default function AdminUsers({ users = {}, filters = {} }) {
             Admin: { bg: isDark ? 'rgba(239,68,68,0.15)' : '#fee2e2', color: '#dc2626' },
             Reviewer: { bg: isDark ? 'rgba(245,158,11,0.15)' : '#fef3c7', color: '#d97706' },
             Juri: { bg: isDark ? 'rgba(217,119,6,0.15)' : '#fffbeb', color: '#b45309' },
+            Scanner: { bg: isDark ? 'rgba(6,182,212,0.15)' : '#cffafe', color: '#0891b2' },
+            Scaner: { bg: isDark ? 'rgba(6,182,212,0.15)' : '#cffafe', color: '#0891b2' },
             Author: { bg: isDark ? 'rgba(107,114,128,0.15)' : '#f3f4f6', color: '#6b7280' },
         };
         return map[role] || map.Author;
@@ -185,6 +187,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                                     <MenuItem value="Author">Author</MenuItem>
                                     <MenuItem value="Reviewer">Reviewer</MenuItem>
                                     <MenuItem value="Juri">Juri</MenuItem>
+                                    <MenuItem value="Scanner">SCANER</MenuItem>
                                     <MenuItem value="Admin">Admin</MenuItem>
                                 </Select>
                             </FormControl>
@@ -248,6 +251,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                                                         <MenuItem value="Author">Author</MenuItem>
                                                         <MenuItem value="Reviewer">Reviewer</MenuItem>
                                                         <MenuItem value="Juri">Juri</MenuItem>
+                                                        <MenuItem value="Scanner">SCANER</MenuItem>
                                                         <MenuItem value="Admin">Admin</MenuItem>
                                                     </Select>
                                                     {loading === user.id && <CircularProgress size={18} sx={{ color: '#1abc9c' }} />}
@@ -438,6 +442,7 @@ export default function AdminUsers({ users = {}, filters = {} }) {
                             <MenuItem value="Author">Author</MenuItem>
                             <MenuItem value="Reviewer">Reviewer</MenuItem>
                             <MenuItem value="Juri">Juri</MenuItem>
+                            <MenuItem value="Scanner">SCANER</MenuItem>
                             <MenuItem value="Admin">Admin</MenuItem>
                         </Select>
                     </FormControl>
