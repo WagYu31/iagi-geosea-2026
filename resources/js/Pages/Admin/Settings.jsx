@@ -10,6 +10,9 @@ import {
     Paper,
     TextField,
     Button,
+    FormControl,
+    InputLabel,
+    Select,
     FormControlLabel,
     Switch,
     Alert,
@@ -1143,11 +1146,15 @@ export default function Settings({ settings, submissionSettings, pricing: initia
         if (!settings) return defaultValue;
 
         for (const section in settings) {
-            const setting = settings[section].find(s => s.key === key);
+            const raw = settings[section];
+            const sectionItems = Array.isArray(raw)
+                ? raw
+                : (raw && typeof raw === 'object' ? Object.values(raw) : []);
+            const setting = sectionItems.find(s => s && s.key === key);
             if (setting) {
                 if (setting.type === 'json') {
                     try {
-                        return JSON.parse(setting.value);
+                        return typeof setting.value === 'string' ? JSON.parse(setting.value) : setting.value;
                     } catch (e) {
                         return defaultValue;
                     }
@@ -1163,7 +1170,11 @@ export default function Settings({ settings, submissionSettings, pricing: initia
         if (!settings) return null;
 
         for (const section in settings) {
-            const setting = settings[section].find(s => s.key === key);
+            const raw = settings[section];
+            const sectionItems = Array.isArray(raw)
+                ? raw
+                : (raw && typeof raw === 'object' ? Object.values(raw) : []);
+            const setting = sectionItems.find(s => s && s.key === key);
             if (setting) return setting.id;
         }
         return null;
