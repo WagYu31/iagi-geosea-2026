@@ -6006,6 +6006,9 @@
 
           <select id="desktop-dpt-filter" class="dpt-select-filter">
             <option value="all">Semua Status (All)</option>
+            <option value="no_email">⚠️ Email Kosong / Belum Ada</option>
+            <option value="has_email">✉️ Email Sudah Terisi</option>
+            <option value="no_phone">📱 WhatsApp Belum Diisi</option>
             <option value="voted">✓ Sudah Memilih</option>
             <option value="not_voted">⏳ Belum Memilih</option>
             <option value="claimed">🔑 Token Terbit (Belum Vote)</option>
@@ -10901,6 +10904,14 @@
           const matchQuery = !query || npa.includes(query) || name.includes(query) || email.includes(query) || phone.includes(query);
           if (!matchQuery) return false;
 
+          const cleanEmail = String(item.email || '').trim();
+          const hasEmail = cleanEmail.length > 0 && cleanEmail !== '-' && cleanEmail.includes('@');
+          const cleanPhone = String(item.phone || '').trim();
+          const hasPhone = cleanPhone.length > 0 && cleanPhone !== '-';
+
+          if (filter === 'no_email') return !hasEmail;
+          if (filter === 'has_email') return hasEmail;
+          if (filter === 'no_phone') return !hasPhone;
           if (filter === 'voted') return item.voted === true;
           if (filter === 'not_voted') return item.voted !== true;
           if (filter === 'claimed') return item.claimed === true && !item.voted;
@@ -10973,6 +10984,9 @@
           const isResolvedIssue = chatTicket && chatTicket.status === 'resolved';
           const rowIssueClass = isUnresolvedIssue ? 'row-has-issue' : '';
 
+          const rowCleanEmail = String(v.email || '').trim();
+          const rowHasEmail = rowCleanEmail.length > 0 && rowCleanEmail !== '-' && rowCleanEmail.includes('@');
+
           return `
           <tr id="dpt-row-${v.npa}" class="${isChecked ? 'row-selected' : ''} ${rowIssueClass}">
             <td style="text-align: center; width: 44px;">
@@ -11009,9 +11023,11 @@
               ` : ''}
             </td>
             <td>
-              <div style="font-family: var(--font-mono); font-size: 0.74rem; color: #CBD5E1; display: flex; align-items: center; gap: 5px;">
-                <span>✉️</span>
-                <span>${v.email}</span>
+              <div style="font-family: var(--font-mono); font-size: 0.74rem; display: flex; align-items: center; gap: 5px;">
+                ${rowHasEmail 
+                  ? `<span style="color: #CBD5E1; display: inline-flex; align-items: center; gap: 5px;"><span>✉️</span><span>${v.email}</span></span>` 
+                  : `<span style="color: #F87171; font-weight: 700; background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.35); padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;" title="Email belum diisi di DPT"><span>⚠️</span><span>Email Kosong</span></span>`
+                }
               </div>
               <div style="margin-top: 4px; font-family: var(--font-mono); font-size: 0.72rem; display: flex; align-items: center; gap: 5px;">
                 ${v.phone 
