@@ -123,10 +123,16 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
         return targetDateStr;
     }, [targetDateStr]);
 
-    // Clean up label: replace old abstract deadline text with official conference event countdown
+    // Clean up label: replace old abstract deadline text or outdated labels with official title
     const effectiveLabel = useMemo(() => {
-        if (!label || label === 'ABSTRACT SUBMISSION DEADLINE') {
-            return 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026';
+        if (
+            !label ||
+            label === 'ABSTRACT SUBMISSION DEADLINE' ||
+            label === 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026' ||
+            label === 'ROAD TO 55TH PIT IAGI-GEOSEA XIX 2026' ||
+            label.toLowerCase().includes('abstract submission')
+        ) {
+            return 'ROAD TO 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026';
         }
         return label;
     }, [label]);
@@ -174,6 +180,39 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
         { value: countdown.minutes, label: 'Minutes' },
         { value: countdown.seconds, label: 'Seconds' },
     ];
+
+    // Helper function to render 55ᵀᴴ with clean, sharp superscript typography
+    const renderBadgeLabel = (labelStr) => {
+        if (!labelStr) return '';
+        const parts = labelStr.split(/(55ᵀᴴ|55TH|55th)/i);
+        if (parts.length > 1) {
+            return parts.map((part, idx) => {
+                if (/^(55ᵀᴴ|55TH|55th)$/i.test(part)) {
+                    return (
+                        <Box component="span" key={idx} sx={{ whiteSpace: 'nowrap' }}>
+                            55
+                            <Box
+                                component="span"
+                                sx={{
+                                    display: 'inline-block',
+                                    fontSize: '0.62em',
+                                    lineHeight: 1,
+                                    transform: 'translateY(-0.35em)',
+                                    fontWeight: 800,
+                                    fontFamily: 'inherit',
+                                    ml: '0.04em',
+                                }}
+                            >
+                                TH
+                            </Box>
+                        </Box>
+                    );
+                }
+                return part;
+            });
+        }
+        return labelStr;
+    };
 
     return (
         <Box
@@ -233,7 +272,7 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
                             textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                         }}
                     >
-                        {effectiveLabel}
+                        {renderBadgeLabel(effectiveLabel)}
                     </Typography>
                 </Box>
 

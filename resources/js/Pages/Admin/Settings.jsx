@@ -1176,8 +1176,14 @@ export default function Settings({ settings, submissionSettings, pricing: initia
     });
     const [countdownLabel, setCountdownLabel] = useState(() => {
         const val = getSettingValue('countdown_label', '');
-        if (!val || val === 'ABSTRACT SUBMISSION DEADLINE') {
-            return 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026';
+        if (
+            !val ||
+            val === 'ABSTRACT SUBMISSION DEADLINE' ||
+            val === 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026' ||
+            val === 'ROAD TO 55TH PIT IAGI-GEOSEA XIX 2026' ||
+            val.toLowerCase().includes('abstract submission')
+        ) {
+            return 'ROAD TO 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026';
         }
         return val;
     });
@@ -2779,7 +2785,7 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                                 fullWidth
                                                 label="Countdown Badge Title"
                                                 value={countdownLabel}
-                                                placeholder="ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026"
+                                                placeholder="ROAD TO 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026"
                                                 onChange={(e) => setCountdownLabel(e.target.value)}
                                                 sx={inputSx}
                                             />
