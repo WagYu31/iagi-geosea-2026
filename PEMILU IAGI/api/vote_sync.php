@@ -241,7 +241,8 @@ if ($action === 'get_results') {
         'success' => true,
         'total_votes' => count($ballots),
         'counts' => $counts,
-        'total_voters_registered' => count($voters)
+        'total_voters_registered' => count($voters),
+        'ballots' => $ballots
     ]);
     exit;
 }

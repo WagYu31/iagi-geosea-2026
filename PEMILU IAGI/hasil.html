@@ -1561,8 +1561,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=4.5.6"></script>
-  <script src="js/storage.js?v=4.5.6"></script>
+  <script src="js/data.js?v=4.6.1"></script>
+  <script src="js/storage.js?v=4.6.1"></script>
   <script>
     // Initialize Pemilu Storage
     const storage = new PemiluStorage();
@@ -2309,8 +2309,21 @@
 
       if (checkPlenoUnlock()) {
         loadLiveResults();
-        // Live auto refresh every 3 seconds to sync when votes happen in other tabs
-        setInterval(loadLiveResults, 3000);
+        if (storage && typeof storage.syncWithServer === 'function') {
+          storage.syncWithServer().then(() => loadLiveResults());
+        }
+        // Live auto refresh every 3 seconds to sync when votes happen in other tabs or server
+        let isSyncingHasil = false;
+        setInterval(async () => {
+          if (checkPlenoUnlock()) {
+            if (!isSyncingHasil && storage && typeof storage.syncWithServer === 'function') {
+              isSyncingHasil = true;
+              try { await storage.syncWithServer(); } catch (e) {}
+              isSyncingHasil = false;
+            }
+            loadLiveResults();
+          }
+        }, 3000);
       }
 
       window.addEventListener('storage', (e) => {

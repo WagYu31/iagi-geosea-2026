@@ -10,7 +10,8 @@ const STORAGE_KEYS = {
   AUDIT: 'pemilu_iagi_audit_logs_v2',
   SETTINGS: 'pemilu_iagi_settings_v2',
   ADMIN_ACCOUNTS: 'pemilu_iagi_admin_accounts_v1',
-  DELETED_NPAS: 'pemilu_iagi_deleted_npas_v1'
+  DELETED_NPAS: 'pemilu_iagi_deleted_npas_v1',
+  SERVER_RESULTS: 'pemilu_iagi_server_results_v1'
 };
 
 // Simple pseudo SHA-256 string hash for client-side cryptographic receipt
@@ -222,33 +223,72 @@ class PemiluStorage {
       } catch (e) {}
     }
 
-    // Auto-sync status pemilih yang sudah mencoblos dari server KPKU
-    this.syncVotedWithServer();
+    // Auto-sync status pemilih dan perolehan suara dari server KPKU
+    this.syncWithServer();
+  }
+
+  async syncWithServer() {
+    try {
+      if (typeof fetch === 'undefined') return;
+
+      // 1. Sync list of voters who have cast their votes
+      try {
+        const respVoted = await fetch('api/vote_sync.php?action=get_voted_list');
+        const dataVoted = await respVoted.json();
+        if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
+          const dpt = this.getDPT();
+          let changed = false;
+          dpt.forEach(v => {
+            const clean = String(v.npa || '').trim().toUpperCase();
+            if (dataVoted.voted_npas[clean]) {
+              if (!v.voted || !v.claimed) {
+                v.voted = true;
+                v.claimed = true;
+                v.token = null; // Token burned permanently
+                v.voted_at = dataVoted.voted_npas[clean].voted_at || new Date().toISOString();
+                v.receipt_hash = dataVoted.voted_npas[clean].receipt_hash || 'VERIFIED';
+                changed = true;
+              }
+            }
+          });
+          if (changed) {
+            this.saveDPT(dpt);
+          }
+        }
+      } catch (errVoted) {
+        console.warn('Voted list sync notice:', errVoted);
+      }
+
+      // 2. Sync digital ballot box & quick count results from central server
+      try {
+        const respResults = await fetch('api/vote_sync.php?action=get_results');
+        const dataResults = await respResults.json();
+        if (dataResults && dataResults.success) {
+          // Cache server counts & total votes
+          localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify({
+            total_votes: Number(dataResults.total_votes || 0),
+            counts: dataResults.counts || { 1: 0, 2: 0, 3: 0 },
+            updated_at: Date.now()
+          }));
+
+          // If server returns ballots array, sync them to local storage
+          if (Array.isArray(dataResults.ballots) && dataResults.ballots.length > 0) {
+            const currentBallots = this.getBallots();
+            if (dataResults.ballots.length >= currentBallots.length) {
+              localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(dataResults.ballots));
+            }
+          }
+        }
+      } catch (errResults) {
+        console.warn('Results sync notice:', errResults);
+      }
+    } catch (e) {
+      console.warn('Server sync error:', e);
+    }
   }
 
   async syncVotedWithServer() {
-    try {
-      if (typeof fetch === 'undefined') return;
-      const resp = await fetch('api/vote_sync.php?action=get_voted_list');
-      const data = await resp.json();
-      if (data && data.success && data.voted_npas) {
-        const dpt = this.getDPT();
-        let changed = false;
-        dpt.forEach(v => {
-          const clean = String(v.npa || '').trim().toUpperCase();
-          if (data.voted_npas[clean] && !v.voted) {
-            v.voted = true;
-            v.token = null; // Token burned permanently
-            v.voted_at = data.voted_npas[clean].voted_at || new Date().toISOString();
-            v.receipt_hash = data.voted_npas[clean].receipt_hash || 'VERIFIED';
-            changed = true;
-          }
-        });
-        if (changed) {
-          this.saveDPT(dpt);
-        }
-      }
-    } catch (e) {}
+    return this.syncWithServer();
   }
 
   // --- DPT Management ---
@@ -944,16 +984,33 @@ class PemiluStorage {
     const ballots = this.getBallots();
     const dpt = this.getDPT();
 
-    const counts = { 1: 0, 2: 0, 3: 0 };
+    let counts = { 1: 0, 2: 0, 3: 0 };
     ballots.forEach(b => {
       if (counts[b.candidate_id] !== undefined) {
         counts[b.candidate_id]++;
       }
     });
 
-    const totalVotes = ballots.length;
+    let totalVotes = ballots.length;
+
+    // Fallback / sync from cached server results if local ballots are fewer
+    try {
+      const rawServer = localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS);
+      if (rawServer) {
+        const srv = JSON.parse(rawServer);
+        if (srv && typeof srv.total_votes === 'number' && srv.total_votes > totalVotes) {
+          totalVotes = srv.total_votes;
+          counts = {
+            1: Number(srv.counts?.[1] || 0),
+            2: Number(srv.counts?.[2] || 0),
+            3: Number(srv.counts?.[3] || 0)
+          };
+        }
+      }
+    } catch (e) {}
+
     const totalDPT = dpt.length;
-    const totalClaimed = dpt.filter(v => v.claimed).length;
+    const totalClaimed = dpt.filter(v => v.claimed || v.voted).length;
     const turnoutPercentage = totalDPT > 0 ? (Math.min(100, (totalVotes / totalDPT) * 100)).toFixed(1) : '0.0';
     const claimPercentage = totalDPT > 0 ? ((totalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
 
@@ -1494,6 +1551,7 @@ class PemiluStorage {
     localStorage.removeItem(STORAGE_KEYS.AUDIT);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
     localStorage.removeItem(STORAGE_KEYS.DELETED_NPAS);
+    localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
     localStorage.removeItem('pemilu_iagi_random_check_samples_v1');
     this.init();
     return true;
@@ -1502,6 +1560,7 @@ class PemiluStorage {
   // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact) ---
   async clearBallotsAndResetVotes() {
     localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
+    localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
     try {
       const dpt = this.getDPT();
       dpt.forEach(v => {

@@ -8105,8 +8105,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.5.9"></script>
-  <script src="js/storage.js?v=4.5.9"></script>
+  <script src="js/data.js?v=4.6.1"></script>
+  <script src="js/storage.js?v=4.6.1"></script>
 
   <script>
     // =========================================================================
@@ -8956,6 +8956,11 @@
         }
 
         refreshAll();
+        if (window.pemiluStorage && typeof window.pemiluStorage.syncWithServer === 'function') {
+          window.pemiluStorage.syncWithServer().then(() => {
+            if (isUnlocked) refreshAll();
+          });
+        }
       }
 
       window.toggleAdminSidebar = function(open) {
@@ -10189,8 +10194,14 @@
         }
       };
 
-      window.refreshAdminData = function() {
+      window.refreshAdminData = async function() {
+        if (window.pemiluStorage && typeof window.pemiluStorage.syncWithServer === 'function') {
+          await window.pemiluStorage.syncWithServer();
+        }
         refreshAll();
+        if (typeof renderResumePlenoSection === 'function') {
+          renderResumePlenoSection();
+        }
       };
 
       // Logout
@@ -10293,8 +10304,8 @@
         // 4. Update DPT mini stats bar
         const dptList = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
         const votedCount = dptList.filter(v => v.voted).length;
-        const claimedNotVoted = dptList.filter(v => v.claimed && !v.voted).length;
-        const unclaimedCount = dptList.filter(v => !v.claimed).length;
+        const claimedNotVoted = dptList.filter(v => (v.claimed || v.token) && !v.voted).length;
+        const unclaimedCount = dptList.filter(v => !v.claimed && !v.voted && !v.token).length;
 
         const elMiniTotal = document.getElementById('dpt-mini-total');
         if (elMiniTotal) elMiniTotal.innerText = results.totalDPT;
@@ -12866,10 +12877,19 @@
         refreshAll();
       });
 
-      // 2-second periodic polling to catch any votes happening live in another tab
-      setInterval(() => {
-        if (isUnlocked) refreshAll();
-      }, 2000);
+      // 3-second periodic live server synchronization & polling
+      let isSyncingAdminLive = false;
+      setInterval(async () => {
+        if (!isUnlocked) return;
+        if (!isSyncingAdminLive && window.pemiluStorage && typeof window.pemiluStorage.syncWithServer === 'function') {
+          isSyncingAdminLive = true;
+          try {
+            await window.pemiluStorage.syncWithServer();
+          } catch (e) {}
+          isSyncingAdminLive = false;
+        }
+        refreshAll();
+      }, 3000);
       // =========================================================================
       // LOGIC: RANDOM CHECK 5 PEMILIH TIMSES (04 NOVEMBER PAGI)
       // =========================================================================
