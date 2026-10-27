@@ -15,6 +15,8 @@
 
   <style>
     :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       --admin-bg: #010c0a;
       --admin-panel: rgba(2, 22, 18, 0.88);
       --admin-panel-hover: rgba(3, 30, 24, 0.95);
@@ -25,6 +27,67 @@
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    input, button, select, textarea {
+      font-family: inherit;
+    }
+
+    .font-mono, [class*="mono"] {
+      font-family: var(--font-mono) !important;
+    }
+
+    /* Professional Dark Autofill Override - Prevents browser white/cyan autofill glitch */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #03140f inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      transition: background-color 5000s ease-in-out 0s;
+      caret-color: #ffffff !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+    }
+
+    /* Executive Alert Box */
+    .alert-box {
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      animation: alertSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes alertSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .alert-error {
+      background: rgba(239, 68, 68, 0.12) !important;
+      border: 1px solid rgba(239, 68, 68, 0.4) !important;
+      color: #FCA5A5 !important;
+    }
+    .alert-success {
+      background: rgba(16, 185, 129, 0.12) !important;
+      border: 1px solid rgba(16, 185, 129, 0.4) !important;
+      color: #6EE7B7 !important;
+    }
+    .alert-warning {
+      background: rgba(245, 186, 66, 0.12) !important;
+      border: 1px solid rgba(245, 186, 66, 0.4) !important;
+      color: #FDE68A !important;
     }
 
     html {
@@ -1638,22 +1701,23 @@
 
     .login-input-field {
       width: 100%;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
       color: #FFFFFF;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       font-family: inherit;
+      font-weight: 500;
       box-sizing: border-box;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .login-input-field:focus {
       outline: none;
       border-color: #10B981;
-      background: rgba(0, 0, 0, 0.55);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      background: rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.12);
     }
 
     /* Teal/Emerald Submit Button from Image 2 */
@@ -1661,26 +1725,26 @@
       width: 100%;
       background: linear-gradient(135deg, #10B981 0%, #059669 100%);
       color: #FFFFFF;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       font-weight: 800;
-      letter-spacing: 0.05em;
-      padding: 13px;
-      border-radius: var(--radius-sm);
+      letter-spacing: 0.04em;
+      padding: 14px 18px;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.3);
-      transition: all 0.2s ease;
-      margin-top: 10px;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 14px;
     }
 
     .btn-login-teal:hover {
       background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45);
+      transform: translateY(-1.5px);
+      box-shadow: 0 8px 28px rgba(16, 185, 129, 0.45);
     }
 
     /* Right Visual Artwork Pane */
@@ -7707,121 +7771,123 @@
 
     <!-- ================= MODAL: FORMULIR BANTUAN GENERATE TOKEN KPKU ================= -->
     <div id="modal-generate-token" class="admin-modal-backdrop" style="display: none !important;">
-      <div class="admin-modal-dialog" style="max-width: 580px;">
-        <div class="admin-modal-header">
-          <div class="admin-modal-title">
-            <span style="color: #FBBF24; font-size: 1.25rem;">🔑</span>
+      <div class="admin-modal-dialog" style="max-width: 610px; border-radius: 22px; border: 1.5px solid rgba(245, 186, 66, 0.4); box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 50px rgba(245, 186, 66, 0.15); background: #061510;">
+        <div class="admin-modal-header" style="padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0, 0, 0, 0.25);">
+          <div class="admin-modal-title" style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.35); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; box-shadow: 0 0 20px rgba(245, 186, 66, 0.2);">
+              🔑
+            </div>
             <div>
-              <div style="font-weight: 800; font-size: 1rem; color: #FFFFFF;">Formulir Bantuan Generate Token Pemilih</div>
-              <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 400; margin-top: 2px;">
+              <div style="font-weight: 800; font-size: 1.1rem; color: #FFFFFF; letter-spacing: -0.01em;">Formulir Bantuan Generate Token Pemilih</div>
+              <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 500; margin-top: 2px;">
                 Bantuan Helpdesk KPKU untuk pemilih yang tokennya tidak terkirim via email
               </div>
             </div>
           </div>
-          <button type="button" class="admin-modal-close" onclick="closeGenerateTokenModal()">✕</button>
+          <button type="button" class="admin-modal-close" onclick="closeGenerateTokenModal()" style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: #94A3B8; font-size: 1rem; cursor: pointer; transition: all 0.2s;" title="Tutup Modal">✕</button>
         </div>
         <form id="form-generate-token" onsubmit="event.preventDefault(); doSubmitGenerateToken();">
-          <div class="admin-modal-body">
-            <div id="gen-token-alert" style="display: none; margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.8rem;"></div>
+          <div class="admin-modal-body" style="padding: 22px 24px;">
+            <div id="gen-token-alert" style="display: none; margin-bottom: 16px; padding: 12px 16px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; line-height: 1.5;"></div>
 
             <!-- Pilih Pemilih (NPA/Nama Search / Select) -->
-            <div class="form-group" style="margin-bottom: 14px;">
-              <label class="form-label" style="display: flex; justify-content: space-between;">
-                <span>Cari / Pilih Anggota Pemilih (DPT) *</span>
-                <span class="helper">Ketik NPA atau Nama Lengkap</span>
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 700; color: #E2E8F0; font-size: 0.82rem;">Cari / Pilih Anggota Pemilih (DPT) *</span>
+                <span class="helper" style="color: #F5BA42; font-weight: 700; font-size: 0.72rem;">Ketik NPA atau Nama Lengkap</span>
               </label>
               <div style="position: relative;">
-                <input type="text" id="gen-token-search-voter" class="form-input" placeholder="Ketik NPA atau Nama (contoh: 00000 atau Hendra)..." autocomplete="off" oninput="handleGenTokenVoterSearch(this.value)">
-                <div id="gen-token-voter-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #0F172A; border: 1px solid #334155; border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 4px;"></div>
+                <input type="text" id="gen-token-search-voter" class="form-input" placeholder="Ketik NPA atau Nama (contoh: 00092 atau Adjat)..." autocomplete="off" oninput="handleGenTokenVoterSearch(this.value)" style="height: 48px; border-radius: 12px; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.16); padding: 0 16px; font-size: 0.94rem; color: #FFFFFF; font-weight: 600; width: 100%; box-sizing: border-box;">
+                <div id="gen-token-voter-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #0B1E17; border: 1px solid rgba(245, 186, 66, 0.35); border-radius: 10px; max-height: 220px; overflow-y: auto; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.7); margin-top: 6px;"></div>
               </div>
               <input type="hidden" id="gen-token-selected-npa">
             </div>
 
             <!-- Kartu Info Pemilih Terpilih -->
-            <div id="gen-token-voter-card" style="display: none; background: rgba(0,0,0,0.35); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+            <div id="gen-token-voter-card" style="display: none; background: linear-gradient(135deg, rgba(2, 26, 20, 0.85) 0%, rgba(1, 14, 11, 0.95) 100%); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                 <div>
-                  <div id="gen-token-card-name" style="font-weight: 800; color: #FFFFFF; font-size: 0.9rem;">-</div>
-                  <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #F5BA42; margin-top: 2px;">
+                  <div id="gen-token-card-name" style="font-weight: 800; color: #FFFFFF; font-size: 1.1rem; letter-spacing: -0.01em;">-</div>
+                  <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #F5BA42; font-weight: 700; margin-top: 3px;">
                     NPA: <span id="gen-token-card-npa">-</span> • <span id="gen-token-card-pengda">-</span>
                   </div>
                 </div>
                 <div id="gen-token-card-status-pill"></div>
               </div>
               
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.72rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.35); border-radius: 10px; padding: 12px 14px;">
                 <div>
-                  <span style="color: #64748B;">Email Terdaftar:</span>
-                  <div id="gen-token-card-email" style="color: #CBD5E1; font-family: var(--font-mono); word-break: break-all;">-</div>
+                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Email Terdaftar:</span>
+                  <div id="gen-token-card-email" style="color: #38BDF8; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; word-break: break-all; margin-top: 2px;">-</div>
                 </div>
                 <div>
-                  <span style="color: #64748B;">No. WhatsApp:</span>
-                  <div id="gen-token-card-phone" style="color: #4ADE80; font-family: var(--font-mono);">-</div>
+                  <span style="color: #94A3B8; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">No. WhatsApp:</span>
+                  <div id="gen-token-card-phone" style="color: #4ADE80; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; margin-top: 2px;">-</div>
                 </div>
               </div>
             </div>
 
             <!-- Generator Token Kriptografi Acak -->
-            <div class="form-group" style="margin-bottom: 14px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label class="form-label" style="margin-bottom: 0;">Kode Token Kriptografi (Acak Sistem)</label>
-                <button type="button" onclick="handleRollRandomToken()" style="background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.35); color: #FBBF24; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;">
+            <div class="form-group" style="margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label class="form-label" style="margin-bottom: 0; font-weight: 700; color: #E2E8F0; font-size: 0.82rem;">Kode Token Kriptografi (Acak Sistem)</label>
+                <button type="button" onclick="handleRollRandomToken()" style="background: rgba(245, 186, 66, 0.12); border: 1px solid rgba(245, 186, 66, 0.35); color: #FBBF24; font-size: 0.72rem; padding: 5px 12px; border-radius: 9999px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; transition: all 0.2s;">
                   <span>🎲</span>
                   <span>Acak Token Baru</span>
                 </button>
               </div>
 
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <input type="text" id="gen-token-result-input" class="form-input font-mono" readonly style="font-size: 1rem; font-weight: 800; letter-spacing: 0.12em; text-align: center; color: #FDE68A; background: rgba(0,0,0,0.6); border: 1px solid #F5BA42; box-shadow: 0 0 15px rgba(245, 186, 66, 0.15); padding: 10px 14px;" placeholder="IAGI-2026-XXXX-XXXX">
-                <button type="button" onclick="handleCopyGenToken()" class="btn btn-gold" style="padding: 10px 14px; font-size: 0.8rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;" title="Salin Token">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="gen-token-result-input" class="font-mono" readonly style="flex: 1; height: 50px; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.14em; text-align: center; color: #FDE68A; background: #03140F; border: 1.5px solid #F5BA42; border-radius: 12px; box-shadow: 0 0 25px rgba(245, 186, 66, 0.18); padding: 0 16px; font-family: var(--font-mono); outline: none;" placeholder="IAGI-2026-XXXX-XXXX">
+                <button type="button" onclick="handleCopyGenToken()" class="btn btn-gold" style="height: 50px; padding: 0 20px; font-size: 0.84rem; font-weight: 800; border-radius: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 16px rgba(245, 186, 66, 0.25);" title="Salin Token">
                   <span>📋</span>
                   <span>Salin</span>
                 </button>
               </div>
-              <div style="font-size: 0.68rem; color: #94A3B8; margin-top: 5px; display: flex; align-items: center; gap: 4px;">
+              <div style="font-size: 0.7rem; color: #94A3B8; margin-top: 6px; display: flex; align-items: center; gap: 5px;">
                 <span>🔒</span>
-                <span>Standar Kriptografi LUBER: Token acak 128-bit unik sekali pakai. Otomatis hangus setelah memilih.</span>
+                <span>Standar Kriptografi LUBER: Token acak 128-bit unik sekali pakai. Otomatis hangus pasca memilih.</span>
               </div>
             </div>
 
             <!-- Jam / Waktu Klaim -->
-            <div id="gen-token-time-preview" style="font-size: 0.72rem; color: #34D399; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <div id="gen-token-time-preview" style="font-size: 0.74rem; color: #34D399; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 9px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600;">
               <span>🕒</span>
-              <span><strong>Waktu Terbit / Klaim:</strong> <span id="gen-token-time-val">Sekarang (Realtime WIB)</span></span>
+              <span><strong>Waktu Terbit / Klaim:</strong> <span id="gen-token-time-val">Diterbitkan saat disimpan (Realtime WIB)</span></span>
             </div>
 
             <!-- Opsi Kirim Email Otomatis -->
-            <div id="gen-token-email-option-wrap" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 11px 14px; margin-bottom: 12px; transition: all 0.2s ease;">
-              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin: 0; user-select: none;">
-                <input type="checkbox" id="gen-token-auto-email" checked style="width: 18px; height: 18px; margin-top: 2px; accent-color: #38BDF8; cursor: pointer;">
+            <div id="gen-token-email-option-wrap" style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 13px 16px; margin-bottom: 16px; transition: all 0.2s ease;">
+              <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0; user-select: none;">
+                <input type="checkbox" id="gen-token-auto-email" checked style="width: 19px; height: 19px; accent-color: #38BDF8; cursor: pointer; border-radius: 4px;">
                 <div style="flex: 1;">
-                  <div style="font-size: 0.82rem; font-weight: 800; color: #E0F2FE; display: flex; align-items: center; gap: 6px;">
+                  <div style="font-size: 0.84rem; font-weight: 800; color: #E0F2FE; display: flex; align-items: center; gap: 6px;">
                     <span>📧</span>
                     <span>Kirimkan Token & Surat Suara ke Email Pemilih</span>
                   </div>
-                  <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 3px; line-height: 1.4;">
-                    Surat suara elektronik & magic link voting akan dikirimkan ke: <strong id="gen-token-target-email" style="color: #38BDF8; font-family: var(--font-mono);">-</strong>
+                  <div style="font-size: 0.73rem; color: #94A3B8; margin-top: 3px; line-height: 1.4;">
+                    Surat suara elektronik & magic link voting dikirim ke: <strong id="gen-token-target-email" style="color: #38BDF8; font-family: var(--font-mono); font-weight: 700;">-</strong>
                   </div>
                 </div>
               </label>
             </div>
 
             <!-- Action Dispatch Buttons (Email, WhatsApp & Quick Share) -->
-            <div id="gen-token-dispatch-group" style="display: none; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; margin-top: 10px;">
+            <div id="gen-token-dispatch-group" style="display: none; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
               <div style="font-size: 0.75rem; font-weight: 700; color: #FFFFFF; display: flex; align-items: center; gap: 6px;">
                 <span>🚀</span>
                 <span>Kirimkan Ulang ke Pemilih:</span>
               </div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button type="button" id="gen-token-btn-email" onclick="handleSendEmailFromGenModal()" class="btn btn-gold" style="flex: 1; min-width: 140px; padding: 8px 12px; font-size: 0.78rem; justify-content: center; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; display: inline-flex; align-items: center; gap: 6px;">
+                <button type="button" id="gen-token-btn-email" onclick="handleSendEmailFromGenModal()" class="btn btn-gold" style="flex: 1; min-width: 140px; padding: 9px 14px; font-size: 0.78rem; justify-content: center; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; display: inline-flex; align-items: center; gap: 6px; border-radius: 8px;">
                   <span>📧</span>
                   <span id="gen-token-btn-email-text">Kirim ke Email</span>
                 </button>
-                <button type="button" id="gen-token-btn-wa" onclick="handleSendWaFromGenModal()" class="btn-act-wa" style="flex: 1; min-width: 140px; padding: 8px 12px; font-size: 0.78rem; justify-content: center;">
+                <button type="button" id="gen-token-btn-wa" onclick="handleSendWaFromGenModal()" class="btn-act-wa" style="flex: 1; min-width: 140px; padding: 9px 14px; font-size: 0.78rem; justify-content: center; border-radius: 8px;">
                   <span>💬</span>
                   <span>Kirim via WA</span>
                 </button>
-                <button type="button" id="gen-token-btn-copy-draft" onclick="handleCopyEmailDraftFromGenModal()" class="btn btn-subtle" style="padding: 8px 12px; font-size: 0.78rem; border-color: rgba(255,255,255,0.15);">
+                <button type="button" id="gen-token-btn-copy-draft" onclick="handleCopyEmailDraftFromGenModal()" class="btn btn-subtle" style="padding: 9px 14px; font-size: 0.78rem; border-color: rgba(255,255,255,0.15); border-radius: 8px;">
                   <span>✉️</span>
                   <span>Salin Draft</span>
                 </button>
@@ -7830,14 +7896,16 @@
 
           </div>
 
-          <div class="admin-modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-            <button type="button" class="btn btn-subtle" onclick="closeGenerateTokenModal()" style="font-size: 0.8rem; padding: 8px 16px;">Tutup</button>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
-              <button type="button" id="btn-submit-gen-token-email" onclick="handleSaveAndSendEmail()" class="btn" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.45); color: #38BDF8; font-size: 0.8rem; padding: 8px 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer;">
+          <div class="admin-modal-footer" style="padding: 18px 24px; background: rgba(0,0,0,0.35); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+            <button type="button" class="btn" onclick="closeGenerateTokenModal()" style="height: 44px; padding: 0 20px; font-size: 0.84rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+              Tutup
+            </button>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;">
+              <button type="button" id="btn-submit-gen-token-email" onclick="handleSaveAndSendEmail()" class="btn" style="height: 44px; padding: 0 18px; font-size: 0.84rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; transition: all 0.2s;">
                 <span>📧</span>
                 <span>Kirim ke Email</span>
               </button>
-              <button type="submit" id="btn-submit-gen-token" class="btn btn-gold" style="font-size: 0.8rem; padding: 8px 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <button type="submit" id="btn-submit-gen-token" class="btn btn-gold" style="height: 44px; padding: 0 22px; font-size: 0.85rem; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.25); cursor: pointer; white-space: nowrap;">
                 <span>💾</span>
                 <span>Simpan & Terbitkan Token</span>
               </button>
@@ -8614,9 +8682,11 @@
 
       function showAlert(msg, type = 'error') {
         if (!pinAlert) return;
-        pinAlert.style.display = 'block';
+        pinAlert.style.display = 'flex';
         pinAlert.className = `alert-box alert-${type}`;
-        pinAlert.innerText = msg;
+        const icon = type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️');
+        const cleanMsg = String(msg || '').replace(/^[❌⛔⚠️✓✅]\s*/, '');
+        pinAlert.innerHTML = `<span style="font-size: 1.1rem; flex-shrink: 0; line-height: 1;">${icon}</span><div style="flex: 1; font-size: 0.82rem; line-height: 1.45; font-weight: 600;">${cleanMsg}</div>`;
       }
 
       function hideAlert() {
