@@ -150,22 +150,8 @@ const CANDIDATES = [
   }
 ];
 
-// Daftar Pemilih Tetap (DPT) Terverifikasi Publikasi Resmi KPKU IAGI 2026 (Total: 2144 Pemilih)
+// Daftar Pemilih Tetap (DPT) Terverifikasi Publikasi Resmi KPKU IAGI 2026 (Total: 2143 Pemilih)
 const INITIAL_DPT = [
-  {
-    "npa": "99999",
-    "name": "Wahyu Utomo",
-    "email": "cingire687@gmail.com",
-    "phone": "085771593522",
-    "pengda": "DKI Jakarta",
-    "category": "Professional",
-    "status": "AKTIF",
-    "claimed": false,
-    "token": null,
-    "claimed_at": null,
-    "voted": false,
-    "voted_at": null
-  },
   {
     "npa": "00092",
     "name": "Adjat Sudradjat",

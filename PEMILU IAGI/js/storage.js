@@ -9,7 +9,8 @@ const STORAGE_KEYS = {
   BALLOTS: 'pemilu_iagi_ballots_v2',
   AUDIT: 'pemilu_iagi_audit_logs_v2',
   SETTINGS: 'pemilu_iagi_settings_v2',
-  ADMIN_ACCOUNTS: 'pemilu_iagi_admin_accounts_v1'
+  ADMIN_ACCOUNTS: 'pemilu_iagi_admin_accounts_v1',
+  DELETED_NPAS: 'pemilu_iagi_deleted_npas_v1'
 };
 
 // Simple pseudo SHA-256 string hash for client-side cryptographic receipt
@@ -63,6 +64,40 @@ class PemiluStorage {
     this.init();
   }
 
+  getDeletedNpas() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.DELETED_NPAS);
+      if (!raw) return new Set();
+      const arr = JSON.parse(raw);
+      return new Set(Array.isArray(arr) ? arr.map(n => String(n || '').trim().toUpperCase()) : []);
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  addDeletedNpas(npas) {
+    try {
+      const set = this.getDeletedNpas();
+      const list = Array.isArray(npas) ? npas : [npas];
+      list.forEach(n => {
+        const clean = String(n || '').trim().toUpperCase();
+        if (clean) set.add(clean);
+      });
+      localStorage.setItem(STORAGE_KEYS.DELETED_NPAS, JSON.stringify(Array.from(set)));
+    } catch (e) {}
+  }
+
+  removeDeletedNpa(npa) {
+    try {
+      const set = this.getDeletedNpas();
+      const clean = String(npa || '').trim().toUpperCase();
+      if (set.has(clean)) {
+        set.delete(clean);
+        localStorage.setItem(STORAGE_KEYS.DELETED_NPAS, JSON.stringify(Array.from(set)));
+      }
+    } catch (e) {}
+  }
+
   init() {
     // Hapus data mock/dummy v1 & v2 dari sesi sebelumnya agar ter-upgrade ke data resmi
     try {
@@ -88,27 +123,40 @@ class PemiluStorage {
 
     // Inisialisasi awal jika data DPT belum pernah dibuat sama sekali (null) atau masih menggunakan data sampel lama (< 500 pemilih)
     const existingDptRaw = localStorage.getItem(STORAGE_KEYS.DPT);
+    const deletedNpas = this.getDeletedNpas();
     let shouldInit = false;
     if (existingDptRaw === null) {
       shouldInit = true;
     } else {
       try {
-        const parsed = JSON.parse(existingDptRaw);
+        let parsed = JSON.parse(existingDptRaw);
         if (!Array.isArray(parsed) || parsed.length < 500) {
           shouldInit = true;
         } else {
-          // Sinkronisasi otomatis: jika ada pemilih baru di INITIAL_DPT (misal NPA 99999), masukkan ke cache
+          let hasChanges = false;
+          // 1. Bersihkan pemilih yang tercatat dalam daftar terhapus atau NPA testing 99999
+          if (deletedNpas.size > 0 || parsed.some(v => String(v.npa || '').trim().toUpperCase() === '99999')) {
+            const beforeLen = parsed.length;
+            parsed = parsed.filter(v => {
+              const vNpa = String(v.npa || '').trim().toUpperCase();
+              return !deletedNpas.has(vNpa) && vNpa !== '99999';
+            });
+            if (parsed.length !== beforeLen) {
+              hasChanges = true;
+            }
+          }
+
+          // 2. Sinkronisasi otomatis: hanya masukkan pemilih baru dari INITIAL_DPT jika BELUM ada di localStorage DAN BELUM pernah dihapus
           const existingNpas = new Set(parsed.map(v => String(v.npa || '').trim().toUpperCase()));
-          let hasNewVoters = false;
           cleanDpt.forEach(defVoter => {
             const defNpa = String(defVoter.npa || '').trim().toUpperCase();
-            if (defNpa && !existingNpas.has(defNpa)) {
+            if (defNpa && !existingNpas.has(defNpa) && !deletedNpas.has(defNpa) && defNpa !== '99999') {
               parsed.unshift(defVoter);
               existingNpas.add(defNpa);
-              hasNewVoters = true;
+              hasChanges = true;
             }
           });
-          if (hasNewVoters) {
+          if (hasChanges) {
             localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(parsed));
           }
         }
@@ -118,7 +166,11 @@ class PemiluStorage {
     }
 
     if (shouldInit) {
-      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(cleanDpt));
+      const filteredDpt = cleanDpt.filter(v => {
+        const vNpa = String(v.npa || '').trim().toUpperCase();
+        return !deletedNpas.has(vNpa) && vNpa !== '99999';
+      });
+      localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(filteredDpt));
     }
 
     // Kotak suara murni KOSONG (0 suara) untuk persiapan audit & pengecekan
@@ -266,8 +318,9 @@ class PemiluStorage {
   }
 
   resetDPTToDefault() {
+    localStorage.removeItem(STORAGE_KEYS.DELETED_NPAS);
     const defaultDpt = (typeof window !== 'undefined' && window.INITIAL_DPT) ? window.INITIAL_DPT : (typeof INITIAL_DPT !== 'undefined' ? INITIAL_DPT : []);
-    const cleanDpt = defaultDpt.map(v => ({
+    const cleanDpt = defaultDpt.filter(v => String(v.npa || '').trim().toUpperCase() !== '99999').map(v => ({
       ...v,
       claimed: false,
       token: null,
@@ -294,8 +347,9 @@ class PemiluStorage {
 
   getVoterByNpa(npa) {
     if (!npa) return null;
-    const dpt = this.getDPT();
     const cleanNpa = String(npa).trim().toUpperCase();
+    if (this.getDeletedNpas().has(cleanNpa) || cleanNpa === '99999') return null;
+    const dpt = this.getDPT();
     const found = dpt.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
     if (found) return found;
 
@@ -356,6 +410,7 @@ class PemiluStorage {
 
     dpt.unshift(newVoter);
     this.saveDPT(dpt);
+    this.removeDeletedNpa(cleanNpa);
     this.addAuditLog('DPT_ADDED', `Pemilih baru didaftarkan: NPA ${cleanNpa} (${cleanName}) Pengda ${cleanPengda}`);
 
     return { success: true, voter: newVoter };
@@ -363,6 +418,7 @@ class PemiluStorage {
 
   deleteVoter(npa) {
     const cleanNpa = String(npa || '').trim().toUpperCase();
+    this.addDeletedNpas(cleanNpa);
     const dpt = this.getDPT();
     const idx = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
     if (idx === -1) {
@@ -381,6 +437,7 @@ class PemiluStorage {
       return { success: false, error: 'Daftar NPA tidak valid.' };
     }
     const cleanNpaSet = new Set(npas.map(n => String(n || '').trim().toUpperCase()));
+    this.addDeletedNpas(Array.from(cleanNpaSet));
     const dpt = this.getDPT();
 
     const remaining = [];
@@ -610,8 +667,8 @@ class PemiluStorage {
 
     let voterIndex = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
 
-    // Robust Fallback: jika belum ada di cache localStorage tetapi terdaftar di INITIAL_DPT resmi (seperti NPA 99999)
-    if (voterIndex === -1 && typeof INITIAL_DPT !== 'undefined') {
+    // Robust Fallback: jika belum ada di cache localStorage tetapi terdaftar di INITIAL_DPT resmi (dan belum dihapus)
+    if (voterIndex === -1 && typeof INITIAL_DPT !== 'undefined' && !this.getDeletedNpas().has(cleanNpa) && cleanNpa !== '99999') {
       const initialMatch = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
       if (initialMatch) {
         const newVoter = {
@@ -1390,6 +1447,7 @@ class PemiluStorage {
     localStorage.removeItem(STORAGE_KEYS.BALLOTS);
     localStorage.removeItem(STORAGE_KEYS.AUDIT);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+    localStorage.removeItem(STORAGE_KEYS.DELETED_NPAS);
     localStorage.removeItem('pemilu_iagi_random_check_samples_v1');
     this.init();
     return true;
