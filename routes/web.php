@@ -333,6 +333,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/email-settings', [App\Http\Controllers\AdminController::class, 'saveEmailSettings'])->name('email.save');
         Route::post('/email-test', [App\Http\Controllers\AdminController::class, 'testEmail'])->name('email.test');
     });
+    });
 
     // Reviewer routes
     Route::middleware(['role:reviewer'])->prefix('reviewer')->name('reviewer.')->group(function () {
