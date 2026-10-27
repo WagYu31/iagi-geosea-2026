@@ -695,12 +695,37 @@ class PemiluStorage {
 
     const voter = dpt[voterIndex];
 
+    // Jika di cache lokal email masih kosong, perbarui dari INITIAL_DPT jika tersedia
+    if ((!voter.email || voter.email.trim() === '') && typeof INITIAL_DPT !== 'undefined') {
+      const initVoter = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+      if (initVoter && initVoter.email && initVoter.email.trim() !== '') {
+        voter.email = initVoter.email.trim();
+        dpt[voterIndex].email = voter.email;
+        this.saveDPT(dpt);
+      }
+    }
+
     // Fuzzy check name or exact email check
-    if (voter.email.toLowerCase() !== cleanEmail) {
-      return {
-        success: false,
-        error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
-      };
+    if (voter.email && voter.email.trim() !== '') {
+      if (voter.email.toLowerCase() !== cleanEmail) {
+        return {
+          success: false,
+          error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
+        };
+      }
+    } else {
+      // Jika di DPT email belum terdaftar, verifikasi kecocokan nama
+      const cleanVName = (voter.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cleanInputName = cleanName.replace(/[^a-z0-9]/g, '');
+      if (cleanVName && cleanInputName && !cleanVName.includes(cleanInputName) && !cleanInputName.includes(cleanVName)) {
+        return {
+          success: false,
+          error: `Email pada DPT untuk NPA ${cleanNpa} belum terdata, dan nama yang dimasukkan tidak cocok dengan nama di DPT (${voter.name}).`
+        };
+      }
+      voter.email = cleanEmail;
+      dpt[voterIndex].email = cleanEmail;
+      this.saveDPT(dpt);
     }
 
     if (voter.voted) {

@@ -9563,7 +9563,7 @@ const INITIAL_DPT = [
   {
     "npa": "04647",
     "name": "Ufi Ma’rufianty",
-    "email": "",
+    "email": "umarufianty30@gmail.com",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
