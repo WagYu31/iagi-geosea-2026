@@ -156,6 +156,19 @@ class PemiluStorage {
               hasChanges = true;
             }
           });
+
+          // 3. Sinkronisasi email baru dari INITIAL_DPT ke pemilih yang sebelumnya emailnya masih kosong di localStorage
+          cleanDpt.forEach(defVoter => {
+            const defNpa = String(defVoter.npa || '').trim().toUpperCase();
+            if (defNpa && defVoter.email && defVoter.email.trim() !== '') {
+              const localVoter = parsed.find(v => String(v.npa || '').trim().toUpperCase() === defNpa);
+              if (localVoter && (!localVoter.email || localVoter.email.trim() === '')) {
+                localVoter.email = defVoter.email.trim();
+                hasChanges = true;
+              }
+            }
+          });
+
           if (hasChanges) {
             localStorage.setItem(STORAGE_KEYS.DPT, JSON.stringify(parsed));
           }
@@ -708,10 +721,18 @@ class PemiluStorage {
     // Fuzzy check name or exact email check
     if (voter.email && voter.email.trim() !== '') {
       if (voter.email.toLowerCase() !== cleanEmail) {
-        return {
-          success: false,
-          error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
-        };
+        // Fallback: cek jika email di INITIAL_DPT sudah diperbarui dan cocok dengan input
+        const initV = (typeof INITIAL_DPT !== 'undefined') ? INITIAL_DPT.find(x => String(x.npa || '').trim().toUpperCase() === cleanNpa) : null;
+        if (initV && initV.email && initV.email.trim().toLowerCase() === cleanEmail) {
+          voter.email = cleanEmail;
+          dpt[voterIndex].email = cleanEmail;
+          this.saveDPT(dpt);
+        } else {
+          return {
+            success: false,
+            error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
+          };
+        }
       }
     } else {
       // Jika di DPT email belum terdaftar, verifikasi kecocokan nama
