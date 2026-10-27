@@ -1574,8 +1574,8 @@ class PemiluStorage {
     return true;
   }
 
-  // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact) ---
-  async clearBallotsAndResetVotes() {
+  // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact - Sandi: 31052002) ---
+  async clearBallotsAndResetVotes(adminPin = '31052002') {
     localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
     localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
     try {
@@ -1598,12 +1598,12 @@ class PemiluStorage {
         await fetch('api/vote_sync.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'clear_ballots', admin_pin: '312226' })
+          body: JSON.stringify({ action: 'clear_ballots', admin_pin: adminPin })
         });
       }
     } catch (e) {}
 
-    this.addAuditLog('BALLOT_BOX_PURGED', 'Kotak suara resmi dikosongkan (0 suara) oleh Panitia KPKU. Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.');
+    this.addAuditLog('BALLOT_BOX_PURGED', 'Kotak suara resmi dikosongkan (0 suara) oleh Panitia KPKU dengan sandi otoritas. Seluruh hak suara DPT dipulihkan untuk Sidang Pemilu.');
     return true;
   }
 }

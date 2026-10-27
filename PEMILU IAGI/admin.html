@@ -8267,6 +8267,53 @@
       </div>
     </div>
 
+    <!-- ================= MODAL: KONFIRMASI KOSONGKAN KOTAK SUARA ================= -->
+    <div id="modal-clear-ballot-box" class="admin-modal-backdrop" style="display: none !important;">
+      <div class="admin-modal-dialog" style="max-width: 480px; text-align: center; border: 1.5px solid rgba(239, 68, 68, 0.4); box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(239, 68, 68, 0.2); background: #0A110F; border-radius: 22px; padding: 28px 24px; box-sizing: border-box;">
+        
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 16px auto; box-shadow: 0 0 25px rgba(239, 68, 68, 0.25);">
+          🗑️
+        </div>
+
+        <div style="display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; background: rgba(239, 68, 68, 0.12); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.35); margin-bottom: 12px;">
+          OTORITAS KEAMANAN TINGKAT TINGGI
+        </div>
+
+        <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em;">
+          Kosongkan Seluruh Kotak Suara?
+        </h3>
+
+        <p style="margin: 0 0 18px 0; font-size: 0.82rem; color: #94A3B8; line-height: 1.55; text-align: center;">
+          Aksi ini akan menghapus seluruh surat suara testing dan mengembalikan perolehan suara ke <strong>0 Suara (0.0%)</strong>. Data DPT tetap utuh dan dipulihkan seluruh hak suaranya.
+        </p>
+
+        <div id="clear-ballot-error" style="display: none; padding: 10px 14px; border-radius: 10px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; font-size: 0.82rem; font-weight: 700; margin-bottom: 16px;"></div>
+
+        <div style="text-align: left; margin-bottom: 20px;">
+          <label style="font-size: 0.78rem; font-weight: 700; color: #CBD5E1; display: block; margin-bottom: 6px;">
+            Masukkan Sandi Otoritas (Wajib):
+          </label>
+          <div style="position: relative;">
+            <input type="password" id="clear-ballot-pin-input" class="form-input font-mono" placeholder="Masukkan sandi..." autocomplete="off" onkeydown="if(event.key==='Enter') executeClearBallotBox()" style="width: 100%; height: 46px; border-radius: 10px; background: rgba(0,0,0,0.5); border: 1.5px solid rgba(239, 68, 68, 0.35); padding: 0 44px 0 14px; color: #FFFFFF; font-size: 1rem; box-sizing: border-box; text-align: center; letter-spacing: 0.2em;">
+            <button type="button" onclick="toggleClearBallotPwd()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer; font-size: 1.1rem;" title="Lihat Sandi">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button type="button" class="btn" onclick="closeClearBallotModal()" style="width: auto !important; height: 42px; padding: 0 20px; font-size: 0.84rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 10px; cursor: pointer;">
+            Batal
+          </button>
+          <button type="button" id="btn-execute-clear-ballots" onclick="executeClearBallotBox()" class="btn" style="width: auto !important; height: 42px; padding: 0 22px; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%); color: #FFFFFF; border: 1px solid #F87171; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4); display: inline-flex; align-items: center; gap: 6px;">
+            <span>🗑️</span>
+            <span>Kosongkan Sekarang</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
     </main>
   </div>
 
@@ -13236,36 +13283,105 @@
         });
       }
 
-      // Kosongkan Kotak Suara (Reset Suara ke 0 Tanpa Merusak DPT)
-      window.confirmClearBallotBox = async function() {
-        const pin = prompt('KONFIRMASI PENGOSONGAN KOTAK SUARA (RESET KE 0):\n\n' +
-          'Aksi ini akan menghapus seluruh suara simulasi/testing dan mengembalikan kotak suara ke 0 Suara.\n' +
-          'Data DPT (2.144 pemilih) akan tetap utuh dan dipulihkan seluruh hak suaranya agar siap untuk Hari-H.\n\n' +
-          'Masukkan PIN Otoritas KPKU:');
-        if (!pin) return;
-        if (pin.trim() !== '2026') {
-          alert('❌ PIN Otoritas KPKU salah! Pengosongan kotak suara dibatalkan.');
+      // Kosongkan Kotak Suara (Reset Suara ke 0 Tanpa Merusak DPT - Sandi: 31052002)
+      window.confirmClearBallotBox = function() {
+        const modal = document.getElementById('modal-clear-ballot-box');
+        const err = document.getElementById('clear-ballot-error');
+        const inp = document.getElementById('clear-ballot-pin-input');
+        if (err) err.style.display = 'none';
+        if (inp) {
+          inp.value = '';
+          inp.type = 'password';
+        }
+        if (modal) {
+          modal.style.setProperty('display', 'flex', 'important');
+          setTimeout(() => { if (inp) inp.focus(); }, 120);
+        } else {
+          fallbackClearBallotBoxPrompt();
+        }
+      };
+
+      window.closeClearBallotModal = function() {
+        const modal = document.getElementById('modal-clear-ballot-box');
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+      };
+
+      window.toggleClearBallotPwd = function() {
+        const inp = document.getElementById('clear-ballot-pin-input');
+        if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+      };
+
+      window.executeClearBallotBox = async function() {
+        const inp = document.getElementById('clear-ballot-pin-input');
+        const err = document.getElementById('clear-ballot-error');
+        const btn = document.getElementById('btn-execute-clear-ballots');
+        const pin = inp ? inp.value.trim() : '';
+
+        // Validasi Sandi Otoritas: 31052002
+        if (pin !== '31052002') {
+          if (err) {
+            err.style.display = 'block';
+            err.innerText = '❌ Sandi otoritas salah! Pengosongan kotak suara ditolak.';
+          } else {
+            alert('❌ Sandi otoritas salah! Pengosongan kotak suara ditolak.');
+          }
+          if (inp) {
+            inp.focus();
+            inp.select();
+          }
           return;
         }
 
-        if (confirm('PERINGATAN TERAKHIR PANITIA KPKU:\n\n' +
-          'Apakah Anda yakin ingin mengosongkan kotak suara sekarang?\n' +
-          '• Total Suara Masuk akan kembali menjadi 0 Suara (0.0% Partisipasi).\n' +
-          '• Seluruh 2.144 DPT dipulihkan hak suaranya.\n' +
-          '• Kotak suara menjadi FRESH & BERSIH untuk Pemilihan Resmi.')) {
-          
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳</span><span>Mengosongkan...</span>';
+        }
+
+        try {
           if (window.pemiluStorage && typeof window.pemiluStorage.clearBallotsAndResetVotes === 'function') {
-            await window.pemiluStorage.clearBallotsAndResetVotes();
+            await window.pemiluStorage.clearBallotsAndResetVotes('31052002');
           }
           if (typeof refreshAll === 'function') refreshAll();
           if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
-          
+
+          closeClearBallotModal();
+
           alert('✓ KOTAK SUARA BERHASIL DIKOSONGKAN!\n\n' +
             '• Total Suara Masuk: 0 Suara\n' +
             '• Partisipasi: 0.0%\n' +
-            '• DPT Terdaftar: 2.144 Pemilih (100% Hak Suara Siap Digunakan)\n\n' +
-            'Sistem siap untuk pemungutan suara resmi Pemilu IAGI 2026.');
+            '• Hak Suara DPT: 100% Siap Digunakan untuk Hari-H Pemilihan.\n\n' +
+            'Sistem kotak suara telah di-reset dan bersih.');
+        } catch (e) {
+          console.error(e);
+          if (err) {
+            err.style.display = 'block';
+            err.innerText = 'Gagal mengosongkan kotak suara: ' + (e.message || e);
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>🗑️</span><span>Kosongkan Sekarang</span>';
+          }
         }
+      };
+
+      // Fallback Prompt jika modal DOM belum siap
+      window.fallbackClearBallotBoxPrompt = async function() {
+        const pin = prompt('KONFIRMASI PENGOSONGAN KOTAK SUARA (RESET KE 0):\n\n' +
+          'Aksi ini akan menghapus seluruh suara testing dan mengembalikan kotak suara ke 0 Suara.\n' +
+          'Data DPT tetap utuh dan dipulihkan seluruh hak suaranya.\n\n' +
+          'Masukkan Sandi Otoritas (31052002):');
+        if (!pin) return;
+        if (pin.trim() !== '31052002') {
+          alert('❌ Sandi otoritas salah! Pengosongan kotak suara dibatalkan.');
+          return;
+        }
+        if (window.pemiluStorage && typeof window.pemiluStorage.clearBallotsAndResetVotes === 'function') {
+          await window.pemiluStorage.clearBallotsAndResetVotes('31052002');
+        }
+        if (typeof refreshAll === 'function') refreshAll();
+        if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
+        alert('✓ KOTAK SUARA BERHASIL DIKOSONGKAN!\n\nPerolehan suara telah direset ke 0 Suara.');
       };
 
       // Export CSV

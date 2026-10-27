@@ -316,8 +316,8 @@ if ($action === 'clear_ballots') {
         exit;
     }
 
-    // Validasi Dual-Key Otoritas Pleno: 312226
-    $isPinValid = ($adminPin === '312226');
+    // Validasi Dual-Key Otoritas Pleno: 31052002 (atau legacy 312226)
+    $isPinValid = ($adminPin === '31052002' || $adminPin === '312226');
 
     if (!$isPinValid) {
         if (!isset($lockouts[$clientIp])) {
