@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from '@inertiajs/react';
 import { alpha, keyframes } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -108,11 +108,23 @@ function FloatingParticle({ size, top, left, delay, duration, variant = 1 }) {
 }
 
 // Isolated countdown timer component to prevent re-rendering the entire Hero every 1 second
-const CountdownSection = React.memo(function CountdownSection({ targetDateStr, fadeInUpAnim }) {
+const CountdownSection = React.memo(function CountdownSection({ targetDateStr, label, sublabel, dateText, fadeInUpAnim }) {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
+    // Fallback date: 2 November 2026 23:59:59 WIB
+    const resolvedTargetStr = useMemo(() => {
+        const defaultDate = '2026-11-02T23:59:59';
+        if (!targetDateStr) return defaultDate;
+        const parsed = new Date(targetDateStr).getTime();
+        // If the date is invalid or in the past (e.g. initial seeded 2026-01-18), use 2 Nov 2026
+        if (isNaN(parsed) || parsed <= new Date().getTime()) {
+            return defaultDate;
+        }
+        return targetDateStr;
+    }, [targetDateStr]);
+
     useEffect(() => {
-        const targetDate = new Date(targetDateStr || '2026-01-18T00:00:00').getTime();
+        const targetDate = new Date(resolvedTargetStr).getTime();
         const calculate = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
@@ -123,12 +135,14 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
                     minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
                     seconds: Math.floor((distance % (1000 * 60)) / 1000),
                 });
+            } else {
+                setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
             }
         };
         calculate();
         const interval = setInterval(calculate, 1000);
         return () => clearInterval(interval);
-    }, [targetDateStr]);
+    }, [resolvedTargetStr]);
 
     const timeUnits = [
         { value: countdown.days, label: 'Days' },
@@ -141,97 +155,207 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, f
         <Box
             sx={{
                 display: 'flex',
-                gap: { xs: 1.5, sm: 2.5, md: 3 },
+                flexDirection: 'column',
+                alignItems: 'center',
                 mt: { xs: 4, sm: 5 },
-                justifyContent: 'center',
-                flexWrap: 'wrap',
                 position: 'relative',
                 zIndex: 2,
+                width: '100%',
             }}
         >
-            {timeUnits.map((item, index) => (
-                <Box
-                    key={item.label}
-                    component={motion.div}
-                    initial={{ opacity: 0, y: 35, scale: 0.88 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{
-                        duration: 0.75,
-                        delay: 1.6 + index * 0.09,
-                        ease: [0.16, 1, 0.3, 1],
-                    }}
-                    whileHover={{
-                        y: -8,
-                        scale: 1.07,
-                        boxShadow: '0 20px 40px rgba(13, 148, 136, 0.45), 0 0 25px rgba(77, 212, 172, 0.35)',
-                        borderColor: 'rgba(77, 212, 172, 0.7)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.24)',
-                        transition: { duration: 0.25 },
-                    }}
-                    sx={{
-                        textAlign: 'center',
-                        px: { xs: 1.8, sm: 2.8, md: 3.2 },
-                        py: { xs: 1.6, sm: 2.2 },
-                        borderRadius: '20px',
-                        bgcolor: 'rgba(255, 255, 255, 0.15)',
-                        backdropFilter: 'blur(16px)',
-                        WebkitBackdropFilter: 'blur(16px)',
-                        border: '1.5px solid rgba(255, 255, 255, 0.28)',
-                        minWidth: { xs: 72, sm: 90, md: 105 },
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
-                        cursor: 'default',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        transition: 'border-color 0.25s ease, background-color 0.25s ease',
-                    }}
-                >
-                    {/* Top ambient glowing accent line */}
+            {/* Header Badge: clarifies that this countdown is strictly for the abstract submission deadline */}
+            <Box
+                component={motion.div}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 1.45 }}
+                sx={{
+                    display: 'inline-flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: 'center',
+                    gap: { xs: 0.8, sm: 1.2 },
+                    px: { xs: 2.2, sm: 3 },
+                    py: { xs: 1, sm: 0.8 },
+                    mb: 1.5,
+                    borderRadius: { xs: '16px', sm: '9999px' },
+                    bgcolor: 'rgba(9, 77, 66, 0.65)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: '1.5px solid rgba(77, 212, 172, 0.45)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35)',
+                    textAlign: 'center',
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box
                         sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: '20%',
-                            right: '20%',
-                            height: '2px',
-                            background: 'linear-gradient(90deg, transparent, rgba(77, 212, 172, 0.9), transparent)',
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            bgcolor: '#4dd4ac',
+                            boxShadow: '0 0 10px #4dd4ac',
+                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         }}
                     />
-
                     <Typography
-                        component={motion.div}
-                        key={item.value}
-                        initial={{ opacity: 0.6, y: -2 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25 }}
+                        component="span"
                         sx={{
-                            fontSize: { xs: '1.65rem', sm: '2.2rem', md: '2.75rem' },
-                            fontWeight: 900,
                             color: '#ffffff',
-                            lineHeight: 1,
-                            fontFamily: '"Inter", "Segoe UI", sans-serif',
-                            letterSpacing: '-0.02em',
-                            textShadow: '0 2px 14px rgba(0,0,0,0.35)',
-                        }}
-                    >
-                        {String(item.value).padStart(2, '0')}
-                    </Typography>
-                    <Typography
-                        variant="caption"
-                        sx={{
-                            color: '#a7f3d0',
-                            fontWeight: 700,
-                            fontSize: { xs: '0.65rem', sm: '0.78rem' },
-                            letterSpacing: '0.14em',
+                            fontWeight: 800,
+                            fontSize: { xs: '0.78rem', sm: '0.88rem' },
+                            letterSpacing: '0.08em',
                             textTransform: 'uppercase',
-                            display: 'block',
-                            mt: 0.7,
-                            textShadow: '0 1px 6px rgba(0,0,0,0.3)',
+                            fontFamily: '"Inter", sans-serif',
+                            textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                         }}
                     >
-                        {item.label}
+                        ⏳ {label || 'ABSTRACT SUBMISSION DEADLINE'}
                     </Typography>
                 </Box>
-            ))}
+
+                <Box
+                    component="span"
+                    sx={{
+                        display: { xs: 'none', sm: 'inline-block' },
+                        color: 'rgba(255, 255, 255, 0.35)',
+                    }}
+                >
+                    •
+                </Box>
+
+                <Typography
+                    component="span"
+                    sx={{
+                        color: '#4dd4ac',
+                        fontWeight: 800,
+                        fontSize: { xs: '0.74rem', sm: '0.84rem' },
+                        letterSpacing: '0.05em',
+                        fontFamily: '"Inter", sans-serif',
+                        bgcolor: 'rgba(77, 212, 172, 0.15)',
+                        px: 1.5,
+                        py: 0.3,
+                        borderRadius: '9999px',
+                        border: '1px solid rgba(77, 212, 172, 0.3)',
+                    }}
+                >
+                    {dateText || '2 November 2026 (23:59 WIB)'}
+                </Typography>
+            </Box>
+
+            {/* Explanatory subtext: clarifying that this timer is for submission, not the conference event date */}
+            <Typography
+                component={motion.p}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 1.55 }}
+                sx={{
+                    color: 'rgba(255, 255, 255, 0.88)',
+                    fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                    fontWeight: 500,
+                    mb: { xs: 2.5, sm: 3 },
+                    textAlign: 'center',
+                    maxWidth: '620px',
+                    textShadow: '0 1px 6px rgba(0,0,0,0.6)',
+                    letterSpacing: '0.01em',
+                    lineHeight: 1.5,
+                }}
+            >
+                {sublabel || 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)'}
+            </Typography>
+
+            {/* Countdown Boxes */}
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: { xs: 1.5, sm: 2.5, md: 3 },
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                }}
+            >
+                {timeUnits.map((item, index) => (
+                    <Box
+                        key={item.label}
+                        component={motion.div}
+                        initial={{ opacity: 0, y: 35, scale: 0.88 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                            duration: 0.75,
+                            delay: 1.6 + index * 0.09,
+                            ease: [0.16, 1, 0.3, 1],
+                        }}
+                        whileHover={{
+                            y: -8,
+                            scale: 1.07,
+                            boxShadow: '0 20px 40px rgba(13, 148, 136, 0.45), 0 0 25px rgba(77, 212, 172, 0.35)',
+                            borderColor: 'rgba(77, 212, 172, 0.7)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.24)',
+                            transition: { duration: 0.25 },
+                        }}
+                        sx={{
+                            textAlign: 'center',
+                            px: { xs: 1.8, sm: 2.8, md: 3.2 },
+                            py: { xs: 1.6, sm: 2.2 },
+                            borderRadius: '20px',
+                            bgcolor: 'rgba(255, 255, 255, 0.15)',
+                            backdropFilter: 'blur(16px)',
+                            WebkitBackdropFilter: 'blur(16px)',
+                            border: '1.5px solid rgba(255, 255, 255, 0.28)',
+                            minWidth: { xs: 72, sm: 90, md: 105 },
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+                            cursor: 'default',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            transition: 'border-color 0.25s ease, background-color 0.25s ease',
+                        }}
+                    >
+                        {/* Top ambient glowing accent line */}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: '20%',
+                                right: '20%',
+                                height: '2px',
+                                background: 'linear-gradient(90deg, transparent, rgba(77, 212, 172, 0.9), transparent)',
+                            }}
+                        />
+
+                        <Typography
+                            component={motion.div}
+                            key={item.value}
+                            initial={{ opacity: 0.6, y: -2 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.25 }}
+                            sx={{
+                                fontSize: { xs: '1.65rem', sm: '2.2rem', md: '2.75rem' },
+                                fontWeight: 900,
+                                color: '#ffffff',
+                                lineHeight: 1,
+                                fontFamily: '"Inter", "Segoe UI", sans-serif',
+                                letterSpacing: '-0.02em',
+                                textShadow: '0 2px 14px rgba(0,0,0,0.35)',
+                            }}
+                        >
+                            {String(item.value).padStart(2, '0')}
+                        </Typography>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: '#a7f3d0',
+                                fontWeight: 700,
+                                fontSize: { xs: '0.65rem', sm: '0.78rem' },
+                                letterSpacing: '0.14em',
+                                textTransform: 'uppercase',
+                                display: 'block',
+                                mt: 0.7,
+                                textShadow: '0 1px 6px rgba(0,0,0,0.3)',
+                            }}
+                        >
+                            {item.label}
+                        </Typography>
+                    </Box>
+                ))}
+            </Box>
         </Box>
     );
 });
@@ -998,7 +1122,13 @@ export default function Hero({ settings, auth }) {
                 )}
 
                 {/* Isolated Countdown Component (does not re-render parent Hero) */}
-                <CountdownSection targetDateStr={settings.countdown_target_date} fadeInUpAnim={fadeInUp} />
+                <CountdownSection 
+                    targetDateStr={settings.countdown_target_date} 
+                    label={settings.countdown_label}
+                    sublabel={settings.countdown_sublabel}
+                    dateText={settings.countdown_date_text}
+                    fadeInUpAnim={fadeInUp} 
+                />
             </Container>
         </Box>
     );

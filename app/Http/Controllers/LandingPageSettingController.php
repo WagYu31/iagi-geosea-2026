@@ -810,6 +810,82 @@ class LandingPageSettingController extends Controller
     }
 
     /**
+     * Save countdown timer settings (target date, label, and sublabel)
+     */
+    public function saveCountdownSettings(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'countdown_target_date' => 'nullable|string',
+                'countdown_label' => 'nullable|string|max:255',
+                'countdown_sublabel' => 'nullable|string|max:500',
+                'countdown_date_text' => 'nullable|string|max:255',
+            ]);
+
+            if (!empty($validated['countdown_target_date'])) {
+                LandingPageSetting::updateOrCreate(
+                    ['key' => 'countdown_target_date'],
+                    [
+                        'value' => $validated['countdown_target_date'],
+                        'section' => 'countdown',
+                        'type' => 'date',
+                        'description' => 'Target date for abstract submission countdown',
+                    ]
+                );
+            }
+
+            LandingPageSetting::updateOrCreate(
+                ['key' => 'countdown_label'],
+                [
+                    'value' => $validated['countdown_label'] ?? 'ABSTRACT SUBMISSION DEADLINE',
+                    'section' => 'countdown',
+                    'type' => 'text',
+                    'description' => 'Badge label for countdown timer',
+                ]
+            );
+
+            LandingPageSetting::updateOrCreate(
+                ['key' => 'countdown_sublabel'],
+                [
+                    'value' => $validated['countdown_sublabel'] ?? 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)',
+                    'section' => 'countdown',
+                    'type' => 'text',
+                    'description' => 'Subtext explaining countdown purpose',
+                ]
+            );
+
+            if (!empty($validated['countdown_date_text'])) {
+                LandingPageSetting::updateOrCreate(
+                    ['key' => 'countdown_date_text'],
+                    [
+                        'value' => $validated['countdown_date_text'],
+                        'section' => 'countdown',
+                        'type' => 'text',
+                        'description' => 'Formatted date text for countdown badge',
+                    ]
+                );
+            }
+
+            Cache::forget('landing-page-settings');
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+
+            Log::info('Countdown settings saved successfully');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Countdown settings saved successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Save countdown error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Save failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Upload hero logo (center logo in hero section)
      */
     public function uploadHeroLogo(Request $request)

@@ -1170,7 +1170,19 @@ export default function Settings({ settings, submissionSettings, pricing: initia
     };
 
     // Landing Page Settings State
-    const [countdownDate, setCountdownDate] = useState(getSettingValue('countdown_target_date', ''));
+    const [countdownDate, setCountdownDate] = useState(() => {
+        const val = getSettingValue('countdown_target_date', '');
+        return val || '2026-11-02T23:59';
+    });
+    const [countdownLabel, setCountdownLabel] = useState(() => {
+        return getSettingValue('countdown_label', 'ABSTRACT SUBMISSION DEADLINE');
+    });
+    const [countdownSublabel, setCountdownSublabel] = useState(() => {
+        return getSettingValue('countdown_sublabel', 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)');
+    });
+    const [countdownDateText, setCountdownDateText] = useState(() => {
+        return getSettingValue('countdown_date_text', '2 November 2026 (23:59 WIB)');
+    });
     const [contactInfo, setContactInfo] = useState(() => {
         const info = getSettingValue('contact_info', '{}');
         try {
@@ -1370,26 +1382,23 @@ export default function Settings({ settings, submissionSettings, pricing: initia
 
     // Save Countdown Timer
     const saveCountdown = async () => {
-        const settingId = getSettingId('countdown_target_date');
-        if (!settingId) {
-            alert('Countdown setting not found');
-            return;
-        }
-
         setSavingCountdown(true);
         try {
-            await router.patch(route('admin.settings.update', settingId), {
-                value: countdownDate,
-            }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    alert('Countdown timer updated successfully!');
-                },
-                onError: (errors) => {
-                    console.error('Save failed:', errors);
-                    alert('Failed to save countdown timer');
-                },
+            const response = await axios.post(route('admin.settings.saveCountdown'), {
+                countdown_target_date: countdownDate,
+                countdown_label: countdownLabel,
+                countdown_sublabel: countdownSublabel,
+                countdown_date_text: countdownDateText,
             });
+            if (response.data.success) {
+                alert('Countdown timer and abstract submission settings updated successfully!');
+                router.reload({ preserveScroll: true });
+            } else {
+                alert('Failed to save countdown timer: ' + (response.data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert('Failed to save countdown timer: ' + (error.response?.data?.error || error.message));
         } finally {
             setSavingCountdown(false);
         }
