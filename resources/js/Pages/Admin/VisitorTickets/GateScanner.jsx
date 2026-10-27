@@ -505,28 +505,50 @@ export default function GateScanner({
                 console.warn(`Direct start with ${targetMode} failed, trying alternate facingMode...`, firstErr);
             }
 
-            // Fallback to opposite facingMode (e.g. user on laptop or environment on phone)
+            // Fallback 1: opposite facingMode (e.g. user on laptop or environment on phone)
             const altFacing = targetMode === 'environment' ? 'user' : 'environment';
-            await html5QrCodeRef.current.start(
-                { facingMode: altFacing },
-                qrConfig,
-                qrSuccessCallback,
-                () => {}
-            );
-            setFacingMode(altFacing);
-            setScanning(true);
+            try {
+                await html5QrCodeRef.current.start(
+                    { facingMode: altFacing },
+                    qrConfig,
+                    qrSuccessCallback,
+                    () => {}
+                );
+                setFacingMode(altFacing);
+                setScanning(true);
+                return;
+            } catch (altErr) {
+                console.warn(`Alt facingMode ${altFacing} failed, trying camera enumeration...`, altErr);
+            }
+
+            // Fallback 2: enumerate devices and pick the first available camera ID
+            const devices = await Html5Qrcode.getCameras();
+            if (devices && devices.length > 0) {
+                setAvailableCameras(devices);
+                await html5QrCodeRef.current.start(
+                    devices[0].id,
+                    qrConfig,
+                    qrSuccessCallback,
+                    () => {}
+                );
+                setSelectedCameraId(devices[0].id);
+                setScanning(true);
+                return;
+            }
+
+            throw new Error('Tidak ada kamera yang dapat diinisialisasi pada perangkat ini.');
 
         } catch (err) {
             console.error('Camera start error:', err);
             const errStr = String(err?.message || err);
-            if (errStr.includes('NotAllowedError') || errStr.includes('Permission') || errStr.includes('permission')) {
-                setCameraError('Izin akses kamera diblokir di Chrome. Silakan klik ikon Setelan / Slider ( 🎛️ ) persis di sebelah kiri tulisan "pitiagi.cloud" di address bar atas, lalu geser toggle "Kamera" ke ON (Izinkan), kemudian refresh halaman.');
+            if (errStr.includes('NotAllowedError')) {
+                setCameraError(`Izin kamera belum aktif di Chrome (${errStr}). Pastikan izin Camera diatur ke Allow lalu klik tombol Coba Lagi.`);
             } else if (errStr.includes('NotFoundError') || errStr.includes('DevicesNotFoundError')) {
-                setCameraError('Kamera tidak ditemukan pada perangkat ini. Pastikan webcam terpasang atau gunakan USB Barcode Scanner Gun.');
+                setCameraError(`Kamera tidak ditemukan pada perangkat ini (${errStr}).`);
             } else if (errStr.includes('NotReadableError') || errStr.includes('TrackStartError')) {
-                setCameraError('Kamera sedang digunakan oleh aplikasi lain (seperti Zoom, Google Meet, dll). Tutup aplikasi tersebut lalu coba lagi.');
+                setCameraError(`Kamera sedang digunakan oleh tab atau aplikasi lain (${errStr}). Pastikan tab webcam test atau aplikasi kamera lain ditutup, lalu klik Coba Lagi.`);
             } else {
-                setCameraError(`Gagal mengakses kamera (${errStr}). Pastikan izin kamera aktif atau gunakan USB Barcode Scanner Gun.`);
+                setCameraError(`Kendala kamera (${errStr}). Silakan klik tombol Coba Lagi.`);
             }
             setScanning(false);
         }
