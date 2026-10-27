@@ -111,17 +111,41 @@ function FloatingParticle({ size, top, left, delay, duration, variant = 1 }) {
 const CountdownSection = React.memo(function CountdownSection({ targetDateStr, label, sublabel, dateText, fadeInUpAnim }) {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-    // Fallback date: 2 November 2026 23:59:59 WIB
+    // Fallback date: 3 November 2026 08:00:00 WIB (Conference Event Date)
     const resolvedTargetStr = useMemo(() => {
-        const defaultDate = '2026-11-02T23:59:59';
+        const defaultDate = '2026-11-03T08:00:00';
         if (!targetDateStr) return defaultDate;
         const parsed = new Date(targetDateStr).getTime();
-        // If the date is invalid or in the past (e.g. initial seeded 2026-01-18), use 2 Nov 2026
+        // If the date is invalid or in the past (e.g. initial seeded 2026-01-18), use 3 Nov 2026
         if (isNaN(parsed) || parsed <= new Date().getTime()) {
             return defaultDate;
         }
         return targetDateStr;
     }, [targetDateStr]);
+
+    // Clean up label: replace old abstract deadline text with official conference event countdown
+    const effectiveLabel = useMemo(() => {
+        if (!label || label === 'ABSTRACT SUBMISSION DEADLINE') {
+            return 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026';
+        }
+        return label;
+    }, [label]);
+
+    // Clean up date text: replace with 3 - 5 November 2026
+    const effectiveDateText = useMemo(() => {
+        if (!dateText || dateText === '2 November 2026 (23:59 WIB)') {
+            return '3 - 5 November 2026';
+        }
+        return dateText;
+    }, [dateText]);
+
+    // Clean up sublabel: ignore old abstract disclaimer
+    const effectiveSublabel = useMemo(() => {
+        if (!sublabel || sublabel.includes('abstrak')) {
+            return null;
+        }
+        return sublabel;
+    }, [sublabel]);
 
     useEffect(() => {
         const targetDate = new Date(resolvedTargetStr).getTime();
@@ -163,7 +187,7 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
                 width: '100%',
             }}
         >
-            {/* Header Badge: clarifies that this countdown is strictly for the abstract submission deadline */}
+            {/* Header Badge: Event Countdown */}
             <Box
                 component={motion.div}
                 initial={{ opacity: 0, y: 15 }}
@@ -176,7 +200,7 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
                     gap: { xs: 0.8, sm: 1.2 },
                     px: { xs: 2.2, sm: 3 },
                     py: { xs: 1, sm: 0.8 },
-                    mb: 1.5,
+                    mb: effectiveSublabel ? 1.5 : 2.5,
                     borderRadius: { xs: '16px', sm: '9999px' },
                     bgcolor: 'rgba(9, 77, 66, 0.65)',
                     backdropFilter: 'blur(16px)',
@@ -203,13 +227,13 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
                             color: '#ffffff',
                             fontWeight: 800,
                             fontSize: { xs: '0.78rem', sm: '0.88rem' },
-                            letterSpacing: '0.08em',
+                            letterSpacing: '0.06em',
                             textTransform: 'uppercase',
                             fontFamily: '"Inter", sans-serif',
                             textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                         }}
                     >
-                        ⏳ {label || 'ABSTRACT SUBMISSION DEADLINE'}
+                        {effectiveLabel}
                     </Typography>
                 </Box>
 
@@ -238,30 +262,32 @@ const CountdownSection = React.memo(function CountdownSection({ targetDateStr, l
                         border: '1px solid rgba(77, 212, 172, 0.3)',
                     }}
                 >
-                    {dateText || '2 November 2026 (23:59 WIB)'}
+                    {effectiveDateText}
                 </Typography>
             </Box>
 
-            {/* Explanatory subtext: clarifying that this timer is for submission, not the conference event date */}
-            <Typography
-                component={motion.p}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.55 }}
-                sx={{
-                    color: 'rgba(255, 255, 255, 0.88)',
-                    fontSize: { xs: '0.75rem', sm: '0.82rem' },
-                    fontWeight: 500,
-                    mb: { xs: 2.5, sm: 3 },
-                    textAlign: 'center',
-                    maxWidth: '620px',
-                    textShadow: '0 1px 6px rgba(0,0,0,0.6)',
-                    letterSpacing: '0.01em',
-                    lineHeight: 1.5,
-                }}
-            >
-                {sublabel || 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)'}
-            </Typography>
+            {/* Optional subtext if specified by admin */}
+            {effectiveSublabel && (
+                <Typography
+                    component={motion.p}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 1.55 }}
+                    sx={{
+                        color: 'rgba(255, 255, 255, 0.88)',
+                        fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                        fontWeight: 500,
+                        mb: { xs: 2.5, sm: 3 },
+                        textAlign: 'center',
+                        maxWidth: '620px',
+                        textShadow: '0 1px 6px rgba(0,0,0,0.6)',
+                        letterSpacing: '0.01em',
+                        lineHeight: 1.5,
+                    }}
+                >
+                    {effectiveSublabel}
+                </Typography>
+            )}
 
             {/* Countdown Boxes */}
             <Box

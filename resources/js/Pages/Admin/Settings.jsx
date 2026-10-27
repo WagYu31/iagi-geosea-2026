@@ -1172,16 +1172,28 @@ export default function Settings({ settings, submissionSettings, pricing: initia
     // Landing Page Settings State
     const [countdownDate, setCountdownDate] = useState(() => {
         const val = getSettingValue('countdown_target_date', '');
-        return val || '2026-11-02T23:59';
+        return val || '2026-11-03T08:00';
     });
     const [countdownLabel, setCountdownLabel] = useState(() => {
-        return getSettingValue('countdown_label', 'ABSTRACT SUBMISSION DEADLINE');
+        const val = getSettingValue('countdown_label', '');
+        if (!val || val === 'ABSTRACT SUBMISSION DEADLINE') {
+            return 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026';
+        }
+        return val;
     });
     const [countdownSublabel, setCountdownSublabel] = useState(() => {
-        return getSettingValue('countdown_sublabel', 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)');
+        const val = getSettingValue('countdown_sublabel', '');
+        if (val && val.includes('abstrak')) {
+            return '';
+        }
+        return val || '';
     });
     const [countdownDateText, setCountdownDateText] = useState(() => {
-        return getSettingValue('countdown_date_text', '2 November 2026 (23:59 WIB)');
+        const val = getSettingValue('countdown_date_text', '');
+        if (!val || val === '2 November 2026 (23:59 WIB)') {
+            return '3 - 5 November 2026';
+        }
+        return val;
     });
     const [contactInfo, setContactInfo] = useState(() => {
         const info = getSettingValue('contact_info', '{}');
@@ -2748,17 +2760,46 @@ export default function Settings({ settings, submissionSettings, pricing: initia
                                 <Card elevation={0} sx={sectionCardSx}>
                                     <CardContent sx={{ p: 3 }}>
                                         <Typography variant="h6" sx={sectionTitleSx}>
-                                            ⏱️ Countdown Timer
+                                            ⏱️ Conference Countdown Timer
                                         </Typography>
-                                        <TextField
-                                            fullWidth
-                                            type="datetime-local"
-                                            label="Target Date & Time"
-                                            value={countdownDate}
-                                            onChange={(e) => setCountdownDate(e.target.value)}
-                                            InputLabelProps={{ shrink: true }}
-                                            sx={{ mb: 2, ...inputSx }}
-                                        />
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                            Konfigurasi waktu hitung mundur dan label teks yang ditampilkan pada landing page.
+                                        </Typography>
+                                        <Stack spacing={2} sx={{ mb: 2 }}>
+                                            <TextField
+                                                fullWidth
+                                                type="datetime-local"
+                                                label="Target Date & Time (Tanggal Konferensi)"
+                                                value={countdownDate}
+                                                onChange={(e) => setCountdownDate(e.target.value)}
+                                                InputLabelProps={{ shrink: true }}
+                                                sx={inputSx}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Countdown Badge Title"
+                                                value={countdownLabel}
+                                                placeholder="ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026"
+                                                onChange={(e) => setCountdownLabel(e.target.value)}
+                                                sx={inputSx}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Countdown Date Text (Badge Tanggal)"
+                                                value={countdownDateText}
+                                                placeholder="3 - 5 November 2026"
+                                                onChange={(e) => setCountdownDateText(e.target.value)}
+                                                sx={inputSx}
+                                            />
+                                            <TextField
+                                                fullWidth
+                                                label="Subteks Penjelasan (Opsional)"
+                                                value={countdownSublabel}
+                                                placeholder="Kosongkan jika tidak perlu keterangan tambahan"
+                                                onChange={(e) => setCountdownSublabel(e.target.value)}
+                                                sx={inputSx}
+                                            />
+                                        </Stack>
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                             <Button variant="contained" onClick={saveCountdown} disabled={savingCountdown} sx={tealBtnSx}>
                                                 {savingCountdown ? 'Saving...' : 'Save Countdown'}

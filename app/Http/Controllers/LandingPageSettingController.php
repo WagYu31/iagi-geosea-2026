@@ -837,7 +837,7 @@ class LandingPageSettingController extends Controller
             LandingPageSetting::updateOrCreate(
                 ['key' => 'countdown_label'],
                 [
-                    'value' => $validated['countdown_label'] ?? 'ABSTRACT SUBMISSION DEADLINE',
+                    'value' => $validated['countdown_label'] ?? 'ROAD TO 55TH PIT IAGI & GEOSEA XIX 2026',
                     'section' => 'countdown',
                     'type' => 'text',
                     'description' => 'Badge label for countdown timer',
@@ -847,24 +847,22 @@ class LandingPageSettingController extends Controller
             LandingPageSetting::updateOrCreate(
                 ['key' => 'countdown_sublabel'],
                 [
-                    'value' => $validated['countdown_sublabel'] ?? 'Waktu tersisa batas pengumpulan abstrak (bukan tanggal pelaksanaan konferensi)',
+                    'value' => $validated['countdown_sublabel'] ?? '',
                     'section' => 'countdown',
                     'type' => 'text',
                     'description' => 'Subtext explaining countdown purpose',
                 ]
             );
 
-            if (!empty($validated['countdown_date_text'])) {
-                LandingPageSetting::updateOrCreate(
-                    ['key' => 'countdown_date_text'],
-                    [
-                        'value' => $validated['countdown_date_text'],
-                        'section' => 'countdown',
-                        'type' => 'text',
-                        'description' => 'Formatted date text for countdown badge',
-                    ]
-                );
-            }
+            LandingPageSetting::updateOrCreate(
+                ['key' => 'countdown_date_text'],
+                [
+                    'value' => $validated['countdown_date_text'] ?? '3 - 5 November 2026',
+                    'section' => 'countdown',
+                    'type' => 'text',
+                    'description' => 'Formatted date text for countdown badge',
+                ]
+            );
 
             Cache::forget('landing-page-settings');
             if (function_exists('opcache_reset')) {
