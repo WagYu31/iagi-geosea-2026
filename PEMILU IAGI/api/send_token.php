@@ -235,7 +235,7 @@ $messageHtml = <<<HTML
                     <ul style="font-size: 12px; color: #78350F; margin: 0; padding-left: 18px; line-height: 1.6;">
                       <li>Jaga kerahasiaan kode unik ini. Jangan serahkan kode kepada siapa pun demi menjaga kemurnian suara Anda.</li>
                       <li>Sistem e-voting menerapkan <em>Zero-Knowledge Decoupling</em>: pilihan Anda tidak dapat dilacak kembali ke identitas Anda.</li>
-                      <li>Batas akhir pemungutan suara resmi: <strong>Minggu, 25 Oktober 2026 pukul 18.00 WIB</strong>.</li>
+                      <li>Batas akhir pemungutan suara resmi: <strong>Selasa, 03 November 2026 pukul 23.59 WIB</strong>.</li>
                     </ul>
                   </td>
                 </tr>
