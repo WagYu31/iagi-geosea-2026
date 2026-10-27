@@ -539,7 +539,7 @@ export default function GateScanner({
             console.error('Camera start error:', err);
             const errStr = String(err?.message || err);
             if (errStr.includes('NotAllowedError') || errStr.includes('Permission') || errStr.includes('permission')) {
-                setCameraError('Izin akses kamera belum diberikan / diblokir di browser. Silakan klik ikon gembok / kamera di sebelah kiri alamat website (address bar), pilih "Izinkan / Allow" untuk Kamera, lalu refresh halaman.');
+                setCameraError('Izin akses kamera diblokir di Chrome. Silakan klik ikon Setelan / Slider ( 🎛️ ) persis di sebelah kiri tulisan "pitiagi.cloud" di address bar atas, lalu geser toggle "Kamera" ke ON (Izinkan), kemudian refresh halaman.');
             } else if (errStr.includes('NotFoundError') || errStr.includes('DevicesNotFoundError')) {
                 setCameraError('Kamera tidak ditemukan pada perangkat ini. Pastikan webcam terpasang atau gunakan USB Barcode Scanner Gun.');
             } else if (errStr.includes('NotReadableError') || errStr.includes('TrackStartError')) {
@@ -933,7 +933,23 @@ export default function GateScanner({
                             </Box>
 
                             {cameraError && (
-                                <Alert severity="error" sx={{ mb: 2, borderRadius: '12px', fontSize: '0.8rem', fontWeight: 600 }}>
+                                <Alert 
+                                    severity="error" 
+                                    sx={{ mb: 2, borderRadius: '12px', fontSize: '0.8rem', fontWeight: 600 }}
+                                    action={
+                                        <Button 
+                                            color="inherit" 
+                                            size="small" 
+                                            onClick={() => {
+                                                setCameraError(null);
+                                                startCamera();
+                                            }}
+                                            sx={{ fontWeight: 800, textTransform: 'none', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '8px', px: 1.5 }}
+                                        >
+                                            Coba Lagi
+                                        </Button>
+                                    }
+                                >
                                     {cameraError}
                                 </Alert>
                             )}
