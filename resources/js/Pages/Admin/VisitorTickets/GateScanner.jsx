@@ -473,66 +473,47 @@ export default function GateScanner({
                 processTicketCheckIn(decodedText, false);
             };
 
-            // If a specific camera device ID or mode was provided
-            if (specificModeOrId && typeof specificModeOrId === 'string' && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const defaultFacing = isMobile ? 'environment' : 'user';
+            const targetMode = specificModeOrId || defaultFacing;
+
+            // If a specific camera device ID was provided
+            if (typeof targetMode === 'string' && targetMode !== 'environment' && targetMode !== 'user') {
                 await html5QrCodeRef.current.start(
-                    specificModeOrId,
+                    targetMode,
                     qrConfig,
                     qrSuccessCallback,
                     () => {}
                 );
-                setSelectedCameraId(specificModeOrId);
+                setSelectedCameraId(targetMode);
                 setScanning(true);
                 return;
             }
 
-            // Strategy 1: Enumerate camera devices first (avoids OverconstrainedError on MacBooks/laptops)
-            try {
-                const devices = await Html5Qrcode.getCameras();
-                if (devices && devices.length > 0) {
-                    setAvailableCameras(devices);
-                    // On mobile, prefer rear camera if found; on laptop/desktop, use available webcam
-                    const preferred = (specificModeOrId === 'user') 
-                        ? devices.find(d => d.label?.toLowerCase().includes('front') || d.label?.toLowerCase().includes('user') || d.label?.toLowerCase().includes('facetime')) || devices[0]
-                        : devices.find(d => d.label?.toLowerCase().includes('back') || d.label?.toLowerCase().includes('rear') || d.label?.toLowerCase().includes('environment')) || devices[0];
-
-                    await html5QrCodeRef.current.start(
-                        preferred.id,
-                        qrConfig,
-                        qrSuccessCallback,
-                        () => {}
-                    );
-                    setSelectedCameraId(preferred.id);
-                    setScanning(true);
-                    return;
-                }
-            } catch (enumErr) {
-                console.warn('Camera enumeration fallback...', enumErr);
-            }
-
-            // Strategy 2: Try with facingMode 'environment' (phones/tablets rear camera)
+            // Direct start with target facingMode (single getUserMedia call, zero hardware lock contention)
             try {
                 await html5QrCodeRef.current.start(
-                    { facingMode: specificModeOrId || facingMode },
+                    { facingMode: targetMode },
                     qrConfig,
                     qrSuccessCallback,
                     () => {}
                 );
-                setFacingMode(specificModeOrId || facingMode);
+                setFacingMode(targetMode);
                 setScanning(true);
                 return;
-            } catch (envErr) {
-                console.warn('FacingMode start failed, trying alternate user facingMode...', envErr);
+            } catch (firstErr) {
+                console.warn(`Direct start with ${targetMode} failed, trying alternate facingMode...`, firstErr);
             }
 
-            // Strategy 3: Try with facingMode 'user' (front camera / laptop webcam)
+            // Fallback to opposite facingMode (e.g. user on laptop or environment on phone)
+            const altFacing = targetMode === 'environment' ? 'user' : 'environment';
             await html5QrCodeRef.current.start(
-                { facingMode: 'user' },
+                { facingMode: altFacing },
                 qrConfig,
                 qrSuccessCallback,
                 () => {}
             );
-            setFacingMode('user');
+            setFacingMode(altFacing);
             setScanning(true);
 
         } catch (err) {
