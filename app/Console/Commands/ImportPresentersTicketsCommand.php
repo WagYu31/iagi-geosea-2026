@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\VisitorTicket;
+use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use ZipArchive;
@@ -45,6 +46,9 @@ class ImportPresentersTicketsCommand extends Command
 
         $created = 0;
         $skipped = 0;
+        $errors = 0;
+
+        $adminId = User::first()->id ?? null;
 
         $bar = $this->output->createProgressBar($total);
         $bar->start();
@@ -55,7 +59,13 @@ class ImportPresentersTicketsCommand extends Command
             $phone = trim($p['phone']);
             $institution = trim($p['institution']);
 
-            // Cek duplikasi berdasarkan email
+            if (empty($name)) {
+                $skipped++;
+                $bar->advance();
+                continue;
+            }
+
+            // Cek duplikasi berdasarkan email & visitor_type
             $existing = VisitorTicket::where('visitor_email', $email)
                 ->where('visitor_type', 'presenter')
                 ->first();
@@ -67,24 +77,33 @@ class ImportPresentersTicketsCommand extends Command
             }
 
             if (!$isDryRun) {
-                $ticketCode = VisitorTicket::generateTicketCode('presenter');
-                VisitorTicket::create([
-                    'registered_by_admin_id' => 1,
-                    'registration_source' => 'admin_import_excel',
-                    'visitor_name' => $name,
-                    'visitor_email' => !empty($email) ? $email : null,
-                    'visitor_phone' => !empty($phone) ? $phone : null,
-                    'visitor_institution' => !empty($institution) ? $institution : null,
-                    'ticket_code' => $ticketCode,
-                    'visitor_type' => 'presenter',
-                    'status' => 'active',
-                    'checked_in' => false,
-                    'card_printed' => false,
-                    'is_group_leader' => true,
-                ]);
+                try {
+                    $ticketCode = VisitorTicket::generateTicketCode('presenter');
+                    VisitorTicket::create([
+                        'payment_id' => null,
+                        'registered_by_admin_id' => $adminId,
+                        'registration_source' => 'admin_onsite',
+                        'visitor_name' => $name,
+                        'visitor_email' => !empty($email) ? $email : null,
+                        'visitor_phone' => !empty($phone) ? $phone : null,
+                        'visitor_institution' => !empty($institution) ? $institution : null,
+                        'ticket_code' => $ticketCode,
+                        'visitor_type' => 'presenter',
+                        'status' => 'active',
+                        'checked_in' => false,
+                        'card_printed' => false,
+                        'is_group_leader' => true,
+                    ]);
+                    $created++;
+                } catch (\Throwable $e) {
+                    $errors++;
+                    $this->newLine();
+                    $this->error("Gagal insert {$name} ({$email}): " . $e->getMessage());
+                }
+            } else {
+                $created++;
             }
 
-            $created++;
             $bar->advance();
         }
 
@@ -95,20 +114,27 @@ class ImportPresentersTicketsCommand extends Command
         $this->info(" HASIL IMPORT:");
         $this->info(" Berhasil ditambahkan : {$created} tiket presenter (Status: ACTIVE, FREE)");
         $this->info(" Dilewati (Sudah ada) : {$skipped}");
+        if ($errors > 0) {
+            $this->error(" Gagal (Error)        : {$errors}");
+        }
         $this->info(" Total diproses       : {$total}");
         $this->info("======================================================================\n");
 
         if (!$isDryRun && $created > 0) {
-            ActivityLog::record(
-                action: 'import_tickets_excel',
-                module: 'visitor_tickets',
-                description: "Import {$created} data presenter dari FIX PRESENTER fixxx.xlsx",
-                snapshot: [
-                    'created' => $created,
-                    'skipped' => $skipped,
-                    'total' => $total,
-                ]
-            );
+            try {
+                ActivityLog::record(
+                    action: 'import_tickets_excel',
+                    module: 'visitor_tickets',
+                    description: "Import {$created} data presenter dari FIX PRESENTER fixxx.xlsx",
+                    snapshot: [
+                        'created' => $created,
+                        'skipped' => $skipped,
+                        'total' => $total,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                // Ignore activity log if fails
+            }
         }
 
         return 0;
