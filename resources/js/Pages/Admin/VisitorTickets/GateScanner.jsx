@@ -593,7 +593,7 @@ export default function GateScanner({
                 }
             }
 
-            // 5. DESKTOP / LAPTOP: Bind to first detected video device ID
+            // 5. DESKTOP / LAPTOP: Bind to detected video device ID
             if (videoDevices.length > 0 && videoDevices[0].deviceId) {
                 const preferred = videoDevices.find((d) =>
                     d.label?.toLowerCase().includes('macbook') ||
@@ -603,8 +603,15 @@ export default function GateScanner({
                     d.label?.toLowerCase().includes('camera')
                 ) || videoDevices[0];
 
-                const ok = await tryStart(preferred.deviceId);
-                if (ok) {
+                // Try soft deviceId constraint first
+                if (await tryStart({ deviceId: preferred.deviceId })) {
+                    setSelectedCameraId(preferred.deviceId);
+                    setScanning(true);
+                    return;
+                }
+
+                // Fallback to exact deviceId string
+                if (await tryStart(preferred.deviceId)) {
                     setSelectedCameraId(preferred.deviceId);
                     setScanning(true);
                     return;
