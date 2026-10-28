@@ -246,13 +246,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const pengda = dptFilterState.pengda;
 
     return dpt.filter(v => {
-      // 1. Text Search Filter
+      // 1. Text Search Filter (Name, NPA, Pengda)
       if (q) {
         const matchName = (v.name || '').toLowerCase().includes(q);
         const matchNpa = (v.npa || '').toLowerCase().includes(q);
         const matchPengda = (v.pengda || '').toLowerCase().includes(q);
-        const matchEmail = (v.email || '').toLowerCase().includes(q);
-        if (!matchName && !matchNpa && !matchPengda && !matchEmail) return false;
+        if (!matchName && !matchNpa && !matchPengda) return false;
       }
 
       // 2. Status Filter
@@ -349,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dptResultsContainer.innerHTML = paginated.map(v => {
       let statusPill = '<span class="dpt-status-pill dpt-status-unclaimed">⏳ Belum Klaim</span>';
       let actionBtn = `
-        <button class="btn-voter-claim" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}', '${v.email}')" title="Klaim Surat Suara & Token">
+        <button class="btn-voter-claim" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}')" title="Klaim Surat Suara & Token">
           <span>Klaim Token</span>
           <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
@@ -510,15 +509,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Helper window function for prefilling claim from DPT search
-  window.prefillClaim = (npa, name, email) => {
+  // Helper window function for prefilling claim from DPT search (PII Protected: Email is never autofilled)
+  window.prefillClaim = (npa, name) => {
     navigateTo('claim');
     const npaInput = document.getElementById('claim-npa');
     const nameInput = document.getElementById('claim-name');
     const emailInput = document.getElementById('claim-email');
     if (npaInput) npaInput.value = npa;
     if (nameInput) nameInput.value = name;
-    if (emailInput) emailInput.value = email;
+    if (emailInput) {
+      emailInput.value = '';
+      emailInput.placeholder = 'Ketik email terdaftar Anda untuk verifikasi hak suara...';
+      emailInput.focus();
+    }
   };
 
   // ================= MODUL 2: KLAIM SURAT SUARA =================
