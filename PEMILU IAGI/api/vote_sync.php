@@ -118,9 +118,9 @@ function getAdminPin($payload = []) {
     return '';
 }
 
-// Validasi Dual-Key Otoritas Pleno (31052002, 312226, atau master PIN 2026)
+// Validasi Dual-Key Otoritas Pleno (31052002 atau 312226)
 function isValidAdminPin($pin) {
-    return ($pin === '31052002' || $pin === '312226' || $pin === '2026');
+    return ($pin === '31052002' || $pin === '312226');
 }
 
 // Ambil Status Segel Kotak Suara Digital Server (Default: TERSEGEL KETAT / is_sealed: true)
@@ -167,8 +167,8 @@ function getAdminCredentials() {
             'npa' => '00000',
             'role' => 'Operator DPT',
             'status' => 'AKTIF',
-            'password_hash' => password_hash('admin', PASSWORD_BCRYPT),
-            'security_pin_hash' => password_hash('2026', PASSWORD_BCRYPT),
+            'password_hash' => password_hash('Addiansyah2026!', PASSWORD_BCRYPT),
+            'security_pin_hash' => password_hash('5930', PASSWORD_BCRYPT),
             'two_factor' => true,
             'created_at' => '2026-01-20T08:00:00Z',
             'last_login' => null
@@ -319,13 +319,13 @@ if ($action === 'admin_login') {
         exit;
     }
 
-    // Validasi Password Hash Bcrypt (dengan fallback toleransi server)
+    // Validasi Password Hash Bcrypt (dengan otentikasi resmi server)
     $isPassValid = false;
-    if (password_verify($password, $admin['password_hash'])) {
+    if (!empty($admin['password_hash']) && password_verify($password, $admin['password_hash'])) {
         $isPassValid = true;
-    } elseif ($email === 'cingire687@gmail.com' && in_array($password, ['W31052002.', 'W31052002', '31052002', 'admin', 'admin2026'])) {
+    } elseif ($email === 'cingire687@gmail.com' && in_array($password, ['W31052002.', 'W31052002'])) {
         $isPassValid = true;
-    } elseif ($email === 'addiansyah@unsri.ac.id' && in_array($password, ['admin', 'admin2026'])) {
+    } elseif ($email === 'addiansyah@unsri.ac.id' && in_array($password, ['Addiansyah2026!', 'Addiansyah2026'])) {
         $isPassValid = true;
     }
 
@@ -500,7 +500,7 @@ if ($action === 'admin_verify_otp') {
     if (!$isValid) {
         if ($email === 'cingire687@gmail.com' && in_array($code, ['3105', '31052002'])) {
             $isValid = true;
-        } elseif ($email === 'addiansyah@unsri.ac.id' && in_array($code, ['2026', '202602'])) {
+        } elseif ($email === 'addiansyah@unsri.ac.id' && in_array($code, ['5930', '082255555930'])) {
             $isValid = true;
         }
     }

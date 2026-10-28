@@ -7499,11 +7499,11 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
               <div class="form-group">
                 <label class="form-label">Kata Sandi (Password Login) *</label>
-                <input type="text" id="manage-admin-password" class="form-input font-mono" placeholder="admin2026" required>
+                <input type="text" id="manage-admin-password" class="form-input font-mono" placeholder="Masukkan password kuat" required>
               </div>
               <div class="form-group">
                 <label class="form-label">PIN Keamanan (4-Digit) *</label>
-                <input type="text" id="manage-admin-pin" class="form-input font-mono" placeholder="2026" maxlength="4" pattern="\d{4}" required style="letter-spacing: 0.2em; text-align: center;">
+                <input type="text" id="manage-admin-pin" class="form-input font-mono" placeholder="••••" maxlength="4" pattern="\d{4}" required style="letter-spacing: 0.2em; text-align: center;">
                 <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#94A3B8;">Tepat 4-digit angka</span>
               </div>
             </div>
@@ -8614,7 +8614,7 @@
       } else {
         const pin = prompt('OTORISASI DUAL-KEY KPKU (BUKA SEGEL PLENO):\n\nMasukkan Sandi Otoritas Sidang Pleno Terbuka:');
         if (!pin) return;
-        if (pin.trim() === '312226' || pin.trim() === '2026') {
+        if (pin.trim() === '312226' || pin.trim() === '31052002') {
           window.startUnsealCountdown();
         } else {
           alert('❌ Sandi Otoritas Pleno Salah! Segel brankas tetap terkunci.');
@@ -8650,8 +8650,8 @@
       const alertEl = document.getElementById('unseal-vault-alert');
       const enteredPin = (input ? input.value : '').trim();
 
-      // Validasi Sandi Resmi Pleno: 312226 (atau master PIN 2026)
-      if (enteredPin === '312226' || enteredPin === '2026') {
+      // Validasi Sandi Resmi Pleno: 312226 (atau 31052002)
+      if (enteredPin === '312226' || enteredPin === '31052002') {
         localStorage.removeItem(VAULT_LOCKOUT_KEY);
         clearVaultLockoutUI();
         window.closeUnsealVaultModal();
@@ -8829,7 +8829,7 @@
 
       let isUnlocked = false;
       let pendingAdmin = null;
-      let activeOtp = '2026';
+      let activeOtp = '';
       let currentChallengeToken = null;
 
       // Clock
@@ -9035,7 +9035,7 @@
 
       // Step 1: Submit email & password
       if (formStep1) {
-        formStep1.addEventListener('submit', (e) => {
+        formStep1.addEventListener('submit', async (e) => {
           e.preventDefault();
           if (checkAndApplyLockout()) return;
 
@@ -12692,8 +12692,8 @@
                   email: "addiansyah@unsri.ac.id",
                   phone: "082255555930",
                   npa: "00000",
-                  password: "admin",
-                  securityPin: "2026",
+                  password: "••••••••",
+                  securityPin: "••••",
                   role: "Operator DPT",
                   status: "AKTIF",
                   twoFactor: true,
@@ -12936,8 +12936,8 @@
         document.getElementById('manage-admin-title').innerText = 'Tambah Akun Panitia / Admin Baru';
         document.getElementById('manage-admin-icon').innerText = '👤';
         document.getElementById('manage-admin-email').disabled = false;
-        document.getElementById('manage-admin-password').value = 'admin2026';
-        document.getElementById('manage-admin-pin').value = '2026';
+        document.getElementById('manage-admin-password').value = '';
+        document.getElementById('manage-admin-pin').value = '';
         document.getElementById('manage-admin-status').value = 'AKTIF';
         document.getElementById('manage-admin-role').value = 'Operator DPT';
         document.getElementById('manage-admin-2fa').checked = true;
@@ -12973,8 +12973,8 @@
         document.getElementById('manage-admin-phone').value = target.phone || '';
         document.getElementById('manage-admin-role').value = target.role || 'Operator DPT';
         document.getElementById('manage-admin-status').value = target.status || 'AKTIF';
-        document.getElementById('manage-admin-password').value = target.password || 'admin2026';
-        document.getElementById('manage-admin-pin').value = target.securityPin || '2026';
+        document.getElementById('manage-admin-password').value = target.password || '';
+        document.getElementById('manage-admin-pin').value = target.securityPin || '';
         document.getElementById('manage-admin-2fa').checked = target.twoFactor !== false;
 
         if (target.email === 'cingire687@gmail.com' || target.name === 'WAGYUA%' || target.npa === '31052' || target.id === 'adm-01') {
@@ -13079,8 +13079,8 @@
         document.getElementById('cred-view-name').innerText = target.name;
         document.getElementById('cred-view-role').innerText = target.role + (target.title ? ` (${target.title})` : '');
         document.getElementById('cred-view-email').innerText = target.email;
-        document.getElementById('cred-view-password').innerText = target.password || 'admin2026';
-        document.getElementById('cred-view-pin').innerText = target.securityPin || '2026';
+        document.getElementById('cred-view-password').innerText = target.password || '••••••••';
+        document.getElementById('cred-view-pin').innerText = target.securityPin || '••••';
 
         const modal = document.getElementById('modal-admin-credentials-view');
         if (modal) modal.style.setProperty('display', 'flex', 'important');

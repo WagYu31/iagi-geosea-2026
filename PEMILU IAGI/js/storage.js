@@ -269,7 +269,7 @@ class PemiluStorage {
     if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
       const defaultSettings = {
         isSealed: true, // Sealed mode active by default
-        adminPin: '2026',
+        adminPin: '312226',
         votingOpen: true,
         claimOpen: true,
         votingStartTime: '2026-10-26T00:01:00+07:00',
@@ -1191,7 +1191,7 @@ class PemiluStorage {
   getSettings() {
     const defaults = {
       isSealed: true,
-      adminPin: '2026',
+      adminPin: '312226',
       votingOpen: true,
       claimOpen: true,
       votingStartTime: '2026-10-26T00:01:00+07:00',
@@ -1416,9 +1416,9 @@ class PemiluStorage {
     }
 
     // Validate Security PIN (strict 4 digits)
-    const rawPin = (accountData.securityPin || '2026').trim();
+    const rawPin = (accountData.securityPin || '').trim();
     if (!rawPin || !/^\d{4}$/.test(rawPin)) {
-      return { success: false, error: 'PIN Keamanan harus tepat 4 digit angka (contoh: 2026).' };
+      return { success: false, error: 'PIN Keamanan harus tepat 4 digit angka.' };
     }
 
     const newAdmin = {
@@ -1428,7 +1428,7 @@ class PemiluStorage {
       email: cleanEmail,
       phone: (accountData.phone || '').trim(),
       npa: rawNpa || '-',
-      password: (accountData.password || 'admin2026').trim(),
+      password: (accountData.password || '').trim(),
       securityPin: rawPin,
       role: accountData.role || 'Operator DPT',
       status: accountData.status || 'AKTIF',
