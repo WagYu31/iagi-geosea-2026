@@ -271,24 +271,7 @@ export default function GateScanner({
             inputRef.current.focus();
         }
 
-        // Seamless permission-reactive check:
-        // Only auto-start if permission was already explicitly granted previously.
-        let isMounted = true;
-        if (navigator?.permissions?.query) {
-            navigator.permissions.query({ name: 'camera' })
-                .then((status) => {
-                    if (status.state === 'granted' && isMounted) {
-                        startCamera();
-                    }
-                    status.onchange = () => {
-                        if (status.state === 'granted' && isMounted) {
-                            setCameraError(null);
-                            startCamera();
-                        }
-                    };
-                })
-                .catch(() => {});
-        }
+
 
         return () => {
             if (html5QrCodeRef.current) {
@@ -505,135 +488,63 @@ export default function GateScanner({
             };
 
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            let lastErr = null;
+            const el = document.getElementById('qr-reader');
+            if (el) el.innerHTML = '';
+            const instance = new Html5Qrcode('qr-reader');
+            html5QrCodeRef.current = instance;
 
-            // Helper to start with guaranteed fresh instance (prevents transition lock)
-            const tryStart = async (cameraSource) => {
-                try {
-                    if (html5QrCodeRef.current) {
-                        try {
-                            const qr = html5QrCodeRef.current;
-                            const isScanning = typeof qr.isScanning === 'boolean' ? qr.isScanning : (qr.getState && qr.getState() === 2);
-                            if (isScanning) {
-                                await qr.stop();
-                            }
-                            await qr.clear();
-                        } catch (_) {}
-                    }
-                    const el = document.getElementById('qr-reader');
-                    if (el) el.innerHTML = '';
-                    const instance = new Html5Qrcode('qr-reader');
-                    html5QrCodeRef.current = instance;
-                    await instance.start(cameraSource, qrConfig, qrSuccessCallback, () => {});
-                    return true;
-                } catch (e) {
-                    lastErr = e;
-                    console.warn('Attempt with source failed:', cameraSource, e);
-                    return false;
-                }
-            };
-
-            // 1. Direct Preflight Check: Request clean userMedia directly on click
-            // This reliably triggers the native browser/OS consent prompt if not yet granted.
-            let stream = null;
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: isMobile ? { facingMode: { ideal: 'environment' } } : true,
-                    audio: false,
-                });
-                // Once permission is granted, immediately stop the test stream tracks
-                stream.getTracks().forEach((track) => track.stop());
-            } catch (permErr) {
-                const errString = String(permErr?.message || permErr);
-                const isDenied =
-                    permErr?.name === 'NotAllowedError' ||
-                    permErr?.name === 'PermissionDeniedError' ||
-                    errString.includes('Permission denied') ||
-                    errString.includes('NotAllowedError');
-
-                if (isDenied) {
-                    throw new Error(
-                        'PERMISSION_DENIED: Akses kamera ditolak oleh macOS atau browser. Harap aktifkan Google Chrome di System Settings > Privacy & Security > Camera.'
-                    );
-                }
-                throw permErr;
-            }
-
-            // 2. Enumerate available video hardware once permission is established
-            let videoDevices = [];
-            try {
-                const allDevices = await navigator.mediaDevices.enumerateDevices();
-                videoDevices = allDevices.filter((d) => d.kind === 'videoinput');
-                if (videoDevices.length > 0) {
-                    setAvailableCameras(
-                        videoDevices.map((d, i) => ({
-                            id: d.deviceId,
-                            label: d.label || `Kamera ${i + 1}`,
-                        }))
-                    );
-                }
-            } catch (_) {}
-
-            // 3. If user explicitly picked a specific camera device ID from dropdown
+            // 1. If user explicitly selected a camera from dropdown
             if (specificModeOrId && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
-                const ok = await tryStart(specificModeOrId);
-                if (ok) {
-                    setSelectedCameraId(specificModeOrId);
-                    setScanning(true);
-                    return;
-                }
-            }
-
-            // 4. MOBILE: Try environment (rear) camera first
-            if (isMobile) {
-                if (await tryStart({ facingMode: 'environment' })) {
-                    setFacingMode('environment');
-                    setScanning(true);
-                    return;
-                }
-            }
-
-            // 5. DESKTOP / LAPTOP: Bind to detected video device ID
-            if (videoDevices.length > 0 && videoDevices[0].deviceId) {
-                const preferred = videoDevices.find((d) =>
-                    d.label?.toLowerCase().includes('macbook') ||
-                    d.label?.toLowerCase().includes('facetime') ||
-                    d.label?.toLowerCase().includes('built-in') ||
-                    d.label?.toLowerCase().includes('integrated') ||
-                    d.label?.toLowerCase().includes('camera')
-                ) || videoDevices[0];
-
-                // Try soft deviceId constraint first
-                if (await tryStart({ deviceId: preferred.deviceId })) {
-                    setSelectedCameraId(preferred.deviceId);
-                    setScanning(true);
-                    return;
-                }
-
-                // Fallback to exact deviceId string
-                if (await tryStart(preferred.deviceId)) {
-                    setSelectedCameraId(preferred.deviceId);
-                    setScanning(true);
-                    return;
-                }
-            }
-
-            // 6. Fallback facingMode modes
-            const fallbackMode = isMobile ? 'environment' : 'user';
-            if (await tryStart({ facingMode: fallbackMode })) {
-                setFacingMode(fallbackMode);
+                await instance.start(specificModeOrId, qrConfig, qrSuccessCallback, () => {});
+                setSelectedCameraId(specificModeOrId);
                 setScanning(true);
+                setCameraError(null);
                 return;
             }
 
-            const altMode = fallbackMode === 'environment' ? 'user' : 'environment';
-            if (await tryStart({ facingMode: altMode })) {
-                setFacingMode(altMode);
+            // 2. Direct start with optimal facingMode
+            const primaryMode = isMobile ? 'environment' : 'user';
+            const secondaryMode = isMobile ? 'user' : 'environment';
+
+            let started = false;
+            try {
+                await instance.start({ facingMode: primaryMode }, qrConfig, qrSuccessCallback, () => {});
+                setFacingMode(primaryMode);
+                started = true;
+            } catch (err1) {
+                console.warn(`Primary mode (${primaryMode}) failed:`, err1);
+                try {
+                    await instance.start({ facingMode: secondaryMode }, qrConfig, qrSuccessCallback, () => {});
+                    setFacingMode(secondaryMode);
+                    started = true;
+                } catch (err2) {
+                    console.warn(`Secondary mode (${secondaryMode}) failed:`, err2);
+                    // 3. Fallback: try by enumerated device IDs
+                    const cameras = await Html5Qrcode.getCameras();
+                    if (cameras && cameras.length > 0) {
+                        setAvailableCameras(cameras);
+                        await instance.start(cameras[0].id, qrConfig, qrSuccessCallback, () => {});
+                        setSelectedCameraId(cameras[0].id);
+                        started = true;
+                    } else {
+                        throw err1 || err2;
+                    }
+                }
+            }
+
+            if (started) {
                 setScanning(true);
+                setCameraError(null);
+                // Background enumerate cameras to populate switcher dropdown
+                Html5Qrcode.getCameras().then((devices) => {
+                    if (devices && devices.length > 0) {
+                        setAvailableCameras(devices);
+                    }
+                }).catch(() => {});
                 return;
             }
 
-            throw lastErr || new Error('Tidak ada perangkat kamera yang dapat diakses.');
+            throw new Error('Tidak ada perangkat kamera yang dapat diakses.');
 
         } catch (err) {
             console.error('Camera start error:', err);
