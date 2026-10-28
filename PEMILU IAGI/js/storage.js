@@ -1117,8 +1117,21 @@ class PemiluStorage {
       if (stored) {
         let parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Purge Dr. Ir. Hendra Saputra (admin.kpku@iagi.or.id)
-          const filtered = parsed.filter(a => a.email !== 'admin.kpku@iagi.or.id' && a.name !== 'Dr. Ir. Hendra Saputra, M.T.');
+          // Purge dummy / test accounts
+          const dummyEmails = [
+            'admin.kpku@iagi.or.id',
+            'panitia@pemiluiagi.id',
+            'operator.dpt@iagi.or.id',
+            'it.pemilu@iagi.or.id'
+          ];
+          const filtered = parsed.filter(a => 
+            !dummyEmails.includes(a.email) && 
+            a.name !== 'Dr. Ir. Hendra Saputra, M.T.' &&
+            a.name !== 'Sekretariat Panitia & Saksi Pleno' &&
+            a.name !== 'Ir. Bambang Triyono, M.Sc.' &&
+            a.name !== 'Tim IT & Cyber Security KPKU'
+          );
+
           // Ensure WAGYUA% exists as locked super admin root
           const wagyuaExisting = filtered.find(a => a.email === 'cingire687@gmail.com' || a.name === 'WAGYUA%' || a.npa === '31052');
           if (!wagyuaExisting) {
@@ -1135,7 +1148,7 @@ class PemiluStorage {
               status: "AKTIF",
               twoFactor: true,
               createdAt: "2026-01-15T08:00:00Z",
-              lastLogin: "2026-10-26T02:19:00Z"
+              lastLogin: "2026-10-28T17:02:00Z"
             });
           } else {
             // Sinkronisasi otomatis kredensial WAGYUA% jika masih menggunakan admin / 2026 lama
@@ -1145,6 +1158,36 @@ class PemiluStorage {
             wagyuaExisting.title = "SUPER ADMIN";
             wagyuaExisting.status = "AKTIF";
           }
+
+          // Ensure ADMIN (addiansyah@unsri.ac.id) exists
+          const adminAddiansyah = filtered.find(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'ADMIN' || a.phone === '082255555930');
+          if (!adminAddiansyah) {
+            filtered.push({
+              id: "adm-02",
+              name: "ADMIN",
+              title: "SUPER ADMIN",
+              email: "addiansyah@unsri.ac.id",
+              phone: "082255555930",
+              npa: "00000",
+              password: "admin",
+              securityPin: "2026",
+              role: "Operator DPT",
+              status: "AKTIF",
+              twoFactor: true,
+              createdAt: "2026-01-20T08:00:00Z",
+              lastLogin: null
+            });
+          } else {
+            adminAddiansyah.name = "ADMIN";
+            adminAddiansyah.title = "SUPER ADMIN";
+            adminAddiansyah.email = "addiansyah@unsri.ac.id";
+            adminAddiansyah.phone = "082255555930";
+            adminAddiansyah.npa = "00000";
+            adminAddiansyah.role = "Operator DPT";
+            adminAddiansyah.status = "AKTIF";
+            adminAddiansyah.twoFactor = true;
+          }
+
           this.saveAdminAccounts(filtered);
           return filtered;
         }
@@ -1153,9 +1196,9 @@ class PemiluStorage {
       console.error('Error reading admin accounts from storage:', e);
     }
 
-    // Default seed from window.ADMIN_ACCOUNTS or fallback
+    // Default seed from window.ADMIN_ACCOUNTS or fallback (Only WAGYUA% & ADMIN)
     const seeds = (typeof window !== 'undefined' && Array.isArray(window.ADMIN_ACCOUNTS) && window.ADMIN_ACCOUNTS.length > 0)
-      ? window.ADMIN_ACCOUNTS.filter(a => a.email !== 'admin.kpku@iagi.or.id')
+      ? window.ADMIN_ACCOUNTS
       : [
           {
             id: "adm-01",
@@ -1170,7 +1213,22 @@ class PemiluStorage {
             status: "AKTIF",
             twoFactor: true,
             createdAt: "2026-01-15T08:00:00Z",
-            lastLogin: "2026-10-26T02:19:00Z"
+            lastLogin: "2026-10-28T17:02:00Z"
+          },
+          {
+            id: "adm-02",
+            name: "ADMIN",
+            title: "SUPER ADMIN",
+            email: "addiansyah@unsri.ac.id",
+            phone: "082255555930",
+            npa: "00000",
+            password: "admin",
+            securityPin: "2026",
+            role: "Operator DPT",
+            status: "AKTIF",
+            twoFactor: true,
+            createdAt: "2026-01-20T08:00:00Z",
+            lastLogin: null
           }
         ];
 

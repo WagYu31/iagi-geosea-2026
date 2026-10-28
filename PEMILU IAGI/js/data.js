@@ -30171,51 +30171,21 @@ const ADMIN_ACCOUNTS = [
     status: "AKTIF",
     twoFactor: true,
     createdAt: "2026-01-15T08:00:00Z",
-    lastLogin: "2026-10-26T02:19:00Z"
+    lastLogin: "2026-10-28T17:02:00Z"
   },
   {
     id: "adm-02",
-    name: "Sekretariat Panitia & Saksi Pleno",
-    title: "Pengawas Pemilu & Saksi Resmi",
-    email: "panitia@pemiluiagi.id",
-    phone: "081298765432",
-    npa: "02100",
-    password: "admin",
-    securityPin: "2026",
-    role: "Pengawas / Saksi",
-    status: "AKTIF",
-    twoFactor: true,
-    createdAt: "2026-01-20T09:30:00Z",
-    lastLogin: null
-  },
-  {
-    id: "adm-03",
-    name: "Ir. Bambang Triyono, M.Sc.",
-    title: "Koordinator Tim Verifikasi DPT",
-    email: "operator.dpt@iagi.or.id",
-    phone: "081388992211",
-    npa: "03421",
+    name: "ADMIN",
+    title: "SUPER ADMIN",
+    email: "addiansyah@unsri.ac.id",
+    phone: "082255555930",
+    npa: "00000",
     password: "admin",
     securityPin: "2026",
     role: "Operator DPT",
     status: "AKTIF",
     twoFactor: true,
-    createdAt: "2026-02-01T10:00:00Z",
-    lastLogin: null
-  },
-  {
-    id: "adm-04",
-    name: "Tim IT & Cyber Security KPKU",
-    title: "Administrator Infrastruktur & Kriptografi",
-    email: "it.pemilu@iagi.or.id",
-    phone: "081122334455",
-    npa: "-",
-    password: "admin",
-    securityPin: "2026",
-    role: "Tim IT & Teknis",
-    status: "AKTIF",
-    twoFactor: true,
-    createdAt: "2026-02-05T14:15:00Z",
+    createdAt: "2026-01-20T08:00:00Z",
     lastLogin: null
   }
 ];
