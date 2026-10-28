@@ -5858,7 +5858,7 @@
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                   <span>Daftar Pemilih (DPT)</span>
                 </div>
-                <span class="sidebar-link-badge" id="sidebar-dpt-count-badge">22</span>
+                <span class="sidebar-link-badge" id="sidebar-dpt-count-badge">2.143</span>
               </a>
             </li>
             <li>
@@ -5867,7 +5867,7 @@
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                   <span>Kelola Akun Admin</span>
                 </div>
-                <span class="sidebar-link-badge badge-emerald" id="sidebar-admin-count-badge">4</span>
+                <span class="sidebar-link-badge badge-emerald" id="sidebar-admin-count-badge">2</span>
               </a>
             </li>
             <li>
@@ -6253,13 +6253,13 @@
 
       <!-- Quick DPT Mini Stats Bar (Embedded within DPT View) -->
       <div id="dpt-mini-stats-bar" style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 18px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.8rem; align-items: center;">
-        <div style="color: #94A3B8;">Total DPT: <strong id="dpt-mini-total" style="color: #F8FAFC; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
+        <div style="color: #94A3B8;">Total DPT: <strong id="dpt-mini-total" style="color: #F8FAFC; font-family: var(--font-mono); font-size: 0.95rem;">2.143</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Sudah Memilih: <strong id="dpt-mini-voted" style="color: #34D399; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Klaim Token: <strong id="dpt-mini-claimed" style="color: #FBBF24; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
-        <div style="color: #94A3B8;">Belum Klaim: <strong id="dpt-mini-unclaimed" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">22</strong></div>
+        <div style="color: #94A3B8;">Belum Klaim: <strong id="dpt-mini-unclaimed" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">2.143</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Partisipasi: <strong id="dpt-mini-turnout" style="color: var(--gold-secondary); font-family: var(--font-mono); font-size: 0.95rem;">0.0%</strong></div>
       </div>
@@ -8381,8 +8381,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.7.0"></script>
-  <script src="js/storage.js?v=4.7.0"></script>
+  <script src="js/data.js?v=4.7.1"></script>
+  <script src="js/storage.js?v=4.7.1"></script>
 
   <script>
     // =========================================================================
@@ -10378,18 +10378,18 @@
 
         // 4. Update DPT mini stats bar
         const dptList = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
-        const votedCount = dptList.filter(v => v.voted).length;
-        const claimedNotVoted = dptList.filter(v => (v.claimed || v.token) && !v.voted).length;
-        const unclaimedCount = dptList.filter(v => !v.claimed && !v.voted && !v.token).length;
+        const votedCount = dptList.filter(v => v && v.voted).length;
+        const claimedNotVoted = dptList.filter(v => v && (v.claimed || v.token) && !v.voted).length;
+        const unclaimedCount = dptList.filter(v => v && !v.claimed && !v.voted && !v.token).length;
 
         const elMiniTotal = document.getElementById('dpt-mini-total');
-        if (elMiniTotal) elMiniTotal.innerText = results.totalDPT;
+        if (elMiniTotal) elMiniTotal.innerText = Number(results.totalDPT).toLocaleString('id-ID');
         const elMiniVoted = document.getElementById('dpt-mini-voted');
-        if (elMiniVoted) elMiniVoted.innerText = votedCount;
+        if (elMiniVoted) elMiniVoted.innerText = votedCount.toLocaleString('id-ID');
         const elMiniClaimed = document.getElementById('dpt-mini-claimed');
-        if (elMiniClaimed) elMiniClaimed.innerText = claimedNotVoted;
+        if (elMiniClaimed) elMiniClaimed.innerText = claimedNotVoted.toLocaleString('id-ID');
         const elMiniUnclaimed = document.getElementById('dpt-mini-unclaimed');
-        if (elMiniUnclaimed) elMiniUnclaimed.innerText = unclaimedCount;
+        if (elMiniUnclaimed) elMiniUnclaimed.innerText = unclaimedCount.toLocaleString('id-ID');
         const elMiniTurnout = document.getElementById('dpt-mini-turnout');
         if (elMiniTurnout) elMiniTurnout.innerText = `${results.turnoutPercentage}%`;
 
@@ -11036,6 +11036,27 @@
         if (totalEl) {
           totalEl.innerText = `${totalItems.toLocaleString('id-ID')} (Total: ${dpt.length.toLocaleString('id-ID')})`;
         }
+
+        // Dynamically update DPT mini stats bar on every render
+        const totalDptCount = dpt.length;
+        const miniVotedCount = dpt.filter(v => v && v.voted).length;
+        const miniClaimedCount = dpt.filter(v => v && (v.claimed || v.token) && !v.voted).length;
+        const miniUnclaimedCount = dpt.filter(v => v && !v.claimed && !v.voted && !v.token).length;
+        const miniTurnoutPct = totalDptCount > 0 ? ((miniVotedCount / totalDptCount) * 100).toFixed(1) : '0.0';
+
+        const elMiniTotalDyn = document.getElementById('dpt-mini-total');
+        if (elMiniTotalDyn) elMiniTotalDyn.innerText = totalDptCount.toLocaleString('id-ID');
+        const elMiniVotedDyn = document.getElementById('dpt-mini-voted');
+        if (elMiniVotedDyn) elMiniVotedDyn.innerText = miniVotedCount.toLocaleString('id-ID');
+        const elMiniClaimedDyn = document.getElementById('dpt-mini-claimed');
+        if (elMiniClaimedDyn) elMiniClaimedDyn.innerText = miniClaimedCount.toLocaleString('id-ID');
+        const elMiniUnclaimedDyn = document.getElementById('dpt-mini-unclaimed');
+        if (elMiniUnclaimedDyn) elMiniUnclaimedDyn.innerText = miniUnclaimedCount.toLocaleString('id-ID');
+        const elMiniTurnoutDyn = document.getElementById('dpt-mini-turnout');
+        if (elMiniTurnoutDyn) elMiniTurnoutDyn.innerText = `${miniTurnoutPct}%`;
+
+        const sbBadgeDyn = document.getElementById('sidebar-dpt-count-badge');
+        if (sbBadgeDyn) sbBadgeDyn.innerText = totalDptCount.toLocaleString('id-ID');
 
         // Render pagination buttons
         renderPaginationButtons(curPage, totalPages);
