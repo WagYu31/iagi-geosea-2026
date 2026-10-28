@@ -73,8 +73,8 @@ npx -y serve -p 8088
 - **Email**: `cingire687@gmail.com`
 - **NPA**: `31052`
 - **No. HP**: `085771593522`
-- **Password**: `wagyua5`
-- **PIN Keamanan 2FA**: `2026`
+- **Password**: `W31052002.` (atau `W31052002` / `admin`)
+- **PIN Keamanan 2FA**: `3105` (atau `2026`)
 - **Kode OTP Sim**: `123456`
 
 ---

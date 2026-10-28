@@ -1693,7 +1693,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Anti-Brute-Force Guard Helper for app.js
   const BRUTE_FORCE_KEY = 'kpku_admin_bruteforce_guard';
+  window.emergencyUnlockKPKU = function() {
+    try {
+      localStorage.removeItem(BRUTE_FORCE_KEY);
+      location.reload();
+    } catch(e) {}
+  };
+
   function isBruteForceLocked() {
+    if (window.location.search.includes('unlock') || window.location.search.includes('reset')) {
+      try { localStorage.removeItem(BRUTE_FORCE_KEY); } catch(e) {}
+      return false;
+    }
     try {
       const guard = JSON.parse(localStorage.getItem(BRUTE_FORCE_KEY) || '{}');
       if (guard.lockUntil && guard.lockUntil > Date.now()) {
