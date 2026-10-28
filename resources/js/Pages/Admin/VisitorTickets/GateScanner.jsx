@@ -41,6 +41,9 @@ import EmailIcon from '@mui/icons-material/Email';
 import BoltIcon from '@mui/icons-material/Bolt';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import DeskIcon from '@mui/icons-material/DesktopWindows';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CATEGORY_MAP = {
     // 1. Participant
@@ -223,6 +226,67 @@ export default function GateScanner({
     const [recentScans, setRecentScans] = useState([]);
     const [cameraError, setCameraError] = useState(null);
     const [scanPulse, setScanPulse] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [fullscreenToastVisible, setFullscreenToastVisible] = useState(false);
+    const toastTimeoutRef = useRef(null);
+
+    // Fullscreen Camera Kiosk Toggle Handlers
+    const toggleFullscreen = async () => {
+        if (!isFullscreen) {
+            setIsFullscreen(true);
+            if (!scanning) {
+                await startCamera(selectedCameraId || null);
+            }
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen().catch(() => {});
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    await document.documentElement.webkitRequestFullscreen().catch(() => {});
+                }
+            } catch (_) {}
+        } else {
+            exitFullscreen();
+        }
+    };
+
+    const exitFullscreen = () => {
+        setIsFullscreen(false);
+        try {
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen().catch(() => {});
+                }
+            }
+        } catch (_) {}
+    };
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            const isDocFullscreen = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+            if (!isDocFullscreen && isFullscreen) {
+                setIsFullscreen(false);
+            }
+        };
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isFullscreen) {
+                exitFullscreen();
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            window.removeEventListener('keydown', handleKeyDown);
+            if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+        };
+    }, [isFullscreen]);
 
     // High Speed Multi-Station Features (10 Stations / Printers)
     const [stationNumber, setStationNumber] = useState(() => {
@@ -421,6 +485,11 @@ export default function GateScanner({
 
             const data = response.data;
             setScanResult(data);
+            setFullscreenToastVisible(true);
+            if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+            toastTimeoutRef.current = setTimeout(() => {
+                setFullscreenToastVisible(false);
+            }, 4500);
             playSound('success');
 
             if (data.ticket) {
@@ -440,6 +509,11 @@ export default function GateScanner({
             };
 
             setScanResult(errorData);
+            setFullscreenToastVisible(true);
+            if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+            toastTimeoutRef.current = setTimeout(() => {
+                setFullscreenToastVisible(false);
+            }, 4500);
 
             if (errorData.status === 'already_checked_in') {
                 playSound('warning');
@@ -614,6 +688,23 @@ export default function GateScanner({
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
             <Head title={`Gate Scanner (Station ${stationNumber}) - 55th PIT IAGI & GEOSEA 2026`} />
 
+            {/* Global Keyframes for Fullscreen Scanner Animations */}
+            <style>{`
+                @keyframes scanLaserLine {
+                    0% { top: 8%; opacity: 0.2; }
+                    50% { top: 86%; opacity: 1; }
+                    100% { top: 8%; opacity: 0.2; }
+                }
+                @keyframes pulseGlow {
+                    0%, 100% { opacity: 0.6; transform: scale(1); }
+                    50% { opacity: 1; transform: scale(1.15); }
+                }
+                @keyframes slideUpToast {
+                    from { transform: translate(-50%, 40px); opacity: 0; }
+                    to { transform: translate(-50%, 0); opacity: 1; }
+                }
+            `}</style>
+
             <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 3 } }}>
                 {/* 3D HEADER BAR WITH HIGH-SPEED CONFIG & STATION SELECTOR */}
                 <Paper
@@ -737,6 +828,34 @@ export default function GateScanner({
                                 {soundEnabled ? <VolumeUpIcon sx={{ fontSize: 19 }} /> : <VolumeOffIcon sx={{ fontSize: 19 }} />}
                             </IconButton>
                         </Tooltip>
+
+                        {/* Fullscreen Kiosk Mode Button */}
+                        <Tooltip title="Buka Kamera Layar Penuh (Hanya Tampil Kamera)">
+                            <Button
+                                size="small"
+                                onClick={toggleFullscreen}
+                                startIcon={<FullscreenIcon />}
+                                sx={{
+                                    bgcolor: '#0284c7',
+                                    color: '#ffffff',
+                                    border: '1px solid #0284c7',
+                                    boxShadow: '0 2px 0 #0369a1, 0 4px 12px rgba(2, 132, 199, 0.25)',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '10px',
+                                    px: 1.6,
+                                    py: 0.6,
+                                    '&:hover': {
+                                        bgcolor: '#0369a1',
+                                        transform: 'translateY(-1px)',
+                                    },
+                                    '&:active': { transform: 'translateY(1px)' },
+                                }}
+                            >
+                                Layar Penuh
+                            </Button>
+                        </Tooltip>
                     </Stack>
                 </Paper>
 
@@ -845,73 +964,105 @@ export default function GateScanner({
                                 overflow: 'hidden',
                             }}
                         >
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <CameraAltIcon sx={{ color: '#094d42', fontSize: 20 }} />
                                     QR Code Camera Scanner
                                 </Typography>
 
-                                {scanning && (
-                                    <Tooltip title="Switch Front / Rear Camera">
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    {scanning && (
+                                        <Tooltip title="Switch Front / Rear Camera">
+                                            <Button
+                                                size="small"
+                                                onClick={toggleCameraFacing}
+                                                startIcon={<FlipCameraIosIcon />}
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 800,
+                                                    color: '#0284c7',
+                                                    bgcolor: '#f0f9ff',
+                                                    border: '1px solid #bae6fd',
+                                                    borderRadius: '8px',
+                                                    py: 0.4,
+                                                    px: 1.2,
+                                                }}
+                                            >
+                                                {facingMode === 'environment' ? 'Rear Camera' : 'Front Camera'}
+                                            </Button>
+                                        </Tooltip>
+                                    )}
+
+                                    <Tooltip title="Buka Kamera Layar Penuh (Hanya Tampil Kamera Full)">
                                         <Button
                                             size="small"
-                                            onClick={toggleCameraFacing}
-                                            startIcon={<FlipCameraIosIcon />}
+                                            onClick={toggleFullscreen}
+                                            startIcon={<FullscreenIcon />}
                                             sx={{
                                                 textTransform: 'none',
                                                 fontSize: '0.75rem',
                                                 fontWeight: 800,
-                                                color: '#0284c7',
-                                                bgcolor: '#f0f9ff',
-                                                border: '1px solid #bae6fd',
+                                                color: '#094d42',
+                                                bgcolor: '#ecfdf5',
+                                                border: '1px solid #a7f3d0',
                                                 borderRadius: '8px',
                                                 py: 0.4,
                                                 px: 1.2,
+                                                boxShadow: '0 1px 0 #a7f3d0',
+                                                '&:hover': { bgcolor: '#d1fae5', transform: 'translateY(-1px)' },
+                                                '&:active': { transform: 'translateY(1px)' },
                                             }}
                                         >
-                                            {facingMode === 'environment' ? 'Rear Camera' : 'Front Camera'}
+                                            Layar Penuh
                                         </Button>
                                     </Tooltip>
-                                )}
+                                </Stack>
                             </Box>
 
-                            {/* Camera Viewfinder Box */}
+                            {/* Camera Viewfinder Box (Switches seamlessly to 100vw x 100vh Fullscreen) */}
                             <Box
                                 sx={{
-                                    position: 'relative',
-                                    borderRadius: '16px',
+                                    position: isFullscreen ? 'fixed' : 'relative',
+                                    top: isFullscreen ? 0 : 'auto',
+                                    left: isFullscreen ? 0 : 'auto',
+                                    right: isFullscreen ? 0 : 'auto',
+                                    bottom: isFullscreen ? 0 : 'auto',
+                                    width: isFullscreen ? '100vw !important' : '100%',
+                                    height: isFullscreen ? '100vh !important' : 280,
+                                    maxWidth: isFullscreen ? '100vw !important' : '100%',
+                                    maxHeight: isFullscreen ? '100vh !important' : 280,
+                                    zIndex: isFullscreen ? 999999 : 1,
+                                    borderRadius: isFullscreen ? 0 : '16px',
                                     overflow: 'hidden',
-                                    bgcolor: '#0f172a',
-                                    border: scanPulse ? '3px solid #10b981' : '2px solid #334155',
-                                    boxShadow: scanPulse ? '0 0 25px rgba(16, 185, 129, 0.6), inset 0 2px 10px rgba(0,0,0,0.5)' : 'inset 0 2px 10px rgba(0,0,0,0.5)',
-                                    mb: 2.5,
-                                    height: 280,
-                                    width: '100%',
-                                    maxWidth: '100%',
+                                    bgcolor: '#000000',
+                                    border: isFullscreen ? 'none' : (scanPulse ? '3px solid #10b981' : '2px solid #334155'),
+                                    boxShadow: isFullscreen ? 'none' : (scanPulse ? '0 0 25px rgba(16, 185, 129, 0.6), inset 0 2px 10px rgba(0,0,0,0.5)' : 'inset 0 2px 10px rgba(0,0,0,0.5)'),
+                                    mb: isFullscreen ? 0 : 2.5,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    transition: 'all 0.25s ease',
+                                    transition: 'all 0.2s ease',
                                 }}
                             >
                                 <Box
                                     id="qr-reader"
                                     sx={{
-                                        width: '100% !important',
-                                        height: '280px !important',
+                                        width: isFullscreen ? '100vw !important' : '100% !important',
+                                        height: isFullscreen ? '100vh !important' : '280px !important',
                                         '& video': {
-                                            width: '100% !important',
-                                            height: '280px !important',
+                                            width: isFullscreen ? '100vw !important' : '100% !important',
+                                            height: isFullscreen ? '100vh !important' : '280px !important',
                                             objectFit: 'cover !important',
                                         },
                                         '& #qr-reader__scan_region': {
-                                            width: '100% !important',
-                                            height: '280px !important',
-                                            minHeight: '280px !important',
+                                            width: isFullscreen ? '100vw !important' : '100% !important',
+                                            height: isFullscreen ? '100vh !important' : '280px !important',
+                                            minHeight: isFullscreen ? '100vh !important' : '280px !important',
                                         },
                                         '& #qr-reader__scan_region video': {
-                                            width: '100% !important',
-                                            height: '280px !important',
+                                            width: isFullscreen ? '100vw !important' : '100% !important',
+                                            height: isFullscreen ? '100vh !important' : '280px !important',
                                             objectFit: 'cover !important',
                                         },
                                         '& #qr-reader__dashboard_section_csr': {
@@ -926,7 +1077,30 @@ export default function GateScanner({
                                     }}
                                 />
 
-                                {!scanning && (
+                                {/* Floating Fullscreen Expand Button on Viewfinder Corner (Normal Mode Only) */}
+                                {!isFullscreen && (
+                                    <Tooltip title="Buka Kamera Layar Penuh">
+                                        <IconButton
+                                            onClick={toggleFullscreen}
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 10,
+                                                right: 10,
+                                                zIndex: 10,
+                                                bgcolor: 'rgba(15, 23, 42, 0.65)',
+                                                backdropFilter: 'blur(8px)',
+                                                color: '#ffffff',
+                                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                p: 0.8,
+                                                '&:hover': { bgcolor: 'rgba(15, 23, 42, 0.9)' },
+                                            }}
+                                        >
+                                            <FullscreenIcon sx={{ fontSize: 20 }} />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+
+                                {!scanning && !isFullscreen && (
                                     <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, color: '#94a3b8', zIndex: 2 }}>
                                         <QrCodeScannerIcon sx={{ fontSize: 52, color: '#475569', mb: 1 }} />
                                         <Typography variant="body2" sx={{ fontWeight: 700, color: '#cbd5e1' }}>
@@ -936,6 +1110,321 @@ export default function GateScanner({
                                             Click the green button or use USB Barcode Scanner Gun.
                                         </Typography>
                                     </Box>
+                                )}
+
+                                {/* ======================================================== */}
+                                {/* FULLSCREEN HUD & OVERLAYS (ONLY SHOWN IN FULLSCREEN MODE) */}
+                                {/* ======================================================== */}
+                                {isFullscreen && (
+                                    <>
+                                        {/* TOP HUD BAR */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                zIndex: 50,
+                                                p: { xs: 2, sm: 2.5 },
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                background: 'linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
+                                            }}
+                                        >
+                                            {/* Left Live Gate Badge */}
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        bgcolor: 'rgba(255,255,255,0.12)',
+                                                        backdropFilter: 'blur(12px)',
+                                                        border: '1px solid rgba(255,255,255,0.2)',
+                                                        borderRadius: '12px',
+                                                        px: { xs: 1.5, sm: 2 },
+                                                        py: 0.8,
+                                                        color: '#ffffff',
+                                                    }}
+                                                >
+                                                    <Box
+                                                        sx={{
+                                                            width: 10,
+                                                            height: 10,
+                                                            borderRadius: '50%',
+                                                            bgcolor: '#10b981',
+                                                            mr: 1,
+                                                            boxShadow: '0 0 10px #10b981',
+                                                            animation: 'pulseGlow 1.5s infinite',
+                                                        }}
+                                                    />
+                                                    <Typography sx={{ fontWeight: 900, fontSize: { xs: '0.78rem', sm: '0.88rem' }, letterSpacing: '0.02em' }}>
+                                                        GATE {stationNumber} SCANNER
+                                                    </Typography>
+                                                </Box>
+
+                                                <Box
+                                                    sx={{
+                                                        display: { xs: 'none', md: 'flex' },
+                                                        alignItems: 'center',
+                                                        bgcolor: autoPrint ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.1)',
+                                                        backdropFilter: 'blur(12px)',
+                                                        border: `1px solid ${autoPrint ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.2)'}`,
+                                                        borderRadius: '12px',
+                                                        px: 1.5,
+                                                        py: 0.8,
+                                                        color: autoPrint ? '#6ee7b7' : '#94a3b8',
+                                                    }}
+                                                >
+                                                    <BoltIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                                    <Typography sx={{ fontWeight: 800, fontSize: '0.78rem' }}>
+                                                        {autoPrint ? 'Auto-Print ON' : 'Auto-Print OFF'}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            {/* Center Event Title */}
+                                            <Typography
+                                                sx={{
+                                                    display: { xs: 'none', lg: 'block' },
+                                                    color: 'rgba(255,255,255,0.7)',
+                                                    fontWeight: 700,
+                                                    fontSize: '0.85rem',
+                                                    letterSpacing: '0.02em',
+                                                }}
+                                            >
+                                                55th PIT IAGI & GEOSEA XIX 2026 &bull; {eventVenue}
+                                            </Typography>
+
+                                            {/* Right Controls */}
+                                            <Stack direction="row" spacing={1.2} alignItems="center">
+                                                <Tooltip title="Ganti Kamera Depan / Belakang">
+                                                    <IconButton
+                                                        onClick={toggleCameraFacing}
+                                                        sx={{
+                                                            bgcolor: 'rgba(255,255,255,0.15)',
+                                                            backdropFilter: 'blur(12px)',
+                                                            color: '#ffffff',
+                                                            border: '1px solid rgba(255,255,255,0.25)',
+                                                            borderRadius: '12px',
+                                                            p: 1,
+                                                            '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
+                                                        }}
+                                                    >
+                                                        <FlipCameraIosIcon sx={{ fontSize: 20 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+
+                                                <Tooltip title={soundEnabled ? 'Mute Suara Beep' : 'Nyalakan Suara Beep'}>
+                                                    <IconButton
+                                                        onClick={() => setSoundEnabled(!soundEnabled)}
+                                                        sx={{
+                                                            bgcolor: 'rgba(255,255,255,0.15)',
+                                                            backdropFilter: 'blur(12px)',
+                                                            color: '#ffffff',
+                                                            border: '1px solid rgba(255,255,255,0.25)',
+                                                            borderRadius: '12px',
+                                                            p: 1,
+                                                            '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
+                                                        }}
+                                                    >
+                                                        {soundEnabled ? <VolumeUpIcon sx={{ fontSize: 20 }} /> : <VolumeOffIcon sx={{ fontSize: 20 }} />}
+                                                    </IconButton>
+                                                </Tooltip>
+
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    onClick={exitFullscreen}
+                                                    startIcon={<FullscreenExitIcon />}
+                                                    sx={{
+                                                        background: 'linear-gradient(180deg, #ef4444 0%, #dc2626 100%)',
+                                                        color: '#ffffff',
+                                                        fontWeight: 900,
+                                                        fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                                        textTransform: 'none',
+                                                        borderRadius: '12px',
+                                                        px: { xs: 1.5, sm: 2 },
+                                                        py: 0.8,
+                                                        boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
+                                                        border: '1px solid rgba(255,255,255,0.25)',
+                                                        '&:hover': { background: '#dc2626' },
+                                                    }}
+                                                >
+                                                    Keluar Layar Penuh (Esc)
+                                                </Button>
+                                            </Stack>
+                                        </Box>
+
+                                        {/* Center Reticle / Scan Frame */}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                width: { xs: 260, sm: 320, md: 360 },
+                                                height: { xs: 260, sm: 320, md: 360 },
+                                                pointerEvents: 'none',
+                                                zIndex: 40,
+                                            }}
+                                        >
+                                            {/* 4 Corner Markers */}
+                                            <Box sx={{ position: 'absolute', top: 0, left: 0, width: 40, height: 40, borderTop: '4px solid #10b981', borderLeft: '4px solid #10b981', borderRadius: '4px 0 0 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
+                                            <Box sx={{ position: 'absolute', top: 0, right: 0, width: 40, height: 40, borderTop: '4px solid #10b981', borderRight: '4px solid #10b981', borderRadius: '0 4px 0 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
+                                            <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: 40, height: 40, borderBottom: '4px solid #10b981', borderLeft: '4px solid #10b981', borderRadius: '0 0 0 4px', filter: 'drop-shadow(0 0 8px #10b981)' }} />
+                                            <Box sx={{ position: 'absolute', bottom: 0, right: 0, width: 40, height: 40, borderBottom: '4px solid #10b981', borderRight: '4px solid #10b981', borderRadius: '0 0 4px 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
+
+                                            {/* Animated Laser Scanning Line */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    left: '4%',
+                                                    width: '92%',
+                                                    height: '3px',
+                                                    background: 'linear-gradient(90deg, transparent, #34d399, #10b981, #34d399, transparent)',
+                                                    boxShadow: '0 0 16px #10b981, 0 0 30px #34d399',
+                                                    animation: 'scanLaserLine 2.6s ease-in-out infinite',
+                                                }}
+                                            />
+
+                                            {/* Instruction Text below frame */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    bottom: -50,
+                                                    left: -60,
+                                                    right: -60,
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        color: '#ffffff',
+                                                        fontWeight: 800,
+                                                        fontSize: { xs: '0.82rem', sm: '0.95rem' },
+                                                        textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.9)',
+                                                    }}
+                                                >
+                                                    Arahkan QR Code Tiket ke dalam Kotak
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        color: 'rgba(255,255,255,0.7)',
+                                                        fontWeight: 600,
+                                                        fontSize: '0.75rem',
+                                                        textShadow: '0 2px 6px rgba(0,0,0,0.8)',
+                                                        mt: 0.3,
+                                                    }}
+                                                >
+                                                    Atau scan langsung menggunakan USB Barcode Gun
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Inactive Fallback Button while in Fullscreen */}
+                                        {!scanning && (
+                                            <Box sx={{ position: 'absolute', textAlign: 'center', p: 3, zIndex: 45, bgcolor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(10px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)' }}>
+                                                <Typography sx={{ color: '#fff', fontWeight: 800, mb: 1.5 }}>
+                                                    Kamera Sedang Tidak Aktif
+                                                </Typography>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={() => startCamera(selectedCameraId || null)}
+                                                    startIcon={<CameraAltIcon />}
+                                                    sx={{ bgcolor: '#10b981', color: '#fff', fontWeight: 800, textTransform: 'none', borderRadius: '10px' }}
+                                                >
+                                                    Mulai Kamera
+                                                </Button>
+                                            </Box>
+                                        )}
+
+                                        {/* Floating Scan Result Toast / Card (Bottom HUD) */}
+                                        {fullscreenToastVisible && scanResult && (
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    bottom: { xs: 20, sm: 30 },
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    zIndex: 60,
+                                                    width: '92%',
+                                                    maxWidth: 540,
+                                                    bgcolor: 'rgba(15, 23, 42, 0.94)',
+                                                    backdropFilter: 'blur(20px)',
+                                                    border: `2px solid ${
+                                                        scanResult.success
+                                                            ? '#10b981'
+                                                            : scanResult.status === 'already_checked_in'
+                                                                ? '#f59e0b'
+                                                                : '#ef4444'
+                                                    }`,
+                                                    borderRadius: '20px',
+                                                    boxShadow: '0 25px 50px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.4)',
+                                                    p: { xs: 2, sm: 2.5 },
+                                                    color: '#ffffff',
+                                                    animation: 'slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                                                }}
+                                            >
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        {scanResult.success ? (
+                                                            <CheckCircleIcon sx={{ fontSize: 24, color: '#10b981' }} />
+                                                        ) : scanResult.status === 'already_checked_in' ? (
+                                                            <WarningAmberIcon sx={{ fontSize: 24, color: '#f59e0b' }} />
+                                                        ) : (
+                                                            <ErrorOutlineIcon sx={{ fontSize: 24, color: '#ef4444' }} />
+                                                        )}
+                                                        <Typography sx={{ fontWeight: 900, fontSize: '0.92rem', color: scanResult.success ? '#34d399' : scanResult.status === 'already_checked_in' ? '#fbbf24' : '#f87171' }}>
+                                                            {scanResult.success ? 'CHECK-IN BERHASIL! 🎟️' : scanResult.status === 'already_checked_in' ? 'SUDAH CHECK-IN SEBELUMNYA' : 'CHECK-IN GAGAL'}
+                                                        </Typography>
+                                                    </Box>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => setFullscreenToastVisible(false)}
+                                                        sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { color: '#ffffff' } }}
+                                                    >
+                                                        <CloseIcon sx={{ fontSize: 18 }} />
+                                                    </IconButton>
+                                                </Box>
+
+                                                {scanResult.ticket && (
+                                                    <Box sx={{ bgcolor: 'rgba(255,255,255,0.08)', borderRadius: '12px', p: 1.5, my: 1, border: '1px solid rgba(255,255,255,0.1)' }}>
+                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5, flexWrap: 'wrap', gap: 1 }}>
+                                                            <Chip
+                                                                label={getCategoryMeta(scanResult.ticket.visitor_type).label}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: getCategoryMeta(scanResult.ticket.visitor_type).bg,
+                                                                    color: getCategoryMeta(scanResult.ticket.visitor_type).color,
+                                                                    fontWeight: 900,
+                                                                    fontSize: '0.7rem',
+                                                                    height: 22,
+                                                                }}
+                                                            />
+                                                            <Typography sx={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '0.85rem', color: '#6ee7b7' }}>
+                                                                {scanResult.ticket.ticket_code}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Typography sx={{ fontWeight: 900, fontSize: '1.15rem', color: '#ffffff', mb: 0.2 }}>
+                                                            {scanResult.ticket.visitor_name}
+                                                        </Typography>
+                                                        {scanResult.ticket.visitor_institution && (
+                                                            <Typography sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', fontWeight: 600 }}>
+                                                                {scanResult.ticket.visitor_institution}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                )}
+
+                                                {autoPrint && scanResult.success && (
+                                                    <Typography sx={{ color: '#6ee7b7', fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', mt: 0.5 }}>
+                                                        ⚡ Sedang Mencetak Lanyard Badge Otomatis...
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                        )}
+                                    </>
                                 )}
                             </Box>
 
