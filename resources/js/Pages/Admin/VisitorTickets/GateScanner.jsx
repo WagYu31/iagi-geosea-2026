@@ -210,7 +210,13 @@ export default function GateScanner({
     const [manualCode, setManualCode] = useState('');
     const [processing, setProcessing] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
-    const [facingMode, setFacingMode] = useState('environment'); // 'environment' or 'user'
+    const [facingMode, setFacingMode] = useState(() => {
+        if (typeof navigator !== 'undefined') {
+            const isPhoneScanner = /iPhone|Android.*Mobile|Mobile.*Android/i.test(navigator.userAgent) && !/iPad|Tablet/i.test(navigator.userAgent);
+            return isPhoneScanner ? 'environment' : 'user';
+        }
+        return 'user';
+    });
     const [availableCameras, setAvailableCameras] = useState([]);
     const [selectedCameraId, setSelectedCameraId] = useState('');
     const [scanResult, setScanResult] = useState(null);
@@ -487,7 +493,9 @@ export default function GateScanner({
                 processTicketCheckIn(decodedText, false);
             };
 
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            // iPad, Mac, PC, Laptop, and Tablets: ALWAYS USE FRONT CAMERA ('user')
+            // Only handheld smartphones (HP panitia) default to scanner mode ('environment')
+            const isHandheldPhone = /iPhone|Android.*Mobile|Mobile.*Android/i.test(navigator.userAgent) && !/iPad|Tablet/i.test(navigator.userAgent);
             const el = document.getElementById('qr-reader');
             if (el) el.innerHTML = '';
             const instance = new Html5Qrcode('qr-reader');
@@ -507,10 +515,11 @@ export default function GateScanner({
                 const cameras = await Html5Qrcode.getCameras();
                 if (cameras && cameras.length > 0) {
                     setAvailableCameras(cameras);
-                    // On mobile, prefer rear/back camera if available, otherwise first camera
-                    const preferred = isMobile
+                    // iPad, Mac, PC: ALWAYS pick the Front / User camera
+                    // Smartphone: pick Rear camera
+                    const preferred = isHandheldPhone
                         ? (cameras.find((c) => /back|rear|environment|belakang/i.test(c.label)) || cameras[cameras.length - 1])
-                        : (cameras.find((c) => /front|user|facetime|built-in|integrated|macbook/i.test(c.label)) || cameras[0]);
+                        : (cameras.find((c) => /front|user|facetime|built-in|integrated|macbook|depan/i.test(c.label)) || cameras[0]);
 
                     await instance.start(preferred.id, qrConfig, qrSuccessCallback, () => {});
                     setSelectedCameraId(preferred.id);
@@ -523,8 +532,8 @@ export default function GateScanner({
             }
 
             // 3. Fallback: try by facingMode
-            const primaryMode = isMobile ? 'environment' : 'user';
-            const secondaryMode = isMobile ? 'user' : 'environment';
+            const primaryMode = isHandheldPhone ? 'environment' : 'user';
+            const secondaryMode = isHandheldPhone ? 'user' : 'environment';
 
             let started = false;
             try {
