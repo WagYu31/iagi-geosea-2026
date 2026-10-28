@@ -18,7 +18,7 @@
     },
     {
       keywords: ['token', 'klaim', 'kode unik', 'surat suara', 'belum dapat', 'email', 'spam'],
-      reply: 'Tata cara <strong>Klaim Token Surat Suara Digital</strong>:\n1. Buka menu <strong>Klaim</strong> di navigasi bawah.\n2. Masukkan <strong>NPA 5-digit</strong> dan <strong>Email terdaftar</strong> Anda di IAGI.\n3. Kode unik 128-bit (contoh: <code>IAGI-2026-XXXX-XXXX</code>) akan langsung dikirimkan ke Email & ditampilkan di layar.\n4. Cek folder <em>Inbox / Spam / Updates</em> email Anda.',
+      reply: 'Tata cara <strong>Klaim Token Surat Suara Digital</strong>:\n1. Buka menu <strong>Klaim</strong> di navigasi bawah.\n2. Masukkan <strong>NPA 5-digit</strong> dan <strong>Email terdaftar</strong> Anda di IAGI.\n3. Kode unik 128-bit (contoh: <code>IAGI-2026-XXXX-XXXX</code>) akan langsung dikirimkan secara rahasia ke Email resmi Anda demi menjaga integritas asas LUBER & JURDIL.\n4. Cek folder <em>Inbox / Spam / Updates</em> email Anda.',
       chips: ['🗳️ Masuk Bilik Suara', '🟢 Hubungi Panitia via WA']
     },
     {

@@ -33,6 +33,72 @@ async function generateSha256(text) {
   }
 }
 
+// Fast Synchronous SHA-256 for PII Email Verification
+function sha256Sync(ascii) {
+  function rightRotate(value, amount) {
+    return (value >>> amount) | (value << (32 - amount));
+  }
+  var mathPow = Math.pow;
+  var maxWord = mathPow(2, 32);
+  var lengthProperty = 'length';
+  var i, j;
+  var result = '';
+  var words = [];
+  var asciiBitLength = ascii[lengthProperty] * 8;
+  var hash = [];
+  var k = [];
+  var primeCounter = 0;
+  var isComposite = {};
+  for (var candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (i = 0; i < 313; i += candidate) {
+        isComposite[i] = candidate;
+      }
+      hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+    }
+  }
+  ascii += '\x80';
+  while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+  for (i = 0; i < ascii[lengthProperty]; i++) {
+    j = ascii.charCodeAt(i);
+    if (j >> 8) return '';
+    words[i >> 2] |= j << ((3 - i) % 4) * 8;
+  }
+  words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+  words[words[lengthProperty]] = (asciiBitLength);
+  for (j = 0; j < words[lengthProperty];) {
+    var w = words.slice(j, j += 16);
+    var oldHash = hash;
+    hash = hash.slice(0, 8);
+    for (i = 0; i < 64; i++) {
+      var w15 = w[i - 15], w2 = w[i - 2];
+      var s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
+      var s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
+      var ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]);
+      var temp1 = hash[7] + (rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25)) + ch + k[i] + (
+        w[i] = (i < 16) ? w[i] : (
+          w[i - 16] + s0 + w[i - 7] + s1
+        ) | 0
+      );
+      var maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+      var temp2 = (rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22)) + maj;
+      hash = [(temp1 + temp2) | 0].concat(hash);
+      hash[4] = (hash[4] + temp1) | 0;
+    }
+    for (i = 0; i < 8; i++) {
+      hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+  }
+  for (i = 0; i < 8; i++) {
+    for (j = 3; j >= 0; j--) {
+      var b = (hash[i] >> (8 * j)) & 255;
+      result += ((b < 16) ? '0' : '') + b.toString(16);
+    }
+  }
+  return result;
+}
+
 // Generate format IAGI-2026-XXXX-XXXX (Acak Sistem Kriptografi LUBER)
 function generateToken() {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -804,31 +870,45 @@ class PemiluStorage {
       }
     }
 
-    // Fuzzy check name or exact email check
-    if (voter.email && voter.email.trim() !== '') {
+    // Strict Verification: check email against email_hash (PII-protected) or legacy email
+    const inputEmailHash = sha256Sync(cleanEmail);
+    const inputEmailNormHash = sha256Sync(cleanEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@'));
+
+    // Check against INITIAL_DPT fallback if voter in cache doesn't have email_hash
+    if (!voter.email_hash && typeof INITIAL_DPT !== 'undefined') {
+      const initV = INITIAL_DPT.find(x => String(x.npa || '').trim().toUpperCase() === cleanNpa);
+      if (initV && initV.email_hash) {
+        voter.email_hash = initV.email_hash;
+        dpt[voterIndex].email_hash = initV.email_hash;
+        this.saveDPT(dpt);
+      }
+    }
+
+    if (voter.email_hash) {
+      if (inputEmailHash !== voter.email_hash && inputEmailNormHash !== voter.email_hash) {
+        return {
+          success: false,
+          error: `Alamat email "${email}" tidak cocok dengan email resmi yang terdaftar untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
+        };
+      }
+      // Validated!
+      voter.email = cleanEmail;
+      dpt[voterIndex].email = cleanEmail;
+      this.saveDPT(dpt);
+    } else if (voter.email && voter.email.trim() !== '' && !voter.email.includes('***')) {
       const vEmail = voter.email.toLowerCase().trim();
       const vEmailNorm = vEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
       const inputEmailNorm = cleanEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
 
       if (vEmail !== cleanEmail && vEmailNorm !== inputEmailNorm) {
-        // Fallback: cek jika email di INITIAL_DPT sudah diperbarui dan cocok dengan input
-        const initV = (typeof INITIAL_DPT !== 'undefined') ? INITIAL_DPT.find(x => String(x.npa || '').trim().toUpperCase() === cleanNpa) : null;
-        if (initV && initV.email && (initV.email.trim().toLowerCase() === cleanEmail || initV.email.trim().toLowerCase().replace('@gl.itb.ac.id', '@itb.ac.id') === inputEmailNorm)) {
-          voter.email = cleanEmail;
-          dpt[voterIndex].email = cleanEmail;
-          this.saveDPT(dpt);
-        } else {
-          return {
-            success: false,
-            error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
-          };
-        }
-      } else if (vEmail !== cleanEmail && vEmailNorm === inputEmailNorm) {
-        // Auto-update to user's canonical input email
-        voter.email = cleanEmail;
-        dpt[voterIndex].email = cleanEmail;
-        this.saveDPT(dpt);
+        return {
+          success: false,
+          error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
+        };
       }
+      voter.email = cleanEmail;
+      dpt[voterIndex].email = cleanEmail;
+      this.saveDPT(dpt);
     } else {
       // Jika di DPT email belum terdaftar, verifikasi kecocokan nama
       const cleanVName = (voter.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');

@@ -10,7 +10,7 @@ const ELECTION_CONFIG = {
   committee: "Komisi Pemilihan Ketua Umum (KPKU) 2026",
   dptReleaseDate: "25 Oktober 2026",
   reactivationDeadline: "24 September 2026",
-  votingEndDate: "2026-10-25T18:00:00+07:00", // Target countdown timer
+  votingEndDate: "2026-11-03T23:59:59+07:00", // Target resmi penutupan pemungutan suara (3 Nov 2026 23:59 WIB)
   helpdesk: {
     whatsapp: "+62 811-158-1461",
     whatsappClean: "628111581461",
@@ -150,12 +150,13 @@ const CANDIDATES = [
   }
 ];
 
-// Daftar Pemilih Tetap (DPT) Terverifikasi Publikasi Resmi KPKU IAGI 2026 (Total: 2143 Pemilih)
+// Daftar Pemilih Tetap (DPT) Terverifikasi Publikasi Resmi KPKU IAGI 2026 (Total: 2143 Pemilih - PII Protected)
 const INITIAL_DPT = [
   {
     "npa": "00092",
     "name": "Adjat Sudradjat",
-    "email": "asudradjat@yahoo.com",
+    "email": "as***@yahoo.com",
+    "email_hash": "f33791b31baa2a0c7b1379c23ebac8899482d03ae30c804d3be71e57bd81e259",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -169,7 +170,8 @@ const INITIAL_DPT = [
   {
     "npa": "00252",
     "name": "Made Emmy Relawati Suparka",
-    "email": "myrel65@yahoo.com",
+    "email": "my***@yahoo.com",
+    "email_hash": "4dc74ff17734ed71ffb5b819ae0ec6a970fadfc6dc4a7dfe75c7cbad31051c78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -183,7 +185,8 @@ const INITIAL_DPT = [
   {
     "npa": "00282",
     "name": "Mudjito",
-    "email": "mudjito203@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "6243b50b5180c852557db9b7db11950a8eb40d5b6134c252e8f880e8a1a72f8b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -197,7 +200,8 @@ const INITIAL_DPT = [
   {
     "npa": "00418",
     "name": "Lambok M Hutasoit",
-    "email": "lambok@gl.itb.ac.id",
+    "email": "la***@gl.itb.ac.id",
+    "email_hash": "6eeaef6f1799c9f92aac8fb0fdd79f34c58c7214976a7eb1c9946b46d4a30fcd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -211,7 +215,8 @@ const INITIAL_DPT = [
   {
     "npa": "00433",
     "name": "Teteh Sudjaah S",
-    "email": "tetehsulaemans@yahoo.co.uk",
+    "email": "te***@yahoo.co.uk",
+    "email_hash": "5a07514dfcb504acc602531737692bf9864dcb9102cf47855b5f78d884d1101a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -225,7 +230,8 @@ const INITIAL_DPT = [
   {
     "npa": "00440",
     "name": "Deddy Hasanusi",
-    "email": "deddy.hasanusi47@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "79fc2719b7e79eccb1b6ba7ede818ff3d72332881401a53904a6f1b1d5a16cd8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -239,7 +245,8 @@ const INITIAL_DPT = [
   {
     "npa": "00446",
     "name": "Sudirman Tjakradinata",
-    "email": "tjakra70@gmail.com",
+    "email": "tj***@gmail.com",
+    "email_hash": "ce5555238f76c2b8e5d04f8282923e6da8afd6173d99df8aa873584cc583ca3e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -253,7 +260,8 @@ const INITIAL_DPT = [
   {
     "npa": "00451",
     "name": "Djoko Santoso",
-    "email": "dsantoso78@yahoo.com",
+    "email": "ds***@yahoo.com",
+    "email_hash": "e9875c34757701382e2e6301e5039a9b254f745214501ccb02621f3600d18b43",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -267,7 +275,8 @@ const INITIAL_DPT = [
   {
     "npa": "00611",
     "name": "Sumardiman Digdowirogo",
-    "email": "sdigdowirogo@sumacorp.co.id",
+    "email": "sd***@sumacorp.co.id",
+    "email_hash": "1d2af9d94f5ec04a78b6dddf6e159098665975681f90e876e1b9ce4c34cb0ace",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -281,7 +290,8 @@ const INITIAL_DPT = [
   {
     "npa": "00675",
     "name": "Setiabudi Djaelani",
-    "email": "setiabudi.djaelani@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "46e2ad65fb1a62a131f30d241c384dcb089628e83e3e836a7a0b82e31aee7bdf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -295,7 +305,8 @@ const INITIAL_DPT = [
   {
     "npa": "00678",
     "name": "Witan O Ardjakusumah",
-    "email": "witan.oa@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "6735c29909a4918334ad6a008fd172bf1cfd796095070b593e79fdf033668d24",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -309,7 +320,8 @@ const INITIAL_DPT = [
   {
     "npa": "00687",
     "name": "Eko Aryanto",
-    "email": "ekoaryanto@petrochina.co.id",
+    "email": "ek***@petrochina.co.id",
+    "email_hash": "196318cf08c75c4d51808e59f2e9dcdcb80a3d120ad33bd06d76132728cc46b9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -323,7 +335,8 @@ const INITIAL_DPT = [
   {
     "npa": "00689",
     "name": "Sumuyut Sarjono",
-    "email": "sumuyut12@yahoo.com",
+    "email": "su***@yahoo.com",
+    "email_hash": "ae947e1583a54441d4a5754f375fcb6e93caa9c3df1de230093abffb327ce18e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -337,7 +350,8 @@ const INITIAL_DPT = [
   {
     "npa": "00691",
     "name": "Nazirman Surid",
-    "email": "Nazirmansurid1212@gmail.com",
+    "email": "Na***@gmail.com",
+    "email_hash": "625d782dd2513964dbccd31665b1972bd5144fba3b45f6bbaacb4dcd7cc751e4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -351,7 +365,8 @@ const INITIAL_DPT = [
   {
     "npa": "00700",
     "name": "Sardjito",
-    "email": "sardjitozaini@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "e5d5eb9221d44ebb3a5752b98762c8c54e04307286e8a276670556f20761c279",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -365,7 +380,8 @@ const INITIAL_DPT = [
   {
     "npa": "00701",
     "name": "Dwi Martono",
-    "email": "dmar_to@yahoo.com",
+    "email": "dm***@yahoo.com",
+    "email_hash": "e993528973a2d877251f767560e863e0faf61f10659efe6abf84e1b31ec704ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -379,7 +395,8 @@ const INITIAL_DPT = [
   {
     "npa": "00702",
     "name": "Bagus Setiardja",
-    "email": "bsatiardja@yahoo.com",
+    "email": "bs***@yahoo.com",
+    "email_hash": "226d183fd3b8f4639cb7183877ee32f9a19d81341bf6934b4ac19a8c71bc8d30",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -393,7 +410,8 @@ const INITIAL_DPT = [
   {
     "npa": "00710",
     "name": "Surarso Hardjono",
-    "email": "hardjono_surarso@yahoo.com",
+    "email": "ha***@yahoo.com",
+    "email_hash": "8be811f5eaa10ec5236424ee12f255676d3cd7eb33f5ac796404e56e421d9938",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -407,7 +425,8 @@ const INITIAL_DPT = [
   {
     "npa": "00777",
     "name": "Subagyo Pramumijoyo",
-    "email": "bagyo@ugm.ac.id",
+    "email": "ba***@ugm.ac.id",
+    "email_hash": "9b61fc8a6fb08d6710c7300833aa8779789cf332a1470b3e2d9d1c170bbf3349",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -421,7 +440,8 @@ const INITIAL_DPT = [
   {
     "npa": "00784",
     "name": "Heryadi Rachmat",
-    "email": "heryadirachmat220@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "20b36b17f622d7a0c3ea3c57077ca7610c04a26c7aa9e1a335323e58e4111f3b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -435,7 +455,8 @@ const INITIAL_DPT = [
   {
     "npa": "00800",
     "name": "Andang Bachtiar",
-    "email": "bachtiar.andang@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "e84c75bc13a820e519181a2c840fdcd40f3c6ffb33f1e9dd9c52100b6d70a1f3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -449,7 +470,8 @@ const INITIAL_DPT = [
   {
     "npa": "00808",
     "name": "Nana Sulaksana",
-    "email": "n.sulaksana@unpad.ac.id",
+    "email": "n.***@unpad.ac.id",
+    "email_hash": "efd165a887734d1b396b1f0316c6155ec7c181ca43df7308b80eb04fa3130452",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -463,7 +485,8 @@ const INITIAL_DPT = [
   {
     "npa": "00815",
     "name": "Achmad Helman Hamdani",
-    "email": "ahmad.helman@unpad.ac.id",
+    "email": "ah***@unpad.ac.id",
+    "email_hash": "018b1ee9e62b4c9bad4fcb4d7e2fd42a51cadbeace4aff52e8ee0e6de0d28976",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -477,7 +500,8 @@ const INITIAL_DPT = [
   {
     "npa": "00865",
     "name": "Taufik Iknsan Derana",
-    "email": "deranataufik@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "6e8a2dab28a1c990eedaad62e783324d9af78920f38356404ccd4e6d777ba463",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -491,7 +515,8 @@ const INITIAL_DPT = [
   {
     "npa": "00883",
     "name": "Suyono",
-    "email": "suyono_aw@yahoo.com",
+    "email": "su***@yahoo.com",
+    "email_hash": "6bfd4a138de945dc76bfee4a2dbe8c28ebdabd0c105dfca0abc7741c54f1ba12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -505,7 +530,8 @@ const INITIAL_DPT = [
   {
     "npa": "00892",
     "name": "Ismail Zaini",
-    "email": "liamsi@indo.net.id",
+    "email": "li***@indo.net.id",
+    "email_hash": "1466d6dfe4187f51e225b9f916eca781d38d513af4e4bfddc6a83e8e06ca5e62",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -519,7 +545,8 @@ const INITIAL_DPT = [
   {
     "npa": "00924",
     "name": "Widi Hartono",
-    "email": "widipur04@yahoo.com",
+    "email": "wi***@yahoo.com",
+    "email_hash": "dc8ec998140c6b466bf397225e13e6e333dcbe5880ad436b84a3e5abdc92307b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -533,7 +560,8 @@ const INITIAL_DPT = [
   {
     "npa": "00956",
     "name": "Agus Mulyono",
-    "email": "agus_mulyono57@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "c02dddbe0e8a3a016d78b3676b14092a68e35355588dbfcd134a23da91449425",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -547,7 +575,8 @@ const INITIAL_DPT = [
   {
     "npa": "00987",
     "name": "Chalid Idham Abdullah",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -561,7 +590,8 @@ const INITIAL_DPT = [
   {
     "npa": "00992",
     "name": "Muhammad Husen",
-    "email": "muhamadhusen571@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "8e2a50ef3ca18acfdaefd967a626feba036f4e83d30ca183057ad89f0316ecb6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -575,7 +605,8 @@ const INITIAL_DPT = [
   {
     "npa": "01031",
     "name": "Wayan Ardana Darma",
-    "email": "wayan.ardana@yahoo.co.id",
+    "email": "wa***@yahoo.co.id",
+    "email_hash": "116491905d4cf48ad6614d42cc26135448221df815d69920c60f0373422593a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -589,7 +620,8 @@ const INITIAL_DPT = [
   {
     "npa": "01036",
     "name": "Heru Hendrayana",
-    "email": "heruha@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "b2c7f288a1f99a2da5dc851860936de8757cdc07db6c747ef384312829c30005",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -603,7 +635,8 @@ const INITIAL_DPT = [
   {
     "npa": "01054",
     "name": "Dunan Madong Siregar",
-    "email": "dunan_siregar@yahoo.com",
+    "email": "du***@yahoo.com",
+    "email_hash": "3ec611b17d2c624e340bf007d87f4b8741a9affe00cad498ab37558138483767",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -617,7 +650,8 @@ const INITIAL_DPT = [
   {
     "npa": "01056",
     "name": "Bambang Pratesa Atmodipurwo",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -631,7 +665,8 @@ const INITIAL_DPT = [
   {
     "npa": "01061",
     "name": "Ruskamto Soeripto",
-    "email": "rsoeripto@yahoo.com",
+    "email": "rs***@yahoo.com",
+    "email_hash": "729e71be7fe80eae8b5225a806599bb913f4cebf4a262d8a8224a6028879ef33",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -645,7 +680,8 @@ const INITIAL_DPT = [
   {
     "npa": "01063",
     "name": "Johan Arief",
-    "email": "johan.arif@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "eb6f59d99600a07dc2990db4073bb98b9bf1a6b9db8d8fe470b535d0b160e4bf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -659,7 +695,8 @@ const INITIAL_DPT = [
   {
     "npa": "01070",
     "name": "Sari Bahagiarti Kusumayudha",
-    "email": "saribk@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "fe5fe7febf4c5808311260d629cc6237eefe7aabcacf735619a44c343007553d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -673,7 +710,8 @@ const INITIAL_DPT = [
   {
     "npa": "01076",
     "name": "Joko Soesilo",
-    "email": "j_soesilo@upnyk.ac.id",
+    "email": "j_***@upnyk.ac.id",
+    "email_hash": "f089ca1e7ea685a75f788367ba3401f660b98d057b327c8479dd6f63aa0ee63f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -687,7 +725,8 @@ const INITIAL_DPT = [
   {
     "npa": "01087",
     "name": "Gusti Bagus Eddy Sucipta",
-    "email": "sucipta68@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "78a25849b9dab3648a0fdf24c68d0162478478ed4eca6272123458a27f1849ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -701,7 +740,8 @@ const INITIAL_DPT = [
   {
     "npa": "01101",
     "name": "Aswan",
-    "email": "aswan_gl@gl.itb.ac.id",
+    "email": "as***@gl.itb.ac.id",
+    "email_hash": "ac23825385f999041cfdb8f6afe6d2603f0d2b55ee650c48a2806fd3d5d43209",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -715,7 +755,8 @@ const INITIAL_DPT = [
   {
     "npa": "01107",
     "name": "JG Nara Nilandaroe",
-    "email": "nara.nilandaroe@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "404161ae9cc5a8b5227eb290fc6c1fdc146d6774f99c7bf2ee49c73d1961d1f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -729,7 +770,8 @@ const INITIAL_DPT = [
   {
     "npa": "01120",
     "name": "Yuliana Astrinita Pane",
-    "email": "yuliana.pane@geoservices.co.id",
+    "email": "yu***@geoservices.co.id",
+    "email_hash": "4742f4b965cbbda8df1461c573159ce7f3847aaf75905a61ecda7593129cfbcc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -743,7 +785,8 @@ const INITIAL_DPT = [
   {
     "npa": "01121",
     "name": "Bambang Setiyadi",
-    "email": "bambang@chevron.com",
+    "email": "ba***@chevron.com",
+    "email_hash": "3c4682aec422c68471514077174689f59eedf1e255af5fb548552e8ec0ee4011",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -757,7 +800,8 @@ const INITIAL_DPT = [
   {
     "npa": "01122",
     "name": "Mochamad Slamet Sugiharto",
-    "email": "slamet.sugiharto@gmail.com",
+    "email": "sl***@gmail.com",
+    "email_hash": "bf710a612bec101f3f0d71d947cfdf19f77605e5fb92d5d8483fbfa586b84aca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -771,7 +815,8 @@ const INITIAL_DPT = [
   {
     "npa": "01123",
     "name": "Avicenia Darwis",
-    "email": "Aviceniadarwis1212@gmail.com",
+    "email": "Av***@gmail.com",
+    "email_hash": "5b0abd00640ba9f7b840d18efba28a93c9716e53f2afb95de7e076b0c9b5e564",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -785,7 +830,8 @@ const INITIAL_DPT = [
   {
     "npa": "01126",
     "name": "Nurcahyo Indro Basuki",
-    "email": "basuki68@hotmail.com",
+    "email": "ba***@hotmail.com",
+    "email_hash": "73d682a92aaed73bb8d7afb5941c56695d1540471361fd095965ce9e1e090195",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -799,7 +845,8 @@ const INITIAL_DPT = [
   {
     "npa": "01140",
     "name": "Nanang Abdul Manaf",
-    "email": "nanang.manaf@esdm.go.id",
+    "email": "na***@esdm.go.id",
+    "email_hash": "248263b5d8cdb406021dc1e904e95a3e0c6c500300fc640ef580439980975945",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -813,7 +860,8 @@ const INITIAL_DPT = [
   {
     "npa": "01142",
     "name": "Arif Zardi Dahlius",
-    "email": "zardidahlius@yahoo.com",
+    "email": "za***@yahoo.com",
+    "email_hash": "ea7f74d38f3fd57f6d8c0312df5e00680fb93a65aec06fc3b50872e382b2666d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -827,7 +875,8 @@ const INITIAL_DPT = [
   {
     "npa": "01170",
     "name": "Doni Hernadi",
-    "email": "dhsuwandi@gmail.com",
+    "email": "dh***@gmail.com",
+    "email_hash": "7944692f7920d5038593feb0508475f33737bd094fb77d1f05afbea65fa7c677",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -841,7 +890,8 @@ const INITIAL_DPT = [
   {
     "npa": "01174",
     "name": "Zulkifli Abubakar",
-    "email": "abubakarzulkifli06@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "318988e28095da9e3c4f815f79915be7a54cbd44d152e1580e91290c4db27aa3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -855,7 +905,8 @@ const INITIAL_DPT = [
   {
     "npa": "01198",
     "name": "Richard Hasudungan Tamba",
-    "email": "rh2tamba@yahoo.com",
+    "email": "rh***@yahoo.com",
+    "email_hash": "75e58f19c24f4f77ffb41026bd17093b6148d2291fc2d8165761577781bc4ed9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -869,7 +920,8 @@ const INITIAL_DPT = [
   {
     "npa": "01230",
     "name": "Rr Julisa Moertoetyana",
-    "email": "julisa.rastafari@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "e5c28a94e3b3bf553dccc1d2cae4284626a513f25c9b04ab3e6e314f0adcf403",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -883,7 +935,8 @@ const INITIAL_DPT = [
   {
     "npa": "01246",
     "name": "Edison Sirodj",
-    "email": "esiroj@yahoo.com",
+    "email": "es***@yahoo.com",
+    "email_hash": "f44900838fcf85aee684fdf46ff8efc8b8cf9d58268ac1117a8f90055a6e3e24",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -897,7 +950,8 @@ const INITIAL_DPT = [
   {
     "npa": "01251",
     "name": "Mohamad Wahyudin",
-    "email": "mwahyudin1205@gmail.com",
+    "email": "mw***@gmail.com",
+    "email_hash": "7deb84ee6a022764b4f042d2848248fde35e87ff251a89e22eddf901425dae76",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -911,7 +965,8 @@ const INITIAL_DPT = [
   {
     "npa": "01260",
     "name": "Sugeng Hartono",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -925,7 +980,8 @@ const INITIAL_DPT = [
   {
     "npa": "01265",
     "name": "Gadjah E Pireno",
-    "email": "gadjah.pireno@gmail.com",
+    "email": "ga***@gmail.com",
+    "email_hash": "cc01adcccce2362fdf455a120bff665bd7f6cd28de4178f9d0bf0835ee2b36a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -939,7 +995,8 @@ const INITIAL_DPT = [
   {
     "npa": "01277",
     "name": "Aris Setiawan",
-    "email": "pak.aris@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "7469fe1561e299c5923bfe82ab8ba76a8bcef8728e750fb68e5defac21a34cc8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -953,7 +1010,8 @@ const INITIAL_DPT = [
   {
     "npa": "01311",
     "name": "Shinta Damayanti",
-    "email": "sdgeologi@gmail.com",
+    "email": "sd***@gmail.com",
+    "email_hash": "54cda9bb824d646567e838c3ba9a93338356ba78df75693dc61666525fd513a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -967,7 +1025,8 @@ const INITIAL_DPT = [
   {
     "npa": "01322",
     "name": "Prihadi Sumintadireja A",
-    "email": "prihadi@gl.itb.ac.id",
+    "email": "pr***@gl.itb.ac.id",
+    "email_hash": "07c458361659def727119e851284c0a81c7d997f141f3915347d1603e61e10b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -981,7 +1040,8 @@ const INITIAL_DPT = [
   {
     "npa": "01330",
     "name": "Hendra C Baskara",
-    "email": "hbaskara@gmail.com",
+    "email": "hb***@gmail.com",
+    "email_hash": "09fa1aab0cd9f672e6dddaec903b05f7fbb0fb536adea6f1d02d6d37107529e7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -995,7 +1055,8 @@ const INITIAL_DPT = [
   {
     "npa": "01333",
     "name": "Indra Jaya",
-    "email": "indrajaya02@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "d59eb5c47f5c67e6bd1ba1749e6abfbde0bebb31aaf360ba2154f2ad4c5a04da",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1009,7 +1070,8 @@ const INITIAL_DPT = [
   {
     "npa": "01337",
     "name": "Kuncoro Kukuh",
-    "email": "kuncoro_kukuh@yahoo.com",
+    "email": "ku***@yahoo.com",
+    "email_hash": "ea498d0087fb80ed2de8518daebdbd0b4070b0766553e6e69b20aa0d51253626",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1023,7 +1085,8 @@ const INITIAL_DPT = [
   {
     "npa": "01339",
     "name": "ALukito Notoprodjo",
-    "email": "lukiton@cbn.net.id",
+    "email": "lu***@cbn.net.id",
+    "email_hash": "55a26b6cf5fe16e072718ba02185cf39e40fb337b3e123b2c7b596b0d38ee094",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1037,7 +1100,8 @@ const INITIAL_DPT = [
   {
     "npa": "01350",
     "name": "Bambang Irawan",
-    "email": "b.irawan.gea@gmail.com",
+    "email": "b.***@gmail.com",
+    "email_hash": "5bc087bc7e83a4521beacca8dbb491f61ba380351db4a2b8685929c206ed803f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1051,7 +1115,8 @@ const INITIAL_DPT = [
   {
     "npa": "01355",
     "name": "Adi Maryono",
-    "email": "maryono.adi@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "abfb6493504d7da69d9a1dbe8d097ad611122b33a07345dd3e9033cbd4c21b47",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1065,7 +1130,8 @@ const INITIAL_DPT = [
   {
     "npa": "01360",
     "name": "Eddy A Subroto",
-    "email": "eddysubroto73@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "9753efa193dc5534f91e24dc240c3c245362ba6cab1a2544ddf0e9e5315e9677",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1079,7 +1145,8 @@ const INITIAL_DPT = [
   {
     "npa": "01362",
     "name": "Edy Sunardi",
-    "email": "edy.sunardi@unpad.ac.id",
+    "email": "ed***@unpad.ac.id",
+    "email_hash": "eb7543bd7abe0cd7e096159d4a911236973e0213d955563384b695eafbef1ae3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1093,7 +1160,8 @@ const INITIAL_DPT = [
   {
     "npa": "01371",
     "name": "Mega Fatimah Rosana",
-    "email": "mega.fatimah.rosana@unpad.ac.id",
+    "email": "me***@unpad.ac.id",
+    "email_hash": "10b50ddaacc2e9b726accbd136f959bdc6c80ec096595134093d582aa71fc8cf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1107,7 +1175,8 @@ const INITIAL_DPT = [
   {
     "npa": "01380",
     "name": "Sukmandaru Prihatmoko",
-    "email": "sprihatmoko@gmail.com",
+    "email": "sp***@gmail.com",
+    "email_hash": "91d3a65a8824730e85f9cc20e088fbcf8184abdf5cd9afd94026714761f9c9ee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1121,7 +1190,8 @@ const INITIAL_DPT = [
   {
     "npa": "01396",
     "name": "M Mochtar Djamaludin",
-    "email": "mochtardijey@yahoo.com",
+    "email": "mo***@yahoo.com",
+    "email_hash": "aadaaf0091f469fd5547228c6c9c59b3573dd89a8a8c9dee2c0e7441f4ba6da0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1135,7 +1205,8 @@ const INITIAL_DPT = [
   {
     "npa": "01409",
     "name": "Tavip Setiawan",
-    "email": "tavip.setiawan@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "eb0a7b6ec2b4be43ce8272db235a6eafe8f87976431ba6b1842cd3115900907d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1149,7 +1220,8 @@ const INITIAL_DPT = [
   {
     "npa": "01417",
     "name": "Achmad Alfian Husein",
-    "email": "a.alfianhusein@gmail.com",
+    "email": "a.***@gmail.com",
+    "email_hash": "36be4035ec6098de461fde99349d7cc2fc55c312a87f6c2964eec5c846e60d15",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1163,7 +1235,8 @@ const INITIAL_DPT = [
   {
     "npa": "01418",
     "name": "Awang Harun Satyana",
-    "email": "aharunsatyana@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "1e01a8188843181b46b95ca396424b2904724d6a0b72709a6fac5fdfcfe6f863",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1177,7 +1250,8 @@ const INITIAL_DPT = [
   {
     "npa": "01444",
     "name": "Tedi Herdian",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1191,7 +1265,8 @@ const INITIAL_DPT = [
   {
     "npa": "01448",
     "name": "Suwarno",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1205,7 +1280,8 @@ const INITIAL_DPT = [
   {
     "npa": "01452",
     "name": "Kamsyadi Chairul Akbar",
-    "email": "kamsyadi@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "dcbbf659027bafe3d450f4c8b721c5928ebec7c024ba111766007d88b1128e00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1219,7 +1295,8 @@ const INITIAL_DPT = [
   {
     "npa": "01458",
     "name": "Nurhayati",
-    "email": "nurhayati.n@pertamina.com",
+    "email": "nu***@pertamina.com",
+    "email_hash": "92fed552ddddfd1002605855e01be1baedcbed3bc2e165438a669df926664ed1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1233,7 +1310,8 @@ const INITIAL_DPT = [
   {
     "npa": "01468",
     "name": "R Arif Perdanakusumah",
-    "email": "aper0513@corp.newmont.com",
+    "email": "ap***@corp.newmont.com",
+    "email_hash": "5a5edc85eabeef6e9f40129986cbe12402c08b408b67b4af44c6c3e410bcf068",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1247,7 +1325,8 @@ const INITIAL_DPT = [
   {
     "npa": "01483",
     "name": "Herman Darman",
-    "email": "herman_darman@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "0cd586c9ab2ad7ceaa0717c3ddce77cb5819bf98b3fdb3ac7476af773839ffcc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1261,7 +1340,8 @@ const INITIAL_DPT = [
   {
     "npa": "01529",
     "name": "Eko Teguh Paripurno",
-    "email": "paripurno@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "13bf62cd85759c39b8a541a5c746a286cc1578da246d9037440e7e33b43e31c1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1275,7 +1355,8 @@ const INITIAL_DPT = [
   {
     "npa": "01551",
     "name": "Siti Umiyatun Choiriah",
-    "email": "umiyatunch@yahoo.com",
+    "email": "um***@yahoo.com",
+    "email_hash": "8b9595d9bf943fb609aa919b065ecaf320054c12f1d1f948c0d6d4facabf8b7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1289,7 +1370,8 @@ const INITIAL_DPT = [
   {
     "npa": "01553",
     "name": "Sugeng Widada Hadiharja",
-    "email": "sugengwidada@upnyk.ac.id",
+    "email": "su***@upnyk.ac.id",
+    "email_hash": "0f8bc189bd7f06dedbd994c8480e5348c1ad9512d1f73a671338afed0ae22a41",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1303,7 +1385,8 @@ const INITIAL_DPT = [
   {
     "npa": "01556",
     "name": "Sutarto",
-    "email": "sutarto_geoupn@yahoo.co.id",
+    "email": "su***@yahoo.co.id",
+    "email_hash": "b2ea31202fd426451efebb1a95b90b5b53d93834f2eda322443a7484c4b765fb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1317,7 +1400,8 @@ const INITIAL_DPT = [
   {
     "npa": "01560",
     "name": "Sapto Kis Daryono",
-    "email": "kisdaryono36@yahoo.com",
+    "email": "ki***@yahoo.com",
+    "email_hash": "eaf51cda25119feab8caf422e52ec1eaa62ef66ba9722b2eb5a6fb88aae5a012",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1331,7 +1415,8 @@ const INITIAL_DPT = [
   {
     "npa": "01573",
     "name": "Irianto Sujai",
-    "email": "iriantosunjai3@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "c534e49615b4a3198dfc2d1eb25c8cd04edd38ffe72c158964c6db0376e347bb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1345,7 +1430,8 @@ const INITIAL_DPT = [
   {
     "npa": "01585",
     "name": "Alimin Ginting",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1359,7 +1445,8 @@ const INITIAL_DPT = [
   {
     "npa": "01590",
     "name": "Minarwan",
-    "email": "minarwanx@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "21b025a4cd523e96f429cf50b591d01e707288d20207b25ad8fc8254be414077",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1373,7 +1460,8 @@ const INITIAL_DPT = [
   {
     "npa": "01592",
     "name": "Hilman Sobir",
-    "email": "Hilmsn78@gmail.com",
+    "email": "Hi***@gmail.com",
+    "email_hash": "f4231d891eea44410a78edf02787caff579fdd7e0b0ff1d8500d1dfc5ee6d784",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1387,7 +1475,8 @@ const INITIAL_DPT = [
   {
     "npa": "01641",
     "name": "Kuntadi Nugrahanto",
-    "email": "kuntadin.pasca@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "2dca8912d6d79cb9aedcc264f0809fe8e93b8ee95f153867219d922a19be56b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1401,7 +1490,8 @@ const INITIAL_DPT = [
   {
     "npa": "01646",
     "name": "Mohammad Syaiful",
-    "email": "mohammadsyaiful@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "7b747f7fbd394cfea4ef64999b62be5e5a43976a89120e56a91a9ebb0de7eb31",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1415,7 +1505,8 @@ const INITIAL_DPT = [
   {
     "npa": "01655",
     "name": "Jarot Setyowiyoto",
-    "email": "jsetyowiyoto@gmail.com",
+    "email": "js***@gmail.com",
+    "email_hash": "9e906ecd66a9f13b5d641133ce7f7e428499bfaabdb377f8c6ef8300f2099a59",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1429,7 +1520,8 @@ const INITIAL_DPT = [
   {
     "npa": "01656",
     "name": "Niniek Rina Herdianita",
-    "email": "herdianita@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "eee117b871ce415efd7222b9554216395d7b8a07ccb5cd671b3324372884fb92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1443,7 +1535,8 @@ const INITIAL_DPT = [
   {
     "npa": "01664",
     "name": "Benyamin",
-    "email": "benyamin@trisakti.ac.id",
+    "email": "be***@trisakti.ac.id",
+    "email_hash": "ce820ac3bbf3c1a44c3fbd099a19be750460f118306d104789573cd32cf242f2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1457,7 +1550,8 @@ const INITIAL_DPT = [
   {
     "npa": "01668",
     "name": "Arinta Dewi",
-    "email": "arinta2110@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "1545fa585a04a19878e584a237de8e0fb7a20c39b00d2a3e2621a511645f8d15",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1471,7 +1565,8 @@ const INITIAL_DPT = [
   {
     "npa": "01672",
     "name": "Bambang Irawan Rintomulyo",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1485,7 +1580,8 @@ const INITIAL_DPT = [
   {
     "npa": "01722",
     "name": "lrawadi Prihaswan",
-    "email": "irawadi.prihaswan@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "1d73785afe8ceca49acdfc3771d1472f7d519bdcf58e1f16eead11d25005dd54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1499,7 +1595,8 @@ const INITIAL_DPT = [
   {
     "npa": "01758",
     "name": "Ricky Adi Wibowo",
-    "email": "rickyadiwibowo@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "aa4ac733fc20c6929274d878c2189a91368d9f87d3731f4bb480f7032634ca13",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1513,7 +1610,8 @@ const INITIAL_DPT = [
   {
     "npa": "01782",
     "name": "Theodorus Duma",
-    "email": "tduma1962@gmail.com",
+    "email": "td***@gmail.com",
+    "email_hash": "209c603b7ebe8df9bccbe4fce14e9f43b2a04590699f8f6ce5a70887712edd5e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1527,7 +1625,8 @@ const INITIAL_DPT = [
   {
     "npa": "01794",
     "name": "Afiat Anugrahadi",
-    "email": "afiat@trisakti.ac.id",
+    "email": "af***@trisakti.ac.id",
+    "email_hash": "da1a68abe48e4740bb291630fcb6c3a55e7c992403fccacd15cc8783c34e30b1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1541,7 +1640,8 @@ const INITIAL_DPT = [
   {
     "npa": "01799",
     "name": "Johanes Hutabarat",
-    "email": "j.hutabarat@unpad.ac.id",
+    "email": "j.***@unpad.ac.id",
+    "email_hash": "cb5cb179eeee07c5f72a027c8b267f67621c6c5599264e7337547555ffc8e377",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1555,7 +1655,8 @@ const INITIAL_DPT = [
   {
     "npa": "01818",
     "name": "Undang Mardiana",
-    "email": "undang.mardiana@unpad.ac.id",
+    "email": "un***@unpad.ac.id",
+    "email_hash": "dfeda64f2872d29e53ffde74524d38b94d7534b6858bebd24d2b38b7c247c9e1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1569,7 +1670,8 @@ const INITIAL_DPT = [
   {
     "npa": "01819",
     "name": "Meirince Pumama Simarmata",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1583,7 +1685,8 @@ const INITIAL_DPT = [
   {
     "npa": "01829",
     "name": "Ari Samodra",
-    "email": "arisamodra1212@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "6402d6adc3d5fc7724ea34ffa79f7eea2a73a9770656f20752037e31980fea25",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1597,7 +1700,8 @@ const INITIAL_DPT = [
   {
     "npa": "01838",
     "name": "Made Oka Iriana Pande",
-    "email": "pandeiriana@centrin.net.id",
+    "email": "pa***@centrin.net.id",
+    "email_hash": "2933749fa57d5c46f484c1b46fc1f5115be967957f0734b1a6c44f206a02dd86",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1611,7 +1715,8 @@ const INITIAL_DPT = [
   {
     "npa": "01899",
     "name": "Yarmanto",
-    "email": "yarmantohardjosuparto@gmail.com",
+    "email": "ya***@gmail.com",
+    "email_hash": "75dbfc47ab5f41ea842758c0bc8e11b46f4317756de103b820c8dc70ac90d3e6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1625,7 +1730,8 @@ const INITIAL_DPT = [
   {
     "npa": "01918",
     "name": "Tumbur H p Nainggolan",
-    "email": "tumbur@jakarta.geoquest.slb.com",
+    "email": "tu***@jakarta.geoquest.slb.com",
+    "email_hash": "5bb534dd755fe41de679a3cb725777d2c9ffca3dccdb855a96094f1da79ae1fd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1639,7 +1745,8 @@ const INITIAL_DPT = [
   {
     "npa": "01920",
     "name": "Elly Evianti Guritno",
-    "email": "elly.guritno@gmail.com",
+    "email": "el***@gmail.com",
+    "email_hash": "b5abfe40343c7299e857fd2d637a5783baed6d9969ee33992894448929fd6c6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1653,7 +1760,8 @@ const INITIAL_DPT = [
   {
     "npa": "01921",
     "name": "Ridwan Djamaluddin",
-    "email": "ridwan.djamaluddin@esdm.go.id",
+    "email": "ri***@esdm.go.id",
+    "email_hash": "414a9264f3fdc73429474e3d9eb837955c11313368b8080caf5e05e02546daee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1667,7 +1775,8 @@ const INITIAL_DPT = [
   {
     "npa": "01925",
     "name": "Retno Widiastuti",
-    "email": "retno.k.sani@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "0c269840828b140637074b513cc7a98a8da3fbd3c5943cf9b777225df11551e6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1681,7 +1790,8 @@ const INITIAL_DPT = [
   {
     "npa": "01926",
     "name": "Lucilla Nugrahaningsih",
-    "email": "lnugrahaningsih@gmail.com",
+    "email": "ln***@gmail.com",
+    "email_hash": "161e84604f5c28553bff456a400f0f3215b5d86efba654543d0c576630762094",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1695,7 +1805,8 @@ const INITIAL_DPT = [
   {
     "npa": "01935",
     "name": "Siswantoro M p",
-    "email": "siswantoromardis63@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "98bfe6064c0234bb4314bab95b9b12d03cb8f7bb7bfc9741b2c10e5563068b00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1709,7 +1820,8 @@ const INITIAL_DPT = [
   {
     "npa": "01936",
     "name": "Rusman Rinawan",
-    "email": "f_rinawan@yahoo.com",
+    "email": "f_***@yahoo.com",
+    "email_hash": "722f245a926c786477e0bc58873cee1fb4733bede9124fa4b15a668ac05dd200",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1723,7 +1835,8 @@ const INITIAL_DPT = [
   {
     "npa": "01937",
     "name": "Setyo Pambudi",
-    "email": "pambudisetyo@yahoo.com",
+    "email": "pa***@yahoo.com",
+    "email_hash": "012ecd22770a6309e877acba7333e12a758f1d5507c1faa1e12534670c70d1de",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1737,7 +1850,8 @@ const INITIAL_DPT = [
   {
     "npa": "01944",
     "name": "Emi Sukiyah",
-    "email": "emi.sukiyah@unpad.ac.id",
+    "email": "em***@unpad.ac.id",
+    "email_hash": "58747e15555a02365dc27c0b0ef44b2872a812aea8e9fe4a04312f99b486eddb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1751,7 +1865,8 @@ const INITIAL_DPT = [
   {
     "npa": "01958",
     "name": "Basuki Setiawan",
-    "email": "be.setiawan.geos@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "e9098a27a75281ed1e3c1be34e13e8bc7cff3fb564eddaf4a21fc7ebf3c011b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1765,7 +1880,8 @@ const INITIAL_DPT = [
   {
     "npa": "01973",
     "name": "Dudy Setyandhaka",
-    "email": "dudy.elli@gmail.com",
+    "email": "du***@gmail.com",
+    "email_hash": "297bff3ce35010874384e44650f109fa4e474f381017198b7a88d5b621896aa6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1779,7 +1895,8 @@ const INITIAL_DPT = [
   {
     "npa": "01982",
     "name": "Hendro Hari Santoso",
-    "email": "hhs_dua001@yahoo.com",
+    "email": "hh***@yahoo.com",
+    "email_hash": "f50953dbd41a64163192b65d915daaf2a507f06d0fc317fd9876f18dba09ff4b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1793,7 +1910,8 @@ const INITIAL_DPT = [
   {
     "npa": "01997",
     "name": "Heri Budiarso",
-    "email": "kulilengo@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "4fb0b7edc92784993e95e811e27a6b303031a99417f82f267f89c03ea95a7dbe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1807,7 +1925,8 @@ const INITIAL_DPT = [
   {
     "npa": "02007",
     "name": "C Malla Meidianna",
-    "email": "cmalla_yk@yahoo.com",
+    "email": "cm***@yahoo.com",
+    "email_hash": "8788632cb65f36e29fae94d7008a979cd1a6f9fb8bf800ecaa1e1c1552fafc7a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1821,7 +1940,8 @@ const INITIAL_DPT = [
   {
     "npa": "02008",
     "name": "APujianto",
-    "email": "apujianto@yahoo.com",
+    "email": "ap***@yahoo.com",
+    "email_hash": "8335e78a6af577762126fb3fd5868ee362b653e4c91220c4ee593cd42714655b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1835,7 +1955,8 @@ const INITIAL_DPT = [
   {
     "npa": "02012",
     "name": "Trenggono Sutioso",
-    "email": "sutioso@yahoo.co.id",
+    "email": "su***@yahoo.co.id",
+    "email_hash": "85e1f15834716b67347f58c28dd9e9457a13d6efd8a4c927ddd5321a2a09aa20",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1849,7 +1970,8 @@ const INITIAL_DPT = [
   {
     "npa": "02035",
     "name": "Rudi Mashuri",
-    "email": "rudimash10@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "78d86032e6aabc9e3909843d1785516e798b56929a0d095a05ab71feb13a9291",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1863,7 +1985,8 @@ const INITIAL_DPT = [
   {
     "npa": "02036",
     "name": "Imam Achmad Sadisun",
-    "email": "sadisun@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "7f4c0856273c0bb51a3ad298defa5c9d6a84bfae63e9f1e3a92593c91e90227e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1877,7 +2000,8 @@ const INITIAL_DPT = [
   {
     "npa": "02038",
     "name": "Sani Hendra Gunawan",
-    "email": "sani.gunawan@geoservices.co.id",
+    "email": "sa***@geoservices.co.id",
+    "email_hash": "877fd30a9542ede0691d63e4cc3ac273c8e0425e29ede7beb8ffb3a6085ca787",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1891,7 +2015,8 @@ const INITIAL_DPT = [
   {
     "npa": "02039",
     "name": "Moehammad Ali Jambak",
-    "email": "ali@trisakti.ac.id",
+    "email": "al***@trisakti.ac.id",
+    "email_hash": "c7060aabd557fffca34114812688eab89db08867ea6deb42238c07ff2145ce6e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1905,7 +2030,8 @@ const INITIAL_DPT = [
   {
     "npa": "02053",
     "name": "Hill Gendoet Hartono",
-    "email": "hilghartono@itny.ac.id",
+    "email": "hi***@itny.ac.id",
+    "email_hash": "e6ebc739f8768bf734e00dfce694f1705e4c3b430694c66a7550a18e48dfab59",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1919,7 +2045,8 @@ const INITIAL_DPT = [
   {
     "npa": "02055",
     "name": "Junita Trivianty Musu",
-    "email": "junita.musu@blulemigas.com",
+    "email": "ju***@blulemigas.com",
+    "email_hash": "cee2e9a144a53242c8dd3f44b6c9c9cbae4d29e9df34672e57e2cc9e5c8825b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1933,7 +2060,8 @@ const INITIAL_DPT = [
   {
     "npa": "02056",
     "name": "Muhammad Burhannudinnur",
-    "email": "burhannudinnur@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "e1a18b7bf16191309232c57b6a0fc944fa239611544edcc4a9d399cd52809bbb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1947,7 +2075,8 @@ const INITIAL_DPT = [
   {
     "npa": "02057",
     "name": "Dewi Syavitri",
-    "email": "dewisyavitri@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "e4f522726c71006c175b0ece4689284661525cfd4173c1ff143d0f1d9bf721a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1961,7 +2090,8 @@ const INITIAL_DPT = [
   {
     "npa": "02062",
     "name": "Adi Sjoekri",
-    "email": "adi.sjoekri@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "98998d890c01fe4fa95b77712753bca61cc7668e8a1ec887889295363f5495fb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1975,7 +2105,8 @@ const INITIAL_DPT = [
   {
     "npa": "02063",
     "name": "Sonny Budhie W Kaliyan",
-    "email": "kaliyansonny@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "1ce2d2775ee442dd4b010e2c321b96c5842292171485f16aadd8ca562095eea5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -1989,7 +2120,8 @@ const INITIAL_DPT = [
   {
     "npa": "02075",
     "name": "Imam B Sosrowidjojo",
-    "email": "sosrowidjojo@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "8112e3acc0319b8619f3bc6c7e1e582ef09f9372baf1e92c931727ad734398b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2003,7 +2135,8 @@ const INITIAL_DPT = [
   {
     "npa": "02076",
     "name": "Indra Badri",
-    "email": "indrabadri3@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "21277ab25f0ac49a71e2ee42b9117434d9e52183ab21a59e04c9f3bee207f63e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2017,7 +2150,8 @@ const INITIAL_DPT = [
   {
     "npa": "02096",
     "name": "Andri Slamet Subandrio Mubandi",
-    "email": "andrissubandrio@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "583c4a988be6eb38a6afc5e26e2688bf54ac55a7b180ae97ef07e6fbf70d9627",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2031,7 +2165,8 @@ const INITIAL_DPT = [
   {
     "npa": "02103",
     "name": "aria anugraha",
-    "email": "aria.geocomputing@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "1a6a1e11bfecc9e6cd44f79ae86458b624ad17cc9c51c5ace6ca966e88f2c8d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2045,7 +2180,8 @@ const INITIAL_DPT = [
   {
     "npa": "02114",
     "name": "Agus Guntoro",
-    "email": "guntoroagus51@yahoo.com",
+    "email": "gu***@yahoo.com",
+    "email_hash": "aea70fce8401055d58917ce5016eb265fecbc95b49988ea6a96867c47e9ad73b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2059,7 +2195,8 @@ const INITIAL_DPT = [
   {
     "npa": "02115",
     "name": "Busthan Azkin",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2073,7 +2210,8 @@ const INITIAL_DPT = [
   {
     "npa": "02126",
     "name": "Ratih Nurruhliati",
-    "email": "rnurruhliati@gmail.com",
+    "email": "rn***@gmail.com",
+    "email_hash": "8f43d1b2e6b5a2add0988de2fe4822c49ca7f250b39c6676a52c185a34d329a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2087,7 +2225,8 @@ const INITIAL_DPT = [
   {
     "npa": "02130",
     "name": "Iceu Cahyani",
-    "email": "icecahyani@yahoo.com",
+    "email": "ic***@yahoo.com",
+    "email_hash": "039d234d3f1e15c9e31951d84b597f6b79723a1884fc4d2b56bdb9c51b5e559d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2101,7 +2240,8 @@ const INITIAL_DPT = [
   {
     "npa": "02142",
     "name": "Widyo Yudanto",
-    "email": "widyo90@yahoo.com",
+    "email": "wi***@yahoo.com",
+    "email_hash": "ecb546fa39aa2f64d53c8ebe36e90263708efb8f00b30cb22adcd43929529746",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2115,7 +2255,8 @@ const INITIAL_DPT = [
   {
     "npa": "02150",
     "name": "James P Llorca",
-    "email": "james.llorca@bpi.vic.gov.au",
+    "email": "ja***@bpi.vic.gov.au",
+    "email_hash": "2b3937e9f2bde354e2c77c301f4cacc1aa16664e6379405665e514c30d2bb472",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2129,7 +2270,8 @@ const INITIAL_DPT = [
   {
     "npa": "02157",
     "name": "Lucas Donny Setijadji",
-    "email": "lucas_donny@yahoo.com",
+    "email": "lu***@yahoo.com",
+    "email_hash": "969e50d105b7906ae91813478cd578e25f9d74ff18661bee31e202beb18d6c93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2143,7 +2285,8 @@ const INITIAL_DPT = [
   {
     "npa": "02167",
     "name": "Mufdi Firdaus",
-    "email": "mufdi.firdaus@esdm.go.id",
+    "email": "mu***@esdm.go.id",
+    "email_hash": "cd0909c98b6a9ba11fec7fbdcf6d3b88604712b613e48be5360091d2187d707e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2157,7 +2300,8 @@ const INITIAL_DPT = [
   {
     "npa": "02169",
     "name": "Gde Handojo Tutuko",
-    "email": "ghtuko@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "941a346e8e482aa1f828acdd1b2da8f8fb6f23c5d164a549f3738fbcec0147d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2171,7 +2315,8 @@ const INITIAL_DPT = [
   {
     "npa": "02179",
     "name": "M munir Zein Damar Pandulu",
-    "email": "naufal_dary@yahoo.com",
+    "email": "na***@yahoo.com",
+    "email_hash": "f962fee82954a5aebaa2c1f50bf8ad956fd40bfb11c0e02d07a884cf4e4a2baf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2185,7 +2330,8 @@ const INITIAL_DPT = [
   {
     "npa": "02183",
     "name": "Sandiaji",
-    "email": "rafifatari@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "48d5d1ab6aa43ce1685f937ca96eb9e0f2eded769679663ad700dc5f52bbd8b5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2199,7 +2345,8 @@ const INITIAL_DPT = [
   {
     "npa": "02185",
     "name": "Ade Firman",
-    "email": "ade.firman@esdm.go.id",
+    "email": "ad***@esdm.go.id",
+    "email_hash": "9b151510ec6378647629113429356e4d56fcb6493a323f8826a1b70e3d214779",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2213,7 +2360,8 @@ const INITIAL_DPT = [
   {
     "npa": "02204",
     "name": "Sugeng Widodo",
-    "email": "sugewidodo@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "a60f475732e7170f6f1ebe5ff02afc83ec841eae8165a28a1a44c60a7e1c15c5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2227,7 +2375,8 @@ const INITIAL_DPT = [
   {
     "npa": "02205",
     "name": "Harman Setyadi",
-    "email": "setyadi.harman@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "8e6c3ae64231dd3b99c4609cd23023217f39bb6dc859da3b221bf65f9702d34a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2241,7 +2390,8 @@ const INITIAL_DPT = [
   {
     "npa": "02208",
     "name": "Bowo Kusnanto",
-    "email": "bowo.kusnanto@gmail.com",
+    "email": "bo***@gmail.com",
+    "email_hash": "aaabacf8ed79bce670c1c621095bf9ba234d8e6985fdaea90a185cc004294caa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2255,7 +2405,8 @@ const INITIAL_DPT = [
   {
     "npa": "02212",
     "name": "Kristanto Witjaksono",
-    "email": "kriswitj@gmail.com",
+    "email": "kr***@gmail.com",
+    "email_hash": "fc0937c2331bec69acd5b6861dac8b9cd760ee0b3bd4b14f62890f01b51b8b6f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2269,7 +2420,8 @@ const INITIAL_DPT = [
   {
     "npa": "02213",
     "name": "Irma Hesti Widyastini",
-    "email": "irma_hesty@yahoo.com",
+    "email": "ir***@yahoo.com",
+    "email_hash": "1b544dc94bbb03a5e2f5a40f131bacbf1e61ee60189c38edfb7162cd01d6d228",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2283,7 +2435,8 @@ const INITIAL_DPT = [
   {
     "npa": "02217",
     "name": "Nazliyati",
-    "email": "nazliyatin@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "4fd855ef9f1367002070d6097613753be08bbda6468cc60ca3cfba5155ee1536",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2297,7 +2450,8 @@ const INITIAL_DPT = [
   {
     "npa": "02225",
     "name": "Dodi Ruyadi",
-    "email": "d_ruyadi@yahoo.com",
+    "email": "d_***@yahoo.com",
+    "email_hash": "df4ba8292fb24104fbe6b7d5ec85df7ca892905e27d65ff46e5a0e5138984716",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2311,7 +2465,8 @@ const INITIAL_DPT = [
   {
     "npa": "02250",
     "name": "Nur Wiwoho",
-    "email": "nurwiwoho1@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "8565f3c194cc1ebb10c56108e82028f0b59f5f6b408c2dc65616d1b68ca3e726",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2325,7 +2480,8 @@ const INITIAL_DPT = [
   {
     "npa": "02266",
     "name": "Purnomo Raharjo",
-    "email": "uwemgi@gmail.com",
+    "email": "uw***@gmail.com",
+    "email_hash": "12d0efeeefda4eb7117ab0a86e7233a36903efc1d10c22ee318cda1d2440e154",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2339,7 +2495,8 @@ const INITIAL_DPT = [
   {
     "npa": "02290",
     "name": "Adi Hardiyono",
-    "email": "adi.hardiyono@unpad.ac.id",
+    "email": "ad***@unpad.ac.id",
+    "email_hash": "c0606f25dd42331a6c7eff6fa7f6d992c325a2918d5feb0ca9e3b1cc0b32e03b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2353,7 +2510,8 @@ const INITIAL_DPT = [
   {
     "npa": "02293",
     "name": "Bahal R Tambunan",
-    "email": "bahalraja@yahoo.com",
+    "email": "ba***@yahoo.com",
+    "email_hash": "503f3b2e54b5d0823b3903a1149a2324f39094eea618a1b384c03d70683f4a12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2367,7 +2525,8 @@ const INITIAL_DPT = [
   {
     "npa": "02298",
     "name": "Iswani Waryono",
-    "email": "isw4ni@gmail.com",
+    "email": "is***@gmail.com",
+    "email_hash": "bece0fa6847ee0456a865f28765224522595855474562be4219b356d4663e545",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2381,7 +2540,8 @@ const INITIAL_DPT = [
   {
     "npa": "02301",
     "name": "D Hendra Amijaya",
-    "email": "hamijaya@ugm.ac.id",
+    "email": "ha***@ugm.ac.id",
+    "email_hash": "06af7fdb9657559791c848b48f8c7711e51a5f74a361484f390b6c590ef31261",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2395,7 +2555,8 @@ const INITIAL_DPT = [
   {
     "npa": "02304",
     "name": "Harapan Coky Mulya Panjaitan",
-    "email": "coky_pan@yahoo.co.id",
+    "email": "co***@yahoo.co.id",
+    "email_hash": "f0eafb5dc456b2afb28bf76a39d42917180f43a76e114f07a91cede9065ce5ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2409,7 +2570,8 @@ const INITIAL_DPT = [
   {
     "npa": "02305",
     "name": "Sri Mulyaningsih",
-    "email": "sri_mulyaningsih@yahoo.com",
+    "email": "sr***@yahoo.com",
+    "email_hash": "0c63e6c973c66cbc876d1449b92ab506c30f8f2c5516bf579ff5f56da1cfb49a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2423,7 +2585,8 @@ const INITIAL_DPT = [
   {
     "npa": "02308",
     "name": "Eko Susanto",
-    "email": "ekoslathik@gmail.com",
+    "email": "ek***@gmail.com",
+    "email_hash": "4aa089be8d3a30126c600f6ca1dd5486e735e984acb0c744439493f91f5f1d29",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2437,7 +2600,8 @@ const INITIAL_DPT = [
   {
     "npa": "02322",
     "name": "Heru Sancoyo",
-    "email": "hsancoyo@gmail.com",
+    "email": "hs***@gmail.com",
+    "email_hash": "66747f1fc9979004c62582eadfe1e4e615feeb46967015a2f8d1f775d195580f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2451,7 +2615,8 @@ const INITIAL_DPT = [
   {
     "npa": "02329",
     "name": "Yosef Khairil Amin",
-    "email": "yosefka@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "cb952bdfe1f72cf75c084c73b02a6d6ee5989882439bdf4322fe014c8a7ba120",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2465,7 +2630,8 @@ const INITIAL_DPT = [
   {
     "npa": "02333",
     "name": "Dyki Trisnadi",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2479,7 +2645,8 @@ const INITIAL_DPT = [
   {
     "npa": "02338",
     "name": "Sugeng Sapto Surjono",
-    "email": "sugengssurjono@ugm.ac.id",
+    "email": "su***@ugm.ac.id",
+    "email_hash": "fdb2fce1de22e1da0d925eebab715216210fb3b0b1d383a7256cdad0a844b1c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2493,7 +2660,8 @@ const INITIAL_DPT = [
   {
     "npa": "02339",
     "name": "Robby Irfan Rafianto",
-    "email": "robby.rafianto@haritamineral.com",
+    "email": "ro***@haritamineral.com",
+    "email_hash": "085fcc2dae62895696c3bb049f72bc99f9f92b3190dd8a818d1d9d09c40e934d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2507,7 +2675,8 @@ const INITIAL_DPT = [
   {
     "npa": "02341",
     "name": "Pri Utami",
-    "email": "p.utami@ugm.ac.id",
+    "email": "p.***@ugm.ac.id",
+    "email_hash": "020c2bbb6dcda874eb2082d63f9790a9d824ea4c8eda7a5488baf142608fef9e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2521,7 +2690,8 @@ const INITIAL_DPT = [
   {
     "npa": "02343",
     "name": "Agus Hendratno",
-    "email": "gushendratno@yahoo.com",
+    "email": "gu***@yahoo.com",
+    "email_hash": "7fce031bc11c725297c43610d9674f9795d7fc248aab1070a5199e62fcfe7b02",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2535,7 +2705,8 @@ const INITIAL_DPT = [
   {
     "npa": "02351",
     "name": "Stj Budi Santoso",
-    "email": "stjbudisantoso@yahoo.com",
+    "email": "st***@yahoo.com",
+    "email_hash": "ab98eb96fae19367108e7d6f765ccfc0a30283e4fbec1127762c5a8a923f8e87",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2549,7 +2720,8 @@ const INITIAL_DPT = [
   {
     "npa": "02353",
     "name": "Sukanda Chandrahayat",
-    "email": "schayat@yahoo.com",
+    "email": "sc***@yahoo.com",
+    "email_hash": "795596dd16ccf6c24a5375178fcba3f39380aca84a82026ea6881184b8e5bf8e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2563,7 +2735,8 @@ const INITIAL_DPT = [
   {
     "npa": "02375",
     "name": "Aquardi Rachmat Suminar",
-    "email": "asuminar@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "c1a6c101589a8acc0181e2afc50b150373eb928f97803bb56548389c5bdbdbf0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2577,7 +2750,8 @@ const INITIAL_DPT = [
   {
     "npa": "02376",
     "name": "Hita Pandita",
-    "email": "hita@itny.ac.id",
+    "email": "hi***@itny.ac.id",
+    "email_hash": "108cffe7b99f82d08d2068790128b8a4182fb1fc319e6a0a5ffa1b0942586b2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2591,7 +2765,8 @@ const INITIAL_DPT = [
   {
     "npa": "02386",
     "name": "Agus Laesanpura",
-    "email": "laesanpu@gf.itb.ac.id",
+    "email": "la***@gf.itb.ac.id",
+    "email_hash": "9f81d4f4f15e127a150dd530523441624e448dafe3b04bdcdf697e2485836a9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2605,7 +2780,8 @@ const INITIAL_DPT = [
   {
     "npa": "02387",
     "name": "Edi Suwandi Utoro",
-    "email": "edi_suwandi@yahoo.com",
+    "email": "ed***@yahoo.com",
+    "email_hash": "5323c0220ad0e335ce268b9723f848871e07c6ffd8e35e5bcb76f6d772d5c8e0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2619,7 +2795,8 @@ const INITIAL_DPT = [
   {
     "npa": "02388",
     "name": "Milla Hayati Amlan",
-    "email": "mamlan@chevron.com",
+    "email": "ma***@chevron.com",
+    "email_hash": "56765c2a9cae0a911f8afb8d53706227a38fcf14101055ec48a60a38e88ebcfe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2633,7 +2810,8 @@ const INITIAL_DPT = [
   {
     "npa": "02394",
     "name": "Muhamad Firdaus",
-    "email": "dauz@komfreak.com",
+    "email": "da***@komfreak.com",
+    "email_hash": "31ac23cc22c641c79b5c4da1c68355f7559c89f4523d362c99a97b7ef3676e24",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2647,7 +2825,8 @@ const INITIAL_DPT = [
   {
     "npa": "02395",
     "name": "Wido Ananto",
-    "email": "wido.ananto@yahoo.com",
+    "email": "wi***@yahoo.com",
+    "email_hash": "0ce92d1ce284b6ce8a011f3de6d2fd763581222dc00fe2ab6f5aade965605fc8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2661,7 +2840,8 @@ const INITIAL_DPT = [
   {
     "npa": "02396",
     "name": "Arman Kusuma",
-    "email": "mand_xuzumach@lovemail.com",
+    "email": "ma***@lovemail.com",
+    "email_hash": "980385516d9ad519f0caa125e0c15e325b4bffadc07404ef380cf29830a45586",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2675,7 +2855,8 @@ const INITIAL_DPT = [
   {
     "npa": "02400",
     "name": "Pujo Rahmanto",
-    "email": "pujo.rahmanto@pertamina.com",
+    "email": "pu***@pertamina.com",
+    "email_hash": "f34e3644308f1c9291bba132903824ab12f3064efd2a9dbe43eea0df2a9f98e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2689,7 +2870,8 @@ const INITIAL_DPT = [
   {
     "npa": "02404",
     "name": "Tosnendo Ayub",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2703,7 +2885,8 @@ const INITIAL_DPT = [
   {
     "npa": "02409",
     "name": "Budi Sunarto",
-    "email": "budisunarto@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "a48866c218b26c938fb8d63d2c63054df1f95fd5a74cf0b72da426242df10f7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2717,7 +2900,8 @@ const INITIAL_DPT = [
   {
     "npa": "02417",
     "name": "Yulie Purwanti",
-    "email": "ddyulie@gmail.com",
+    "email": "dd***@gmail.com",
+    "email_hash": "cbf449b1c9ca1a6ef0c583f92ff47fca15b3f5ea40e84a389dad336c835e0899",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2731,7 +2915,8 @@ const INITIAL_DPT = [
   {
     "npa": "02418",
     "name": "Meutia Farida",
-    "email": "meutia.nugraha@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "bd85aa3fb7ba82ee7121effadab57d3a040a89aa2fbcdcb327e6b9f861109b78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2745,7 +2930,8 @@ const INITIAL_DPT = [
   {
     "npa": "02426",
     "name": "Deni Hernandi",
-    "email": "hermandi-boy@geologist.com",
+    "email": "he***@geologist.com",
+    "email_hash": "d330baa6c8278ed8edbaaf77c41defda3bf4146755391b2aeb70f2900f7d2eb0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2759,7 +2945,8 @@ const INITIAL_DPT = [
   {
     "npa": "02438",
     "name": "Riki Wandi Amri",
-    "email": "Riki.Amri@outlook.com",
+    "email": "Ri***@outlook.com",
+    "email_hash": "ae8dfb0e9cacbe7c3cd97e12a249338419b8d3a7db054e3fb35f55e80aa56f43",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2773,7 +2960,8 @@ const INITIAL_DPT = [
   {
     "npa": "02449",
     "name": "Eril Suhada Lanin",
-    "email": "eril.lanin@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "e00c640b9cbcbcd082de3d67cb6e9b5d2f14174e816a5f97716cc0fe6d7ec440",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2787,7 +2975,8 @@ const INITIAL_DPT = [
   {
     "npa": "02451",
     "name": "Joko Wahyudiono",
-    "email": "joko_wh001@yahoo.com",
+    "email": "jo***@yahoo.com",
+    "email_hash": "1d319189d57ed7eb865a685f6a0495c6eb7e1dcadc30f6acb6e3e8c8f45e562e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2801,7 +2990,8 @@ const INITIAL_DPT = [
   {
     "npa": "02452",
     "name": "Naomi Litaay",
-    "email": "newlitaay@yahoo.com",
+    "email": "ne***@yahoo.com",
+    "email_hash": "5a99a449334d47706c454695aae1ebe182b046e2adf22e91d0f442572d88ca03",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2815,7 +3005,8 @@ const INITIAL_DPT = [
   {
     "npa": "02459",
     "name": "Novie Fery Rusiana Dewi",
-    "email": "novi.rusianadewi@antam.com",
+    "email": "no***@antam.com",
+    "email_hash": "0c1042740a79c8f0ec4fa71ef5cb74ab429155ed2a66277862e4a1ce9b86fbad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2829,7 +3020,8 @@ const INITIAL_DPT = [
   {
     "npa": "02461",
     "name": "Tri Bambang Sukmo Rasantyo",
-    "email": "mrfunid@gmail.com",
+    "email": "mr***@gmail.com",
+    "email_hash": "2fd377510e027e600d190a6543def9523cbc794a83a066973351a07e6961745b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2843,7 +3035,8 @@ const INITIAL_DPT = [
   {
     "npa": "02467",
     "name": "Didik Fotunadi",
-    "email": "didikfotunadi73@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "4ed3edc63121135caaf1afb2125338d43c62d367f8116fa584099fc052df3c3a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2857,7 +3050,8 @@ const INITIAL_DPT = [
   {
     "npa": "02469",
     "name": "Dwikorita Karnawati",
-    "email": "dwiko@bmkg.go.id",
+    "email": "dw***@bmkg.go.id",
+    "email_hash": "2159507d11a54a213657ca0db29482417ccd6382b860fcb0798048b19ee948cb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2871,7 +3065,8 @@ const INITIAL_DPT = [
   {
     "npa": "02470",
     "name": "Bambang Agus Widjayanto",
-    "email": "bambang.awid@yahoo.co.id",
+    "email": "ba***@yahoo.co.id",
+    "email_hash": "76f085905ebf78d5d3d2a02a8f3b639f7362b2404d4fa167f2faeb34bd9c9357",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2885,7 +3080,8 @@ const INITIAL_DPT = [
   {
     "npa": "02472",
     "name": "Sri Widjaja",
-    "email": "sriwijaya0607@gmail.com",
+    "email": "sr***@gmail.com",
+    "email_hash": "eb7c4f06c26a81642bae364e1b6a0a46f55590a80367187ac1e8cf2771ef4afb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2899,7 +3095,8 @@ const INITIAL_DPT = [
   {
     "npa": "02473",
     "name": "Saptono Budi Samodra",
-    "email": "sbsamodra@ugm.ac.id",
+    "email": "sb***@ugm.ac.id",
+    "email_hash": "e12bc6e1904eea4049873dd619a26758d1ef07d2f065ab76aec075c07904eb5c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2913,7 +3110,8 @@ const INITIAL_DPT = [
   {
     "npa": "02489",
     "name": "YOSEPH HERWINDO PASKARINO",
-    "email": "yoseph.herwindo@antam.com",
+    "email": "yo***@antam.com",
+    "email_hash": "50e55c037a5d4bb5b86f49b39e0c313cffab2c7d04e6f24ee9e25f6724290dd6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2927,7 +3125,8 @@ const INITIAL_DPT = [
   {
     "npa": "02496",
     "name": "Cepi Irawan",
-    "email": "cepi@skkmigas.go.id",
+    "email": "ce***@skkmigas.go.id",
+    "email_hash": "ca02d69dc783e0b95bf1243b890d9bcfc35edaaa4b9870dc84e38889645f27d8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2941,7 +3140,8 @@ const INITIAL_DPT = [
   {
     "npa": "02499",
     "name": "Felli Arryandi",
-    "email": "geaarryandi@yahoo.com",
+    "email": "ge***@yahoo.com",
+    "email_hash": "695522517fd5e72d89b7966f7c5d36b985654508f0c9a85cacc1742c69dd933f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2955,7 +3155,8 @@ const INITIAL_DPT = [
   {
     "npa": "02507",
     "name": "Taufik Afriansyah",
-    "email": "taufikafriansyah@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "f0fe96413798a04f23917f140cad0ac27ea02f6e0616db2174bec15cc66c812f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2969,7 +3170,8 @@ const INITIAL_DPT = [
   {
     "npa": "02518",
     "name": "Fikri Muhammad Figih",
-    "email": "fikri.fiqih@icloud.com",
+    "email": "fi***@icloud.com",
+    "email_hash": "629d0ca974aa5d7e03bf149781aabd2d9384e866caf0d369baf5035124567335",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2983,7 +3185,8 @@ const INITIAL_DPT = [
   {
     "npa": "02525",
     "name": "Ery Arifullah",
-    "email": "earifullah27@gmail.com",
+    "email": "ea***@gmail.com",
+    "email_hash": "fa8f372cf077fe0c54f7f9128d82a58965f9b72f06e476361046eda5c640b144",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -2997,7 +3200,8 @@ const INITIAL_DPT = [
   {
     "npa": "02532",
     "name": "Jafilus Nurdin",
-    "email": "jafilus@yahoo.com",
+    "email": "ja***@yahoo.com",
+    "email_hash": "1c994ab661208ab7394671bb023d390f9c28d018f39468904a9923a912bb4110",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3011,7 +3215,8 @@ const INITIAL_DPT = [
   {
     "npa": "02533",
     "name": "Yuyus Kusnandar",
-    "email": "yuyus.kusnandar@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "96020d28ee9ab29fe6c36dbd3db3ae402fca5a7f6b92e6466b7868b179c7d3de",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3025,7 +3230,8 @@ const INITIAL_DPT = [
   {
     "npa": "02539",
     "name": "Ratna Asharina",
-    "email": "asharinar@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "a6629acbdd74dcacf449cbf580e1fc2cc34ea2bc0d62e2de1a5d90379a8ef0c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3039,7 +3245,8 @@ const INITIAL_DPT = [
   {
     "npa": "02546",
     "name": "Kisma Rahardjo",
-    "email": "kismarahardjo47@gmail.com",
+    "email": "ki***@gmail.com",
+    "email_hash": "b47a99566d63a834edcdb3412ed837773b8712dc5a3f6dbed4cc44883ec73667",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3053,7 +3260,8 @@ const INITIAL_DPT = [
   {
     "npa": "02562",
     "name": "Muhammad Syaifudin",
-    "email": "msyaifudin@upnyk.ac.id",
+    "email": "ms***@upnyk.ac.id",
+    "email_hash": "426d469924e39a5d79981350d79c474a835f85a7ed665b1a4a716d4ec56544f9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3067,7 +3275,8 @@ const INITIAL_DPT = [
   {
     "npa": "02564",
     "name": "Anastasia Dewi Titisari",
-    "email": "adewititisari@ugm.ac.id",
+    "email": "ad***@ugm.ac.id",
+    "email_hash": "8c27f6e48e10e3e2bdac100ef96b70d12a61f263e2cb189192f14e3c756d172c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3081,7 +3290,8 @@ const INITIAL_DPT = [
   {
     "npa": "02567",
     "name": "H Dwi Fitri Yudiantoro",
-    "email": "d_fitri4012@yahoo.com",
+    "email": "d_***@yahoo.com",
+    "email_hash": "43d8a7597a758c54d6236c7423ce39c346f8cfae62016b25c44a28d3dff1ae60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3095,7 +3305,8 @@ const INITIAL_DPT = [
   {
     "npa": "02568",
     "name": "Ev Budiadi",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3109,7 +3320,8 @@ const INITIAL_DPT = [
   {
     "npa": "02569",
     "name": "Winarti",
-    "email": "winarti.itny@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "d673cce898efc775153e847fb0c72c7d91334a9388aab8ac6c3d5dcb7e7ac127",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3123,7 +3335,8 @@ const INITIAL_DPT = [
   {
     "npa": "02570",
     "name": "Joko Sungkono",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3137,7 +3350,8 @@ const INITIAL_DPT = [
   {
     "npa": "02571",
     "name": "Dianto Isnawan",
-    "email": "dianto@itny.ac.id",
+    "email": "di***@itny.ac.id",
+    "email_hash": "930290682a96913f1e9159598f9a32ef1b453fb8d7cc0a282316408902751520",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3151,7 +3365,8 @@ const INITIAL_DPT = [
   {
     "npa": "02572",
     "name": "T ListyaniR a",
-    "email": "lis@itny.ac.id",
+    "email": "li***@itny.ac.id",
+    "email_hash": "c9b8792299f55750771cf860a7b51bae4d8480209dc663fb41569a1cf9c4551f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3165,7 +3380,8 @@ const INITIAL_DPT = [
   {
     "npa": "02575",
     "name": "Arif Rianto Budi Nugroho",
-    "email": "arif.rianto@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "944b639eb45cd729da28f5497394bf2c71c290cece8b9de32378d570bc573f4a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3179,7 +3395,8 @@ const INITIAL_DPT = [
   {
     "npa": "02577",
     "name": "Agus Harjanto",
-    "email": "aharjanto69@upnyk.ac.id",
+    "email": "ah***@upnyk.ac.id",
+    "email_hash": "baf9b0ff8da6ef7f44caeccbfa962d7c47b53fa8e56597681ab91f67d22aec83",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3193,7 +3410,8 @@ const INITIAL_DPT = [
   {
     "npa": "02581",
     "name": "Setyo Pamungkas",
-    "email": "setyop120@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "06eb9d95a50401275527499cd6a01a6647f40c2fab394e243ffc6be8d8ecc5d5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3207,7 +3425,8 @@ const INITIAL_DPT = [
   {
     "npa": "02584",
     "name": "Agung Harijoko",
-    "email": "aharijoko@ugm.ac.id",
+    "email": "ah***@ugm.ac.id",
+    "email_hash": "60ee464a0de5049b369f8b852da379ff02e2999eb64a5ea8d39594739eb912a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3221,7 +3440,8 @@ const INITIAL_DPT = [
   {
     "npa": "02606",
     "name": "Hartanto Hadi S",
-    "email": "hartanto07hs@yahoo.com",
+    "email": "ha***@yahoo.com",
+    "email_hash": "f007f31e483c14931cb46d918ff73e897470a0f6a8a5d99a2ebf4bfadb32ffc1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3235,7 +3455,8 @@ const INITIAL_DPT = [
   {
     "npa": "02607",
     "name": "Andi Ruswandi",
-    "email": "andiruswandi1@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "ccb2fba14d7512f6270a2d78279cb0f248fdb1b0438084b5dce4f28eb7bb39e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3249,7 +3470,8 @@ const INITIAL_DPT = [
   {
     "npa": "02608",
     "name": "Sunjaya Eka Saputra",
-    "email": "sunjaya@skkmigas.go.id",
+    "email": "su***@skkmigas.go.id",
+    "email_hash": "65ad291598866e1112ee6093559bddcee70d9afdfcf798783b648b01820033ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3263,7 +3485,8 @@ const INITIAL_DPT = [
   {
     "npa": "02612",
     "name": "Billy Harnest",
-    "email": "bharnest@gmail.com",
+    "email": "bh***@gmail.com",
+    "email_hash": "ac5b6106ffd1e0808c75e327c00ba8ce151d51fb8f62d8b164640137a3eec097",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3277,7 +3500,8 @@ const INITIAL_DPT = [
   {
     "npa": "02615",
     "name": "Azhali Edwin",
-    "email": "azhali_edwin@hcml.co.id",
+    "email": "az***@hcml.co.id",
+    "email_hash": "8ef71ba7accd02343d27eace3f67d0d3b01148783daf2122ca914fa360ca0848",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3291,7 +3515,8 @@ const INITIAL_DPT = [
   {
     "npa": "02627",
     "name": "Lili Fauzielly",
-    "email": "lili.fauzielly@unpad.ac.id",
+    "email": "li***@unpad.ac.id",
+    "email_hash": "8311e5a4d94b8c822001f51ce1103282b803f665318c3d2636edccc9ce796979",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3305,7 +3530,8 @@ const INITIAL_DPT = [
   {
     "npa": "02637",
     "name": "Amien Widodo",
-    "email": "amienwidodo@yahoo.com",
+    "email": "am***@yahoo.com",
+    "email_hash": "7c7435bc0a586279d4a6ebc27db11607aa7a1dcc6dacd174d3234e8098b59c2b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3319,7 +3545,8 @@ const INITIAL_DPT = [
   {
     "npa": "02639",
     "name": "Fathoni Mukti Raharjo",
-    "email": "fathonijo@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "4c1cfcb5db5b36f3006bb7609ea4ad325d39eaa6a9bdfad21d41167e7b582e54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3333,7 +3560,8 @@ const INITIAL_DPT = [
   {
     "npa": "02658",
     "name": "Rinatri Prahastiwi",
-    "email": "ri_qriwel@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "b6e26e5381b2d876eb7c4bfff6c79949a03754efeed5c0b9f0d56281226a7963",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3347,7 +3575,8 @@ const INITIAL_DPT = [
   {
     "npa": "02660",
     "name": "Johan Wahyudi Pakpahan",
-    "email": "jwpakpahan@gmail.com",
+    "email": "jw***@gmail.com",
+    "email_hash": "7ff0fa63f44cbeb48d7cd24762fb59647cd544dfa233cd824fe8d104de606601",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3361,7 +3590,8 @@ const INITIAL_DPT = [
   {
     "npa": "02668",
     "name": "Bambang Pujasmadi",
-    "email": "pujasmb@yahoo.com",
+    "email": "pu***@yahoo.com",
+    "email_hash": "41d6deed88d60d0bb702106144c83df2a48fb934d8651f1386db04ff10393f2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3375,7 +3605,8 @@ const INITIAL_DPT = [
   {
     "npa": "02672",
     "name": "Shofiyuddin",
-    "email": "shofiyuddin@gmail.com",
+    "email": "sh***@gmail.com",
+    "email_hash": "a57c43e6bf0816e8d87d3d03a885a423b2c051aa99df22698d6bfd35384afc16",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3389,7 +3620,8 @@ const INITIAL_DPT = [
   {
     "npa": "02677",
     "name": "Bronto Sutopo",
-    "email": "bronto.sutopo@gmail.com",
+    "email": "br***@gmail.com",
+    "email_hash": "d0eb2588558ac40c769b882e2e5647db23f3dc541ae8ccd123472a021b51c4f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3403,7 +3635,8 @@ const INITIAL_DPT = [
   {
     "npa": "02680",
     "name": "lan Marcus Wollff",
-    "email": "ian.wollff@csaglobal.com",
+    "email": "ia***@csaglobal.com",
+    "email_hash": "826abdc6e39849d0f6e5431b0f0c4d758bdfd0d798f22a96f03b8577381a29ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3417,7 +3650,8 @@ const INITIAL_DPT = [
   {
     "npa": "02681",
     "name": "Anto Sugiharto",
-    "email": "Anto.sugiharto@gmail.com",
+    "email": "An***@gmail.com",
+    "email_hash": "b8a09467b5314c1532322d773c011f0617db6a402790489bcdd28da8586d08e5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3431,7 +3665,8 @@ const INITIAL_DPT = [
   {
     "npa": "02684",
     "name": "Jati Utomo Soenarto",
-    "email": "tjsutomo@gmail.com",
+    "email": "tj***@gmail.com",
+    "email_hash": "aa90be2841595edc118845d4977f3c2e6f0572033103295f001cfa3b7c6f223e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3445,7 +3680,8 @@ const INITIAL_DPT = [
   {
     "npa": "02689",
     "name": "Tulus Butarbutar",
-    "email": "tulusbutarbutar895@gmail.com",
+    "email": "tu***@gmail.com",
+    "email_hash": "2c9a34a2bde634a237c71e1d7ef6c8263365e563c6d597993586fb56a832fa7b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3459,7 +3695,8 @@ const INITIAL_DPT = [
   {
     "npa": "02696",
     "name": "Joseph Marthin Sihombing",
-    "email": "jsihombing01@yahoo.com",
+    "email": "js***@yahoo.com",
+    "email_hash": "63a24f06fa3d8d7b6e288afbaf1796856b8c7ea1efcad5b3835c6705ab0c1c9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3473,7 +3710,8 @@ const INITIAL_DPT = [
   {
     "npa": "02701",
     "name": "Herry Susanto",
-    "email": "santogrande02@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "dc1673f8e519e5b5f42596aeed83cdcd5de2b27d610b83f5f71757d484a4d0dc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3487,7 +3725,8 @@ const INITIAL_DPT = [
   {
     "npa": "02705",
     "name": "Danis Agoes Wiloso",
-    "email": "danisagoes@akprind.ac.id",
+    "email": "da***@akprind.ac.id",
+    "email_hash": "4df22accf1db2db50c790649282cad2459ea1b406d5f722ffa22ee76a05cc695",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3501,7 +3740,8 @@ const INITIAL_DPT = [
   {
     "npa": "02707",
     "name": "Irma Hermawaty",
-    "email": "irma.zyandin@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "5605d6e917366d00533ad6ef48fddbd9dcf264c61f262ae8028b4909aaa29de6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3515,7 +3755,8 @@ const INITIAL_DPT = [
   {
     "npa": "02708",
     "name": "Muhammad Fakhrur Razi",
-    "email": "mufarazi@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "4ee6ce35e5080a6727d5576f5a924bfc153876b45d111775f29c34738c9ce807",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3529,7 +3770,8 @@ const INITIAL_DPT = [
   {
     "npa": "02711",
     "name": "Thomas Yunanto Yoga",
-    "email": "thomas.yoga@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "df588d3351aae5e0d47d0ed364224915cc23e7d0a770b7d840674eda40dfa5ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3543,7 +3785,8 @@ const INITIAL_DPT = [
   {
     "npa": "02718",
     "name": "Sundoro",
-    "email": "srabingu@gmail.com",
+    "email": "sr***@gmail.com",
+    "email_hash": "473bf2a357dedb62d832dc0b8f3a6fa120679439f837f8feffb07bb331f7e3c8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3557,7 +3800,8 @@ const INITIAL_DPT = [
   {
     "npa": "02720",
     "name": "Patrick Joseph Hanna",
-    "email": "phanna2@gmail.com",
+    "email": "ph***@gmail.com",
+    "email_hash": "ffd6aaa51dc965a1c859e68c2f768c3ce27bfc78d294bd6c89154f222e8d647f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3571,7 +3815,8 @@ const INITIAL_DPT = [
   {
     "npa": "02724",
     "name": "Fx Widiarto",
-    "email": "widiarto@lemigas.esdm.go.id",
+    "email": "wi***@lemigas.esdm.go.id",
+    "email_hash": "940f1babcc8fdebc03a93c3b0516e3ac427fc22294fff662532a7e8f2e8783eb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3585,7 +3830,8 @@ const INITIAL_DPT = [
   {
     "npa": "02728",
     "name": "Nugrahani Pudyo",
-    "email": "nugrahani@pertamina.com",
+    "email": "nu***@pertamina.com",
+    "email_hash": "d2f549249f7f375a5f1e9da95a86067f8e64de39dc9ae1ef69d59e1d2ab43893",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3599,7 +3845,8 @@ const INITIAL_DPT = [
   {
     "npa": "02740",
     "name": "Dwiharso Nugroho",
-    "email": "nuki.dnugroho@geodin.net",
+    "email": "nu***@geodin.net",
+    "email_hash": "f0f8eca7bcf16c47925a75da8b51bcfdcf9fa803fe9a647ac803a8088f7c13ca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3613,7 +3860,8 @@ const INITIAL_DPT = [
   {
     "npa": "02741",
     "name": "Syamsu Alam",
-    "email": "syamsu.alam@emp.id",
+    "email": "sy***@emp.id",
+    "email_hash": "ad08798e29f166efdb5f6d41b8933a2b3a4f22965ebe4abc31afb5b5cb1dfabb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3627,7 +3875,8 @@ const INITIAL_DPT = [
   {
     "npa": "02769",
     "name": "Sulistiyono",
-    "email": "Zdelist2000@yahoo.com",
+    "email": "Zd***@yahoo.com",
+    "email_hash": "f55460f2a80e6d242abd80c7a56f473be224770e58590de28bb3798afe943f40",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3641,7 +3890,8 @@ const INITIAL_DPT = [
   {
     "npa": "02771",
     "name": "Wahyu Sasongko",
-    "email": "wahyu_sas@ugm.ac.id",
+    "email": "wa***@ugm.ac.id",
+    "email_hash": "c8fb50a1b82b83380a108ab90147b7681accd3a3bd0364e0894d44f16640dec6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3655,7 +3905,8 @@ const INITIAL_DPT = [
   {
     "npa": "02777",
     "name": "Mochammad Aziz",
-    "email": "m.aziz.akita@gmail.com",
+    "email": "m.***@gmail.com",
+    "email_hash": "30e1644a3e93a8bc4502d8e512414d67d888e2f8c9fbcb8e8dfd9a36c43a9465",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3669,7 +3920,8 @@ const INITIAL_DPT = [
   {
     "npa": "02791",
     "name": "Reno Faisal",
-    "email": "mk.reno.faisal@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "3f38894c3f149c27aea38f3704ba7c589a4017fd585b76b3ff6c22d107b8467b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3683,7 +3935,8 @@ const INITIAL_DPT = [
   {
     "npa": "02799",
     "name": "Amir Al Amin",
-    "email": "amir13120@yahoo.com",
+    "email": "am***@yahoo.com",
+    "email_hash": "4df682d6ca428bbc77612f3996c32e1fc5d5122682ca5d9b9270713362d9b902",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3697,7 +3950,8 @@ const INITIAL_DPT = [
   {
     "npa": "02800",
     "name": "Benyamin Sembiring",
-    "email": "benyaminsembiring@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "df10ad5cf2d8e37490361d75105c97f6bc3c4d74ee3cb7685d3ef1fdc2660d96",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3711,7 +3965,8 @@ const INITIAL_DPT = [
   {
     "npa": "02817",
     "name": "Edward Syafron",
-    "email": "edosyafroni12@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "992b0127ba836dd8fdb746124e0d1e6fe2ef93e31732a0e276f6de299bad5259",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3725,7 +3980,8 @@ const INITIAL_DPT = [
   {
     "npa": "02825",
     "name": "Firdaus Akhmad Yunus Tampilang",
-    "email": "firdausayt@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "871c8dc49c591ed24a071a0c074fb4f6590e37876d541a695252e91238155617",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3739,7 +3995,8 @@ const INITIAL_DPT = [
   {
     "npa": "02829",
     "name": "Yarra Sutadiwiria",
-    "email": "yarra.sutadiwiria@trisakti.ac.id",
+    "email": "ya***@trisakti.ac.id",
+    "email_hash": "35bbe793c8c3466cd7899058f59c49c288c0a8a3adf860bcd4bf46d24a1e1a12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3753,7 +4010,8 @@ const INITIAL_DPT = [
   {
     "npa": "02836",
     "name": "M Sapari Dwi Hadian",
-    "email": "sapari@unpad.ac.id",
+    "email": "sa***@unpad.ac.id",
+    "email_hash": "e69274f3abb0d09824d157b9bf0d3dce5621a9ffa12e5c682e5e72adffe88e64",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3767,7 +4025,8 @@ const INITIAL_DPT = [
   {
     "npa": "02843",
     "name": "Rusalida Raguwanti",
-    "email": "raguwanti@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "09034430c4a47795f92b8a878a099046a90110cf7f73191a6071d430204b1c2d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3781,7 +4040,8 @@ const INITIAL_DPT = [
   {
     "npa": "02846",
     "name": "Yuwono",
-    "email": "ywngeo@gmail.com",
+    "email": "yw***@gmail.com",
+    "email_hash": "cc570c4cf1712acb9403c784602d2b2e4b7b095f25e91765c9e092ed154a34d7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3795,7 +4055,8 @@ const INITIAL_DPT = [
   {
     "npa": "02847",
     "name": "Waskito Tanuwijoyo",
-    "email": "waskitotanuwijaya@yahoo.com",
+    "email": "wa***@yahoo.com",
+    "email_hash": "43be548edadee300da51d74f6f537647637d1a9d3ceea4144c75877ef9218323",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3809,7 +4070,8 @@ const INITIAL_DPT = [
   {
     "npa": "02848",
     "name": "Hartono",
-    "email": "hartono@antam.com",
+    "email": "ha***@antam.com",
+    "email_hash": "a576e8919c171bbdaaf7ee1cfc6ab49fc498ffe64e676ef0db7dd8295330fb76",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3823,7 +4085,8 @@ const INITIAL_DPT = [
   {
     "npa": "02850",
     "name": "Agus Priyantoro",
-    "email": "Sugap1963@gmail.com",
+    "email": "Su***@gmail.com",
+    "email_hash": "33211270f8683ed391f3f0667abf1db6372e5516ea849740c51fddd459d9eadb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3837,7 +4100,8 @@ const INITIAL_DPT = [
   {
     "npa": "02858",
     "name": "Janjan Hertrijana",
-    "email": "jhertrijana@yahoo.com",
+    "email": "jh***@yahoo.com",
+    "email_hash": "f1ab641639f5f47b5b1f08b6c7a8689d29aedc7581c4b2fe3f7c63264a7cde87",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3851,7 +4115,8 @@ const INITIAL_DPT = [
   {
     "npa": "02861",
     "name": "Robhy Cahya Permana",
-    "email": "robhy.permana@pertamina.com",
+    "email": "ro***@pertamina.com",
+    "email_hash": "84d4135efed148f6f9469c674b2bbf019c90d9e8dcda260ae3f89255e6d6351b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3865,7 +4130,8 @@ const INITIAL_DPT = [
   {
     "npa": "02863",
     "name": "Arifudin Idrus",
-    "email": "arifidrus@ugm.ac.id",
+    "email": "ar***@ugm.ac.id",
+    "email_hash": "9335cba7ac2b68f066ecee7f884e3d93b8b720babcedfd61d4dde2da6ce71589",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3879,7 +4145,8 @@ const INITIAL_DPT = [
   {
     "npa": "02867",
     "name": "Mahdi Rana Manggala",
-    "email": "rana_manggala@yahoo.com",
+    "email": "ra***@yahoo.com",
+    "email_hash": "8121da751d8ba10f2003b63d9eb642058bc8223da95d617ee3bb144e42cfc208",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3893,7 +4160,8 @@ const INITIAL_DPT = [
   {
     "npa": "02870",
     "name": "Wahyu Sugiarto",
-    "email": "w.sugiarto21@gmail.com",
+    "email": "w.***@gmail.com",
+    "email_hash": "a872d3a2981f0cd448d950ada86fbff114536de9715befd36b451283bbbf4424",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3907,7 +4175,8 @@ const INITIAL_DPT = [
   {
     "npa": "02884",
     "name": "Nurharianto",
-    "email": "nurharianto20@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "afa674abf92468b60bdea672d6f8905d8a38b13af06f870ea8f46aece90aac78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3921,7 +4190,8 @@ const INITIAL_DPT = [
   {
     "npa": "02888",
     "name": "Deni Rahayu",
-    "email": "denidenir@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "3c2c3f2ac77390a837750173f04ff4702a9500e8f74879c3b65eedd42d0f9286",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3935,7 +4205,8 @@ const INITIAL_DPT = [
   {
     "npa": "02889",
     "name": "Made Sudiana Putra",
-    "email": "i-made.putra@pertamina.com",
+    "email": "i-***@pertamina.com",
+    "email_hash": "629a643c5b8a637e9c63e045adafd6728e8ad93314e268bc8cba0adc76e84f3b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3949,7 +4220,8 @@ const INITIAL_DPT = [
   {
     "npa": "02890",
     "name": "Bintoro Wibowo",
-    "email": "bintoro.wibowo@pertamina.com",
+    "email": "bi***@pertamina.com",
+    "email_hash": "55653cd0daf847ee6ca6914c5cc1cd7cae6c8c9128a81587435830e7316733e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3963,7 +4235,8 @@ const INITIAL_DPT = [
   {
     "npa": "02893",
     "name": "Ary Iriawan",
-    "email": "airiawan23@gmail.com",
+    "email": "ai***@gmail.com",
+    "email_hash": "1e4be15f4286d857b9ef36835e2bb71c0da7a15a3c489c80eb11bd90700d60ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3977,7 +4250,8 @@ const INITIAL_DPT = [
   {
     "npa": "02913",
     "name": "Yudi Satria Purnama",
-    "email": "yudigea93@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "fa852a5c8b15cd89a218e6259c9d4b2299a90412c9f16812847e8727eaad832a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3991,7 +4265,8 @@ const INITIAL_DPT = [
   {
     "npa": "02918",
     "name": "Mochammad Fachmi",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4005,7 +4280,8 @@ const INITIAL_DPT = [
   {
     "npa": "02930",
     "name": "Darmawan Budi Prihanto",
-    "email": "wawanoid@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "82cd62b69c0993feff18e4cc58967e0c06993ebd97991f7c8c012baa708b330d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4019,7 +4295,8 @@ const INITIAL_DPT = [
   {
     "npa": "02933",
     "name": "Waris Budi Raharjo",
-    "email": "warisbr@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "f70fd126498140b78c313cd4cbe7b3ad934571dad4446aa6f992139a7c3a322d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4033,7 +4310,8 @@ const INITIAL_DPT = [
   {
     "npa": "02936",
     "name": "Winny Wahyuni Purnama Dewi",
-    "email": "wahyuniwinny55@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "bf521c5bb484471730423e201eeedc5670c175733d05d5099e8bafc601075abc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4047,7 +4325,8 @@ const INITIAL_DPT = [
   {
     "npa": "02937",
     "name": "Wawan Budianta",
-    "email": "wbudianta@ugm.ac.id",
+    "email": "wb***@ugm.ac.id",
+    "email_hash": "9215159c3b39af2a37d1f2d469d279999cc320c8f05653b5e9e928eedcbd20b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4061,7 +4340,8 @@ const INITIAL_DPT = [
   {
     "npa": "02938",
     "name": "Wahyu Wilopo",
-    "email": "wilopo_w@ugm.ac.id",
+    "email": "wi***@ugm.ac.id",
+    "email_hash": "b51d36989be8aca972b955d42e4908f2fd61940ae4ad6dc3e40f551e9101d287",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4075,7 +4355,8 @@ const INITIAL_DPT = [
   {
     "npa": "02944",
     "name": "Abdurrokhim",
-    "email": "abdurrokhim@unpad.ac.id",
+    "email": "ab***@unpad.ac.id",
+    "email_hash": "84201dde57ebaddd6bb792da1036613c1a0096ae4acc2331bfffc1f1431c2b1d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4089,7 +4370,8 @@ const INITIAL_DPT = [
   {
     "npa": "02949",
     "name": "Lia Jurnaliah",
-    "email": "lia.jurnaliah@unpad.ac.id",
+    "email": "li***@unpad.ac.id",
+    "email_hash": "4cbc4fc4f07dea3fb450135889bad069952d0f0d4c5994b52db9dc0008d7ef80",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4103,7 +4385,8 @@ const INITIAL_DPT = [
   {
     "npa": "02953",
     "name": "Euistintin Yuningsih",
-    "email": "e.tintin@unpad.ac.id",
+    "email": "e.***@unpad.ac.id",
+    "email_hash": "85943c6849e4703f4277245a949471aa17676ea1454ab6362ce8e8c6ed08f33a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4117,7 +4400,8 @@ const INITIAL_DPT = [
   {
     "npa": "02957",
     "name": "Ildrem Syafri",
-    "email": "ildrem@unpad.ac.id",
+    "email": "il***@unpad.ac.id",
+    "email_hash": "f34e4bc40cc23213bc0765bc9787f7dd73a9834223b0ae2e5a9d159998cfed99",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4131,7 +4415,8 @@ const INITIAL_DPT = [
   {
     "npa": "02960",
     "name": "Prihananto Setiadji",
-    "email": "p.setiadji@gmail.com",
+    "email": "p.***@gmail.com",
+    "email_hash": "29ded343b404936f33d45a57b93b11dffe7c538227720b2bfd65f234b677694a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4145,7 +4430,8 @@ const INITIAL_DPT = [
   {
     "npa": "02964",
     "name": "Agus Didit Haryanto",
-    "email": "agus.didit.haryanto@unpad.ac.id",
+    "email": "ag***@unpad.ac.id",
+    "email_hash": "fdcbf97abee72a236dea83bb22a605ca101496d33bf0eeafeced4f43c670f36d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4159,7 +4445,8 @@ const INITIAL_DPT = [
   {
     "npa": "02972",
     "name": "Gde Budi Indrawan",
-    "email": "igbindrawan@ugm.ac.id",
+    "email": "ig***@ugm.ac.id",
+    "email_hash": "88f947de677b7fbcfe368c141d8b026939b692de91b539992bac34c7c412a2cb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4173,7 +4460,8 @@ const INITIAL_DPT = [
   {
     "npa": "02984",
     "name": "Surya Widyantoro",
-    "email": "suryaw@skkmigas.go.id",
+    "email": "su***@skkmigas.go.id",
+    "email_hash": "2847ada4cc74ae4b1bf6c65c4a5de95b05dcbcea3946a9c8d098013333b25c9e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4187,7 +4475,8 @@ const INITIAL_DPT = [
   {
     "npa": "02985",
     "name": "Mohammad Kusuma Utama",
-    "email": "m.kusuma@skkmigas.go.id",
+    "email": "m.***@skkmigas.go.id",
+    "email_hash": "c688e7107ff506f349a0b7abeb75337b13eb321233fe7ab1c6256a2ec1b1ca16",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4201,7 +4490,8 @@ const INITIAL_DPT = [
   {
     "npa": "03010",
     "name": "Didit Hadi Barianto",
-    "email": "diditgeologi@ugm.ac.id",
+    "email": "di***@ugm.ac.id",
+    "email_hash": "a1568032a028025fe5f97c616f5854853c9aba8c3a19efebc7b2810874b29e15",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4215,7 +4505,8 @@ const INITIAL_DPT = [
   {
     "npa": "03025",
     "name": "Muhammad Tatang Djunaedi",
-    "email": "tatangkalan1510@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "c58c7b218de915a0046dd2f6d0eabb426139e1c221b4e43fcb495432b3d33974",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4229,7 +4520,8 @@ const INITIAL_DPT = [
   {
     "npa": "03035",
     "name": "Sugiri",
-    "email": "sugiri@pertamina.com",
+    "email": "su***@pertamina.com",
+    "email_hash": "2c6c208ef4164caf4b4b4bd93a5a2c826004ccca4b3d933d4a55d49112e2f6cc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4243,7 +4535,8 @@ const INITIAL_DPT = [
   {
     "npa": "03038",
     "name": "Agung Setianto",
-    "email": "agung_setianto@ugm.ac.id",
+    "email": "ag***@ugm.ac.id",
+    "email_hash": "293127d8f8e7d766f6ff5ee1e3871505f6d50c6e025c1d1333134ec2901926e3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4257,7 +4550,8 @@ const INITIAL_DPT = [
   {
     "npa": "03043",
     "name": "Firman Fauzi",
-    "email": "geafirzi@yahoo.co.uk",
+    "email": "ge***@yahoo.co.uk",
+    "email_hash": "8632a09923abeb2eef3d8da9e7402e7aee8f6e9743d26adfbf9c62a95ad52ab2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4271,7 +4565,8 @@ const INITIAL_DPT = [
   {
     "npa": "03047",
     "name": "Dodot Eko Soebijakto",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4285,7 +4580,8 @@ const INITIAL_DPT = [
   {
     "npa": "03057",
     "name": "Lambok Parulian Marpaung",
-    "email": "lambokparulian@geologist.com",
+    "email": "la***@geologist.com",
+    "email_hash": "c5140f8901bfc356cc54d64cc89af1a31d5619d62cc134d48a58493ed9dc32ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4299,7 +4595,8 @@ const INITIAL_DPT = [
   {
     "npa": "03064",
     "name": "Koko Suhanto",
-    "email": "koko.suhanto@gmail.com",
+    "email": "ko***@gmail.com",
+    "email_hash": "defca34c7d98984d4947d075fd79a6528f45857bfa0592452bb262ce9299a373",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4313,7 +4610,8 @@ const INITIAL_DPT = [
   {
     "npa": "03065",
     "name": "Fatrial Bahesti",
-    "email": "bahesti@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "048cab7673a090d1a60c2aa1e3ad79669f2434a483928e4e42a8964307e709df",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4327,7 +4625,8 @@ const INITIAL_DPT = [
   {
     "npa": "03080",
     "name": "Irwan Susilo",
-    "email": "irwan@geospasia.com",
+    "email": "ir***@geospasia.com",
+    "email_hash": "ddc81739eff412891c4a7e01263786f2e138323171d7a8dd31c8c042de2a1d62",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4341,7 +4640,8 @@ const INITIAL_DPT = [
   {
     "npa": "03083",
     "name": "Agus Mochamad Ramdhan",
-    "email": "agusmr1974@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "79625eebf1005a5415d86f3c4bf51482dd7cd52e54d2ddfc3f2f3e3da111a47f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4355,7 +4655,8 @@ const INITIAL_DPT = [
   {
     "npa": "03084",
     "name": "Herwin Azis",
-    "email": "herwin.azis@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "71feb3befc91c599271effdae9d0a17d2aeca8e24a25759f7414fd59f225cd9e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4369,7 +4670,8 @@ const INITIAL_DPT = [
   {
     "npa": "03088",
     "name": "Erik Hermawan",
-    "email": "erickhermawan1507@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "b0acab93d05c972359eeaf4a34c0c9ef1a6db616cd2335ce667c706379dd2194",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4383,7 +4685,8 @@ const INITIAL_DPT = [
   {
     "npa": "03097",
     "name": "Muhammad Saleh",
-    "email": "muhammadsaleh.ir69@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "c3f71e81cb5b554dd5478cb6563592ea2bd8f860650c4bf2eb2fda2daac80ced",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4397,7 +4700,8 @@ const INITIAL_DPT = [
   {
     "npa": "03114",
     "name": "La Ode Muh Arham Fidran",
-    "email": "a.fidran@gmail.com",
+    "email": "a.***@gmail.com",
+    "email_hash": "746f02ac15be60bd47b8dbe48fdfc623cfeeb972452cde35844e5c6317c7b2c4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4411,7 +4715,8 @@ const INITIAL_DPT = [
   {
     "npa": "03115",
     "name": "Ilham Haris",
-    "email": "ilham.suherman@gmail.com",
+    "email": "il***@gmail.com",
+    "email_hash": "2cbfbbada3080e36d275238519b0de73c2878e975bc798aa0b627e9ae3e68511",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4425,7 +4730,8 @@ const INITIAL_DPT = [
   {
     "npa": "03127",
     "name": "Mohammad Adam Marnas.",
-    "email": "amarnas-94@yahoo.com",
+    "email": "am***@yahoo.com",
+    "email_hash": "def24695a3f18183655d044f0b57af5982d56c3065ece1fcc3bfdde24291067a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4439,7 +4745,8 @@ const INITIAL_DPT = [
   {
     "npa": "03128",
     "name": "Meinarni Thamrin",
-    "email": "meinarni90@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "289e86d81467bda7ba85afc24280961723dae50d6ca303cdf2b6e43e0ed1cfc1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4453,7 +4760,8 @@ const INITIAL_DPT = [
   {
     "npa": "03157",
     "name": "Bambang Yuwono",
-    "email": "goalls.focuss@gmail.com",
+    "email": "go***@gmail.com",
+    "email_hash": "2a7c7c99c36e6d491d03a0b9a6da144620d6986239656b3e4dfcbe255e232da4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4467,7 +4775,8 @@ const INITIAL_DPT = [
   {
     "npa": "03167",
     "name": "Ketut Agus Karmadi",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4481,7 +4790,8 @@ const INITIAL_DPT = [
   {
     "npa": "03185",
     "name": "Zulgadar Mursida",
-    "email": "zulqadar98@gmail.com",
+    "email": "zu***@gmail.com",
+    "email_hash": "f54e6f8ae5761f100c4cf38209812da6159650fc90fba479e4c0a6db2e86dcd3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4495,7 +4805,8 @@ const INITIAL_DPT = [
   {
     "npa": "03186",
     "name": "Asmita Ahmad",
-    "email": "asmitaahmad@yahoo.com",
+    "email": "as***@yahoo.com",
+    "email_hash": "ed3974f0e1775c2a858bd17f6d4205b557fad250112226705e3bbf8a2b210446",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4509,7 +4820,8 @@ const INITIAL_DPT = [
   {
     "npa": "03187",
     "name": "Erry Mastoadji",
-    "email": "e_mastoadji@yahoo.com",
+    "email": "e_***@yahoo.com",
+    "email_hash": "cdc89ac214125e77eddac07966cf9ac8e238bb8ad7e5fe74e402143bc5a9195e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4523,7 +4835,8 @@ const INITIAL_DPT = [
   {
     "npa": "03189",
     "name": "Rahadian Adhyaksawan",
-    "email": "iwangeo@yahoo.com",
+    "email": "iw***@yahoo.com",
+    "email_hash": "a5da5919b3019671fa9202afe93474be7a58cb02d5f3be3a5840a618348eba1b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4537,7 +4850,8 @@ const INITIAL_DPT = [
   {
     "npa": "03193",
     "name": "Fina Riandra",
-    "email": "friandra@lemigas.esdm.go.id",
+    "email": "fr***@lemigas.esdm.go.id",
+    "email_hash": "446fe55c6ae2b81439075a9c4da1546aadca5296b2f21a37562702a38107d022",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4551,7 +4865,8 @@ const INITIAL_DPT = [
   {
     "npa": "03197",
     "name": "Widodo Nugroho",
-    "email": "widodo.nugroho@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "096dee716e06dcd4857a2a5a0a78fa24e1cdefccd814424917c5f9eaa3331c53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4565,7 +4880,8 @@ const INITIAL_DPT = [
   {
     "npa": "03202",
     "name": "Irdas Amanda Muswar",
-    "email": "irdamus@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "6cfdd62db4d5a082ea3e35986206cffefc9ee7c01305621eb20e3d4bb1f707a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4579,7 +4895,8 @@ const INITIAL_DPT = [
   {
     "npa": "03203",
     "name": "Markus Trimudi Hartono",
-    "email": "trimudi@geoservices.co.id",
+    "email": "tr***@geoservices.co.id",
+    "email_hash": "05de00b2b67f4c962b1db4a5e8de82253d56db37a5fb47b800afcab73dd2d677",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4593,7 +4910,8 @@ const INITIAL_DPT = [
   {
     "npa": "03204",
     "name": "Syamsul Hadi Harnianto",
-    "email": "harnianto@yahoo.com",
+    "email": "ha***@yahoo.com",
+    "email_hash": "bef1af57a98d3cd56c5c6345790f121b014ab95ee9a4440c2438abe1fe8b36b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4607,7 +4925,8 @@ const INITIAL_DPT = [
   {
     "npa": "03205",
     "name": "Allchsan G Juniarsam",
-    "email": "alichsan.juniarsam@pertamina.com",
+    "email": "al***@pertamina.com",
+    "email_hash": "8bb93b1cfc01a5a624a10a63291e285bf5d836c258457315553bbc1469dc5a33",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4621,7 +4940,8 @@ const INITIAL_DPT = [
   {
     "npa": "03208",
     "name": "Yordi Nugrahadi",
-    "email": "yordinugrahadi@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "bd077bd62a245fcd65a3f3ebb265b1d893f6b5fa1bc83b126b6ee3a22efbbe63",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4635,7 +4955,8 @@ const INITIAL_DPT = [
   {
     "npa": "03209",
     "name": "Salahuddin Husein",
-    "email": "shddin@gmail.com",
+    "email": "sh***@gmail.com",
+    "email_hash": "68e8d6b0876d5f62a8b3915d90ae82687fd0af2d51ef8d4c8d28af3b7d7558ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4649,7 +4970,8 @@ const INITIAL_DPT = [
   {
     "npa": "03210",
     "name": "Rusli Har",
-    "email": "rusdaz@yahoo.com",
+    "email": "ru***@yahoo.com",
+    "email_hash": "8d4c70479dd3bbb4ec0b124fbeadbc3ddb18448bdadba7d7df86150bb28ca3d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4663,7 +4985,8 @@ const INITIAL_DPT = [
   {
     "npa": "03212",
     "name": "Bambang S Kuncoro",
-    "email": "bambangsk@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "670ca68412830eb4806c98d02dd0297ff7953741a9bf1fc38cbf69607f4ab2a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4677,7 +5000,8 @@ const INITIAL_DPT = [
   {
     "npa": "03214",
     "name": "Yohanes Bosko Cahyo Indrarto",
-    "email": "bosko.indrarto@gmail.com",
+    "email": "bo***@gmail.com",
+    "email_hash": "f44750f55afe3c8b95d56f070608b1203796ea3a23eedf1b8746c30afa0ca6c4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4691,7 +5015,8 @@ const INITIAL_DPT = [
   {
     "npa": "03218",
     "name": "Handoko Teguh Wibowo",
-    "email": "handokoteguh@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "ac589d4879731f5a8a29157910689d129bcb54d4ad9ccaf3809b9b2ac7c0d1e8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4705,7 +5030,8 @@ const INITIAL_DPT = [
   {
     "npa": "03222",
     "name": "Devi Rahayu",
-    "email": "devi.rahayu@pertamina.com",
+    "email": "de***@pertamina.com",
+    "email_hash": "4dcf9a8a83e9ddde8b1552843d2ff6a5cc30d39b875933c5d5e7431d00ce5ef6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4719,7 +5045,8 @@ const INITIAL_DPT = [
   {
     "npa": "03223",
     "name": "Wayan Warmada",
-    "email": "warmada@mail.ugm.ac.id",
+    "email": "wa***@mail.ugm.ac.id",
+    "email_hash": "b1d1c9223081e9b3d42056717b75a0337b5775ce74a38297e2f9fbc816b8d84c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4733,7 +5060,8 @@ const INITIAL_DPT = [
   {
     "npa": "03225",
     "name": "Sarju Winardi",
-    "email": "sarju_winardi@ugm.ac.id",
+    "email": "sa***@ugm.ac.id",
+    "email_hash": "7566c420ee2359717b11f4a24e59150d9800efadc5dd335d2683806ab284c102",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4747,7 +5075,8 @@ const INITIAL_DPT = [
   {
     "npa": "03226",
     "name": "Dedi Yusmen",
-    "email": "dedyy@pertamina.com",
+    "email": "de***@pertamina.com",
+    "email_hash": "5f8b7b725a5f6b8eba409e549cbd77ec2fc4782d022b5500c147129181faf3ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4761,7 +5090,8 @@ const INITIAL_DPT = [
   {
     "npa": "03230",
     "name": "Yusa Fahrudi",
-    "email": "yfahrudi@gmail.com",
+    "email": "yf***@gmail.com",
+    "email_hash": "4b61f95236e925bdd9cd2d9b888c8bffbfd38eac3523669dc64ee9981df9ddcb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4775,7 +5105,8 @@ const INITIAL_DPT = [
   {
     "npa": "03243",
     "name": "Wahyudi Adhiutomo",
-    "email": "wahyudi.adhiutomo@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "8006ade6f691b09daae955255135dff94b54811557097bbeb1e09d9dc7f9ea6d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4789,7 +5120,8 @@ const INITIAL_DPT = [
   {
     "npa": "03252",
     "name": "Herman",
-    "email": "hermanml92@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "9c1c0b385b7413f04cf4084f4c1e395b91c853b3a1a903c145f8bdcdbab388f6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4803,7 +5135,8 @@ const INITIAL_DPT = [
   {
     "npa": "03254",
     "name": "Dasapta Erwin Irawan",
-    "email": "dasaptaerwin3@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "3b00b6cd6d19e897ab565e2dab769a7aa9655ba95cdaced03354eff01e41844d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4817,7 +5150,8 @@ const INITIAL_DPT = [
   {
     "npa": "03255",
     "name": "Oky Wahastadhi",
-    "email": "oki.wahastadhi@gmail.com",
+    "email": "ok***@gmail.com",
+    "email_hash": "991b18948be6be9d10cd9ad78eb484acb205f789f9a89297983d6fb31993eafd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4831,7 +5165,8 @@ const INITIAL_DPT = [
   {
     "npa": "03256",
     "name": "Dedi Arwana",
-    "email": "dediarwana@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "9c897656c6e42a492cadab5444aaa45bf0f3ebb27d95533ee8f84c12220e1d47",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4845,7 +5180,8 @@ const INITIAL_DPT = [
   {
     "npa": "03263",
     "name": "Ika Riawan",
-    "email": "riawan.ik@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "e41e3bb48be086229b81a5ce3041e4fef3146aa7f6aee31b5a06f75b9c72bcb0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4859,7 +5195,8 @@ const INITIAL_DPT = [
   {
     "npa": "03264",
     "name": "Dwiyoko Trah Urip Taruno",
-    "email": "dwiyoko_urip@yahoo.co.id",
+    "email": "dw***@yahoo.co.id",
+    "email_hash": "8c46bf8cb728c3a2677dd41af7b95a6e37188a32107643e0dce7f4e40aa5afc2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4873,7 +5210,8 @@ const INITIAL_DPT = [
   {
     "npa": "03266",
     "name": "Eddyanto RP Sitorus",
-    "email": "jci_eddy@yahoo.com",
+    "email": "jc***@yahoo.com",
+    "email_hash": "080b8fc5e4f750c1a0ee8c2d031f67f026d33c7dbb88eccd6d3a44346e2deb1b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4887,7 +5225,8 @@ const INITIAL_DPT = [
   {
     "npa": "03273",
     "name": "Elwin Elbur",
-    "email": "elwin@antam.com",
+    "email": "el***@antam.com",
+    "email_hash": "ad89ba149017e4b6566b9df5121df74a6381bb298c6a17582fef83bbae06d498",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4901,7 +5240,8 @@ const INITIAL_DPT = [
   {
     "npa": "03274",
     "name": "Erric Sukmawan",
-    "email": "erric.sukmawan@antam.com",
+    "email": "er***@antam.com",
+    "email_hash": "272fc356b2a8d534026e939a14dbba7942583d808ffc142477622670f776178f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4915,7 +5255,8 @@ const INITIAL_DPT = [
   {
     "npa": "03278",
     "name": "Moch Indra Novian",
-    "email": "indra_novian@ugm.ac.id",
+    "email": "in***@ugm.ac.id",
+    "email_hash": "df4ea8c660d78c0bba7e57afa86da3ddcebbc6d90c4154a0b74d50c716874016",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4929,7 +5270,8 @@ const INITIAL_DPT = [
   {
     "npa": "03281",
     "name": "Akmaluddin",
-    "email": "akmaluddin@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "df7a094b4ae4ab636a97cdff36505d2ca33849b0ff8a406789fc74f22469ffc8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4943,7 +5285,8 @@ const INITIAL_DPT = [
   {
     "npa": "03285",
     "name": "Arilda Septania Wisudawati",
-    "email": "arilda2619@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "df478dbdd58811ba1eee5145bab8733495d78b425065c34b62538de7c9dfd50f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4957,7 +5300,8 @@ const INITIAL_DPT = [
   {
     "npa": "03286",
     "name": "Farah Mulyasari",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4971,7 +5315,8 @@ const INITIAL_DPT = [
   {
     "npa": "03288",
     "name": "Okky Yuditya Pahlevi",
-    "email": "opahlevi@gmail.com",
+    "email": "op***@gmail.com",
+    "email_hash": "978004e814608a1ac34886bcb32a90e5c4bd143592d4c61097674b051bf413b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4985,7 +5330,8 @@ const INITIAL_DPT = [
   {
     "npa": "03294",
     "name": "Panuju",
-    "email": "panuju@esdm.go.id",
+    "email": "pa***@esdm.go.id",
+    "email_hash": "01dfb9780ebafe772713b3357117e301f930f5c188957d509ba3f7f0f785176c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4999,7 +5345,8 @@ const INITIAL_DPT = [
   {
     "npa": "03296",
     "name": "Abdul Kholiq",
-    "email": "abdul.khq99@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "aee617ce277478c1762b217c1745ecb355f86f916941e60fc8673ad44a5c1c2a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5013,7 +5360,8 @@ const INITIAL_DPT = [
   {
     "npa": "03317",
     "name": "Yan Indryanto",
-    "email": "yan.indryanto@pertamina.com",
+    "email": "ya***@pertamina.com",
+    "email_hash": "7415e6654aa90fc78f6bf642feb792dd356305c23cae108890d125877bc25ff4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5027,7 +5375,8 @@ const INITIAL_DPT = [
   {
     "npa": "03318",
     "name": "Firzany Ridwan",
-    "email": "rfirzany@gmail.com",
+    "email": "rf***@gmail.com",
+    "email_hash": "306bc198b51f72bb30d2a52812da2313f29b48750dda7acde4ef5a402b948830",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5041,7 +5390,8 @@ const INITIAL_DPT = [
   {
     "npa": "03319",
     "name": "Boy Yoseph Cahya S S Syah Alam",
-    "email": "boy.yoseph@unpad.ac.id",
+    "email": "bo***@unpad.ac.id",
+    "email_hash": "ad7fc83674db47d13417fb52824415a2b26b4f2db2bca2381886c63d9ec16bef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5055,7 +5405,8 @@ const INITIAL_DPT = [
   {
     "npa": "03320",
     "name": "Rendy",
-    "email": "rendyjohneffendi@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "477307cdb161fdd9f7cbd74d15b943a1b8f5a1adc8ffd20c540131ea5bbbf635",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5069,7 +5420,8 @@ const INITIAL_DPT = [
   {
     "npa": "03323",
     "name": "Amin Bunyamin",
-    "email": "aminbym@yahoo.com",
+    "email": "am***@yahoo.com",
+    "email_hash": "2cf5a7d463e8707610c7d7292c99e645d3bec75c164fe2a81942fa5bff2dd95d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5083,7 +5435,8 @@ const INITIAL_DPT = [
   {
     "npa": "03325",
     "name": "Edy Slameto",
-    "email": "edy.slameto@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "b38243c5a49d1d94239b971b985e33eb56c88a251d673755ec151816031ff916",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5097,7 +5450,8 @@ const INITIAL_DPT = [
   {
     "npa": "03333",
     "name": "Suryantini",
-    "email": "suryantini@gl.itb.ac.id",
+    "email": "su***@gl.itb.ac.id",
+    "email_hash": "20a834c8d3e7488625630b8d8aabb9e89a41f922e2a544ecc73f53769c187ea4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5111,7 +5465,8 @@ const INITIAL_DPT = [
   {
     "npa": "03334",
     "name": "Djoko Anityo Satya Wibowo",
-    "email": "djoko_anityo@yahoo.com",
+    "email": "dj***@yahoo.com",
+    "email_hash": "f3fa8d4d8012b6e5996e6cb3ea9a56c9b5dce416fa8d13894ebcb229d23deead",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5125,7 +5480,8 @@ const INITIAL_DPT = [
   {
     "npa": "03335",
     "name": "R Purwantoko Mahagyo",
-    "email": "wantoko@chevron.com",
+    "email": "wa***@chevron.com",
+    "email_hash": "283a1359e19254387ef7e7e80be839eca0cab5701a6a4ad95b23d92d2419a9fe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5139,7 +5495,8 @@ const INITIAL_DPT = [
   {
     "npa": "03343",
     "name": "Arief Kurniawan",
-    "email": "nenjhap@gmail.com",
+    "email": "ne***@gmail.com",
+    "email_hash": "63d96cab9b371eff2d6fc5e56724e95daa70a467221ff90ebccae144eeb72eaf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5153,7 +5510,8 @@ const INITIAL_DPT = [
   {
     "npa": "03350",
     "name": "Windi Darmawan",
-    "email": "darmawan.windi@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "7b02429c18136d77de88ed6bca142d862b360c66b1db6735473d37af8707bfc7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5167,7 +5525,8 @@ const INITIAL_DPT = [
   {
     "npa": "03353",
     "name": "Didin M Nurdin",
-    "email": "di2n120@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "e17d3dd06bebb18e05ae47fe1df5a77aa3a385c06897cab67780898616b8d623",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5181,7 +5540,8 @@ const INITIAL_DPT = [
   {
     "npa": "03357",
     "name": "Rimbawan Prathidina",
-    "email": "rimbawanprathidina@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "5d7f43e67de24b133f75baea6c445b4ee613bdbb80d51c564354c83d2f2c0e09",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5195,7 +5555,8 @@ const INITIAL_DPT = [
   {
     "npa": "03361",
     "name": "Muhammad Maruf Mukti",
-    "email": "maruf.mukti@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "6366ffeba3db525f3f11237a6c9f9e52f7eeca9cbe044bcb1fffd27a06f7843a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5209,7 +5570,8 @@ const INITIAL_DPT = [
   {
     "npa": "03362",
     "name": "Asep Kurnia Permana",
-    "email": "permana_ak@yahoo.com",
+    "email": "pe***@yahoo.com",
+    "email_hash": "89cce06a5bb1dda10e31d58cb21eca713d2d262f00d7ff7e035e3c02eb9c7821",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5223,7 +5585,8 @@ const INITIAL_DPT = [
   {
     "npa": "03369",
     "name": "Marsu",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5237,7 +5600,8 @@ const INITIAL_DPT = [
   {
     "npa": "03371",
     "name": "Arii Ardjuna",
-    "email": "ardjuna@centrin.net.id",
+    "email": "ar***@centrin.net.id",
+    "email_hash": "ee3a78b643d1bf3cd4614a9230bb81db5f9f555b20fee063b818d3c68701f337",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5251,7 +5615,8 @@ const INITIAL_DPT = [
   {
     "npa": "03373",
     "name": "Zuardin Azzaino",
-    "email": "z.azzaino@gmail.com",
+    "email": "z.***@gmail.com",
+    "email_hash": "d36a5969a75fd552f409fe06e93a90b7f83a0198015642d88308c7d14e783124",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5265,7 +5630,8 @@ const INITIAL_DPT = [
   {
     "npa": "03374",
     "name": "Fuad Ahmadin Nasution",
-    "email": "fuad.ahmadin@gmail.com",
+    "email": "fu***@gmail.com",
+    "email_hash": "1506052217ca1f65a4453d71ff04cc39334307f9668cf4ab60a74265edbc02c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5279,7 +5645,8 @@ const INITIAL_DPT = [
   {
     "npa": "03377",
     "name": "Andi Noventiyanto",
-    "email": "andi.noventiyanto@medcoenergi.com",
+    "email": "an***@medcoenergi.com",
+    "email_hash": "953d51a342a6d6af257bf5764dadb3844275c099f395145f402d7ccd8157700b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5293,7 +5660,8 @@ const INITIAL_DPT = [
   {
     "npa": "03385",
     "name": "Bayu Nugroho",
-    "email": "bayu.ngr@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "8124f4ccab15b09517f97fe72423398560431b506caa9fd0550c482e7d79590b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5307,7 +5675,8 @@ const INITIAL_DPT = [
   {
     "npa": "03386",
     "name": "Ahmad Sujai",
-    "email": "ahmadsujai.crc@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "1a999a709070c9dd38957269e9388954eacf0d021623bf7a1c40c37cab8b9bc4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5321,7 +5690,8 @@ const INITIAL_DPT = [
   {
     "npa": "03387",
     "name": "Totong Koesnadi Usman",
-    "email": "t.usman@pertamina.com",
+    "email": "t.***@pertamina.com",
+    "email_hash": "00afe935aa5e5f88cf2949162951b0ec8a2b8c7aac746502e2229820b4211cf3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5335,7 +5705,8 @@ const INITIAL_DPT = [
   {
     "npa": "03391",
     "name": "Agung Roniwibowo",
-    "email": "agung.roniwibowo@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "474db1b1d6c604516692651225dfa5084bea42858d05acdd2b5e51626fbfc846",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5349,7 +5720,8 @@ const INITIAL_DPT = [
   {
     "npa": "03397",
     "name": "Abdul Bari",
-    "email": "abdulbariikawangi@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "563652a62a9898c9cba794664f2a4e0275e65da360e6530855a126a91f6d6525",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5363,7 +5735,8 @@ const INITIAL_DPT = [
   {
     "npa": "03398",
     "name": "Alfend Rudyawan",
-    "email": "alfend@itb.ac.id",
+    "email": "al***@itb.ac.id",
+    "email_hash": "ad708907d3bb87a249c26d1fad005c84c6e86750831ab9422d14b912431e752c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5377,7 +5750,8 @@ const INITIAL_DPT = [
   {
     "npa": "03406",
     "name": "Arief Wicaksono",
-    "email": "awitea@gmail.com",
+    "email": "aw***@gmail.com",
+    "email_hash": "352f6d51239e82e8031a53d9fbb2bc5cef5bafedab1244fc5f9ebe0c8bb47f0e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5391,7 +5765,8 @@ const INITIAL_DPT = [
   {
     "npa": "03413",
     "name": "lIrawan Cahyono",
-    "email": "doddy_irawandwi@yahoo.com",
+    "email": "do***@yahoo.com",
+    "email_hash": "c44d0786d22a12261a4b48ae97bc7b662feafcb0bd235d367a3cb7c6e6e7866f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5405,7 +5780,8 @@ const INITIAL_DPT = [
   {
     "npa": "03423",
     "name": "Andi Octavia Saputro",
-    "email": "andio_saputro@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "4bbc93cd10e16c8220ab8692b5af483d1f010fa6a36e25acaa1ec99d90267eab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5419,7 +5795,8 @@ const INITIAL_DPT = [
   {
     "npa": "03430",
     "name": "Indra Prasetia Permana",
-    "email": "indraprasetiap@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "5134515c3383a9599a663de380908710024d2033044e3f1125749c596e7a6026",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5433,7 +5810,8 @@ const INITIAL_DPT = [
   {
     "npa": "03436",
     "name": "Yulian Wahyudi",
-    "email": "yulianwahyudi@yahoo.com",
+    "email": "yu***@yahoo.com",
+    "email_hash": "60db09ebea2e18e83a065f1abae577b48558b20782dfb0a3e012013db8792c17",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5447,7 +5825,8 @@ const INITIAL_DPT = [
   {
     "npa": "03437",
     "name": "Adde Avrino",
-    "email": "mk.adde.avrino1@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "18db66eb00d96bfd276e5f7c97d18f53171285b344426d0aabf4c2b0d66869ae",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5461,7 +5840,8 @@ const INITIAL_DPT = [
   {
     "npa": "03446",
     "name": "Risdi Muhammad Zainal",
-    "email": "risdi.zainal@pertamina.com",
+    "email": "ri***@pertamina.com",
+    "email_hash": "15e2f2a3c5151626cef13cad16ce082fd7197bb249d90e8531d08a1c60b09570",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5475,7 +5855,8 @@ const INITIAL_DPT = [
   {
     "npa": "03452",
     "name": "Neni Herawati",
-    "email": "neni792@yahoo.co.id",
+    "email": "ne***@yahoo.co.id",
+    "email_hash": "719ee76ea7be67288ab96a79c56aae8695b2eff457403d3787e2a923379a9eb6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5489,7 +5870,8 @@ const INITIAL_DPT = [
   {
     "npa": "03454",
     "name": "Meutia Sartika A",
-    "email": "meutiasa@yahoo.com",
+    "email": "me***@yahoo.com",
+    "email_hash": "ec1fafa38699e2f6e85f49730382930b4f709d0a8d70a8144922657345735a80",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5503,7 +5885,8 @@ const INITIAL_DPT = [
   {
     "npa": "03457",
     "name": "Mirzam Abdurrachman",
-    "email": "mirzam@itb.ac.id",
+    "email": "mi***@itb.ac.id",
+    "email_hash": "43fa1ae4ac7232e0f1d43b1ea09c75c999d3ed2648c85018b86bde454bc8e85b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5517,7 +5900,8 @@ const INITIAL_DPT = [
   {
     "npa": "03463",
     "name": "Meli Hadiana",
-    "email": "mhadiana@yahoo.com",
+    "email": "mh***@yahoo.com",
+    "email_hash": "bbc52b20c72e451ede155a68f837fdfbd30df6132460b61059a3d09c90434ef0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5531,7 +5915,8 @@ const INITIAL_DPT = [
   {
     "npa": "03467",
     "name": "Ario Budi Wicaksono",
-    "email": "ario.wicaksono@esdm.go.id",
+    "email": "ar***@esdm.go.id",
+    "email_hash": "e6a32641eac342cf8a4191cf23fcf06acf4d1fb9921c0369667d10bc3b6f2f7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5545,7 +5930,8 @@ const INITIAL_DPT = [
   {
     "npa": "03468",
     "name": "Ratna Tri Murwani",
-    "email": "ratnatri@lemigas.esdm.go.id",
+    "email": "ra***@lemigas.esdm.go.id",
+    "email_hash": "b0c1df054561a529ad315af952d230f0b940ba28579aa4b665e6122551ddaeb1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5559,7 +5945,8 @@ const INITIAL_DPT = [
   {
     "npa": "03471",
     "name": "Dyna Sartika Setiadi",
-    "email": "dyna.sartikas@gmail.com",
+    "email": "dy***@gmail.com",
+    "email_hash": "e4ad34b11a64d0054abe6e3fe666fe33dcccbc225d917cb650496ad8295dab51",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5573,7 +5960,8 @@ const INITIAL_DPT = [
   {
     "npa": "03472",
     "name": "Arif Susanto",
-    "email": "arifsusanto220@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "fe2741acfd0d3fa4ff7e799bc28148028b948b05d944e371a3730d26b0bcb252",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5587,7 +5975,8 @@ const INITIAL_DPT = [
   {
     "npa": "03474",
     "name": "Muhammad Rofiq",
-    "email": "muhammad.rofiq1@pertamina.com",
+    "email": "mu***@pertamina.com",
+    "email_hash": "fe2fe1f790055013815a68208be0274eb667b06f9a3ef2f68b7209f13d1ba9d8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5601,7 +5990,8 @@ const INITIAL_DPT = [
   {
     "npa": "03475",
     "name": "Sukisno",
-    "email": "sukisno_gea81@yahoo.com",
+    "email": "su***@yahoo.com",
+    "email_hash": "4d011f2816c6675db2d20ce3d3232078ca4d1a7b22ce54c424aec0a5df1abea4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5615,7 +6005,8 @@ const INITIAL_DPT = [
   {
     "npa": "03478",
     "name": "Yuki Haidir",
-    "email": "yuki.hdr@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "be0fb78baca2c53f238a06483b6af90afb1bcb75134940285278534df297921d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5629,7 +6020,8 @@ const INITIAL_DPT = [
   {
     "npa": "03483",
     "name": "Fadlin",
-    "email": "fadlin@unsoed.ac.id",
+    "email": "fa***@unsoed.ac.id",
+    "email_hash": "e2fa6cd9eb684327e32ba611fdb9706b878f972fcda1c68cb6804cbfd846acfa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5643,7 +6035,8 @@ const INITIAL_DPT = [
   {
     "npa": "03490",
     "name": "Teuku Yan Waliana Muda",
-    "email": "iyan.haryanto@unpad.ac.id",
+    "email": "iy***@unpad.ac.id",
+    "email_hash": "3dc8c73e3e0d2a611219722c9103f9c43e4279595995c2b33a1ad08e0a9c461a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5657,7 +6050,8 @@ const INITIAL_DPT = [
   {
     "npa": "03491",
     "name": "Hendarmawan",
-    "email": "hendarmawan@unpad.ac.id",
+    "email": "he***@unpad.ac.id",
+    "email_hash": "0c9498fd991cc5e0abf2944b32279597173e15db6844e0a05ae30e05aa0db467",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5671,7 +6065,8 @@ const INITIAL_DPT = [
   {
     "npa": "03492",
     "name": "Yuyun Yuniardi",
-    "email": "yuyun.yuniardi@unpad.ac.id",
+    "email": "yu***@unpad.ac.id",
+    "email_hash": "26e95e9b5b5be4c8665140dc84b102e4555d2c00dbe707428d1ba759803b60a1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5685,7 +6080,8 @@ const INITIAL_DPT = [
   {
     "npa": "03503",
     "name": "Mohamad Fery Mustofa",
-    "email": "gilangr234@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "68843ff6cfaf51333c36d9a4e2b69e4d31725daff6ec98f82b633224162feb1e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5699,7 +6095,8 @@ const INITIAL_DPT = [
   {
     "npa": "03508",
     "name": "Doni Prakasa Eka Putra",
-    "email": "putra_dpe@ugm.ac.id",
+    "email": "pu***@ugm.ac.id",
+    "email_hash": "5bc2522e7e4d19e783c4a8d6d1cce2930f59b43e3348ddc4318504b6e5d64ff5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5713,7 +6110,8 @@ const INITIAL_DPT = [
   {
     "npa": "03515",
     "name": "Mill Sartika Indah",
-    "email": "mill.indah@pertamina.com",
+    "email": "mi***@pertamina.com",
+    "email_hash": "d228fb4c151618a4098a7133b1aca5cb40e85f81f1753854736aa7465e4e35ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5727,7 +6125,8 @@ const INITIAL_DPT = [
   {
     "npa": "03521",
     "name": "Waluyo",
-    "email": "waluyobagaskoro@yahoo.com",
+    "email": "wa***@yahoo.com",
+    "email_hash": "931e4f4dfcd5db267a36af44ce84b74a1380a6c3262d38d231669541edb0e44d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5741,7 +6140,8 @@ const INITIAL_DPT = [
   {
     "npa": "03524",
     "name": "Arius Dimara",
-    "email": "ariusdimara@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "aba02f7075a3010fca1a3ebe4454676943c06d1c99f5bc3a94b6e785158f3317",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5755,7 +6155,8 @@ const INITIAL_DPT = [
   {
     "npa": "03528",
     "name": "Mohammad Taufiq",
-    "email": "mtaufiq@lemigas.esdm.go.id",
+    "email": "mt***@lemigas.esdm.go.id",
+    "email_hash": "786f0157694f3756ee09774818e9b7ef8b80f054bf7365161272b5a3cc88fd71",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5769,7 +6170,8 @@ const INITIAL_DPT = [
   {
     "npa": "03529",
     "name": "Winantris",
-    "email": "winantris@unpad.ac.id",
+    "email": "wi***@unpad.ac.id",
+    "email_hash": "e9b8bbbc0ed180808d9c65e21dcf48af86e33f8cbabda17354d8caa0c0e4cb43",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5783,7 +6185,8 @@ const INITIAL_DPT = [
   {
     "npa": "03530",
     "name": "Novi Triany",
-    "email": "novi.triany@trisakti.ac.id",
+    "email": "no***@trisakti.ac.id",
+    "email_hash": "9885f48d5e5147855fe8c3ff5e8d2c07eea77c7b3f0ade30cdae7bba278e379a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5797,7 +6200,8 @@ const INITIAL_DPT = [
   {
     "npa": "03540",
     "name": "Selvi Yuminti",
-    "email": "yuminti@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "510ee844e7c58ab15bf2bb1acf158cab443fb59745d5f4cf3da7c9b2a2c7ae88",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5811,7 +6215,8 @@ const INITIAL_DPT = [
   {
     "npa": "03541",
     "name": "Rahmawan Helmi",
-    "email": "rahmawanhelmi@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "563f87d99065dd80c0f4ede93bf87ab239dc8d17051d3b1749d105ccff6b1bf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5825,7 +6230,8 @@ const INITIAL_DPT = [
   {
     "npa": "03542",
     "name": "R Isnu Hajar Sulistyawan",
-    "email": "isnoe.hsr@gmail.com",
+    "email": "is***@gmail.com",
+    "email_hash": "0e2ff58ff20e81ba13266ca364b819bfbc4e549a74fe812b99a52b4b74f46167",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5839,7 +6245,8 @@ const INITIAL_DPT = [
   {
     "npa": "03548",
     "name": "Restio Brata",
-    "email": "restio.brata@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "9538e5eb470884a2896dbcfa7a28945feaadbac6cc2f307e2d72cf84b6314f3c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5853,7 +6260,8 @@ const INITIAL_DPT = [
   {
     "npa": "03549",
     "name": "Hengky Ng",
-    "email": "HNg3@slb.com",
+    "email": "HN***@slb.com",
+    "email_hash": "55718c4a39f3503dc0313bed414949344bcc73ed79216b20b16040cd345f4b79",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5867,7 +6275,8 @@ const INITIAL_DPT = [
   {
     "npa": "03551",
     "name": "Emiliana Sulistyowati",
-    "email": "seno_wisanggeni@yahoo.com",
+    "email": "se***@yahoo.com",
+    "email_hash": "b74673410d046f5d295c0b3a7c91ad40234722c0a7afb15cd75265d251657bb8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5881,7 +6290,8 @@ const INITIAL_DPT = [
   {
     "npa": "03554",
     "name": "Ferry Sahat Sahala Nababan",
-    "email": "f.nababan@outlook.com",
+    "email": "f.***@outlook.com",
+    "email_hash": "7c21b20b73c7ee050e36ae486fea6c4d4faf363dcce2b4d1a8bb38ba738c2435",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5895,7 +6305,8 @@ const INITIAL_DPT = [
   {
     "npa": "03555",
     "name": "Fajar Hendrasto",
-    "email": "f_hendrasto@yahoo.com",
+    "email": "f_***@yahoo.com",
+    "email_hash": "ab69f3b462efb2f1f392e48474856858baed3e3e0a83d2cefa71fec5e3b20b14",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5909,7 +6320,8 @@ const INITIAL_DPT = [
   {
     "npa": "03558",
     "name": "ROMZY RIO WIBAWA",
-    "email": "romziwibawa@yahoo.com",
+    "email": "ro***@yahoo.com",
+    "email_hash": "a5e20e050ac10d9da4abe2fc0d0fd3cc249301fe05571794b35bed0d3760080b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5923,7 +6335,8 @@ const INITIAL_DPT = [
   {
     "npa": "03559",
     "name": "Muhaemin B Sutami",
-    "email": "mas_muhaemin@yahoo.com",
+    "email": "ma***@yahoo.com",
+    "email_hash": "4702f129e9bb5d60970d242d04eedf70eaf86d283d033f1efefe7ce0b6cebf29",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5937,7 +6350,8 @@ const INITIAL_DPT = [
   {
     "npa": "03561",
     "name": "Sari Agustini",
-    "email": "agustini.ashadi@antam.com",
+    "email": "ag***@antam.com",
+    "email_hash": "5eb444eb492c90a041c5a11706c721f87fadba48b3d7b9ac4f516e5edab2ee5c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5951,7 +6365,8 @@ const INITIAL_DPT = [
   {
     "npa": "03577",
     "name": "Rosalyn Wullandhary",
-    "email": "rwullandhary@gmail.com",
+    "email": "rw***@gmail.com",
+    "email_hash": "c6654f6f670169c5cb0bf546908356e3ec463dc782cfcb813b8e9e0931a64259",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5965,7 +6380,8 @@ const INITIAL_DPT = [
   {
     "npa": "03578",
     "name": "Herryadi Wachyudin",
-    "email": "herryadi.wachyudin@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "cb5789facb769e59a3bd10c5bdcab61c1cdb26239d8679de20c5a5bc89042732",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5979,7 +6395,8 @@ const INITIAL_DPT = [
   {
     "npa": "03583",
     "name": "Gayuh Nugroho Dwi Putranto",
-    "email": "gayuh.putranto@gmail.com",
+    "email": "ga***@gmail.com",
+    "email_hash": "a4345c59283f3405664378694c3a3688a88a83c5ef96cc7f9c74c06a4377cb14",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5993,7 +6410,8 @@ const INITIAL_DPT = [
   {
     "npa": "03586",
     "name": "Dicki Hendrian",
-    "email": "oomdick@gmail.com",
+    "email": "oo***@gmail.com",
+    "email_hash": "670df9691dfe21fb9a1670823dbc1e113ee67c0763597633157417b7545770c3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6007,7 +6425,8 @@ const INITIAL_DPT = [
   {
     "npa": "03587",
     "name": "Ahmad Nur Taufiqurrahman",
-    "email": "ahmad.taufiqurrahman@hotmail.com",
+    "email": "ah***@hotmail.com",
+    "email_hash": "475f5869f9ba6802d0e8c5f9fd6a8d1c79b62975b7f4702a201f213409e70e1c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6021,7 +6440,8 @@ const INITIAL_DPT = [
   {
     "npa": "03606",
     "name": "Widodo",
-    "email": "widodo_geovani@yahoo.com",
+    "email": "wi***@yahoo.com",
+    "email_hash": "2b8f83b8d40814a7176e937ccb560da4c61a24495d53ed948f82a4f002fb89ca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6035,7 +6455,8 @@ const INITIAL_DPT = [
   {
     "npa": "03608",
     "name": "Radyus Ramli Hindarman",
-    "email": "hindarman3@yahoo.com",
+    "email": "hi***@yahoo.com",
+    "email_hash": "650d7a32f7c3de1297c87893f456d6e534fe7d356ef594f9746554b0b121ca9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6049,7 +6470,8 @@ const INITIAL_DPT = [
   {
     "npa": "03609",
     "name": "Kusnadi",
-    "email": "kusnadi85@yahoo.com",
+    "email": "ku***@yahoo.com",
+    "email_hash": "4d00e67e250a0510e05853711b2c0480f3318f9d2b5472b1d5f5955f2032f990",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6063,7 +6485,8 @@ const INITIAL_DPT = [
   {
     "npa": "03615",
     "name": "Nurhadi Wibowo",
-    "email": "bowiegeo@yahoo.com",
+    "email": "bo***@yahoo.com",
+    "email_hash": "223c889f7b21c6061059dbb900acb2e5128cdf3d35be65bbb935d56116cdae4d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6077,7 +6500,8 @@ const INITIAL_DPT = [
   {
     "npa": "03616",
     "name": "WS Handono Putro",
-    "email": "ws_handono@yahoo.com",
+    "email": "ws***@yahoo.com",
+    "email_hash": "05e527373e080e33e89946d0db033762afd402bbb352a94652f680fec0dbb3c9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6091,7 +6515,8 @@ const INITIAL_DPT = [
   {
     "npa": "03620",
     "name": "Prayatna",
-    "email": "japp_ra@yahoo.co.id",
+    "email": "ja***@yahoo.co.id",
+    "email_hash": "f8b0b5fdb902e2ee211387af5ab77154773faf255e0dfd9f684d120f7c8f9156",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6105,7 +6530,8 @@ const INITIAL_DPT = [
   {
     "npa": "03621",
     "name": "Indra Bagio Saputro",
-    "email": "indrabagio@yahoo.com",
+    "email": "in***@yahoo.com",
+    "email_hash": "10f39db3361c59768ad01b0d723caed3daa4ccdd3f9baa0a0d1c85e42e5f2e21",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6119,7 +6545,8 @@ const INITIAL_DPT = [
   {
     "npa": "03623",
     "name": "David Victor Mamengko",
-    "email": "mamengko@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "3ef874b4fb2d9cb1c3b5093dd9eafdc31e0053fc069cd0ae7245f80c2423ccd4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6133,7 +6560,8 @@ const INITIAL_DPT = [
   {
     "npa": "03624",
     "name": "Abdul Muthi",
-    "email": "abdul_muthi@yahoo.com",
+    "email": "ab***@yahoo.com",
+    "email_hash": "65a8cb57437a27b1b80cf35f3ee25658884fffb6e9b269b1ae52e1f0fe858f23",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6147,7 +6575,8 @@ const INITIAL_DPT = [
   {
     "npa": "03628",
     "name": "Okki Verdiansyah",
-    "email": "okki.verdiansyah@antam.com",
+    "email": "ok***@antam.com",
+    "email_hash": "74e7b5386a62d88b5a3e0445b5e62de5188ac980c43f788be8607f7c898d5bc4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6161,7 +6590,8 @@ const INITIAL_DPT = [
   {
     "npa": "03629",
     "name": "Adam Dwinanto",
-    "email": "adam170710@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "aff9fe86f7c299dc15a4e3fc5c6a8ec3db0f53028ab779167b251a48e031710b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6175,7 +6605,8 @@ const INITIAL_DPT = [
   {
     "npa": "03633",
     "name": "Rahmad Riyadi",
-    "email": "rahmad98@yahoo.com",
+    "email": "ra***@yahoo.com",
+    "email_hash": "14761fcfb8fb07434bc9830bba5eeb37833c9a8051779ccbabca94f4214331c1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6189,7 +6620,8 @@ const INITIAL_DPT = [
   {
     "npa": "03634",
     "name": "Whidiyastuti",
-    "email": "whidi.tg02@gmail.com",
+    "email": "wh***@gmail.com",
+    "email_hash": "697e0b302a07c461faf2351f96457eb989b4983503157f58f1873e2685f843a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6203,7 +6635,8 @@ const INITIAL_DPT = [
   {
     "npa": "03643",
     "name": "Suprayitno Adhi Nugroho",
-    "email": "suprayitno.adhi1@pertamina.com",
+    "email": "su***@pertamina.com",
+    "email_hash": "ec423fef7f9f8d69c047049522a59ec3a6d14b196c3864b089a8f3a0f515c4ee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6217,7 +6650,8 @@ const INITIAL_DPT = [
   {
     "npa": "03649",
     "name": "Happy Devi Thesly",
-    "email": "happythesly@yahoo.com",
+    "email": "ha***@yahoo.com",
+    "email_hash": "8894ce535537aca4868dd5dab007d7bde57599d2a9795b5ac279bf57b83549e3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6231,7 +6665,8 @@ const INITIAL_DPT = [
   {
     "npa": "03650",
     "name": "Yusni Marta",
-    "email": "yumageo@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "b3d16ef9221d42a65e9ed8e623a1a42ec77f88a2824abf82c6698a97cf00c12b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6245,7 +6680,8 @@ const INITIAL_DPT = [
   {
     "npa": "03653",
     "name": "Fitriani Agustin",
-    "email": "fitriani.agustin@yahoo.com",
+    "email": "fi***@yahoo.com",
+    "email_hash": "ad8a22fee5abd98294f4aec04bbb22ae771f7a50cea5be956e6d0629428e5cfe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6259,7 +6695,8 @@ const INITIAL_DPT = [
   {
     "npa": "03654",
     "name": "Resha Ramadian",
-    "email": "resha.ramadian@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "c64ff1abc6f6c4b6064f6c42820a636ef52bbdbdff6721056796de9823988ca4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6273,7 +6710,8 @@ const INITIAL_DPT = [
   {
     "npa": "03655",
     "name": "Mohammad Irvan",
-    "email": "irvan.mohammad@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "2b6748406b0016c6b61e7b4f11841ae1ee69aad20f5c0151017b19bd64e2278e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6287,7 +6725,8 @@ const INITIAL_DPT = [
   {
     "npa": "03662",
     "name": "Yusak Wilyam Rumbewas",
-    "email": "yusak.rumbewas79@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "0ddda276118af44ee633b49e3a0f6791cb52c0f3378725945a66b46d763af95f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6301,7 +6740,8 @@ const INITIAL_DPT = [
   {
     "npa": "03663",
     "name": "Agus Sugiharto",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6315,7 +6755,8 @@ const INITIAL_DPT = [
   {
     "npa": "03664",
     "name": "Suhardi",
-    "email": "hardys212@yahoo.co.id",
+    "email": "ha***@yahoo.co.id",
+    "email_hash": "5ceef05e8d2fdb59f4492d64701bfaded02f42eebeaffe5ae82e286f107cf64c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6329,7 +6770,8 @@ const INITIAL_DPT = [
   {
     "npa": "03666",
     "name": "Wulandari Mandradewi",
-    "email": "wulandari.mandradewi@gmail.com",
+    "email": "wu***@gmail.com",
+    "email_hash": "06a4cc4ec3226e967a3469bcf47644d950697fa6b1aa31b0675125e3d9b2276b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6343,7 +6785,8 @@ const INITIAL_DPT = [
   {
     "npa": "03667",
     "name": "Agung Mulyo",
-    "email": "agung.mulyo@unpad.ac.id",
+    "email": "ag***@unpad.ac.id",
+    "email_hash": "01691fff10ee87fd6efbdc11f15b2d7772a5f172372cee206a279c5549074821",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6357,7 +6800,8 @@ const INITIAL_DPT = [
   {
     "npa": "03668",
     "name": "Sihol Edison Sitorus",
-    "email": "sihol_edison@yahoo.co.id",
+    "email": "si***@yahoo.co.id",
+    "email_hash": "6c16084a9d8d53f3b41eef8ea5df747018550862e2afa678c912129d7e8728f8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6371,7 +6815,8 @@ const INITIAL_DPT = [
   {
     "npa": "03676",
     "name": "Zufialdi Zakaria",
-    "email": "zufialdi.zakaria@unpad.ac.id",
+    "email": "zu***@unpad.ac.id",
+    "email_hash": "9114e32ff48b8b9c756f015db82e40e3c614dd3a6bea2c73b94cbc72257da9a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6385,7 +6830,8 @@ const INITIAL_DPT = [
   {
     "npa": "03679",
     "name": "Efo Hadi",
-    "email": "efohadi@gmail.com",
+    "email": "ef***@gmail.com",
+    "email_hash": "37d5c309d66f6c7108c1309b18e5a4e064b426d8aee46e902a84b590c5c28b25",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6399,7 +6845,8 @@ const INITIAL_DPT = [
   {
     "npa": "03687",
     "name": "Arif Budiman",
-    "email": "arif.budiman2011@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "5de2a22fd2a8d443ddc8c73f08fa07e9711732988ad3aab45aa8d91209df5c59",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6413,7 +6860,8 @@ const INITIAL_DPT = [
   {
     "npa": "03689",
     "name": "Leonardo Sembiring",
-    "email": "leonardo.geos@gmail.com",
+    "email": "le***@gmail.com",
+    "email_hash": "8b55315af6c20186a129d5a26acfe21dc1db40b0e8d2fef25a4be7af3f33e2a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6427,7 +6875,8 @@ const INITIAL_DPT = [
   {
     "npa": "03695",
     "name": "Cecep Mochammad Yasin",
-    "email": "cmyasin@djmbp.esdm.go.id",
+    "email": "cm***@djmbp.esdm.go.id",
+    "email_hash": "c4cd31f565f1dfb52689aeac28e58cd994190a76847bd7bdb96d1055a439cde7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6441,7 +6890,8 @@ const INITIAL_DPT = [
   {
     "npa": "03696",
     "name": "Pipit Kalbarini Harinursari",
-    "email": "pipit_geologi@yahoo.com",
+    "email": "pi***@yahoo.com",
+    "email_hash": "2bf62907e9bd5b5bf9048bedee202761b60abbb4eb4413c739e1e21c46055a1c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6455,7 +6905,8 @@ const INITIAL_DPT = [
   {
     "npa": "03700",
     "name": "Wendy Prayuda",
-    "email": "wendy.prayuda@antam.com",
+    "email": "we***@antam.com",
+    "email_hash": "b41bd8351b767fd3a87b239f41963eb0f4d6afcbadebd88bca9154442bca886a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6469,7 +6920,8 @@ const INITIAL_DPT = [
   {
     "npa": "03703",
     "name": "Supandi",
-    "email": "supandisttnas@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "920a2f6fd877f0db1d739a211074aa5e91308b1b9d51f58d2358e05baf05a82d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6483,7 +6935,8 @@ const INITIAL_DPT = [
   {
     "npa": "03704",
     "name": "Rully Aditya Syauzie",
-    "email": "rlly_as@yahoo.com",
+    "email": "rl***@yahoo.com",
+    "email_hash": "27a1576af8fc1b12bbeb5ac3a8e3de073ac7ce3cd4b6a12da2244618bac68218",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6497,7 +6950,8 @@ const INITIAL_DPT = [
   {
     "npa": "03707",
     "name": "Ricky Ferdianto Herlambang",
-    "email": "ricky.ferdianto.herlambang@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "d8378b8912257c6ecddb1f25b375396b3001596537bc854a0ebe92daebbe7c60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6511,7 +6965,8 @@ const INITIAL_DPT = [
   {
     "npa": "03710",
     "name": "Hari Utomo",
-    "email": "hariutomo62@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "d5c091c40d70294888e4a0ea06beafc27c00c72d8d2aecb1ef8c471fbc54ff54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6525,7 +6980,8 @@ const INITIAL_DPT = [
   {
     "npa": "03711",
     "name": "Argo Wuryanto",
-    "email": "argo.wuryanto@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "72924ddc51f8a37ea9d0e5a05df652003bec1e101d5ada36477b858ec634b8be",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6539,7 +6995,8 @@ const INITIAL_DPT = [
   {
     "npa": "03717",
     "name": "Yan Adriansyah",
-    "email": "yan_adrian97@yahoo.com",
+    "email": "ya***@yahoo.com",
+    "email_hash": "17a673c7980bc301a34f0282dbd774e53794dd9994d0aefa88351c55e967783b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6553,7 +7010,8 @@ const INITIAL_DPT = [
   {
     "npa": "03721",
     "name": "Andi Herlisa",
-    "email": "andi.herlisa@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "2d24db171b4f6d1fb007452c3e085712b51027ff27d020477882b7905c35fa92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6567,7 +7025,8 @@ const INITIAL_DPT = [
   {
     "npa": "03730",
     "name": "Dicky Harishidayat",
-    "email": "mk.dicky.h@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "3f16471b42ab77776b32a79695e6fb3a0fed226538dd282637e6093594fc38d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6581,7 +7040,8 @@ const INITIAL_DPT = [
   {
     "npa": "03741",
     "name": "Eko Fernando Simanjuntak",
-    "email": "ekojuntak12@gmail.com",
+    "email": "ek***@gmail.com",
+    "email_hash": "71c744c414161fc247c295bd5e34bc3dbb17d1da3abb46dd226407ac55e88d63",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6595,7 +7055,8 @@ const INITIAL_DPT = [
   {
     "npa": "03744",
     "name": "Aris Thimonicus Asmuruf",
-    "email": "thimonicus@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "1614be58c3732b9ae589468f1c114e3e853d68497f1c79bf129b6dde10fa16d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6609,7 +7070,8 @@ const INITIAL_DPT = [
   {
     "npa": "03747",
     "name": "Anthony John Mc Dugall",
-    "email": "tony.mcdougall@kbkgold.co.id",
+    "email": "to***@kbkgold.co.id",
+    "email_hash": "28d802cda4ffe0ac65ea77b614cfc9c23d749c4f47360981761fe748b129474e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6623,7 +7085,8 @@ const INITIAL_DPT = [
   {
     "npa": "03748",
     "name": "Eddy Triyanto",
-    "email": "triyanto0679@gmail.com",
+    "email": "tr***@gmail.com",
+    "email_hash": "6b5facbd1bf98ea5cf9a2bf9c29bdb103fd294de1778af3abd5f7a2964377f63",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6637,7 +7100,8 @@ const INITIAL_DPT = [
   {
     "npa": "03749",
     "name": "Sonny Yudhistira",
-    "email": "sonny.yudhistira@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "9796f80a80575ee9852fddbeb281f375ea17a2d47460eca0a5068e303a86671c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6651,7 +7115,8 @@ const INITIAL_DPT = [
   {
     "npa": "03750",
     "name": "Endri Sujatmiko",
-    "email": "endrisujatmiko2@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "7247f436144f2f8fe030c7942bd21ec432cb7879d6506ba36be21e9a98896413",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6665,7 +7130,8 @@ const INITIAL_DPT = [
   {
     "npa": "03752",
     "name": "Ari Sofyadi",
-    "email": "arisofyadi@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "51d46b84b1be48781b8b93fefd88826d8f60c3f1de270c9bbcca23d78eaaaed5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6679,7 +7145,8 @@ const INITIAL_DPT = [
   {
     "npa": "03754",
     "name": "Ade Suryan Setiawan",
-    "email": "ASetiawan10@slb.com",
+    "email": "AS***@slb.com",
+    "email_hash": "e78b4569d8651903394fb30af9d1295bc259df810f8f8b485d0f7ddf81bc3d48",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6693,7 +7160,8 @@ const INITIAL_DPT = [
   {
     "npa": "03770",
     "name": "Putri Riadini",
-    "email": "priadini@apecbmic.com",
+    "email": "pr***@apecbmic.com",
+    "email_hash": "a4eb69a82727c0db7af16d9f735be8bbc7201f689969dfe0875ab993bafaf7a2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6707,7 +7175,8 @@ const INITIAL_DPT = [
   {
     "npa": "03781",
     "name": "lyep Sopandi",
-    "email": "sopandi_jakarta@yahoo.co.id",
+    "email": "so***@yahoo.co.id",
+    "email_hash": "f544a0931858bd585c335f3a688c55d650e06c56f0bdc46304a2c69f4b3086e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6721,7 +7190,8 @@ const INITIAL_DPT = [
   {
     "npa": "03782",
     "name": "Casdira",
-    "email": "casdira@pertamina.com",
+    "email": "ca***@pertamina.com",
+    "email_hash": "89337259ebc8adb58bd9fede5670c67db050d1e440b982a095d89cb930777954",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6735,7 +7205,8 @@ const INITIAL_DPT = [
   {
     "npa": "03784",
     "name": "Asnanto Multa Putranto",
-    "email": "asnantomp@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "e185cfffb1723171095a73c02a83e09e81ba04c78656767bc9fd208433b085cc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6749,7 +7220,8 @@ const INITIAL_DPT = [
   {
     "npa": "03786",
     "name": "Dumex Pasaribu",
-    "email": "dumex.pasaribu@gmail.com",
+    "email": "du***@gmail.com",
+    "email_hash": "faffe723c33d808bacdfccd6692983611433c4497b442f7601187c85675e01b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6763,7 +7235,8 @@ const INITIAL_DPT = [
   {
     "npa": "03790",
     "name": "Sirozuddin",
-    "email": "sirozuddin@yahoo.com",
+    "email": "si***@yahoo.com",
+    "email_hash": "09f46ad82a59c6ec34005e16813c5cb3e76366c0dff69c8c05b1fc82b5c6d558",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6777,7 +7250,8 @@ const INITIAL_DPT = [
   {
     "npa": "03792",
     "name": "Henrikus Panjaitan",
-    "email": "henrikusp@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "e2a1994bd5278f27f7f4329dc9a5116a216a1535a4bd2db72e5bb9932bcbe05e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6791,7 +7265,8 @@ const INITIAL_DPT = [
   {
     "npa": "03793",
     "name": "Julianta Parlindungan Panjaitan",
-    "email": "julianta.panjaitan2@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "6f999bae24010a5576dd886185b2fe0965c22029b365a436fba694fd1ffca735",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6805,7 +7280,8 @@ const INITIAL_DPT = [
   {
     "npa": "03804",
     "name": "Fanny Rosdiawan",
-    "email": "fanny.rosdiawan@pertamina.com",
+    "email": "fa***@pertamina.com",
+    "email_hash": "66288c8368e7e81545557c0abfd13fd24143f5ccc0a2d23ddaf3c363d5b76200",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6819,7 +7295,8 @@ const INITIAL_DPT = [
   {
     "npa": "03805",
     "name": "Nugroho Imam Setiawan",
-    "email": "nusetiawan@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "6a85d2a3e8fcd8e01f7068c31c51727125fd8656ebf698966af2d37e42bcccdd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6833,7 +7310,8 @@ const INITIAL_DPT = [
   {
     "npa": "03807",
     "name": "Bayu Sapta Fitriana",
-    "email": "bayu.fitriana@pertamina.com",
+    "email": "ba***@pertamina.com",
+    "email_hash": "73ccce1b681d7b545425946a2ee27460ad70f63fedc5abd20e7974072a491717",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6847,7 +7325,8 @@ const INITIAL_DPT = [
   {
     "npa": "03816",
     "name": "Alfi Syahrin",
-    "email": "alfisyahrin702@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "4cc302e82bafa88cd58d8155d325317aba489333d8ced1a109f0bda4c591dfe5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6861,7 +7340,8 @@ const INITIAL_DPT = [
   {
     "npa": "03823",
     "name": "Surahmat",
-    "email": "japrisaya@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "e57aad1659f8a5b3e8b95c652855ef4ef0e0b00ed51c741d2a9575b261732469",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6875,7 +7355,8 @@ const INITIAL_DPT = [
   {
     "npa": "03839",
     "name": "Adi Gunawan",
-    "email": "gugun.geo04@gmail.com",
+    "email": "gu***@gmail.com",
+    "email_hash": "76394668b008d6a7427ba1e20336867dc7a938d1315e9b78d8ac46c1bcbe0ce8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6889,7 +7370,8 @@ const INITIAL_DPT = [
   {
     "npa": "03840",
     "name": "Ndaru Cahyono",
-    "email": "ndaru_cahyono@hotmail.com",
+    "email": "nd***@hotmail.com",
+    "email_hash": "5ad4fe05e9d3dde5b368c2646088a4f4d59d5eb285819df0a430fb45c2d99848",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6903,7 +7385,8 @@ const INITIAL_DPT = [
   {
     "npa": "03841",
     "name": "Murodi",
-    "email": "murodi7869@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "8952a468e336c07a104cceef1f957f5b9f31bbb0ec73ea6c2d6fb4e3f4667dca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6917,7 +7400,8 @@ const INITIAL_DPT = [
   {
     "npa": "03850",
     "name": "Mauliate Agustinus H S",
-    "email": "mauliates@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "0bacb545633e4ccf4aa2d789b98c469ad230a4564c19608640df910c3ffe6142",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6931,7 +7415,8 @@ const INITIAL_DPT = [
   {
     "npa": "03856",
     "name": "Cipi Armandita",
-    "email": "mk.cipi.armandita@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "8f231d68853db524f26739b66e6a27896a40164800b1cb6a242e5ab0390678d4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6945,7 +7430,8 @@ const INITIAL_DPT = [
   {
     "npa": "03857",
     "name": "Taubah Faulin",
-    "email": "tfaulin@skkmigas.com",
+    "email": "tf***@skkmigas.com",
+    "email_hash": "6facbc84862cced016bc18ac848e83bd2a5e41ee828e2807235f7ebe1ce38905",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6959,7 +7445,8 @@ const INITIAL_DPT = [
   {
     "npa": "03861",
     "name": "Ervan Kosandi",
-    "email": "ervankosandi@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "0d555be804976c6978af47b09b0cebfb2f5d27534402631e91ab9bd69f650768",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6973,7 +7460,8 @@ const INITIAL_DPT = [
   {
     "npa": "03867",
     "name": "Mangoloi Silalahi",
-    "email": "mangoloi.silalahigeo@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "3af75fd0b1e5fe98ee7a6c2ea54ecf9fd0be96b2ef10a2410b4112850a210827",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -6987,7 +7475,8 @@ const INITIAL_DPT = [
   {
     "npa": "03871",
     "name": "Sukarya Sanusi",
-    "email": "sukarya.sanusi@geoservices.co.id",
+    "email": "su***@geoservices.co.id",
+    "email_hash": "d6912d67d8f87b85f973c827af2c69dabea784961e940fa3d0b2f2c0d9dc4b11",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7001,7 +7490,8 @@ const INITIAL_DPT = [
   {
     "npa": "03872",
     "name": "lan Tasiran",
-    "email": "tasiran@geoservices.co.id",
+    "email": "ta***@geoservices.co.id",
+    "email_hash": "0e23837865447c23d789105697b502e8a7f873902259871a612aea720fabec67",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7015,7 +7505,8 @@ const INITIAL_DPT = [
   {
     "npa": "03875",
     "name": "Agus Kuswandi",
-    "email": "akuswandi@geoservices.co.id",
+    "email": "ak***@geoservices.co.id",
+    "email_hash": "4ae74285285ca25aa112c01636126702c4efda9976521ff29ab688960a8b8313",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7029,7 +7520,8 @@ const INITIAL_DPT = [
   {
     "npa": "03877",
     "name": "Muhammad Dien",
-    "email": "muh.dien@geoservices.co.id",
+    "email": "mu***@geoservices.co.id",
+    "email_hash": "1b4d7e1bb44adc1c989fdd396ca4827415b0ce6347298ad2a053818e57182606",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7043,7 +7535,8 @@ const INITIAL_DPT = [
   {
     "npa": "03878",
     "name": "Dian Timur Bayu Aji",
-    "email": "dt.bayuaji@geoservices.co.id",
+    "email": "dt***@geoservices.co.id",
+    "email_hash": "adf8e304e012e2a76a19cd0d19cf000c6e65ed458eb2c95bc05070fbd2ff1831",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7057,7 +7550,8 @@ const INITIAL_DPT = [
   {
     "npa": "03879",
     "name": "Wildan Asyrunnihaaiy",
-    "email": "wildan@geoservices.co.id",
+    "email": "wi***@geoservices.co.id",
+    "email_hash": "a125a3c85c1d52e242c10ba3a69bf3e9a36a08a89c02c2316c6615fc8f95db5f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7071,7 +7565,8 @@ const INITIAL_DPT = [
   {
     "npa": "03880",
     "name": "Samsul Alam",
-    "email": "samsul.alam@geoservices.co.id",
+    "email": "sa***@geoservices.co.id",
+    "email_hash": "89daad30b8b6fa08df75ee9b608f05c2432bc79d37ac75837cbc5d8c5152991b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7085,7 +7580,8 @@ const INITIAL_DPT = [
   {
     "npa": "03883",
     "name": "Nurmansyah Munir",
-    "email": "nurmansyah@geoservices.co.id",
+    "email": "nu***@geoservices.co.id",
+    "email_hash": "41853f123f397123dbfbf6ff4e2e17efe1245b106e3f41de5fee410cb46c9961",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7099,7 +7595,8 @@ const INITIAL_DPT = [
   {
     "npa": "03884",
     "name": "Khoiril Arief Saleh",
-    "email": "khoiril.arief@geoservices.co.id",
+    "email": "kh***@geoservices.co.id",
+    "email_hash": "ee3a41229b882397042a877f0eb6598e7ddc374118cfc0e37bb5b7b158054056",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7113,7 +7610,8 @@ const INITIAL_DPT = [
   {
     "npa": "03891",
     "name": "Eko Widi Susanto",
-    "email": "ekowidi.s@geoservices.co.id",
+    "email": "ek***@geoservices.co.id",
+    "email_hash": "d6186d942111165f11ab2eacf5e24025ab0d09511d07e5e73d0a60b182984070",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7127,7 +7625,8 @@ const INITIAL_DPT = [
   {
     "npa": "03899",
     "name": "Evrananta Ginting",
-    "email": "fransgeo2k@gmail.com",
+    "email": "fr***@gmail.com",
+    "email_hash": "9e90d228c2366d38ae5da418629828e67d1c987cb18591ad959dd9e4d8f5d164",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7141,7 +7640,8 @@ const INITIAL_DPT = [
   {
     "npa": "03909",
     "name": "Siswandi Kastari",
-    "email": "siswandi@unsoed.ac.id",
+    "email": "si***@unsoed.ac.id",
+    "email_hash": "20476053451beabec443669f2859a79b66a921ded94254aeb736dd79132e41dd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7155,7 +7655,8 @@ const INITIAL_DPT = [
   {
     "npa": "03911",
     "name": "Wawan Gunawan",
-    "email": "w.gunawan@yahoo.com",
+    "email": "w.***@yahoo.com",
+    "email_hash": "caca004f82dc1c087bc31bb9b971b8ed6d0842eda35d4c71d1e617bde32422f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7169,7 +7670,8 @@ const INITIAL_DPT = [
   {
     "npa": "03919",
     "name": "Hendry Setiawan Lie",
-    "email": "hendry.lie@pertamina.com",
+    "email": "he***@pertamina.com",
+    "email_hash": "96101d7c4a7f153c37d50330785920a7e35fe3606f2201bad6056a352c7b1935",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7183,7 +7685,8 @@ const INITIAL_DPT = [
   {
     "npa": "03924",
     "name": "Hendra Iriansyah Darmawan",
-    "email": "hendra_iriansyah_darmawan@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "0d82aa7371f899426368cc1b27bb426040428a64f3a7b03024109f6341f04c88",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7197,7 +7700,8 @@ const INITIAL_DPT = [
   {
     "npa": "03937",
     "name": "Asep Nugraha",
-    "email": "a.nugraha5484@gmail.com",
+    "email": "a.***@gmail.com",
+    "email_hash": "bf089057813132a3169cd0fb50b3f28ddcb2742c9f30e391ba38ba01d4793d36",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7211,7 +7715,8 @@ const INITIAL_DPT = [
   {
     "npa": "03938",
     "name": "Hadi Kurniawan",
-    "email": "hadi211183@yahoo.co.id",
+    "email": "ha***@yahoo.co.id",
+    "email_hash": "40173e8d25dee2dd8030b71652d033d8c00f864b76404187d34675f3a2e633d9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7225,7 +7730,8 @@ const INITIAL_DPT = [
   {
     "npa": "03948",
     "name": "Ridho Feraldo",
-    "email": "t_feraldo@yahoo.com",
+    "email": "t_***@yahoo.com",
+    "email_hash": "9e6081806082e6c4d73b4b88937b96ced4b04f85b8c693c88213d92838e38532",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7239,7 +7745,8 @@ const INITIAL_DPT = [
   {
     "npa": "03951",
     "name": "Adi Noegroho",
-    "email": "adi_noegroho@yahoo.com",
+    "email": "ad***@yahoo.com",
+    "email_hash": "ecb3227c39629d2a67f15fad54b88c2bdcad197fc0b4aa636641cc9d3b2454ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7253,7 +7760,8 @@ const INITIAL_DPT = [
   {
     "npa": "03954",
     "name": "Singgih Widagdo",
-    "email": "singgih0271@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "2b019deef43e4c9ab51235e0666ff6fd89e3debe498717955c256821a37bf738",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7267,7 +7775,8 @@ const INITIAL_DPT = [
   {
     "npa": "03956",
     "name": "Riszky Baisal Risyad",
-    "email": "riszky.baisal@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "d6e5439d115cbe09fb374114b12a163896f109393af005f9f81721c5d92248d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7281,7 +7790,8 @@ const INITIAL_DPT = [
   {
     "npa": "03958",
     "name": "Wahyu Seno Aji",
-    "email": "wahyu.senoaji@pertamina.com",
+    "email": "wa***@pertamina.com",
+    "email_hash": "318997a51683f1b4b60f323025df30eef38072ad1937ae5d89368402e1df7def",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7295,7 +7805,8 @@ const INITIAL_DPT = [
   {
     "npa": "03963",
     "name": "Rizky Yudha Satria",
-    "email": "y.yudhasatria@gmail.com",
+    "email": "y.***@gmail.com",
+    "email_hash": "a2bb804717a657e7259ced29576af660c6293e9b1607ef6bf4bf64c641fa8932",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7309,7 +7820,8 @@ const INITIAL_DPT = [
   {
     "npa": "03964",
     "name": "Sulastama Raharja",
-    "email": "rsulastama@gmail.com",
+    "email": "rs***@gmail.com",
+    "email_hash": "97011667e05fc2182176ad9a9a41d8845217b4130b7a7732ef07a3cc0023cf02",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7323,7 +7835,8 @@ const INITIAL_DPT = [
   {
     "npa": "03967",
     "name": "Anif Punto Utomo",
-    "email": "anifpunto@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "7745c6fdc61bb7ec722e8c9e126952ff9cb1f6c99e36e9bf1a0c3be33d139e2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7337,7 +7850,8 @@ const INITIAL_DPT = [
   {
     "npa": "03972",
     "name": "Fathoni Eko Nugroho",
-    "email": "fathoni.nugroho@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "a8c2d1a42bf43b58a0bc176074d8cc18ff518c3f606daedbc45ca9757401f064",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7351,7 +7865,8 @@ const INITIAL_DPT = [
   {
     "npa": "03976",
     "name": "Budi Agus Suharto",
-    "email": "bagusarto@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "f1cc51bf602cf40d843815214cdf6af7dd5adb390212d4ccb89dd18fce015eca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7365,7 +7880,8 @@ const INITIAL_DPT = [
   {
     "npa": "03980",
     "name": "Dadan Ramdan Setiawan",
-    "email": "dadan_rs@yahoo.com",
+    "email": "da***@yahoo.com",
+    "email_hash": "cf3f796bb7ac3c9b929cdeb540dff27696a85ebde7f10bd95f6fa13833485eba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7379,7 +7895,8 @@ const INITIAL_DPT = [
   {
     "npa": "03988",
     "name": "Arif Gunawan",
-    "email": "arifgeo@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "8e195c5a65142995d7f5393ce0be1b8dfd1039c0557d2055d12d2532b486aee5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7393,7 +7910,8 @@ const INITIAL_DPT = [
   {
     "npa": "03993",
     "name": "Agung Budianto",
-    "email": "a.budianto@pertamina.com",
+    "email": "a.***@pertamina.com",
+    "email_hash": "ad56f15f9a8781e142d54334668c560f3b782afc6e0a4d5d38301ce0758f2be6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7407,7 +7925,8 @@ const INITIAL_DPT = [
   {
     "npa": "03994",
     "name": "Anton Darmawan",
-    "email": "antondarmawan101@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "e4b10d9cbae376c75d42979f5521a379ae6f1d3a89d8729cac903224e2198489",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7421,7 +7940,8 @@ const INITIAL_DPT = [
   {
     "npa": "03997",
     "name": "Fuad Nuri",
-    "email": "fuad.nuri@pertamina.com",
+    "email": "fu***@pertamina.com",
+    "email_hash": "116656c0e734e366dd4feeebcbfec41f4072395146621e1de0f9c27d7260d852",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7435,7 +7955,8 @@ const INITIAL_DPT = [
   {
     "npa": "03998",
     "name": "Iwan Bagus Indriyanto",
-    "email": "iwan.indriyanto@pertamina.com",
+    "email": "iw***@pertamina.com",
+    "email_hash": "0471e315305ed6b6fed7078a964996b534626a0d162ff645c90a501dd544920a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7449,7 +7970,8 @@ const INITIAL_DPT = [
   {
     "npa": "03999",
     "name": "Soffan Miftahul Hadi",
-    "email": "soffan.miftahul@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "d017c1c6d684dc86b9947c5745298e0683a81f6c441e716e78a90b91246ddb3a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7463,7 +7985,8 @@ const INITIAL_DPT = [
   {
     "npa": "04000",
     "name": "Theodorus Rendhi Aryosito Iswarajati",
-    "email": "rendhi.aryosito@pertamina.com",
+    "email": "re***@pertamina.com",
+    "email_hash": "d77514d3d3773ecffa7fac770c987a3710c42952c6435e0336e90e6061f6173a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7477,7 +8000,8 @@ const INITIAL_DPT = [
   {
     "npa": "04001",
     "name": "Triputra Agung Pribadi",
-    "email": "triputra.agung@pertamina.com",
+    "email": "tr***@pertamina.com",
+    "email_hash": "09ddc083010efc8059b2c75d37f5fb2e32b55646cd3e385cceab4e6cc40434f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7491,7 +8015,8 @@ const INITIAL_DPT = [
   {
     "npa": "04002",
     "name": "Wahyuni Tri Sundari",
-    "email": "yoe_nich@yahoo.com",
+    "email": "yo***@yahoo.com",
+    "email_hash": "53cfbed2777f1cc801caef89a731a4f6a628263cedfe8a159c683235f7bdb5f6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7505,7 +8030,8 @@ const INITIAL_DPT = [
   {
     "npa": "04004",
     "name": "Paulo Renata",
-    "email": "paulo.renata11@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "e6ee7332eba4516afb0ea3f0584f7307f8d6fc579c4806a7a334515036ba7f6e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7519,7 +8045,8 @@ const INITIAL_DPT = [
   {
     "npa": "04005",
     "name": "Yusak H Setiawan",
-    "email": "bgamping@yahoo.com",
+    "email": "bg***@yahoo.com",
+    "email_hash": "1901674f62a971d7eceaa9106e9fd3047760289de06cbc95d9e55fb322cb15ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7533,7 +8060,8 @@ const INITIAL_DPT = [
   {
     "npa": "04006",
     "name": "Maikel Arifin",
-    "email": "maikel.ar@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "3f6d68e05be58664bb017300c182096984d9b13d614bc88cfbc69317dd7e91ad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7547,7 +8075,8 @@ const INITIAL_DPT = [
   {
     "npa": "04009",
     "name": "Sugeng Widada",
-    "email": "s_widada@yahoo.co.id",
+    "email": "s_***@yahoo.co.id",
+    "email_hash": "1004cfc95878927c00c807d63329141315ce915ff1544fbec6978db408482cb1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7561,7 +8090,8 @@ const INITIAL_DPT = [
   {
     "npa": "04010",
     "name": "Yerri Heryunanto",
-    "email": "yerry66@yahoo.com",
+    "email": "ye***@yahoo.com",
+    "email_hash": "b14bb5e25fa39f25cb9646670c2795766a5e8330db9330931aa7fdac10da2963",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7575,7 +8105,8 @@ const INITIAL_DPT = [
   {
     "npa": "04011",
     "name": "Agus Dwi Suryanto",
-    "email": "agusdwi.suryanto@pertamina.com",
+    "email": "ag***@pertamina.com",
+    "email_hash": "4b0a21c73718fa6762365e5453eae09aa073f05da84b60920ea81cd38f3d1d9c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7589,7 +8120,8 @@ const INITIAL_DPT = [
   {
     "npa": "04013",
     "name": "Made Suardana",
-    "email": "made.suardana@pertamina.com",
+    "email": "ma***@pertamina.com",
+    "email_hash": "a0a689fdf889a9d4865a6da89f1fababc66c7259b0005e9bf50c524dd036f295",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7603,7 +8135,8 @@ const INITIAL_DPT = [
   {
     "npa": "04016",
     "name": "Teddy Eka Putra",
-    "email": "teddyekaputra@yahoo.com",
+    "email": "te***@yahoo.com",
+    "email_hash": "c92e35a028223601c3df4909275843677c84a5098b88df28f4305c30642494f3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7617,7 +8150,8 @@ const INITIAL_DPT = [
   {
     "npa": "04017",
     "name": "Fauzan Arif",
-    "email": "farif@premier-oil.com",
+    "email": "fa***@premier-oil.com",
+    "email_hash": "f166fe3ebda627f806336e9af4b3d6d9feda8cdc87be2d2dad8788712edeecfe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7631,7 +8165,8 @@ const INITIAL_DPT = [
   {
     "npa": "04020",
     "name": "Fajar Anggakusumah",
-    "email": "fajar.terra@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "12bdce8cf0d133303fbe89e199ceef464025706f8d5133bd723fef0f6a96977d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7645,7 +8180,8 @@ const INITIAL_DPT = [
   {
     "npa": "04022",
     "name": "Putu Suputra Utama",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7659,7 +8195,8 @@ const INITIAL_DPT = [
   {
     "npa": "04023",
     "name": "Fahrudin Fahrudin",
-    "email": "fahrudin@ft.undip.ac.id",
+    "email": "fa***@ft.undip.ac.id",
+    "email_hash": "3dd9f6bb7fd4e386c4a2b130d23b8136d02d3bf009171c6ccb20b853af540418",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7673,7 +8210,8 @@ const INITIAL_DPT = [
   {
     "npa": "04030",
     "name": "Dessy Dharmayanti",
-    "email": "dessy.dh@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "30b0eeefca94af7a2fd45a2f7362e2297f1a7c41740f3696db3d5df69d332a00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7687,7 +8225,8 @@ const INITIAL_DPT = [
   {
     "npa": "04033",
     "name": "Jaenudin",
-    "email": "jaenudinj@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "ec6e343a02dbbbcae9e15ade4ec03286f52429ce232866e78b64736e47598cf3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7701,7 +8240,8 @@ const INITIAL_DPT = [
   {
     "npa": "04035",
     "name": "Jakson Anwari",
-    "email": "jakson.anwari@esdm.go.id",
+    "email": "ja***@esdm.go.id",
+    "email_hash": "091b0fa8fe2c9a0453f5c9fb6d73c744b7c757597e26cf5cf4fd3e72437ac1ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7715,7 +8255,8 @@ const INITIAL_DPT = [
   {
     "npa": "04040",
     "name": "Ajie E Winugroho",
-    "email": "ajie.ewin@esdm.go.id",
+    "email": "aj***@esdm.go.id",
+    "email_hash": "4f2f1a691ccf009aede2039551e56f342cf4bd467943ca85a7ecd341cdfc23a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7729,7 +8270,8 @@ const INITIAL_DPT = [
   {
     "npa": "04041",
     "name": "Michael Allan Daud",
-    "email": "michaelkiky@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "20269c8cfb8b1cd486314e16cac1a338feae61e7a16fc04c568c770fba8329be",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7743,7 +8285,8 @@ const INITIAL_DPT = [
   {
     "npa": "04051",
     "name": "M Tulus Semedie",
-    "email": "tulus.nedpi@antam.com",
+    "email": "tu***@antam.com",
+    "email_hash": "a08a7eec8be75fa151a0bcd5e18029a4868187e5daed4a4be032b1e4d07badd2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7757,7 +8300,8 @@ const INITIAL_DPT = [
   {
     "npa": "04055",
     "name": "Kirandra Ferari Budhi Prasojo",
-    "email": "kirandra.prasojo@pertamina.com",
+    "email": "ki***@pertamina.com",
+    "email_hash": "a1b7aa3270c574eaf299320482efda40810d671bd294f022b6a0a739076dd495",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7771,7 +8315,8 @@ const INITIAL_DPT = [
   {
     "npa": "04056",
     "name": "Godang Shaban",
-    "email": "godang@gmail.com",
+    "email": "go***@gmail.com",
+    "email_hash": "c09473ba57f3545e4cd2ca73976d805be16f9ca8c7b8401fe225da659e49d815",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7785,7 +8330,8 @@ const INITIAL_DPT = [
   {
     "npa": "04060",
     "name": "Faisal Fadillah",
-    "email": "fslfadillah@yahoo.com",
+    "email": "fs***@yahoo.com",
+    "email_hash": "ade80fa488d9fe17a838d7fd01e42db9de43f82f9d973d0fbcc64b1596fc28aa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7799,7 +8345,8 @@ const INITIAL_DPT = [
   {
     "npa": "04062",
     "name": "Adrianto Setiadi",
-    "email": "anto.trilobite@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "8fa246f6d3725f6d5c4d8221f97cf213114c13f2672f2f9b3aefd5cfa84c233e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7813,7 +8360,8 @@ const INITIAL_DPT = [
   {
     "npa": "04064",
     "name": "Asmariyadi",
-    "email": "asmariyadi@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "d7ed2a0264a5488a983e6462433916e270e859b3164ff57ba7baa26f06553f4b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7827,7 +8375,8 @@ const INITIAL_DPT = [
   {
     "npa": "04065",
     "name": "‘Sumarlin Usman",
-    "email": "sumarlin.geospatial@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "93e60ff8b48ac2e2890f82b03bb13625a1beb3f7864cb4be9895087746a49d20",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7841,7 +8390,8 @@ const INITIAL_DPT = [
   {
     "npa": "04067",
     "name": "Kaharuddin Hawing",
-    "email": "ikakhair@gmail.com",
+    "email": "ik***@gmail.com",
+    "email_hash": "001a4d6972f62b5fae316180b8743cb515c25ff5c89632386080730212ff6b19",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7855,7 +8405,8 @@ const INITIAL_DPT = [
   {
     "npa": "04072",
     "name": "Wanni",
-    "email": "wanni_geos@yahoo.com",
+    "email": "wa***@yahoo.com",
+    "email_hash": "b01693072436545d8b7fd88c2c75cc4023f5d38d8c7ee4e24a976d73aaac2509",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7869,7 +8420,8 @@ const INITIAL_DPT = [
   {
     "npa": "04073",
     "name": "Setiyo Wibowo",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7883,7 +8435,8 @@ const INITIAL_DPT = [
   {
     "npa": "04075",
     "name": "Sopi Muhammad Malik Hakim",
-    "email": "maleeqh@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "badd82f23630b222002028733cb87dbf3863b4261ce852dd0a822b56d9ba4905",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7897,7 +8450,8 @@ const INITIAL_DPT = [
   {
     "npa": "04078",
     "name": "Iryanto Rompo",
-    "email": "iryanto.rompo@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "160daf70b0d52989948f37d6f2be4eaffe724b99e2b4ee3db58e07b434dad047",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7911,7 +8465,8 @@ const INITIAL_DPT = [
   {
     "npa": "04079",
     "name": "Alan Matano",
-    "email": "alan.matano@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "4ae1a26b699d3b6e17623f6ce56a099ff7198affa2cbac7ef2807c20fdafa496",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7925,7 +8480,8 @@ const INITIAL_DPT = [
   {
     "npa": "04087",
     "name": "Ayu Trisnasih",
-    "email": "ayu.trisnasih@pertamina.com",
+    "email": "ay***@pertamina.com",
+    "email_hash": "56ef346b7bb2c9fd0a29c2a48493cc28107f95dc6561bb5e23cd180d2bb14a74",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7939,7 +8495,8 @@ const INITIAL_DPT = [
   {
     "npa": "04095",
     "name": "Kartika Dwi Handayani",
-    "email": "kartikadh@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "2151a2402e1acbaed0ea9772f2bef35518c960d6f5553234160cb52cf027a9a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7953,7 +8510,8 @@ const INITIAL_DPT = [
   {
     "npa": "04141",
     "name": "Yoseph C A Swamidharma",
-    "email": "yoseph.swamidharma@yahoo.com",
+    "email": "yo***@yahoo.com",
+    "email_hash": "58e48fa2390ae0501ae678c728d66767557ed7ddb7c870162ef12d4ca64d2163",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7967,7 +8525,8 @@ const INITIAL_DPT = [
   {
     "npa": "04144",
     "name": "Dadan Kriswandi",
-    "email": "dadan.kriswandi@pertamina.com",
+    "email": "da***@pertamina.com",
+    "email_hash": "c88c1b933fee78cedc028a73e07991e21f33b3e5951b48633f1a36f89c14fe5f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7981,7 +8540,8 @@ const INITIAL_DPT = [
   {
     "npa": "04146",
     "name": "Rizqi Syawal",
-    "email": "justrizqi22@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "c0a9e16402c19e98969541d2233b08b37356f2384407637b22c2f26379256839",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7995,7 +8555,8 @@ const INITIAL_DPT = [
   {
     "npa": "04155",
     "name": "Hani Adi Graha",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8009,7 +8570,8 @@ const INITIAL_DPT = [
   {
     "npa": "04159",
     "name": "Visitasi Maria Juliana Femant",
-    "email": "fvisitasi@yahoo.com",
+    "email": "fv***@yahoo.com",
+    "email_hash": "3ae190ef01fbd545a5059b20be46bb0741455df50b7464e3409a12af0359a070",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8023,7 +8585,8 @@ const INITIAL_DPT = [
   {
     "npa": "04160",
     "name": "Latip Candraditya",
-    "email": "lantip.candraditya@geoservices.co.id",
+    "email": "la***@geoservices.co.id",
+    "email_hash": "7cdbc5621c396a801e229dd7359be68b97a6d4ddf8f7b24a9f9ab76f5eeb80d9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8037,7 +8600,8 @@ const INITIAL_DPT = [
   {
     "npa": "04164",
     "name": "Agus Cahyadin",
-    "email": "agus.cahyadin@geoservices.co.id",
+    "email": "ag***@geoservices.co.id",
+    "email_hash": "eb926f875b3532c98d1d71b329571164a6040cc0a88c46037b96c3108e351304",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8051,7 +8615,8 @@ const INITIAL_DPT = [
   {
     "npa": "04167",
     "name": "Firman Ansori Soedirman",
-    "email": "firman.ansori@geoservices.co.id",
+    "email": "fi***@geoservices.co.id",
+    "email_hash": "e954f1705118c8afab610829619801f92ea15ad307b6deb19ee30abfb0574b82",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8065,7 +8630,8 @@ const INITIAL_DPT = [
   {
     "npa": "04170",
     "name": "Aveliansyah",
-    "email": "aveliansyah@gmail.com",
+    "email": "av***@gmail.com",
+    "email_hash": "506a33983930eda55dfc86584f1a686c1a3319a0fb998d3f2c5d55e22a68c5b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8079,7 +8645,8 @@ const INITIAL_DPT = [
   {
     "npa": "04171",
     "name": "Dedek Priscilla",
-    "email": "dedek.priscill@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "a18a8291ca20c61292ddc9f7a50358ad4b771b33f61bc482c7890251e5b61a9f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8093,7 +8660,8 @@ const INITIAL_DPT = [
   {
     "npa": "04172",
     "name": "Satriya Besari",
-    "email": "satriya.besari@antam.com",
+    "email": "sa***@antam.com",
+    "email_hash": "2b8dd1f3effed5cee4254508a46cfed7817def49336735d9d91a2d9ec90fc242",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8107,7 +8675,8 @@ const INITIAL_DPT = [
   {
     "npa": "04175",
     "name": "Wanda Ilham Dani",
-    "email": "wandaabisyafiq87@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "42f90da3ab7de521dab7b77e284866ecd9e3158ee217afe5d44d5a4848838db0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8121,7 +8690,8 @@ const INITIAL_DPT = [
   {
     "npa": "04176",
     "name": "Riko Ardiansyah Indra Kusuma",
-    "email": "riko.ardiansyah@antam.com",
+    "email": "ri***@antam.com",
+    "email_hash": "3779eaf7900be05992803097ca94de40945c80c43c6cc664bb2f0370a461c07b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8135,7 +8705,8 @@ const INITIAL_DPT = [
   {
     "npa": "04177",
     "name": "Arief Prawira Kusumah",
-    "email": "ariefprawira_kusumah@yahoo.co.id",
+    "email": "ar***@yahoo.co.id",
+    "email_hash": "b00eba080f2e917b0109657d714bc4363d4d2c73461b589a2583f973cabd9b2a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8149,7 +8720,8 @@ const INITIAL_DPT = [
   {
     "npa": "04178",
     "name": "Ruri Pitaloka",
-    "email": "shinsengumi_rei@yahoo.com",
+    "email": "sh***@yahoo.com",
+    "email_hash": "ab4b69095a16ff798bc19c735b08413a0bc1b2474800cb0ef88075a6943c2f3b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8163,7 +8735,8 @@ const INITIAL_DPT = [
   {
     "npa": "04179",
     "name": "Andika Hutasoit",
-    "email": "andika.hutasoit@antam.com",
+    "email": "an***@antam.com",
+    "email_hash": "a23e0d847a612d3805ef280fc79205a0e93098d80367f4aecc41c74115d6df70",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8177,7 +8750,8 @@ const INITIAL_DPT = [
   {
     "npa": "04180",
     "name": "Henny Madao",
-    "email": "henny.heiset@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "84e59129a4efb549032e6e5925b3ce93550f2a6ae4e67553725ccfbb9d45ba77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8191,7 +8765,8 @@ const INITIAL_DPT = [
   {
     "npa": "04194",
     "name": "Dian Zilalil Hakim",
-    "email": "dhakim@live.com",
+    "email": "dh***@live.com",
+    "email_hash": "7ca083aadf1a4dfaceae6e0035ffc84711ecca0602a11c293cc6433b81bc1a44",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8205,7 +8780,8 @@ const INITIAL_DPT = [
   {
     "npa": "04196",
     "name": "Andreas Yudha Sugiyanto",
-    "email": "andreasyudha4@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "4692d70b92fb348bef464b635f917029dbec04d80c3b8eedfb7cc78c3401da44",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8219,7 +8795,8 @@ const INITIAL_DPT = [
   {
     "npa": "04217",
     "name": "Andrei Nuryansyah",
-    "email": "andrei.nuryansyah@pertamina.com",
+    "email": "an***@pertamina.com",
+    "email_hash": "fc7f64179dfe1d2163f5ef8d2dfb0857a4aa18c15b7761966f4faa5adc192916",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8233,7 +8810,8 @@ const INITIAL_DPT = [
   {
     "npa": "04222",
     "name": "ko Sagala",
-    "email": "iko_gea@yahoo.com",
+    "email": "ik***@yahoo.com",
+    "email_hash": "603a0faf2d4e4dbac3e08deb837bfa9ee98db31ca81b8fa4251ad1d4a81a34a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8247,7 +8825,8 @@ const INITIAL_DPT = [
   {
     "npa": "04226",
     "name": "Fajar Alam",
-    "email": "fajar_alam81@yahoo.com",
+    "email": "fa***@yahoo.com",
+    "email_hash": "69be43df01ee01d4ba8bb912713fbe12581661e14daf7d6b28c6e73e50377b9b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8261,7 +8840,8 @@ const INITIAL_DPT = [
   {
     "npa": "04242",
     "name": "Vijaya Isnaniawardhani",
-    "email": "vijaya.isnania@unpad.ac.id",
+    "email": "vi***@unpad.ac.id",
+    "email_hash": "2fc62acfa693df69e23f889d00d1f7e33baa93d44c6663fd658a41c9140bdf3d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8275,7 +8855,8 @@ const INITIAL_DPT = [
   {
     "npa": "04243",
     "name": "Indra Noviardi Yulian",
-    "email": "indra.noviardi@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "f09509990499fcd40ecfb8b111b853fc35b182f2d457d6720c63a2fbb5664bf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8289,7 +8870,8 @@ const INITIAL_DPT = [
   {
     "npa": "04246",
     "name": "Yoga Andriana Sendjaja",
-    "email": "yoga.andriana.sendjaja@unpad.ac.id",
+    "email": "yo***@unpad.ac.id",
+    "email_hash": "3c859a55416248cb252f263ee0cf428797b06ef2fda9a065d2d51fc16a2425fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8303,7 +8885,8 @@ const INITIAL_DPT = [
   {
     "npa": "04248",
     "name": "Aldis Ramadhan",
-    "email": "aldis_ramadhan07@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "586a50bea8c0dc2c2a5530c04c8ae785bb81680101a1a1aaa372d66e5f1793d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8317,7 +8900,8 @@ const INITIAL_DPT = [
   {
     "npa": "04250",
     "name": "‘Wahyu Pramono",
-    "email": "wahjoepramz@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "e2dda55955781936deb65a18e16ae13021ff8c8cbe9d666c0d274eb319cb9be7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8331,7 +8915,8 @@ const INITIAL_DPT = [
   {
     "npa": "04251",
     "name": "Agah Nugraha",
-    "email": "agah.nugraha@pertamina.com",
+    "email": "ag***@pertamina.com",
+    "email_hash": "9f3a31d6b42e59c54480cc17f367648438cc39223d1dd1e1f43eb8b71660484f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8345,7 +8930,8 @@ const INITIAL_DPT = [
   {
     "npa": "04252",
     "name": "Ferdinandus Kartiko Samodro",
-    "email": "kartiko.samodro@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "7c3df46d7f4a766b65f61bb23c779d9c83917fb1c605adc2629c86d66c3af617",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8359,7 +8945,8 @@ const INITIAL_DPT = [
   {
     "npa": "04257",
     "name": "Nur Widi Astanto Agus Tri Heriyadi",
-    "email": "nurwidi1979@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "5b9d2d15530e18a1bdebc5c2d96a0f921427cefcd5667b5a02b7731e3a6714bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8373,7 +8960,8 @@ const INITIAL_DPT = [
   {
     "npa": "04263",
     "name": "Yosa Fikri",
-    "email": "yosafikri@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "3b36813a6eb86570f3668d5218abbc16235584c094928e72205de0284676bbb6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8387,7 +8975,8 @@ const INITIAL_DPT = [
   {
     "npa": "04269",
     "name": "Purwanto Widi Atmoko",
-    "email": "purwanto.atmoko@yahoo.com",
+    "email": "pu***@yahoo.com",
+    "email_hash": "3479752b9bffe44597f78d5811faec97fb462be940f7b43168bd02018c822239",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8401,7 +8990,8 @@ const INITIAL_DPT = [
   {
     "npa": "04270",
     "name": "Rachmat Pratiwinda",
-    "email": "rachprat2014@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "3853515bc8f07874cd94dd04146ae2309224471b681fda5337b6f446e9ca7ce9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8415,7 +9005,8 @@ const INITIAL_DPT = [
   {
     "npa": "04276",
     "name": "Andi Kadir Jailani",
-    "email": "andi.kajai@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "e9055cccd235eca7eb2cd05b03a9be649a5b7a8113e3641840d817cbf87d871f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8429,7 +9020,8 @@ const INITIAL_DPT = [
   {
     "npa": "04279",
     "name": "Glady Wardhana",
-    "email": "glady.wardhana@ptbepi.com",
+    "email": "gl***@ptbepi.com",
+    "email_hash": "5a6227a305cb7f4a5356583e0bcb2e4f9c81a4392a10bc6fe93fb5db2505be6c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8443,7 +9035,8 @@ const INITIAL_DPT = [
   {
     "npa": "04280",
     "name": "Sury Endah Kusumaning P",
-    "email": "geologistsury@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "f236629a89dfa5736d39224a8a117f7d0ddb183a6baba7ed47d8813bf8180720",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8457,7 +9050,8 @@ const INITIAL_DPT = [
   {
     "npa": "04292",
     "name": "Lukman Sutrisno",
-    "email": "gealukman@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "bad114fa62541f7afdf851b186bdee67508fc1b950bd606c4f692e08de68c79e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8471,7 +9065,8 @@ const INITIAL_DPT = [
   {
     "npa": "04295",
     "name": "Prihatin Tri Setyobudi",
-    "email": "pt_budie@yahoo.co.id",
+    "email": "pt***@yahoo.co.id",
+    "email_hash": "008a51dba13677c6b3a81dc8e3ee30fc442905cdc5bf39629d20b112c6ad7146",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8485,7 +9080,8 @@ const INITIAL_DPT = [
   {
     "npa": "04296",
     "name": "Andyono Broto Santoso",
-    "email": "dyon161@gmail.com",
+    "email": "dy***@gmail.com",
+    "email_hash": "190ac3bef7e8db695209304187ca59d56209d8892197150fab0e5e662be2076c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8499,7 +9095,8 @@ const INITIAL_DPT = [
   {
     "npa": "04307",
     "name": "Pipin Ariyanto",
-    "email": "hestiilusi@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "03a1b8e8196090e4fd6ae7f8a2c1431ea6ab6decb8c793074921c8f80d880de2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8513,7 +9110,8 @@ const INITIAL_DPT = [
   {
     "npa": "04313",
     "name": "Yosa Al Mizani",
-    "email": "yosa.mizani@pertamina.com",
+    "email": "yo***@pertamina.com",
+    "email_hash": "4594535f277f4e301f41270adea31aa99012112e4477a00e263976d316140d5b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8527,7 +9125,8 @@ const INITIAL_DPT = [
   {
     "npa": "04328",
     "name": "Deni Hemandi",
-    "email": "deni_hernandi@yahoo.com",
+    "email": "de***@yahoo.com",
+    "email_hash": "7e46c2ff1a430e3706680b32513167898ee71dd4ca595f0bbca89ad3d11be66d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8541,7 +9140,8 @@ const INITIAL_DPT = [
   {
     "npa": "04329",
     "name": "‘Wahyudi Malik",
-    "email": "wahyudimalik@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "9b9785e3af0e7ba7b352e5ee7e3916f9abfd702cd178bd19c9b001d090ef9a8d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8555,7 +9155,8 @@ const INITIAL_DPT = [
   {
     "npa": "04336",
     "name": "Eri Sarmantua Sitinjak",
-    "email": "erygea@yahoo.com",
+    "email": "er***@yahoo.com",
+    "email_hash": "c76ba0e6317d186a5b3b119e41129f518cf105cd95889265d42614805d8f2655",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8569,7 +9170,8 @@ const INITIAL_DPT = [
   {
     "npa": "04339",
     "name": "Risa Triandari",
-    "email": "risatriandari@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "7ddac79a6e697df606ba9a9710d239b0bc759c2d5ebcbb217cd5ac2f5f7fe722",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8583,7 +9185,8 @@ const INITIAL_DPT = [
   {
     "npa": "04340",
     "name": "Muhammad Fajar",
-    "email": "abumumtazpeca@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "0b481c25cbc21b31828f2ebb2795dd584bbfeb66929a0b9e74e9cd06300a316c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8597,7 +9200,8 @@ const INITIAL_DPT = [
   {
     "npa": "04343",
     "name": "Bernadeta Subandini Astuti",
-    "email": "bernadeta_s_a@yahoo.com",
+    "email": "be***@yahoo.com",
+    "email_hash": "68d575c3440de3e9ad3e2ca218dae7cc90cc7202f4d5d2b606b1d789106b7401",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8611,7 +9215,8 @@ const INITIAL_DPT = [
   {
     "npa": "04350",
     "name": "Rahmat Indrajati",
-    "email": "indrajati85@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "a136f6b7a9f2cf16522cb49f514b2dc5f725bf7ee6843a9a9df0b981600c36bd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8625,7 +9230,8 @@ const INITIAL_DPT = [
   {
     "npa": "04359",
     "name": "Julikah",
-    "email": "julikah@lemigas.esdm.go.id",
+    "email": "ju***@lemigas.esdm.go.id",
+    "email_hash": "fa290d87dc9fcce192c8f29685e673dcb1fe38c95292fa30269652f4752377af",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8639,7 +9245,8 @@ const INITIAL_DPT = [
   {
     "npa": "04360",
     "name": "Dedy Sunjaya",
-    "email": "sunjaya.dedi@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "cc7d7837e739a076b017ced46d680bb11779fbccd0a792e533e14826075df807",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8653,7 +9260,8 @@ const INITIAL_DPT = [
   {
     "npa": "04370",
     "name": "Rulliyansyah",
-    "email": "rulliyansyah@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "36258b716b2dfd277c6610e682020c6fae942314dc86cc1b7f1f72225980f96c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8667,7 +9275,8 @@ const INITIAL_DPT = [
   {
     "npa": "04374",
     "name": "Deasy Rimanda Cahyaningtyas",
-    "email": "deasyrimanda@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "bd268c4c3b238ea9b2c9670b3538daa4bd41fe6a3dcae9697e86ab558e64d658",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8681,7 +9290,8 @@ const INITIAL_DPT = [
   {
     "npa": "04378",
     "name": "Mirna Yanti",
-    "email": "ummunadine_love@yahoo.co.id",
+    "email": "um***@yahoo.co.id",
+    "email_hash": "b83901350cee966e89670f60ae289f16ebb40c787a95797edff67e3a999486d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8695,7 +9305,8 @@ const INITIAL_DPT = [
   {
     "npa": "04392",
     "name": "Aditya Ari Marindra",
-    "email": "aditya.marindra@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "e6e180adbfc4fb7f14436b4c26395b1d2d2bad13ff0d64904250148262fc3d86",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8709,7 +9320,8 @@ const INITIAL_DPT = [
   {
     "npa": "04393",
     "name": "Anita Yuliyanti",
-    "email": "itamarindra@gmail.com",
+    "email": "it***@gmail.com",
+    "email_hash": "f47769a0b6bae05e62e4008315d497669b01216d3807109fa45057f1a925c7ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8723,7 +9335,8 @@ const INITIAL_DPT = [
   {
     "npa": "04401",
     "name": "Dede Rismunandar",
-    "email": "deris_95@yahoo.co.id",
+    "email": "de***@yahoo.co.id",
+    "email_hash": "a66df68e0b4a6e37121ef45d5be98aff1a6b184f3bb02a6813ec2669109798fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8737,7 +9350,8 @@ const INITIAL_DPT = [
   {
     "npa": "04403",
     "name": "Yosafat Palty Simanjuntak",
-    "email": "yosafat.simanjuntak@antam.com",
+    "email": "yo***@antam.com",
+    "email_hash": "4bf0472aa2e8aac2d555df6fab4b962fbe5e6ae76cbedc7405d6a7f62f35e0c8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8751,7 +9365,8 @@ const INITIAL_DPT = [
   {
     "npa": "04404",
     "name": "Bayuaji Jokosatrio P",
-    "email": "bayuajijoko@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "4c95231dcbed3bbc13ac724ddc3075eec4ab07b54d31a09bd97a26b7395c4a57",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8765,7 +9380,8 @@ const INITIAL_DPT = [
   {
     "npa": "04405",
     "name": "Andi Kumiawan",
-    "email": "andi.kurniawan@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "f7f042a271a530bcefb6067b6c1521fce60fbecfd087763ff40a2adf6a5f81ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8779,7 +9395,8 @@ const INITIAL_DPT = [
   {
     "npa": "04416",
     "name": "Jhonny P Marpaung",
-    "email": "jp_marpaung@yahoo.com",
+    "email": "jp***@yahoo.com",
+    "email_hash": "78ae281b74d1ebc0296b7dd307f92b10ee9277d7958468ef719549f4555eb15d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8793,7 +9410,8 @@ const INITIAL_DPT = [
   {
     "npa": "04421",
     "name": "Aurora Juniarti",
-    "email": "Aurora.juniar@gmail.com",
+    "email": "Au***@gmail.com",
+    "email_hash": "5d0af4621e49dc9a2986b4b66864bae4d653ea53b542a77347865669c271e471",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8807,7 +9425,8 @@ const INITIAL_DPT = [
   {
     "npa": "04423",
     "name": "Trimudi Hartono",
-    "email": "trimudi57@yahoo.com",
+    "email": "tr***@yahoo.com",
+    "email_hash": "a0a5aefdd0329489a512da3d62128d7dea8e46c095db7a87bba40dca88c45962",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8821,7 +9440,8 @@ const INITIAL_DPT = [
   {
     "npa": "04424",
     "name": "Amin Rinjani",
-    "email": "amin.rinjani@geoservices.co.id",
+    "email": "am***@geoservices.co.id",
+    "email_hash": "3aaef5158ca61983df1bc9aa8a2adbb1a69173d4408d183aa4e6f8c59caae80b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8835,7 +9455,8 @@ const INITIAL_DPT = [
   {
     "npa": "04425",
     "name": "Muhammad Pandu Herdianto",
-    "email": "pandu.herdianto@pertamina.com",
+    "email": "pa***@pertamina.com",
+    "email_hash": "fc3f6dec56b37e81355934f36a81b05a97f3d9813b9a6250021ace197b8c85ae",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8849,7 +9470,8 @@ const INITIAL_DPT = [
   {
     "npa": "04427",
     "name": "Eko Aditya",
-    "email": "ekoadityageologi@gmail.com",
+    "email": "ek***@gmail.com",
+    "email_hash": "81acf8f01c67bec3569cb7e815a16232c9e4cd487481dd18ad4efc99dbaf1336",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8863,7 +9485,8 @@ const INITIAL_DPT = [
   {
     "npa": "04428",
     "name": "Arya Arditya Kurnia",
-    "email": "arya.arditya@live.com",
+    "email": "ar***@live.com",
+    "email_hash": "7061dfb82a19f82276ee32e69e282e1dc1dc5987fdd2b5a865ed72465e0e7211",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8877,7 +9500,8 @@ const INITIAL_DPT = [
   {
     "npa": "04432",
     "name": "Arida Nurizan",
-    "email": "ariezha@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "d7696e4afd05819f90ee5dee5bf75038fdf36b6dae48421958044810247f671b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8891,7 +9515,8 @@ const INITIAL_DPT = [
   {
     "npa": "04433",
     "name": "Juraedah Dwi Anggraeni",
-    "email": "dwi82anggraeni@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "8dc97fee8aa7102bad3499c9378c85812927bce7c5212e19a2dc53228082e556",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8905,7 +9530,8 @@ const INITIAL_DPT = [
   {
     "npa": "04434",
     "name": "Siti Knodijah",
-    "email": "siti_0609@yahoo.com",
+    "email": "si***@yahoo.com",
+    "email_hash": "8fcba0c16c28a5c1a39e10420a8c373ec15db8991d29afb3cc5ece18945e528c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8919,7 +9545,8 @@ const INITIAL_DPT = [
   {
     "npa": "04435",
     "name": "Latipa Henim Siregar",
-    "email": "latipahenim@yahoo.com",
+    "email": "la***@yahoo.com",
+    "email_hash": "646f39a8ce36bdab3ed3f985cf06799fa22d6eb513ec473a0a4038a6666e7611",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8933,7 +9560,8 @@ const INITIAL_DPT = [
   {
     "npa": "04436",
     "name": "Agus Nur Kasnanto",
-    "email": "agusnurkasnanto@g.resources.net",
+    "email": "ag***@g.resources.net",
+    "email_hash": "a9db38cc7a677f8c842f0aa8fbb8a21dcaaa9c66f446d7d781a0ab2e1e1ea902",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8947,7 +9575,8 @@ const INITIAL_DPT = [
   {
     "npa": "04437",
     "name": "Alfian Harmiyanto",
-    "email": "alfianfield@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "bfa25b2459c683d30a5e666050f6f40d8f167f58883be06082ccb48ce09e3497",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8961,7 +9590,8 @@ const INITIAL_DPT = [
   {
     "npa": "04441",
     "name": "Rizki Arianto",
-    "email": "rizki.arianto.mgei@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "4cdc9f258bd8beae4d83d92a04c82e5cdb4a521046a6ed443d4139f2951294ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8975,7 +9605,8 @@ const INITIAL_DPT = [
   {
     "npa": "04443",
     "name": "Hendra Lesmana",
-    "email": "hendra_lesmana2003@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "2dc3e43c8b636f78e44180b2616c7ee9f27ca55dea0099eb65b3487c1529703d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8989,7 +9620,8 @@ const INITIAL_DPT = [
   {
     "npa": "04446",
     "name": "Roni Amzah",
-    "email": "roncielbleu@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "a146e8b416401ab1a7a97ce5bfb611a8dff46d87aa1c0af7425a04e9e58f4b75",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9003,7 +9635,8 @@ const INITIAL_DPT = [
   {
     "npa": "04452",
     "name": "Iqbal Fandiansyah",
-    "email": "iqbal.bremen@gmail.com",
+    "email": "iq***@gmail.com",
+    "email_hash": "28d7831564d330f2f7752bd3f9c2cb5449b3a7de7250f118301a0b9be5d79327",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9017,7 +9650,8 @@ const INITIAL_DPT = [
   {
     "npa": "04470",
     "name": "Citra Nurwani",
-    "email": "citranurwani@yahoo.co.id",
+    "email": "ci***@yahoo.co.id",
+    "email_hash": "fb8ebac05653ba67ab8ad68af73a9e670e6c3b172e51a7f9b3941e187256c3e8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9031,7 +9665,8 @@ const INITIAL_DPT = [
   {
     "npa": "04474",
     "name": "Alfiady",
-    "email": "alfiadyady@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "20d4f0785a691d17ccaca041aa1cd4e7a36cf41c007c356e90fab1869d663541",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9045,7 +9680,8 @@ const INITIAL_DPT = [
   {
     "npa": "04475",
     "name": "Fivry Wellda Maulana",
-    "email": "fivry@akprind.ac.id",
+    "email": "fi***@akprind.ac.id",
+    "email_hash": "5345292e1e6081f045295e0cf51da13570b8647e1f83f2e5ac465c34316803cb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9059,7 +9695,8 @@ const INITIAL_DPT = [
   {
     "npa": "04479",
     "name": "Surya Adi Nugraha",
-    "email": "surya_2472@yahoo.co.id",
+    "email": "su***@yahoo.co.id",
+    "email_hash": "38d43545ba273f0c0ad607a4c9e153c70e89691b694e3d916aa920e941ab96a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9073,7 +9710,8 @@ const INITIAL_DPT = [
   {
     "npa": "04481",
     "name": "Rizky Ferdiansyah",
-    "email": "rizky.fer@icloud.com",
+    "email": "ri***@icloud.com",
+    "email_hash": "38fbc3e693b9414f7074e2addc4d69dd3218c2ae86e76621cddf90fbd740e584",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9087,7 +9725,8 @@ const INITIAL_DPT = [
   {
     "npa": "04484",
     "name": "Banu Andhika",
-    "email": "banu_andhika@yahoo.com",
+    "email": "ba***@yahoo.com",
+    "email_hash": "5df83c0f30122d61b8cdd3325a87cc7bb2ed0902a5cbec8f3966f6905ab9ac9b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9101,7 +9740,8 @@ const INITIAL_DPT = [
   {
     "npa": "04490",
     "name": "Albert Septario Tempessy",
-    "email": "aseptario@yahoo.com",
+    "email": "as***@yahoo.com",
+    "email_hash": "e08fdac2a618e19c7f47cb4b2cc06e4dcd023481c791834ed22fac55bcbb47f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9115,7 +9755,8 @@ const INITIAL_DPT = [
   {
     "npa": "04494",
     "name": "‘Wahyu Asmantowi",
-    "email": "asmanw@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "763e07b737b4085e6849f23bd1b92daa5f01996b280a4d5bf7b37c2cc8789404",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9129,7 +9770,8 @@ const INITIAL_DPT = [
   {
     "npa": "04501",
     "name": "Eko Nurtanto",
-    "email": "eko_nurtanto@yahoo.com",
+    "email": "ek***@yahoo.com",
+    "email_hash": "0e71f2228444be13b6fb55e690fa0037b7a33e5d0f730f361b55aecc1bf52f0f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9143,7 +9785,8 @@ const INITIAL_DPT = [
   {
     "npa": "04509",
     "name": "Bhima Suhardiyansyah",
-    "email": "rebhima@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "c4af1cab3c8808b83ad5e07b454c58f9bfb769bd1947d3d816916d1164cbb1ef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9157,7 +9800,8 @@ const INITIAL_DPT = [
   {
     "npa": "04514",
     "name": "Titto Ibnu Baroto H",
-    "email": "tittobaroto@gmail.com",
+    "email": "ti***@gmail.com",
+    "email_hash": "d63efbdd8d05e984b6ef737de222cd289c74949dffd3653d7a9f69557645d4e1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9171,7 +9815,8 @@ const INITIAL_DPT = [
   {
     "npa": "04521",
     "name": "Teddy Tresnanto",
-    "email": "teddy_tresnanto@yahoo.com",
+    "email": "te***@yahoo.com",
+    "email_hash": "280231b2c24543e247818b6639e58d6a2d438847884679ec2a38df3f5cc8608e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9185,7 +9830,8 @@ const INITIAL_DPT = [
   {
     "npa": "04527",
     "name": "Joko Santoso",
-    "email": "khokho.geo01@gmail.com",
+    "email": "kh***@gmail.com",
+    "email_hash": "3b0aecc4cf75fa5e0dd130b01f5d2846214fe9442b150f41f9330200e2f2791f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9199,7 +9845,8 @@ const INITIAL_DPT = [
   {
     "npa": "04554",
     "name": "Karnadi",
-    "email": "syahrul.karnadi@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "7deac18cf63f339432001447c001a1d9105b575ff571c34c70ac7349a98f51bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9213,7 +9860,8 @@ const INITIAL_DPT = [
   {
     "npa": "04558",
     "name": "SETYO MULYO KURNIAWAN",
-    "email": "setyo.miner@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "96b8b74b8714448ad572c836330e966429333bb6ff5ed10b6b8085763eb227cf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9227,7 +9875,8 @@ const INITIAL_DPT = [
   {
     "npa": "04568",
     "name": "Nurul Ikhsan",
-    "email": "ikhsan120@gmail.com",
+    "email": "ik***@gmail.com",
+    "email_hash": "e354a8da35bcff45aa54bf7f2c13f9e4e3cc82686fd37ebeefc9cd6677c6337e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9241,7 +9890,8 @@ const INITIAL_DPT = [
   {
     "npa": "04577",
     "name": "Yanuaria Satya Dewi",
-    "email": "ysdewi@skkmigas.go.id",
+    "email": "ys***@skkmigas.go.id",
+    "email_hash": "486d76bc2332a047030f4b115653134b7d6b61b1fccc4d3478b7d49037e88b6b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9255,7 +9905,8 @@ const INITIAL_DPT = [
   {
     "npa": "04579",
     "name": "Ivan Kharisma Barus",
-    "email": "van_de_baruz@yahoo.com",
+    "email": "va***@yahoo.com",
+    "email_hash": "04bbcb284486dafaa1010fa6763b12de14f218134ebe82cdf2ec95acc9c1872d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9269,7 +9920,8 @@ const INITIAL_DPT = [
   {
     "npa": "04591",
     "name": "Abdul Ghofur",
-    "email": "ghof120@yahoo.com",
+    "email": "gh***@yahoo.com",
+    "email_hash": "f6d4904ff93f178105a151d54b2e33c827c8ab149a8ae47951c6cab7b2b1693c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9283,7 +9935,8 @@ const INITIAL_DPT = [
   {
     "npa": "04594",
     "name": "Arya Nugraha",
-    "email": "arya.nugraha@pertamina.com",
+    "email": "ar***@pertamina.com",
+    "email_hash": "dd477bfab9307b993a0622494ac826701203a9cc21c24a1ab1d69eb1a077c265",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9297,7 +9950,8 @@ const INITIAL_DPT = [
   {
     "npa": "04595",
     "name": "Hade Bakda Maulin",
-    "email": "hade.maulin@pertamina.com",
+    "email": "ha***@pertamina.com",
+    "email_hash": "29e672a711420bfab8f67bd4c08b2c3463e0f5edba927ffaaa663e4926376067",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9311,7 +9965,8 @@ const INITIAL_DPT = [
   {
     "npa": "04596",
     "name": "Ari lrawan Masputra",
-    "email": "masputra.ari@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "68eb6bd6ae9e0335e8a552b78c1651422994efd9eadbf0e3228d2602f6a45dc4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9325,7 +9980,8 @@ const INITIAL_DPT = [
   {
     "npa": "04597",
     "name": "Ginanjar Mahar Pamungkas",
-    "email": "ginanjar.pamungkas@pertamina.com",
+    "email": "gi***@pertamina.com",
+    "email_hash": "17b446499b22154262854ccb6ad5898cf53f03f600c7866a0b6a475e5c947ff1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9339,7 +9995,8 @@ const INITIAL_DPT = [
   {
     "npa": "04598",
     "name": "Ika Dwi Astuti",
-    "email": "ika.dwiastuti@gmail.com",
+    "email": "ik***@gmail.com",
+    "email_hash": "66935785de52643658b2e827be0483750a0144b136e20e30d965e84cf761ccef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9353,7 +10010,8 @@ const INITIAL_DPT = [
   {
     "npa": "04600",
     "name": "Pentatok Kuncoro Sri Setiyoaji",
-    "email": "pentatok@ugm.ac.id",
+    "email": "pe***@ugm.ac.id",
+    "email_hash": "a8fd8f986e7024ab2b1bca7820fd0abc78d257dc7b70021bde17a51b230d0001",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9367,7 +10025,8 @@ const INITIAL_DPT = [
   {
     "npa": "04601",
     "name": "Nurlia Eka Putri",
-    "email": "neputrii@gmail.com",
+    "email": "ne***@gmail.com",
+    "email_hash": "2daf9343cbe1ed09211432af0fbefe89cfa3d9c6e3166e418dc9d9f833e5b417",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9381,7 +10040,8 @@ const INITIAL_DPT = [
   {
     "npa": "04603",
     "name": "Invansyah",
-    "email": "irwansyah@esdm.go.id",
+    "email": "ir***@esdm.go.id",
+    "email_hash": "b67479cb2217c01acdc9a2f449672290c9fb77ada8dbcf12b11a3e1ba01f5ee1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9395,7 +10055,8 @@ const INITIAL_DPT = [
   {
     "npa": "04604",
     "name": "Nurus Firdaus",
-    "email": "nurus.firdaus@esdm.go.id",
+    "email": "nu***@esdm.go.id",
+    "email_hash": "574b355e82d3e9a03ddba655de19c0547a5a6ce534e8870e138e898751393459",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9409,7 +10070,8 @@ const INITIAL_DPT = [
   {
     "npa": "04606",
     "name": "Taufan Junaedi",
-    "email": "taufan.junaedi@esdm.go.id",
+    "email": "ta***@esdm.go.id",
+    "email_hash": "2c5146eddbcce006b98002ad5b47adcc24865af2575aa7e78a7f79247da68ca0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9423,7 +10085,8 @@ const INITIAL_DPT = [
   {
     "npa": "04611",
     "name": "Muhamad Yanuar Mahardi",
-    "email": "muhamad.mahardi@pertamina.com",
+    "email": "mu***@pertamina.com",
+    "email_hash": "c06a8c9d004e049d303fd58bb27283994ff9c515f73f7325bc3267b2d603839f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9437,7 +10100,8 @@ const INITIAL_DPT = [
   {
     "npa": "04612",
     "name": "Aulia Pradana",
-    "email": "pradana.aulia@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "0e9a04a355a1e4f12006c3ab140b0c19464781618a45b5e419734edf7c198d1c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9451,7 +10115,8 @@ const INITIAL_DPT = [
   {
     "npa": "04613",
     "name": "Dicky Muslim",
-    "email": "d.muslim@unpad.ac.id",
+    "email": "d.***@unpad.ac.id",
+    "email_hash": "fe4c04f4769e765dc5111b3f54d6e84726ab9a7fb98a744dfc4a6908b2eb5273",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9465,7 +10130,8 @@ const INITIAL_DPT = [
   {
     "npa": "04617",
     "name": "Diponegoro Ariwibowo",
-    "email": "dhipo_naw@yahoo.com",
+    "email": "dh***@yahoo.com",
+    "email_hash": "470bd7df7dc3ec6ff2b50b720d1a56cd4bc53c2ce43128ec593579b32aa40eed",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9479,7 +10145,8 @@ const INITIAL_DPT = [
   {
     "npa": "04620",
     "name": "Heri Setiawan",
-    "email": "heri.s@emp.id",
+    "email": "he***@emp.id",
+    "email_hash": "c8306b49f80c8ffbd39b4e8838bd1879761ee1a622bdf3a685cbdeebfe5ceb13",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9493,7 +10160,8 @@ const INITIAL_DPT = [
   {
     "npa": "04621",
     "name": "Afrizon Setiawan",
-    "email": "afrizon.setiawan@emp.id",
+    "email": "af***@emp.id",
+    "email_hash": "e1f9e64ad294b9fb3a9b36a1e8a10c27c55cf9962a5bd4a5ed84206aa45393eb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9507,7 +10175,8 @@ const INITIAL_DPT = [
   {
     "npa": "04622",
     "name": "Radig Wisnu Yuwono",
-    "email": "radig_wisnu@energy-mp.com",
+    "email": "ra***@energy-mp.com",
+    "email_hash": "ffbe59f50da628c5b6d5f622e85a1e42ca034a60aa2b00c00c0ef8c2de6ce07e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9521,7 +10190,8 @@ const INITIAL_DPT = [
   {
     "npa": "04624",
     "name": "Hendarman",
-    "email": "hendarman@emp.id",
+    "email": "he***@emp.id",
+    "email_hash": "9b2163c9ba60843f1063778a84aa4180ec7faf6247a0d55c35c482ca3590f478",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9535,7 +10205,8 @@ const INITIAL_DPT = [
   {
     "npa": "04640",
     "name": "Prof. Husnul Kausarian, M.Sc, Ph.D",
-    "email": "kausarianhusnul@yahoo.com",
+    "email": "ka***@yahoo.com",
+    "email_hash": "ca177e8748c52782b15ad8c071c1c8864f605d021a501f05d6f3caafccb75c31",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9549,7 +10220,8 @@ const INITIAL_DPT = [
   {
     "npa": "04642",
     "name": "Budi Prayitno",
-    "email": "budiprayitno@eng.uir.ac.id",
+    "email": "bu***@eng.uir.ac.id",
+    "email_hash": "e4d7367fce34993151fe6320af8f2c5af2e60ca7deffe71b6a845b3fee176387",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9563,7 +10235,8 @@ const INITIAL_DPT = [
   {
     "npa": "04647",
     "name": "Ufi Ma’rufianty",
-    "email": "umarufianty30@gmail.com",
+    "email": "um***@gmail.com",
+    "email_hash": "42867ba278a87fb4dfae29b4062b6e2efdb531e465ddbc6f5d4b6c058107dafa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9577,7 +10250,8 @@ const INITIAL_DPT = [
   {
     "npa": "04650",
     "name": "David Howard Stock",
-    "email": "stocky2020@gmail.com",
+    "email": "st***@gmail.com",
+    "email_hash": "12064e0e948331d04b5530c3c188a1d623b5ceac369e4984263ca90a00bf9025",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9591,7 +10265,8 @@ const INITIAL_DPT = [
   {
     "npa": "04660",
     "name": "Muhammad Arif Syahrijal",
-    "email": "syahrijal.arif@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "f5fe9695a60a4a402805922809b83f606a7a48ecc55924a84cfc8e752da57b0f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9605,7 +10280,8 @@ const INITIAL_DPT = [
   {
     "npa": "04665",
     "name": "Yoselena Sunarto",
-    "email": "yoselenast@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "80fceab7388b436dc4c0b101093a024a6b758f03325d218ee77c67d5022baad4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9619,7 +10295,8 @@ const INITIAL_DPT = [
   {
     "npa": "04666",
     "name": "Vendy Gangganido",
-    "email": "gangganido_vendy@yahoo.com",
+    "email": "ga***@yahoo.com",
+    "email_hash": "172c1cbeada156546d1a59e451b51657635344280042604e0177138aaa033a95",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9633,7 +10310,8 @@ const INITIAL_DPT = [
   {
     "npa": "04671",
     "name": "Yanri Budi Karseno",
-    "email": "yanri_budi@yahoo.com",
+    "email": "ya***@yahoo.com",
+    "email_hash": "de03a4a90d1f0b2b7a879cae12b4a9de14eb18108451632ef6120bf3c3a020e5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9647,7 +10325,8 @@ const INITIAL_DPT = [
   {
     "npa": "04678",
     "name": "Asyari Ismail Wardhana",
-    "email": "ai.wardhana@gmail.com",
+    "email": "ai***@gmail.com",
+    "email_hash": "11b2f5931ed2b4da6b3b252f909627dd1a11199354c1ae6bfd96f42a1a6e71d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9661,7 +10340,8 @@ const INITIAL_DPT = [
   {
     "npa": "04679",
     "name": "Rafwal Descartes",
-    "email": "descartes_rafwal@yahoo.com",
+    "email": "de***@yahoo.com",
+    "email_hash": "7bd1b291d8b8c2ddad10b38b713be670673404ce66148e64b1c4bc2c07d75e9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9675,7 +10355,8 @@ const INITIAL_DPT = [
   {
     "npa": "04693",
     "name": "Dwandari Ralanarko",
-    "email": "dwandari_r@yahoo.com",
+    "email": "dw***@yahoo.com",
+    "email_hash": "f9a891152e10cbb1cc190d17eba3740153a2b1f55d20b8a922d7d0ebc4b1eeb9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9689,7 +10370,8 @@ const INITIAL_DPT = [
   {
     "npa": "04696",
     "name": "Reza Widiatmo",
-    "email": "reza.widiatmo@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "4f5e7ba33cf8a62fb7a091684d1d61a148254ac41b657217d9175f15818825a2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9703,7 +10385,8 @@ const INITIAL_DPT = [
   {
     "npa": "04699",
     "name": "Muhajir",
-    "email": "muhajir@pertamina.com",
+    "email": "mu***@pertamina.com",
+    "email_hash": "197bf58b0ced2b6ce74408ec6f4d158ad6fb0c697be90faeed343cf7d9284288",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9717,7 +10400,8 @@ const INITIAL_DPT = [
   {
     "npa": "04704",
     "name": "Muhammad Zain Tuakia",
-    "email": "mzain.tuakia@gmail.com",
+    "email": "mz***@gmail.com",
+    "email_hash": "0fc4dc2d229e61da167a8ed09cdb1379c847cff477fd837d03e7785b951817d7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9731,7 +10415,8 @@ const INITIAL_DPT = [
   {
     "npa": "04743",
     "name": "Muhammad Addiansyah",
-    "email": "muhammadaddiansyah@yahoo.com",
+    "email": "mu***@yahoo.com",
+    "email_hash": "af627bf83f33077068096b995967a15f4eac94c41a80a649eb343a4e3ac849c3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9745,7 +10430,8 @@ const INITIAL_DPT = [
   {
     "npa": "04753",
     "name": "Hazred Umar Fathan",
-    "email": "hazredfathan@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "146cf32d3c12370a837aa01958ecfb26cf449180b58bfc83854567a99bbd8df4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9759,7 +10445,8 @@ const INITIAL_DPT = [
   {
     "npa": "04764",
     "name": "Rizky Dwi Renaldy",
-    "email": "mk.rizky.renaldy@mitrakerja.pertamina.com",
+    "email": "mk***@mitrakerja.pertamina.com",
+    "email_hash": "f6c5da70b301f54add12932406af9ee385f622d1cfa8ee664cb6a31e5978ddbe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9773,7 +10460,8 @@ const INITIAL_DPT = [
   {
     "npa": "04801",
     "name": "Sifa Fauzia",
-    "email": "fauziasifa.geo@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "014ab36c54da16edc2f76b928f4da393f97533f0952b190aa7d9653b2244c7cd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9787,7 +10475,8 @@ const INITIAL_DPT = [
   {
     "npa": "04804",
     "name": "Vian Indrasatwika",
-    "email": "vian.indrasatwika@gmail.com",
+    "email": "vi***@gmail.com",
+    "email_hash": "1ddb5ccd283ad170c307f6b12215255c3da24f76e23c859c4b97e2f471f3e4b6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9801,7 +10490,8 @@ const INITIAL_DPT = [
   {
     "npa": "04811",
     "name": "Ghufron Fauzi",
-    "email": "fauzi.ghufron@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "e38e7ca3887354ae1462d28edfa67a45ee5866a9d064699846ee3b2432cf9759",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9815,7 +10505,8 @@ const INITIAL_DPT = [
   {
     "npa": "04812",
     "name": "Ragil Pratiwi",
-    "email": "ragil.pratiwi@geoservices.co.id",
+    "email": "ra***@geoservices.co.id",
+    "email_hash": "af64068583fa5f58b47e7b5f1d7811eb1c47026e4e0a460e9a0c20f5a6dda24a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9829,7 +10520,8 @@ const INITIAL_DPT = [
   {
     "npa": "04819",
     "name": "Nur Hadi",
-    "email": "nurhadi.hamdan@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "66c8d0499bbd645a3dccaf84c3cd3b08ea97df616c37a56d0d46fc7839096317",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9843,7 +10535,8 @@ const INITIAL_DPT = [
   {
     "npa": "04821",
     "name": "Yudi Herdian",
-    "email": "yherdian@gmail.com",
+    "email": "yh***@gmail.com",
+    "email_hash": "149bca45f6d16b7a861758d4bc149addb184f50472cfb3e9b02b373f6234e45e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9857,7 +10550,8 @@ const INITIAL_DPT = [
   {
     "npa": "04835",
     "name": "Sinto Yudho",
-    "email": "sinto.yudho78@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "7ff108a923afebec0b7937abb18ffc8b0d1552741e8f252ca7793ce55ae4d3ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9871,7 +10565,8 @@ const INITIAL_DPT = [
   {
     "npa": "04836",
     "name": "Niken Saraswati",
-    "email": "niken.saraswati10@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "5c41f8f1e83c1a679d44a2268ea16b8e08a785ebdb63d28e148740895dfa8ff9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9885,7 +10580,8 @@ const INITIAL_DPT = [
   {
     "npa": "04837",
     "name": "Silfi Ariani",
-    "email": "silfiariani@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "19e6f554de955669d8f88119db0415638759f772e3b3982d4d9baf7423b49f33",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9899,7 +10595,8 @@ const INITIAL_DPT = [
   {
     "npa": "04838",
     "name": "Alfaidhul Akbar",
-    "email": "alfaidhul.akbar@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "1e9ae3b358e96add2b1f0ef1f36e4b2f74aaa5afa2c5cc524dd11672e57df39a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9913,7 +10610,8 @@ const INITIAL_DPT = [
   {
     "npa": "04841",
     "name": "Ismail Zulmi",
-    "email": "ismail.zulmi8@gmail.com",
+    "email": "is***@gmail.com",
+    "email_hash": "db0a894a24fd9bec6293f2a18e540711b2186ed7e42c8eee010779f35692e68c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9927,7 +10625,8 @@ const INITIAL_DPT = [
   {
     "npa": "04844",
     "name": "Bayu Adhi Pramudhita",
-    "email": "bayu.adhi@energi-mp.com",
+    "email": "ba***@energi-mp.com",
+    "email_hash": "0bfde259ea1337fd331a8ae3b6034f96599436cce1ff318672d881a0195de09d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9941,7 +10640,8 @@ const INITIAL_DPT = [
   {
     "npa": "04845",
     "name": "‘Wiendra Akhmad Faridsyah",
-    "email": "wiendra.akhmad@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "b19ec1e86cbb6a726411a11909280ba8ce0455324f8d3d213f9c42d6f69fd386",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9955,7 +10655,8 @@ const INITIAL_DPT = [
   {
     "npa": "04847",
     "name": "Resky Yustiawan",
-    "email": "resky.geologist@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "14d75513b263977355c2f5dac2d0a2ec25d7aa3fc1891c462750061e0c77d391",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9969,7 +10670,8 @@ const INITIAL_DPT = [
   {
     "npa": "04852",
     "name": "Multinadi",
-    "email": "multihadi@yahoo.com",
+    "email": "mu***@yahoo.com",
+    "email_hash": "91a8acd3b8b975e04a222869ee3dd7b16f9ddbde3dd61c1c1b3d831484312a1e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9983,7 +10685,8 @@ const INITIAL_DPT = [
   {
     "npa": "04853",
     "name": "Ricky Novaldo Syamri",
-    "email": "rickynovaldo@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "979e6158d50a5c17d1eba2a22394f8acb8fadac6676ade62ec91bf8c3340052d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9997,7 +10700,8 @@ const INITIAL_DPT = [
   {
     "npa": "04859",
     "name": "Muhammad Hamdhani Astas",
-    "email": "hamdhaniastas@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "c50d54963b72a390a4f937939a2f4579d2b1b7765c48889a432089a1f665651b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10011,7 +10715,8 @@ const INITIAL_DPT = [
   {
     "npa": "04864",
     "name": "Jaka Frianto",
-    "email": "den.jakageo@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "524d8653501dc7e32eac6bc050abe365ea5d337a041acb7f649488e917ab26a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10025,7 +10730,8 @@ const INITIAL_DPT = [
   {
     "npa": "04872",
     "name": "Aryo Radityo",
-    "email": "aradityo@skkmigas.go.id",
+    "email": "ar***@skkmigas.go.id",
+    "email_hash": "05b076faf1967348df4424f73ad697f04c558a9c5b6c5a5242698ecc4c7db77c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10039,7 +10745,8 @@ const INITIAL_DPT = [
   {
     "npa": "04873",
     "name": "Joko Prasetyo",
-    "email": "jprasetyo@skkmigas.go.id",
+    "email": "jp***@skkmigas.go.id",
+    "email_hash": "fd038215e48cfb74ae15a20ac9ae3878b493e8c6225ea2702168e323abafc0e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10053,7 +10760,8 @@ const INITIAL_DPT = [
   {
     "npa": "04874",
     "name": "Fadli Syafitra",
-    "email": "fsyafitra@skkmigas.go.id",
+    "email": "fs***@skkmigas.go.id",
+    "email_hash": "4aefd8dc237dcc5f129b51c1a0300a07aad52890e63ac154fe253fdc791cd546",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10067,7 +10775,8 @@ const INITIAL_DPT = [
   {
     "npa": "04876",
     "name": "Sumaryana",
-    "email": "sumaryana@skkmigas.go.id",
+    "email": "su***@skkmigas.go.id",
+    "email_hash": "e06d491f92388b4c75b6f469f6a863a97dc60037b857efbc7d5d411af6792353",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10081,7 +10790,8 @@ const INITIAL_DPT = [
   {
     "npa": "04877",
     "name": "Zaenal Holis",
-    "email": "zholis@skkmigas.go.id",
+    "email": "zh***@skkmigas.go.id",
+    "email_hash": "a4ab57b1237a83424d59214ead9f73a0a64b41fe8eff11d48c5e994948965341",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10095,7 +10805,8 @@ const INITIAL_DPT = [
   {
     "npa": "04879",
     "name": "Wendy Kurniawan",
-    "email": "wkurniawan@skkmigas.go.id",
+    "email": "wk***@skkmigas.go.id",
+    "email_hash": "46c887fb0ea912974f0a643ab7b8b386f0fc328672c62a83a92867a93d2df11d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10109,7 +10820,8 @@ const INITIAL_DPT = [
   {
     "npa": "04883",
     "name": "Fajar Nur Rachmanto",
-    "email": "fadjar1979@yahoo.com",
+    "email": "fa***@yahoo.com",
+    "email_hash": "fc875dd4992cadd2888d4df0c403ae08b2fdf0c7e83bc56a2bd0cac1183bb37b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10123,7 +10835,8 @@ const INITIAL_DPT = [
   {
     "npa": "04888",
     "name": "Adi Sulaksono",
-    "email": "adisulak203@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "72b45cc8424ad174b3ad97866837d26cd8a3e4a9aa2c5a596c2d5c9361f158a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10137,7 +10850,8 @@ const INITIAL_DPT = [
   {
     "npa": "04892",
     "name": "Ruchita Mirza Ayurahma Utami K",
-    "email": "ruchitamirza@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "1c70440d2a160c91920bcc391d8550e3099b751d9582053aa5d73791cd1f1cb8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10151,7 +10865,8 @@ const INITIAL_DPT = [
   {
     "npa": "04893",
     "name": "Fm Wahyu Dwi Priyantono",
-    "email": "wpriyantono@yahoo.co.id",
+    "email": "wp***@yahoo.co.id",
+    "email_hash": "119a01e642b8384a1dae7004b287485f0e864a7b59946358cfc915d4b32d5bd9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10165,7 +10880,8 @@ const INITIAL_DPT = [
   {
     "npa": "04897",
     "name": "Albert Malvin Richal Dading",
-    "email": "richaldading@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "34094b62f5c32720a4853783bd5a4e75a5c93c381c8b3381b73a07f19b33b4d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10179,7 +10895,8 @@ const INITIAL_DPT = [
   {
     "npa": "04898",
     "name": "Yasinto Sindhu Priastomo",
-    "email": "yasinto@geodin.net",
+    "email": "ya***@geodin.net",
+    "email_hash": "8a3834906e9eea7f837a87f277705223036c7eb6cb7ae569d0e4b165961df2c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10193,7 +10910,8 @@ const INITIAL_DPT = [
   {
     "npa": "04900",
     "name": "Raini Adinda Siswikirana",
-    "email": "raini.adinda@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "7714619c31b18a64bc1f6ccf0dd6c4f8e55b818ec51162d1ecf7fa602a609728",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10207,7 +10925,8 @@ const INITIAL_DPT = [
   {
     "npa": "04905",
     "name": "Adi Prayogi",
-    "email": "aprayogi@skkmigas.go.id",
+    "email": "ap***@skkmigas.go.id",
+    "email_hash": "07ada711a2c791359eb9dfc64d43d0e9c0cb912f3fdd11e73122f21a4cc27611",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10221,7 +10940,8 @@ const INITIAL_DPT = [
   {
     "npa": "04911",
     "name": "Andry Hidayat",
-    "email": "andry.hidayat11@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "71275ff482340d60fe15e6a99b7fcae67521787e2893b223130c012bb87a8ecd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10235,7 +10955,8 @@ const INITIAL_DPT = [
   {
     "npa": "04913",
     "name": "Hesekiel Bernando Nainggolan",
-    "email": "nando_unpad@yahoo.co.id",
+    "email": "na***@yahoo.co.id",
+    "email_hash": "17ce3511a210d22feaf00d08e385df5d547880616dcfe0a42aa920a2d6880829",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10249,7 +10970,8 @@ const INITIAL_DPT = [
   {
     "npa": "04916",
     "name": "Tatsky Reza Setiawan",
-    "email": "tatzkyrs@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "2ce49631b58fbcd5a100b3a42638ed36491cd17e18d4e2399271fb6a87824481",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10263,7 +10985,8 @@ const INITIAL_DPT = [
   {
     "npa": "04923",
     "name": "Dwi Margianto",
-    "email": "dwi.margianto@antam.com",
+    "email": "dw***@antam.com",
+    "email_hash": "c292143d1037281724ed07b984f6480a1bb746946fdfecf2c05a382acb9db80f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10277,7 +11000,8 @@ const INITIAL_DPT = [
   {
     "npa": "04927",
     "name": "Mohamad Riyan Kamil",
-    "email": "mohamad.kamil@antam.com",
+    "email": "mo***@antam.com",
+    "email_hash": "9fa21a59a97f87b9d0b99bcd7a745a7ece8100b805b2319426a53133130205a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10291,7 +11015,8 @@ const INITIAL_DPT = [
   {
     "npa": "04930",
     "name": "Medy Karattong",
-    "email": "medypapua@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "dacea304e2c9e6929e907580b451d63d5745dccb18abb3b88028fe9ee6030ee9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10305,7 +11030,8 @@ const INITIAL_DPT = [
   {
     "npa": "04931",
     "name": "Trisno Widodo",
-    "email": "trisno_widodo@yahoo.com",
+    "email": "tr***@yahoo.com",
+    "email_hash": "93309f4f5af40d1dddd2794a6f5be99e267ea5044aae3592722eb73a401ecbcb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10319,7 +11045,8 @@ const INITIAL_DPT = [
   {
     "npa": "04934",
     "name": "Muharam",
-    "email": "muharam.s@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "16d004484f7052e6d6bca5bb25d3fa5d83be9032dc9d00eeb8fae334a0d3d131",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10333,7 +11060,8 @@ const INITIAL_DPT = [
   {
     "npa": "04935",
     "name": "Indra Yuliandri",
-    "email": "drameli81@gmail.com",
+    "email": "dr***@gmail.com",
+    "email_hash": "704648f740b3d133617f8934b28f283deae8cf892ba726adcede3e4363d1ed50",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10347,7 +11075,8 @@ const INITIAL_DPT = [
   {
     "npa": "04936",
     "name": "Sandi Kurniawan",
-    "email": "sandi.kurniawan.22@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "b48fc13d757718a1718f607ca1da41f3b15b46b11c7d4f71b992043460acb820",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10361,7 +11090,8 @@ const INITIAL_DPT = [
   {
     "npa": "04937",
     "name": "Hendra Winastu",
-    "email": "off.wndra@gmail.com",
+    "email": "of***@gmail.com",
+    "email_hash": "f7845a6a58cc04155c84e1db476ebfddbe345c61078e65431016289dc9c0fab0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10375,7 +11105,8 @@ const INITIAL_DPT = [
   {
     "npa": "04938",
     "name": "Bhondan Suryo Bhroto",
-    "email": "bhondansoeyo@gmail.com",
+    "email": "bh***@gmail.com",
+    "email_hash": "4f47204fddb1b37555d0885f104ec34d3ac1c99f5c972c05f7a17416ba437c2d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10389,7 +11120,8 @@ const INITIAL_DPT = [
   {
     "npa": "04939",
     "name": "Cahyadenta Agung Sumantri",
-    "email": "agung.sumantri@geoservices.co.id",
+    "email": "ag***@geoservices.co.id",
+    "email_hash": "171b9345517b617ca7d7bed1d50e832e1b0493218beaf593759d6cee8e5b7447",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10403,7 +11135,8 @@ const INITIAL_DPT = [
   {
     "npa": "04944",
     "name": "Sanry Tappang",
-    "email": "sanry.tappang@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "d28ebab1212d2bc87753e72731d3ac7d8a21fd09083bbec2564241d296940615",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10417,7 +11150,8 @@ const INITIAL_DPT = [
   {
     "npa": "04948",
     "name": "Herry Suhartomo",
-    "email": "herry.suhartomo@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "cf6abd96c692aaa7aff909e7c1762925b0a2672cc98dd998251378278f656a21",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10431,7 +11165,8 @@ const INITIAL_DPT = [
   {
     "npa": "04949",
     "name": "Rezza Soedarmintarto",
-    "email": "rsoedarmintarto@gmail.com",
+    "email": "rs***@gmail.com",
+    "email_hash": "098656ca84e11835195b5c642bb02b5afca830cf1053dde079924b090978078e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10445,7 +11180,8 @@ const INITIAL_DPT = [
   {
     "npa": "04954",
     "name": "Hering Dyah Kusuma Wijayanti",
-    "email": "herningdkusuma@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "d5187424b722121d2fd95caac20dd51762208f2147d16f25ca5034cf30237c54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10459,7 +11195,8 @@ const INITIAL_DPT = [
   {
     "npa": "04957",
     "name": "Suherman Dwi Nuryana",
-    "email": "suherman.dn@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "354230dfb32c7cb5d85042b8043e5fbaee6b82dbd86705e2717059b144dc09d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10473,7 +11210,8 @@ const INITIAL_DPT = [
   {
     "npa": "04960",
     "name": "Ivan Ryan Waromi",
-    "email": "waromivan@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "d00eba8c87340c38894b57d24c86f98a4a8a9803b5fb2b27a9eb6cf632131053",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10487,7 +11225,8 @@ const INITIAL_DPT = [
   {
     "npa": "04962",
     "name": "Endang Hartiningsih",
-    "email": "endang.uncen@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "02ddd5955f48e5cfd236e5f934bd6b12b033958ff67aa1393dffcf7c4b235f8f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10501,7 +11240,8 @@ const INITIAL_DPT = [
   {
     "npa": "04965",
     "name": "Marcelino Yonas",
-    "email": "marcnov78@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "bee1a2c2357df3d0fd0fda08bb5ba799ffd2af7aae1b1d655b4a4c32baa94298",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10515,7 +11255,8 @@ const INITIAL_DPT = [
   {
     "npa": "04969",
     "name": "Teguh Purwantoro",
-    "email": "teguh.purwantoro@pertamina.com",
+    "email": "te***@pertamina.com",
+    "email_hash": "e63f10f99a1202a80651f8c875414edfc36e461916bebf9a73da822c5565fbcb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10529,7 +11270,8 @@ const INITIAL_DPT = [
   {
     "npa": "04989",
     "name": "Andi Mardianza",
-    "email": "andi.mardianza@pertamina.com",
+    "email": "an***@pertamina.com",
+    "email_hash": "78fc7453d563fb5413769d89c37f1bca476bd2ebce1b247143475dd297a2d26c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10543,7 +11285,8 @@ const INITIAL_DPT = [
   {
     "npa": "04996",
     "name": "Rizki Kurniawan",
-    "email": "rizkiqq@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "f1e2b02291582ed1368f678c33d3d0f04710e5fe33d70ade633c7064fd0ac330",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10557,7 +11300,8 @@ const INITIAL_DPT = [
   {
     "npa": "04999",
     "name": "lyan Haryanto",
-    "email": "iyan.haryanto@unpad.ac.id",
+    "email": "iy***@unpad.ac.id",
+    "email_hash": "3dc8c73e3e0d2a611219722c9103f9c43e4279595995c2b33a1ad08e0a9c461a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10571,7 +11315,8 @@ const INITIAL_DPT = [
   {
     "npa": "05000",
     "name": "Daniel Andreas Madre",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10585,7 +11330,8 @@ const INITIAL_DPT = [
   {
     "npa": "05003",
     "name": "Radian Jufri",
-    "email": "radian.jufri@geoservices.co.id",
+    "email": "ra***@geoservices.co.id",
+    "email_hash": "48f20f75cb1dd1eb50469a41d8cc67125afe3b74e9471014ba32b5400f9a6f1d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10599,7 +11345,8 @@ const INITIAL_DPT = [
   {
     "npa": "05004",
     "name": "Andrea Dimas Saputra",
-    "email": "andrea.dsaputra@geoservices.co.id",
+    "email": "an***@geoservices.co.id",
+    "email_hash": "b734944cb74ba9769b256b1829ad8321b3fc7128722662decab9baa0adee2303",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10613,7 +11360,8 @@ const INITIAL_DPT = [
   {
     "npa": "05005",
     "name": "Four Fauzan Wira",
-    "email": "fourfauzan.wira@geoservices.co.id",
+    "email": "fo***@geoservices.co.id",
+    "email_hash": "1ab306be2ad061d5e033bf3f1243ec78a940538e942fc01a8c5e8e66c37c84bd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10627,7 +11375,8 @@ const INITIAL_DPT = [
   {
     "npa": "05007",
     "name": "Agus Kurmiawan Solikhin",
-    "email": "agusks_ugm03@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "4e2f275d9c792b0fa9df14bba0bb7424d691fb7ad307e60d22d02c36373fa954",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10641,7 +11390,8 @@ const INITIAL_DPT = [
   {
     "npa": "05072",
     "name": "Agus Budiyono",
-    "email": "budikageogama@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "4a912bd5a71b8c300457c29dcfd0250128fc47f96827dc504cda274c5cff70fb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10655,7 +11405,8 @@ const INITIAL_DPT = [
   {
     "npa": "05078",
     "name": "Syamsidar Sutan",
-    "email": "syamsidar_sutan@yahoo.com",
+    "email": "sy***@yahoo.com",
+    "email_hash": "a177f069df34c24955638245b8b13d147e5213cf1095436076ce1b8dca2a3684",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10669,7 +11420,8 @@ const INITIAL_DPT = [
   {
     "npa": "05093",
     "name": "Ramadan Sari",
-    "email": "ramadansari@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "2b62545cda978076f2a8082f68355f489ba8fcbe742a55a045143796876dcabe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10683,7 +11435,8 @@ const INITIAL_DPT = [
   {
     "npa": "05100",
     "name": "ARIS HERMAWAN",
-    "email": "aristg91@yahoo.co.id",
+    "email": "ar***@yahoo.co.id",
+    "email_hash": "5ed8ffb6692be107a2d88457f4ab38c33c2fff87febf65113a52b3ab105b1893",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10697,7 +11450,8 @@ const INITIAL_DPT = [
   {
     "npa": "05101",
     "name": "Gofar Adianto Yudhakusuma",
-    "email": "gf-z999@yahoo.co.id",
+    "email": "gf***@yahoo.co.id",
+    "email_hash": "d3b98c14a423b65aacfeccf9eba9fce637f03d2e7c26698f1d616368153885e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10711,7 +11465,8 @@ const INITIAL_DPT = [
   {
     "npa": "05104",
     "name": "DENNY LESMANA",
-    "email": "lesmana_denny@yahoo.com",
+    "email": "le***@yahoo.com",
+    "email_hash": "526b256a69e0369ccdfd882ae97eed9bbc31ba17066c541f136f0e522cdf3502",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10725,7 +11480,8 @@ const INITIAL_DPT = [
   {
     "npa": "05106",
     "name": "Adhitya Ari Nugroho",
-    "email": "adhityaarinugroho@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "e793f4c4dd61a6b40e8c8f7bbccda79c20248c1318a44ae4f5654cae399f9735",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10739,7 +11495,8 @@ const INITIAL_DPT = [
   {
     "npa": "05107",
     "name": "Anita Galih Ringga Jayanti",
-    "email": "anitagalihringga@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "f3df1dc06e94e9a594c1ef21f73b63b62ca745a2752409962a78a407b9acf043",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10753,7 +11510,8 @@ const INITIAL_DPT = [
   {
     "npa": "05110",
     "name": "Rahajeng Ayu Permana Sari",
-    "email": "rayupermanasari@yahoo.com",
+    "email": "ra***@yahoo.com",
+    "email_hash": "bc6c2dd0ed351c5888a1898ffa66108adebce1f2a98687b92ffaa003b8d40522",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10767,7 +11525,8 @@ const INITIAL_DPT = [
   {
     "npa": "05113",
     "name": "WILDAAINI NURLATHIFAH",
-    "email": "wildanurlathifah@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "ef3e86182391619598f95d3b74ffeaf54a90758d91ea3a4b7b2d4d0c0a98f941",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10781,7 +11540,8 @@ const INITIAL_DPT = [
   {
     "npa": "05118",
     "name": "Sejati Awang Wibowo",
-    "email": "awang.wibowo@gmail.com",
+    "email": "aw***@gmail.com",
+    "email_hash": "21aee680c8294a33a88185a43e5446449ff3dd11c15094be76ab03865082ad0a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10795,7 +11555,8 @@ const INITIAL_DPT = [
   {
     "npa": "05121",
     "name": "Cahyaningratri Prima Riyandhan",
-    "email": "petrominusakti@yahoo.com",
+    "email": "pe***@yahoo.com",
+    "email_hash": "bed6bad859b6a562d0fce8233363cddd8ceca4ccfc5e89b564ff5d589fd637c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10809,7 +11570,8 @@ const INITIAL_DPT = [
   {
     "npa": "05134",
     "name": "Gamet Reza Nugroho",
-    "email": "oktober26th@yahoo.com",
+    "email": "ok***@yahoo.com",
+    "email_hash": "5de8e8df687d8b66f5ad9ae9252636ae1713664d50a42777bc7ad964f26b36c7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10823,7 +11585,8 @@ const INITIAL_DPT = [
   {
     "npa": "05135",
     "name": "Rezalita Junalia",
-    "email": "rezalitajunalia_tfs@yahoo.com",
+    "email": "re***@yahoo.com",
+    "email_hash": "cb6f7634d7e951ef7efd1b33752a68fe822ae1b75fb130c932207479407cbe19",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10837,7 +11600,8 @@ const INITIAL_DPT = [
   {
     "npa": "05143",
     "name": "Rienno Ismail",
-    "email": "gearienno@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "23518fb3eaf04e226b7f0d992895a57d7df62f8d3ccb2608d08562887300583a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10851,7 +11615,8 @@ const INITIAL_DPT = [
   {
     "npa": "05144",
     "name": "Perdana Rakhmana Putra",
-    "email": "perdana.putra@pertamina.com",
+    "email": "pe***@pertamina.com",
+    "email_hash": "ad5990da59320c9b6a993f78ed7114049372a67334f9009bd93fbaaa78088296",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10865,7 +11630,8 @@ const INITIAL_DPT = [
   {
     "npa": "05145",
     "name": "Kukuh Suprayogi",
-    "email": "kukuh.suprayogi@pertamina.com",
+    "email": "ku***@pertamina.com",
+    "email_hash": "afaca4bf3a24eb30c8cbc7c504565b7b6129d2b9c3d010cf798eead327f6139f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10879,7 +11645,8 @@ const INITIAL_DPT = [
   {
     "npa": "05153",
     "name": "Ersina Rakhma",
-    "email": "ersinarakhma@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "a14753c5bcb858b3b94b20e67e5c55c4e5720eef4ace0d143cb3130283100e34",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10893,7 +11660,8 @@ const INITIAL_DPT = [
   {
     "npa": "05155",
     "name": "Mohammad Apriniyadi",
-    "email": "apriniadi@trisakti.ac.id",
+    "email": "ap***@trisakti.ac.id",
+    "email_hash": "713974ac4b923d7dff08abb29140766e94d9754a1d9ed3e642aa0d462a2cfa53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10907,7 +11675,8 @@ const INITIAL_DPT = [
   {
     "npa": "05156",
     "name": "Mira Meirawaty",
-    "email": "mira@trisakti.ac.id",
+    "email": "mi***@trisakti.ac.id",
+    "email_hash": "95c3f5ed54be684fa59b50d2d5bfbd7cea42fca27fdb6d6d319757bc8853fe0c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10921,7 +11690,8 @@ const INITIAL_DPT = [
   {
     "npa": "05157",
     "name": "Ramadhan Adhitama",
-    "email": "ramadhan.adhitama@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "1c445b31f049485dc01d08d9db289953d84148a6395a2e12ac54d6b1282db08a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10935,7 +11705,8 @@ const INITIAL_DPT = [
   {
     "npa": "05172",
     "name": "Nusawan",
-    "email": "nusawan8@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "95dcc048c4b80a7684d9734437e4b82ac47e4da390465418f7c026f1bcce7f80",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10949,7 +11720,8 @@ const INITIAL_DPT = [
   {
     "npa": "05175",
     "name": "Raden Irvan Sophian",
-    "email": "r.irvan.sophian@unpad.ac.id",
+    "email": "r.***@unpad.ac.id",
+    "email_hash": "f1051d88dc46de67f898efc1bc8a8527b52396a2c096f0ddfcbe0ddf06cadc12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10963,7 +11735,8 @@ const INITIAL_DPT = [
   {
     "npa": "05176",
     "name": "Reza Mohammad Ganjar Gani",
-    "email": "reza.mohammad@unpad.ac.id",
+    "email": "re***@unpad.ac.id",
+    "email_hash": "c3f28ff500076103d2e23450b1d9c47ddb9096394dd9568d201433b8d0b0f2ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10977,7 +11750,8 @@ const INITIAL_DPT = [
   {
     "npa": "05186",
     "name": "Endo Finaldhi",
-    "email": "finaldhi.endo@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "ffead3959a69a4099c54aa12e0d1a3d98aa1dfc13268c8040c678ce63c31d03c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10991,7 +11765,8 @@ const INITIAL_DPT = [
   {
     "npa": "05187",
     "name": "Ferian Anggara",
-    "email": "ferian@ugm.ac.id",
+    "email": "fe***@ugm.ac.id",
+    "email_hash": "254334ae727fb1b104e5536a9e79cced44c40ba70232fc45bd0e8070769f55b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11005,7 +11780,8 @@ const INITIAL_DPT = [
   {
     "npa": "05188",
     "name": "Radhitya Adzan Hidayah",
-    "email": "radhitya.adzan.h@akprind.ac.id",
+    "email": "ra***@akprind.ac.id",
+    "email_hash": "184f960ab1d53838132be9167f4f57291a17fce16dd2a739b89b4894b3e0f914",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11019,7 +11795,8 @@ const INITIAL_DPT = [
   {
     "npa": "05189",
     "name": "Dina Tania",
-    "email": "dina_tania@akprind.ac.id",
+    "email": "di***@akprind.ac.id",
+    "email_hash": "6b9a2d0870cf43e4104f16d2f44fac3432a7f38b0ecd1a81fa84c531fc9fe555",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11033,7 +11810,8 @@ const INITIAL_DPT = [
   {
     "npa": "05191",
     "name": "Oki Budi Wijayanto",
-    "email": "oki.bwijayanto@gmail.com",
+    "email": "ok***@gmail.com",
+    "email_hash": "4ed754c11d692cf0b7c64a40e8f03b624df5bff882fd0c2e16f8056dce23f68c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11047,7 +11825,8 @@ const INITIAL_DPT = [
   {
     "npa": "05198",
     "name": "Ginanjar Rahmat",
-    "email": "ginanjar.rahmat@esdm.go.id",
+    "email": "gi***@esdm.go.id",
+    "email_hash": "40b3e7499297c2debf5311912de426fed6eeea6734a63cdaebe8261843cc71ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11061,7 +11840,8 @@ const INITIAL_DPT = [
   {
     "npa": "05199",
     "name": "Unggul Prasetyo Wibowo",
-    "email": "uungpw@yahoo.com",
+    "email": "uu***@yahoo.com",
+    "email_hash": "418d41af9991537942c76821106b8c305994d4da098c8e7d066656c8d5504807",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11075,7 +11855,8 @@ const INITIAL_DPT = [
   {
     "npa": "05202",
     "name": "Nora Desiani",
-    "email": "Ndesiani@gmail.com",
+    "email": "Nd***@gmail.com",
+    "email_hash": "987274c2c39f9aa2e646b40e46a38a4a611857052e97cdb667a711295f298764",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11089,7 +11870,8 @@ const INITIAL_DPT = [
   {
     "npa": "05204",
     "name": "Hengky Palysa",
-    "email": "hpalysa@gmail.com",
+    "email": "hp***@gmail.com",
+    "email_hash": "cfa60abfba277e8f014cc05dd8180a9f63ea764a3244b94f7834d39b615c1aaf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11103,7 +11885,8 @@ const INITIAL_DPT = [
   {
     "npa": "05215",
     "name": "Yoseph Datu Adiatama",
-    "email": "datu.adiatma@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "6bc2eb5c468b1001880bcd0c94c717bfae380f73807d37dc537122456830a69e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11117,7 +11900,8 @@ const INITIAL_DPT = [
   {
     "npa": "05216",
     "name": "Muhammad Kamal Fakhri",
-    "email": "kamal.fakhri@ymail.com",
+    "email": "ka***@ymail.com",
+    "email_hash": "09c781f5b219f66608b08d352f68ad0142fb9a7c24f73a77f4eec8d5e57f7bfe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11131,7 +11915,8 @@ const INITIAL_DPT = [
   {
     "npa": "05222",
     "name": "Riza Agustiana",
-    "email": "riza.agustiana@pertamina.com",
+    "email": "ri***@pertamina.com",
+    "email_hash": "31a77c258294468c32f2cd7c675cc53ce6ea91d909ba8d742c6a6897d3e77ce7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11145,7 +11930,8 @@ const INITIAL_DPT = [
   {
     "npa": "05223",
     "name": "Andri Akbar",
-    "email": "andri.akbar@pertamina.com",
+    "email": "an***@pertamina.com",
+    "email_hash": "b80f26d2ec1e0c98a2a77b1b7df6f3436b5f171bb5458e742c6d79a05ae737ad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11159,7 +11945,8 @@ const INITIAL_DPT = [
   {
     "npa": "05224",
     "name": "Andri Yumansa",
-    "email": "andri.y.sihombing@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "06d26f45fc730a8a0afe2abda839ae2ee5fc2e77cdb11795558878d73049eb4a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11173,7 +11960,8 @@ const INITIAL_DPT = [
   {
     "npa": "05225",
     "name": "Bambang Parikesit O",
-    "email": "parikesit120@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "1ecfe738dbbec5e0209c2f2d9b0a514d7d24d8821821a44a4800bb4a0973f1f2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11187,7 +11975,8 @@ const INITIAL_DPT = [
   {
     "npa": "05226",
     "name": "Khadafi",
-    "email": "khadafi.khadafi@pertamina.com",
+    "email": "kh***@pertamina.com",
+    "email_hash": "142e15065a084e4f46a5da4eb5d4e36754e7bb750eaf13c21f6b65b3bef4f618",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11201,7 +11990,8 @@ const INITIAL_DPT = [
   {
     "npa": "05228",
     "name": "Yosaphat Ardhita",
-    "email": "yosaphat.yudha@pertamina.com",
+    "email": "yo***@pertamina.com",
+    "email_hash": "74fb619f6ae4c13a6aaf72ba53c321216ba6c472eac47fceed77b2dace17e09f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11215,7 +12005,8 @@ const INITIAL_DPT = [
   {
     "npa": "05249",
     "name": "Albert Julian Guming",
-    "email": "a.julian.gurning@gmail.com",
+    "email": "a.***@gmail.com",
+    "email_hash": "93772e0e3b38b1cde188b76808a4f25cdac5708ec57aef2d34b6278add3be899",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11229,7 +12020,8 @@ const INITIAL_DPT = [
   {
     "npa": "05271",
     "name": "Asrizal",
-    "email": "asrizal_syahri@yahoo.com",
+    "email": "as***@yahoo.com",
+    "email_hash": "7339b03f1f21e9e1845df760338b4f4fd8406515a246af74a725557329ea0926",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11243,7 +12035,8 @@ const INITIAL_DPT = [
   {
     "npa": "05274",
     "name": "Luhur Cahyo Prasetyo",
-    "email": "dzuhrinur@yahoo.com",
+    "email": "dz***@yahoo.com",
+    "email_hash": "bc8fd89fb1a92e34ec2a0ad4cc3eefbb272d0d383138cb2145ed1ce836322289",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11257,7 +12050,8 @@ const INITIAL_DPT = [
   {
     "npa": "05278",
     "name": "Jaka Satria Budiman",
-    "email": "jaka.sb@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "e84a87ff378e6bf66cca2e0eaeeb48eda3a2066354aa2efd9b572c6f744aed90",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11271,7 +12065,8 @@ const INITIAL_DPT = [
   {
     "npa": "05302",
     "name": "Herman Siagian",
-    "email": "herman_siagian@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "555a5ccfa52e3ef83f40e6e987d00b8ddad0dd5b7903740645fdc38860f45a8a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11285,7 +12080,8 @@ const INITIAL_DPT = [
   {
     "npa": "05307",
     "name": "PURWA WIGUNA",
-    "email": "pwiguna99@gmail.com",
+    "email": "pw***@gmail.com",
+    "email_hash": "51c8ed6bf3a9746d4a031df158376275286f2d943ce17a98e1252b7447e2000f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11299,7 +12095,8 @@ const INITIAL_DPT = [
   {
     "npa": "05370",
     "name": "Tian Syaeful Ramadhan",
-    "email": "tiansyaiful@gmail.com",
+    "email": "ti***@gmail.com",
+    "email_hash": "f3749fd755dc588bba0858c805b79fcbb83abd99208069ad801a5cb3b2e8dced",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11313,7 +12110,8 @@ const INITIAL_DPT = [
   {
     "npa": "05385",
     "name": "Fisco Raseno",
-    "email": "fiscoraseno.05@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "ba9566a947b3e601ac8ed86f89928b3e4abf740a14a89065216c19f8a8cc61a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11327,7 +12125,8 @@ const INITIAL_DPT = [
   {
     "npa": "05387",
     "name": "Rahmatullah Arbi",
-    "email": "rahmatullah.arbi@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "d313448924856c014b4e29a0f2f86765b55a6e1ee8fd34fa9b5c2add1190e196",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11341,7 +12140,8 @@ const INITIAL_DPT = [
   {
     "npa": "05390",
     "name": "Agustina Djafar",
-    "email": "agustinadjafar@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "b8ea9111b9e40fd2e997baa58e6a9efbda858543aa419d841cadfc2fe26ec5c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11355,7 +12155,8 @@ const INITIAL_DPT = [
   {
     "npa": "05398",
     "name": "Yulindra Christiawan",
-    "email": "yulindrac@yahoo.com",
+    "email": "yu***@yahoo.com",
+    "email_hash": "3003393c722013039b64d5c04b1392bd106b0e906812f2eba7036b4df794b07d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11369,7 +12170,8 @@ const INITIAL_DPT = [
   {
     "npa": "05402",
     "name": "Cindi Kamelina",
-    "email": "cindikamelina@gmail.com",
+    "email": "ci***@gmail.com",
+    "email_hash": "94e9bbf7f40f07711172853621598b1b323ed5fe0b2ef35574fd942ef4519ff5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11383,7 +12185,8 @@ const INITIAL_DPT = [
   {
     "npa": "05403",
     "name": "Satyogroho Dhian Amertho",
-    "email": "satyogroho@pttimah.co.id",
+    "email": "sa***@pttimah.co.id",
+    "email_hash": "39f5ed285fd655ca2f244a6d75d99724de169fd64492427ab77da2f06fac5c88",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11397,7 +12200,8 @@ const INITIAL_DPT = [
   {
     "npa": "05411",
     "name": "Suwasno",
-    "email": "suwasno.rinjani@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "30fcfa70cc4e770442eb75eeca8b109b21125e69c0f9e24a7c7555d8c5f0eaef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11411,7 +12215,8 @@ const INITIAL_DPT = [
   {
     "npa": "05417",
     "name": "Erawati Fitriyani Adji",
-    "email": "erawati.206@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "0a97d36233faefdebb24a8d73f05d3efc844bff2bd6219a097b858fb36342828",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11425,7 +12230,8 @@ const INITIAL_DPT = [
   {
     "npa": "05424",
     "name": "Eko Puswanto",
-    "email": "epuswanto@gmail.com",
+    "email": "ep***@gmail.com",
+    "email_hash": "b614def2ca6c7e9ffa7817ddd78f779b6c18b75ccc1e4142beb85010d0ed797f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11439,7 +12245,8 @@ const INITIAL_DPT = [
   {
     "npa": "05425",
     "name": "Isnianto Saputra",
-    "email": "isnianto.saputra@gmail.com",
+    "email": "is***@gmail.com",
+    "email_hash": "e214b43f6e213f313d7673d06f646ae994e19439114a1a2e5b1da3a1c72fc050",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11453,7 +12260,8 @@ const INITIAL_DPT = [
   {
     "npa": "05432",
     "name": "Priyo Prabowo Herlambang",
-    "email": "priyo.prabowo.h@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "2540e7a7bd65ebc7b3659ca3027858f8641328802fd73b7e33f48558194e85d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11467,7 +12275,8 @@ const INITIAL_DPT = [
   {
     "npa": "05436",
     "name": "Gesang Panggrahito Pati",
-    "email": "gesang_10@yahoo.com",
+    "email": "ge***@yahoo.com",
+    "email_hash": "e2a121b81a9899d63e229ef38a68ff275fdd53e66f7187a1a8fec6dc47f44b16",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11481,7 +12290,8 @@ const INITIAL_DPT = [
   {
     "npa": "05451",
     "name": "Made Wirawan",
-    "email": "wam99o0k@yahoo.com",
+    "email": "wa***@yahoo.com",
+    "email_hash": "1ed98422f3b1805d4a27aa7ac7e70bdf196dec9fea17287ac3e5fd98ce70cf26",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11495,7 +12305,8 @@ const INITIAL_DPT = [
   {
     "npa": "05456",
     "name": "Rohima Sera Afifah",
-    "email": "rohimasera.afifah@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "73bfb78a772d35ea8b5581303132074fb059900f0ac7664f591d749f8bec16d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11509,7 +12320,8 @@ const INITIAL_DPT = [
   {
     "npa": "05469",
     "name": "Wahyu Garjito",
-    "email": "garjito_01@yahoo.com",
+    "email": "ga***@yahoo.com",
+    "email_hash": "82ffed4e0cac9e39a0e85b203ce52a55ec8976d3241dcb4da2580b0fbe7f6fe3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11523,7 +12335,8 @@ const INITIAL_DPT = [
   {
     "npa": "05485",
     "name": "Nor Handayamto Putro",
-    "email": "nor.handayamto@gmail.com",
+    "email": "no***@gmail.com",
+    "email_hash": "a7f3efaa605da86827623305c913b32cffe05f0af61994cc68f244c335e35ccb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11537,7 +12350,8 @@ const INITIAL_DPT = [
   {
     "npa": "05486",
     "name": "Bagus Bestari Kamarullah",
-    "email": "kurangturu10@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "3930aa66d8eb6d918d2e6a2c16653f10d084e2230515e40d3285971f057e6214",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11551,7 +12365,8 @@ const INITIAL_DPT = [
   {
     "npa": "05493",
     "name": "Ahmad Syauqi Hidayatillah",
-    "email": "ahmad.syauqi.h@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "3218a6f93b30dd64bf235b5ec60a7ef2622cb892c1555147358000fcfb31e7de",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11565,7 +12380,8 @@ const INITIAL_DPT = [
   {
     "npa": "05507",
     "name": "‘Wahyu Prabowo",
-    "email": "wahyuprabowo@geologist.com",
+    "email": "wa***@geologist.com",
+    "email_hash": "52dfcb16c801134a76124b282bece20845808f8901df48b0439fddf969043c53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11579,7 +12395,8 @@ const INITIAL_DPT = [
   {
     "npa": "05510",
     "name": "Aton Patonah",
-    "email": "a.patonah@unpad.ac.id",
+    "email": "a.***@unpad.ac.id",
+    "email_hash": "84e65e1631d54964bf56015d01d4af4fe84b291586b02d272637eef364fdc6d5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11593,7 +12410,8 @@ const INITIAL_DPT = [
   {
     "npa": "05511",
     "name": "Evi Kristantina Utari",
-    "email": "etantina.geology97@gmail.com",
+    "email": "et***@gmail.com",
+    "email_hash": "f55c1e64bcc8078114327295c317b82f5b46865cba21ad1301572c6e486ed749",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11607,7 +12425,8 @@ const INITIAL_DPT = [
   {
     "npa": "05512",
     "name": "Didi Ardhi Nugroho",
-    "email": "didi.ardhi@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "2abfba57fb262d748c8dfbe22f222fe64be62211567c0b570f9b6657676e5e7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11621,7 +12440,8 @@ const INITIAL_DPT = [
   {
     "npa": "05516",
     "name": "Astyka Pamumpuni",
-    "email": "astyka@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "2d32537b5f4e8034c7eda399b8ddeb23b8553d988f7b42c68979141a1d551a88",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11635,7 +12455,8 @@ const INITIAL_DPT = [
   {
     "npa": "05520",
     "name": "Muhammad Fauzan",
-    "email": "mfauzan700@gmail.com",
+    "email": "mf***@gmail.com",
+    "email_hash": "74a11a662bb946a334e03ce8e54a315dc9ee9f6b17b2079673b858fa4df3252e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11649,7 +12470,8 @@ const INITIAL_DPT = [
   {
     "npa": "05521",
     "name": "Muhammad Sulhuzair Burhanuddin",
-    "email": "dzulgeo06@gmail.com",
+    "email": "dz***@gmail.com",
+    "email_hash": "eb939e60e0abe720d4f9497f1dcd678ae1e053ee6c87fbb78e1c2853f56b2c12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11663,7 +12485,8 @@ const INITIAL_DPT = [
   {
     "npa": "05523",
     "name": "Firman Herdiansyah",
-    "email": "firman_abdullah10@yahoo.com",
+    "email": "fi***@yahoo.com",
+    "email_hash": "9045c20524ab0282975a800d6f0744ae13d094afbd6b8079e038fb9000dcb011",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11677,7 +12500,8 @@ const INITIAL_DPT = [
   {
     "npa": "05524",
     "name": "Dyah Ayu Setyorini",
-    "email": "adyah.87@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "631782b30ea5110d6d6ef80f83171d4395208a4d83dd78a68cc7b33c5453764c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11691,7 +12515,8 @@ const INITIAL_DPT = [
   {
     "npa": "05525",
     "name": "Muhammad Adimas Amri",
-    "email": "adimasamri@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "207c4321d14a134361efddeaa13dc17b18eafadbcad31b766e44ea49df1453fc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11705,7 +12530,8 @@ const INITIAL_DPT = [
   {
     "npa": "05526",
     "name": "‘Wildan Tri Koesmawardani",
-    "email": "wildantrik@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "bc11428485a35a7f0941d42e458aa1fbda401ce77d3da6f9ee675022028b996b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11719,7 +12545,8 @@ const INITIAL_DPT = [
   {
     "npa": "05527",
     "name": "Surya Darma Hafiz",
-    "email": "suryadarma_hafiz@yahoo.com",
+    "email": "su***@yahoo.com",
+    "email_hash": "707d90a7f2de900633dbd7e5332382e6e2ba2d9ea8fea61e21fb8f96311aa2a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11733,7 +12560,8 @@ const INITIAL_DPT = [
   {
     "npa": "05528",
     "name": "Eli Saut Silalahi",
-    "email": "elisilalahi9@gmail.com",
+    "email": "el***@gmail.com",
+    "email_hash": "405ee90c0d6ab5b08ae539a3d7459eb18af2a2899be5a158191590ef3eff7da1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11747,7 +12575,8 @@ const INITIAL_DPT = [
   {
     "npa": "05532",
     "name": "Khoiril Anwar Maryunani",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11761,7 +12590,8 @@ const INITIAL_DPT = [
   {
     "npa": "05540",
     "name": "Muhammad Fahrullah, St., Mt., Ipm., Asean Eng",
-    "email": "fahrullahinsinyur88@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "079dd72114017c88efe432a4ed1b68607a1a66332df47c51584434f856bf159d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11775,7 +12605,8 @@ const INITIAL_DPT = [
   {
     "npa": "05551",
     "name": "Bani Tiofan Tampubolon",
-    "email": "bttampubolon@skkmigas.go.id",
+    "email": "bt***@skkmigas.go.id",
+    "email_hash": "66028bff90a2a1dfc303f30b90280fcefb46f4548c4b2f04411feda57d0a7531",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11789,7 +12620,8 @@ const INITIAL_DPT = [
   {
     "npa": "05552",
     "name": "Najib",
-    "email": "najib@ft.undip.ac.id",
+    "email": "na***@ft.undip.ac.id",
+    "email_hash": "f31d976c4f36d6e03c950f13fe578b57f6dce740060b49fc45f391a371e3597a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11803,7 +12635,8 @@ const INITIAL_DPT = [
   {
     "npa": "05553",
     "name": "Yoga Aribowo",
-    "email": "yogaribowo@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "baf475ad33b97cf3e1d693b2b1cf17b4f284ed08e663070f23272b54e99f2aa4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11817,7 +12650,8 @@ const INITIAL_DPT = [
   {
     "npa": "05554",
     "name": "Dian Agus Widarso",
-    "email": "dianagusgeo@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "4a755403dd404ddd78131e04b866379a0af39d33fca46eb5cef8c26322b0ba22",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11831,7 +12665,8 @@ const INITIAL_DPT = [
   {
     "npa": "05555",
     "name": "Tri Winarno",
-    "email": "triwingeo@gmail.com",
+    "email": "tr***@gmail.com",
+    "email_hash": "a306b142a0e2b903dc1f40acbc37e8ba6ec216f0524fb21ae6fa5675ff6b5dad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11845,7 +12680,8 @@ const INITIAL_DPT = [
   {
     "npa": "05556",
     "name": "Anis Kurniasih",
-    "email": "aniskurniasihgeo@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "4b221880ce8bc234a688ffd9a2bd8f8be1adc8ad6e5bbf864b95a361810bdecb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11859,7 +12695,8 @@ const INITIAL_DPT = [
   {
     "npa": "05561",
     "name": "Idarwati",
-    "email": "idarwati@ft.unsri.ac.id",
+    "email": "id***@ft.unsri.ac.id",
+    "email_hash": "ebb3afda31e03a723fe25f8f90c474a8e2d3084bdb12b39850b3b2157fd1dd24",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11873,7 +12710,8 @@ const INITIAL_DPT = [
   {
     "npa": "05564",
     "name": "Rendy Defriza Firdausi",
-    "email": "rendy.defriza@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "fcce198cd42cc636783657bcbb1de3b5afe57e77419415330f9722bed0404296",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11887,7 +12725,8 @@ const INITIAL_DPT = [
   {
     "npa": "05577",
     "name": "Guntur Nurrahman",
-    "email": "muhammadgunturn@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "e1ee4b635cf68919c185621e42ac99397f3e3e4b8259ccd37a86aa7265fc8884",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11901,7 +12740,8 @@ const INITIAL_DPT = [
   {
     "npa": "05581",
     "name": "Subagyo",
-    "email": "bagyo.modeling@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "5b19f281926563363797f9b9530ea601a0cd57e48ef42c57f8448d590c397dc1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11915,7 +12755,8 @@ const INITIAL_DPT = [
   {
     "npa": "05583",
     "name": "Joni R Ahmad",
-    "email": "joni.ra@geologist.com",
+    "email": "jo***@geologist.com",
+    "email_hash": "0c57ee5167d927ed4877e94ebcd63001d20ea2048511e9b34283864143d40744",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11929,7 +12770,8 @@ const INITIAL_DPT = [
   {
     "npa": "05588",
     "name": "Argya Hastubrata Basundara",
-    "email": "argya.basundara@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "4f4d9d1a22749d94fe41091b966e90b4414295ed764422168e2f3e42cfaa31fd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11943,7 +12785,8 @@ const INITIAL_DPT = [
   {
     "npa": "05590",
     "name": "Epo Prasetya Kusumah",
-    "email": "epo.kusumah@gmail.com",
+    "email": "ep***@gmail.com",
+    "email_hash": "3d5344b2fd1db967cfe1f1df49fcf0455e3a3eff823316770de5178145adca25",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11957,7 +12800,8 @@ const INITIAL_DPT = [
   {
     "npa": "05591",
     "name": "Abang Mansyursyah Surya Nugraha",
-    "email": "amsuryanugraha@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "5874d42a9ce95a422092ba2137159146b70cdba3bbeb495f25fd72445b21fbb1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11971,7 +12815,8 @@ const INITIAL_DPT = [
   {
     "npa": "05597",
     "name": "Komang Andika Aris Permana",
-    "email": "candix129@gmail.com",
+    "email": "ca***@gmail.com",
+    "email_hash": "ae89780b42e6dee101d1ddde9e61d18ecc39b67bae6f3e222264a16df9e71529",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11985,7 +12830,8 @@ const INITIAL_DPT = [
   {
     "npa": "05601",
     "name": "Roni Permadi Kusumah",
-    "email": "rpk22oke@yahoo.com",
+    "email": "rp***@yahoo.com",
+    "email_hash": "d120c25a87d31d82417265fee3f11ca9ae23acc120358b33e8a2e9d535385741",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -11999,7 +12845,8 @@ const INITIAL_DPT = [
   {
     "npa": "05610",
     "name": "‘Wahyudi Agus Kristianto",
-    "email": "wahyudiak1@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "9d0a0decf00ad2bcc4f9142eb463fdccaabee4cf93c80d3f6b6a9572bc4ce9d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12013,7 +12860,8 @@ const INITIAL_DPT = [
   {
     "npa": "05615",
     "name": "Muhammad Azka Yusuf",
-    "email": "muhammad.azka91@yahoo.com",
+    "email": "mu***@yahoo.com",
+    "email_hash": "a186ab77431bfc6c226a1ccebc4d276a6e75922a480b0e2570fd9683777d40a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12027,7 +12875,8 @@ const INITIAL_DPT = [
   {
     "npa": "05623",
     "name": "Nahar Mugaddim Jundan Arif",
-    "email": "jda_arif@yahoo.com",
+    "email": "jd***@yahoo.com",
+    "email_hash": "1a74a4777eccbd262fbecf98bd5ee99aad46092a6fe52018b66c91ba6b0d4046",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12041,7 +12890,8 @@ const INITIAL_DPT = [
   {
     "npa": "05626",
     "name": "Yuana Pertiwi",
-    "email": "yppertiwi@fmi.com",
+    "email": "yp***@fmi.com",
+    "email_hash": "ebe06e7e3da6604118d9e908267ef9cda13c915d35569d1c410e3a053040da51",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12055,7 +12905,8 @@ const INITIAL_DPT = [
   {
     "npa": "05635",
     "name": "Bella Dinna Safitri",
-    "email": "mk.bella.safitri@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "f5fe6f8a36d2dc6f194048bd157222abfc6ebdcc78bd849fbf6ed6130b420f9c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12069,7 +12920,8 @@ const INITIAL_DPT = [
   {
     "npa": "05641",
     "name": "Candra Hadi Kusuma",
-    "email": "candra83@gmail.com",
+    "email": "ca***@gmail.com",
+    "email_hash": "a853c26b23c799579974916d3441f1acfe1228a4623951869ab4a2544b731867",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12083,7 +12935,8 @@ const INITIAL_DPT = [
   {
     "npa": "05645",
     "name": "Gayatri Indah Marliyani",
-    "email": "gayatri.marliyani@ugm.ac.id",
+    "email": "ga***@ugm.ac.id",
+    "email_hash": "328fa72b00c64fc0ff68ebe9b6f030a185c40ee73cdbb0f0545d1e32587e3080",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12097,7 +12950,8 @@ const INITIAL_DPT = [
   {
     "npa": "05646",
     "name": "Indra Arifianto",
-    "email": "indra.arifianto@mail.ugm.ac.id",
+    "email": "in***@mail.ugm.ac.id",
+    "email_hash": "88e31859a421bf848baec2724ea022ef5b8de0705731c78bebb39816c0d16cf6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12111,7 +12965,8 @@ const INITIAL_DPT = [
   {
     "npa": "05653",
     "name": "Sri Hartanto",
-    "email": "sri.hartanto@pertamina.com",
+    "email": "sr***@pertamina.com",
+    "email_hash": "ada1d9c6a9278efe88099792ace29e050dffe0980741f44f24b194d851ad93f6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12125,7 +12980,8 @@ const INITIAL_DPT = [
   {
     "npa": "05661",
     "name": "Hilman Ramdani",
-    "email": "hilman.ramdani@pertamina.com",
+    "email": "hi***@pertamina.com",
+    "email_hash": "b649653591418180efe8ca37cc765be53f0b26b61d3abcdda37cc750cb21bbe3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12139,7 +12995,8 @@ const INITIAL_DPT = [
   {
     "npa": "05663",
     "name": "Dwi Arifman Cahyono",
-    "email": "dwi.arifman@pertamina.com",
+    "email": "dw***@pertamina.com",
+    "email_hash": "3fa603918fee343d1a3cbe0e065224b64d466fbbfad1b7bfbc03d964935b012c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12153,7 +13010,8 @@ const INITIAL_DPT = [
   {
     "npa": "05664",
     "name": "Anom Prasetya",
-    "email": "anom.prasetya@pertamina.com",
+    "email": "an***@pertamina.com",
+    "email_hash": "ee31623bc485b0df49644099c4d7f35e56dd8d1b972114381d1b6b2bb925f651",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12167,7 +13025,8 @@ const INITIAL_DPT = [
   {
     "npa": "05667",
     "name": "Surya Pranata",
-    "email": "suryapranatauplift@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "b7cf7892abcf2213c5160f78d1d39e2c4481dc63abd11103c797ee826e818e6c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12181,7 +13040,8 @@ const INITIAL_DPT = [
   {
     "npa": "05673",
     "name": "Marino Chritiano Baroek",
-    "email": "rino.baroek@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "f2525a6b6c0be53f49aed54792516560409908010d39bab2edfe099b81a3c268",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12195,7 +13055,8 @@ const INITIAL_DPT = [
   {
     "npa": "05679",
     "name": "Yulianto Tri Nugroho",
-    "email": "garudasolo.01@gmail.com",
+    "email": "ga***@gmail.com",
+    "email_hash": "45cc7e8b97fdecef564713af0ac1501d4395efe58a1a5d2bb5b0aa3e8fa51711",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12209,7 +13070,8 @@ const INITIAL_DPT = [
   {
     "npa": "05681",
     "name": "Rosmalia Dita Nugraheni",
-    "email": "rosmalia.dn@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "9be3c7cf7cc2194aa6634a38bcbd17b6e9dd7234f20025a195cc2f0b3e38d26d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12223,7 +13085,8 @@ const INITIAL_DPT = [
   {
     "npa": "05682",
     "name": "Imam Setiaji Ronoatmojo",
-    "email": "ajironoatmojo@gmail.com",
+    "email": "aj***@gmail.com",
+    "email_hash": "f1347fe21631e0a8b7edbfa6eb652694f24c6c52018d95ed899e919c8d199d5a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12237,7 +13100,8 @@ const INITIAL_DPT = [
   {
     "npa": "05686",
     "name": "Friska Agustin",
-    "email": "friska.agustin08@gmail.com",
+    "email": "fr***@gmail.com",
+    "email_hash": "b248ebb59eadfe0c3b2e34f44903ec2d7edae440fb63192faff35a7f3828e3d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12251,7 +13115,8 @@ const INITIAL_DPT = [
   {
     "npa": "05687",
     "name": "Mochamad Fajar Sodiq",
-    "email": "fasud13@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "0ed7a2a73654014d6f6313fbe3cb0b970b77cab002e1c37cf977de9d47f3e621",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12265,7 +13130,8 @@ const INITIAL_DPT = [
   {
     "npa": "05689",
     "name": "Basuki Rahmad",
-    "email": "b_rahmad2004@yahoo.com",
+    "email": "b_***@yahoo.com",
+    "email_hash": "bccf81701524b5c4cf2f8ad5a6a2ae1d8a04383dd064c382ce0808b7bc1ec123",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12279,7 +13145,8 @@ const INITIAL_DPT = [
   {
     "npa": "05691",
     "name": "Gathuk Widiyanto",
-    "email": "gathuk.widiyayanto@pertamina.com",
+    "email": "ga***@pertamina.com",
+    "email_hash": "7f9b0ff72dc5532ff5cfd598d9ac32aae42be448b8a800175327caa8b4c10de9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12293,7 +13160,8 @@ const INITIAL_DPT = [
   {
     "npa": "05692",
     "name": "Sunarli Ardi",
-    "email": "sunarli.ardi@pertamina.com",
+    "email": "su***@pertamina.com",
+    "email_hash": "645e4998f4af6ceb092825d6fccb5fca9cf1fe1638cd49539af360d801d238b1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12307,7 +13175,8 @@ const INITIAL_DPT = [
   {
     "npa": "05700",
     "name": "Arif Hindarto",
-    "email": "arif.hindarto@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "78ab20c57982045a8e906c67ad4c892a4b7bc100a4d8dc18737713d0a277f5f9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12321,7 +13190,8 @@ const INITIAL_DPT = [
   {
     "npa": "05702",
     "name": "Sukaesih",
-    "email": "s_esin@yahoo.co.id",
+    "email": "s_***@yahoo.co.id",
+    "email_hash": "071cea26696ded8fa01804bddb4fb1de6f0536c936350ee96b97d3dc4278da42",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12335,7 +13205,8 @@ const INITIAL_DPT = [
   {
     "npa": "05718",
     "name": "Twin Hosea Widodo",
-    "email": "twin.hosea@sci.ui.ac.id",
+    "email": "tw***@sci.ui.ac.id",
+    "email_hash": "597672ba6b73e7593c31005a4dd97d467b1b412b53233c4ce5350b184bb0a403",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12349,7 +13220,8 @@ const INITIAL_DPT = [
   {
     "npa": "05719",
     "name": "Reza Syahputra",
-    "email": "syahputra.reza@sci.ui.ac.id",
+    "email": "sy***@sci.ui.ac.id",
+    "email_hash": "c21a6d272d0affc176d799fa1c23640d22082495f6a07962a681ba109b076b85",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12363,7 +13235,8 @@ const INITIAL_DPT = [
   {
     "npa": "05725",
     "name": "Meliawati",
-    "email": "ang.meihva@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "6cfee4e9e4cc351b2109d133384ddb69f974505be574a0c8271bdd4f5fc221f9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12377,7 +13250,8 @@ const INITIAL_DPT = [
   {
     "npa": "05726",
     "name": "Andreas",
-    "email": "andreas_98yk@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "afb9144a032ba11ba171464295bfce6a25e18218bb11394a1ddde64294f4d34d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12391,7 +13265,8 @@ const INITIAL_DPT = [
   {
     "npa": "05729",
     "name": "Ahmad Mustaghfirin",
-    "email": "ahmad.mustaghfirin.b@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "3bc78b379a899678df4d8891cb08ad9c3ed6d396ecb137d39febc9c297cf223c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12405,7 +13280,8 @@ const INITIAL_DPT = [
   {
     "npa": "05758",
     "name": "Iwan Yulianto",
-    "email": "iwanyulianto93@yahoo.com",
+    "email": "iw***@yahoo.com",
+    "email_hash": "b2393c74097ffdd448cfd9d09d62e6eb98115ca3cfbcbd27526cd03643d29aa7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12419,7 +13295,8 @@ const INITIAL_DPT = [
   {
     "npa": "05759",
     "name": "Nadya Fauzia Puspitasari",
-    "email": "nadya.fauzia@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "4c4d50eb7576de017b069138de9fea14e671a72cea6cbda7d198829c4f9bae40",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12433,7 +13310,8 @@ const INITIAL_DPT = [
   {
     "npa": "05763",
     "name": "Arief Ismanto",
-    "email": "arief.ismanto@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "72109af9d4db405cdb759ecce405a8ad4206a45f15459f7ac4e0a3ed47077b03",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12447,7 +13325,8 @@ const INITIAL_DPT = [
   {
     "npa": "05768",
     "name": "Alamsyah Anas",
-    "email": "syahalam_geologist@yahoo.com",
+    "email": "sy***@yahoo.com",
+    "email_hash": "56e4cd5e8f7d9292f5a8711f2d28d886e8038e4fa73018a72d8b1501113f48d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12461,7 +13340,8 @@ const INITIAL_DPT = [
   {
     "npa": "05771",
     "name": "Imisha Gheamarsa",
-    "email": "irnisha.g@geoservices.co.id",
+    "email": "ir***@geoservices.co.id",
+    "email_hash": "691af863dbb015ef5a4cd0ed67c5152de7f9409c28370c2560e6f952a8a7d11a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12475,7 +13355,8 @@ const INITIAL_DPT = [
   {
     "npa": "05773",
     "name": "Kartika Palupi Savitri",
-    "email": "kartika.palupi.s@ugm.ac.id",
+    "email": "ka***@ugm.ac.id",
+    "email_hash": "52f3716f0debc1a10a4dae0c28fdd788ec1235c784072859c30209b20d9bac58",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12489,7 +13370,8 @@ const INITIAL_DPT = [
   {
     "npa": "05776",
     "name": "Ronny Setyawan Wijayanto",
-    "email": "ronnysetyawan@yahoo.com",
+    "email": "ro***@yahoo.com",
+    "email_hash": "246975153b2f80ea6c209ecac0747aa5b3c3ef2570bef4928133bf3c6b828f6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12503,7 +13385,8 @@ const INITIAL_DPT = [
   {
     "npa": "05781",
     "name": "Nofhy Gumelar Nurdaen",
-    "email": "nofhy1983@gmail.com",
+    "email": "no***@gmail.com",
+    "email_hash": "0df5dfa0198f12ff836471329e34301c671dc242dcfdd97cb8031e98cd0a8d4e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12517,7 +13400,8 @@ const INITIAL_DPT = [
   {
     "npa": "05792",
     "name": "Rakhmad Budi Waluyo",
-    "email": "rakhmadbudi@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "5cee49a27968b00ba706847d00fd2d31a1745f9738f7375883c2722d7d86e74e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12531,7 +13415,8 @@ const INITIAL_DPT = [
   {
     "npa": "05794",
     "name": "Cokro Wibowo Suratno",
-    "email": "cokwib@gmail.com",
+    "email": "co***@gmail.com",
+    "email_hash": "9f5e4cfa2bf234f0c237885305bb0e12643ea7c1607f1762adbe6ec097c9e860",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12545,7 +13430,8 @@ const INITIAL_DPT = [
   {
     "npa": "05795",
     "name": "Ivan Ibrahim",
-    "email": "ivanibrahim08@gmail.com",
+    "email": "iv***@gmail.com",
+    "email_hash": "1584f5b852631a4f00309937c4e07f13870577e9c3a3134e3d51f33c48d5861b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12559,7 +13445,8 @@ const INITIAL_DPT = [
   {
     "npa": "05796",
     "name": "Gusti Ngurah Agung Prabawa",
-    "email": "prabawa.gusti@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "b93d5427bd6be7a5828f2530db2d48e4f472e8bbaad18270ca5a961ffd92b269",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12573,7 +13460,8 @@ const INITIAL_DPT = [
   {
     "npa": "05797",
     "name": "Ignatius Adi Prabowo",
-    "email": "adi.prabowo@sttnas.ac.id",
+    "email": "ad***@sttnas.ac.id",
+    "email_hash": "24b1021a03175c0b618521ba49c8d9ef0e246571eb761a481bb79e1dda9a87a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12587,7 +13475,8 @@ const INITIAL_DPT = [
   {
     "npa": "05798",
     "name": "Obrin Trianda",
-    "email": "obrintrianda.lahat@gmail.com",
+    "email": "ob***@gmail.com",
+    "email_hash": "3cce2f4fef7c788143b29f9c6118a2ece8f493e8ed28676f1cb72b085aeab70d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12601,7 +13490,8 @@ const INITIAL_DPT = [
   {
     "npa": "05801",
     "name": "Paramitha Tedja Trisnaning",
-    "email": "tedja.trisnaning@gmail.com",
+    "email": "te***@gmail.com",
+    "email_hash": "ad59225514103460a2a0d3ee59062a0bf26fa867755daab869f30a4beccec209",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12615,7 +13505,8 @@ const INITIAL_DPT = [
   {
     "npa": "05802",
     "name": "Hurien Helmi",
-    "email": "hurien.helmi@itny.ac.id",
+    "email": "hu***@itny.ac.id",
+    "email_hash": "e4dd42f58f30e0e3b6f3cbfaaf1df8cf4d6b9c0749f0e49208946e992228e795",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12629,7 +13520,8 @@ const INITIAL_DPT = [
   {
     "npa": "05803",
     "name": "Siti Nuraini",
-    "email": "siti.nuraini@sttnas.ac.id",
+    "email": "si***@sttnas.ac.id",
+    "email_hash": "6a0acc15fda7e5c47ec2aaabc01bf071688bea5f9404584a6e40839912a5921b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12643,7 +13535,8 @@ const INITIAL_DPT = [
   {
     "npa": "05804",
     "name": "Hussein Flowers Rizqi",
-    "email": "alhussein.rizqi@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "20c5d1cced5b321ece1eb89f10d6d3a2b7ffc434ebcb10f8e6725d9382e3702f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12657,7 +13550,8 @@ const INITIAL_DPT = [
   {
     "npa": "05805",
     "name": "Agustinus Bany Kurnianto",
-    "email": "kurniantobrany@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "dbb7a4e26e318ad34ef6f0c383bcfaa2c57366c48f034ec98c54d99c3a6c7066",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12671,7 +13565,8 @@ const INITIAL_DPT = [
   {
     "npa": "05806",
     "name": "Fatimah",
-    "email": "fatimah@itny.ac.id",
+    "email": "fa***@itny.ac.id",
+    "email_hash": "e46b44befaae109638e5f1a10a2570e8ef9d552595d72f982ab0e9dec065b671",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12685,7 +13580,8 @@ const INITIAL_DPT = [
   {
     "npa": "05812",
     "name": "Muhammad Ardhyan Jannatan",
-    "email": "ardhyan.jannatan@pertamina.com",
+    "email": "ar***@pertamina.com",
+    "email_hash": "f2e963a8e4c9ccb2085ba91197c540d1f496cc30336e4800b3fb6568dd60f660",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12699,7 +13595,8 @@ const INITIAL_DPT = [
   {
     "npa": "05817",
     "name": "Tsara Kamilah",
-    "email": "tsarakamilah@gmail.com",
+    "email": "ts***@gmail.com",
+    "email_hash": "f8a808f83cb680d3b64b4b87185b1c560cd99404dbd35746f075d76beb099b8e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12713,7 +13610,8 @@ const INITIAL_DPT = [
   {
     "npa": "05819",
     "name": "‘Wisnu Aji Dwi Kristanto",
-    "email": "wisnuaji@upnyk.ac.id",
+    "email": "wi***@upnyk.ac.id",
+    "email_hash": "bc41e05606a2de1826b4b02f2752b73ce552408a2427392d6590477cdc704588",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12727,7 +13625,8 @@ const INITIAL_DPT = [
   {
     "npa": "05822",
     "name": "Bayu Defitra",
-    "email": "bayudefitra@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "e78dd83a18bf65c74de8f525a8f5213d8ddfda2fc910c4e79866c385f7cf7592",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12741,7 +13640,8 @@ const INITIAL_DPT = [
   {
     "npa": "05823",
     "name": "Setia Pambudi",
-    "email": "setia.pambudi91@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "7aa5d182734ad721aaa5909cdb6afa002c8f2a7d88e40f302957618dd0af0f60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12755,7 +13655,8 @@ const INITIAL_DPT = [
   {
     "npa": "05826",
     "name": "Eko Prasetyo",
-    "email": "eprasetyoe@yahoo.com",
+    "email": "ep***@yahoo.com",
+    "email_hash": "b1ffed88106a82e38456ce850734f917598356cba269b8934e1c903c596391a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12769,7 +13670,8 @@ const INITIAL_DPT = [
   {
     "npa": "05828",
     "name": "Dita Anggun Lestari",
-    "email": "dita.anggun@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "6894996cae134178067dd8c5275763c62313cdfb5a66469a3c3d6dbe87b0f3c9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12783,7 +13685,8 @@ const INITIAL_DPT = [
   {
     "npa": "05830",
     "name": "Hanung Sukhendra",
-    "email": "h.sukhendra@gmail.com",
+    "email": "h.***@gmail.com",
+    "email_hash": "cc4f34ef99f4e85a4d056049701a1fc84705883e900a06d2a6ff350bfcaaa1ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12797,7 +13700,8 @@ const INITIAL_DPT = [
   {
     "npa": "05832",
     "name": "Hary Triyadi",
-    "email": "hary.triyadi@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "b9f1b7bea29697704ab158cb3ec7bae35c61f6fc00938b38c67aa37dbbf28ca9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12811,7 +13715,8 @@ const INITIAL_DPT = [
   {
     "npa": "05836",
     "name": "Angga Widya Yogatama",
-    "email": "yogatama.angga@yahoo.com",
+    "email": "yo***@yahoo.com",
+    "email_hash": "6326e0a7bed4f059b362c231a066570ccf6898155ba33e1949389d2f7e55f9da",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12825,7 +13730,8 @@ const INITIAL_DPT = [
   {
     "npa": "05837",
     "name": "Raufan Fikri",
-    "email": "raufan.fikri@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "f618bd2bc1c67de85998e1a9aed72d1e89eec2089a93a3a2f06abf7ca2c8e115",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12839,7 +13745,8 @@ const INITIAL_DPT = [
   {
     "npa": "05847",
     "name": "Alam Surya Pasemah",
-    "email": "alamsuryapasemah@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "360aca93e5a353ccc6d33be5da118e620a5f4494f261773a91bce04465bb9635",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12853,7 +13760,8 @@ const INITIAL_DPT = [
   {
     "npa": "05848",
     "name": "Anton Murtono",
-    "email": "antonmurtono@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "5a31b699654d6d550e5daf151fb7c7d8bb4a462c38e2cd6dcef06b894e2ea266",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12867,7 +13775,8 @@ const INITIAL_DPT = [
   {
     "npa": "05849",
     "name": "Reza Aviandono",
-    "email": "reza.aviandono@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "0b19cdfdb3270bc996416b00b71b1a7c8ceb75e7851e802cf11df46f88847c4e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12881,7 +13790,8 @@ const INITIAL_DPT = [
   {
     "npa": "05854",
     "name": "Iwan Dermawan",
-    "email": "iwan241@ymail.com",
+    "email": "iw***@ymail.com",
+    "email_hash": "99e85ceaae301979a1ad32cf0dda2f2bc359506824f0819a9c41b058c199f008",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12895,7 +13805,8 @@ const INITIAL_DPT = [
   {
     "npa": "05857",
     "name": "Dhika Noor Pradhana",
-    "email": "dn.pradhana@gmail.com",
+    "email": "dn***@gmail.com",
+    "email_hash": "c21c8b245501c0c60ba0b9632bf812a9cff9aef2954ee946ee9412b8f9f16862",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12909,7 +13820,8 @@ const INITIAL_DPT = [
   {
     "npa": "05858",
     "name": "Michi Oktaviana Sato",
-    "email": "michioktaviana@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "e34a2f56c3ed7f8e343ea04ce52aa8589b9036d69ae118d8a40b10ec1a21ffb4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12923,7 +13835,8 @@ const INITIAL_DPT = [
   {
     "npa": "05860",
     "name": "Catur Cahyaningsih",
-    "email": "caturcahyaningsih@eng.uir.ac.id",
+    "email": "ca***@eng.uir.ac.id",
+    "email_hash": "7e7d6e9d81a097988f323b0e74fd055f191bad5618f0499ebdea09da10a4babc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12937,7 +13850,8 @@ const INITIAL_DPT = [
   {
     "npa": "05861",
     "name": "Adi Suryadi",
-    "email": "adihmidayrus@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "338ea0828526aa6d5f95faede38fd6dd86db898f4f7ae7cf0a8d71dac6a12211",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12951,7 +13865,8 @@ const INITIAL_DPT = [
   {
     "npa": "05862",
     "name": "Nur Rochman Nabawi",
-    "email": "naba.geologi@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "df7f4aabdae2be9b74caee7c3c9508f6fe4faca7bd1432e922c697456c0b9872",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12965,7 +13880,8 @@ const INITIAL_DPT = [
   {
     "npa": "05869",
     "name": "Aditya Nugraha Achiral",
-    "email": "aditnugrahachi@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "cfec6ed187bb10ba354372ecfd35793d9be12fb02089624b9c719376af65f6bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12979,7 +13895,8 @@ const INITIAL_DPT = [
   {
     "npa": "05870",
     "name": "Widandi Pratama",
-    "email": "widandipratama@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "d293f2922913035d8f2313691b897c9518895efa49734dedb7923f59000c3556",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -12993,7 +13910,8 @@ const INITIAL_DPT = [
   {
     "npa": "05873",
     "name": "Arthur G P Nayoan",
-    "email": "arthur.nayoan@hotmail.com",
+    "email": "ar***@hotmail.com",
+    "email_hash": "2eded183aaa0742dfe1b5004ba31198364743dc5d0dc165e344c5e9755a1d004",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13007,7 +13925,8 @@ const INITIAL_DPT = [
   {
     "npa": "05874",
     "name": "Sona Agustin",
-    "email": "sonaagustin1@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "be6a2d77ce594a4cb32a8ffe7b4f6b992dd434ec1eafaacc8d49cf75574dbc00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13021,7 +13940,8 @@ const INITIAL_DPT = [
   {
     "npa": "05876",
     "name": "Javiar Ramadhan",
-    "email": "javiar_ramadhan@yahoo.com",
+    "email": "ja***@yahoo.com",
+    "email_hash": "a0023cf0f14f0db5ede60eaf6f2003f4c5ff3e8e7f022b829213c2f6ee6476d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13035,7 +13955,8 @@ const INITIAL_DPT = [
   {
     "npa": "05882",
     "name": "Merinca Velyana",
-    "email": "merincaduri@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "ad3c32be8dd0ad7a69f348c1095938937e7a0f9dcfc3df532b63d782ed7f8d79",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13049,7 +13970,8 @@ const INITIAL_DPT = [
   {
     "npa": "05887",
     "name": "Agung Yoda Prakasa",
-    "email": "agung.yoda@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "57e1135d60ccb3f516d0db0e96dc9557f5395d77e091282ef5bd7b406b8f2cd0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13063,7 +13985,8 @@ const INITIAL_DPT = [
   {
     "npa": "05889",
     "name": "Dhany Rizky",
-    "email": "dhanyrizky32@yahoo.co.id",
+    "email": "dh***@yahoo.co.id",
+    "email_hash": "0ff92236f0a2900212b5651815b0b03c84ff366b9bd9f3c2feb162c5a6565a24",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13077,7 +14000,8 @@ const INITIAL_DPT = [
   {
     "npa": "05890",
     "name": "‘Widya Anggraini",
-    "email": "widyaanggraini22@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "1fa57e5c84433ad33020383adac8bcd5a56ea4f7fdc04f3b433a7745de6cef49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13091,7 +14015,8 @@ const INITIAL_DPT = [
   {
     "npa": "05892",
     "name": "Fachry Muhammad",
-    "email": "fachrymuh85@yahoo.com",
+    "email": "fa***@yahoo.com",
+    "email_hash": "405dee12b638c0441cd2ee5c16cb8ff7cf658808938796a6056bd501d43c9fcc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13105,7 +14030,8 @@ const INITIAL_DPT = [
   {
     "npa": "05893",
     "name": "Krisna Aditya Sitanggang",
-    "email": "krisnaadityasitanggang@gmail.com",
+    "email": "kr***@gmail.com",
+    "email_hash": "5154b824588ac01d6f85dbfda8d6ac1778c2063d2f81fb76c0164845216e7a85",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13119,7 +14045,8 @@ const INITIAL_DPT = [
   {
     "npa": "05894",
     "name": "Martua Resa Doni Pakpahan",
-    "email": "mr.doni.mrd@gmail.com",
+    "email": "mr***@gmail.com",
+    "email_hash": "112653e53b0c2989646c9b8d028994a87422b5f191efc21364f7807f8faf0dd3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13133,7 +14060,8 @@ const INITIAL_DPT = [
   {
     "npa": "05896",
     "name": "Sindy Febri Nurmalasari",
-    "email": "sindifebi@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "edefb5b03e49b79f8ef2a15d7f0c1423a38ef64f4b70e8e5f41c60789fbda54f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13147,7 +14075,8 @@ const INITIAL_DPT = [
   {
     "npa": "05898",
     "name": "Kirana Suci Saraswati",
-    "email": "kiranassaraswati@gmail.com",
+    "email": "ki***@gmail.com",
+    "email_hash": "a31b335e4e8ef17d82f822d90b2e2c061ce413ef434e654c63b5317540ed0621",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13161,7 +14090,8 @@ const INITIAL_DPT = [
   {
     "npa": "05900",
     "name": "Barona Bella Desta",
-    "email": "baronadesta@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "fc4c1101a4049865b28908e616f94ce6bc219f921cc8474819e02efa059d1966",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13175,7 +14105,8 @@ const INITIAL_DPT = [
   {
     "npa": "05901",
     "name": "Vishe Melaz",
-    "email": "peacemelaz@yahoo.com",
+    "email": "pe***@yahoo.com",
+    "email_hash": "0e6ab280e8daafbf756869e209555344219771892cb14759ce370c7844d98268",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13189,7 +14120,8 @@ const INITIAL_DPT = [
   {
     "npa": "05903",
     "name": "Rendy Jamil",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13203,7 +14135,8 @@ const INITIAL_DPT = [
   {
     "npa": "05906",
     "name": "Rinal Khaidar Ali",
-    "email": "rinal_khaidar@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "7923191a48cf89f62b07775e2d26aae637e62953d2ffb96ac7961c18f7e9e367",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13217,7 +14150,8 @@ const INITIAL_DPT = [
   {
     "npa": "05915",
     "name": "Anwar Faozi",
-    "email": "anwarfaozi.1082@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "0c08685ee8c8334c9c48e69a2dcabba948c4161cd1d4649c8ef8d0ae78b88744",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13231,7 +14165,8 @@ const INITIAL_DPT = [
   {
     "npa": "05916",
     "name": "Baihaqi Badry",
-    "email": "baihaqibadry@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "5d22a71efb886472cf3807d0dc09ad0f25bccaa4fd4bc31190e0198f1515c1d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13245,7 +14180,8 @@ const INITIAL_DPT = [
   {
     "npa": "05917",
     "name": "Bekti Wahyu Widayanto",
-    "email": "bektikelana@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "abdf988d495fc39544f51017716b1ff2eeb9d9a9e4a9d2ec7654a5972d7366ee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13259,7 +14195,8 @@ const INITIAL_DPT = [
   {
     "npa": "05922",
     "name": "Etty Sugiarti",
-    "email": "ety.sugiarti@yahoo.com",
+    "email": "et***@yahoo.com",
+    "email_hash": "1ddf597e83013458303c8f0d5a56597d8841a1ff08b547b779a95fb2768eb84f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13273,7 +14210,8 @@ const INITIAL_DPT = [
   {
     "npa": "05925",
     "name": "M Magdalena Ritonga",
-    "email": "magdalenaritonga@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "30fc557725613560d5ddd68d6846ad3afad875f6d063b1f6cf286615fee48e94",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13287,7 +14225,8 @@ const INITIAL_DPT = [
   {
     "npa": "05952",
     "name": "Rio Priandri Nugroho",
-    "email": "rio.priandri@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "b4e5c1159d83ce229a6d3e5fe82223412d300a61c618fe82c6656ff4c4e15c6b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13301,7 +14240,8 @@ const INITIAL_DPT = [
   {
     "npa": "05954",
     "name": "Resti Samyati Jatiningrum",
-    "email": "restisamyati@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "b5ee839206a72732bd6d85561e51cad9bf76b0b3a663d4f389fb1db1ae01acaf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13315,7 +14255,8 @@ const INITIAL_DPT = [
   {
     "npa": "05982",
     "name": "Agung Reksahutama",
-    "email": "agung.reksahutama@rhpetrogas.co.id",
+    "email": "ag***@rhpetrogas.co.id",
+    "email_hash": "145c62ab85248c350eadae2e5cebeac8b4c664a0219bca6670d3e81eabcbd25b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13329,7 +14270,8 @@ const INITIAL_DPT = [
   {
     "npa": "05992",
     "name": "Yusup Iskandar",
-    "email": "yusup.iskandar@esdm.go.id",
+    "email": "yu***@esdm.go.id",
+    "email_hash": "0de112b0f7b2ffa7a1bb25fd7ea4fce71164915734dbf4b724265e907a718c0b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13343,7 +14285,8 @@ const INITIAL_DPT = [
   {
     "npa": "06037",
     "name": "Duduk Sumargono",
-    "email": "duduk.sumargono@antam.com",
+    "email": "du***@antam.com",
+    "email_hash": "56d4f32a107dab3f30273af2ed4809c6f8624c3f5868ea3040bdf8f38848998e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13357,7 +14300,8 @@ const INITIAL_DPT = [
   {
     "npa": "06053",
     "name": "Dirga David Suhendi",
-    "email": "dirgadavidsuhendi@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "5d2ed3c1cc2e512dd93d6838ecf99a20411c87efff009b7b36775d0c2eee2d08",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13371,7 +14315,8 @@ const INITIAL_DPT = [
   {
     "npa": "06055",
     "name": "Jimmy Gunarso",
-    "email": "jimmy.gunarso@gmail.com",
+    "email": "ji***@gmail.com",
+    "email_hash": "ea3f9550a04d28f8f250b19c1584cb707936db7d59d9138beb2b8bfd21839313",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13385,7 +14330,8 @@ const INITIAL_DPT = [
   {
     "npa": "06059",
     "name": "Rezy Syahputra",
-    "email": "rezy_syahputra25@yahoo.com",
+    "email": "re***@yahoo.com",
+    "email_hash": "fd3ad156169852aaece6a5f5a8b3e5eb79fe591202a7be56d9abb855b7bb16c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13399,7 +14345,8 @@ const INITIAL_DPT = [
   {
     "npa": "06068",
     "name": "Hendrata Rachmanto",
-    "email": "hendrata@antam.com",
+    "email": "he***@antam.com",
+    "email_hash": "72453c2eb9ba8a8af351d2031f5ceefac6cc197317f730a1a893eda9d02fafcb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13413,7 +14360,8 @@ const INITIAL_DPT = [
   {
     "npa": "06069",
     "name": "Nadia Soraya",
-    "email": "nadiasoraya_ns@yahoo.com",
+    "email": "na***@yahoo.com",
+    "email_hash": "afb07b2b7060c851ce0f492da8f9003ae13709ebcb3422a3f8d19c2bf2f29b2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13427,7 +14375,8 @@ const INITIAL_DPT = [
   {
     "npa": "06072",
     "name": "Dian Hadiyansyah",
-    "email": "dian.hadiyansyah@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "c6664793566e3cd681431e2481b20489e9ae0a88388ccf070ed58fa10ed17378",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13441,7 +14390,8 @@ const INITIAL_DPT = [
   {
     "npa": "06073",
     "name": "Roni Cahya Ciputra",
-    "email": "roni010@pbrin.go.id",
+    "email": "ro***@pbrin.go.id",
+    "email_hash": "a4779399fb299660d3c46d3417fbae24a6417d4e949e2d5d718fe7dbd7490114",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13455,7 +14405,8 @@ const INITIAL_DPT = [
   {
     "npa": "06075",
     "name": "Gilang Firmanda",
-    "email": "firmandagilang@live.com",
+    "email": "fi***@live.com",
+    "email_hash": "f1493f2cddb9cdc4869d60d16bc078728701f4abbf65fd43f1679f78b6f13a00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13469,7 +14420,8 @@ const INITIAL_DPT = [
   {
     "npa": "06082",
     "name": "Yudhistrian Rosaviansa Putra P",
-    "email": "yudhistrianpermana@yahoo.com",
+    "email": "yu***@yahoo.com",
+    "email_hash": "b7cce212679c1146b7580e9b940e34b8086b4df2fb68841d096e91809bdd3781",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13483,7 +14435,8 @@ const INITIAL_DPT = [
   {
     "npa": "06087",
     "name": "Aurora Rahmani Munaqusyah H",
-    "email": "aurora.rahmani@gmail.com",
+    "email": "au***@gmail.com",
+    "email_hash": "d3dac29feb8e0c899ccd2385f1eaff15671aa11a2569a97b926f04e0a90424c9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13497,7 +14450,8 @@ const INITIAL_DPT = [
   {
     "npa": "06088",
     "name": "Ahmad Hidayat",
-    "email": "hidayat_ahmad01@yahoo.co.id",
+    "email": "hi***@yahoo.co.id",
+    "email_hash": "fe778f9d458b9db7e70eaf21d4942369f64bdc94fe2fe3d8aee5210a088bc025",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13511,7 +14465,8 @@ const INITIAL_DPT = [
   {
     "npa": "06091",
     "name": "Muhammad Faqih Alfyan",
-    "email": "faqihalfyan92@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "79bdece39453d541ff2947bfa1f8cb20449f9fedd2a7faa19c392ad06a229cce",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13525,7 +14480,8 @@ const INITIAL_DPT = [
   {
     "npa": "06092",
     "name": "Muh hud Astin",
-    "email": "muhammad.astin@jresources.com",
+    "email": "mu***@jresources.com",
+    "email_hash": "ca4f371e9e6d5d0edd2b36634899482e2f2c4402046f58ae8f231b8171708d49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13539,7 +14495,8 @@ const INITIAL_DPT = [
   {
     "npa": "06095",
     "name": "David H Pardede",
-    "email": "david.pardede05@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "5aa31e9c2a12f6d95615f5e0d9b543833360f65408e66bd3a9e5fe13a862cb72",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13553,7 +14510,8 @@ const INITIAL_DPT = [
   {
     "npa": "06098",
     "name": "Abdul Bonde",
-    "email": "bonde.abdul@gmail.com",
+    "email": "bo***@gmail.com",
+    "email_hash": "19b6a9a8e3648c52537744d7ae1e4417faf9d911d05058c431446c271118b807",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13567,7 +14525,8 @@ const INITIAL_DPT = [
   {
     "npa": "06099",
     "name": "Ahmad Khoirul Basyar",
-    "email": "ahmadkbasyar@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "b82f6c76ca6804bc659677b93fbf33b025c43efe4e4c17da5ef594079e6b7c44",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13581,7 +14540,8 @@ const INITIAL_DPT = [
   {
     "npa": "06108",
     "name": "David Iswanto",
-    "email": "david.iswanto@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "f1d98db8e9887c795edc6ff7300ada664a29fb8acad67f1e66131730dcb7dc7c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13595,7 +14555,8 @@ const INITIAL_DPT = [
   {
     "npa": "06110",
     "name": "Muhammad Fakhri Auladana",
-    "email": "fakhriauladana@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "ac2a5b56db0395b55c8518624a1bd3ae12ece251e270189bce0e4bde2f378826",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13609,7 +14570,8 @@ const INITIAL_DPT = [
   {
     "npa": "06111",
     "name": "Muhammad Riefaldy",
-    "email": "geo09reifaldy@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "0beca04dcd2c0096cef32c223d53c46ef237f8cedf40519671187cee73ece288",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13623,7 +14585,8 @@ const INITIAL_DPT = [
   {
     "npa": "06117",
     "name": "J Bugi Hantoro",
-    "email": "bugihantoro@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "15f9da6271a04b52b46fd28594ef206b54e0e486316f456827bf8fb4ab20685a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13637,7 +14600,8 @@ const INITIAL_DPT = [
   {
     "npa": "06122",
     "name": "Wira Pratama Panjaitan",
-    "email": "wira.geologos@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "fae0adac706c4dc3ef2c259e18e89e153c0d8017af4ee9c67281002ce50d4595",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13651,7 +14615,8 @@ const INITIAL_DPT = [
   {
     "npa": "06123",
     "name": "Agoes Karyanto",
-    "email": "totochov.karyanto@gmail.com",
+    "email": "to***@gmail.com",
+    "email_hash": "1735086563554b29dd722dd5e8511b14d916f84be214a0ff5941559cd4237845",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13665,7 +14630,8 @@ const INITIAL_DPT = [
   {
     "npa": "06124",
     "name": "Indra Andra Dinata",
-    "email": "indraandradinata@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "b4373bd1b95877996be4997650edbf3d09bc07e5bc6b30f1d3428034361ace9a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13679,7 +14645,8 @@ const INITIAL_DPT = [
   {
     "npa": "06126",
     "name": "Jalu Bias Firdausi",
-    "email": "jalubias7@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "ff1ace2415a1756fbb2f4b66071e5abef15703005326ae501b5b10ef543f4d38",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13693,7 +14660,8 @@ const INITIAL_DPT = [
   {
     "npa": "06129",
     "name": "Nicodemus Rimba Raya",
-    "email": "nico.raya24@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "6b7ab9ee1b925729e0487ca3bd6c4e6b1e73bfbe39f427a785d8fba0476d6e79",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13707,7 +14675,8 @@ const INITIAL_DPT = [
   {
     "npa": "06135",
     "name": "Bagaskara Widi Nugroho",
-    "email": "bagaskara.nugroho@antam.com",
+    "email": "ba***@antam.com",
+    "email_hash": "69f3a0e81a0985e82a0ff232c70a38137b183032010a8e8fdbc905f3b0b50582",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13721,7 +14690,8 @@ const INITIAL_DPT = [
   {
     "npa": "06148",
     "name": "Sastiawan",
-    "email": "sastiawan24@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "5f21c58320840e50d87735868148b24acda8251dd2dade8a8b066f2400766cc2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13735,7 +14705,8 @@ const INITIAL_DPT = [
   {
     "npa": "06155",
     "name": "Mahmud Najamudin",
-    "email": "mahmud.najamudin@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "394c86fe1de920657c65453092f8fe8b130f666fab2d94c5d7f858af865059c7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13749,7 +14720,8 @@ const INITIAL_DPT = [
   {
     "npa": "06157",
     "name": "Hamrin",
-    "email": "hamrin_geologist@ymail.com",
+    "email": "ha***@ymail.com",
+    "email_hash": "856c098541b8fe1797ed68e2997f4ba417ec08003293d288df8f6ef671944282",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13763,7 +14735,8 @@ const INITIAL_DPT = [
   {
     "npa": "06158",
     "name": "Abdul Barik",
-    "email": "abdulbarikst@yahoo.com",
+    "email": "ab***@yahoo.com",
+    "email_hash": "1f97cf91d77dc741beb0133aa793c28295c117491b5ade7767a0e153476f99ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13777,7 +14750,8 @@ const INITIAL_DPT = [
   {
     "npa": "06160",
     "name": "Adi Pangestu",
-    "email": "Adipanggestu@gmail.com",
+    "email": "Ad***@gmail.com",
+    "email_hash": "313b12efef45c800efc1016860e25cb6ecc3eb55a6a78b972b725b047123add8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13791,7 +14765,8 @@ const INITIAL_DPT = [
   {
     "npa": "06162",
     "name": "lyan Fadhlurrahman",
-    "email": "ifrahman12@gmail.com",
+    "email": "if***@gmail.com",
+    "email_hash": "d6f6833674d350014a8f932f50d31d7d0f5bc2c1b0a0c71b72f8eb9ce9a642e4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13805,7 +14780,8 @@ const INITIAL_DPT = [
   {
     "npa": "06163",
     "name": "Ade Setiawan Saputra R",
-    "email": "adhe.setiawan.sr@yahoo.com",
+    "email": "ad***@yahoo.com",
+    "email_hash": "ed3cb63eb31a9aaa506daa9188a985cd210ba4a13c4697a76b2f83f86475f081",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13819,7 +14795,8 @@ const INITIAL_DPT = [
   {
     "npa": "06165",
     "name": "Sevtho Linggi Allo",
-    "email": "sevtho94@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "8c56c245c49dc77111394157e440cd9e6601b0c98cd9d6ad5543da5a62ef86a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13833,7 +14810,8 @@ const INITIAL_DPT = [
   {
     "npa": "06167",
     "name": "Muh Nurhidayat",
-    "email": "muhammadnurhidayat51@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "8d932ec515a9c0ef889211a3250cdbaac6edd0c5999072767ced286274903c41",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13847,7 +14825,8 @@ const INITIAL_DPT = [
   {
     "npa": "06173",
     "name": "Yogi Adhetia Putra",
-    "email": "yogi.adput@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "9066ca59112ea83d5e4bf31e521a1bc43b04c463d8cfb19500e6e7bef14ef8aa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13861,7 +14840,8 @@ const INITIAL_DPT = [
   {
     "npa": "06180",
     "name": "Intan Paramita Haty",
-    "email": "intanparamitahaty@yahoo.co.id",
+    "email": "in***@yahoo.co.id",
+    "email_hash": "78932093ee219f6fb2ecf817e92892e950bf82e8db6ec20400cc5d60da0f7562",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13875,7 +14855,8 @@ const INITIAL_DPT = [
   {
     "npa": "06181",
     "name": "Yody Rizkianto",
-    "email": "rizkianto.yody@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "c46ad9e2d583b4580b619ea36b31894016e5cef0eddd2d4b8531d4275cd00a1b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13889,7 +14870,8 @@ const INITIAL_DPT = [
   {
     "npa": "06182",
     "name": "Muchamad Ocky Bayu Nugroho",
-    "email": "bayu.ocky@upnyk.ac.id",
+    "email": "ba***@upnyk.ac.id",
+    "email_hash": "80bd47e82028713836f0a6afffaca28e1721c06a0f62394bae83bdf2198e8f3a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13903,7 +14885,8 @@ const INITIAL_DPT = [
   {
     "npa": "06183",
     "name": "Muslimin U Botjing",
-    "email": "mn.geo2018@gmail.com",
+    "email": "mn***@gmail.com",
+    "email_hash": "a08433721ca9874f172cf32355688b07c2b8951910ec4bb2df1f913674a5f2ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13917,7 +14900,8 @@ const INITIAL_DPT = [
   {
     "npa": "06189",
     "name": "Muhammad Haston Samudra W",
-    "email": "hastonsam16@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "cfb8b7bea7c4943ccd57fe138c4500b2203253c96a7d577977e28ab9f00dce12",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13931,7 +14915,8 @@ const INITIAL_DPT = [
   {
     "npa": "06200",
     "name": "Sulaeman",
-    "email": "geounpad17@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "f621a768779a8e4e4566d46540e544d0fb36f854ba1f6e1639a5953af6646689",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13945,7 +14930,8 @@ const INITIAL_DPT = [
   {
     "npa": "06202",
     "name": "Ernowo",
-    "email": "ernowo99@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "ac01f3a394f82e544d7f79ba88a6178317bfd9406af86335262f7ef5667df51d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13959,7 +14945,8 @@ const INITIAL_DPT = [
   {
     "npa": "06212",
     "name": "Haryo Edi Wibowo",
-    "email": "haryo.edi.w@ugm.ac.id",
+    "email": "ha***@ugm.ac.id",
+    "email_hash": "dd14b5b249cdc49c8d9977701a95d8cfa814ccfda1c3c6cd7802c5a0dfbfb3a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13973,7 +14960,8 @@ const INITIAL_DPT = [
   {
     "npa": "06213",
     "name": "Fahmi Hakim",
-    "email": "fahmihakim@ugm.ac.id",
+    "email": "fa***@ugm.ac.id",
+    "email_hash": "fcbab4d0c594f242c78f0cb4eb0d6270e7eca7d73f96aca65de9e72500059d95",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -13987,7 +14975,8 @@ const INITIAL_DPT = [
   {
     "npa": "06214",
     "name": "Hendy Setiawan",
-    "email": "hendy.setiawan@ugm.ac.id",
+    "email": "he***@ugm.ac.id",
+    "email_hash": "a1ad0b31331b12c1bca9646ba8d6eca9c573b919d593399324e386f5c9450512",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14001,7 +14990,8 @@ const INITIAL_DPT = [
   {
     "npa": "06219",
     "name": "Muhammad Rizqy Septyandy",
-    "email": "rizqyseptyandy@ft.unmul.ac.id",
+    "email": "ri***@ft.unmul.ac.id",
+    "email_hash": "0b52d7a8abbd02cfcb4e7367fcf8f7f60386c42b450a8bf9a1997e224f4cd631",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14015,7 +15005,8 @@ const INITIAL_DPT = [
   {
     "npa": "06226",
     "name": "Gilang Cahya Ramadhan",
-    "email": "gilangc.ramadhan@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "38d8fc9e467a24ac67872749b06c5ac0558bc87879adebe7e268754b92550be7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14029,7 +15020,8 @@ const INITIAL_DPT = [
   {
     "npa": "06231",
     "name": "Agung Wicaksono Setiawan",
-    "email": "agung.wicaksono@pttimah.co.id",
+    "email": "ag***@pttimah.co.id",
+    "email_hash": "a548b5e584d039beb0261683636b5c477d719d1fa424148a8e71d9c49934b6a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14043,7 +15035,8 @@ const INITIAL_DPT = [
   {
     "npa": "06237",
     "name": "Ahmad Fadhly",
-    "email": "ahmadfadhlygeo@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "9be677e3456b344caf7c5cce28ed17086424a3fd4f9d8330286990759f142360",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14057,7 +15050,8 @@ const INITIAL_DPT = [
   {
     "npa": "06244",
     "name": "Inzuddin Lubis",
-    "email": "inzuddin.esdm@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "e3773428bef30077791852d07164a2ca7db83eb83521da42c9caf010c7f6eb39",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14071,7 +15065,8 @@ const INITIAL_DPT = [
   {
     "npa": "06246",
     "name": "Refky Adi Nata",
-    "email": "refkyadi@ft.unp.ac.id",
+    "email": "re***@ft.unp.ac.id",
+    "email_hash": "1422959ff239cb893db3a00a1f5b4e69b8dde6f8edbdedef9ff1dfe8832629e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14085,7 +15080,8 @@ const INITIAL_DPT = [
   {
     "npa": "06250",
     "name": "Bryna Mustika Hasitamurti",
-    "email": "brynaa.mustika@gmail.com",
+    "email": "br***@gmail.com",
+    "email_hash": "1200781949427429843da2d6432c17364790cbf7527890f04a568f6c82a40565",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14099,7 +15095,8 @@ const INITIAL_DPT = [
   {
     "npa": "06251",
     "name": "Ermond Rikardo Amir",
-    "email": "rikardo.amir@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "a1d1eea6750ff66861c1062fc9499fbb4cd66ee6ecaf3855c0ed2d666fa913ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14113,7 +15110,8 @@ const INITIAL_DPT = [
   {
     "npa": "06262",
     "name": "Arif Iman Santosa",
-    "email": "arif.gea98@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "591fcb9df261903bd5a9147c1a7de4aabda6b031f9c6f51f546b0b1ceca9ab35",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14127,7 +15125,8 @@ const INITIAL_DPT = [
   {
     "npa": "06268",
     "name": "Christian Hendri Hasudungan",
-    "email": "christian.hendri77@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "79dffe98c66e3dbf6d77e48d7fb7f27b89e38f085b90e8182a18af6e71fdcae9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14141,7 +15140,8 @@ const INITIAL_DPT = [
   {
     "npa": "06284",
     "name": "Cipta Endyana",
-    "email": "cipta.endyana@unpad.ac.id",
+    "email": "ci***@unpad.ac.id",
+    "email_hash": "f31841ef955b1ddff6b591bc425143950da01ca9eaf5eaa22d0fe86f61be067a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14155,7 +15155,8 @@ const INITIAL_DPT = [
   {
     "npa": "06285",
     "name": "Mochamad Nusiyam Barkah",
-    "email": "m.nursiyam@unpad.ac.id",
+    "email": "m.***@unpad.ac.id",
+    "email_hash": "01495bb2be6c2534da3213b38ea5fecc2b58a957ecfa0adb4b0313e01f09bbac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14169,7 +15170,8 @@ const INITIAL_DPT = [
   {
     "npa": "06286",
     "name": "Yusi Firmansyah",
-    "email": "yusi.firmansyah@unpad.ac.id",
+    "email": "yu***@unpad.ac.id",
+    "email_hash": "4239028e07bb24fd365902afa073771cc6ccbe39af91c1369210dcd58cc877c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14183,7 +15185,8 @@ const INITIAL_DPT = [
   {
     "npa": "06287",
     "name": "Nisa Nurul imi",
-    "email": "nisa.nurul.ilmi@unpad.ac.id",
+    "email": "ni***@unpad.ac.id",
+    "email_hash": "e1cc71ee293923055b02ad3e1fcdfa76af9999b1d276e4328cf5d754d1d8ac42",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14197,7 +15200,8 @@ const INITIAL_DPT = [
   {
     "npa": "06288",
     "name": "Nanda Natasia",
-    "email": "nanda.natasia@unpad.ac.id",
+    "email": "na***@unpad.ac.id",
+    "email_hash": "3dc36cbf6bfb239ff314659d52073361d1c26bd981802e3fd300880f716dec09",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14211,7 +15215,8 @@ const INITIAL_DPT = [
   {
     "npa": "06289",
     "name": "Santi Dwi Pratiwi",
-    "email": "santi.dwi.pratiwi@unpad.ac.id",
+    "email": "sa***@unpad.ac.id",
+    "email_hash": "4aa696a253fefe4a28f650c77da1bba5d08b573a4447797710de98d4c8bb61c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14225,7 +15230,8 @@ const INITIAL_DPT = [
   {
     "npa": "06290",
     "name": "Yudhi Listiawan",
-    "email": "yudhi.listiawan@unpad.ac.id",
+    "email": "yu***@unpad.ac.id",
+    "email_hash": "8fc7c3a904454e7f6da3e052b679e10decb3dc0222eacae49aca2d068ac5f00a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14239,7 +15245,8 @@ const INITIAL_DPT = [
   {
     "npa": "06291",
     "name": "Andi Agus Nur",
-    "email": "andi.agus.nur@unpad.ac.id",
+    "email": "an***@unpad.ac.id",
+    "email_hash": "ed9ce5808368340781144ab3b362afa4b3ca543fb0afd2ce898a1eb6b8202c42",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14253,7 +15260,8 @@ const INITIAL_DPT = [
   {
     "npa": "06293",
     "name": "Billy Gumelar Adhiperdhana",
-    "email": "billy@unpad.ac.id",
+    "email": "bi***@unpad.ac.id",
+    "email_hash": "98ed2d82dd627e5e5e6b0be2fce1b02e73b856d88a08665443631d5b3b3e171b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14267,7 +15275,8 @@ const INITIAL_DPT = [
   {
     "npa": "06294",
     "name": "Ismawan",
-    "email": "ismawan@unpad.ac.id",
+    "email": "is***@unpad.ac.id",
+    "email_hash": "af2070a65f5775ed762aead65671134cc42f242ca850b4fa3136d89afbbc4c7b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14281,7 +15290,8 @@ const INITIAL_DPT = [
   {
     "npa": "06298",
     "name": "Febriwan Mohamad",
-    "email": "febriwan@unpad.ac.id",
+    "email": "fe***@unpad.ac.id",
+    "email_hash": "5be52824d35edc1b29b2563224d84029a706c37239b290b9c8ea9a70631feec7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14295,7 +15305,8 @@ const INITIAL_DPT = [
   {
     "npa": "06299",
     "name": "Aldrin Ramadian",
-    "email": "aldrin.ramadian@unpad.ac.id",
+    "email": "al***@unpad.ac.id",
+    "email_hash": "c2d82c2a47271df62ba37cc3f315d44a76dda30ab4ae445e91f183b5ce6080e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14309,7 +15320,8 @@ const INITIAL_DPT = [
   {
     "npa": "06300",
     "name": "Faisal Helmi",
-    "email": "Faisal.Helmi@unpad.ac.id",
+    "email": "Fa***@unpad.ac.id",
+    "email_hash": "c44d5f7674ffef2daa1b94b07902be6443ea2cb4e4db5fcecc6fac7c5e68559d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14323,7 +15335,8 @@ const INITIAL_DPT = [
   {
     "npa": "06302",
     "name": "Muhammad Kurniawan A",
-    "email": "m.kurniawan@unpad.ac.id",
+    "email": "m.***@unpad.ac.id",
+    "email_hash": "71abc03cda99b9ea81bb148b1d8670297d3a5d3cfdfa81adb589230f0147b8a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14337,7 +15350,8 @@ const INITIAL_DPT = [
   {
     "npa": "06305",
     "name": "Kemala Wijayanti",
-    "email": "kemala14002@unpad.ac.id",
+    "email": "ke***@unpad.ac.id",
+    "email_hash": "5ec7da9fc184390d573b8bc696327db5a7f495fe9bf1faa48b25dd9ef6e1fc52",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14351,7 +15365,8 @@ const INITIAL_DPT = [
   {
     "npa": "06306",
     "name": "Nur Khoirullah",
-    "email": "khoirullah@unpad.ac.id",
+    "email": "kh***@unpad.ac.id",
+    "email_hash": "295d1076750347b2f2e8ada1d155f71dd1dd29813d18f5b3f36bc80ae6bd1ec2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14365,7 +15380,8 @@ const INITIAL_DPT = [
   {
     "npa": "06307",
     "name": "Pradnya Paramarta Raditya R",
-    "email": "raditya.rendra@unpad.ac.id",
+    "email": "ra***@unpad.ac.id",
+    "email_hash": "09e6f4908a1b45bd9a8a4b21f5f8fa1e3a330b4d7f2f63fde7a2b886342e61a3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14379,7 +15395,8 @@ const INITIAL_DPT = [
   {
     "npa": "06308",
     "name": "Syaiful Alam",
-    "email": "syaiful.alam@unpad.ac.id",
+    "email": "sy***@unpad.ac.id",
+    "email_hash": "bb10b8e49eb1fdb21013d3b56f178d5e895005a782953d1b162dbadd6da74cf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14393,7 +15410,8 @@ const INITIAL_DPT = [
   {
     "npa": "06310",
     "name": "Ricky Andrian Tampubolon",
-    "email": "rickyandriantampubolon@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "4e53f5227aa0b89a2aa342f0d8ccfc73cfb36bf3c05ba9dab99002ef504dee2e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14407,7 +15425,8 @@ const INITIAL_DPT = [
   {
     "npa": "06317",
     "name": "Oky Sugarbo",
-    "email": "okysugarbo@itny.ac.id",
+    "email": "ok***@itny.ac.id",
+    "email_hash": "d7334f9b9b8ac86ee1ee560bac73dd21125cc82d2f7977d250cc40fb09b72846",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14421,7 +15440,8 @@ const INITIAL_DPT = [
   {
     "npa": "06318",
     "name": "Nurakhmi Qadaryati",
-    "email": "nurakhmi@live.undip.ac.id",
+    "email": "nu***@live.undip.ac.id",
+    "email_hash": "a88f05e88970088b8c4cb7cdcd9fb6bf83fec55dfa0c9ea295124be61bfd0efe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14435,7 +15455,8 @@ const INITIAL_DPT = [
   {
     "npa": "06319",
     "name": "Jenian Marin",
-    "email": "jenianmarin@gmail.com",
+    "email": "je***@gmail.com",
+    "email_hash": "22a160445a4e07f0f64aab3874220249a0caff7a6e84392264b25165ef23b13f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14449,7 +15470,8 @@ const INITIAL_DPT = [
   {
     "npa": "06320",
     "name": "Reddy Setyawan",
-    "email": "reddysetyawan.23@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "1ff8082e02964d3d8f6438c9b3a29c0ef705783f24f3bdf1b7df63674025798e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14463,7 +15485,8 @@ const INITIAL_DPT = [
   {
     "npa": "06335",
     "name": "Amazt Purba Adryanto",
-    "email": "arnazt_adryanto@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "66c5a3b76e76a09116c4aff291ec613a8e6bd4cd39767cffcc6ef5333ed3a8ac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14477,7 +15500,8 @@ const INITIAL_DPT = [
   {
     "npa": "06337",
     "name": "Sigid Eko Suprijanto",
-    "email": "sigidekosuprijanto@yahoo.com",
+    "email": "si***@yahoo.com",
+    "email_hash": "9d4d90dbc6148d030e0049b3a3ba241e5fb07227a1d2fd255b758684169e0c2e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14491,7 +15515,8 @@ const INITIAL_DPT = [
   {
     "npa": "06338",
     "name": "Danya Zhafira",
-    "email": "danya.zhafira@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "38616648d5f6f4db5c6edf5ce5d5bf75137cc056eb3232c31830f634b26274a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14505,7 +15530,8 @@ const INITIAL_DPT = [
   {
     "npa": "06339",
     "name": "Adi Susanto",
-    "email": "andi.volcanotravel@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "1303382edba3fd826bd1ce0b51255f80dfe5dc1ac8269f8c248e246743c27651",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14519,7 +15545,8 @@ const INITIAL_DPT = [
   {
     "npa": "06343",
     "name": "Rus Abdissalam",
-    "email": "rus.abdissalam@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "a5e622d3f6488332e280d77ce5113f1c214e2f85e9d57b72fbda443af156c3e6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14533,7 +15560,8 @@ const INITIAL_DPT = [
   {
     "npa": "06351",
     "name": "Nobrya Husni",
-    "email": "nobrya@gmail.com",
+    "email": "no***@gmail.com",
+    "email_hash": "0104459033ca9cdc34b6a5941d7991b12e9d2a5f24287f384f5a614673914c6e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14547,7 +15575,8 @@ const INITIAL_DPT = [
   {
     "npa": "06353",
     "name": "Aditya Andrew Valerio Lumintang",
-    "email": "aditilumintang@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "9e5dcc9e71c1672f5406b06e23cf94e9b39cdd8493078315afb65acb357d00f8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14561,7 +15590,8 @@ const INITIAL_DPT = [
   {
     "npa": "06354",
     "name": "Richard Clifton Hague",
-    "email": "richard.hague@vale.com",
+    "email": "ri***@vale.com",
+    "email_hash": "0638d9ffda16fedfa096c71dfddedb858c834936b7afd9e7f7512d8a4a5c3ec4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14575,7 +15605,8 @@ const INITIAL_DPT = [
   {
     "npa": "06356",
     "name": "Rido Fauzi",
-    "email": "ridofauzi.rf@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "b8fc4005b1bdd2ac61d3d08b78a82dfe01eb42167967c899b1dfb848fcd8869d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14589,7 +15620,8 @@ const INITIAL_DPT = [
   {
     "npa": "06357",
     "name": "Putra Ardiansyah",
-    "email": "putra_geo08@yahoo.com",
+    "email": "pu***@yahoo.com",
+    "email_hash": "c81c484355dcd773f167a88b48983a416120ec85b57c5cf28260ddd71f301819",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14603,7 +15635,8 @@ const INITIAL_DPT = [
   {
     "npa": "06360",
     "name": "Reza Rospita Arini",
-    "email": "reza.rospita@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "54af3c63c7a4e507b9b8a21cd1b3be70cf1f9f16965af4362b6675cc57ac2928",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14617,7 +15650,8 @@ const INITIAL_DPT = [
   {
     "npa": "06361",
     "name": "Herru Sendia Febian",
-    "email": "herrufebian@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "e497eb8ce32b182fc489b593225763acf1269fbc0478d61c3f3cecdf2899d9e7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14631,7 +15665,8 @@ const INITIAL_DPT = [
   {
     "npa": "06363",
     "name": "Yorizal",
-    "email": "yorizalpratama02@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "6cbbe5535f5d5c8cdd8beb7b2986219b48011a276480f8a52f9e6c51857b5402",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14645,7 +15680,8 @@ const INITIAL_DPT = [
   {
     "npa": "06364",
     "name": "Heri Prabowo",
-    "email": "heri.19782000@ft.unp.ac.id",
+    "email": "he***@ft.unp.ac.id",
+    "email_hash": "e4bc98507bd71a4b3f0ab73c259da0930a2ecf62ea4366c22d90de8fd031515e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14659,7 +15695,8 @@ const INITIAL_DPT = [
   {
     "npa": "06365",
     "name": "Harizona Aulia Rahman",
-    "email": "harizonarahman@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "41b947852e00f2d765a2b1d42ed83221e109d707a259522a2402f28e50ab3d0b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14673,7 +15710,8 @@ const INITIAL_DPT = [
   {
     "npa": "06366",
     "name": "Andy Harris Noermansyah",
-    "email": "noermansyah.andyharris@gmail.com",
+    "email": "no***@gmail.com",
+    "email_hash": "cb879610fe2e02c0ebd0980f11abee1bdf2118cbd4fc106dfee870335a4d92db",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14687,7 +15725,8 @@ const INITIAL_DPT = [
   {
     "npa": "06375",
     "name": "Nur Qosim Ghozali",
-    "email": "nurqosimg@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "2b9919e0f8e7e88acd634164dab7526d62f1c0d4ff6ecab4d82c1db870d0c2ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14701,7 +15740,8 @@ const INITIAL_DPT = [
   {
     "npa": "06377",
     "name": "Ardi Yoga Pradana",
-    "email": "ardi.yoga@pertamina.com",
+    "email": "ar***@pertamina.com",
+    "email_hash": "0f9e5fe12a6331a01115d9dbcfe57d45ec670b32a5cc00835a8495438084ffad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14715,7 +15755,8 @@ const INITIAL_DPT = [
   {
     "npa": "06378",
     "name": "Belmesty Kamila",
-    "email": "belmesty.kamila@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "08dcec5aacfbb194daab286548627e29ee3395e3a58ffed0eba5cf0f2dd9d270",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14729,7 +15770,8 @@ const INITIAL_DPT = [
   {
     "npa": "06390",
     "name": "Jethro Hotbatahi Hasoloan",
-    "email": "jethrohasoloan@gmail.com",
+    "email": "je***@gmail.com",
+    "email_hash": "b48aadad7dc7ea9930b1f649f35032a930f7cbee2eecba373132e7fadd54712e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14743,7 +15785,8 @@ const INITIAL_DPT = [
   {
     "npa": "06392",
     "name": "‘Subhan Haris",
-    "email": "subhanharis71@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "eba9c75afe2edac56d9c0068d7a19b51408aed1e423f5a6f96d1f690f166d3d5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14757,7 +15800,8 @@ const INITIAL_DPT = [
   {
     "npa": "06394",
     "name": "Ahmad Ali",
-    "email": "ahmadali.geos@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "ded38021504d3f669e53fff541fd615b395625f0ea2d1637e2bf33f5988724fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14771,7 +15815,8 @@ const INITIAL_DPT = [
   {
     "npa": "06398",
     "name": "Asrafil",
-    "email": "a.asrafil@yahoo.com",
+    "email": "a.***@yahoo.com",
+    "email_hash": "ca2f17e441e575fc59bea8769ac89d71fa8f313c7d8b3574d20b31b067236640",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14785,7 +15830,8 @@ const INITIAL_DPT = [
   {
     "npa": "06404",
     "name": "Hamka Jaya",
-    "email": "hamkadjaya.16@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "ee4c6f020ce0c5d1400ba21fecfc83f3c984528ade07f58ebb4d4bf887fe2fc8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14799,7 +15845,8 @@ const INITIAL_DPT = [
   {
     "npa": "06416",
     "name": "Riska Puspita",
-    "email": "r.puspita.tugas@gmail.com",
+    "email": "r.***@gmail.com",
+    "email_hash": "072e2c364921b609cc1d0b05b8422c500fc8a4d2ba4321cb8b528fe17bd81251",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14813,7 +15860,8 @@ const INITIAL_DPT = [
   {
     "npa": "06417",
     "name": "Safah",
-    "email": "safahsaing@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "e1600f592febb053aa8ebc50c695f786e41c74dca9ea82edd53100c48ad78274",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14827,7 +15875,8 @@ const INITIAL_DPT = [
   {
     "npa": "06418",
     "name": "Semuel E Popang",
-    "email": "sempopang70@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "3ff15e733f2211a413a5891059522c80859ad48d681ca05ed440e313f5380312",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14841,7 +15890,8 @@ const INITIAL_DPT = [
   {
     "npa": "06426",
     "name": "Nunik Rezkiarti Janat",
-    "email": "niggrezkijanat@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "e14c7ef0fb488bcb92ae47198b43692013b51935b6623f3080dd45954fadaf46",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14855,7 +15905,8 @@ const INITIAL_DPT = [
   {
     "npa": "06427",
     "name": "Galih Dewan Dhana",
-    "email": "dewandhana2@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "e8b264227fc073a3c6075739c695c6b81ea7a1451d9a04edb155bed817c08abc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14869,7 +15920,8 @@ const INITIAL_DPT = [
   {
     "npa": "06439",
     "name": "Pendi",
-    "email": "pendigeology@gmail.com",
+    "email": "pe***@gmail.com",
+    "email_hash": "cc516168c40be79ff3fca85389543d4f7d088c4a1b4e59102017970446bf6716",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14883,7 +15935,8 @@ const INITIAL_DPT = [
   {
     "npa": "06450",
     "name": "Freds Imanuel Defretes",
-    "email": "fredsdefretes@gmail.com",
+    "email": "fr***@gmail.com",
+    "email_hash": "bb18c926312068e2980b4d2cce15b325e4cb3a0457a200919d9cdaf18bd2c238",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14897,7 +15950,8 @@ const INITIAL_DPT = [
   {
     "npa": "06467",
     "name": "Mohammad Adjie Pamungkas",
-    "email": "adjiemap@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "81c3de10e08f57ca2d54c7e08673aa07a7e0489846d9f0978d9f6f8ca322ce1a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14911,7 +15965,8 @@ const INITIAL_DPT = [
   {
     "npa": "06475",
     "name": "Adventino",
-    "email": "iadventino96@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "431aec4ae376425146b3e8e78587eeb6c1a680fc05366045904b4114197b5e6c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14925,7 +15980,8 @@ const INITIAL_DPT = [
   {
     "npa": "06481",
     "name": "Megie Dian Marina Bisay",
-    "email": "megiedianmarina.bisay@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "f2667ca5d932888e3d7e80375483da87c2959cbc927c4f01b349c5304fefa031",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14939,7 +15995,8 @@ const INITIAL_DPT = [
   {
     "npa": "06492",
     "name": "Fitriansyah Putri",
-    "email": "tiasyahputri.fp@gmail.com",
+    "email": "ti***@gmail.com",
+    "email_hash": "a4b7037cdc57aa45874c6c16f8e06ba9b1abc2c136bc144c91e616902906d349",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14953,7 +16010,8 @@ const INITIAL_DPT = [
   {
     "npa": "06494",
     "name": "Muhammad Fadli Rozamuri",
-    "email": "rozamurifadli@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "3461f76b3f2e9434808585ee7551dd131830a470fc405722dab21b118db3226e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14967,7 +16025,8 @@ const INITIAL_DPT = [
   {
     "npa": "06503",
     "name": "Farida Dwi Aryati",
-    "email": "faridadwiaryati@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "ccdc921ea91c0626ab7a47c22a6c87f8ceb2dd9e44d57ab11622c108d13cb581",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14981,7 +16040,8 @@ const INITIAL_DPT = [
   {
     "npa": "06512",
     "name": "Dian Al Fajri",
-    "email": "dianalfajri@yahoo.com",
+    "email": "di***@yahoo.com",
+    "email_hash": "3260b1357726646d5582d912fee3c318eb0c082c640dc51272d04edc3bc0663c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -14995,7 +16055,8 @@ const INITIAL_DPT = [
   {
     "npa": "06521",
     "name": "Agustinus Nopi",
-    "email": "tinusnopi@gmail.com",
+    "email": "ti***@gmail.com",
+    "email_hash": "0c1ff94ba11c90d4ea39226be4b9deea002d506610a90db008f730487383717f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15009,7 +16070,8 @@ const INITIAL_DPT = [
   {
     "npa": "06523",
     "name": "Harry Gunanto",
-    "email": "harry_gunanto@yahoo.com",
+    "email": "ha***@yahoo.com",
+    "email_hash": "204b80d4f6740016a0565284135b9c88ce487cb91e6a3345b28307a1ee399950",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15023,7 +16085,8 @@ const INITIAL_DPT = [
   {
     "npa": "06538",
     "name": "Robet Wahyu Widodo",
-    "email": "rbtwidodo15@gmail.com",
+    "email": "rb***@gmail.com",
+    "email_hash": "0f1c5a0429ed7c635039de2bdd3039f5f9d03bd8d68a3500b2c23fc2efed80ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15037,7 +16100,8 @@ const INITIAL_DPT = [
   {
     "npa": "06553",
     "name": "Andy Yahya Al Hakim",
-    "email": "yahya.andy@gmail.com",
+    "email": "ya***@gmail.com",
+    "email_hash": "4e304c57656c0536cbb07a85c562f359a43b2a3ad98beb1ad8a63dedde99c7ef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15051,7 +16115,8 @@ const INITIAL_DPT = [
   {
     "npa": "06554",
     "name": "Dwi Grevani Hayuti",
-    "email": "dwigrevanihayuti@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "65706042ef8f9e1c477b4887a25083b2d60b088b2d8014e760dd52309ac9ac21",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15065,7 +16130,8 @@ const INITIAL_DPT = [
   {
     "npa": "06556",
     "name": "Harlan Renaldi",
-    "email": "harlanrenaldi@mail.ugm.ac.id",
+    "email": "ha***@mail.ugm.ac.id",
+    "email_hash": "5ddbc8d6a037b61803613d2770e071413feb85d4dd36ac9376475b83802fa08d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15079,7 +16145,8 @@ const INITIAL_DPT = [
   {
     "npa": "06557",
     "name": "‘Sri Nangkung Vignoriva",
-    "email": "riva1247@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "8832b682ab2dd7ec71046444674776c873dc269ca8a722d361bac6cad3b96fbf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15093,7 +16160,8 @@ const INITIAL_DPT = [
   {
     "npa": "06562",
     "name": "Wah Adi Suseno",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15107,7 +16175,8 @@ const INITIAL_DPT = [
   {
     "npa": "06578",
     "name": "Alimran",
-    "email": "alimrangeo08@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "f57a09c86722170ea52d2949169d0a1fb8a375d239e3eb67e992b00b3f17fd2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15121,7 +16190,8 @@ const INITIAL_DPT = [
   {
     "npa": "06583",
     "name": "Yoga Herlambanga WR Wibowo",
-    "email": "h3rlambank@gmail.com",
+    "email": "h3***@gmail.com",
+    "email_hash": "fb588c23d79d03a496f80e9dc62d9e1991c81716a82957aa43ad0d2a18ea59dd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15135,7 +16205,8 @@ const INITIAL_DPT = [
   {
     "npa": "06587",
     "name": "Wahyu Vian Pratama",
-    "email": "wahyuvian.pratama@pttimah.co.id",
+    "email": "wa***@pttimah.co.id",
+    "email_hash": "a9b2827bd820c480f9adfe95da9546fe4946b23895a60671b62860c40fc05fd4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15149,7 +16220,8 @@ const INITIAL_DPT = [
   {
     "npa": "06588",
     "name": "Imran Mahmud",
-    "email": "mahmudimran112@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "950f2ed7054ccb7540bd80319ebc9796e5fde94d76a5719d44b083d8a57e7432",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15163,7 +16235,8 @@ const INITIAL_DPT = [
   {
     "npa": "06590",
     "name": "Hasria",
-    "email": "hasriageologi@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "48bf7c414b399cd317e3433aa273ca7ddeb473b436206af0abd5ad09fed7d599",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15177,7 +16250,8 @@ const INITIAL_DPT = [
   {
     "npa": "06591",
     "name": "Rachman Fauzi",
-    "email": "manuzisj@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "c0f0c33ca41e7c31796242deb831f2707e6cfeb0755173c84f897572db692ffa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15191,7 +16265,8 @@ const INITIAL_DPT = [
   {
     "npa": "06592",
     "name": "Dicko Rizky Febriansanu",
-    "email": "dicko.febriansanu@gl.itera.ac.id",
+    "email": "di***@gl.itera.ac.id",
+    "email_hash": "2899aab493e2b1355f53a7260d26ea910b7332cf08ffb741e1624824680362fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15205,7 +16280,8 @@ const INITIAL_DPT = [
   {
     "npa": "06610",
     "name": "Rachmanda Anandita Putra",
-    "email": "rananditaputra@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "19fd05945b1ec1437557ce5cb08a6495abafe1d96b04089ee4053379587d0f2f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15219,7 +16295,8 @@ const INITIAL_DPT = [
   {
     "npa": "06635",
     "name": "Ariyo Suharyanto",
-    "email": "ariyo_geo@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "75d814cfd2accd5041d37a96af4bfed230314ef8651d270ef3d0bc03779d1d8c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15233,7 +16310,8 @@ const INITIAL_DPT = [
   {
     "npa": "06644",
     "name": "Bintang Rajasanegara",
-    "email": "rajasanegarabintang@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "9a5a082f3df1ebf31f058ff4422bbc8ee95fc23ff05e97338d492a5c281b7941",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15247,7 +16325,8 @@ const INITIAL_DPT = [
   {
     "npa": "06645",
     "name": "Alexander Simatupang",
-    "email": "alexandersimatupang10@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "1da1473147fef025b96ce8660fb0101b55f48146430b3613a5d40143a6425eee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15261,7 +16340,8 @@ const INITIAL_DPT = [
   {
     "npa": "06647",
     "name": "Akbar Prima Jaya",
-    "email": "akbarprimajaya@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "e64e0d06abe703223b6eca89d34de1fbcdb48679fc58cdb2052c141104df4cc0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15275,7 +16355,8 @@ const INITIAL_DPT = [
   {
     "npa": "06687",
     "name": "Syafrizal",
-    "email": "syafrizal_srmi@yahoo.com",
+    "email": "sy***@yahoo.com",
+    "email_hash": "7c639ea0d3c21227bb7c5ccf39dc221b85f1b04030458bed0c5a3ba81db06520",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15289,7 +16370,8 @@ const INITIAL_DPT = [
   {
     "npa": "06688",
     "name": "Arifin",
-    "email": "arifin993@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "95db13ed39b562cde94f0e14df47224f2e30ce5b13e473dc9ebd880ae99f6eb1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15303,7 +16385,8 @@ const INITIAL_DPT = [
   {
     "npa": "06697",
     "name": "Ghifary Fitra Kamarullah",
-    "email": "ghifaryfitrak15@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "5ff853478b4eda3a53a1f655d4b6a46a2f386a783e0a75bd5d8c8086287008f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15317,7 +16400,8 @@ const INITIAL_DPT = [
   {
     "npa": "06702",
     "name": "Budianto",
-    "email": "budipangea01upn@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "72444172b26303c30be6f2b790365533ca529c6031dd36c4219291e6dc94fb1c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15331,7 +16415,8 @@ const INITIAL_DPT = [
   {
     "npa": "06712",
     "name": "Ari James Faraddy",
-    "email": "faraddy2@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "172958f42411ac98d67868edf012fc3e3bba8282d434d2ef7bdafd6788509edf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15345,7 +16430,8 @@ const INITIAL_DPT = [
   {
     "npa": "06727",
     "name": "‘Syaifullah Fadhil Yuflih",
-    "email": "syaifullahyuflih@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "17a005765b94b737f3ef092bedc7145341c1510739a0f1881562a65e1c84d1d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15359,7 +16445,8 @@ const INITIAL_DPT = [
   {
     "npa": "06728",
     "name": "Riandito Haryadi",
-    "email": "rianditoharyadi@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "f17a391cd28e7ce06f24b148f04a3cc308cc7ed62a4a7b2b6c9feab6588aaf15",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15373,7 +16460,8 @@ const INITIAL_DPT = [
   {
     "npa": "06731",
     "name": "Erriza Syahputra",
-    "email": "rizageost@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "05d1f54b249a9298d01a8ad1310ae4151e9bd7bd12597806bec009c9d89b4187",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15387,7 +16475,8 @@ const INITIAL_DPT = [
   {
     "npa": "06733",
     "name": "Esti Handini",
-    "email": "esti.h@ugm.ac.id",
+    "email": "es***@ugm.ac.id",
+    "email_hash": "92a454d4d54ff2044a4e7d9d66c30024c6d2422952df6be867c632c5ea36c6bd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15401,7 +16490,8 @@ const INITIAL_DPT = [
   {
     "npa": "06734",
     "name": "Yan Restu Freski",
-    "email": "yan_restu@ugm.ac.id",
+    "email": "ya***@ugm.ac.id",
+    "email_hash": "f72aeca0c4885bb3b2bd247fb18e346f4316d7ffbaff33765d9cfe9c16e647c5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15415,7 +16505,8 @@ const INITIAL_DPT = [
   {
     "npa": "06736",
     "name": "Agung Nurhadi",
-    "email": "agungnurhadi84@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "2bfe980bf41bc2cc46aee1c374f98f76f394a00cc442e09873fbf80a71eb3d33",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15429,7 +16520,8 @@ const INITIAL_DPT = [
   {
     "npa": "06737",
     "name": "Aldino Yulianto",
-    "email": "aldino.yulianto@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "512138102c3d4f0addc80a11dcdf2e83ab228bdaeb64ece87166ccd6ad6f7a4b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15443,7 +16535,8 @@ const INITIAL_DPT = [
   {
     "npa": "06740",
     "name": "Cindy Dhevayani Savitri",
-    "email": "cindy.dhevayani@gmail.com",
+    "email": "ci***@gmail.com",
+    "email_hash": "594848f0b086f6a8ce66fb060a9ab20ca919b864a9c39fa9606e78935bcfe822",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15457,7 +16550,8 @@ const INITIAL_DPT = [
   {
     "npa": "06741",
     "name": "Sandro Adventus Silaban",
-    "email": "sandro_0112@yahoo.com",
+    "email": "sa***@yahoo.com",
+    "email_hash": "68b60824543e46a49522ca452e3f165b106b689e9e70322814466df18eaa4a9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15471,7 +16565,8 @@ const INITIAL_DPT = [
   {
     "npa": "06745",
     "name": "Santo Dewatmoko",
-    "email": "santo.dewatmoko@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "c298168162764eee19eeef4cef05255a1bc52fc9b7a3bdcb16368cd1bb96dae5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15485,7 +16580,8 @@ const INITIAL_DPT = [
   {
     "npa": "06748",
     "name": "Joko Nugroho",
-    "email": "jokonugroho69@yahoo.com",
+    "email": "jo***@yahoo.com",
+    "email_hash": "01273bf88aa4d53168c565fd486109585ec4ea05c5f4aedc8d9ded6cbe1b2202",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15499,7 +16595,8 @@ const INITIAL_DPT = [
   {
     "npa": "06751",
     "name": "Berli Sahala Simorangkir",
-    "email": "berlisahalasimorangkir@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "66f248e8d859e913cdf2383aaf483a6ff10b653b52126945e8c52a3b282f8102",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15513,7 +16610,8 @@ const INITIAL_DPT = [
   {
     "npa": "06759",
     "name": "Wahyu Budhi Khorniawan",
-    "email": "wahyubudhikhorniawan@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "a1c6ff6d98005577423ded76ed73b3df73b630b0d575733a48cf457de6c24201",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15527,7 +16625,8 @@ const INITIAL_DPT = [
   {
     "npa": "06761",
     "name": "Nataniel Nondon Mangiwa",
-    "email": "nataniel.mangiwa@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "209ee524b0fd2838d714ab9cfbd80acafb594421271f24151ae8353f79b8c435",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15541,7 +16640,8 @@ const INITIAL_DPT = [
   {
     "npa": "06768",
     "name": "Hamriani Ryka",
-    "email": "rykahamriani@gmail.com",
+    "email": "ry***@gmail.com",
+    "email_hash": "2aec294f12f1746853c9ade96e02cc015f02308285ad7d3086f557cbe3b956ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15555,7 +16655,8 @@ const INITIAL_DPT = [
   {
     "npa": "06771",
     "name": "Musalam Latuconsina",
-    "email": "musalam1105@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "d69e1419f5ca3b7e0e6878be36be6cede1862f00c6efb2e58c6079c13a439b51",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15569,7 +16670,8 @@ const INITIAL_DPT = [
   {
     "npa": "06772",
     "name": "Abdul Gafur",
-    "email": "geol_abg@yahoo.com",
+    "email": "ge***@yahoo.com",
+    "email_hash": "2d32a518711c00622f9f401973603e4300f6d31ff4f489d57790275bf5e69a49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15583,7 +16685,8 @@ const INITIAL_DPT = [
   {
     "npa": "06774",
     "name": "Ignas Audaks Meak",
-    "email": "ignas.meak@gmail.com",
+    "email": "ig***@gmail.com",
+    "email_hash": "ecf6127fb1751cb58dd144994e92da83b19237b4f8e290a853a7717b39c3d0f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15597,7 +16700,8 @@ const INITIAL_DPT = [
   {
     "npa": "06776",
     "name": "Dimas Hardita",
-    "email": "dimas.hardita@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "f3604014d5f5eb27780005afc25ce7dde8e4c090855b97d19fa85019aff3665a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15611,7 +16715,8 @@ const INITIAL_DPT = [
   {
     "npa": "06777",
     "name": "Gagas Pambudi Utomo",
-    "email": "gagasutomo@gmail.com",
+    "email": "ga***@gmail.com",
+    "email_hash": "153603a7dcce69a86528d43e0185f1f5fd56c28ce145896b71c507d38b22ca6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15625,7 +16730,8 @@ const INITIAL_DPT = [
   {
     "npa": "06778",
     "name": "Muhammad Rifaldo Luthfan",
-    "email": "mrluthfan95@gmail.com",
+    "email": "mr***@gmail.com",
+    "email_hash": "521235a463f17e1053b2707a9281fa3be70b3b5776bc2fca5449a1b325dae1fe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15639,7 +16745,8 @@ const INITIAL_DPT = [
   {
     "npa": "06790",
     "name": "Mochammad Yuswianto Rachmawan",
-    "email": "yuswianto@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "fd520b1de55a05ba09f29f492a332171b3fdfd15809895efcbbc271e74c89a23",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15653,7 +16760,8 @@ const INITIAL_DPT = [
   {
     "npa": "06792",
     "name": "Sarah Intan Fanstria",
-    "email": "sarahfanstria@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "2e796d00df7bc7e1d71c8040f83a2f8839c32300bca1614931859478a40c9f8f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15667,7 +16775,8 @@ const INITIAL_DPT = [
   {
     "npa": "06796",
     "name": "Widiastuti Nur Farida",
-    "email": "widiastuti.n.f@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "80ec570d76f7ff46b30d5d4796e1386ca74945b15291bcc8208bdec120f16f6f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15681,7 +16790,8 @@ const INITIAL_DPT = [
   {
     "npa": "06797",
     "name": "Igka Nurjiani Arista",
-    "email": "aristaigka@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "9e54d7df534d7931b97ce59503b52907fd04951e23358f99de96da0c62e55841",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15695,7 +16805,8 @@ const INITIAL_DPT = [
   {
     "npa": "06801",
     "name": "Reynaldy Fifariz",
-    "email": "rfifariz@geodin.net",
+    "email": "rf***@geodin.net",
+    "email_hash": "882e65c24cc108f5dd9ff52e69b44289b96e146932ded207ec41facf33a1ee7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15709,7 +16820,8 @@ const INITIAL_DPT = [
   {
     "npa": "06807",
     "name": "Adiswara Ramadhan",
-    "email": "adiswara.ramadhan@pertamina.com",
+    "email": "ad***@pertamina.com",
+    "email_hash": "d33b7b46db66dafa668850423625d899b204aa1772a063624fcf31d0834ae0d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15723,7 +16835,8 @@ const INITIAL_DPT = [
   {
     "npa": "06810",
     "name": "Dian Novia Sartika",
-    "email": "dian.noviasartika@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "f6d66bcabb4a5e814032f93a3ec76217281c734a111dd5118697f43b85cb4d6f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15737,7 +16850,8 @@ const INITIAL_DPT = [
   {
     "npa": "06811",
     "name": "Saufi Handri",
-    "email": "saufi_handri@yahoo.com",
+    "email": "sa***@yahoo.com",
+    "email_hash": "a5eed309b54fb8c6b4ecd3b6777d2e3222d41541046542416e505bee9e81c765",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15751,7 +16865,8 @@ const INITIAL_DPT = [
   {
     "npa": "06813",
     "name": "Hermawan Budiyanto",
-    "email": "hb.geo01@gmail.com",
+    "email": "hb***@gmail.com",
+    "email_hash": "9a4773a3afd24022302a78043b82f65e941793a1a43852534bd417f10b6863df",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15765,7 +16880,8 @@ const INITIAL_DPT = [
   {
     "npa": "06816",
     "name": "Intan Kemala Dewi",
-    "email": "IDewi@slb.com",
+    "email": "ID***@slb.com",
+    "email_hash": "8c78b41518ec5009ed1caf17904d41c6cecaf17927faeb793aca566e5afae67e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15779,7 +16895,8 @@ const INITIAL_DPT = [
   {
     "npa": "06818",
     "name": "Rizki Nanda",
-    "email": "rizkinandading@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "eaf5c6ca9822e109c5d025a5003107ab841543da6b9732501b109bb25b6595be",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15793,7 +16910,8 @@ const INITIAL_DPT = [
   {
     "npa": "06819",
     "name": "Muhammad Luthfi",
-    "email": "luthfi.muhammad2@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "01e7b52ab4a6ae1f977c892a046cab0c5513a9d916a1a98b4bf39fbdb87f1477",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15807,7 +16925,8 @@ const INITIAL_DPT = [
   {
     "npa": "06821",
     "name": "Ghazi Muslim",
-    "email": "ghazi17001@mail.unpad.ac.id",
+    "email": "gh***@mail.unpad.ac.id",
+    "email_hash": "0b67754510a3771a465ea67edf236b52f0d4d8bd3a68d9dc4b6b3e21053580bb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15821,7 +16940,8 @@ const INITIAL_DPT = [
   {
     "npa": "06823",
     "name": "Imam Muttagien",
-    "email": "geoimut@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "749ed034806ad356b316950ff67cbb3d0e49b6b1237a203dc0d9f6bf329a7f26",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15835,7 +16955,8 @@ const INITIAL_DPT = [
   {
     "npa": "06825",
     "name": "Nico Andreas Nainggolan",
-    "email": "niconainggolanraja@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "2fa9fe8d2505c2f03df0a3b5e06f04bce44f270b4544030f76d7248a0c3df819",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15849,7 +16970,8 @@ const INITIAL_DPT = [
   {
     "npa": "06826",
     "name": "Andrei Norman Dondokambey",
-    "email": "andrei.dondokambey@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "61ed1f649135e645532b3b2904e30368797412c921e30f4ebc23e632dc7944b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15863,7 +16985,8 @@ const INITIAL_DPT = [
   {
     "npa": "06827",
     "name": "Petrus Parlindungan Purba",
-    "email": "petruspurba2577@gmail.com",
+    "email": "pe***@gmail.com",
+    "email_hash": "b4d825f0bd272d5ba1338227954a18d237b38c31d87dd865b417bd21d184b44c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15877,7 +17000,8 @@ const INITIAL_DPT = [
   {
     "npa": "06828",
     "name": "Muhammad Chandra",
-    "email": "muhammad.chandra@hotmail.com",
+    "email": "mu***@hotmail.com",
+    "email_hash": "d1cd4f9d14c625d0f1d89a4094936191c9f8837cbccbb553f7f16a26713f621a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15891,7 +17015,8 @@ const INITIAL_DPT = [
   {
     "npa": "06835",
     "name": "Benyamin Kumiawan",
-    "email": "benyamin.kurniawan@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "e817fa2d4c7a65c90fa089b4fde8964e4011ca236c2f44c4980dc5e4966f19d7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15905,7 +17030,8 @@ const INITIAL_DPT = [
   {
     "npa": "06836",
     "name": "Bayu Rahmanto",
-    "email": "bayurahmanto7@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "8c7d20b6eaf4a6f6f341d94d9a9cfaf95fb37e8d466983dd8283b539687006f8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15919,7 +17045,8 @@ const INITIAL_DPT = [
   {
     "npa": "06837",
     "name": "‘Syaiful Hilal",
-    "email": "syaifulhilal102@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "58a4392de59a1099549e7212ef2bfd071893a92b3e4dd793bb6d1edd94cdd394",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15933,7 +17060,8 @@ const INITIAL_DPT = [
   {
     "npa": "06840",
     "name": "Herry Riswandi",
-    "email": "herry.riswandi.1982@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "4062328109c312575e9dfc35788db54bd31dada6fd3bf80b8ad79f0729f5a234",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15947,7 +17075,8 @@ const INITIAL_DPT = [
   {
     "npa": "06841",
     "name": "Muhammad Gazali Rachman",
-    "email": "mgazalirachman@gmail.com",
+    "email": "mg***@gmail.com",
+    "email_hash": "71624c4220cc524e645ab22f34872ebc8b3b558557ddc10e7e41b89d1d79a731",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15961,7 +17090,8 @@ const INITIAL_DPT = [
   {
     "npa": "06843",
     "name": "‘Subhan Arif",
-    "email": "sbhan.arif@gmail.com",
+    "email": "sb***@gmail.com",
+    "email_hash": "61ce816183b475641ace2c43318dd0e025547464af519739f284e7385bc5ee0a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15975,7 +17105,8 @@ const INITIAL_DPT = [
   {
     "npa": "06845",
     "name": "Ervina Puri Utami",
-    "email": "ervinapuriutami@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "55fd35997dd7926e5d05d4ab883f96229e3c93a221301d17b59d98595568844b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -15989,7 +17120,8 @@ const INITIAL_DPT = [
   {
     "npa": "06849",
     "name": "Agus Marwanto",
-    "email": "amarwantobrex@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "6937b399b0aa1a461c532e3b82067c33dd7cf5f93adeb7a6992aba706d1134c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16003,7 +17135,8 @@ const INITIAL_DPT = [
   {
     "npa": "06851",
     "name": "Indra Gunawan",
-    "email": "igun@itb.ac.id",
+    "email": "ig***@itb.ac.id",
+    "email_hash": "d1cb1c7743fe179df113169db4a82b73efcc554a69cec5d755aef13df91de80d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16017,7 +17150,8 @@ const INITIAL_DPT = [
   {
     "npa": "06852",
     "name": "Bella Wijdani Sakina",
-    "email": "bellasakina@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "0d26f49230b0a414d6a2b95511d520fc0656b1142ed8125d36f329befb88a8b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16031,7 +17165,8 @@ const INITIAL_DPT = [
   {
     "npa": "06853",
     "name": "Emeralda Saentya",
-    "email": "aldazaent@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "9c78c6072b192841b1891f8a036e07e4e8b175a6cab0e176c21a55ab386dfdde",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16045,7 +17180,8 @@ const INITIAL_DPT = [
   {
     "npa": "06857",
     "name": "Aulia Hidayat Burhamidar",
-    "email": "auliahidayatb@gmail.com",
+    "email": "au***@gmail.com",
+    "email_hash": "6007bc5995b42e6c795be84a75d1e945b724b60162a9b868ad3a638a6c2210e7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16059,7 +17195,8 @@ const INITIAL_DPT = [
   {
     "npa": "06859",
     "name": "Suharko",
-    "email": "suharkosw@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "f91f55d0c0af75845436c4f64d9f794d8d978d6c5e650267d64275b5cd931b77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16073,7 +17210,8 @@ const INITIAL_DPT = [
   {
     "npa": "06862",
     "name": "Febriansyah",
-    "email": "febriansyah@bukitasam.co.id",
+    "email": "fe***@bukitasam.co.id",
+    "email_hash": "a3b2ec1e68337a5f947eab67e07df4a13f884c5e3f18d9a81f9375c4bb07a364",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16087,7 +17225,8 @@ const INITIAL_DPT = [
   {
     "npa": "06863",
     "name": "Vivi Dewi Mardiana Nusantara",
-    "email": "vdewimardiananusantara@gmail.com",
+    "email": "vd***@gmail.com",
+    "email_hash": "1e1967abe75b39d75124de467213a783ce6eff0df8dc8320454081594f3679a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16101,7 +17240,8 @@ const INITIAL_DPT = [
   {
     "npa": "06864",
     "name": "Didi Juwanto",
-    "email": "didijuwanto@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "04dab5eb9b037baf03f741b539a38e1a553f6794e2912e5878a463186a67cf5a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16115,7 +17255,8 @@ const INITIAL_DPT = [
   {
     "npa": "06866",
     "name": "Hery Sulistyo",
-    "email": "sulistyohery6071@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "a94f71aa894fd0d17915e49a185eb0e90af3870d2dfa43cc674ae85e32f277ae",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16129,7 +17270,8 @@ const INITIAL_DPT = [
   {
     "npa": "06869",
     "name": "Agung Wicaksono",
-    "email": "agung.wisesono@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "28147a1996ea34853ccf470f3810082eb0752348d2f6201a937ff0b42d00ae73",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16143,7 +17285,8 @@ const INITIAL_DPT = [
   {
     "npa": "06870",
     "name": "Naafiakra Nouval Wibowo",
-    "email": "noval_wibowo@yahoo.com",
+    "email": "no***@yahoo.com",
+    "email_hash": "0cc31c340089cd6cc35ebba3d998d32bb5a88c0930a9d8894769c19f1a57d128",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16157,7 +17300,8 @@ const INITIAL_DPT = [
   {
     "npa": "06871",
     "name": "Desianto Payung Battu",
-    "email": "desianto.battu@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "d0b0a14e0db42e3872002f966c948244943f9aa870f738b5adb56d776a2c6156",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16171,7 +17315,8 @@ const INITIAL_DPT = [
   {
     "npa": "06872",
     "name": "‘Syukri Nasution",
-    "email": "syukri_nast@yahoo.co.id",
+    "email": "sy***@yahoo.co.id",
+    "email_hash": "dd6eadd4a4c93c7d5b658571d20d39d2fd5f2cf8c68c67f97ea9fdecf8186dc3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16185,7 +17330,8 @@ const INITIAL_DPT = [
   {
     "npa": "06873",
     "name": "Ardhi Ishak",
-    "email": "ardhi.ishak@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "cb2b5946f9c8496a7c170e49d0a57115842b9016705cdbba73254c0d2ca09191",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16199,7 +17345,8 @@ const INITIAL_DPT = [
   {
     "npa": "06874",
     "name": "Erick Prim Putra",
-    "email": "epp.geologist@gmail.com",
+    "email": "ep***@gmail.com",
+    "email_hash": "d074744eb20f92d94d5469ef5fb3de4c7caefda3709b5bc54756a7de11edaa1d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16213,7 +17360,8 @@ const INITIAL_DPT = [
   {
     "npa": "06876",
     "name": "Rinaldi Ikhram",
-    "email": "rinaldikhram@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "0207fff60b2c540049b197e841962b57d9ee6bdb95f8feb5946b483f60dc11f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16227,7 +17375,8 @@ const INITIAL_DPT = [
   {
     "npa": "06878",
     "name": "Rizky Satria Putranto",
-    "email": "rizky.satria33@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "ab44c843e5920ad65adf4b11245a5fa67102017f568a7386818acc37b6676475",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16241,7 +17390,8 @@ const INITIAL_DPT = [
   {
     "npa": "06879",
     "name": "Muhammad Thoha",
-    "email": "muhammad.thoha.s@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "790936aff541f99edccd8bc175a91b0612b9f197a1b7c0f5249e56be83ca1f0e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16255,7 +17405,8 @@ const INITIAL_DPT = [
   {
     "npa": "06880",
     "name": "Muhammad Malik Ar Rahiem",
-    "email": "malikarrahiem91@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "13506c45a3c06565c0296efbaa7f3366390df970d03ea6ff1a6cea50c1dc06c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16269,7 +17420,8 @@ const INITIAL_DPT = [
   {
     "npa": "06884",
     "name": "Endi Nurjadi",
-    "email": "endi.nurjadi@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "087391a5698f3a81eb2ca5866ab5c70b5b361176609ceef806446f108805e9a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16283,7 +17435,8 @@ const INITIAL_DPT = [
   {
     "npa": "06886",
     "name": "Andi Fachryl Ramdani",
-    "email": "andifachrylram@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "167076770995a51c34bfa59f16d839671068079051a740347b1f75208bf1fe2d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16297,7 +17450,8 @@ const INITIAL_DPT = [
   {
     "npa": "06887",
     "name": "Idham Andri Kurmiawan",
-    "email": "idhamak@gmail.com",
+    "email": "id***@gmail.com",
+    "email_hash": "ad7bf942a99cd1723181075ae036a3ce367f0149ced58ed2d751149244575725",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16311,7 +17465,8 @@ const INITIAL_DPT = [
   {
     "npa": "06891",
     "name": "Agung Kurniadi",
-    "email": "agungkurniadi11@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "4636244dc7d33af75e983dcf589ee9c42708df390437b92e9df54dc6e50acbee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16325,7 +17480,8 @@ const INITIAL_DPT = [
   {
     "npa": "06893",
     "name": "Rommel! Manurung",
-    "email": "rommelmsmanurung@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "447835fd3ebe256992885c9db08169aecc66538872982c13ae23138285f1cf79",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16339,7 +17495,8 @@ const INITIAL_DPT = [
   {
     "npa": "06903",
     "name": "Muhammad Riyo Hanafi",
-    "email": "mriyo.hanafi@gmail.com",
+    "email": "mr***@gmail.com",
+    "email_hash": "ffebc6a4a0b90a5122069464fb25cbf576d8b42a821dfdef88bd6ab92947adf7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16353,7 +17510,8 @@ const INITIAL_DPT = [
   {
     "npa": "06905",
     "name": "Prismaya Ayu Savitri",
-    "email": "Prismayaayu@gmail.com",
+    "email": "Pr***@gmail.com",
+    "email_hash": "4cb3311cffc9d1ff771061bc61c851ca62f6710caa696cafc7406dc6d681b559",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16367,7 +17525,8 @@ const INITIAL_DPT = [
   {
     "npa": "06909",
     "name": "Talitha Azzahra Rahma Aisya",
-    "email": "talitha.azzahr@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "0fd9d25217a53544c28f2126bfcc5194438a64f881a0ec8896032301d3105845",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16381,7 +17540,8 @@ const INITIAL_DPT = [
   {
     "npa": "06910",
     "name": "Stenly Loupatty",
-    "email": "stenlyloupatty1@gmail.com",
+    "email": "st***@gmail.com",
+    "email_hash": "df27e8002e1648a1abed2df89da80ccb9010317e79cad11fd6aeb733bde1e249",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16395,7 +17555,8 @@ const INITIAL_DPT = [
   {
     "npa": "06915",
     "name": "Gyaista Sampurno",
-    "email": "gyaista@gmail.com",
+    "email": "gy***@gmail.com",
+    "email_hash": "11109d26e812edcd3f656a3ed74b3910055320604366d5fd5c8a0ee3992e8c57",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16409,7 +17570,8 @@ const INITIAL_DPT = [
   {
     "npa": "06918",
     "name": "Maman Sudarman",
-    "email": "mamansudarman519@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "8612bce25fe3c48f1e63f039a4e92ba9dff0023833521e0a97522bbd2b18d618",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16423,7 +17585,8 @@ const INITIAL_DPT = [
   {
     "npa": "06920",
     "name": "Yohanes S Girsang",
-    "email": "joegeo08@outlook.com",
+    "email": "jo***@outlook.com",
+    "email_hash": "7688f4fbe40b3b150f493856b574f7a42b15e1f7793e5d86ac33ebab1a63962a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16437,7 +17600,8 @@ const INITIAL_DPT = [
   {
     "npa": "06921",
     "name": "Daniel Adipradipto",
-    "email": "danieladipradipto@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "dcb6b76b5d034b056b8ea3110029cc368f78fec19bf67d98965c8ea99b3c91e1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16451,7 +17615,8 @@ const INITIAL_DPT = [
   {
     "npa": "06924",
     "name": "Jusri Haming",
-    "email": "jusri@ymail.com",
+    "email": "ju***@ymail.com",
+    "email_hash": "6a0a907b640cff18d8138f50a2b64a2cea31684e0b4de861299fdf4d0e2bc248",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16465,7 +17630,8 @@ const INITIAL_DPT = [
   {
     "npa": "06927",
     "name": "Muchlis Nurdiyanto",
-    "email": "muchlisnrd@geoservices.co.id",
+    "email": "mu***@geoservices.co.id",
+    "email_hash": "8fe8eaa6ee1eddaac97ed1649a7e4f7f17b1330d69ab6ffa16f7031145c8114f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16479,7 +17645,8 @@ const INITIAL_DPT = [
   {
     "npa": "06933",
     "name": "Urwatul Wusga",
-    "email": "urwahw@gmail.com",
+    "email": "ur***@gmail.com",
+    "email_hash": "b346b1216ed5255075c2081f1a82c333e0d40932ae24d8df2fc2c2e4155b7a9b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16493,7 +17660,8 @@ const INITIAL_DPT = [
   {
     "npa": "06937",
     "name": "Ferdian Haryadi",
-    "email": "haryferdian@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "0e2b47c8ad671e6a49765856aa4c43f955d62f1d20c9ca0f752d04cf2e8aac3d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16507,7 +17675,8 @@ const INITIAL_DPT = [
   {
     "npa": "06938",
     "name": "Yayan Karnadharasamita Purnama",
-    "email": "lumutbalai61@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "ad6ba214c51bfa0e3dd0293cef49d540cd186f8d3c9b4b87818f68ca0923d0a2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16521,7 +17690,8 @@ const INITIAL_DPT = [
   {
     "npa": "06941",
     "name": "Gede Darma Raharja",
-    "email": "gede.darma.raharja@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "5f0174d5d494d999d988d16f2b33307d0c979c58e06fefa1661f6e2c37831af0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16535,7 +17705,8 @@ const INITIAL_DPT = [
   {
     "npa": "06942",
     "name": "Thema Arrisaldi",
-    "email": "arrisaldi@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "394722f279628b6434084c36b75069fb1f515c1338fd638b01e0c7c2c5ab74a1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16549,7 +17720,8 @@ const INITIAL_DPT = [
   {
     "npa": "06943",
     "name": "Romi Sagita",
-    "email": "romi_sagita@yahoo.com",
+    "email": "ro***@yahoo.com",
+    "email_hash": "0e4dd9fc598fc85d22e257a60fb4933c2030cb8d728aa8f62eb6bd2fdcba89a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16563,7 +17735,8 @@ const INITIAL_DPT = [
   {
     "npa": "06952",
     "name": "Muh Dwiki Satrio Wicaksono",
-    "email": "muhdwikisatrio@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "2f2607201e252dffe315cccab93f9c2369a0c94df7def1b0910ed5397c04fece",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16577,7 +17750,8 @@ const INITIAL_DPT = [
   {
     "npa": "06955",
     "name": "Bayu Giriansyah",
-    "email": "bayugiriansyah20@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "4d2910167d16ee2fbe179f0ad92db187deac3c910f1d513677bef18d7a8a0fca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16591,7 +17765,8 @@ const INITIAL_DPT = [
   {
     "npa": "06959",
     "name": "Nisa Nadia Rahma",
-    "email": "n.nadiarahma@gmail.com",
+    "email": "n.***@gmail.com",
+    "email_hash": "67736ef1f580a8ba67c0d90f89582cbdda358b84779793f05b2a1b9936b49b58",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16605,7 +17780,8 @@ const INITIAL_DPT = [
   {
     "npa": "06960",
     "name": "Rama Tri Saksono",
-    "email": "ramatris@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "77092a642799ae3eba0926e19150f6aa0fc827612f1d16d521b923c77ce0e7b5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16619,7 +17795,8 @@ const INITIAL_DPT = [
   {
     "npa": "06962",
     "name": "Masyyuddin",
-    "email": "msygeo03@gmail.com",
+    "email": "ms***@gmail.com",
+    "email_hash": "cfb3c7381b435c6894797baae46c51c0dbbab5c7eef91c9cf4cbee58813669b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16633,7 +17810,8 @@ const INITIAL_DPT = [
   {
     "npa": "06965",
     "name": "Hardian Dwi Lakstianto",
-    "email": "hardiandwi@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "ee8f9d5cf1b41392c8c86fd8a77a0e5700c6c8f8480e1bc804ab4e28f7f5f5a1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16647,7 +17825,8 @@ const INITIAL_DPT = [
   {
     "npa": "06976",
     "name": "Aan Trihandono",
-    "email": "aan_3handono@yahoo.co.id",
+    "email": "aa***@yahoo.co.id",
+    "email_hash": "a7ba69bf50e04241d4d544a2f6c0b3ff083950190c7b528cf3def6043f8fd097",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16661,7 +17840,8 @@ const INITIAL_DPT = [
   {
     "npa": "06981",
     "name": "Ahmad Mardianto MuthiVullah",
-    "email": "ahmad.mardianto619@hotmail.com",
+    "email": "ah***@hotmail.com",
+    "email_hash": "a94352edf1fcab76959742b4a4c64a88ae8dcdb4a5d39f1c53230cf4d3379875",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16675,7 +17855,8 @@ const INITIAL_DPT = [
   {
     "npa": "06982",
     "name": "Laila Dzaikra",
-    "email": "laila.dzaikra.h@gmail.com",
+    "email": "la***@gmail.com",
+    "email_hash": "318b4fe00675f4c73e3a2abc3d5aca2ea33132ec21cfbcfe27e7b721247acd29",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16689,7 +17870,8 @@ const INITIAL_DPT = [
   {
     "npa": "06983",
     "name": "Dini Nuari",
-    "email": "dininuari@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "e16011c9688174dcffa53cbde6ce41990dcf1afcfb3546ff826c9af59037a938",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16703,7 +17885,8 @@ const INITIAL_DPT = [
   {
     "npa": "06985",
     "name": "Dominicus Hevy Hardiyanto",
-    "email": "dominichevy@gmail.com",
+    "email": "do***@gmail.com",
+    "email_hash": "9f6294c6ded6c80b5b23e3599a003d20d5db102ff0d993dd8f240963e11326d9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16717,7 +17900,8 @@ const INITIAL_DPT = [
   {
     "npa": "06987",
     "name": "Hendra Maulana Irvan",
-    "email": "hendra.maulana.i@outlook.com",
+    "email": "he***@outlook.com",
+    "email_hash": "0aee3778d51ee03bedf050faeb8fbb8d70dd38897464e2def7b6b33435ea4afd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16731,7 +17915,8 @@ const INITIAL_DPT = [
   {
     "npa": "06991",
     "name": "Erfin Elly",
-    "email": "erfinelly@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "84c2ed1bfb806789da0c4094a83901cb9b8f5cf426ba47f77115980a4c13e402",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16745,7 +17930,8 @@ const INITIAL_DPT = [
   {
     "npa": "06993",
     "name": "Obed Duma",
-    "email": "obedduma09@gmail.com",
+    "email": "ob***@gmail.com",
+    "email_hash": "27f29362c6632d15e9c95ea54b8181c0c75a960ae057d734ef13c353187eb41e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16759,7 +17945,8 @@ const INITIAL_DPT = [
   {
     "npa": "06995",
     "name": "Maria Candra Mulyani",
-    "email": "mariacandra@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "6ab68b71d603409be98cc3cf3f5e2a7559bae966a5ff12cd16c7b1fb5b87a796",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16773,7 +17960,8 @@ const INITIAL_DPT = [
   {
     "npa": "07001",
     "name": "Muhammad Ilyasa Satyadharma",
-    "email": "ilyasatyadharma@gmail.com",
+    "email": "il***@gmail.com",
+    "email_hash": "966b2bb6cb8d8bfe5808cb4f182fb8a568944269b203dce7294a1256a82c3567",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16787,7 +17975,8 @@ const INITIAL_DPT = [
   {
     "npa": "07008",
     "name": "Dikdik Risdianto",
-    "email": "dikrisdi@yahoo.com",
+    "email": "di***@yahoo.com",
+    "email_hash": "fd6c9249b75aed874e03215af8f6ede78b78ada46dcf8f442b5887cfb147af91",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16801,7 +17990,8 @@ const INITIAL_DPT = [
   {
     "npa": "07010",
     "name": "Deta Hanif",
-    "email": "detaanhanif@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "b9f1f6ce2d132f6eb29ec9b5375006bc797769daf09be46c73e25ed3594cb04a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16815,7 +18005,8 @@ const INITIAL_DPT = [
   {
     "npa": "07011",
     "name": "Salma Difa",
-    "email": "salmadifm@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "08a94d3baaff37be168268ec83c7a8a0a94b2a74b19dca26b9d1c94ee93e1a9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16829,7 +18020,8 @@ const INITIAL_DPT = [
   {
     "npa": "07012",
     "name": "Aldaka Wiguna",
-    "email": "aldakawgn@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "17cec33b7814e0d44c88856c881792903828cdebf36479ae73d6477ff011e13a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16843,7 +18035,8 @@ const INITIAL_DPT = [
   {
     "npa": "07013",
     "name": "Herki Priambodo",
-    "email": "herki_priambodo@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "5a4941cb87630f72198733d0281cd5f11cf21584a2711810b74bb7979ede5f91",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16857,7 +18050,8 @@ const INITIAL_DPT = [
   {
     "npa": "07014",
     "name": "Mulyati",
-    "email": "muly.poenk@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "1965269b6744faf00e88620b35e132e841b4ab3dbb5e8bf0167bc64e37471395",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16871,7 +18065,8 @@ const INITIAL_DPT = [
   {
     "npa": "07020",
     "name": "Muhamad Anzja Chabbani Istala",
-    "email": "muhamad.anzja@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "7d0b399706995f4f6e08470f6848dde738fdfdce3c27bb78920ac02572fd11b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16885,7 +18080,8 @@ const INITIAL_DPT = [
   {
     "npa": "07022",
     "name": "Magdalena Ari Tifani",
-    "email": "magdalena.aritifani@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "9ac1308846eccbf97e44d46940d8f918adf283996c2244efc091c9d0f0bc0f0c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16899,7 +18095,8 @@ const INITIAL_DPT = [
   {
     "npa": "07026",
     "name": "Herfien Samalehu",
-    "email": "ferhin2001@yahoo.com",
+    "email": "fe***@yahoo.com",
+    "email_hash": "03132eabc547d7cd9bc94a0f33c614de15eabace68bb9224ff164668d302471f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16913,7 +18110,8 @@ const INITIAL_DPT = [
   {
     "npa": "07037",
     "name": "Reza Riezqi Ramadhan",
-    "email": "rezariezqi.ramadhan@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "4507954c0aec5b92ab24e4e459c35ba77b2972d44920ac9c8a4cdcd126f48f5e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16927,7 +18125,8 @@ const INITIAL_DPT = [
   {
     "npa": "07044",
     "name": "Dicky Hilmawan",
-    "email": "dikihilmawan@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "fa92e94dda40bd8e8fea2f7039b8a4bd95cb94d9bb2c486c2fd533a5683c731c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16941,7 +18140,8 @@ const INITIAL_DPT = [
   {
     "npa": "07045",
     "name": "Guntur Ghiffari",
-    "email": "gntr.ghiffari@gmail.com",
+    "email": "gn***@gmail.com",
+    "email_hash": "df11840b36ebad8c373470d0424f3af5f05ffad6cd4eb66e5be81ccbe1b61dcc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16955,7 +18155,8 @@ const INITIAL_DPT = [
   {
     "npa": "07049",
     "name": "Indi Amrullah",
-    "email": "indi_amr@yahoo.com",
+    "email": "in***@yahoo.com",
+    "email_hash": "01fadb362db020a170f7ad02bd64de3a97cda4fda8aafd2b7e43591fb0b531ee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16969,7 +18170,8 @@ const INITIAL_DPT = [
   {
     "npa": "07057",
     "name": "Andreas Dony Ervianto",
-    "email": "andreas.dony431@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "9c5276ecc18bb992c73513e51ffb0af44d89e035f64c1bc5386e833f4d35664b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16983,7 +18185,8 @@ const INITIAL_DPT = [
   {
     "npa": "07059",
     "name": "Andri Akbarrizal",
-    "email": "andri.akbarrizal@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "f28e2b2f6f05b50a959f28dd283406def39aa73810e6cc07cbfc92733405783f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -16997,7 +18200,8 @@ const INITIAL_DPT = [
   {
     "npa": "07065",
     "name": "Muhammad Satya Himawan Danuartha",
-    "email": "satyahimawan@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "f4e688be33bf763585618cbdacc35413fd9a755205565c0e2b7b7cf22c77853f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17011,7 +18215,8 @@ const INITIAL_DPT = [
   {
     "npa": "07070",
     "name": "Yazid Abdurrazzaq Setyowiyoto",
-    "email": "yazidabdur@gmail.com",
+    "email": "ya***@gmail.com",
+    "email_hash": "e330e05888aed39c3f02dfe0ad92cfcf605c4d003720ac82379e596149a18903",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17025,7 +18230,8 @@ const INITIAL_DPT = [
   {
     "npa": "07075",
     "name": "Made Agus Sutha Negara",
-    "email": "suthanegara@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "51d26079f8e278274f3621fde1780e8c4f83775edd3427dd61eed45ad0d50394",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17039,7 +18245,8 @@ const INITIAL_DPT = [
   {
     "npa": "07079",
     "name": "Efriadi Satria",
-    "email": "efriadi.satria@gmail.com",
+    "email": "ef***@gmail.com",
+    "email_hash": "f2c454f255773482a518a552fe39e6e45146db5990c58a81ddfc99d94ca07c74",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17053,7 +18260,8 @@ const INITIAL_DPT = [
   {
     "npa": "07083",
     "name": "Zachary William David Casley",
-    "email": "zach.casley@merdekacoppergold.com",
+    "email": "za***@merdekacoppergold.com",
+    "email_hash": "4eeefc69b1549831bb04a5646f6306f42f0aaa965c43911cfe7299d21ecc7f75",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17067,7 +18275,8 @@ const INITIAL_DPT = [
   {
     "npa": "07095",
     "name": "Yudith Matindas",
-    "email": "yudithymatindas@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "75527d6697345f770183bb9d36cc10417bd528eab277414db1ca7888e79203ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17081,7 +18290,8 @@ const INITIAL_DPT = [
   {
     "npa": "07097",
     "name": "Denta Anindio Pratama",
-    "email": "anindio.pratama@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "8e9992c8bf81de76daae0d59b9d204c8a318e96d9825feddb3f9fbbaa0fef73e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17095,7 +18305,8 @@ const INITIAL_DPT = [
   {
     "npa": "07099",
     "name": "Hana Nur Aini",
-    "email": "hanaatmadja21@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "3d082b9e3710e14fd5bb0b86320bdc541de88b7710e39151f0f9c8f32cbe4b78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17109,7 +18320,8 @@ const INITIAL_DPT = [
   {
     "npa": "07100",
     "name": "Rizki Fadhilah Ramadhan",
-    "email": "fadhilahrizki867@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "f70830746f87d8f8e0d7c495dc897ad4fd9e869726cb4416b8d1a37cb2ea0f8b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17123,7 +18335,8 @@ const INITIAL_DPT = [
   {
     "npa": "07106",
     "name": "Riki Suputra",
-    "email": "riki_suputra@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "b3a8225f927604fdc5962e0c4776aed81d88c19060abfab5743c37c24b241dd1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17137,7 +18350,8 @@ const INITIAL_DPT = [
   {
     "npa": "07107",
     "name": "Joko Suprianto",
-    "email": "jokosuprianto3030@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "a41d62fd36ffcbc8dd53f3628f26b7cfceb50a482633a3885d757223b9ea85f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17151,7 +18365,8 @@ const INITIAL_DPT = [
   {
     "npa": "07113",
     "name": "Achmad Fathoni",
-    "email": "fathoni03@yahoo.com",
+    "email": "fa***@yahoo.com",
+    "email_hash": "bfc450e930303eb3a696844385e7826ebda5b94c7700289b57a1dbe69ebc4965",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17165,7 +18380,8 @@ const INITIAL_DPT = [
   {
     "npa": "07115",
     "name": "Pherto Rimos",
-    "email": "phertorimos87@gmail.com",
+    "email": "ph***@gmail.com",
+    "email_hash": "a18e8d7c9e2369eb80d2136daaf6f79d079a03df33d7c2556b87e3d0aab965a3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17179,7 +18395,8 @@ const INITIAL_DPT = [
   {
     "npa": "07116",
     "name": "Endri lwantoro",
-    "email": "ndri.iwantoro@gmail.com",
+    "email": "nd***@gmail.com",
+    "email_hash": "585c5c65840326b27c9b0af1942bdb965bfcbe67e1d2b2cb981bec2cd7bedd93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17193,7 +18410,8 @@ const INITIAL_DPT = [
   {
     "npa": "07118",
     "name": "Bambang Tri Wahyono",
-    "email": "primeabu507@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "5a7eaaec19a6f04b03e6a113c80cfd23bcaa5656b5638dfa2ad951139839b180",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17207,7 +18425,8 @@ const INITIAL_DPT = [
   {
     "npa": "07120",
     "name": "Afifudin",
-    "email": "afif1120@gmail.com",
+    "email": "af***@gmail.com",
+    "email_hash": "70c41cb6ed7c79e99ffc492519f0800b1dbba931d8945037bf56fbe8af81fea9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17221,7 +18440,8 @@ const INITIAL_DPT = [
   {
     "npa": "07121",
     "name": "‘Singgih limiawan",
-    "email": "ranggantengblast@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "c9dbe5a32770bc4fabe000ba596dbd5192538812d20d3e47bb05b32c163ae7c8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17235,7 +18455,8 @@ const INITIAL_DPT = [
   {
     "npa": "07123",
     "name": "Susilo Listyantoro",
-    "email": "listyantoro.susilo@pertamina.com",
+    "email": "li***@pertamina.com",
+    "email_hash": "b0ab650811114f9e661559fd3dc0657e960d24e3aa8f2c20c783e44a21b2c70d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17249,7 +18470,8 @@ const INITIAL_DPT = [
   {
     "npa": "07127",
     "name": "Sinchia Dewi Puspita",
-    "email": "sinchia.puspita@pertamina.com",
+    "email": "si***@pertamina.com",
+    "email_hash": "95f2482f6d4c77611faf39f5edb77c0eea44e906ca58b5d75d351f8bf16d3f2f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17263,7 +18485,8 @@ const INITIAL_DPT = [
   {
     "npa": "07135",
     "name": "Jeffrey Halim",
-    "email": "jeffrey_halim@hotmail.com",
+    "email": "je***@hotmail.com",
+    "email_hash": "29b32cd1886b8bd323ec75e4cd6351c57fb52c63967d482dffaca68e472d6097",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17277,7 +18500,8 @@ const INITIAL_DPT = [
   {
     "npa": "07140",
     "name": "Wilson Alex Bernardus Marbun",
-    "email": "marbungeologist@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "56c555b2bb436f1d08b71a3dff132f962f10570330eea3110847dc2ad1f7a65c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17291,7 +18515,8 @@ const INITIAL_DPT = [
   {
     "npa": "07143",
     "name": "Mayta Kamila",
-    "email": "maytakamila05@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "1e5eb31dbf49368ed6e73e469ddc1116fbaff4b57cca7897d754c51eb508c7a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17305,7 +18530,8 @@ const INITIAL_DPT = [
   {
     "npa": "07145",
     "name": "Jumbadi",
-    "email": "jhadipranoto@gmail.com",
+    "email": "jh***@gmail.com",
+    "email_hash": "7c6d9ee356755718117cfd5df9fc7430ff28f3439cca382a496a23fb00b78aa1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17319,7 +18545,8 @@ const INITIAL_DPT = [
   {
     "npa": "07147",
     "name": "Siswadi",
-    "email": "siswadimr@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "b4e46403aa4defdababbc6fad76c4fc3bab60011daa331b8af71db9c59a1b584",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17333,7 +18560,8 @@ const INITIAL_DPT = [
   {
     "npa": "07148",
     "name": "Didit Ariady Firmansyah",
-    "email": "ditafirmans@yahoo.com",
+    "email": "di***@yahoo.com",
+    "email_hash": "f5459fce485fc7fc030b8f1c3329949cd9cb2b9a2eb90b588693e9a4c012408e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17347,7 +18575,8 @@ const INITIAL_DPT = [
   {
     "npa": "07150",
     "name": "Hermawan Joko Sutrisno",
-    "email": "hermawan_js@yahoo.com",
+    "email": "he***@yahoo.com",
+    "email_hash": "153d7ffe9753f89a582f420603c96571c80c34ced985d6a41c35a87d85a68bd1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17361,7 +18590,8 @@ const INITIAL_DPT = [
   {
     "npa": "07151",
     "name": "Edward Sibarani",
-    "email": "esibarani@gmail.com",
+    "email": "es***@gmail.com",
+    "email_hash": "ad3090478215e79b2b3d87eedd847043edfa02be648e6b27109aba13672411c7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17375,7 +18605,8 @@ const INITIAL_DPT = [
   {
     "npa": "07153",
     "name": "Arif Gunawan",
-    "email": "argun2277@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "aa9393da4f0d879d0e7115421c6945ce1d8c114d9df14e893c4d5f4427b1e34b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17389,7 +18620,8 @@ const INITIAL_DPT = [
   {
     "npa": "07160",
     "name": "Zulfahmi Roskha",
-    "email": "fahmiroskha@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "0c70de6768f0cb84b5f7a6c718e6f2f0f919b47c1dbb619b49530438386d262f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17403,7 +18635,8 @@ const INITIAL_DPT = [
   {
     "npa": "07163",
     "name": "Tri Hartono",
-    "email": "tri.hartono@antam.com",
+    "email": "tr***@antam.com",
+    "email_hash": "8a161047da48d248676fd8a1305cc2d0b995c969c32a08936780438447899e57",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17417,7 +18650,8 @@ const INITIAL_DPT = [
   {
     "npa": "07167",
     "name": "Marenda Dananjaya Wiryoutomo",
-    "email": "MDananjaya@slb.com",
+    "email": "MD***@slb.com",
+    "email_hash": "a3d8c89833e9bb8b1328062e90a19b5e9ede5a8c71a00bfbec129b28803f987a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17431,7 +18665,8 @@ const INITIAL_DPT = [
   {
     "npa": "07168",
     "name": "Irwan Iskandar",
-    "email": "irwan.iskandar.ii@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "2247d94a5ca916e7f85d2886d01dc394473e2cf0141e870901522008695d99d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17445,7 +18680,8 @@ const INITIAL_DPT = [
   {
     "npa": "07178",
     "name": "lbnu Aswantito",
-    "email": "ibnuaswantito@gmail.com",
+    "email": "ib***@gmail.com",
+    "email_hash": "d320f4fe1650342d43853476fdf641800ef7d777e2c92b7122678e9629eb3aa4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17459,7 +18695,8 @@ const INITIAL_DPT = [
   {
     "npa": "07179",
     "name": "Rubima Aisha Yulman",
-    "email": "rubimayulman@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "5d50aa3043462b69fd152439056cf07c6427db1e2a8f3b3326db7c5ac43a79a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17473,7 +18710,8 @@ const INITIAL_DPT = [
   {
     "npa": "07192",
     "name": "M Fikrul Rozi",
-    "email": "fikrulrozi@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "cd32f5104d646b543fde2c75e24ce178658dc60f613cad735cd6d946e78139d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17487,7 +18725,8 @@ const INITIAL_DPT = [
   {
     "npa": "07193",
     "name": "Baginda Saragih",
-    "email": "baginda_saragih@yahoo.co.id",
+    "email": "ba***@yahoo.co.id",
+    "email_hash": "ea3160a8388d21a81edce5ad9be8985ea568e7a909f67bdfa99c3ae45c0d498e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17501,7 +18740,8 @@ const INITIAL_DPT = [
   {
     "npa": "07194",
     "name": "Reinesans Pasali",
-    "email": "reinesans@yahoo.com",
+    "email": "re***@yahoo.com",
+    "email_hash": "e50c7a20520a4bef311423de4f0768b4c402ffd95bf20ac187565ddd53c43b0a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17515,7 +18755,8 @@ const INITIAL_DPT = [
   {
     "npa": "07195",
     "name": "Rindu Grahabhakti Intani",
-    "email": "rindu.intani@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "86fe0e11548321666cfb4d51a03ba29cbebfd26912fcd11208cc5b19b4d619f8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17529,7 +18770,8 @@ const INITIAL_DPT = [
   {
     "npa": "07196",
     "name": "Kurnia Wahyudi Suryanto",
-    "email": "kurnia.wahyudi28@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "cdd08c0f67a47c3e2d6c2218aa5e1f07dce84a822f0bd1f4d2b06c2045bba948",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17543,7 +18785,8 @@ const INITIAL_DPT = [
   {
     "npa": "07201",
     "name": "Nadia",
-    "email": "nadia_zn@yahoo.com",
+    "email": "na***@yahoo.com",
+    "email_hash": "c855d4eb44bdb658346e1f81b978e6e85fcb703eeb34411fe7baea79b63da1b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17557,7 +18800,8 @@ const INITIAL_DPT = [
   {
     "npa": "07203",
     "name": "Faisal Abdullah",
-    "email": "faisal_gea@yahoo.com",
+    "email": "fa***@yahoo.com",
+    "email_hash": "45c8440ff600886b9287fb2185c4219cc70c83d0496341c8b94fa063dfa707aa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17571,7 +18815,8 @@ const INITIAL_DPT = [
   {
     "npa": "07204",
     "name": "Muhammad Edo Marshal Nurshal",
-    "email": "edomarshal@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "62412a29ac903a22bdd6423a588c8c5f09f20367293e40990ee6b9b55f0d695a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17585,7 +18830,8 @@ const INITIAL_DPT = [
   {
     "npa": "07207",
     "name": "Ari Yusliandi",
-    "email": "ariyusliandi@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "daf8d0cf9ef2b13ecce8d8657d77f569c0e235d0a14b360db146ba944b69983c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17599,7 +18845,8 @@ const INITIAL_DPT = [
   {
     "npa": "07245",
     "name": "Suwahyadi",
-    "email": "suwahyadi@esdm.go.id",
+    "email": "su***@esdm.go.id",
+    "email_hash": "c3f15cba66c70a43734d0996cdac5f8f7af43107cb008238cb3839dc5abbe67f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17613,7 +18860,8 @@ const INITIAL_DPT = [
   {
     "npa": "07254",
     "name": "Erwandi Yanto",
-    "email": "erwandi.yanto@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "fa7162f7dfd062a1e653f3e628d3dfc807e6281f306d2ffa8a86928caafb1649",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17627,7 +18875,8 @@ const INITIAL_DPT = [
   {
     "npa": "07256",
     "name": "Haris Herlambang",
-    "email": "hherlambang2000@yahoo.co.uk",
+    "email": "hh***@yahoo.co.uk",
+    "email_hash": "24b48b7fb44a8caa9c425a23fe0ce4851b3fac2058c23956afbb7d5d81348410",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17641,7 +18890,8 @@ const INITIAL_DPT = [
   {
     "npa": "07262",
     "name": "Hastra Santayana",
-    "email": "h.santayana22@gmail.com",
+    "email": "h.***@gmail.com",
+    "email_hash": "cfded595cb609619ccdd994276611aa9c230e43749e4f21125f066e78245188b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17655,7 +18905,8 @@ const INITIAL_DPT = [
   {
     "npa": "07264",
     "name": "Gita Srikandi",
-    "email": "gitasrikandi120@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "d16ef8cd459c779c775e01dd177fb84e15bd1f7a82daa2bd58a8734592549bf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17669,7 +18920,8 @@ const INITIAL_DPT = [
   {
     "npa": "07270",
     "name": "Engelbertus Rexi Esomar",
-    "email": "rexi.geo98@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "e2caeab2821f21a1888be10b5fcffcd3b1a15d51a44f5264d89fdc0d773a326b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17683,7 +18935,8 @@ const INITIAL_DPT = [
   {
     "npa": "07271",
     "name": "Erwin Setiawan",
-    "email": "erwins9813@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "18a3cb79771ac7cb464d6a809213aa10b438f3985ff3bd6c93978ae8fb2dce55",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17697,7 +18950,8 @@ const INITIAL_DPT = [
   {
     "npa": "07272",
     "name": "Tsania Ozza",
-    "email": "tsaniaozza@yahoo.com",
+    "email": "ts***@yahoo.com",
+    "email_hash": "fc8622a74c3c573142aa1cc9d6519743abdb6d1178c557a5ef2e6606e9139546",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17711,7 +18965,8 @@ const INITIAL_DPT = [
   {
     "npa": "07282",
     "name": "Agus Superiadi",
-    "email": "agus.super070871@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "f0d6603d5f01ab167fbbf78686e90a0aa0e8abd2a48e72bfeae13bc5c7e7303a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17725,7 +18980,8 @@ const INITIAL_DPT = [
   {
     "npa": "07284",
     "name": "M Panji Suryaatmaja",
-    "email": "muh.panji@geodin.net",
+    "email": "mu***@geodin.net",
+    "email_hash": "3d926c8020952e0f0198d45fd36ed0d5038931eb44fb04e1187acd8a53cf1d5a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17739,7 +18995,8 @@ const INITIAL_DPT = [
   {
     "npa": "07287",
     "name": "Luvian Elsandi Pumomo",
-    "email": "luviansandy@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "d9602670c3b7158e847d1f7fa42e3c66624d139b426c1805336d41db6f4063a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17753,7 +19010,8 @@ const INITIAL_DPT = [
   {
     "npa": "07289",
     "name": "Joe Anderson Siadary",
-    "email": "jsiadary@gmail.com",
+    "email": "js***@gmail.com",
+    "email_hash": "b121ea5ff4688958f02b393108896775e511234957118182da45940d18149b93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17767,7 +19025,8 @@ const INITIAL_DPT = [
   {
     "npa": "07290",
     "name": "Wely Samara",
-    "email": "welygeo18@gmail.com",
+    "email": "we***@gmail.com",
+    "email_hash": "3ecbd11094e3f8c99e91aead536fe989d1c082786ecd839751f17f0f9966520e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17781,7 +19040,8 @@ const INITIAL_DPT = [
   {
     "npa": "07292",
     "name": "Moch Nur Hadi",
-    "email": "mochamadnurhadi@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "daa9e4c90714ed1dff50664bdddc5338167faa031c1a7556c56626c058397b56",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17795,7 +19055,8 @@ const INITIAL_DPT = [
   {
     "npa": "07294",
     "name": "Robertus Septima Luhur Simarmata",
-    "email": "robertussis@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "0f5856e17bc42248a8101b87c22334a46a340901bb737140b5b7df345e3ab66f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17809,7 +19070,8 @@ const INITIAL_DPT = [
   {
     "npa": "07297",
     "name": "Dudi Hermawan",
-    "email": "doeday@gmail.com",
+    "email": "do***@gmail.com",
+    "email_hash": "ad51df1b91c476bddae376696300520fd51b8abacd1eb71a65605cb770a512ff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17823,7 +19085,8 @@ const INITIAL_DPT = [
   {
     "npa": "07298",
     "name": "Santia Ardi Mustofa",
-    "email": "tofa_sam@yahoo.com",
+    "email": "to***@yahoo.com",
+    "email_hash": "a5a33295b97675251964fe0d5d862a98d01f62eab3b6f1afc4a08f17d1275434",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17837,7 +19100,8 @@ const INITIAL_DPT = [
   {
     "npa": "07299",
     "name": "Widya Asoka Suleman",
-    "email": "soka.xoca@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "a200bccc8c6ae86947c00388aff048369367359d5cc3d9cebc1ec039c55e32ee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17851,7 +19115,8 @@ const INITIAL_DPT = [
   {
     "npa": "07301",
     "name": "Sucipta",
-    "email": "ssucipta@gmail.com",
+    "email": "ss***@gmail.com",
+    "email_hash": "1b4ef1393cf0568462a5cdbb679fcf18c76562826afa468d004362f3fa394130",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17865,7 +19130,8 @@ const INITIAL_DPT = [
   {
     "npa": "07304",
     "name": "Dewandio Iryanto",
-    "email": "dewandioyogaswara@outlook.com",
+    "email": "de***@outlook.com",
+    "email_hash": "84a3a950315e0ef1b06bf141f821e28b4e31dd46e7f0f2befdb460c3b426421e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17879,7 +19145,8 @@ const INITIAL_DPT = [
   {
     "npa": "07309",
     "name": "Yohanes Sebayang",
-    "email": "anenkgea@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "53f8f5b9f2bd8e4011dc6212435c196c0c9c02aaeeee3d2e80b7a41f401df490",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17893,7 +19160,8 @@ const INITIAL_DPT = [
   {
     "npa": "07321",
     "name": "Renato Aldi",
-    "email": "mandiri.arya@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "98c2a4c467d77b23287b0e20ab86f09711353cdefc21b15d1b3b10f4e3846a2a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17907,7 +19175,8 @@ const INITIAL_DPT = [
   {
     "npa": "07325",
     "name": "Arya Disiyona",
-    "email": "adisiyona@skkmigas.go.id",
+    "email": "ad***@skkmigas.go.id",
+    "email_hash": "afb64f05daf74b4de04acc3872953926eb0aa19198bd800ead9ad16656eba883",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17921,7 +19190,8 @@ const INITIAL_DPT = [
   {
     "npa": "07330",
     "name": "Andy Mahendra",
-    "email": "andymahendra@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "c023f2d166fff160c3dcbf4aa2868d1ee2835990901dcb027f8fa4dc546eebf8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17935,7 +19205,8 @@ const INITIAL_DPT = [
   {
     "npa": "07333",
     "name": "Rahmat Satya Nugraha",
-    "email": "rahmatsatyan@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "65caae4efb0719125084de1cbeda84da959cb0a2b5f0fa44645b32e44696c7ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17949,7 +19220,8 @@ const INITIAL_DPT = [
   {
     "npa": "07334",
     "name": "Rian Amukti",
-    "email": "rian.amukti87@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "0b6da0cf781a8cfa581dd7ba5781ba5f7b055bb986d21bc2a7aace439319b9b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17963,7 +19235,8 @@ const INITIAL_DPT = [
   {
     "npa": "07337",
     "name": "Tan Mariyanti",
-    "email": "hoxiuming1979@gmail.com",
+    "email": "ho***@gmail.com",
+    "email_hash": "301b5af79bb69f5748394d6d8223694b6fc498787c4986f35ad41569aa0bc617",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17977,7 +19250,8 @@ const INITIAL_DPT = [
   {
     "npa": "07341",
     "name": "Mahjar",
-    "email": "jomahjar@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "5dfbcf9c3e4165538e56a2e0e593ebc0181165e2d652102602cff3cce92e1cc5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -17991,7 +19265,8 @@ const INITIAL_DPT = [
   {
     "npa": "07347",
     "name": "Benny Pulungan",
-    "email": "benny.alizar.amin@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "15517c6769a700d4e5a72b0c745045dd7b700a36656d972f0f08ce7f440b186a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18005,7 +19280,8 @@ const INITIAL_DPT = [
   {
     "npa": "07348",
     "name": "Yuniarti Ulfa",
-    "email": "yuniarulfa@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "9b50c4742793ebdfe89050d73586dd2c88f2bbedf7613706da75c3b2792fc18e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18019,7 +19295,8 @@ const INITIAL_DPT = [
   {
     "npa": "07351",
     "name": "Rizal Abiyudo",
-    "email": "yudotn@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "9b39ad7033fd4ef9dcb3d400fb5672e4563e9f524cff42afaec1c46694ee5285",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18033,7 +19310,8 @@ const INITIAL_DPT = [
   {
     "npa": "07352",
     "name": "Iwan Abdurrahman",
-    "email": "iwan.abdurrahman@gmail.com",
+    "email": "iw***@gmail.com",
+    "email_hash": "c9bb76941135db27d8f900a7cd15f29e6f0fe054fa0d67fc42069d4b5c0ab170",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18047,7 +19325,8 @@ const INITIAL_DPT = [
   {
     "npa": "07354",
     "name": "Wahyudi Susanto",
-    "email": "wahyudi.susanto@pertamina.com",
+    "email": "wa***@pertamina.com",
+    "email_hash": "e4adce871a97d53438b4b5ada3fcb6a0873523c74cf008c818ee319709c201c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18061,7 +19340,8 @@ const INITIAL_DPT = [
   {
     "npa": "07366",
     "name": "Suryatno",
-    "email": "suryatnodm@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "842d7ac48c1fed2fda0dbd9bd44597786db12a42415c16f66c6b2484155304d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18075,7 +19355,8 @@ const INITIAL_DPT = [
   {
     "npa": "07369",
     "name": "Dedi Juandi",
-    "email": "dedij@yahoo.com",
+    "email": "de***@yahoo.com",
+    "email_hash": "36e3cda388adef813646de6eb5f03d80d8a6e7eca343a4c6674a899869d86572",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18089,7 +19370,8 @@ const INITIAL_DPT = [
   {
     "npa": "07385",
     "name": "Nur Hayati",
-    "email": "nur.hayati1788@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "2d166d758ef4b1f8b141f8afb66899fde793ad939b0d08f4fd1f663d6778cc95",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18103,7 +19385,8 @@ const INITIAL_DPT = [
   {
     "npa": "07386",
     "name": "Ahmad Najihal Amal",
-    "email": "Ahmad.Amal@pertamina.com",
+    "email": "Ah***@pertamina.com",
+    "email_hash": "c0d98cb46f5a1f7c5711112301ab08482deff18659bc90e5e28eb6c3234215a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18117,7 +19400,8 @@ const INITIAL_DPT = [
   {
     "npa": "07398",
     "name": "Daniel Radityo",
-    "email": "daniel.radityo12@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "c8177903c90ef3fc15e79f15e98ba57d4de521361e84c3d57a5c6fd9e24f7f30",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18131,7 +19415,8 @@ const INITIAL_DPT = [
   {
     "npa": "07401",
     "name": "Wilfred Samosir",
-    "email": "wilfred.samosir@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "05dfad1fbd3e37a5ad2f53da2ea9318cbfa10230a7ffab7ef5027e7be3282fd1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18145,7 +19430,8 @@ const INITIAL_DPT = [
   {
     "npa": "07403",
     "name": "Jummanto Nalayo",
-    "email": "jumanalayo@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "4bb624a57bac996ecd4773583e00c483160e5191c1366d1eba5ed0202a84c0b6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18159,7 +19445,8 @@ const INITIAL_DPT = [
   {
     "npa": "07414",
     "name": "Abi Saddam A! Hadi",
-    "email": "abisaddamalhadi@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "c3499412a8c981ae687e5fb020bb238ed02dff492bb99f3b67dab758bef3ac11",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18173,7 +19460,8 @@ const INITIAL_DPT = [
   {
     "npa": "07415",
     "name": "Muhammad Rahmat Redho Akbar",
-    "email": "redhoakbar8@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "971d217a20864938eba0479685c211f1eadcbeb3ec06fbc4b2992457c1cd3bd0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18187,7 +19475,8 @@ const INITIAL_DPT = [
   {
     "npa": "07419",
     "name": "Andrian Danurwenda",
-    "email": "andriandwd@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "b5f7c7b1e8216ebbe3d2bedb28e04d6040996c35e50243400929f16589f51360",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18201,7 +19490,8 @@ const INITIAL_DPT = [
   {
     "npa": "07421",
     "name": "Hans Habel",
-    "email": "hanshabel50@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "e38d8918a7449afe7f3fa8f0b399a8faaf791e8a295dec699ac51ad7dcafd5f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18215,7 +19505,8 @@ const INITIAL_DPT = [
   {
     "npa": "07423",
     "name": "Vivi Rachmawati",
-    "email": "vie_rach@yahoo.com",
+    "email": "vi***@yahoo.com",
+    "email_hash": "b14a0419c9cbf084f6c7b1da1a2eb07905a54b451bf722c778d06512fbcea564",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18229,7 +19520,8 @@ const INITIAL_DPT = [
   {
     "npa": "07424",
     "name": "Arvinrandy Gunawan",
-    "email": "arvinrandy@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "c1fa0558a023545d8e162fb5d83a440777e920e36dbb5fe91bf5294461f18f9b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18243,7 +19535,8 @@ const INITIAL_DPT = [
   {
     "npa": "07431",
     "name": "Fadhil Anmad Alfaridi",
-    "email": "fa.alfaridi@yahoo.co.id",
+    "email": "fa***@yahoo.co.id",
+    "email_hash": "9133f3fd17aeb6624f2ace0ab99b03713f7be40a79ccf93d8f7356b09ab5b680",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18257,7 +19550,8 @@ const INITIAL_DPT = [
   {
     "npa": "07435",
     "name": "Davilia Vanessa",
-    "email": "daviliavanesaa22@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "86eb68d9425b5c4c7f159441e3cd8b063cf8aa0a3a4f77e2fc0e08d429fd5e19",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18271,7 +19565,8 @@ const INITIAL_DPT = [
   {
     "npa": "07437",
     "name": "Bayu Wisnubroto",
-    "email": "BWisnubroto@slb.com",
+    "email": "BW***@slb.com",
+    "email_hash": "1828c99fd53d1e913dfec4ec1a7f1c83ddfd336ece628cd9dc14b46c5b2a56ac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18285,7 +19580,8 @@ const INITIAL_DPT = [
   {
     "npa": "07438",
     "name": "Hilarius Rodriguez Mbui Demu",
-    "email": "digodemu@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "a96c8009b2ede36947cdace6fa9379e0679df00f33b2e0e5fb56383d0d623e28",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18299,7 +19595,8 @@ const INITIAL_DPT = [
   {
     "npa": "07443",
     "name": "Julius Ardo Pattinama",
-    "email": "jbpattinama@gmail.com",
+    "email": "jb***@gmail.com",
+    "email_hash": "b3a46a150ff195cd7e351c5637795f3818cd032a7e76807852e0b998175864ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18313,7 +19610,8 @@ const INITIAL_DPT = [
   {
     "npa": "07445",
     "name": "Gadis Ghia Arviallyn",
-    "email": "ghia.gadis@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "f7efa6805923d80509e05e90ddd2fdaeab458aa0a378504fd0b0aef742d6937e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18327,7 +19625,8 @@ const INITIAL_DPT = [
   {
     "npa": "07447",
     "name": "Willy Haryo Kusumo",
-    "email": "willyharyo01@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "0174b5ec5f3bd825848d43da781ff3269e3b08925ecb8f841d13dbe9a243734d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18341,7 +19640,8 @@ const INITIAL_DPT = [
   {
     "npa": "07448",
     "name": "Ubaidillah Dwi Satria",
-    "email": "ubaidillah.dwisatria@gmail.com",
+    "email": "ub***@gmail.com",
+    "email_hash": "a11c22cf052deed6d81cbbad5205c02fb351aec605113a022079d1f541f6471e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18355,7 +19655,8 @@ const INITIAL_DPT = [
   {
     "npa": "07454",
     "name": "Bonny Nicholas Airlangga",
-    "email": "bonny_nicholas@yahoo.com",
+    "email": "bo***@yahoo.com",
+    "email_hash": "a7bc9b59577f8b93e9e4530c87efda5c976a1a8597bc3236d4f51228a5f80d06",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18369,7 +19670,8 @@ const INITIAL_DPT = [
   {
     "npa": "07457",
     "name": "Labora Pramana",
-    "email": "laborapramana@gmail.com",
+    "email": "la***@gmail.com",
+    "email_hash": "575d21d5fb80c50f2309fff2fdbdb36d59d23268e1860a8405c1ae38a0158232",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18383,7 +19685,8 @@ const INITIAL_DPT = [
   {
     "npa": "07458",
     "name": "Teddy Irano",
-    "email": "teddygeo27@gmail.com",
+    "email": "te***@gmail.com",
+    "email_hash": "4eac56b526b6ea433213177096544002be971f991eebfde1a35044f872985ab0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18397,7 +19700,8 @@ const INITIAL_DPT = [
   {
     "npa": "07459",
     "name": "Arif Wicaksono",
-    "email": "arifwicaksonogeologi@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "bb17e6d1e7c92632ca2bcd35902107fb706588aa43c65aa5073993b1db65475a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18411,7 +19715,8 @@ const INITIAL_DPT = [
   {
     "npa": "07460",
     "name": "Taufiq Ridha",
-    "email": "taufiqr58@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "d2bfb9cc7f110d885681187ec0b9bb1e63d89d132e2da753fc48c373fee0cd4b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18425,7 +19730,8 @@ const INITIAL_DPT = [
   {
     "npa": "07462",
     "name": "Asrizal Syahri",
-    "email": "asrizal.syahri@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "f2c71fcfed4925c778fe660641bb0e2586fe610890f3c8f127c0f01d141bd337",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18439,7 +19745,8 @@ const INITIAL_DPT = [
   {
     "npa": "07464",
     "name": "Putri Mahar Agista",
-    "email": "mahar.agista@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "ff8d03f3cb6f5da643e93a708c03658e2fd60abc049a4e536fc583763ff3bf0e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18453,7 +19760,8 @@ const INITIAL_DPT = [
   {
     "npa": "07469",
     "name": "Vincent Setiawan",
-    "email": "vincentfidelis15@gmail.com",
+    "email": "vi***@gmail.com",
+    "email_hash": "522d84305b5b067f41e20f422892d736e3b67c439dd152d89c1ac8ae6d00c2bd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18467,7 +19775,8 @@ const INITIAL_DPT = [
   {
     "npa": "07472",
     "name": "Betseba Sibarani",
-    "email": "betsebasibarani@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "3a1d3ddc2ff1f4eaceda33b44b977bac4ea69e3c29453c2a41581c039f664501",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18481,7 +19790,8 @@ const INITIAL_DPT = [
   {
     "npa": "07475",
     "name": "Rizki Mula Saputra",
-    "email": "rizkimulasaputra2@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "6f341d918c4d2292741d1752cf22fb865cc4596b359f44ab802ba33228c8e8b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18495,7 +19805,8 @@ const INITIAL_DPT = [
   {
     "npa": "07477",
     "name": "Dani Solisa",
-    "email": "danisolisa@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "aa5ce9865b95cdbbfd03fd953d5d74a5e5d4a238491500da9e5fb65a589bbce9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18509,7 +19820,8 @@ const INITIAL_DPT = [
   {
     "npa": "07480",
     "name": "Azmy Jayanggito",
-    "email": "azmy.jagito@gmail.com",
+    "email": "az***@gmail.com",
+    "email_hash": "1a3024c069cd3308710263b091c1416994c3189d74cf01487296fdf3bb845fbd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18523,7 +19835,8 @@ const INITIAL_DPT = [
   {
     "npa": "07487",
     "name": "Akhmad Zamroni",
-    "email": "akhmadzamroni@itny.ac.id",
+    "email": "ak***@itny.ac.id",
+    "email_hash": "96a7bef8d701d39a39ac619e33caa370ee6c41eeab6fd809c47a78cdd0b17b23",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18537,7 +19850,8 @@ const INITIAL_DPT = [
   {
     "npa": "07511",
     "name": "Cut Syarlitha",
-    "email": "merpatigabelas@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "befed7b0b8b5da49b859c5b988c6b849d201005ecc6f48e5ae59aa532d708fd9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18551,7 +19865,8 @@ const INITIAL_DPT = [
   {
     "npa": "07528",
     "name": "Adittya Gustriandy",
-    "email": "adittyagustriandy03.ag@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "018121d7c97715ad12850d6cc82a78efe7c0df836da5fee624746c898d612fbd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18565,7 +19880,8 @@ const INITIAL_DPT = [
   {
     "npa": "07535",
     "name": "Astin Nurdiana",
-    "email": "astin.nurdiana.s8@dc.tohoku.ac.jp",
+    "email": "as***@dc.tohoku.ac.jp",
+    "email_hash": "6aa64f05147e66ba48d59d729df115dc63d8ef925ddd7fac65c5126f2e5061f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18579,7 +19895,8 @@ const INITIAL_DPT = [
   {
     "npa": "07536",
     "name": "Joko Sosiawan Trikukuh",
-    "email": "JTrikukuh@slb.com",
+    "email": "JT***@slb.com",
+    "email_hash": "6613a720675ebb30ac484e4d0cadcfa85f1e8e6291d6828844b142fe5d64fce3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18593,7 +19910,8 @@ const INITIAL_DPT = [
   {
     "npa": "07538",
     "name": "Gde Wirawan",
-    "email": "gde.wirawan@gmail.com",
+    "email": "gd***@gmail.com",
+    "email_hash": "2b8490df7e36ac24dd4a66b9aaf4a45d11602e55f97659bf0162e3185cb57610",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18607,7 +19925,8 @@ const INITIAL_DPT = [
   {
     "npa": "07550",
     "name": "Ken Prabowo",
-    "email": "ken.prabowo@gmail.com",
+    "email": "ke***@gmail.com",
+    "email_hash": "bed12d59cdac6c4875874ab791463a4bf72a1197004d2d6b4a0e2c16cc55f8d4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18621,7 +19940,8 @@ const INITIAL_DPT = [
   {
     "npa": "07551",
     "name": "Geri Agroli",
-    "email": "geriagroli@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "8fa0f6cb20da4134752ee18b4471152a530f295749eb118e2511261fb8cbe442",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18635,7 +19955,8 @@ const INITIAL_DPT = [
   {
     "npa": "07552",
     "name": "Rizki Arie Fajar",
-    "email": "ariefajar_geo@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "3d85c02e81ab2466e6d96708fcb31855e91bf5444d88b801ad3f93ca939541eb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18649,7 +19970,8 @@ const INITIAL_DPT = [
   {
     "npa": "07563",
     "name": "Antonius Suwarno",
-    "email": "antonius.suwarno58@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "9630085e3599a33b3d9b1a78b1460ca1a1f76609af73fea225446a9131bb9f8b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18663,7 +19985,8 @@ const INITIAL_DPT = [
   {
     "npa": "07566",
     "name": "Rizky Kumiawan Wardana",
-    "email": "rkwardana@skkmigas.go.id",
+    "email": "rk***@skkmigas.go.id",
+    "email_hash": "202e03ef9f40c1ac87a8a8649ff88dca392f731533e05508ae0ee4dd0c6bc744",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18677,7 +20000,8 @@ const INITIAL_DPT = [
   {
     "npa": "07571",
     "name": "Aep Saepul Bahri",
-    "email": "albahri120@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "84c09013bb9e7411f8e3be6bcc81b7313d9926fb4b2e6a6b06589a6b7e582f6b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18691,7 +20015,8 @@ const INITIAL_DPT = [
   {
     "npa": "07580",
     "name": "Hitler Sijabat",
-    "email": "hit.sijabat@gmail.com",
+    "email": "hi***@gmail.com",
+    "email_hash": "23da8ca38c1fc1758c9e17952c8342f8b2037e55b59ca2dbcaa5d81047e62ac2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18705,7 +20030,8 @@ const INITIAL_DPT = [
   {
     "npa": "07581",
     "name": "Tommy Supratama",
-    "email": "sprtmtommy@gmail.com",
+    "email": "sp***@gmail.com",
+    "email_hash": "c8dd439955ba9f257df4c4275efb69dea03be9b65776d3eeb1c1b1b9238ce41b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18719,7 +20045,8 @@ const INITIAL_DPT = [
   {
     "npa": "07583",
     "name": "Kinanti Sayekti Anggarini",
-    "email": "kinantisayekti@gmail.com",
+    "email": "ki***@gmail.com",
+    "email_hash": "e2723df305597f21251c29742358ee553a8f4e7a204526698b2978b41b5813b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18733,7 +20060,8 @@ const INITIAL_DPT = [
   {
     "npa": "07587",
     "name": "Fauzal Ikram",
-    "email": "fauzalnabil@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "f379508fd1c62281bd2194512063077904aac3c94f4e01ff375b85b611bd02db",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18747,7 +20075,8 @@ const INITIAL_DPT = [
   {
     "npa": "07591",
     "name": "Imam Malik",
-    "email": "imammalik@yahoo.com",
+    "email": "im***@yahoo.com",
+    "email_hash": "655da1e12dfa17ad9e3e6851124712874e2e46bdbee8308bee8d500857d7a577",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18761,7 +20090,8 @@ const INITIAL_DPT = [
   {
     "npa": "07593",
     "name": "Asrofi Mursalin",
-    "email": "asrofimursalin992@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "d490d2511b997d0f995577bde9b32e17bc41c5106045e34d19b0e084738371fd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18775,7 +20105,8 @@ const INITIAL_DPT = [
   {
     "npa": "07600",
     "name": "WENDRI RIANZA",
-    "email": "wendri.rianza22@gmail.com",
+    "email": "we***@gmail.com",
+    "email_hash": "bcedae90d93f3d5a0a234676a87669f39e80abeed336bfd86aeaa944ca35f978",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18789,7 +20120,8 @@ const INITIAL_DPT = [
   {
     "npa": "07608",
     "name": "Moch Rahadian Wicaksono",
-    "email": "mrahadianw@gmail.com",
+    "email": "mr***@gmail.com",
+    "email_hash": "f0641616a4bcc5703e231363a81433af1f2c327a21cdc2114903249b8c2b3554",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18803,7 +20135,8 @@ const INITIAL_DPT = [
   {
     "npa": "07610",
     "name": "Muhamad Vidi Faizal",
-    "email": "mvfaisal70@gmail.com",
+    "email": "mv***@gmail.com",
+    "email_hash": "8ba926d91872ff89ffc11377cde64412bd9a204231142748a83214d682481f8a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18817,7 +20150,8 @@ const INITIAL_DPT = [
   {
     "npa": "07614",
     "name": "Septian Yudha Permana",
-    "email": "septian.yudha@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "90460f7773bd29c48dac7991f7df4ab9876e9f635df58c54aab57114f5b11a2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18831,7 +20165,8 @@ const INITIAL_DPT = [
   {
     "npa": "07615",
     "name": "Budi Abdul Muis",
-    "email": "mk.budi.muiz@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "228f0c9ad888644e8eaef2f941dc05bbd02977790293f59f3e2531c437aa60a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18845,7 +20180,8 @@ const INITIAL_DPT = [
   {
     "npa": "07616",
     "name": "Teguh Nugraha",
-    "email": "nugratz@yahoo.com",
+    "email": "nu***@yahoo.com",
+    "email_hash": "2d5732ae65732b3dae4a52ff12c057c04e7b960d96af904dac550964324a60d4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18859,7 +20195,8 @@ const INITIAL_DPT = [
   {
     "npa": "07619",
     "name": "Susilowati",
-    "email": "susi.susilowatips@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "187affd36e47c33eede957637591ce16da5b0128386e050b7ba15e810d916ec5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18873,7 +20210,8 @@ const INITIAL_DPT = [
   {
     "npa": "07634",
     "name": "Reza Indra Yudha",
-    "email": "reza.indrayudha@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "b63db94078b74f16a5a27f11871e0b27ef95432a1722753af5628c36b4bb9adb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18887,7 +20225,8 @@ const INITIAL_DPT = [
   {
     "npa": "07656",
     "name": "Agus Priyantoro",
-    "email": "priyantoroagus@yahoo.com",
+    "email": "pr***@yahoo.com",
+    "email_hash": "31cac2725f40526397168c0960728c1eb22dae4192d46bd1566f2febcafd7e33",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18901,7 +20240,8 @@ const INITIAL_DPT = [
   {
     "npa": "07684",
     "name": "Murthala Hatta",
-    "email": "murthala_hatta@yahoo.com",
+    "email": "mu***@yahoo.com",
+    "email_hash": "098ae3abd58448d86badcb99915ef7bd1aa8a4653d7cbfa597681cd9bf6cc3ac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18915,7 +20255,8 @@ const INITIAL_DPT = [
   {
     "npa": "07690",
     "name": "Nurullah Akmal",
-    "email": "nurullah_akmal@yahoo.com",
+    "email": "nu***@yahoo.com",
+    "email_hash": "fd4b283e37a14f27540866132fa14e8dcf130a0fdc158bf59f771785c1264d6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18929,7 +20270,8 @@ const INITIAL_DPT = [
   {
     "npa": "07694",
     "name": "Dwi Kumianto",
-    "email": "dwikurnianto609@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "03f64994921fa3b2252e36d9e79aad367495e40c22ffbf2e2db9abacd43f5883",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18943,7 +20285,8 @@ const INITIAL_DPT = [
   {
     "npa": "07695",
     "name": "Agus Susianto",
-    "email": "agus.susianto@pertamina.com",
+    "email": "ag***@pertamina.com",
+    "email_hash": "91365644e7a8031cc55800b1b3ba20211f50a3e7c62772918246fab197e3a3f3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18957,7 +20300,8 @@ const INITIAL_DPT = [
   {
     "npa": "07697",
     "name": "Aris Dwi Prihantono",
-    "email": "arisdwiprihantono@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "acbd61bdf11bf37bce2b87eb3f8d3f2e5e85385b0c8d0d1fd869877dd45a1cc5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18971,7 +20315,8 @@ const INITIAL_DPT = [
   {
     "npa": "07698",
     "name": "Isranto Handoyo Putra",
-    "email": "israntohp@gmail.com",
+    "email": "is***@gmail.com",
+    "email_hash": "5201052ddf4bae253935706e98f08b081b5d226d960f9266b798f2d89acb6bf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18985,7 +20330,8 @@ const INITIAL_DPT = [
   {
     "npa": "07708",
     "name": "Moch Hasmannoor Rachman",
-    "email": "moch.hasmannoor.r@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "daa75b1086920667ec3a2413625126cddbbaa8580ca5a93b1ca34ff632efb02f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -18999,7 +20345,8 @@ const INITIAL_DPT = [
   {
     "npa": "07711",
     "name": "Dalmathias Archady",
-    "email": "d.archady@gmail.com",
+    "email": "d.***@gmail.com",
+    "email_hash": "2e6c13c0d7e871aef66ec9bed8ef6ed1962b60511723c6248aa5bfa481119b63",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19013,7 +20360,8 @@ const INITIAL_DPT = [
   {
     "npa": "07720",
     "name": "Zilmi Nugroho",
-    "email": "Zilmi30@gmail.com",
+    "email": "Zi***@gmail.com",
+    "email_hash": "a99555d35f88659f13f1d8fe469f5f587f4bb9cbfe56290c78d41f458dac8db5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19027,7 +20375,8 @@ const INITIAL_DPT = [
   {
     "npa": "07722",
     "name": "Yuliana Wijayanti",
-    "email": "yuliwijaya.batm@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "7f02b4c5f74397b07f26e580a42036a66372c410a9190b20133047892d3a6ac9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19041,7 +20390,8 @@ const INITIAL_DPT = [
   {
     "npa": "07723",
     "name": "Adhitya Pratama Lanadito",
-    "email": "lanadito2207ap@gmail.com",
+    "email": "la***@gmail.com",
+    "email_hash": "3d9b18de28813369231f0eb834c23947ccd97f641cbee4c1fa74099c5a259f40",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19055,7 +20405,8 @@ const INITIAL_DPT = [
   {
     "npa": "07725",
     "name": "Asri Ilhami",
-    "email": "asri.ilhami@pertamina.com",
+    "email": "as***@pertamina.com",
+    "email_hash": "a80c71323e135101fa87ac4c911c18f8aebcb2c905b479bf95fff07b4620fe94",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19069,7 +20420,8 @@ const INITIAL_DPT = [
   {
     "npa": "07727",
     "name": "Agus",
-    "email": "agus_bgol@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "fcf25717fa6b9b2c2e8c3e57f9f2b11464eacd2755ce1895ea1fd56b58966517",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19083,7 +20435,8 @@ const INITIAL_DPT = [
   {
     "npa": "07728",
     "name": "Mustika Rivay",
-    "email": "mustikarivay@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "ec43efe3c232fab20f6757a7ec37d3d2b69054551dc362465a4dfb963c1cd84a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19097,7 +20450,8 @@ const INITIAL_DPT = [
   {
     "npa": "07735",
     "name": "Rika Febrianty",
-    "email": "rika_febrianty89@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "bc8e28460b99725cc944826d76e950898e10c2a44b3c59cb5c00620c8060a051",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19111,7 +20465,8 @@ const INITIAL_DPT = [
   {
     "npa": "07739",
     "name": "Rahardian Afriza Aswan",
-    "email": "rahardianafrizaaswan@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "35981dfd491b2877b1a7c9a0db351f89d51f1b185f508b36538a3677621f9c30",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19125,7 +20480,8 @@ const INITIAL_DPT = [
   {
     "npa": "07744",
     "name": "Taufik Akbar",
-    "email": "taufik@norasnusantara.com",
+    "email": "ta***@norasnusantara.com",
+    "email_hash": "d9a9c3f07ac11b664f3380f3d9606d8710768554b3688b730fa03654d25f169c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19139,7 +20495,8 @@ const INITIAL_DPT = [
   {
     "npa": "07759",
     "name": "Nayarudin Rahmat",
-    "email": "nayarudin@yahoo.com",
+    "email": "na***@yahoo.com",
+    "email_hash": "fff7ab901fe3ad0cf0fa1e622d6375e97cf5e0889b65796c07fd380242ffca37",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19153,7 +20510,8 @@ const INITIAL_DPT = [
   {
     "npa": "07760",
     "name": "Andi Reinaldo",
-    "email": "arainaldo@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "7a6d475503135f665e35d85f9f5d97900331dccdd9a84e491c60ff695296a8a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19167,7 +20525,8 @@ const INITIAL_DPT = [
   {
     "npa": "07763",
     "name": "Muhammad Fatih Qodri",
-    "email": "fatihqodri@itny.ac.id",
+    "email": "fa***@itny.ac.id",
+    "email_hash": "42d1b775dc2511970f87095a6f5090bd8f5c0e9dcbb96c2e0a605be8994031d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19181,7 +20540,8 @@ const INITIAL_DPT = [
   {
     "npa": "07765",
     "name": "Fauziah",
-    "email": "fauziah.aluwi@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "112c4b9be323d2b9320d3359936e377143384fdcee07f50f2338c810820bd810",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19195,7 +20555,8 @@ const INITIAL_DPT = [
   {
     "npa": "07767",
     "name": "Dimas Allan Zulkarnain",
-    "email": "dimas.allan22@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "faeaa96cb07e4f96102a8e2b09497d00d7f6cd4838b5ce5d96edf531412ba3a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19209,7 +20570,8 @@ const INITIAL_DPT = [
   {
     "npa": "07768",
     "name": "Aryoseno",
-    "email": "aryoseno.1984@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "9e89b0b2a0373a29b4f0dc5a4ed21f1789700177e725c374da19eae56050d6f2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19223,7 +20585,8 @@ const INITIAL_DPT = [
   {
     "npa": "07774",
     "name": "Noviar Hendriyanto",
-    "email": "noviar.hy@gmail.com",
+    "email": "no***@gmail.com",
+    "email_hash": "2e02947abee8d7854b2d9ae4d3b8ac88b6566bb34c2db738782f5b8da08ce76e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19237,7 +20600,8 @@ const INITIAL_DPT = [
   {
     "npa": "07777",
     "name": "Kukuh Jalu Waskita",
-    "email": "kukuh.waskita@yahoo.com",
+    "email": "ku***@yahoo.com",
+    "email_hash": "32b6cdd2a74b5cb881e9bb63735dfa882eacf89fd86a8b01c4f3cdf0e00182fd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19251,7 +20615,8 @@ const INITIAL_DPT = [
   {
     "npa": "07779",
     "name": "Jhon Philips Mulatua Sinaga",
-    "email": "philips.sinaga@gmail.com",
+    "email": "ph***@gmail.com",
+    "email_hash": "61dd7b6088c94e5233f93bfd700d1fbf84b1c9431a92f81826287ff0ac501291",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19265,7 +20630,8 @@ const INITIAL_DPT = [
   {
     "npa": "07801",
     "name": "Fikri Adam Dermawan",
-    "email": "fikri.adam.derma@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "60aefbf0b5d7e1046effd575790e4f11c322563361d6dfe13f6829c047cd0bc6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19279,7 +20645,8 @@ const INITIAL_DPT = [
   {
     "npa": "07811",
     "name": "Ardiansyah Marbun",
-    "email": "ardiansyahh2618@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "c53742dcf2698bd18a73d2dd764aab1cf69ed17c51d9902cea577b1a7e044eef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19293,7 +20660,8 @@ const INITIAL_DPT = [
   {
     "npa": "07812",
     "name": "Rahmad Sinambela",
-    "email": "rahmad.sinambela@agincourtresources.com",
+    "email": "ra***@agincourtresources.com",
+    "email_hash": "9dc298c952f396d6b2a79b448bb4dcb0a7714f9456d79c87999367e786335b2c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19307,7 +20675,8 @@ const INITIAL_DPT = [
   {
     "npa": "07813",
     "name": "Randy",
-    "email": "randy.darsono@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "e752b53fb18c8e277188c97becac5cbfb27cc8354bddc41c53757621056b6671",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19321,7 +20690,8 @@ const INITIAL_DPT = [
   {
     "npa": "07817",
     "name": "Rohmad Irvan Habibi",
-    "email": "habibumi@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "9d1b983ff4afcc7043f54f4d55910121c8921c31976773b6e824f9e7525c2c04",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19335,7 +20705,8 @@ const INITIAL_DPT = [
   {
     "npa": "07821",
     "name": "Reza Dwi Adrianto",
-    "email": "rezaondo@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "79f2f8fb65b0140978c0c60d79c1cb1705da0c5e8f6fbb5b6324f2fa7de0269a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19349,7 +20720,8 @@ const INITIAL_DPT = [
   {
     "npa": "07823",
     "name": "Agus Wiramsya Oscar",
-    "email": "oscar.agus@yahoo.co.id",
+    "email": "os***@yahoo.co.id",
+    "email_hash": "2926be05920a61e4b9e0dabe91b400f69fcf86a160ad19354165ee51e52475b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19363,7 +20735,8 @@ const INITIAL_DPT = [
   {
     "npa": "07825",
     "name": "Fiandri Indragunawan Rinawan",
-    "email": "irfiandri@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "f99e17c2a277dae886f1bf8ed82aba2da620dbb9a5b07b77c452de5908101742",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19377,7 +20750,8 @@ const INITIAL_DPT = [
   {
     "npa": "07829",
     "name": "Zulhayuddin Hasibuan",
-    "email": "Zulhayuddin.hasibuan@agincourtresources.com",
+    "email": "Zu***@agincourtresources.com",
+    "email_hash": "66f6a05cbbfeebfdef7f1891ca926e995e7579457efbb5c4b0862ef0f294bced",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19391,7 +20765,8 @@ const INITIAL_DPT = [
   {
     "npa": "07839",
     "name": "Erik Yogapurana",
-    "email": "erikyoga@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "1c9e78628e6a820a15ce87b83c32320cdc1aa7ad5405b2a5c66fd3ad48bd1b2b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19405,7 +20780,8 @@ const INITIAL_DPT = [
   {
     "npa": "07851",
     "name": "Risqa Permatasyara Mu'min",
-    "email": "risqatsyr@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "402b639dd98c9961ef8c2f8e645b2c07c5320f546a07c88c8aa581ec5da93a49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19419,7 +20795,8 @@ const INITIAL_DPT = [
   {
     "npa": "07854",
     "name": "Kafrizaldy",
-    "email": "kafrizaldy08@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "e5b1b8db55b9b58b362b76468affce056bbc6f2b860d98df93f31bd428b6f3f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19433,7 +20810,8 @@ const INITIAL_DPT = [
   {
     "npa": "07855",
     "name": "Nasruddin Bahrul",
-    "email": "nasruddin.bahrul@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "42d87257bf3bc9420a0c78fdbf6e3db40ea252467eded12f8d8f6662b6aa8111",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19447,7 +20825,8 @@ const INITIAL_DPT = [
   {
     "npa": "07865",
     "name": "Okta Christal Situmorang",
-    "email": "oktachristal@yahoo.co.id",
+    "email": "ok***@yahoo.co.id",
+    "email_hash": "cbbf7cd601a9325778eef9faa7ac92b15efd07b2ecb52d26801a5da32c77a41c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19461,7 +20840,8 @@ const INITIAL_DPT = [
   {
     "npa": "07867",
     "name": "Fauziah Anggraeni",
-    "email": "fanggraeni@skkmigas.go.id",
+    "email": "fa***@skkmigas.go.id",
+    "email_hash": "850b828b7a2c7292f57b9b6a75763d5333da747296b6669d813163528b114e7a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19475,7 +20855,8 @@ const INITIAL_DPT = [
   {
     "npa": "07873",
     "name": "Yoggi Frederick Butar Butar",
-    "email": "yoggi.butarbutar@outlook.com",
+    "email": "yo***@outlook.com",
+    "email_hash": "e931cd66f7b0efc8bff03934504a9c403f8f027dcf87d760c5fa4f0b8eccfdfb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19489,7 +20870,8 @@ const INITIAL_DPT = [
   {
     "npa": "07879",
     "name": "Sugiono",
-    "email": "sugionoinside@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "f8afa5035e3d87ceb904c6e16e6653ba0b19cca2ee564b916e0be911f7b17941",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19503,7 +20885,8 @@ const INITIAL_DPT = [
   {
     "npa": "07880",
     "name": "Reza Makaro Surbakti",
-    "email": "rezamakaro@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "626868282b0441fa4ffdbc726e119e5f06c1dc47c3d886c014a0b631050783b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19517,7 +20900,8 @@ const INITIAL_DPT = [
   {
     "npa": "07907",
     "name": "Dede Suherman",
-    "email": "dede.suherman95@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "62f397e51cc4eace43745d08260e5295a5d4f78f1264a3713d896e6b886e3e90",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19531,7 +20915,8 @@ const INITIAL_DPT = [
   {
     "npa": "07911",
     "name": "Bambang Widodo",
-    "email": "bambangvario@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "536c4171d288f445b5dd0732b946344b336d15259f658d99826f7401bca7e4bf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19545,7 +20930,8 @@ const INITIAL_DPT = [
   {
     "npa": "07923",
     "name": "Yunus Surya Anggara",
-    "email": "surya.yunus@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "ed76942b11fdc483f1646035e118b29c990c764721ccde6414f459f20bbf9910",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19559,7 +20945,8 @@ const INITIAL_DPT = [
   {
     "npa": "07932",
     "name": "Debriadi Harset",
-    "email": "deb_harset@yahoo.co.id",
+    "email": "de***@yahoo.co.id",
+    "email_hash": "fa78d27a65967240e8cc1697e22b7c51ed89c567ad72c5f7a53ca16caacd6e00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19573,7 +20960,8 @@ const INITIAL_DPT = [
   {
     "npa": "07935",
     "name": "Muhammad Arba Azzaman",
-    "email": "muh.arbaazzaman@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "6d287c7d937790c99d6a10bb40521e609bba669fed2a12717ffc44b7f6002c2e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19587,7 +20975,8 @@ const INITIAL_DPT = [
   {
     "npa": "07943",
     "name": "Randy Wahid Prasetyo",
-    "email": "jhon.magma@gmail.com",
+    "email": "jh***@gmail.com",
+    "email_hash": "e1fff178cd9baeef70562123877f640fa409261e26b78e8ddaad42d8569513b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19601,7 +20990,8 @@ const INITIAL_DPT = [
   {
     "npa": "07946",
     "name": "Roni Herdiyanto",
-    "email": "roni.geologist@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "994fba943875f510f09746bb8418ee88de74d82418bbdb84e4e261b99d27322c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19615,7 +21005,8 @@ const INITIAL_DPT = [
   {
     "npa": "07947",
     "name": "Riko Susetia Yuda",
-    "email": "rikosyuda@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "e7d798f55053535643743db29a965e87dd29d331e2942adf004dddd8b1f855fe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19629,7 +21020,8 @@ const INITIAL_DPT = [
   {
     "npa": "07948",
     "name": "R Bimo Anggoro Putro",
-    "email": "er_bim@yahoo.com",
+    "email": "er***@yahoo.com",
+    "email_hash": "f0e586791241e1ee2d9496e8786ddaec16bd010f371008814d3f0138ab6c0082",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19643,7 +21035,8 @@ const INITIAL_DPT = [
   {
     "npa": "07949",
     "name": "Yudhiro Caesar Utama",
-    "email": "yudhiro.utama@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "69159dfedd6fd890ddc8f4101ba88ec87a416870ab8df54174126a0cc5d90a51",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19657,7 +21050,8 @@ const INITIAL_DPT = [
   {
     "npa": "07953",
     "name": "Nila Rahayu",
-    "email": "nilarahayu90@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "55397eb7cf5fc166df70aa9a33b3f72351bc83695ba0ee95c2174e049a55e033",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19671,7 +21065,8 @@ const INITIAL_DPT = [
   {
     "npa": "07955",
     "name": "Joko Prawito",
-    "email": "joko.prawito@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "bad79f327c679f6d07ca2cc3b7881743d506ce398b017ecccbbef18772a1461e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19685,7 +21080,8 @@ const INITIAL_DPT = [
   {
     "npa": "07956",
     "name": "Taufiq Effendy",
-    "email": "taufiq.effendy@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "4044e02c8953c0aa607bfd30fd80eb488b9134c01415d999f5667e854a6f1bd7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19699,7 +21095,8 @@ const INITIAL_DPT = [
   {
     "npa": "07963",
     "name": "Muhammad Syahdan Khubbi",
-    "email": "syahdankhubbi709@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "d3195be04b86945969adfad9d4b6e860f6afcf9cf128ed204556b443c501ecf7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19713,7 +21110,8 @@ const INITIAL_DPT = [
   {
     "npa": "07969",
     "name": "Hanif Setiyawan",
-    "email": "setiyawanhanif@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "e30508e76448089e8ab70608d5b3feddcbc774231450ef4e73dbee999747fa32",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19727,7 +21125,8 @@ const INITIAL_DPT = [
   {
     "npa": "07971",
     "name": "Harris Nugrahardi",
-    "email": "harris.nugrahardi@pertamina.com",
+    "email": "ha***@pertamina.com",
+    "email_hash": "7e07d112f63ad1afc82c103e52fda4b161a4c3df236766237956576f96645d49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19741,7 +21140,8 @@ const INITIAL_DPT = [
   {
     "npa": "07983",
     "name": "Susanti Alawiyah",
-    "email": "s_alawiyah@yahoo.com",
+    "email": "s_***@yahoo.com",
+    "email_hash": "0bc74247155ea31f46e591d68b61f0363e8b1dffcd3ea44d941f51a29c26a419",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19755,7 +21155,8 @@ const INITIAL_DPT = [
   {
     "npa": "07994",
     "name": "Mika Rizki Puspaningrum",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19769,7 +21170,8 @@ const INITIAL_DPT = [
   {
     "npa": "07996",
     "name": "Bagus Dwi Cahya",
-    "email": "bagusdwicahya.bdc@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "d77e2fbeb1d5dcf78176cc2aa9ddd847327d7aee8b539a81656799496a5575e1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19783,7 +21185,8 @@ const INITIAL_DPT = [
   {
     "npa": "08009",
     "name": "Widyantara Mulya",
-    "email": "widi.geos@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "bd884b927792bbfc63f49efceda7a67a923a760c482cf3fed66a379ac1084bb0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19797,7 +21200,8 @@ const INITIAL_DPT = [
   {
     "npa": "08015",
     "name": "Ilham Kalami",
-    "email": "m.ilham.kalami@gmail.com",
+    "email": "m.***@gmail.com",
+    "email_hash": "8a2de78f78d3e2e1fdd5b09fcfde3c55d0787ab20d3b0def2b7ee1f579cdb19f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19811,7 +21215,8 @@ const INITIAL_DPT = [
   {
     "npa": "08022",
     "name": "Boni Ari Fianto",
-    "email": "masfian0103@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "c1530ffeae23ef369b7e9848a9876ff9593b93bb23705db556db8a7fef1f3c99",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19825,7 +21230,8 @@ const INITIAL_DPT = [
   {
     "npa": "08023",
     "name": "Wayan Aris Widarmayana",
-    "email": "wayan.widarmayana@pertamina.com",
+    "email": "wa***@pertamina.com",
+    "email_hash": "c75361f8441787232eb7bd07fea18d05870e10b1dc2e04247f5c24d56116b83a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19839,7 +21245,8 @@ const INITIAL_DPT = [
   {
     "npa": "08035",
     "name": "Niki Rahma Rizkita",
-    "email": "nikirrizkita@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "58f915039f62a352f4dcba2246f9818948b30f9499cdc8a2c6c3c18c6946c15f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19853,7 +21260,8 @@ const INITIAL_DPT = [
   {
     "npa": "08039",
     "name": "Muhammad Khaidir Husain",
-    "email": "khaidirhusain@gmail.com",
+    "email": "kh***@gmail.com",
+    "email_hash": "36e0f25e901051aa8632ec5a758760dcd9e59dafe0587559136378a4e2398821",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19867,7 +21275,8 @@ const INITIAL_DPT = [
   {
     "npa": "08042",
     "name": "Suizsa Sadafe",
-    "email": "suizsa.sadafe@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "9d239cd5e5db769a754f201ff1d8d9c3878435787323fc10d921579fe0d59bfa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19881,7 +21290,8 @@ const INITIAL_DPT = [
   {
     "npa": "08044",
     "name": "Evin Haro Rajagukguk",
-    "email": "evin_raja@yahoo.com",
+    "email": "ev***@yahoo.com",
+    "email_hash": "18f4d1253f1939332a7c2523c071b2c627c5ff5d759c111f273059ec858f1ea7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19895,7 +21305,8 @@ const INITIAL_DPT = [
   {
     "npa": "08048",
     "name": "Juki Bodi Sembada",
-    "email": "juki.sembada@antam.com",
+    "email": "ju***@antam.com",
+    "email_hash": "8200b5985f571454328f3188c433e097ff1c8c3104c25e90817304d9d2eb47d5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19909,7 +21320,8 @@ const INITIAL_DPT = [
   {
     "npa": "08051",
     "name": "Mardliyah Oktaviani Putri",
-    "email": "moputrigeologi@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "f377dda4e576ddfb52233aacf2deddcee2c7fb7ec4f3af95411321dc9757aaee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19923,7 +21335,8 @@ const INITIAL_DPT = [
   {
     "npa": "08052",
     "name": "Fatimah Nadira",
-    "email": "nadiraalatas12@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "f4495b5aa937465ea6c01cfca7f2aaa222b7e260c4b8d4c7739383846d1ec322",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19937,7 +21350,8 @@ const INITIAL_DPT = [
   {
     "npa": "08053",
     "name": "Ruswana",
-    "email": "ruswana@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "1cbeb1f8ed87f03986d65715b12fb2cd48c5f5b074d3ff496bcc28f1b5ba7ded",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19951,7 +21365,8 @@ const INITIAL_DPT = [
   {
     "npa": "08055",
     "name": "kbar Raniadi Fardan",
-    "email": "ikbar.r.fardan@gmail.com",
+    "email": "ik***@gmail.com",
+    "email_hash": "9771636d6422933a5c269cd9f499d37f20c63d8cf0e17c5a8137b483e4703fec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19965,7 +21380,8 @@ const INITIAL_DPT = [
   {
     "npa": "08068",
     "name": "Yoyok Hartoyo",
-    "email": "yoyokhartoyoplus@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "9321d3a6587ddc2a60972344919d02257d9e9efc0e85de28e7ba5f1a769e346e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19979,7 +21395,8 @@ const INITIAL_DPT = [
   {
     "npa": "08069",
     "name": "Djohan Rizal Prasetya",
-    "email": "djohan.rizal@gmail.com",
+    "email": "dj***@gmail.com",
+    "email_hash": "1d43b8b0b10c31ae410871725a4d242bc32d4b86ed20ea45d45e62fb2938db56",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19993,7 +21410,8 @@ const INITIAL_DPT = [
   {
     "npa": "08071",
     "name": "Gilang Gautama Putra",
-    "email": "gilanggautamaputra@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "f2c204260fb980fd4f59385e2de59d0fa19d71850ad6f50335f281b24f9ab0f9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20007,7 +21425,8 @@ const INITIAL_DPT = [
   {
     "npa": "08074",
     "name": "Hendra Wahyudi",
-    "email": "h9wahyudi@gmail.com",
+    "email": "h9***@gmail.com",
+    "email_hash": "d3d830df054bb7fac15c118586e99a9a80fccae22d5f900e980307ed06fa2d78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20021,7 +21440,8 @@ const INITIAL_DPT = [
   {
     "npa": "08078",
     "name": "Sony Malik Kartanegara",
-    "email": "sony.m.kartanegara@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "a9aa3ba020c87076c8d17561bf936a4deaa6baf9b9b1467f3240f13bee578ad0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20035,7 +21455,8 @@ const INITIAL_DPT = [
   {
     "npa": "08092",
     "name": "Debbi Garneta",
-    "email": "db.garneta@gmail.com",
+    "email": "db***@gmail.com",
+    "email_hash": "1cc9188ecf8b3de0eacb256d1bab2ee44a5bbe6a5249a264813df34f42704ba0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20049,7 +21470,8 @@ const INITIAL_DPT = [
   {
     "npa": "08107",
     "name": "Anggoro Chandra Setiyadi Sofyan",
-    "email": "anggoro.setiyadi@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "e84bda8f5f6f26c128e8eec69aedd0576f3e0cbd561b25b5259ddc52eff9cee2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20063,7 +21485,8 @@ const INITIAL_DPT = [
   {
     "npa": "08119",
     "name": "Zuli Mustofa",
-    "email": "zuldafa21@gmail.com",
+    "email": "zu***@gmail.com",
+    "email_hash": "5d17669a2aa06cdb72e3b9b42046cd9dce4e8667d73cdeb1fece71056447271e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20077,7 +21500,8 @@ const INITIAL_DPT = [
   {
     "npa": "08129",
     "name": "Aman Bhakti",
-    "email": "amanbhakti7@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "613de1652a30bd5ad3ebb22d33275ddf39bfc3aefbabaed16bf251d8638ad268",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20091,7 +21515,8 @@ const INITIAL_DPT = [
   {
     "npa": "08139",
     "name": "Tati Fitriana",
-    "email": "tatifitriana@gmail.com",
+    "email": "ta***@gmail.com",
+    "email_hash": "18f23b558c08c8211d674f4fbb377ccc0bb7c61ee9e826da229cd51b1590d00f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20105,7 +21530,8 @@ const INITIAL_DPT = [
   {
     "npa": "08140",
     "name": "Pakalima Manik",
-    "email": "pakalima99@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "c840c277c1e2328ca2155bab40cacfe97fbd2af0938518c51cae6f55998028d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20119,7 +21545,8 @@ const INITIAL_DPT = [
   {
     "npa": "08145",
     "name": "Ferdi Rizal",
-    "email": "forsterit.olv@gmail.com",
+    "email": "fo***@gmail.com",
+    "email_hash": "62df4b17ad8718048a543298077c3bd1b877e0a6ee4706bac61bced601e02f3d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20133,7 +21560,8 @@ const INITIAL_DPT = [
   {
     "npa": "08148",
     "name": "Avesta Yudha Prasetya",
-    "email": "avesta.weer@gmail.com",
+    "email": "av***@gmail.com",
+    "email_hash": "da8a12ad71c845ac267d37bb0a9de8bbb85406041779e8ba94d2c3509a8a28b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20147,7 +21575,8 @@ const INITIAL_DPT = [
   {
     "npa": "08149",
     "name": "Jarwanto",
-    "email": "jarwanbjb@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "435a52f10a2175d71de7718063b166a0ba75de8a009d9e8e7761a1cb97306f52",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20161,7 +21590,8 @@ const INITIAL_DPT = [
   {
     "npa": "08151",
     "name": "Edin Akhmad Syaripudin",
-    "email": "edin.syaripudin@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "3fe0107628054517d2489c5031ca8f8cc0896fe351662482675bde9fe06d0b77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20175,7 +21605,8 @@ const INITIAL_DPT = [
   {
     "npa": "08160",
     "name": "Samsul Rizal",
-    "email": "samsulrizall824@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "7d81ee8a2c61c1f866c370530099269d5e0e220db5ff37ab1f6c0d331ea35649",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20189,7 +21620,8 @@ const INITIAL_DPT = [
   {
     "npa": "08164",
     "name": "Brahmantyo Azhar Jihad Muhammad",
-    "email": "gieehad@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "142567113cd04368a2350de34a2360be181ae09a91d74eb914f8df04c65f33f2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20203,7 +21635,8 @@ const INITIAL_DPT = [
   {
     "npa": "08204",
     "name": "Ryan Nur Rahdiana",
-    "email": "ryan.rahdiana@gmail.com",
+    "email": "ry***@gmail.com",
+    "email_hash": "ec0b3522060b954b6ee22d5fb5ed3702400d7b46db94fb1c6bec9c13629bd2e4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20217,7 +21650,8 @@ const INITIAL_DPT = [
   {
     "npa": "08220",
     "name": "Hafidz Nurrahman",
-    "email": "hafidz.noerrahman@live.com",
+    "email": "ha***@live.com",
+    "email_hash": "088f233ff29e78bd83786bb2071e0beaadc20119708fbfb61967f405ccba68f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20231,7 +21665,8 @@ const INITIAL_DPT = [
   {
     "npa": "08221",
     "name": "Ludwina Jesslyn Rachel",
-    "email": "ludwinajesslyn@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "dd5e152aa9354663d2f70a10d4fe6d14d8ce03dee5c0037fad0a644edca112b5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20245,7 +21680,8 @@ const INITIAL_DPT = [
   {
     "npa": "08224",
     "name": "Laode Mochamad Alifuddin",
-    "email": "alifuddin.geo@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "58330014e28639d517753904b3da6439e291215fb026bc821ec2e823d25d8eb1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20259,7 +21695,8 @@ const INITIAL_DPT = [
   {
     "npa": "08227",
     "name": "Grandiselo M Cahyowidigdo",
-    "email": "grandiselomuncar@gmail.com",
+    "email": "gr***@gmail.com",
+    "email_hash": "de013bfed2346b2ccee2e6f3e51bfd47bf1f4c16b5b0fb1a3b9591aebc7fcac0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20273,7 +21710,8 @@ const INITIAL_DPT = [
   {
     "npa": "08237",
     "name": "Rio Ervin Permana",
-    "email": "riogeo03@yahoo.co.id",
+    "email": "ri***@yahoo.co.id",
+    "email_hash": "3e899ad61c6c5d48d52d92994a86f225f31845b9c2292245e197b2d410abdbd9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20287,7 +21725,8 @@ const INITIAL_DPT = [
   {
     "npa": "08251",
     "name": "Edwin Aldriansyah",
-    "email": "ealdriansyahwin@gmail.com",
+    "email": "ea***@gmail.com",
+    "email_hash": "b2afe5e5758680a28aa46c09426c315fba6f3096b3b2a371b1a8805ea01a13a2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20301,7 +21740,8 @@ const INITIAL_DPT = [
   {
     "npa": "08252",
     "name": "Nurul Anjaina",
-    "email": "nurul.anjaina@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "467e499780aa5f1aad02bc9b0f73986f4556ddee3c6a5de995f58ff4dd886130",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20315,7 +21755,8 @@ const INITIAL_DPT = [
   {
     "npa": "08258",
     "name": "Andi Rifan",
-    "email": "convolute2007@gmail.com",
+    "email": "co***@gmail.com",
+    "email_hash": "f67195ae23d1b7380cc35e019407b77680770abd870ff2e847fea143515d6ad4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20329,7 +21770,8 @@ const INITIAL_DPT = [
   {
     "npa": "08265",
     "name": "Bahrul Hidayah",
-    "email": "bahrul.hidayah@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "68731afa0cce08705d35a83ef2fd2d74f1cbfa24baf34b4a619c990579c8b213",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20343,7 +21785,8 @@ const INITIAL_DPT = [
   {
     "npa": "08270",
     "name": "Wisnu S Prayitna",
-    "email": "wisnuprayitna@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "c4e4e6c61a9af3b43c5eba9374719dfeb16e51a7d4855395b4ec42f80aaff767",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20357,7 +21800,8 @@ const INITIAL_DPT = [
   {
     "npa": "08271",
     "name": "Muh Nur Asyikin Abbas",
-    "email": "abbas.geology@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "88199705de8cbf6b65de1ed1afff50452ac31f11ad9c07126e8e973eb138fddb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20371,7 +21815,8 @@ const INITIAL_DPT = [
   {
     "npa": "08275",
     "name": "Rahmatullah Sulaiman",
-    "email": "rahmatullah.03geouh@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "74c38bea35fe370ec00b90c36b1f0d18e61af28970ede61e89b5bc7559b4510c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20385,7 +21830,8 @@ const INITIAL_DPT = [
   {
     "npa": "08278",
     "name": "Muhammad Risqonullah",
-    "email": "rizqonegara@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "8f8c2337ca13e9593bea3639c8f392bdaf01fc73436ddc8a5ebdd0c2b6a811fe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20399,7 +21845,8 @@ const INITIAL_DPT = [
   {
     "npa": "08300",
     "name": "Abdi Hidayat Maruru",
-    "email": "abdihidayat.m@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "1f4f34918a25733db4e152cf6bb0d054ffda631dd0302bc5af1f18e243389e8f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20413,7 +21860,8 @@ const INITIAL_DPT = [
   {
     "npa": "08310",
     "name": "Anugrah Pradana",
-    "email": "anugrahpradana@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "2da831dc18f0368ad5ad67d6c738618691840ceb88e942b6d24c27aa60c63965",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20427,7 +21875,8 @@ const INITIAL_DPT = [
   {
     "npa": "08318",
     "name": "Ahmad Farhan Nugraha",
-    "email": "ahmadfarhann35@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "664118db36ff74bdfeb1bef3262bdd335022080924f4773d9fe3d22ba1b65b6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20441,7 +21890,8 @@ const INITIAL_DPT = [
   {
     "npa": "08320",
     "name": "Muhammad Taufiq",
-    "email": "ns.muhammad.taufiq@gmail.com",
+    "email": "ns***@gmail.com",
+    "email_hash": "93a2b4abf7d474fa79288f76bf107edf2951e2ef14b9cbe54ff49df4edc85f19",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20455,7 +21905,8 @@ const INITIAL_DPT = [
   {
     "npa": "08331",
     "name": "Obed Patiung",
-    "email": "obedpatiung85@gmail.com",
+    "email": "ob***@gmail.com",
+    "email_hash": "4a6ee2969453bef8aea89a39e4d067b7e5908773763e9d9ccff217d97ef33c7a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20469,7 +21920,8 @@ const INITIAL_DPT = [
   {
     "npa": "08337",
     "name": "Bukhori Muslim",
-    "email": "bukhorimuslim628@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "fd6df4a67e37d7134579e3ea21ade0de3465f9e7da6d0e238fccefc58e826337",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20483,7 +21935,8 @@ const INITIAL_DPT = [
   {
     "npa": "08367",
     "name": "Inggrid Rian Darusta",
-    "email": "riandarusta@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "990a1fd9fb30b03aee2658523f680a7ebd29889aa3742c0a9e6c73c9e129e430",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20497,7 +21950,8 @@ const INITIAL_DPT = [
   {
     "npa": "08369",
     "name": "Ketut Putu Manji Dharsana",
-    "email": "manjidharsana@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "b4fb5c3a9bcfda13909665705fdc5f9e4e0a478e83311d6e9562baead46d6ff2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20511,7 +21965,8 @@ const INITIAL_DPT = [
   {
     "npa": "08374",
     "name": "Invandi",
-    "email": "irwandi@audemars.co.id",
+    "email": "ir***@audemars.co.id",
+    "email_hash": "c73e4ca7fce029bba9720098ef11143f920eb8a2969f5c891f79a0c30da95d2f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20525,7 +21980,8 @@ const INITIAL_DPT = [
   {
     "npa": "08384",
     "name": "Imam Prasetyo",
-    "email": "imamgea@gmail.com",
+    "email": "im***@gmail.com",
+    "email_hash": "bc8f20474573cafe93932dec2c00e87a149c0f8281ce40b8523c2a9b2564ebdf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20539,7 +21995,8 @@ const INITIAL_DPT = [
   {
     "npa": "08386",
     "name": "Defa Meidi Wijaya",
-    "email": "defamw@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "90d9ef0b30f0313d648d5733bdde754ee8e0b1786dc1c39741a992ee4ac4a1e8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20553,7 +22010,8 @@ const INITIAL_DPT = [
   {
     "npa": "08391",
     "name": "Yogie Prananta Surbakti",
-    "email": "surbaktiyogie@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "0e0b0e3ddcb8abc811413d3889ee3e309975c86297f05e416256fcfab7b59cf4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20567,7 +22025,8 @@ const INITIAL_DPT = [
   {
     "npa": "08396",
     "name": "Yan Rizal",
-    "email": "yanrizal151@yahoo.com",
+    "email": "ya***@yahoo.com",
+    "email_hash": "c002a0ccea483db43ddc49e63b24814a6983a34890b26743e81205fa3fb0c072",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20581,7 +22040,8 @@ const INITIAL_DPT = [
   {
     "npa": "08417",
     "name": "Ahmad Irfan Nizam",
-    "email": "nizam.geology@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "c316418e33746658edd21ca631938526789c3be0d87fb783199b4d24c69f308b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20595,7 +22055,8 @@ const INITIAL_DPT = [
   {
     "npa": "08427",
     "name": "Galung Malvinas",
-    "email": "galungmalvinas@yahoo.com",
+    "email": "ga***@yahoo.com",
+    "email_hash": "50c906dec2f86e0db98a3a1eb37692ba83d548ab1009e5ec728652f2f1c615df",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20609,7 +22070,8 @@ const INITIAL_DPT = [
   {
     "npa": "08433",
     "name": "Max Milliam Poceratu",
-    "email": "maxpoceratu@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "ee7ba0eeec919511eb9f58ebaf4d7f60bfd9901f518dc4ecfd7e2beaa86bbee3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20623,7 +22085,8 @@ const INITIAL_DPT = [
   {
     "npa": "08437",
     "name": "Alexandra",
-    "email": "alexlamak6@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "63e0c230c907a6c6adc66e16be1d0bb4d0e893338c23b3333ea7f9421686f798",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20637,7 +22100,8 @@ const INITIAL_DPT = [
   {
     "npa": "08450",
     "name": "Ekaprasetya Yusnikusumah",
-    "email": "faithlessthought@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "def53320a590b1dfa3e84b1d7b831aed661a4d0d67eb385a71d61d6ee88f7760",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20651,7 +22115,8 @@ const INITIAL_DPT = [
   {
     "npa": "08454",
     "name": "Sonya Slamet",
-    "email": "sonyaslamet@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "7b2bcadc052b496a2c8216dbde1fa7b88ce306767f143c0d26ec7d65a53b00d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20665,7 +22130,8 @@ const INITIAL_DPT = [
   {
     "npa": "08456",
     "name": "Ambang Sasongko",
-    "email": "ambangsasongko@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "c35d08c412f7278c283469bc821538f209b7cd1446997f5072d20d9d28a6a6a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20679,7 +22145,8 @@ const INITIAL_DPT = [
   {
     "npa": "08457",
     "name": "Mildred Aponno",
-    "email": "mildredmuriel@yahoo.com",
+    "email": "mi***@yahoo.com",
+    "email_hash": "f4ae6759ca18a3527fbd0aecc9c1ee19afa19d07366114556fc35058da8737ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20693,7 +22160,8 @@ const INITIAL_DPT = [
   {
     "npa": "08458",
     "name": "Julis Lona",
-    "email": "lonajulis@gmail.com",
+    "email": "lo***@gmail.com",
+    "email_hash": "9be080e1b5421970b0c3cd68bd7d64bd866f371dd08ca477f71ba12ff5897f65",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20707,7 +22175,8 @@ const INITIAL_DPT = [
   {
     "npa": "08473",
     "name": "Riyan Subekti",
-    "email": "subekti.riyan@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "3ac44be62aa0bd2a24699fdfc045dab1ce2d30c2935ef539cf9894bfad22f615",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20721,7 +22190,8 @@ const INITIAL_DPT = [
   {
     "npa": "08495",
     "name": "Ricky Helbet",
-    "email": "helbet98@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "99567490a05aeb5c3a0a0d855250025d1dff37508d56feeb36a53761986e3a9f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20735,7 +22205,8 @@ const INITIAL_DPT = [
   {
     "npa": "08500",
     "name": "Syiria Latuamury",
-    "email": "syiria.latuamury.sI@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "1de7cd2d2bc3ff37dfe3ae180257643bbd0ce5c8a043999fa85ea9b4860a4a76",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20749,7 +22220,8 @@ const INITIAL_DPT = [
   {
     "npa": "08515",
     "name": "Rony Rumpuin",
-    "email": "rony.geologi72@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "0e951262bf05c1a2408a75eca80d953b12b480845b4b878eb8ccc3ea41a1495d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20763,7 +22235,8 @@ const INITIAL_DPT = [
   {
     "npa": "08526",
     "name": "Febriwandy Tandi Ruruk",
-    "email": "w4ndygeo06@gmail.com",
+    "email": "w4***@gmail.com",
+    "email_hash": "d29070f43da3863d440843d83a6227e165705de81f99681e5f7c69334e363c93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20777,7 +22250,8 @@ const INITIAL_DPT = [
   {
     "npa": "08539",
     "name": "Jasman Ridho",
-    "email": "jasmanridho@yahoo.com",
+    "email": "ja***@yahoo.com",
+    "email_hash": "ee0146d0a483be2e327aecf9456b15ea73b50c1eee74ecf3b3350b89685b8f87",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20791,7 +22265,8 @@ const INITIAL_DPT = [
   {
     "npa": "08546",
     "name": "Muhammad Hilmi",
-    "email": "muhammadhilmi64@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "2a5b58e7564c21e934f2b8da63c0a6f9e4596a433567cf46f18f9d2633ff367f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20805,7 +22280,8 @@ const INITIAL_DPT = [
   {
     "npa": "08562",
     "name": "Yusuf N Suabey",
-    "email": "nicko.jusuf.suabey@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "bdf7485d7df08d7d43885180edd9f328db89b7f0e460409e8639f3f603482536",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20819,7 +22295,8 @@ const INITIAL_DPT = [
   {
     "npa": "08575",
     "name": "Siti Karina Ipaenin",
-    "email": "karinaipaenin@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "5c194e8a1685a2eeab88ef65f7945c485ec5860f8c85e1350b8ab9d51743b9c3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20833,7 +22310,8 @@ const INITIAL_DPT = [
   {
     "npa": "08577",
     "name": "Relitta Anakita",
-    "email": "relittaanakita@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "af870ec0c9ecfd195048c50dbcab235ab91d78e3526cb11297b33d757c99cc9d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20847,7 +22325,8 @@ const INITIAL_DPT = [
   {
     "npa": "08578",
     "name": "Helen Heumasse",
-    "email": "helenheumasse2411@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "b14bc0906c23453d22c094de7d85b45182a3d1e7e85f46385bc42b37b7a34b74",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20861,7 +22340,8 @@ const INITIAL_DPT = [
   {
     "npa": "08590",
     "name": "Muhammad Harifan",
-    "email": "rifan69@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "a60cae7893ac9192618e85ebb5d5daba8e342d72910f621f1b20c3e411d811fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20875,7 +22355,8 @@ const INITIAL_DPT = [
   {
     "npa": "08595",
     "name": "Muhamad Sadli Rumonin",
-    "email": "sadliroem@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "bf2478396fdf5c0fd81ed99734f15b2ee889d2fe7b983d400220645caa92173d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20889,7 +22370,8 @@ const INITIAL_DPT = [
   {
     "npa": "08599",
     "name": "Lutfi Nugrahadin",
-    "email": "LNugrahadin@slb.com",
+    "email": "LN***@slb.com",
+    "email_hash": "72ffd6e77a17992d7d5edd7eb2f0c8cc36f05fe3f14074012dae2b778429ba78",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20903,7 +22385,8 @@ const INITIAL_DPT = [
   {
     "npa": "08600",
     "name": "Nuresa Riana Nugraha",
-    "email": "nuresariananugraha@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "bbedc3b307dcfdd2e0352e9a0c7d861fa7858252af24617d78d83ccbc8d48bfc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20917,7 +22400,8 @@ const INITIAL_DPT = [
   {
     "npa": "08614",
     "name": "Arie Naftali Hawu Hede",
-    "email": "ariehede@itb.ac.id",
+    "email": "ar***@itb.ac.id",
+    "email_hash": "c2b099a1ec1db3f3db36a2587ca26e432b1ec4913551fadd6100660325f83951",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20931,7 +22415,8 @@ const INITIAL_DPT = [
   {
     "npa": "08615",
     "name": "David F Siregar",
-    "email": "davidfsiregar@yahoo.com",
+    "email": "da***@yahoo.com",
+    "email_hash": "847e6fe63a06fda469265e9db446da07bf60aa08418764705390e29db827d91b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20945,7 +22430,8 @@ const INITIAL_DPT = [
   {
     "npa": "08624",
     "name": "Nasrullah Hasanuddin",
-    "email": "nasrullah.h_ulla@yahoo.com",
+    "email": "na***@yahoo.com",
+    "email_hash": "40c8c27902948e3e673221afeba8ea1b4473734b86e4611a643ce030e26f3797",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20959,7 +22445,8 @@ const INITIAL_DPT = [
   {
     "npa": "08671",
     "name": "Rehard Nur Arbiyudha",
-    "email": "rehardnur@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "4757eede68f6a7b0d0fbeac8ef9d2721c034efb5fab3bb4cb4ca16890e8c954f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20973,7 +22460,8 @@ const INITIAL_DPT = [
   {
     "npa": "08682",
     "name": "Primus Efianus",
-    "email": "primusakti99@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "f59f68902052ef32c252cb2a1e70917c1f71b7f61aefd166553975969dbdacc4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -20987,7 +22475,8 @@ const INITIAL_DPT = [
   {
     "npa": "08734",
     "name": "Widi Satria Utama",
-    "email": "widi.satria.utama@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "f301ecd51a758a79b3073e536794879052537cee6bb19588c6e76d4a8466a516",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21001,7 +22490,8 @@ const INITIAL_DPT = [
   {
     "npa": "08738",
     "name": "Faisal Siddiq",
-    "email": "faisalsiddiq1402@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "c0740288afe8f83f05dbafdc619103c5b164d43fcb8fc193a55a3090e724528e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21015,7 +22505,8 @@ const INITIAL_DPT = [
   {
     "npa": "08742",
     "name": "Herlando Juniansyah Putra Perdana",
-    "email": "landojuniansyah@yahoo.co.id",
+    "email": "la***@yahoo.co.id",
+    "email_hash": "a2a1564899c216ccf3a7103654fd53eb30fc95293bad262578e275a01ac407c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21029,7 +22520,8 @@ const INITIAL_DPT = [
   {
     "npa": "08751",
     "name": "Gifar Fajri Sofwan",
-    "email": "gifarfs@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "94e4121764eb63881bdd4727b3a7618e30032a8068b9be659a88134ecfc9cd3b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21043,7 +22535,8 @@ const INITIAL_DPT = [
   {
     "npa": "08754",
     "name": "Rahajeng Ardinni Noor",
-    "email": "rahajeng.ardinni@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "81545c00ed68d66f28f1744aea290fba022efa07b5ab918f846782f4e48dded8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21057,7 +22550,8 @@ const INITIAL_DPT = [
   {
     "npa": "08759",
     "name": "Hitznaiti Husna",
-    "email": "hitznaiti@gmail.com",
+    "email": "hi***@gmail.com",
+    "email_hash": "190f1fe04d926875afc8ad2fc912d57769e00a39d281f94ebdcfc5a21491dfed",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21071,7 +22565,8 @@ const INITIAL_DPT = [
   {
     "npa": "08767",
     "name": "Arief Hidayat",
-    "email": "arief.hidayatzein@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "c64f3b7bd40bc18cb9b89046fa68e21241f45cedacff28b832d9167d84029753",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21085,7 +22580,8 @@ const INITIAL_DPT = [
   {
     "npa": "08768",
     "name": "Lukman Fahry",
-    "email": "lukmanfahry1994@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "8fe421e2483c04c19974eab0f45695a3c3743bd3726660c9b7796b15563f73d1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21099,7 +22595,8 @@ const INITIAL_DPT = [
   {
     "npa": "08773",
     "name": "Perdana Noverda Pamurty",
-    "email": "perdana.noverda@gmail.com",
+    "email": "pe***@gmail.com",
+    "email_hash": "404e0a397e9cc08bd9423973dc097091f917ad034441ae90c2761996b10d9b32",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21113,7 +22610,8 @@ const INITIAL_DPT = [
   {
     "npa": "08806",
     "name": "Debby Irawan",
-    "email": "debbyira@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "5219e1e603d3d555919204f43840c532fc1ae5d02439e5869d466fed02a53f5e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21127,7 +22625,8 @@ const INITIAL_DPT = [
   {
     "npa": "08820",
     "name": "Jananda Nuralam Indriyanto",
-    "email": "jananda.nuralam@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "b3268fb5f15ac1d1af4a397e42bc804c37da584db3b6d0d26a1683cfee478d64",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21141,7 +22640,8 @@ const INITIAL_DPT = [
   {
     "npa": "08829",
     "name": "‘Sri Mulyani",
-    "email": "SMulyani@slb.com",
+    "email": "SM***@slb.com",
+    "email_hash": "ff40a97bd21914eda44da4fe6888963686b083c93bee8e503b3a2949b1a1218a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21155,7 +22655,8 @@ const INITIAL_DPT = [
   {
     "npa": "08832",
     "name": "Raden Okky Mahendra",
-    "email": "r.okkymahendra@gmail.com",
+    "email": "r.***@gmail.com",
+    "email_hash": "df2e00556bdda5df0dd4b2cedfcbfd78fc8ae94d6e6513a440f4dd88a13b8221",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21169,7 +22670,8 @@ const INITIAL_DPT = [
   {
     "npa": "08833",
     "name": "Thomas Cafreza Atarita",
-    "email": "thoms.cfr@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "acc866cd1d33543ba2f861cc756622e5e7865455d5d68618d09ce53810c703b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21183,7 +22685,8 @@ const INITIAL_DPT = [
   {
     "npa": "08834",
     "name": "Aldo Octavianto M",
-    "email": "aldooctavianto@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "c4050d7c3a3592310c6ce3739b0747407f2323684d10f44e0954df4bb66a9484",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21197,7 +22700,8 @@ const INITIAL_DPT = [
   {
     "npa": "08843",
     "name": "Endy Mukhlis Syuhada",
-    "email": "endymukh0306@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "20e57d7dc1a6ab5f9494591639caacb7c671000980853ea9dc909fb7f7099e53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21211,7 +22715,8 @@ const INITIAL_DPT = [
   {
     "npa": "08844",
     "name": "Malik Duto Kuncoro",
-    "email": "kuncoro.malik@outlook.com",
+    "email": "ku***@outlook.com",
+    "email_hash": "631e0a3af3281125cbaf09cfa9e710bd33fb8e18d09427408ebf10785523f37c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21225,7 +22730,8 @@ const INITIAL_DPT = [
   {
     "npa": "08876",
     "name": "Wahyu Setiawan",
-    "email": "wahyust1@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "58e723c6d7e987006890f1dffeb91870f11c6ff4f011531ab139a6bd80e9321e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21239,7 +22745,8 @@ const INITIAL_DPT = [
   {
     "npa": "08888",
     "name": "Irfan Anshori Fadhil",
-    "email": "irfan.a.fadhil@hotmail.com",
+    "email": "ir***@hotmail.com",
+    "email_hash": "5c36974e8a9c8d8cf62ae87b39295d613bc5accf40fefc6ef1ce3966e4652e45",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21253,7 +22760,8 @@ const INITIAL_DPT = [
   {
     "npa": "08895",
     "name": "Puja Kesuma",
-    "email": "mpujo.kesuma@gmail.com",
+    "email": "mp***@gmail.com",
+    "email_hash": "6b97c1ad384dd4a93a0b58ff8c88d94f24e12d77ed3045641f0253dee88afd6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21267,7 +22775,8 @@ const INITIAL_DPT = [
   {
     "npa": "08911",
     "name": "Septyo Uji Pratomo",
-    "email": "septyoup@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "13c2b83c88bc9e51082f14b23474899ccc07b1d8b72a81f9c2cdddd3ed61a178",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21281,7 +22790,8 @@ const INITIAL_DPT = [
   {
     "npa": "08924",
     "name": "Candra",
-    "email": "candrahungkul@gmail.com",
+    "email": "ca***@gmail.com",
+    "email_hash": "64e813c39d8e05af8d5a1cb40be42e2532da37e6db745ea431a33699d3022fff",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21295,7 +22805,8 @@ const INITIAL_DPT = [
   {
     "npa": "08962",
     "name": "Danang Agung Triwidianto",
-    "email": "danang170694@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "55dffd98543d3c0cdbdaeffcefb610ab41fc72d01662c37ac9d019edb2322b86",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21309,7 +22820,8 @@ const INITIAL_DPT = [
   {
     "npa": "08964",
     "name": "Irfan Sidik Dozyn",
-    "email": "irfan.dozyn@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "00cffd87baced358d84ba0476df6b8d4bef252ad3448f5c96ed6616115048a0c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21323,7 +22835,8 @@ const INITIAL_DPT = [
   {
     "npa": "08965",
     "name": "Riyadi",
-    "email": "riyadisth@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "23e908a093201161c3cd90e17bef845bd273aa5889fc5059e07df870e6772a93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21337,7 +22850,8 @@ const INITIAL_DPT = [
   {
     "npa": "08966",
     "name": "Parmanto Adhi Tjahjono",
-    "email": "parmantoadhi@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "d065b8625e8ce5b76db37fa40f39984bb333b4db8be0b075a90fb9fb7ace615e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21351,7 +22865,8 @@ const INITIAL_DPT = [
   {
     "npa": "08967",
     "name": "Rinza Syahputra",
-    "email": "rinzasyahputra@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "1e941688e6f67f893a136cc7a5824c4e1e3538edacad94e2f64b0722cd5b6b8b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21365,7 +22880,8 @@ const INITIAL_DPT = [
   {
     "npa": "08968",
     "name": "Ameer Z. Fitrat",
-    "email": "fitrat.pie@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "354c8f253838724a969117f9e2f42f21a802e759ff1df667387c157375514fde",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21379,7 +22895,8 @@ const INITIAL_DPT = [
   {
     "npa": "08969",
     "name": "Yudistian Yunis",
-    "email": "yudistian@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "71d2f345c2e623b664ff153d2422d9114270d30cf3b5e147c8e4a30ba954e486",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21393,7 +22910,8 @@ const INITIAL_DPT = [
   {
     "npa": "08970",
     "name": "Tri Peni Setyowati",
-    "email": "setyowati.tripeni@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "3db665bd337753a708051d7f065c8f575cc689b6c5aa30be0a2a31e912958479",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21407,7 +22925,8 @@ const INITIAL_DPT = [
   {
     "npa": "08977",
     "name": "Danis Diaz Syahputra",
-    "email": "danis_diaz@ymail.com",
+    "email": "da***@ymail.com",
+    "email_hash": "b141d91196b03b66c78412d69304b89878f83110baa0744336086116d18787e6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21421,7 +22940,8 @@ const INITIAL_DPT = [
   {
     "npa": "08981",
     "name": "Anak Agung Sagung Mayun Yudhyasmara Prabandari",
-    "email": "yudhyasmara@yahoo.com",
+    "email": "yu***@yahoo.com",
+    "email_hash": "7feb6a0a22521960064774fdc934d2d03be7190dd964451904114addc5afcf00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21435,7 +22955,8 @@ const INITIAL_DPT = [
   {
     "npa": "08984",
     "name": "Sandra Labobar",
-    "email": "sandralabobar@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "e453e767eb3847140ee5bfa5efdc3338de2d1042c31bc2d381049307851bad8f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21449,7 +22970,8 @@ const INITIAL_DPT = [
   {
     "npa": "08996",
     "name": "Zubaeda Tianotak",
-    "email": "edhatianotak95@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "7125caef1f37ccbc29a5f31f5d5bd4d70d64588ad612c560394a7e944628d4a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21463,7 +22985,8 @@ const INITIAL_DPT = [
   {
     "npa": "08997",
     "name": "Julius Tandibuna",
-    "email": "juliustandibuna@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "e1540df6d2938e7c580f1233c5e588d656ebfc9eabbb03b0344c287031367be8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21477,7 +23000,8 @@ const INITIAL_DPT = [
   {
     "npa": "08998",
     "name": "Syahwin Saulatu",
-    "email": "bappedasyahwin@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "af5d85fd3fed9ffbee5f74e545ecd082c722a7c5e1bb9df909942eefbb6b00aa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21491,7 +23015,8 @@ const INITIAL_DPT = [
   {
     "npa": "09034",
     "name": "Widya Puspa Dwi Harnum",
-    "email": "widyapuspa49@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "6584bfa149296e0bd9f1a2ed1d219283ac20cbd74191b353f9519597673539ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21505,7 +23030,8 @@ const INITIAL_DPT = [
   {
     "npa": "09039",
     "name": "Febby Yudhi Pratama",
-    "email": "febbyyudhipratama@gmail.com",
+    "email": "fe***@gmail.com",
+    "email_hash": "8abbab3fba6f6fbdb6af26d7d7904f314094f6a60d141f12c6fc6b65c15eb9f7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21519,7 +23045,8 @@ const INITIAL_DPT = [
   {
     "npa": "09045",
     "name": "Rinaldi Pratama",
-    "email": "rinaldi.pratama.itb@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "aa9ec717f86814d384c73ea44ae9d95c7d709880c38d5c4a6464c27f3c2bcd72",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21533,7 +23060,8 @@ const INITIAL_DPT = [
   {
     "npa": "09062",
     "name": "Ryan Surjaudaja",
-    "email": "ryan.itb@gmail.com",
+    "email": "ry***@gmail.com",
+    "email_hash": "7b0058591996cd1a43f9bcb505632eafedff386a56be56c649d723ed9c455b7f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21547,7 +23075,8 @@ const INITIAL_DPT = [
   {
     "npa": "09082",
     "name": "Muhamad Yusuf Abdul Madjid",
-    "email": "muhammadyusuf@geodin.net",
+    "email": "mu***@geodin.net",
+    "email_hash": "d816453b42d89d1fe92289123acd8dcd7a2039a231bbd974092caa6f744367d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21561,7 +23090,8 @@ const INITIAL_DPT = [
   {
     "npa": "09097",
     "name": "Ali Mashar",
-    "email": "alimashar1996@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "d156c88268a2414a7681d0519708df4cc98ab8229f74449ce782b868ca78231c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21575,7 +23105,8 @@ const INITIAL_DPT = [
   {
     "npa": "09106",
     "name": "Arthur A Tumengkol",
-    "email": "artbeacon1@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "a4e4efd4b7731854469cd2c90aa05d1fbc40cd295a8ea218eac9d3a460e54e77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21589,7 +23120,8 @@ const INITIAL_DPT = [
   {
     "npa": "09107",
     "name": "Eka Nuryanti Faudjan",
-    "email": "ekanuryantifaudja@gmail.com",
+    "email": "ek***@gmail.com",
+    "email_hash": "5f70b9daf2a2c4d04c13591b3339e39dbc95fb61439dbf1ebb9bb201ec886f82",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21603,7 +23135,8 @@ const INITIAL_DPT = [
   {
     "npa": "09110",
     "name": "Fadhil Muhammad Akrom",
-    "email": "fadhilmuhammadakrom@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "87af89cb5f8585cda6b2aad3c6870557c03caaee79ee76df479cf10e6dc2b3ad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21617,7 +23150,8 @@ const INITIAL_DPT = [
   {
     "npa": "09138",
     "name": "Muhammad Iqbal",
-    "email": "miqbaal46@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "de1caa69b58adfcee70f34c913ecd3c4b0c46597c05910d415f4a6b0579a26a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21631,7 +23165,8 @@ const INITIAL_DPT = [
   {
     "npa": "09163",
     "name": "Istiqlal Irawan",
-    "email": "istiqlal_irawan@yahoo.com",
+    "email": "is***@yahoo.com",
+    "email_hash": "689281927b43a7849f2d87977734a3ddf071649a91c4faf1c0cd52b2ee858aca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21645,7 +23180,8 @@ const INITIAL_DPT = [
   {
     "npa": "09169",
     "name": "Rakel Octivan Ismet",
-    "email": "rakeloctivanismet@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "4c1da8f9d323d3200ba078951f3c3d6238e7bb92869f1399f40b49df3645e260",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21659,7 +23195,8 @@ const INITIAL_DPT = [
   {
     "npa": "09170",
     "name": "Fannana",
-    "email": "fun_nana1002@yahoo.com",
+    "email": "fu***@yahoo.com",
+    "email_hash": "1505f1dbd5630092bb0bce4916dfa2324e14211d562844dde1355d8e0818b4b6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21673,7 +23210,8 @@ const INITIAL_DPT = [
   {
     "npa": "09171",
     "name": "Afriyan Akbar",
-    "email": "afriyan.akbar@gmail.com",
+    "email": "af***@gmail.com",
+    "email_hash": "902ccdbfe75992a52faf357312c20da93593f79da5ac0662249939926ff61565",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21687,7 +23225,8 @@ const INITIAL_DPT = [
   {
     "npa": "09181",
     "name": "Bayu Rezki Ma\\‘aarij",
-    "email": "bayurezki@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "b59efb031e9a403b98ee34be7cde8d6136efb93fbf4f9971f249f432a3a1d447",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21701,7 +23240,8 @@ const INITIAL_DPT = [
   {
     "npa": "09192",
     "name": "M. Revanda Prasetya",
-    "email": "prasetyarevan@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "f659756b5fac9fd71ab3cb5c3c46f9a2eadad1fadf56fb606b7953ecc60d8486",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21715,7 +23255,8 @@ const INITIAL_DPT = [
   {
     "npa": "09200",
     "name": "Hafiz Rahmat",
-    "email": "hafizrahmat2910@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "2f9ccdbe89bd6c5a3a3141e5932f1a5190898cc14b33a9cdb24607dfbb30282a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21729,7 +23270,8 @@ const INITIAL_DPT = [
   {
     "npa": "09207",
     "name": "Drestanta Yudha Satya",
-    "email": "drestantayudha@gmail.com",
+    "email": "dr***@gmail.com",
+    "email_hash": "962d64db1bbd403b2b7b3a22058d2cafaaec888e7b8e9affa2f6cda1c00afb93",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21743,7 +23285,8 @@ const INITIAL_DPT = [
   {
     "npa": "09209",
     "name": "Ryan Damara Pradhana",
-    "email": "rdpradhana@skkmigas.go.id",
+    "email": "rd***@skkmigas.go.id",
+    "email_hash": "aa2fe44cde106cd28a78d03a43ca1c6735e6d73a8f9db63e642f1c83ecac8223",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21757,7 +23300,8 @@ const INITIAL_DPT = [
   {
     "npa": "09213",
     "name": "Dwi Meidian Sulistyo",
-    "email": "dwi.m.sulistyo.88@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "f1d96b9bff0700a1ba9aa7ff5dd6e9564b79a03b57eb610f0270e59d5ccfe05f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21771,7 +23315,8 @@ const INITIAL_DPT = [
   {
     "npa": "09233",
     "name": "Wusono Prihadi Santosa",
-    "email": "wusono@yahoo.com",
+    "email": "wu***@yahoo.com",
+    "email_hash": "c241b00cf711b06613a991216b9efb515f5d7465e85cde2332a7b515d62ee87c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21785,7 +23330,8 @@ const INITIAL_DPT = [
   {
     "npa": "09245",
     "name": "Rivan Agusta",
-    "email": "rivan.agusta@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "7ab1396819f67c25f8c5d469fde470cd79be6c151e83fac00f4abee3fa1b4739",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21799,7 +23345,8 @@ const INITIAL_DPT = [
   {
     "npa": "09251",
     "name": "Hasnan Luthfi Dalimunthe",
-    "email": "hasnanluthfi@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "860cc694c23ff70a2620c9e1d1ded0242a8e8f73887bba504293d0067394c785",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21813,7 +23360,8 @@ const INITIAL_DPT = [
   {
     "npa": "09267",
     "name": "Iwan Bambang S",
-    "email": "iwan_bambang_s@yahoo.com",
+    "email": "iw***@yahoo.com",
+    "email_hash": "0a74b64d1f230d1830b0ba3ab6bb7c70fde016dbc07d09ce887827b465aabad5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21827,7 +23375,8 @@ const INITIAL_DPT = [
   {
     "npa": "09278",
     "name": "Irpan limi",
-    "email": "k3I3boy@gmail.com",
+    "email": "k3***@gmail.com",
+    "email_hash": "e206a46861702158036f2e5215df3e1560cb658da843585034272d4f852959db",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21841,7 +23390,8 @@ const INITIAL_DPT = [
   {
     "npa": "09285",
     "name": "Rio Aditya",
-    "email": "rioadit2010@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "4ffb317204288be180c75c28b7269aa1323cd24301d1bb81b20c564b21590379",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21855,7 +23405,8 @@ const INITIAL_DPT = [
   {
     "npa": "09287",
     "name": "Karera Luca",
-    "email": "kareraluca33@gmail.com",
+    "email": "ka***@gmail.com",
+    "email_hash": "c161b1e26606f02c7c1be51071c0858dbe5828629adc8710669af349026f6dd9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21869,7 +23420,8 @@ const INITIAL_DPT = [
   {
     "npa": "09290",
     "name": "Teuku Ryan Hagaznurly Syah",
-    "email": "thagaznurlysyah@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "69de2ef0f51402e916e4bf1f4626269e2cdc63cd7a635dfe693eed4f36dbf340",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21883,7 +23435,8 @@ const INITIAL_DPT = [
   {
     "npa": "09305",
     "name": "Muhammad Habibi",
-    "email": "habibi@sprcorp.com",
+    "email": "ha***@sprcorp.com",
+    "email_hash": "defe95506c8fe00734720478b3ef7c636fc67c44e7338af61b9c73fb0d610d70",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21897,7 +23450,8 @@ const INITIAL_DPT = [
   {
     "npa": "09313",
     "name": "Topan Adriyan Biki",
-    "email": "topanadriyanb@gmail.com",
+    "email": "to***@gmail.com",
+    "email_hash": "1ad66fc546188187056c7bd362a3b7838b780eedac69e53211ac01053f476312",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21911,7 +23465,8 @@ const INITIAL_DPT = [
   {
     "npa": "09317",
     "name": "Ahmad Zakaria",
-    "email": "ahmad.z2015@yahoo.com",
+    "email": "ah***@yahoo.com",
+    "email_hash": "9d906ba3079a4f6f5e3d92f69572c5c4ca4f7667296550b2cc98dcdaf7f1eb44",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21925,7 +23480,8 @@ const INITIAL_DPT = [
   {
     "npa": "09326",
     "name": "William Baswono",
-    "email": "willian.sb@yahoo.com",
+    "email": "wi***@yahoo.com",
+    "email_hash": "19410842c460e3316a52fc9a67f8948f00cabe1b9b227cf314bedf48c5e07d66",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21939,7 +23495,8 @@ const INITIAL_DPT = [
   {
     "npa": "09328",
     "name": "T Zulfikar Bahagia",
-    "email": "t.zulfikar_bp@yahoo.com",
+    "email": "t.***@yahoo.com",
+    "email_hash": "bd826bdbaa7ee12b73785edefa43ec65b98379bd9334b1510930165d9a1bfc95",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21953,7 +23510,8 @@ const INITIAL_DPT = [
   {
     "npa": "09329",
     "name": "Sakinah Fitria",
-    "email": "sakinah.ft@yahoo.com",
+    "email": "sa***@yahoo.com",
+    "email_hash": "69d005bb1dafc6be706ea8e48d809c83e95e610ff96a8c32e6ab1c6ba8b144ef",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21967,7 +23525,8 @@ const INITIAL_DPT = [
   {
     "npa": "09354",
     "name": "Ken Aully Utama",
-    "email": "ken.aullyutama@outlook.com",
+    "email": "ke***@outlook.com",
+    "email_hash": "3c9a7046117a88d43f3fc72f08d7d69237663a15ff115db1621e8838cb75fb38",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21981,7 +23540,8 @@ const INITIAL_DPT = [
   {
     "npa": "09371",
     "name": "Fitria Dinarsin Pamungkaswaty",
-    "email": "fitriadinarsih.p@outlook.com",
+    "email": "fi***@outlook.com",
+    "email_hash": "06cefdfdb54d7e27df3ac6438da14c5eee9eb1dfcfa18412d44da7f1f4c31e10",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -21995,7 +23555,8 @@ const INITIAL_DPT = [
   {
     "npa": "09380",
     "name": "Haditiya Cipta Nugraha",
-    "email": "haditiyaciptanug@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "071a64c4d0a41ecfc504e4d84a3c1c7d182f15ee9ac067a5de53c538b2ac83d5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22009,7 +23570,8 @@ const INITIAL_DPT = [
   {
     "npa": "09383",
     "name": "Amanda Chintya Grace",
-    "email": "achintyagrace@gmail.com",
+    "email": "ac***@gmail.com",
+    "email_hash": "121835086a8632ff25d1ff204113983ba4af3071bd433b2a9b1fe428582045b7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22023,7 +23585,8 @@ const INITIAL_DPT = [
   {
     "npa": "09384",
     "name": "Darren Adrinanto Utomo",
-    "email": "darren.au96@outlook.com",
+    "email": "da***@outlook.com",
+    "email_hash": "29604cb1d9db498f4bd4830d2238964bfdd11561007babc501f2697054ca7cf8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22037,7 +23600,8 @@ const INITIAL_DPT = [
   {
     "npa": "09386",
     "name": "Ajeng Wulandari",
-    "email": "ajeng.wulandari@pertamina.com",
+    "email": "aj***@pertamina.com",
+    "email_hash": "07333ab91b6bebb7350e166a062e21097e8026756164b029aca5ed2c17409ca0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22051,7 +23615,8 @@ const INITIAL_DPT = [
   {
     "npa": "09391",
     "name": "Handrika Widagdo",
-    "email": "handrika.widagdo@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "c81e99422543c08cef6266f4b7482daab8845cec980b8debcc4c9c30dcfce186",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22065,7 +23630,8 @@ const INITIAL_DPT = [
   {
     "npa": "09405",
     "name": "Moh. Qoid Filayati",
-    "email": "filayatimoh.qoid@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "6ac0a51044b54327afdd3d5bc3c280363efd78ebb481ccbda324721f3b4fc302",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22079,7 +23645,8 @@ const INITIAL_DPT = [
   {
     "npa": "09408",
     "name": "‘Widyo Permono",
-    "email": "widyo.permono@esdm.go.id",
+    "email": "wi***@esdm.go.id",
+    "email_hash": "d4dfc810d1aabd31544bb0e7594e6630b777ab394f4a0335f0237f2ef128f706",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22093,7 +23660,8 @@ const INITIAL_DPT = [
   {
     "npa": "09412",
     "name": "Ambrovicty Lasamahu",
-    "email": "ambrovicty59@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "8c435eca53e5b0d8c2af0000e936bb5b75d4478a6d0611f125697886cf4bb7f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22107,7 +23675,8 @@ const INITIAL_DPT = [
   {
     "npa": "09413",
     "name": "Arif Seno Adji",
-    "email": "arifsenoadji@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "08421299f57b66d0d002b04c576428986f53918e28d3eaab74d93540f7197bf9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22121,7 +23690,8 @@ const INITIAL_DPT = [
   {
     "npa": "09415",
     "name": "Mahfudin Mahmud",
-    "email": "esdmfudin87@gmail.com",
+    "email": "es***@gmail.com",
+    "email_hash": "c721f5e464751b68f6b9afcf81c5e9ee2bc4ad49847d9e4bdb7a5e50dffcfcb8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22135,7 +23705,8 @@ const INITIAL_DPT = [
   {
     "npa": "09431",
     "name": "Dwi Utami",
-    "email": "utamidwi02@gmail.com",
+    "email": "ut***@gmail.com",
+    "email_hash": "d68323347d833faa36745e219c41e45e4c5c6be5512af9e8d65ec4df7a224782",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22149,7 +23720,8 @@ const INITIAL_DPT = [
   {
     "npa": "09457",
     "name": "Febrina",
-    "email": "febrina.febrina@gmail.com",
+    "email": "fe***@gmail.com",
+    "email_hash": "7ef37c1fae3d522fe7e0e72151c25512df551ac73c2e99bf2b48f4a5ba830790",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22163,7 +23735,8 @@ const INITIAL_DPT = [
   {
     "npa": "09460",
     "name": "Irfan Yazid",
-    "email": "irfanyazidyazid@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "fceadb0eba44ffeded41d73690381306d714f534744ca630946c10f55234b3ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22177,7 +23750,8 @@ const INITIAL_DPT = [
   {
     "npa": "09474",
     "name": "Askari Gafar",
-    "email": "askarigafar@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "b85d68ec5f525626e0b354f57010225c81c692e6eb0e02d4a6b9c7bb2272452c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22191,7 +23765,8 @@ const INITIAL_DPT = [
   {
     "npa": "09487",
     "name": "Emellia Bunga Amitama",
-    "email": "emellia.amitama@gmail.com",
+    "email": "em***@gmail.com",
+    "email_hash": "3c59d1e3b207591ae19aeaaeb63e10d48bcb6a6fd7030c3c92be460f5eb179ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22205,7 +23780,8 @@ const INITIAL_DPT = [
   {
     "npa": "09488",
     "name": "Adrian Rahman Aprianto",
-    "email": "adrianrahman22@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "5b7f0a9ab4f83190836a079c87434d2a6fed19921a900aa53d6501e20a373a34",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22219,7 +23795,8 @@ const INITIAL_DPT = [
   {
     "npa": "09494",
     "name": "Imbang Jaya",
-    "email": "imbang.jaya@esdm.go.id",
+    "email": "im***@esdm.go.id",
+    "email_hash": "b0515c3374248a4ee3a3cdd0cee50687ddbef6297988a212c476b5e16029f109",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22233,7 +23810,8 @@ const INITIAL_DPT = [
   {
     "npa": "09517",
     "name": "Julio Dimas Pramadika",
-    "email": "juliodimaspram@gmail.com",
+    "email": "ju***@gmail.com",
+    "email_hash": "ecbf586e0240b60b2f4f64f4c4659492a3b8ad0cfd1cfc03c7b437c18abd9be2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22247,7 +23825,8 @@ const INITIAL_DPT = [
   {
     "npa": "09560",
     "name": "Ananda Afifatillah",
-    "email": "aafifatillah@yahoo.com",
+    "email": "aa***@yahoo.com",
+    "email_hash": "15e344063c28ecdb4699b0bf727e11c5c2879d3da6771ba24d2ec98fdd66fa3c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22261,7 +23840,8 @@ const INITIAL_DPT = [
   {
     "npa": "09573",
     "name": "Febri Nur K",
-    "email": "febrinurkho@yahoo.com",
+    "email": "fe***@yahoo.com",
+    "email_hash": "3c5471e5c5916373eb332391b212e311949d303abef845eab5e842b79a052d5d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22275,7 +23855,8 @@ const INITIAL_DPT = [
   {
     "npa": "09575",
     "name": "Atika Maharani Arnur",
-    "email": "atikamaharani632@yahoo.com",
+    "email": "at***@yahoo.com",
+    "email_hash": "2a4a6971b7c92c2b4688e4dc1a5afb96b4df97e18eaeaafb6c441fe90eb82286",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22289,7 +23870,8 @@ const INITIAL_DPT = [
   {
     "npa": "09577",
     "name": "Aulia Prayogi",
-    "email": "aulia.prayogi@yahoo.com",
+    "email": "au***@yahoo.com",
+    "email_hash": "45ad0bf6d3fd673af056e6085796dba1a80e28fcbcf8e3de9187167c8cfe9637",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22303,7 +23885,8 @@ const INITIAL_DPT = [
   {
     "npa": "09578",
     "name": "Avishena P",
-    "email": "avishena.p@yahoo.com",
+    "email": "av***@yahoo.com",
+    "email_hash": "1584025d8b7c7273427cc1e9723e5eaab46f012c5dbd5c404e308d61aefb4b60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22317,7 +23900,8 @@ const INITIAL_DPT = [
   {
     "npa": "09590",
     "name": "Widya Adiza Putri",
-    "email": "widyaadiza.wa@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "c30663cd581f2e9df518bc2c4fc2667215da207fa637842e72be09d990e45c98",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22331,7 +23915,8 @@ const INITIAL_DPT = [
   {
     "npa": "09594",
     "name": "Nobertus Pakadang",
-    "email": "obhe30@gmail.com",
+    "email": "ob***@gmail.com",
+    "email_hash": "438d139589fe5c6826b0a50cbf577c236a626aa8c1a3ed24459e9fb073bc6320",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22345,7 +23930,8 @@ const INITIAL_DPT = [
   {
     "npa": "09611",
     "name": "Meutia Fitri Hasan",
-    "email": "meutiafitrihasan@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "52036d2a44bd9d2dce2712d4be43433f46500c98af995574430b9ac6ec945203",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22359,7 +23945,8 @@ const INITIAL_DPT = [
   {
     "npa": "09624",
     "name": "Firman Ardhy Litiloly",
-    "email": "firmaniitiloly@yahoo.com",
+    "email": "fi***@yahoo.com",
+    "email_hash": "cda0f2f73c09bafcbeeda13b9543bdb99efcbe90274e0acbb173e0e9336b1074",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22373,7 +23960,8 @@ const INITIAL_DPT = [
   {
     "npa": "09634",
     "name": "Deaz Dewantaraa",
-    "email": "deaz.dewantara@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "4e5f5d90469c354723b038d7f5a448bc12dca10b8938aacb89ad4c42b721e852",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22387,7 +23975,8 @@ const INITIAL_DPT = [
   {
     "npa": "09646",
     "name": "Nabilah Adani",
-    "email": "NAdani2@slb.com",
+    "email": "NA***@slb.com",
+    "email_hash": "933d17f63b5c7cac25a63685d2dee2039636265ebd27799a46f3137a0d4f45be",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22401,7 +23990,8 @@ const INITIAL_DPT = [
   {
     "npa": "09647",
     "name": "Firha Nazlia Ramadhani",
-    "email": "ramadhanifirhanazlia@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "8a94312e5fdd559a439edd61c56dad9decde927fd6d784d1ed5362daf32a8c74",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22415,7 +24005,8 @@ const INITIAL_DPT = [
   {
     "npa": "09648",
     "name": "Mikhail Valentino Lestaluhu",
-    "email": "mikhail.lestaluhu@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "041d7e6219f965add3d7411d9d0a6db54586a2bd13cc03f9ee4ac68f4954e207",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22429,7 +24020,8 @@ const INITIAL_DPT = [
   {
     "npa": "09652",
     "name": "Wisnu Widiatmoko",
-    "email": "WWidiatmoko@slb.com",
+    "email": "WW***@slb.com",
+    "email_hash": "d8c57459cecd7b85ab1c835ce1450efda41a94d35d71a481101444731cad6749",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22443,7 +24035,8 @@ const INITIAL_DPT = [
   {
     "npa": "09683",
     "name": "Muhammad Budisatya Wiranatanagara",
-    "email": "muhammad.wiranatanagara@esdm.go.id",
+    "email": "mu***@esdm.go.id",
+    "email_hash": "fe81df5abdc4227ed7914101e586a3c87f3a60e681a626594a1aa18cdecfdd60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22457,7 +24050,8 @@ const INITIAL_DPT = [
   {
     "npa": "09684",
     "name": "‘Wahyu Probo Ananto",
-    "email": "wahyuproboananto@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "03ba020bef12ab3ab389d31dd10f63263a5af91348df4ab92adf2d26141df162",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22471,7 +24065,8 @@ const INITIAL_DPT = [
   {
     "npa": "09685",
     "name": "Andri Gunawan",
-    "email": "agunawanschist@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "0abee6af0221b1d1ccdbf46787663472d705cc37db6728d7b604b680685d8d05",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22485,7 +24080,8 @@ const INITIAL_DPT = [
   {
     "npa": "09686",
     "name": "Suliantara",
-    "email": "suliantara2202@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "1d58a93090a2b75f1f4382efa71bf6e775948369c290d449b06ae92ebc945366",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22499,7 +24095,8 @@ const INITIAL_DPT = [
   {
     "npa": "09697",
     "name": "Chrisany Hukubun",
-    "email": "chrisanyhukbun@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "c7248b82f002c2134d4137ba3267f519f5b38d6598d3ddf916f2bf49f4cc4d22",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22513,7 +24110,8 @@ const INITIAL_DPT = [
   {
     "npa": "09699",
     "name": "Giovaldo Juen Lumoly",
-    "email": "Giovaldolumoly@gmail.com",
+    "email": "Gi***@gmail.com",
+    "email_hash": "e932af4ff11220fa1f545d44e98ffeded410dd93fac5fa4076003a9e2f9fff04",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22527,7 +24125,8 @@ const INITIAL_DPT = [
   {
     "npa": "09710",
     "name": "Monica Triskia Lewakabessy",
-    "email": "monicatriskia@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "10d9a13ed77d51cee251d10d72d145bdfef824ee58ec2769b554fd7c3aa7b415",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22541,7 +24140,8 @@ const INITIAL_DPT = [
   {
     "npa": "09716",
     "name": "Ratih C F Ratumanan",
-    "email": "ratihcfr@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "af3fe3a2176ca47eb8e5b95b3704e7b6b1a78c8d37a83a9aaba421c77c8f8f83",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22555,7 +24155,8 @@ const INITIAL_DPT = [
   {
     "npa": "09722",
     "name": "Ageng Warasta",
-    "email": "ageng.warasta@skkmigas.go.id",
+    "email": "ag***@skkmigas.go.id",
+    "email_hash": "47d1bf40144cdce4715730551243f9bc0bf90729461976ffdf0217cb7fd38650",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22569,7 +24170,8 @@ const INITIAL_DPT = [
   {
     "npa": "09761",
     "name": "Mutiara Vania Salma",
-    "email": "vania2605@yahoo.com",
+    "email": "va***@yahoo.com",
+    "email_hash": "e6c7ec223cdf803e951f64e3ea62b0699167ce36be1e48719162bb8fea6e7d04",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22583,7 +24185,8 @@ const INITIAL_DPT = [
   {
     "npa": "09765",
     "name": "Muhamad IIham Akbar",
-    "email": "ilhamuhakbar@yahoo.com",
+    "email": "il***@yahoo.com",
+    "email_hash": "61829388693bbddd684bf0ad65cfbe102b778cacd9f250d4e418098c4f291084",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22597,7 +24200,8 @@ const INITIAL_DPT = [
   {
     "npa": "09772",
     "name": "Lola Syalsabilla",
-    "email": "shinta.019@yahoo.com",
+    "email": "sh***@yahoo.com",
+    "email_hash": "bceb78bb201cd977ea6f034783018304a670df660c8f5167467fb2554ebce954",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22611,7 +24215,8 @@ const INITIAL_DPT = [
   {
     "npa": "09793",
     "name": "Kurnia Adji Widjaja",
-    "email": "adjikurnia@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "42f94a9998101e63d953d09d362ea0fffb8555a0b7224a34bbd73b5e3c15a9c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22625,7 +24230,8 @@ const INITIAL_DPT = [
   {
     "npa": "09799",
     "name": "Alfredo Sugiarto",
-    "email": "alfredo@geodin.net",
+    "email": "al***@geodin.net",
+    "email_hash": "a0ec6912bd651fbe1866a388c43a4f076bb53b1ad470d014efb2775c0b2197a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22639,7 +24245,8 @@ const INITIAL_DPT = [
   {
     "npa": "09801",
     "name": "Hanny Ramadhani",
-    "email": "hannyjkt11@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "9b04c6ff1c3c1b73991f255de7556d63e0dc1fff0c30ebf6e1597403e11f00f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22653,7 +24260,8 @@ const INITIAL_DPT = [
   {
     "npa": "09807",
     "name": "Jessyka Anggita Fitriyani",
-    "email": "jessykah2301@gmail.com",
+    "email": "je***@gmail.com",
+    "email_hash": "ff65a4095ba71a49a15aa2be8c3ce4a4d99d39702cf4aadbaaf80abb88b61598",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22667,7 +24275,8 @@ const INITIAL_DPT = [
   {
     "npa": "09816",
     "name": "Fakhmi Idzni Faza Fakhrudin",
-    "email": "3idzni@gmail.com",
+    "email": "3i***@gmail.com",
+    "email_hash": "0bea538274e8fdb52ee2d186f4775a2404b99f8cd8eb3c73a7600bda36e08470",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22681,7 +24290,8 @@ const INITIAL_DPT = [
   {
     "npa": "09821",
     "name": "Roy Widiartha",
-    "email": "widiartha@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "71eecb8e6e49d2f13a1dec859948b4e2fa7e64a57d3c4a0c2cf77fea8d8e61f1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22695,7 +24305,8 @@ const INITIAL_DPT = [
   {
     "npa": "09823",
     "name": "Herlambang Setyawan",
-    "email": "herlambang.setyawan@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "5e2b8b7050fbb779ad882fe32acf0febe61ec524d6426587a79bfbc80bd72cf9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22709,7 +24320,8 @@ const INITIAL_DPT = [
   {
     "npa": "09824",
     "name": "Irkamni",
-    "email": "ir.010907@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "e4ba8a4a5904329c3134c0d0f29667d0a3445eb616924d9206e497aab7c06343",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22723,7 +24335,8 @@ const INITIAL_DPT = [
   {
     "npa": "09828",
     "name": "Vita Borlak",
-    "email": "vitaborlak5@gmail.com",
+    "email": "vi***@gmail.com",
+    "email_hash": "f4f8c364021aac850158c8fcf29b688f245efe97d3280c5442f4b7ca2ec829d8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22737,7 +24350,8 @@ const INITIAL_DPT = [
   {
     "npa": "09830",
     "name": "Budi Prasetyo",
-    "email": "budpras77@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "d10eab5672aa4bf16af2a22d12f653f4c794451cb92967008cc44a153ca82ff6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22751,7 +24365,8 @@ const INITIAL_DPT = [
   {
     "npa": "09842",
     "name": "Arief Budiman Ustiawan",
-    "email": "budiustiwan@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "4f272e01971dbb9fa087b77f48c6018b9fbf77205c1b36313060aa4376e5b771",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22765,7 +24380,8 @@ const INITIAL_DPT = [
   {
     "npa": "09853",
     "name": "Akfil Fakhri",
-    "email": "akfil.fakhri@pertamina.com",
+    "email": "ak***@pertamina.com",
+    "email_hash": "98632beffaa8dbad98b0ac9ef97e2ad06de260eb2db9bd3684989d94cf8da010",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22779,7 +24395,8 @@ const INITIAL_DPT = [
   {
     "npa": "09855",
     "name": "Andaru Cahyo Guntoro",
-    "email": "andaru.guntoro@ymail.com",
+    "email": "an***@ymail.com",
+    "email_hash": "6463b8085b8715d567fbfae57111e064a4c631903f33fc2d2c034f2fd15b603c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22793,7 +24410,8 @@ const INITIAL_DPT = [
   {
     "npa": "09876",
     "name": "Ayuta Fauzia Ladiba",
-    "email": "ayuta.fauzia.ladiba@gmail.com",
+    "email": "ay***@gmail.com",
+    "email_hash": "a3c9a293c7df225340d5e6e0441a7f6419763722a2602ba19db5640b6980d3e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22807,7 +24425,8 @@ const INITIAL_DPT = [
   {
     "npa": "09881",
     "name": "Dhanny Triamindo",
-    "email": "dhannytriamindo@gmail.com",
+    "email": "dh***@gmail.com",
+    "email_hash": "67efee92434538e1dbcefa4e8eca3554560498696a9930ea154c244429d8b751",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22821,7 +24440,8 @@ const INITIAL_DPT = [
   {
     "npa": "09905",
     "name": "Ginanjar Mahar Pamungkas",
-    "email": "ginanjar.mahar@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "58ce938ce7a7feecc38bb2d469cfbd0b383ac7cfa687073c442d54b94bc2484a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22835,7 +24455,8 @@ const INITIAL_DPT = [
   {
     "npa": "09919",
     "name": "Rizal Debrian Mahantara",
-    "email": "rdmahantara@gmail.com",
+    "email": "rd***@gmail.com",
+    "email_hash": "c83a212a87b28c2e91ecd81052bf7dcbd7f38ae4651075ce53ad9fb15ce36e6d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22849,7 +24470,8 @@ const INITIAL_DPT = [
   {
     "npa": "09932",
     "name": "Irvan Sakti Nugroho",
-    "email": "irvansaktoro@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "0bfecfde78ec5c626e3c6806f2077cde0879b725d72aac327bcdb512844aafd4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22863,7 +24485,8 @@ const INITIAL_DPT = [
   {
     "npa": "09935",
     "name": "Alvey Nukefi",
-    "email": "alvey.nukefi@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "7b039d9e3b0c803c8b1cf12a603090b48dab3d2076ab800b0885999a53701465",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22877,7 +24500,8 @@ const INITIAL_DPT = [
   {
     "npa": "09968",
     "name": "Ardi Nazamzi",
-    "email": "nazamzi.ardi@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "bb8d0c51785bfa0ecb7600cb3af1aac0e5add87de17f7d5f7eb3174322ca4593",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22891,7 +24515,8 @@ const INITIAL_DPT = [
   {
     "npa": "09973",
     "name": "Ary Wahyu Wibowo",
-    "email": "ary.wahyu@pertamina.com",
+    "email": "ar***@pertamina.com",
+    "email_hash": "c38692dad98d11309662bd9cee96d5356e74856e4febb09bfd076d9e0578d494",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22905,7 +24530,8 @@ const INITIAL_DPT = [
   {
     "npa": "09977",
     "name": "Alfrin M Said",
-    "email": "alfrinmsaid@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "56f5d108438719dbc63aa2b398b6aa2503aa5bdd468dfeafa087514b58bc51ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22919,7 +24545,8 @@ const INITIAL_DPT = [
   {
     "npa": "09995",
     "name": "Faisal Sangaji",
-    "email": "faisalsangaji.geoista@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "9f093c9faace7daf6be2231e1322dd00fc79425c299bac66014483fcf006a1cd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22933,7 +24560,8 @@ const INITIAL_DPT = [
   {
     "npa": "09999",
     "name": "Sonny Wiyoga",
-    "email": "SWiyoga@slb.com",
+    "email": "SW***@slb.com",
+    "email_hash": "e4e9e32c2819d22f18ca5739aa8c52fdb0ac1b0fc2caa44ae8886cc00b36ae36",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22947,7 +24575,8 @@ const INITIAL_DPT = [
   {
     "npa": "10019",
     "name": "Rahmat Qodri",
-    "email": "rahmatqodri96@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "b6ab98b25b284fe2930804084866cf6ffb9b256ae8a10833f7c53d4afabde1c8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22961,7 +24590,8 @@ const INITIAL_DPT = [
   {
     "npa": "10023",
     "name": "Radipto Hananto",
-    "email": "radiptoprakoso@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "f936202e8ba7670c1e4506297babab12e515c40d6da92b7e1ff274a6e8a0b8b9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22975,7 +24605,8 @@ const INITIAL_DPT = [
   {
     "npa": "10028",
     "name": "Susilo",
-    "email": "susilogeologis@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "7bc3a62443cc959b6669c47f7a852e13805c0b4b42ddfb90b6805a47d0ada330",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22989,7 +24620,8 @@ const INITIAL_DPT = [
   {
     "npa": "10050",
     "name": "Ceterine Crystal Oei",
-    "email": "ceterineoei33@gmail.com",
+    "email": "ce***@gmail.com",
+    "email_hash": "7800df80252e0b482da3bae2e230d1e611379c2f219522763f20f6ec225e6f7b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23003,7 +24635,8 @@ const INITIAL_DPT = [
   {
     "npa": "10085",
     "name": "Moses Sarawan",
-    "email": "mosarsarawan2@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "f720181210c02aa54288fa8c49ad065e8d8f2518b662385672512874bc9c8b1c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23017,7 +24650,8 @@ const INITIAL_DPT = [
   {
     "npa": "10095",
     "name": "Andarias Woff",
-    "email": "woffandarias@gmail.com",
+    "email": "wo***@gmail.com",
+    "email_hash": "e363590c12f00957f74af2098be5a79e567a2a5288e8a380a2e7bc0de73652ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23031,7 +24665,8 @@ const INITIAL_DPT = [
   {
     "npa": "10096",
     "name": "Azarico Putra",
-    "email": "azarico.putra@gmail.com",
+    "email": "az***@gmail.com",
+    "email_hash": "ef7e8ad97859e4d7d1272f92ef2c6741eb61945f0512cca65bcfd43881d8544e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23045,7 +24680,8 @@ const INITIAL_DPT = [
   {
     "npa": "10117",
     "name": "Cakra Farizi",
-    "email": "chakrafarizi@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "d6c5f7e680ee4b82b971f19c83a68aca2f4fa54798a334a4d6673d714b11fcf1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23059,7 +24695,8 @@ const INITIAL_DPT = [
   {
     "npa": "10121",
     "name": "Irena Andisa Maura",
-    "email": "irena.maura@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "7b68d6cd63927b318a96bd499a3cbfc42aa2c823ad3680d91b3034cebf81044b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23073,7 +24710,8 @@ const INITIAL_DPT = [
   {
     "npa": "10123",
     "name": "Ailin Yerangga",
-    "email": "Yaranggaailin@gmail.com",
+    "email": "Ya***@gmail.com",
+    "email_hash": "b2638bf3c424cf208f464e97b4e92495bdb3a29ae985610e4a41eabebdf5ed25",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23087,7 +24725,8 @@ const INITIAL_DPT = [
   {
     "npa": "10136",
     "name": "Popi Oktapiyana",
-    "email": "popi.okta@gmail.com",
+    "email": "po***@gmail.com",
+    "email_hash": "e27ded67e1e18b7e557f6458b5ad9407c813eaab98f9385fdda08dd97fcee3cf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23101,7 +24740,8 @@ const INITIAL_DPT = [
   {
     "npa": "10137",
     "name": "Fitri Mairizki",
-    "email": "fitrimairizki@eng.uir.ac.id",
+    "email": "fi***@eng.uir.ac.id",
+    "email_hash": "7cb1000c7de409f1d3ec6119d42a260f5141de58983ec3de5d40c06b435f3259",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23115,7 +24755,8 @@ const INITIAL_DPT = [
   {
     "npa": "10140",
     "name": "Soni Ade Irawan",
-    "email": "soni.irawan@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "02250e2ceed0540850041cc6a94931ca2a8969e7c13981bc0c13cd12733028f6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23129,7 +24770,8 @@ const INITIAL_DPT = [
   {
     "npa": "10143",
     "name": "Astri Yunita",
-    "email": "astriyunita26@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "f00c2071b072fe522144187a7e22a9096e8efba4641abedb798466b056328a1d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23143,7 +24785,8 @@ const INITIAL_DPT = [
   {
     "npa": "10148",
     "name": "Evi Silpia Lestari",
-    "email": "evi.lestari.38@gmail.com",
+    "email": "ev***@gmail.com",
+    "email_hash": "a62f002d792214b91173df51cd6297d700b20206abb3f7e316b292e0a6ce3df7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23157,7 +24800,8 @@ const INITIAL_DPT = [
   {
     "npa": "10149",
     "name": "Dyah Ayu Anitasari",
-    "email": "da.anitasari@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "cbfee747b9bc0d9e78c318bb4819714ada7e6714beab826f903abede6657b04b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23171,7 +24815,8 @@ const INITIAL_DPT = [
   {
     "npa": "10160",
     "name": "Vian Verdian",
-    "email": "vian.verdian2014@yahoo.com",
+    "email": "vi***@yahoo.com",
+    "email_hash": "2066d8ee50eae399c9cf49739f6e509dc92a0c714bfcd4124f67a9fcfef924fa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23185,7 +24830,8 @@ const INITIAL_DPT = [
   {
     "npa": "10179",
     "name": "Eric Edwin",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23199,7 +24845,8 @@ const INITIAL_DPT = [
   {
     "npa": "10195",
     "name": "Riady Agustono",
-    "email": "riyadiagustono@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "318d4099eb87dbe83473ef35fcf9f7a302d0b881a3ae391220876d5d45485d9e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23213,7 +24860,8 @@ const INITIAL_DPT = [
   {
     "npa": "10197",
     "name": "Koeshariyanto",
-    "email": "yeka100181@gmail.com",
+    "email": "ye***@gmail.com",
+    "email_hash": "8748420cf57ca9ab67b692c54083416f10bcb7381a3547c817ce80179bc8e365",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23227,7 +24875,8 @@ const INITIAL_DPT = [
   {
     "npa": "10199",
     "name": "Yose Rizal",
-    "email": "rizal_yose51@yahoo.com",
+    "email": "ri***@yahoo.com",
+    "email_hash": "e471ba93b5a4123f07a3c10df640952ccda93f15d5b77a9c12bc579d022b1c9b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23241,7 +24890,8 @@ const INITIAL_DPT = [
   {
     "npa": "10200",
     "name": "Jan Alexander",
-    "email": "jan.alexander@yahoo.com",
+    "email": "ja***@yahoo.com",
+    "email_hash": "668cc6c6ea8ebc1bb0a28d7d45f4aa241a7eb792cee92a0d66c38ef613bc9da8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23255,7 +24905,8 @@ const INITIAL_DPT = [
   {
     "npa": "10201",
     "name": "Azky Zikra",
-    "email": "asky.ilyas@gmail.com",
+    "email": "as***@gmail.com",
+    "email_hash": "65ebc410336b2ad8ab0c02599a3f12dc15c8400949d64b813782950e0e182ca1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23269,7 +24920,8 @@ const INITIAL_DPT = [
   {
     "npa": "10209",
     "name": "Oki Kurniawan",
-    "email": "oki.kurniawan@upnyk.ac.id",
+    "email": "ok***@upnyk.ac.id",
+    "email_hash": "98957a934dfb7875a8912f41559fe0b8b6b3ac87f12c340daeef89c2b84e2112",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23283,7 +24935,8 @@ const INITIAL_DPT = [
   {
     "npa": "10223",
     "name": "Fachmy M Irhamsyah",
-    "email": "fachmy.muhamad@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "bedb46a785e4755baa1f6a8c0c7761fd3bdfed8e045477592029e8ea9fc300db",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23297,7 +24950,8 @@ const INITIAL_DPT = [
   {
     "npa": "10235",
     "name": "Muhammad Ghalib Akbar Ghalib Akbar",
-    "email": "ghalibakbarmuhammad@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "50b142bcb075f82f5af3627e913a2e17232354df9c0600ba55400fa242c4a991",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23311,7 +24965,8 @@ const INITIAL_DPT = [
   {
     "npa": "10236",
     "name": "Muhammad Hermosa Widiadi",
-    "email": "muhammadhermosawidiadi.01@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "18ed54a0d8c42a573af1c92725fe9c1c9d639d6a3e267040b7bcb66e31a3c016",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23325,7 +24980,8 @@ const INITIAL_DPT = [
   {
     "npa": "10237",
     "name": "Rino Alfiandri",
-    "email": "rinogeologi03@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "cdcbd49eaf817aeb95319718a5cbbccb8658b9307fd77787a1ffed947ca5d543",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23339,7 +24995,8 @@ const INITIAL_DPT = [
   {
     "npa": "10238",
     "name": "Muhammad Iqbal Fadhillah",
-    "email": "m.iqbalfadhillah@yahoo.com",
+    "email": "m.***@yahoo.com",
+    "email_hash": "1223f58a40b82ce80e1a4a635d99ede1f2ab987f8203c1c9890b30fe6bd85129",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23353,7 +25010,8 @@ const INITIAL_DPT = [
   {
     "npa": "10240",
     "name": "Muhammad Luthfi Audryan Dwiyoga",
-    "email": "m.luthfiaudryan@yahoo.com",
+    "email": "m.***@yahoo.com",
+    "email_hash": "f1bafe06711a1a132d060b6b9b310c5b354df9c5a4fa1e3547d765232cd37451",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23367,7 +25025,8 @@ const INITIAL_DPT = [
   {
     "npa": "10242",
     "name": "Muhammad Suryadi",
-    "email": "m.suryadi2014@yahoo.com",
+    "email": "m.***@yahoo.com",
+    "email_hash": "5811249f49fd3c2a108fcc19995e7c71ec7595c0c30f8279dcb9d2e5ce4b4a5f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23381,7 +25040,8 @@ const INITIAL_DPT = [
   {
     "npa": "10248",
     "name": "Radar Lanang Permata",
-    "email": "ra.permata@yahoo.com",
+    "email": "ra***@yahoo.com",
+    "email_hash": "051f3dff1359039ba4189649da3ebf6d84c0e2cc09e1d406d0c149763c360d2f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23395,7 +25055,8 @@ const INITIAL_DPT = [
   {
     "npa": "10254",
     "name": "Ryan Dwi Wahyu Ardi",
-    "email": "dwa.ryan@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "8684eedb2862f44d818655a96084cf45ca1b4b539e45df95eef24685d3821023",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23409,7 +25070,8 @@ const INITIAL_DPT = [
   {
     "npa": "10256",
     "name": "Ramadhan Luthfi",
-    "email": "ramadhanluthfi13@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "1b21795e0d3b5390fb6e566d33a70fa6820359eee53d3509e1566438278cf2fd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23423,7 +25085,8 @@ const INITIAL_DPT = [
   {
     "npa": "10258",
     "name": "Alanta Elyan Putra",
-    "email": "alanta.ep@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "754af516945c0eba5ae5246a90b2cf5c5d66a8b8a1b7fb59ab9c74972d4a5370",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23437,7 +25100,8 @@ const INITIAL_DPT = [
   {
     "npa": "10274",
     "name": "Ahmad Rifqa Nurmisuari",
-    "email": "a.f_nurmisuari@yahoo.com",
+    "email": "a.***@yahoo.com",
+    "email_hash": "9b831b23c192b20715b559137606b91510c350b43feaa721ab56633d9e74998e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23451,7 +25115,8 @@ const INITIAL_DPT = [
   {
     "npa": "10276",
     "name": "Aldi Prasetya H",
-    "email": "aldi.ph@yahoo.com",
+    "email": "al***@yahoo.com",
+    "email_hash": "422acf0ec20c4495c1b6462d86280b46f04609a0ed6ef384c06f5c52a388dcc4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23465,7 +25130,8 @@ const INITIAL_DPT = [
   {
     "npa": "10277",
     "name": "Aldys Maulida Hafdi Riyanto",
-    "email": "aldys.mahari@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "7cd59bce61d17e1def543e595679ed5cad5f5236b3842aae7867237863d82bec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23479,7 +25145,8 @@ const INITIAL_DPT = [
   {
     "npa": "10278",
     "name": "Aryabima Witjaksana",
-    "email": "aryabimaw@yahoo.com",
+    "email": "ar***@yahoo.com",
+    "email_hash": "01e1431a2095e7cb1805725709850790364999e3c42977cdaf89219fca70af7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23493,7 +25160,8 @@ const INITIAL_DPT = [
   {
     "npa": "10285",
     "name": "Kania Ralitsa Reinhaz",
-    "email": "kaniaralitsa@outlook.com",
+    "email": "ka***@outlook.com",
+    "email_hash": "29627009a70dac37538bfa11c785d9bfd5fd3b5e8b4d2a41343a47f168a836f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23507,7 +25175,8 @@ const INITIAL_DPT = [
   {
     "npa": "10287",
     "name": "Merlin Ahuluheluw",
-    "email": "geo.mey04@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "b9e6e4d188c7735c3f1796b5bd0a738374b281c7ab86ff1f010b8e2df5c505c1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23521,7 +25190,8 @@ const INITIAL_DPT = [
   {
     "npa": "10289",
     "name": "Thisia Violen Bolaman",
-    "email": "thisiaviolen18@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "72883654fdac1fdcf9ca192afabaca012dabd3221df9a42ba35de8a490c6b92b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23535,7 +25205,8 @@ const INITIAL_DPT = [
   {
     "npa": "10300",
     "name": "Tri Angga Putra",
-    "email": "trianggaputra2189@gmail.com",
+    "email": "tr***@gmail.com",
+    "email_hash": "6989b923eb9764ebe9005d01d3163af6426774a89f6b321acf3e4b78beca7ddc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23549,7 +25220,8 @@ const INITIAL_DPT = [
   {
     "npa": "10315",
     "name": "Kenan Diponegoro",
-    "email": "kdiponegoro@gmail.com",
+    "email": "kd***@gmail.com",
+    "email_hash": "dd20f3adba30b58c5349ba4d09caa3225a54c22e062ccdea542d599fa5d6b129",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23563,7 +25235,8 @@ const INITIAL_DPT = [
   {
     "npa": "10323",
     "name": "Mohamad Galuh Sagara",
-    "email": "msagaragaluh@gmail.com",
+    "email": "ms***@gmail.com",
+    "email_hash": "06ba7ba1518c8f3069f1394d568fac085cc33f93122c573177d2352667cd079c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23577,7 +25250,8 @@ const INITIAL_DPT = [
   {
     "npa": "10326",
     "name": "Muhammad Virgiawan Agustin",
-    "email": "m.virgiawan.a@gmail.com",
+    "email": "m.***@gmail.com",
+    "email_hash": "90608e6415b615ff0c3f06aad09b67d54cd460b92c9e552ec6ee0ccfa7364e7d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23591,7 +25265,8 @@ const INITIAL_DPT = [
   {
     "npa": "10330",
     "name": "Handal Hardanto",
-    "email": "handalhard@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "963706bbc8e6c1de8de83726d4e314b164976d416d7e01f82590f2cce1e2276d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23605,7 +25280,8 @@ const INITIAL_DPT = [
   {
     "npa": "10331",
     "name": "lbnu Marwan Wariya",
-    "email": "esdmibnu82@gmail.com",
+    "email": "es***@gmail.com",
+    "email_hash": "8b362f890fcf0d4ab416bc7b01b69b616759079874fce4a084e7e4a1abf3475c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23619,7 +25295,8 @@ const INITIAL_DPT = [
   {
     "npa": "10335",
     "name": "Widarto",
-    "email": "sabillapm123@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "d1ff2a4639154829585ba9ef251b498c42e6d45618ec322174a2f9247a495678",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23633,7 +25310,8 @@ const INITIAL_DPT = [
   {
     "npa": "10336",
     "name": "Canggah Besari",
-    "email": "canggah23@gmail.com",
+    "email": "ca***@gmail.com",
+    "email_hash": "d7353cb9c887be3cfd123b35dc6758bb265c1dbc9fec5fad1a472e7add496c81",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23647,7 +25325,8 @@ const INITIAL_DPT = [
   {
     "npa": "10338",
     "name": "Afdal Zikri",
-    "email": "afdalzkr96@gmail.com",
+    "email": "af***@gmail.com",
+    "email_hash": "a5bd1a45111fba02a173ac2aba45e76e3a2758441784186aa8e70ff6c548951a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23661,7 +25340,8 @@ const INITIAL_DPT = [
   {
     "npa": "10349",
     "name": "Invan Winarto",
-    "email": "winartoiwan@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "1874f364d888d8fa64750573f4f5c9ad47f18655c630f7c5746327c4d2c44013",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23675,7 +25355,8 @@ const INITIAL_DPT = [
   {
     "npa": "10350",
     "name": "Ahmad Yuda Setia Pratama",
-    "email": "ahmad.yuda059@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "d93e5ae9ea86b0d328c95d3f98db4e40cba2a0a754e981516032d19cbe8ed4e4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23689,7 +25370,8 @@ const INITIAL_DPT = [
   {
     "npa": "10358",
     "name": "Ridha Santika Riadi",
-    "email": "ridha.santika@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "535c21aea24149f7e2717c2290ed9371dc161fe521f13131ede59f4f6028b66f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23703,7 +25385,8 @@ const INITIAL_DPT = [
   {
     "npa": "10366",
     "name": "Patar Marlundu",
-    "email": "patar.marlundu@antam.com",
+    "email": "pa***@antam.com",
+    "email_hash": "423a9cb13fc24382b6d1c6ff02b13ea3893b5a82b883f2c9fe97da41f9401ebc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23717,7 +25400,8 @@ const INITIAL_DPT = [
   {
     "npa": "10369",
     "name": "Didi Ardiyansyah",
-    "email": "ardiyansyahst@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "d9c4377e4725e527f984dcb5200127bd35f6d3909c9c57e4af86a4f46139f45a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23731,7 +25415,8 @@ const INITIAL_DPT = [
   {
     "npa": "10373",
     "name": "Meinardi Napoh",
-    "email": "napoh33@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "6d670a92cfe5ef77addd4ae9d918011ffa2fb88f6776a38d2207842e0ae60371",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23745,7 +25430,8 @@ const INITIAL_DPT = [
   {
     "npa": "10383",
     "name": "Dinda Savira",
-    "email": "dindanst98@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "17c354523676ef986a6574f2a4705f66abeb9c84bdbeda0b6f0ab1a17dbac038",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23759,7 +25445,8 @@ const INITIAL_DPT = [
   {
     "npa": "10386",
     "name": "Theodora Ngaderman",
-    "email": "theodorangaderman@gmail.com",
+    "email": "th***@gmail.com",
+    "email_hash": "dbde7016004d5ab4cbcaa687575cffda68a4be12baac567e3d2586300e5342d9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23773,7 +25460,8 @@ const INITIAL_DPT = [
   {
     "npa": "10390",
     "name": "Arief Satrio Prinanasto",
-    "email": "aprihanasto@gmail.com",
+    "email": "ap***@gmail.com",
+    "email_hash": "521c5b949214d7bb10e5b2edf14e323dc2ef65a4294e75904d1d65ee2ef30c22",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23787,7 +25475,8 @@ const INITIAL_DPT = [
   {
     "npa": "10392",
     "name": "Rania R. Sofya",
-    "email": "Raniaraniar@gmail.com",
+    "email": "Ra***@gmail.com",
+    "email_hash": "3b3f8acb8db5d49425b5552ff7605b32c98b0432a7c7dc80156f22deb9bcb58a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23801,7 +25490,8 @@ const INITIAL_DPT = [
   {
     "npa": "10409",
     "name": "Fhirdha Rizgi",
-    "email": "fhirdharizq@gmail.com",
+    "email": "fh***@gmail.com",
+    "email_hash": "d0180324364d61865d83abcdd6e6f9a329cc151c3f1b1c29fade85571cbd2638",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23815,7 +25505,8 @@ const INITIAL_DPT = [
   {
     "npa": "10413",
     "name": "Yanwar Yusup Rukmana",
-    "email": "yanwaryr@gmail.com",
+    "email": "ya***@gmail.com",
+    "email_hash": "e92a3076598fd4851aaef94c010ac4bd900f4cf8aacdfc5d63dc07b25b1260c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23829,7 +25520,8 @@ const INITIAL_DPT = [
   {
     "npa": "10415",
     "name": "Faried Rahmany",
-    "email": "ansar_22@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "21e4d6014ea6fd7c78680c831de0096fbd44909ff55a9abbeff0845041a65f6f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23843,7 +25535,8 @@ const INITIAL_DPT = [
   {
     "npa": "10418",
     "name": "Wahyu Setyaningsih",
-    "email": "wahyusetyaningsih@mail.unnes.ac.id",
+    "email": "wa***@mail.unnes.ac.id",
+    "email_hash": "4f023bebae8439970ef9a22ba8c635515a1fcf77c3ec188c52e5449d79adf8d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23857,7 +25550,8 @@ const INITIAL_DPT = [
   {
     "npa": "10431",
     "name": "Yan Wijaya",
-    "email": "yan.wijaya@pertamina.com",
+    "email": "ya***@pertamina.com",
+    "email_hash": "ad738de1fa86925b31e83d63f2d38a356c53cfbe256f3d6910c116d100d45cfd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23871,7 +25565,8 @@ const INITIAL_DPT = [
   {
     "npa": "10440",
     "name": "Husein Sadewa Wiguna",
-    "email": "sadewawigunahusein@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "33e52c705d4dd6dbab8abfe9435e7015b47451a13a9b03a30230011bdfa9d760",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23885,7 +25580,8 @@ const INITIAL_DPT = [
   {
     "npa": "10464",
     "name": "Asri Wiguna Pratiwi",
-    "email": "wigunaasri5@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "f43e8479cedf9a796af3ac5bc3437fe5ff3ffd703a05469adc91c7da486c32c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23899,7 +25595,8 @@ const INITIAL_DPT = [
   {
     "npa": "10469",
     "name": "Sofia Salsabila",
-    "email": "sofiasalsa@ymail.com",
+    "email": "so***@ymail.com",
+    "email_hash": "4cec7d1ea6c92f8357ce7b60550cac96047cbe168cd0b3b42f711a6db3cbb66f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23913,7 +25610,8 @@ const INITIAL_DPT = [
   {
     "npa": "10480",
     "name": "Bagaskara Wahyu Purnomo Putra",
-    "email": "bagaskarawahyupp@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "963039627192d6f361e77c234c6f948ebd564bf25aba18be9e52ef6ca11322c9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23927,7 +25625,8 @@ const INITIAL_DPT = [
   {
     "npa": "10496",
     "name": "Yusri Lin Kasi",
-    "email": "ylin.kasi@gmail.com",
+    "email": "yl***@gmail.com",
+    "email_hash": "a7a6d9540a1102a86a6eaba630a61d8c90585e47ae169e3c4cd7569749b52cfa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23941,7 +25640,8 @@ const INITIAL_DPT = [
   {
     "npa": "10498",
     "name": "Tomy Alvin Rivai",
-    "email": "tomyalvinrivai@gmail.com",
+    "email": "to***@gmail.com",
+    "email_hash": "992912b19da7fbff807ddf94efbebee78be2c2aa093f51231b81964f3f7a9793",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23955,7 +25655,8 @@ const INITIAL_DPT = [
   {
     "npa": "10508",
     "name": "Purnaning Tuwuh Triwigati",
-    "email": "tuwuhpurnaning@yahoo.com",
+    "email": "tu***@yahoo.com",
+    "email_hash": "0b53963e5998c2a6b9042c078a39e4becc5d28c84441d4918827559d6e708e8c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23969,7 +25670,8 @@ const INITIAL_DPT = [
   {
     "npa": "10523",
     "name": "Agus Sugiharto",
-    "email": "agoes.soegiharto@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "6ee6ae1635be09f519b8d23ec1f2e075327d046ea5fe142451fe40d661e64f77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23983,7 +25685,8 @@ const INITIAL_DPT = [
   {
     "npa": "10527",
     "name": "Annisa Rachmat",
-    "email": "annisa.rachmat@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "13aa547f2b3d47b3dfff44aa98651650f9fbc02c19d82e018d53ebc61d28a3b4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -23997,7 +25700,8 @@ const INITIAL_DPT = [
   {
     "npa": "10536",
     "name": "Harsyid Harun",
-    "email": "harsyid.harun@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "a77d619935777bba70c891f34a960895338d02dd88ad138d48f7acb7d3e91e00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24011,7 +25715,8 @@ const INITIAL_DPT = [
   {
     "npa": "10542",
     "name": "Herrie Gumelar",
-    "email": "herrie.ig@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "c41f84c1840a4e8384e92c447b97a914f1fff92ebb0d181ac89bf4e7b76e3914",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24025,7 +25730,8 @@ const INITIAL_DPT = [
   {
     "npa": "10543",
     "name": "Reza Ardiansyah",
-    "email": "reza@indotan.co.id",
+    "email": "re***@indotan.co.id",
+    "email_hash": "7ef099d39c0760af827e7bcb2431d1711425f98e6927eeab7c25738d1faf9a0f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24039,7 +25745,8 @@ const INITIAL_DPT = [
   {
     "npa": "10545",
     "name": "Parlindungan Hasibuan",
-    "email": "parlindungan81@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "82542af501100aa44849a18161dd8483fef802bb9af6339c0e80d892807e495d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24053,7 +25760,8 @@ const INITIAL_DPT = [
   {
     "npa": "10554",
     "name": "lin Muhsinah",
-    "email": "iin_spe@yahoo.com",
+    "email": "ii***@yahoo.com",
+    "email_hash": "dfd760981f02282652d27ec6366bf661fa74a960a1b4f4b4e08b46e4474b253e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24067,7 +25775,8 @@ const INITIAL_DPT = [
   {
     "npa": "10558",
     "name": "Achmad Faisal",
-    "email": "achmadfaisal.husni@gmail.com",
+    "email": "ac***@gmail.com",
+    "email_hash": "d0621884ee047077d35d7e8e03e3e9c6eb57047d2c3a41a2d8ca165a32d2d74a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24081,7 +25790,8 @@ const INITIAL_DPT = [
   {
     "npa": "10559",
     "name": "Wendrie Revando",
-    "email": "wendrie.revando@gmail.com",
+    "email": "we***@gmail.com",
+    "email_hash": "9897b587ac93e15f4a549c0327566ca0dd972ca2776b8d49b8f86fcbd8a6424b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24095,7 +25805,8 @@ const INITIAL_DPT = [
   {
     "npa": "10564",
     "name": "Kevin Prastya",
-    "email": "mk.kevin.prastya@pertamina.com",
+    "email": "mk***@pertamina.com",
+    "email_hash": "d8a87d1128247bc5ab5edf5a4193ee7912fe53830f9b1940f6d27efa1bd5819e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24109,7 +25820,8 @@ const INITIAL_DPT = [
   {
     "npa": "10565",
     "name": "Darmawan Prakasa",
-    "email": "dadidu61082@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "8d2f4aa5721b4f734060c67e4ad78e885db299323ba4f39517255b7fc6347b9a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24123,7 +25835,8 @@ const INITIAL_DPT = [
   {
     "npa": "10567",
     "name": "Ahmad Zaki Romi",
-    "email": "azromiptba@gmail.com",
+    "email": "az***@gmail.com",
+    "email_hash": "a7fbb8331de89b64274889d0d6a684ce1a6a40d4f807478a2e0d9a50b862692c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24137,7 +25850,8 @@ const INITIAL_DPT = [
   {
     "npa": "10574",
     "name": "Peni Rostiarti",
-    "email": "prostiarti@bukitasam.co.id",
+    "email": "pr***@bukitasam.co.id",
+    "email_hash": "d970c1ca410953942de7a15ab685dace809a1d5fa3ea212ffa76f5f073db87ad",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24151,7 +25865,8 @@ const INITIAL_DPT = [
   {
     "npa": "10575",
     "name": "Septyo Cholidie",
-    "email": "tiyokseza@yahoo.com",
+    "email": "ti***@yahoo.com",
+    "email_hash": "6abd3874c3ad9ffce77838b7ced700fcb6353d948564d6a362512bb1ef2dec4e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24165,7 +25880,8 @@ const INITIAL_DPT = [
   {
     "npa": "10586",
     "name": "Rina Dwi Indriana",
-    "email": "loveliakautsar@gmail.com",
+    "email": "lo***@gmail.com",
+    "email_hash": "259c20152b1810acddb23679e0dee259367c1950cffa1f00c58eb755410cc373",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24179,7 +25895,8 @@ const INITIAL_DPT = [
   {
     "npa": "10591",
     "name": "Basuki Dwi Priyanto",
-    "email": "bdwipriyanto@gmail.com",
+    "email": "bd***@gmail.com",
+    "email_hash": "d025797d6fcc2d3b8950cbedbdec4eec3cb42b7fb90ae6a82d5ee7a0328069b8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24193,7 +25910,8 @@ const INITIAL_DPT = [
   {
     "npa": "10592",
     "name": "Puspita Dinda Rahmawati",
-    "email": "pspitadinda@gmail.com",
+    "email": "ps***@gmail.com",
+    "email_hash": "73fd09f497620ce4cdb3c1d9cadaf55a88c03c699725b3ac0dbe18522ad234a4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24207,7 +25925,8 @@ const INITIAL_DPT = [
   {
     "npa": "10606",
     "name": "Rangga Mahardika Khairully",
-    "email": "rmkhairully@gmail.com",
+    "email": "rm***@gmail.com",
+    "email_hash": "807ca0b5bead1758cdfd4cf8e1be50c2b3369425f6ba44d5824417840bc4d1a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24221,7 +25940,8 @@ const INITIAL_DPT = [
   {
     "npa": "10615",
     "name": "Bari Hanafi",
-    "email": "bari.hanafi@yahoo.com",
+    "email": "ba***@yahoo.com",
+    "email_hash": "692f6a5be2e4d280962f493349525774816ad7e340a8d34b43502d5f97145e3f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24235,7 +25955,8 @@ const INITIAL_DPT = [
   {
     "npa": "10617",
     "name": "Achmad Ramdhoni Dahlan",
-    "email": "achmadrd@gmail.com",
+    "email": "ac***@gmail.com",
+    "email_hash": "2362ac37bfd41b16e9b10e61842144767ec14fe3a9d2e85fac81065d351cbc70",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24249,7 +25970,8 @@ const INITIAL_DPT = [
   {
     "npa": "10625",
     "name": "Muhammad Ghassan Jazmi Shalihin",
-    "email": "ghassan105.geounpad10@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "64dfdbb77e42f109971ed4c8ae1017dd77fef442cd5b637eaa45060efb609a5a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24263,7 +25985,8 @@ const INITIAL_DPT = [
   {
     "npa": "10633",
     "name": "Wisnu Broto Adi",
-    "email": "wisnuadi95@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "fc03da388094f6958c78633b89f11ec3d29e9c8a04048632c96cf47a1b31be2f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24277,7 +26000,8 @@ const INITIAL_DPT = [
   {
     "npa": "10640",
     "name": "M. Rizal Baslang",
-    "email": "rizalbaslang@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "d0489b689221c5054cf853b0043362471500b289fcca85ce4da756c4ac937dce",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24291,7 +26015,8 @@ const INITIAL_DPT = [
   {
     "npa": "10643",
     "name": "Ikrar Teguh Mandiri",
-    "email": "mandiri.ikrar@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "68dd19e06ac8d20d62e162ac016ae6b95a940bd2c011c979fc623d7f5fb4a6d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24305,7 +26030,8 @@ const INITIAL_DPT = [
   {
     "npa": "10646",
     "name": "Arini Puspasari",
-    "email": "arini.puspasari@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "4bb11097d87618e6ac70e27cfc99e8d61402053cb2411b46b701f01b02d9cd5b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24319,7 +26045,8 @@ const INITIAL_DPT = [
   {
     "npa": "10649",
     "name": "Khairul Ikhsan",
-    "email": "khairulikhsan1992@gmail.com",
+    "email": "kh***@gmail.com",
+    "email_hash": "2ebd8e260c38000d99ad47e2b3aee648d883e14fc9e82a78c00720e8d07b5223",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24333,7 +26060,8 @@ const INITIAL_DPT = [
   {
     "npa": "10662",
     "name": "Husni Randa",
-    "email": "randahusni@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "ebb32003c4addcc522fab09abccd06ff791821e460e4a996c43a9e178c3a5712",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24347,7 +26075,8 @@ const INITIAL_DPT = [
   {
     "npa": "10670",
     "name": "Raed Abdat",
-    "email": "raedabdat@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "082ec2b4ac0bd0b84c18bbaed94a348e8ea6272b0a9408f18e4054637a6d694e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24361,7 +26090,8 @@ const INITIAL_DPT = [
   {
     "npa": "10681",
     "name": "Faisal Farizi",
-    "email": "faisal.farizi@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "83ab5c72b7eff34021f8c7d8cb2a33c621ab382f740ec9d3b9b40f7148bfbd4a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24375,7 +26105,8 @@ const INITIAL_DPT = [
   {
     "npa": "10692",
     "name": "Kemal Harris",
-    "email": "kemsharris@gmail.com",
+    "email": "ke***@gmail.com",
+    "email_hash": "da60c957f624a03896b2e8b56218065e8d106c4da162e870ebbf1e9bc0020062",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24389,7 +26120,8 @@ const INITIAL_DPT = [
   {
     "npa": "10695",
     "name": "Devon Sena Thorffata",
-    "email": "devonsenathorffata@gmail.com",
+    "email": "de***@gmail.com",
+    "email_hash": "f03782473fcc2444324e706e1ead79566bff8b5b3548a0de9409b3974c76023f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24403,7 +26135,8 @@ const INITIAL_DPT = [
   {
     "npa": "10706",
     "name": "Christophorus Wisnu",
-    "email": "christophorus.wisnu94@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "4a5f1576113e8bef638f1c34bb20bbe8917419a9c00b3af8adc78f341d2d1ff8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24417,7 +26150,8 @@ const INITIAL_DPT = [
   {
     "npa": "10710",
     "name": "Akbar Tanjung",
-    "email": "akbartanjung208@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "c483add8640e464133480e0275739f9a7b8732bd29bbe4829f44188525472ad0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24431,7 +26165,8 @@ const INITIAL_DPT = [
   {
     "npa": "10712",
     "name": "Fany Hermawan",
-    "email": "fhermawan24@gmail.com",
+    "email": "fh***@gmail.com",
+    "email_hash": "654ccecd529ac5e0760f7b0035efb794307cc01d704fc852a0980094ed9dbdf2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24445,7 +26180,8 @@ const INITIAL_DPT = [
   {
     "npa": "10722",
     "name": "Peter Pratistha Utama",
-    "email": "peterpratistha@gmail.com",
+    "email": "pe***@gmail.com",
+    "email_hash": "22435a37a2b5655cc5230b76e6c5dc5dfbc3aebf9c6c5e82d59e8cddfe9e1b00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24459,7 +26195,8 @@ const INITIAL_DPT = [
   {
     "npa": "10724",
     "name": "Andhika Nugraha",
-    "email": "andhika.nugraha97@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "e74be789cca1f2d911595b8f49050dbce43728ebb68616573edccc576c36c131",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24473,7 +26210,8 @@ const INITIAL_DPT = [
   {
     "npa": "10725",
     "name": "Prima Aulia",
-    "email": "aprima1812@gmail.com",
+    "email": "ap***@gmail.com",
+    "email_hash": "f2207f98303befdb69685dc42fa01e6828b3efe5fcdcfe3ea39ffcb2294e790f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24487,7 +26225,8 @@ const INITIAL_DPT = [
   {
     "npa": "10739",
     "name": "Happy Tangdikarrang",
-    "email": "happy.2477@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "acb25a7ac0f7bae302a77ba2fc3e5f5e5f8173111256bac0ddeb535ca54ca39e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24501,7 +26240,8 @@ const INITIAL_DPT = [
   {
     "npa": "10751",
     "name": "Budi Santoso",
-    "email": "santoso.geo@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "247d4d03a3625918541ada9eef8fa01956cb2c9042e0df8224061c12a15b9d8a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24515,7 +26255,8 @@ const INITIAL_DPT = [
   {
     "npa": "10752",
     "name": "Gugun Gunawan",
-    "email": "gugun_78@yahoo.com",
+    "email": "gu***@yahoo.com",
+    "email_hash": "945c525e3f571edd1fbf19b893c9f35549550a2d074878fb39b5d6b9edc96419",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24529,7 +26270,8 @@ const INITIAL_DPT = [
   {
     "npa": "10754",
     "name": "Rahmadi Hidayat",
-    "email": "rahmadihidayat@ugm.ac.id",
+    "email": "ra***@ugm.ac.id",
+    "email_hash": "719b83a5bc57625e83257c0eaf8670640c5111c1c6aa68959becfc388437b5b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24543,7 +26285,8 @@ const INITIAL_DPT = [
   {
     "npa": "10758",
     "name": "Fernandes Hari",
-    "email": "hari.fernandes@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "641e0fd910f5d4fe6569c6a0bab231b210bb33f1d663aedfc76e4f3f5e3e238a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24557,7 +26300,8 @@ const INITIAL_DPT = [
   {
     "npa": "10759",
     "name": "AQSAL RAMADHAN SHADDAD.",
-    "email": "aksalshaddad@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "947b17bd2684db11a2f84a0afe83eb6018112836fe83c087e6280f80285fa4a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24571,7 +26315,8 @@ const INITIAL_DPT = [
   {
     "npa": "10762",
     "name": "Nurul Yulanda Septianty",
-    "email": "yulandanurul@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "09628127f9a0d889be8070ff5aec9be662298a307316b93c32495431aa5fea27",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24585,7 +26330,8 @@ const INITIAL_DPT = [
   {
     "npa": "10763",
     "name": "Kurniawan Adha",
-    "email": "kurniawanadhaa@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "9f974b136aa2e80cc1dc88d9bcb45e30e7186b3b30db1ddc16ff5a2e75c1c6bf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24599,7 +26345,8 @@ const INITIAL_DPT = [
   {
     "npa": "10768",
     "name": "Darmawan",
-    "email": "darmawangeologist@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "55da041f3be64faad0e1ae5a3d82d583a9e5aef6847fe1f8c0745711e313c6ed",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24613,7 +26360,8 @@ const INITIAL_DPT = [
   {
     "npa": "10772",
     "name": "A. Wirdiansyah",
-    "email": "wirdiansy14@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "5726ca1dc76ffacfa76365601fc45c7b4445c81dd736fd4325ec0393ca601178",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24627,7 +26375,8 @@ const INITIAL_DPT = [
   {
     "npa": "10773",
     "name": "Reza Nurdiansyah",
-    "email": "rezanurdiansyahofficial@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "5b93f6e6e2788f7ebb786f2ecb670d54123e9574030d8c97995c88fcf0a88346",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24641,7 +26390,8 @@ const INITIAL_DPT = [
   {
     "npa": "10779",
     "name": "Feli Ramsanjami Agung",
-    "email": "feliramsanjamia@gmail.com",
+    "email": "fe***@gmail.com",
+    "email_hash": "63054f505dfaa8eeb12bfb4be89cb9a2c1eb27a4b530a0eecad7cb1c44e716e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24655,7 +26405,8 @@ const INITIAL_DPT = [
   {
     "npa": "10780",
     "name": "Tristan Aulia Akhsan",
-    "email": "tristanauliaakhsan77@gmail.com",
+    "email": "tr***@gmail.com",
+    "email_hash": "4dbe2f11f1e4b4d896f24abca916c54e43d51af95064562d2090793219d60468",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24669,7 +26420,8 @@ const INITIAL_DPT = [
   {
     "npa": "10782",
     "name": "Ziadul Faiez",
-    "email": "Ziadulfaiez@rocketmail.com",
+    "email": "Zi***@rocketmail.com",
+    "email_hash": "7036df688630dad50feec2b68cd260118f1aed14bb3c7152140ae623e0e6c1c4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24683,7 +26435,8 @@ const INITIAL_DPT = [
   {
     "npa": "10786",
     "name": "Peter Syaputra",
-    "email": "petersyaputra93@gmail.com",
+    "email": "pe***@gmail.com",
+    "email_hash": "24cea95704db1fb6f342c002d247e35085467751c97166d297568e0f8c5c4ad5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24697,7 +26450,8 @@ const INITIAL_DPT = [
   {
     "npa": "10787",
     "name": "Rizky Oktaviandi",
-    "email": "rizkioktafendi@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "895a8cfbe5021d87d4dd97bddbc32767a14766d38cbe84ee721b58167c4fa05d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24711,7 +26465,8 @@ const INITIAL_DPT = [
   {
     "npa": "10790",
     "name": "Roby Samuel",
-    "email": "robysamuel867@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "bab83f2627d64060928ff873d262304139028bb52ca76751a29cffb9eead2f53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24725,7 +26480,8 @@ const INITIAL_DPT = [
   {
     "npa": "10794",
     "name": "Yogi Aditia",
-    "email": "yogiaditia51@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "1b44abf2382fa600500ecd3c5abc2ff2d45ff46032edc4b7409951dbeccb673d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24739,7 +26495,8 @@ const INITIAL_DPT = [
   {
     "npa": "10795",
     "name": "Dio Fikri Rizaldy",
-    "email": "diofikri.r@student.uir.ac.id",
+    "email": "di***@student.uir.ac.id",
+    "email_hash": "909b6fe2ed3f5afdbb1884d0b99fdb75925756e3294d04ac4f058f391cf8a1f2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24753,7 +26510,8 @@ const INITIAL_DPT = [
   {
     "npa": "10797",
     "name": "Latria Adistia",
-    "email": "latriaadistia319@gmail.com",
+    "email": "la***@gmail.com",
+    "email_hash": "292e2859e93420c7beea3f55eaaa64cd437149cf25ef09191b6eb0f0f2d37b13",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24767,7 +26525,8 @@ const INITIAL_DPT = [
   {
     "npa": "10800",
     "name": "Bellinda Grace",
-    "email": "bellindagrace97@gmail.com",
+    "email": "be***@gmail.com",
+    "email_hash": "7e32527c3f650c1cb43a60ebe393f98a0bf18041bd8d007fd103116e75f37941",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24781,7 +26540,8 @@ const INITIAL_DPT = [
   {
     "npa": "10803",
     "name": "Abill Akega Fada",
-    "email": "abillakega@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "da1e495d261794794c8f5acc099b0c70ff0843c663cf778fe665e25e0ece688a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24795,7 +26555,8 @@ const INITIAL_DPT = [
   {
     "npa": "10804",
     "name": "M. Ferdy Frederich",
-    "email": "mffrederich@gmail.com",
+    "email": "mf***@gmail.com",
+    "email_hash": "8400566a79b268026843c7319d66d11e1c50023689a6bbb262d579dc48520b05",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24809,7 +26570,8 @@ const INITIAL_DPT = [
   {
     "npa": "10806",
     "name": "Mahathir Bramantyo Yuwono",
-    "email": "mabayuwono@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "2fb61dcd60335e6e8bea3b9f15a84874330ee3d6ce68c1283da0e1fb3eef133b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24823,7 +26585,8 @@ const INITIAL_DPT = [
   {
     "npa": "10808",
     "name": "Vido Julian Nurkholis",
-    "email": "vidojuliannurkholis@gmail.com",
+    "email": "vi***@gmail.com",
+    "email_hash": "e901241dbe6a9d31b414ce71678ce62b17a0a2c0060d1f547f303764d6bb8494",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24837,7 +26600,8 @@ const INITIAL_DPT = [
   {
     "npa": "10812",
     "name": "Anjas Latif",
-    "email": "anjaslatif@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "e6706d76c05071ec0cff2906bcc809288d452bb68c545d6369840a543394b1bf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24851,7 +26615,8 @@ const INITIAL_DPT = [
   {
     "npa": "10813",
     "name": "Ghazy Alghifary",
-    "email": "ghazyalghifary17@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "20d7bbce4777cc4e92aa1b21bb82064ce53405593217285fbc4e0d73d378a5a5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24865,7 +26630,8 @@ const INITIAL_DPT = [
   {
     "npa": "10814",
     "name": "Zunarto Saputro",
-    "email": "iagizunartosaputra@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "76c36d9acc3df26f4fc4e677c16f5f3744e83fc59777427f82fbfca37c329ed0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24879,7 +26645,8 @@ const INITIAL_DPT = [
   {
     "npa": "10815",
     "name": "Edwin Brilliant",
-    "email": "iagiedwinbrilliant@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "3a4100bc3a704140a922f3056442c552ed9bae067bf2d93480d6a6179d4742a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24893,7 +26660,8 @@ const INITIAL_DPT = [
   {
     "npa": "10816",
     "name": "Dedek Firmansyah",
-    "email": "iagidedek3@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "ca57a5ea53f62e566b2803c2a30f4a6c8cec7622f2aac36ec0d3b817b8e4ce0c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24907,7 +26675,8 @@ const INITIAL_DPT = [
   {
     "npa": "10817",
     "name": "Muhammad Idham Fauzan",
-    "email": "iagimuhammadidhamfauzan@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "16ee361ec38676f68e414bd9df5c9b46caff8900fcfd330670e3842b2721b074",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24921,7 +26690,8 @@ const INITIAL_DPT = [
   {
     "npa": "10818",
     "name": "Sri Rahayu",
-    "email": "iagisrahayu.effendi@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "de6fa80841df0570f8b63e80660684b46175aa977341e94dae3c75bd33e03fc8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24935,7 +26705,8 @@ const INITIAL_DPT = [
   {
     "npa": "10819",
     "name": "Farida Isdiwati",
-    "email": "iagifaridaisdiwati@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "53e511f3de06ebd1a213baa72b9efe8bdad4237c1d5af46de32eb4b461218841",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24949,7 +26720,8 @@ const INITIAL_DPT = [
   {
     "npa": "10820",
     "name": "Rizki Putra Arya",
-    "email": "iagirizkiputra0399@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "c427d2fe53a7be6016b388dd370aff1a0527e6e5c8ebdfb644ffdefbe8495fe9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24963,7 +26735,8 @@ const INITIAL_DPT = [
   {
     "npa": "10821",
     "name": "Muhammad Rivai",
-    "email": "iagimuhammadrivai.jrgeologist@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "9e0f10aef9f85d24c1209568a77c9f5d398b7cb307e4665c9b8adf6e30615a5c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24977,7 +26750,8 @@ const INITIAL_DPT = [
   {
     "npa": "10822",
     "name": "Vio Nita",
-    "email": "O8vionita@gmail.com",
+    "email": "O8***@gmail.com",
+    "email_hash": "8de8a43ce6668c24495087af62b7ad19bf3f25d21c6963b2294781d1c85b4272",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -24991,7 +26765,8 @@ const INITIAL_DPT = [
   {
     "npa": "10823",
     "name": "Elsadella Nindya Putri",
-    "email": "iaginindyaelsabella@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "28c5a2cb615a60a1722461eac972faad67da4d0a641ad2362ff66a25191eb076",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25005,7 +26780,8 @@ const INITIAL_DPT = [
   {
     "npa": "10824",
     "name": "Oktan Trio Wibowo",
-    "email": "iagioktanwibowo@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "942d5a382f97e4c6d384c8a25b56ff6a4bfef704eed38681bd0c1730992a240f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25019,7 +26795,8 @@ const INITIAL_DPT = [
   {
     "npa": "10825",
     "name": "Ainun",
-    "email": "ainuna920@gmail.com",
+    "email": "ai***@gmail.com",
+    "email_hash": "4c5184d022b5e74e9ed42ae78779535efe26e100c233d4f9e1a455551c2c7c32",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25033,7 +26810,8 @@ const INITIAL_DPT = [
   {
     "npa": "10826",
     "name": "Ezzat Fayza",
-    "email": "iagiezzatfayza65@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "4c4c2323dcdda48d369a20b77f8fe1fc4508928dd6a9f19c615f522dd881426c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25047,7 +26825,8 @@ const INITIAL_DPT = [
   {
     "npa": "10827",
     "name": "Rahmatullah Ramadhan",
-    "email": "iagirahmatgeologi1@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "b1e84d13acf651b6818dbbe2f07e0a5dfe26a5ff734b444585f3effdbae70104",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25061,7 +26840,8 @@ const INITIAL_DPT = [
   {
     "npa": "10828",
     "name": "Firdaus Randa",
-    "email": "iagifirdausranda@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "b0c36f1aa1887f1b4e73eb3910158704f4196c2acb5c070fd3318b010fa797ec",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25075,7 +26855,8 @@ const INITIAL_DPT = [
   {
     "npa": "10829",
     "name": "Ihsan Ramadan",
-    "email": "iagiihsanramadan92@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "7c3a276a228aaf1831295bc998c6ae10c85a9d44f711c74122179072164c82e3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25089,7 +26870,8 @@ const INITIAL_DPT = [
   {
     "npa": "10830",
     "name": "Gian Fernanda",
-    "email": "iagigian.fernanda1988@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "fc25ec1ac8c842095889962a7b32669316e9446c5e17239ad3849c3c4933b6a9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25103,7 +26885,8 @@ const INITIAL_DPT = [
   {
     "npa": "10831",
     "name": "Hansen Wijaya",
-    "email": "iagihansenwijaya@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "17bf5f0909216347b18925401e736211805195eb3d80fee08d1d1a7dc11364e2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25117,7 +26900,8 @@ const INITIAL_DPT = [
   {
     "npa": "10832",
     "name": "Ledy Redyafry",
-    "email": "iagiredyafryledy@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "5dd6be4f17596631eac306df8c777eecbe12ca22a98bda436d91012fc5a6b0d0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25131,7 +26915,8 @@ const INITIAL_DPT = [
   {
     "npa": "10833",
     "name": "Mohammad Barezzi Naufal Taftazzanni",
-    "email": "iagimohammadbarezzi@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "8c8c4c4ea778746e3e34ae6a9703c4e5b1f05ad0f06d3c0b759083e6c66f7aa2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25145,7 +26930,8 @@ const INITIAL_DPT = [
   {
     "npa": "10834",
     "name": "Muhammad Alfian",
-    "email": "iagimuhammadalfian@gmail.com",
+    "email": "ia***@gmail.com",
+    "email_hash": "e0355c5c4407d2919ce9800ba9d8c29fcf9d782c68533b48f793643ebffed6b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25159,7 +26945,8 @@ const INITIAL_DPT = [
   {
     "npa": "10838",
     "name": "Nicko Herlambang",
-    "email": "nicko.herlambang81@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "b4a0775b8f57f40a65e0217494283b7e42290a5a86e0750effaf5f7ca91ce538",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25173,7 +26960,8 @@ const INITIAL_DPT = [
   {
     "npa": "10839",
     "name": "M Farel Bagaskara",
-    "email": "mfarelb92@gmail.com",
+    "email": "mf***@gmail.com",
+    "email_hash": "ae2f969ec0c9490d92773b8f2894ce8db874d0194ef46e7e8b184dfe1969145c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25187,7 +26975,8 @@ const INITIAL_DPT = [
   {
     "npa": "10853",
     "name": "Prihantoro Budi Laksono",
-    "email": "p.budilaksono.bl@gmail.com",
+    "email": "p.***@gmail.com",
+    "email_hash": "5ab9e21b3ef257e3797718a94d3fc3ea14e6ac44a7b6fbc40a23b81e3b2e7a77",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25201,7 +26990,8 @@ const INITIAL_DPT = [
   {
     "npa": "10865",
     "name": "Jayanti Anggraini",
-    "email": "jayanti.anggraini@pertamina.com",
+    "email": "ja***@pertamina.com",
+    "email_hash": "09bd0b1dbcdee9a0c43cba17a8fed9c3f745aaad334dfc64f6ac4fc6cf9b55c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25215,7 +27005,8 @@ const INITIAL_DPT = [
   {
     "npa": "10867",
     "name": "Supriady",
-    "email": "awak.supriady@gmail.com",
+    "email": "aw***@gmail.com",
+    "email_hash": "327b0d9fa6dfe17b983c1f61cb36661c6ceeffd85da09c9b5568675f2a477ca9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25229,7 +27020,8 @@ const INITIAL_DPT = [
   {
     "npa": "10875",
     "name": "Ichsan Invanni",
-    "email": "ichsan.invanni@gmail.com",
+    "email": "ic***@gmail.com",
+    "email_hash": "edc5631bfb6e2cbf7c004fc3c37e6f98a23b488dfca93b22bfe0a685d0137ab4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25243,7 +27035,8 @@ const INITIAL_DPT = [
   {
     "npa": "10892",
     "name": "Ilham Fikri Salam",
-    "email": "ilhamfiksal97@gmail.com",
+    "email": "il***@gmail.com",
+    "email_hash": "9e9667ca81c473f414c9bfe6f67514ad2024a21cd0a8370031aa9bca0267f52f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25257,7 +27050,8 @@ const INITIAL_DPT = [
   {
     "npa": "10906",
     "name": "Andi Wicahyanto Warsito",
-    "email": "andiwwarsito@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "f864e088de1d1a9d1b67ecaeabc1f7f685ad947a41ea181ecc6e0e02f8b81f81",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25271,7 +27065,8 @@ const INITIAL_DPT = [
   {
     "npa": "10916",
     "name": "Nurhikmah Supardi",
-    "email": "nurhikmah.supardi90@yahoo.com",
+    "email": "nu***@yahoo.com",
+    "email_hash": "4aec0b94172e379f5b8e677a55d04e4653c672112b188a6dcbcffc33f2605090",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25285,7 +27080,8 @@ const INITIAL_DPT = [
   {
     "npa": "10940",
     "name": "Fakhrizal Mulya Parampasi",
-    "email": "fakhrizalmulyaparampasi@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "d3c5ddb7fdd5c423a2720c098320ede929c4dd628afff1ca54a9259e1345010f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25299,7 +27095,8 @@ const INITIAL_DPT = [
   {
     "npa": "10945",
     "name": "Daniel Ganna",
-    "email": "dani.geo05@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "f89db33d3f7dfc0750370f608b60ed220f1bc13369cc0973487884f18769fc7c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25313,7 +27110,8 @@ const INITIAL_DPT = [
   {
     "npa": "10947",
     "name": "Moh Rizal S Ente",
-    "email": "rizalente14@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "1b06a235848240b05eb501ef57bcd52dce0114632acdadc6b3d47ce990c1fada",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25327,7 +27125,8 @@ const INITIAL_DPT = [
   {
     "npa": "10961",
     "name": "M Renda Wirana",
-    "email": "muhamadrenda20@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "9d652a5bcea0f6f81209c6629e46735f294d9080db08ddf056f67f486f5c0e20",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25341,7 +27140,8 @@ const INITIAL_DPT = [
   {
     "npa": "10962",
     "name": "M Ivan Vawad R",
-    "email": "mirvanvawadr@gmail.com",
+    "email": "mi***@gmail.com",
+    "email_hash": "babf6aa8508787949c65e1fc7329b26db0345b7b5b036ecd0c09d5347d7cac6e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25355,7 +27155,8 @@ const INITIAL_DPT = [
   {
     "npa": "10969",
     "name": "Totok Sulistyo",
-    "email": "totok.sulistyo@poltekba.ac.id",
+    "email": "to***@poltekba.ac.id",
+    "email_hash": "e5aeeac0010655a9a4c7741bdf9efa1ebc1750d4eb9fd922f9ba66f2dd72421b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25369,7 +27170,8 @@ const INITIAL_DPT = [
   {
     "npa": "10973",
     "name": "Jeffrey Malaihollo",
-    "email": "Jeff@ccgoldfields.com",
+    "email": "Je***@ccgoldfields.com",
+    "email_hash": "c52a3922e7bc90ca06b5f77d98af113b985445f6cf609b9c4ae0ea1880230f0d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25383,7 +27185,8 @@ const INITIAL_DPT = [
   {
     "npa": "10974",
     "name": "Julia Olivia Joris",
-    "email": "skyjulia07@gmail.com",
+    "email": "sk***@gmail.com",
+    "email_hash": "acaa6a57fb91ddd2932ee419b9df139bb7e4166afbf6bee6be641fa2c6e3183b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25397,7 +27200,8 @@ const INITIAL_DPT = [
   {
     "npa": "10975",
     "name": "A. Egen Slarmanat",
-    "email": "arborekr4123@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "247a236ea5f5f89a9b65ae0c905450b505f56783e4b9bc135d34969679f68133",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25411,7 +27215,8 @@ const INITIAL_DPT = [
   {
     "npa": "10976",
     "name": "Josephus R Kelibulin",
-    "email": "kelibulin_ronny_josephus@yahoo.com",
+    "email": "ke***@yahoo.com",
+    "email_hash": "36e20e4124cfb97e5088755e753486a84a38e5131fffd945e8733b8140de1156",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25425,7 +27230,8 @@ const INITIAL_DPT = [
   {
     "npa": "10977",
     "name": "Nugroho D Hananto",
-    "email": "nugr002@brin.go.id",
+    "email": "nu***@brin.go.id",
+    "email_hash": "9a5d8e925e358f9fdab3475d44b30aa7de12766b58c5d52806cf0fef0a1cb150",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25439,7 +27245,8 @@ const INITIAL_DPT = [
   {
     "npa": "10978",
     "name": "Garindia Grandis",
-    "email": "garindia.grandis@esdm.go.id",
+    "email": "ga***@esdm.go.id",
+    "email_hash": "6615a94621046733b98bc706af5c517e533c1da88fecaf60ab4ef72e049e4bd0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25453,7 +27260,8 @@ const INITIAL_DPT = [
   {
     "npa": "10981",
     "name": "Rr. Desi Kumala Isnani",
-    "email": "rr.desi@upnyk.ac.id",
+    "email": "rr***@upnyk.ac.id",
+    "email_hash": "f99189734376d204ce3f5df695f07194aeb976e47918b2af3d8f4bf0316439f4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25467,7 +27275,8 @@ const INITIAL_DPT = [
   {
     "npa": "10982",
     "name": "Moch. Prahastomi Muttahari",
-    "email": "moch.prahastomi@upnyk.ac.id",
+    "email": "mo***@upnyk.ac.id",
+    "email_hash": "49420d0f5a747507fc52b6d2adde1d042dd730667f2506e0fdb75f130ad12a26",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25481,7 +27290,8 @@ const INITIAL_DPT = [
   {
     "npa": "10983",
     "name": "Aga Rizky",
-    "email": "aga.rizky@upnyk.ac.id",
+    "email": "ag***@upnyk.ac.id",
+    "email_hash": "5098798591438291e4234a14f53d3e939590af5946323bffc788f79bf92e9603",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25495,7 +27305,8 @@ const INITIAL_DPT = [
   {
     "npa": "10984",
     "name": "Istiana",
-    "email": "istiana.istiana@upnyk.ac.id",
+    "email": "is***@upnyk.ac.id",
+    "email_hash": "1c718471f4ae6b78b43772daf7ffafdee28b51c8f87de78ff5cb3675781effcc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25509,7 +27320,8 @@ const INITIAL_DPT = [
   {
     "npa": "10985",
     "name": "Wahyuni Annisa Humairoh",
-    "email": "wahyuni.annisahumairoh@upnyk.ac.id",
+    "email": "wa***@upnyk.ac.id",
+    "email_hash": "3f86280d860e64fe6b0a63b1458688760e4f8ba91150ab5ba78b8433365900b0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25523,7 +27335,8 @@ const INITIAL_DPT = [
   {
     "npa": "10986",
     "name": "Afrilita",
-    "email": "afrilita@upnyk.ac.id",
+    "email": "af***@upnyk.ac.id",
+    "email_hash": "f54bc64631a589f9447f0dc4ec68e44a94fea180680bbd73e7f6ca0813398cdf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25537,7 +27350,8 @@ const INITIAL_DPT = [
   {
     "npa": "10987",
     "name": "Ikhwannur Adha",
-    "email": "ikhwannur.adha@upnyk.ac.id",
+    "email": "ik***@upnyk.ac.id",
+    "email_hash": "925d2992cc7d57ae16aba6dbb0cdae07b075ab0407199e77416afe9c957087db",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25551,7 +27365,8 @@ const INITIAL_DPT = [
   {
     "npa": "10988",
     "name": "Hasan Tri Atmojo",
-    "email": "hasan.triatmojo@upnyk.ac.id",
+    "email": "ha***@upnyk.ac.id",
+    "email_hash": "f40429eb5b25ee6e79550b8066c037668a47abd4994adae35e58dc8840c51bfc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25565,7 +27380,8 @@ const INITIAL_DPT = [
   {
     "npa": "10989",
     "name": "Adam Raka Ekasara",
-    "email": "adam.raka@upnyk.ac.id",
+    "email": "ad***@upnyk.ac.id",
+    "email_hash": "1b9eef0b12a595234262a13e358dd8b38ca601c5ca040cb7ae7d1c20411285d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25579,7 +27395,8 @@ const INITIAL_DPT = [
   {
     "npa": "10990",
     "name": "Dani Mardiati",
-    "email": "dani.mardiati@upnyk.ac.id",
+    "email": "da***@upnyk.ac.id",
+    "email_hash": "71414ee71249be116fe2e101f220027c3f2398521d0124aa17d50e87a3748216",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25593,7 +27410,8 @@ const INITIAL_DPT = [
   {
     "npa": "10991",
     "name": "Alfathony Krisnabudhi",
-    "email": "alfathony.krisnabudhi@upnyk.ac.id",
+    "email": "al***@upnyk.ac.id",
+    "email_hash": "eb9ea93486fea5f0543137079d19178a9c78066444240391e5477bda291d1061",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25607,7 +27425,8 @@ const INITIAL_DPT = [
   {
     "npa": "10992",
     "name": "Dian Rahma Yoni",
-    "email": "dian.rahma@upnyk.ac.id",
+    "email": "di***@upnyk.ac.id",
+    "email_hash": "ef323d562990a7c05fe19e2aa5b7737f760d42d42443a4b3198c556ab3fd27c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25621,7 +27440,8 @@ const INITIAL_DPT = [
   {
     "npa": "10994",
     "name": "Muh Iqbal Ramadhan",
-    "email": "ramadhanmuhiqbal@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "a52afaa96264083f8fed5de2f7682219334b271abb9540e494eead2bd78b5a51",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25635,7 +27455,8 @@ const INITIAL_DPT = [
   {
     "npa": "10998",
     "name": "Naufal Fairuz Suhairi",
-    "email": "naufal552@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "61971ef1ede066142351b2d5ada3fe47cf051a27ac72b04135df8a64d5c905bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25649,7 +27470,8 @@ const INITIAL_DPT = [
   {
     "npa": "11001",
     "name": "Aripin Rambe",
-    "email": "aripinsimamorarambe@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "de9e8bde16f7b4a1b1c41cf496287d825ec6778bd6bc7d72b69098fd0d7d066e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25663,7 +27485,8 @@ const INITIAL_DPT = [
   {
     "npa": "11017",
     "name": "Akhmad Taufiq",
-    "email": "akhmdtaufiq@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "84020a9005d4c1d859e2e5b9b651d1cca6f4eba316cc21133b0e49383c231ddb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25677,7 +27500,8 @@ const INITIAL_DPT = [
   {
     "npa": "11023",
     "name": "Budi Muljana",
-    "email": "budi.muljana@unpad.ac.id",
+    "email": "bu***@unpad.ac.id",
+    "email_hash": "185bc06d6e5c4f9a5eba22a6ae1c248a297e69c273aa74f2b4d2a17956a0366f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25691,7 +27515,8 @@ const INITIAL_DPT = [
   {
     "npa": "11037",
     "name": "Lutfiardi Norman Affandi",
-    "email": "lutfiardinorman@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "6c46f5b8529c407e7165fec2d79fba1009de1b4756e4ce2e131f38401680af15",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25705,7 +27530,8 @@ const INITIAL_DPT = [
   {
     "npa": "11042",
     "name": "Guillaume Lorilleux",
-    "email": "glorilleux@yahoo.fr",
+    "email": "gl***@yahoo.fr",
+    "email_hash": "740b849ce011e7e99ae52e8001e9ee4f10f47e47eaa1cbfd453fd40a6a857a3b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25719,7 +27545,8 @@ const INITIAL_DPT = [
   {
     "npa": "11051",
     "name": "Amritzal Nur Firdaus",
-    "email": "nuramritzal@gmail.com",
+    "email": "nu***@gmail.com",
+    "email_hash": "8840dba3196333e94a4c6dd9fdc7f7f61a6c760efe3e4e5e7ca3872b0015739c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25733,7 +27560,8 @@ const INITIAL_DPT = [
   {
     "npa": "11054",
     "name": "Riefay Usman",
-    "email": "riefqyusman@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "26a5dab11b9f73a34e7a95a94d27645099e1b1cc172e4c8d8612ebcf30399c64",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25747,7 +27575,8 @@ const INITIAL_DPT = [
   {
     "npa": "11055",
     "name": "Rama Baiquni Herawan",
-    "email": "ramaherawan@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "f97e4a01b0d0f0a5d0972c43531994bd00cafcdc0326e7dddf88c8fb63402e49",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25761,7 +27590,8 @@ const INITIAL_DPT = [
   {
     "npa": "11058",
     "name": "Bagastio Ramadhan",
-    "email": "bagastioramadhan@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "f066d6bf6467e1f5e15db704b1c8ea927c4b262183adf828976f11bcb59dd913",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25775,7 +27605,8 @@ const INITIAL_DPT = [
   {
     "npa": "11060",
     "name": "Irsyad Auliya Azhar Ramadhan",
-    "email": "ramairsyad.ri@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "83d9e3ecec18338787f60a06b6e2e04de6ad4e6e915149b1e0ea78acc4f55e13",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25789,7 +27620,8 @@ const INITIAL_DPT = [
   {
     "npa": "11063",
     "name": "Dwika Rizki Wirawan",
-    "email": "rizkiwirawan194@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "e4cec5dd18f90ff71431d27a89e3c672bb0ff431f2ae2dc0af7002a0e68d0abe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25803,7 +27635,8 @@ const INITIAL_DPT = [
   {
     "npa": "11067",
     "name": "Ceterine Crysty",
-    "email": "ceterinecrysty@gmail.com",
+    "email": "ce***@gmail.com",
+    "email_hash": "8e31781f7b42baddf953e9a4ecd6b7a0ba81ec8705d3da8d9ce63270e442fdca",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25817,7 +27650,8 @@ const INITIAL_DPT = [
   {
     "npa": "11069",
     "name": "Faiz Akbar Prihutama",
-    "email": "faizakp8@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "2ef5093fcf8e29294b5d55c708c31fa2e30b25f934e6394913ac87c970048fd3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25831,7 +27665,8 @@ const INITIAL_DPT = [
   {
     "npa": "11071",
     "name": "Chris Simada Sembiring",
-    "email": "christiansimada@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "2b120cecf3e7d7e6285ba5fa215c6989c03a4a1b20e07a64fb0e8ece16619467",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25845,7 +27680,8 @@ const INITIAL_DPT = [
   {
     "npa": "11088",
     "name": "Ivan Rama Dzaky Dijunio",
-    "email": "ivanramadd@gmail.com",
+    "email": "iv***@gmail.com",
+    "email_hash": "145b6ec7779a78d7bee8252025001d8111966ceeb008de1a6b90ec3256840cb7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25859,7 +27695,8 @@ const INITIAL_DPT = [
   {
     "npa": "11090",
     "name": "Dadang Ariyono",
-    "email": "dadang.ariyono@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "5a93dad02b2e2fa6e7a7fc49219916cfcf33046dae5cbc74892a9461a80af016",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25873,7 +27710,8 @@ const INITIAL_DPT = [
   {
     "npa": "11102",
     "name": "Budi Prasetio",
-    "email": "prasetbud11@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "836fd5f112b72599f33e243f06fbcc29c9f5a6828082b2557c6127febdf49eee",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25887,7 +27725,8 @@ const INITIAL_DPT = [
   {
     "npa": "11105",
     "name": "Rizka Eka Pradana",
-    "email": "rizkaekapradana@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "86e65c94dcc66038d8365fccac876fcbe156ec1fe36812dbd3b6d727218cda60",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25901,7 +27740,8 @@ const INITIAL_DPT = [
   {
     "npa": "11112",
     "name": "Ebsanroy Yatule",
-    "email": "ebsanroy@gmail.com",
+    "email": "eb***@gmail.com",
+    "email_hash": "6b3969f0f16d8340d64eed358b4d9da410401816c1e21e905c1b103324050491",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25915,7 +27755,8 @@ const INITIAL_DPT = [
   {
     "npa": "11122",
     "name": "Shilika Herzegovina Ferian",
-    "email": "shilika.herzegovina@gmail.com",
+    "email": "sh***@gmail.com",
+    "email_hash": "02fa8f3de1b47cc54ac21a4252f910b76b9d572c1cf1c7ac6a6254de420a80b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25929,7 +27770,8 @@ const INITIAL_DPT = [
   {
     "npa": "11123",
     "name": "Sulaiman",
-    "email": "mesa.geo04@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "3d12149fe0de2d29090ed8a7db84197661ccbe28393904cbff2b83e6f55f278e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25943,7 +27785,8 @@ const INITIAL_DPT = [
   {
     "npa": "11138",
     "name": "Ramayuddin Djunuda",
-    "email": "olieth_geo04@yahoo.com",
+    "email": "ol***@yahoo.com",
+    "email_hash": "cff814c93f62fb22b21de070c6abb6fa29472ccbd4d7bede7dbca708b2d7594e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25957,7 +27800,8 @@ const INITIAL_DPT = [
   {
     "npa": "11144",
     "name": "Rafi Hidayat",
-    "email": "rafihidayat2016@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "b8742824bfabe74135175f612ef042a283475d622a37e8d13ee2f97158ff2cbe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25971,7 +27815,8 @@ const INITIAL_DPT = [
   {
     "npa": "11147",
     "name": "Chrisman Lanabu",
-    "email": "risman.lanabu@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "81893088c000ecaa1c4384e7e8d6ed9c7bed3915a3eb32bbb86cdf46555ddc02",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25985,7 +27830,8 @@ const INITIAL_DPT = [
   {
     "npa": "11151",
     "name": "Renny Cahyaningtyas",
-    "email": "r3nny_cahyany@yahoo.co.id",
+    "email": "r3***@yahoo.co.id",
+    "email_hash": "3d1c53faa5e75f2a7fee463d57975445cdbddbe3c0b3ca34bf910eb9772a27a1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25999,7 +27845,8 @@ const INITIAL_DPT = [
   {
     "npa": "11159",
     "name": "Kurniawan Giga Sakti",
-    "email": "kurniawangigasakti@gmail.com",
+    "email": "ku***@gmail.com",
+    "email_hash": "6a614614a07d57d7482a5d3d9e250eb16b9d7643e010502385133a2531862d65",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26013,7 +27860,8 @@ const INITIAL_DPT = [
   {
     "npa": "11161",
     "name": "Andy Setiabudi W",
-    "email": "andy.ascjogja@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "fe3a78d6d0169423d5bbfd3ef1d259212a58a45e723ee6096a233661ef9e581e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26027,7 +27875,8 @@ const INITIAL_DPT = [
   {
     "npa": "11162",
     "name": "Melky Rondonuwu",
-    "email": "melky81@geologist.com",
+    "email": "me***@geologist.com",
+    "email_hash": "2877862befff2df8322ded2ba5d076ada55f3121ee798a67492b7f50e304d5e1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26041,7 +27890,8 @@ const INITIAL_DPT = [
   {
     "npa": "11171",
     "name": "Zapheline Matakupan",
-    "email": "Zapheline@gmail.com",
+    "email": "Za***@gmail.com",
+    "email_hash": "13209afe00cedc60fd9a56ea7e8c7efa2b740d542113220437f98b8d419a786e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26055,7 +27905,8 @@ const INITIAL_DPT = [
   {
     "npa": "11177",
     "name": "Agus Iskandar",
-    "email": "agus230871@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "ebfaba82e7361a6f3f7a68317b4b50982c8d879d29d574e2b861be8794184729",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26069,7 +27920,8 @@ const INITIAL_DPT = [
   {
     "npa": "11181",
     "name": "Fitra Akbar Gaib",
-    "email": "fitraakbarg@gmail.com",
+    "email": "fi***@gmail.com",
+    "email_hash": "fba1aec39e3a32518002a3ea245223484a71d573a34add16bc9974f4e54bc182",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26083,7 +27935,8 @@ const INITIAL_DPT = [
   {
     "npa": "11182",
     "name": "Daniel Jefri Hasudungan",
-    "email": "danjefry@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "0a849fe39fb05f4b1cf3be845b8ea067e5247566a5a6a1383616a6621c91f38e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26097,7 +27950,8 @@ const INITIAL_DPT = [
   {
     "npa": "11188",
     "name": "Ildo Muhary Putra",
-    "email": "ildomuharyputra20@gmail.com",
+    "email": "il***@gmail.com",
+    "email_hash": "3ab21880d496f5f0459e010ed5ad9a8e12c1ef4dbd60289fb7bcdb87662ff159",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26111,7 +27965,8 @@ const INITIAL_DPT = [
   {
     "npa": "11194",
     "name": "Marsaban, ST.",
-    "email": "sabansangia73@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "5090731ec59732670f524874cb2b06218b95d20094b88da05f3daa3515104069",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26125,7 +27980,8 @@ const INITIAL_DPT = [
   {
     "npa": "11209",
     "name": "Yoseph Robby Apranda",
-    "email": "yosephra@yahoo.com",
+    "email": "yo***@yahoo.com",
+    "email_hash": "80de347e6f75480c8121401877c5043a006c67d4e20a90512f6cdb93dc02d654",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26139,7 +27995,8 @@ const INITIAL_DPT = [
   {
     "npa": "11226",
     "name": "Edwin Pranata",
-    "email": "dwnpranata@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "573570ef9c0dc81eb315df53918975f95d22eb80b4184ba24b72171c5e5a2e7f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26153,7 +28010,8 @@ const INITIAL_DPT = [
   {
     "npa": "11227",
     "name": "Ari Kresnawan",
-    "email": "ibari.kresnawan@gmail.com",
+    "email": "ib***@gmail.com",
+    "email_hash": "fae01e9c65fbdb3fe5e18a575298176363819bfd96fd1e2a913eceb6b05de26f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26167,7 +28025,8 @@ const INITIAL_DPT = [
   {
     "npa": "11229",
     "name": "Maya Aiko Salsabila",
-    "email": "maya.aikosalsabilaputri@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "dc2e5de1185bacd754fb0b8936a785df06efa8af7495a14646e36f15f6c23d28",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26181,7 +28040,8 @@ const INITIAL_DPT = [
   {
     "npa": "11231",
     "name": "Suherman Suherman",
-    "email": "suhermankurdi@yahoo.com",
+    "email": "su***@yahoo.com",
+    "email_hash": "cfc875b21d0f97d123a0bf8707afd1464a504a43a6011222309ecfc387c77e1f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26195,7 +28055,8 @@ const INITIAL_DPT = [
   {
     "npa": "11233",
     "name": "Zulfa Nindya Salsabila",
-    "email": "zulfanindyas@gmail.com",
+    "email": "zu***@gmail.com",
+    "email_hash": "40e98a42562aa94c88af9dd04d81502ccc99033ddee6f4ca6ff3e5104346b7c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26209,7 +28070,8 @@ const INITIAL_DPT = [
   {
     "npa": "11238",
     "name": "Kevin Aliandika",
-    "email": "aliandikakevin@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "a57ab05b1971b818bc53583403045b4064732405a7da87f2b80c7b2cbf2b780e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26223,7 +28085,8 @@ const INITIAL_DPT = [
   {
     "npa": "11240",
     "name": "Ir. Syamsul Bakhri Usung, M.si",
-    "email": "abdijuned79@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "88d9f30d1a10a7731fd9beff1e800f6d971ecbd7550d8c5340d17ad3720c9c7d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26237,7 +28100,8 @@ const INITIAL_DPT = [
   {
     "npa": "11241",
     "name": "Andri Eko Sasminto",
-    "email": "andri.geologi@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "6c51b3bc5452f6b641f142ab4a47cbdbbc4876ee63a3146e931cb984d4143282",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26251,7 +28115,8 @@ const INITIAL_DPT = [
   {
     "npa": "11245",
     "name": "Jennifer Michelle Sherafim",
-    "email": "jmichellesherafim18@gmail.com",
+    "email": "jm***@gmail.com",
+    "email_hash": "389c323a1293f1484e825d7a20ba43b53e13b6c37b7b38a0294858970aa9b971",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26265,7 +28130,8 @@ const INITIAL_DPT = [
   {
     "npa": "11246",
     "name": "Wahyu Wafiq Suharyanto",
-    "email": "wahyuwafiqsuharyanto@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "a537fe1bf20e3265b20ac6332d8d3dd50b586fcb18d22fb5339f61bf9344abb0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26279,7 +28145,8 @@ const INITIAL_DPT = [
   {
     "npa": "11247",
     "name": "Muhammad Abdurrozak Siamashari",
-    "email": "abdurrozak.sks@gmail.com",
+    "email": "ab***@gmail.com",
+    "email_hash": "60250273ee5d5ddb57b83d5d8ae1d4c96c64a5c023b281b107874ff5037fa4f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26293,7 +28160,8 @@ const INITIAL_DPT = [
   {
     "npa": "11249",
     "name": "Hadi Prayoga",
-    "email": "hadiprayoga675@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "c9e8bbf85ff7da0bdcfa98d586337e3de6743231fb798008ff5f4d486627e5d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26307,7 +28175,8 @@ const INITIAL_DPT = [
   {
     "npa": "11250",
     "name": "Nyoman Sutiawan",
-    "email": "inyomansutyawan35@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "68ad3a2a9dd82ed923303eb577e58e99977f29416fb7dd406fb8eb4fc5879f02",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26321,7 +28190,8 @@ const INITIAL_DPT = [
   {
     "npa": "11252",
     "name": "Rinie Mekarsari",
-    "email": "rinie.mac@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "dd998ff2db3dfbb21d970abdf395ec9f6152db80f4e9899d91521d154f76518c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26335,7 +28205,8 @@ const INITIAL_DPT = [
   {
     "npa": "11254",
     "name": "Melly Widiyarti",
-    "email": "mellywidiyarti2@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "d661dcda77ed6704336a19971af0f9e580e897d31d01fcd018311760b4cb627c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26349,7 +28220,8 @@ const INITIAL_DPT = [
   {
     "npa": "11259",
     "name": "Danny Nursasono",
-    "email": "dannynursasono@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "f896a67eba749b23fc4b39c3e56e987c3f1a39abc78597d7c9d8c28fca19cf1a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26363,7 +28235,8 @@ const INITIAL_DPT = [
   {
     "npa": "11260",
     "name": "Muhammad Naufal Aiman",
-    "email": "naufalaiman2001@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "b1b1847012afaaed162f58f0352c55f9145f35423a361b8a944757db8c70e94e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26377,7 +28250,8 @@ const INITIAL_DPT = [
   {
     "npa": "11261",
     "name": "Adinda Ramadhani",
-    "email": "adinda.rama98@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "5b548ee6a7c58b4e8116b794fcd6a96b1979ba79fd47744ab490464cd25688c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26391,7 +28265,8 @@ const INITIAL_DPT = [
   {
     "npa": "11263",
     "name": "Lia Alfianita",
-    "email": "liaalfianita96@gmail.com",
+    "email": "li***@gmail.com",
+    "email_hash": "7338932dbc7f3faf9cbe4cc1ea51a838acdc51198ca0877d6f1b0451dc146bb8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26405,7 +28280,8 @@ const INITIAL_DPT = [
   {
     "npa": "11265",
     "name": "Bayu Himawan",
-    "email": "bayuhimawan.geologist@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "a772d60cf9f7af943401d9e1360ae23ecb36f87dfcd356468d2f86b54e99054c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26419,7 +28295,8 @@ const INITIAL_DPT = [
   {
     "npa": "11267",
     "name": "Munahruddin Munahruddin",
-    "email": "munahruddin1@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "d0d71d61ceca185eedda65d126d5de32122033e298820781192f4e255dc15fde",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26433,7 +28310,8 @@ const INITIAL_DPT = [
   {
     "npa": "11268",
     "name": "Rizky Syaputra",
-    "email": "rizkysy1@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "2628f24e4129d56a733c1f8419c83ab2c80ea7d24be7047d8c1b60066cb6931d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26447,7 +28325,8 @@ const INITIAL_DPT = [
   {
     "npa": "11274",
     "name": "Ananda Putri Ardini",
-    "email": "anandaputriard@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "63fa20264d96dccfa5862c0fce36bd833c9f813c4b4a1ed75cd6f0656df2128c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26461,7 +28340,8 @@ const INITIAL_DPT = [
   {
     "npa": "11278",
     "name": "redondo asprilla nugroho",
-    "email": "redondo.nugroho@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "190370133795de2298d53b6e4c9d6bb5ba18b52a193afa90f9ade2cf7630d34e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26475,7 +28355,8 @@ const INITIAL_DPT = [
   {
     "npa": "11282",
     "name": "Ellen Devi",
-    "email": "ellengeologist@gmail.com",
+    "email": "el***@gmail.com",
+    "email_hash": "a66fe11b7ceb661040f8c8e1eb77896063eb03c2d9d80268c3ea5f874b953975",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26489,7 +28370,8 @@ const INITIAL_DPT = [
   {
     "npa": "11285",
     "name": "Muhammad Shiddiq",
-    "email": "mshiddiq.97@gmail.com",
+    "email": "ms***@gmail.com",
+    "email_hash": "c43d9a2306e0aa895440c169ae5244e07d9455b2ae8056cd80d08c280d7a1087",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26503,7 +28385,8 @@ const INITIAL_DPT = [
   {
     "npa": "11286",
     "name": "Hermina Haluk",
-    "email": "halukhermina@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "8f90823aacc910f03c2fc915e0c980714465c0948e0ca9b831770c7ccffd413b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26517,7 +28400,8 @@ const INITIAL_DPT = [
   {
     "npa": "11296",
     "name": "Eduardus Bonar Luseno",
-    "email": "eduardusbnrisn@gmail.com",
+    "email": "ed***@gmail.com",
+    "email_hash": "15ca6b544aec6db9f9fb14e867cd0a50739359a0759d198991e2fd1bdf00a0b1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26531,7 +28415,8 @@ const INITIAL_DPT = [
   {
     "npa": "11298",
     "name": "Angger Assidhigie",
-    "email": "angger.assidhiqie@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "70d9e0a6e5bd77bd191bf364bad50a19e068a6a3b46938b96798b0b4d8b2072a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26545,7 +28430,8 @@ const INITIAL_DPT = [
   {
     "npa": "11301",
     "name": "Muhammad Fachreza",
-    "email": "fachreza.m@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "4d437eead0d788d54813b4efb7d2e702b0cdb4a225e4c513c8d6652c97361e8d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26559,7 +28445,8 @@ const INITIAL_DPT = [
   {
     "npa": "11306",
     "name": "Lambok Parulian Marpaung",
-    "email": "lambok.parulian@gmail.com",
+    "email": "la***@gmail.com",
+    "email_hash": "846867b42f4925943db6c76fc6b7286cdcf7db0b90d9f21bac70c63c0c4c4953",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26573,7 +28460,8 @@ const INITIAL_DPT = [
   {
     "npa": "11311",
     "name": "Budi Jangkung Prasetyo",
-    "email": "budijangkungprasetyo@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "afbbb68e9d3ce4a1a08271ef3da68f06a2b44d724955e281bfb3a3d582ea5025",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26587,7 +28475,8 @@ const INITIAL_DPT = [
   {
     "npa": "11312",
     "name": "Muhammad Iqbal Ramadhan",
-    "email": "muhammad.ramadhan@emp.id",
+    "email": "mu***@emp.id",
+    "email_hash": "e0bc48d7075add7db23ce83d3652a237d98cd6f86bdf157e9983ab8ab86b1d68",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26601,7 +28490,8 @@ const INITIAL_DPT = [
   {
     "npa": "11313",
     "name": "Dandy Ariawan Sansosie Putra",
-    "email": "dandysansosie@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "b9d57bcbb1d3236a7d4b780eaff6145f4df70760a12f46f70fc27f2de4af444e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26615,7 +28505,8 @@ const INITIAL_DPT = [
   {
     "npa": "11318",
     "name": "Yunita Meilany",
-    "email": "yunitameilany@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "9ce4df4a1249467a365d07ae90ffff9163019c11832b35240454f821efe54e76",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26629,7 +28520,8 @@ const INITIAL_DPT = [
   {
     "npa": "11321",
     "name": "Gesit Mutiarta",
-    "email": "gesit.mutiarta@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "5db0a6c652012dda93ed4917b930b40c5c2595071217a2878651e204c67a3f5a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26643,7 +28535,8 @@ const INITIAL_DPT = [
   {
     "npa": "11323",
     "name": "Dayinta Ambarsari",
-    "email": "dayintaambarsari@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "ba812e57499dbc24c6775fb26d9d3016126e1021250bd28abb056ee3853266a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26657,7 +28550,8 @@ const INITIAL_DPT = [
   {
     "npa": "11338",
     "name": "Oktavian Dwi Hardiyanto",
-    "email": "oktavian.dwi@geoservices.co.id",
+    "email": "ok***@geoservices.co.id",
+    "email_hash": "411d4b66b9ff02a5920c301c90e4e9f401ac670cd3d2ec5660482c015402ced2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26671,7 +28565,8 @@ const INITIAL_DPT = [
   {
     "npa": "11349",
     "name": "Muhammad Ainurrofiq Jamalulail",
-    "email": "ainurrofiq.jamalulail@gmail.com",
+    "email": "ai***@gmail.com",
+    "email_hash": "9cd783cb992f5d65287fad975882316133021cbbddad7c2b5d2afb27552abe20",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26685,7 +28580,8 @@ const INITIAL_DPT = [
   {
     "npa": "11355",
     "name": "Ester Christiani Sitompul",
-    "email": "esterchristiani@gmail.com",
+    "email": "es***@gmail.com",
+    "email_hash": "dd431ef1ffc84cbaf5463099dcd346d78c019d8e4bba101edac38d33367d8d92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26699,7 +28595,8 @@ const INITIAL_DPT = [
   {
     "npa": "11361",
     "name": "Raja Susatio",
-    "email": "susatio.raja@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "75c95196b42538418e74d3ab30d3e7a262dc7bf42b4ed04bf8a3190cc88c32c0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26713,7 +28610,8 @@ const INITIAL_DPT = [
   {
     "npa": "11364",
     "name": "Nazla Syafitri Rangkuti",
-    "email": "nazla.syafitrii@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "1ee320e60176c69253c42470271e2583780536331b196d6489f58f4a587b3603",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26727,7 +28625,8 @@ const INITIAL_DPT = [
   {
     "npa": "11368",
     "name": "Fauzi Wiguna",
-    "email": "fauziwiguna123@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "97926add44e91b2fbcbe023369dd69122fe5e4e1ff1b15b6997bdec859d4c0d4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26741,7 +28640,8 @@ const INITIAL_DPT = [
   {
     "npa": "11371",
     "name": "Diyaning Ratri",
-    "email": "diyaningratri@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "25980a733ce49f4d8f67e567b42cb12662cd7227f2c8360ba6b6a3161bd01862",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26755,7 +28655,8 @@ const INITIAL_DPT = [
   {
     "npa": "11372",
     "name": "Paulus Perangin Angin",
-    "email": "pauluspangin1@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "9b0bd5416d49204f8cb8f2e2155b5f3d769f0b959b0afc7aacce087a77211203",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26769,7 +28670,8 @@ const INITIAL_DPT = [
   {
     "npa": "11373",
     "name": "Michael Silaen",
-    "email": "silaenmichael9@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "cd7786f7118928860f8241f1bfa4b727a54088f44caaa00f8ca3e825e8fd3eea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26783,7 +28685,8 @@ const INITIAL_DPT = [
   {
     "npa": "11374",
     "name": "Luthfi Zulkifli",
-    "email": "luthfli.zulkifli@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "30c0e9a573e66160d3d649ae184adf5d7547597dcffcc255dc6bdb6d1085e07b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26797,7 +28700,8 @@ const INITIAL_DPT = [
   {
     "npa": "11375",
     "name": "Hafidz Noor Fikri",
-    "email": "hafidz@ulm.ac.id",
+    "email": "ha***@ulm.ac.id",
+    "email_hash": "090b96801435f9beb3ae295b45a036a3f2e38cbb21c471e84d758143ffc287b2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26811,7 +28715,8 @@ const INITIAL_DPT = [
   {
     "npa": "11378",
     "name": "Eko Wicaksono",
-    "email": "eko_miner@yahoo.co.id",
+    "email": "ek***@yahoo.co.id",
+    "email_hash": "8e17426d328b1c2f57fab8b90273da05d695045931ecfe6a028614ac616339a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26825,7 +28730,8 @@ const INITIAL_DPT = [
   {
     "npa": "11379",
     "name": "Handani Satriawan Djajadiningrat",
-    "email": "ayi.djajadiningrat@gmail.com",
+    "email": "ay***@gmail.com",
+    "email_hash": "1c7a28f5df26e139a6ac57fd8629c8b89a95174e8d569c364a3c383837724d4a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26839,7 +28745,8 @@ const INITIAL_DPT = [
   {
     "npa": "11387",
     "name": "Agus Sucipto",
-    "email": "agus.sucipto@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "e8cbbe27643ac42c14bd05f9795bb70070ab90e53326ec0cf2df5f083c2d2653",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26853,7 +28760,8 @@ const INITIAL_DPT = [
   {
     "npa": "11389",
     "name": "Odetha Augustio",
-    "email": "odethaaugustio@gmail.com",
+    "email": "od***@gmail.com",
+    "email_hash": "e87d12e2adbbf795fd3d9baddb8eae455889c533a06c52acfb6c768f53603687",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26867,7 +28775,8 @@ const INITIAL_DPT = [
   {
     "npa": "11391",
     "name": "Agnes Sulistya Ningrum",
-    "email": "agnes_sulistya@yahoo.com",
+    "email": "ag***@yahoo.com",
+    "email_hash": "04a91c39f2911c913341aa14a3fa746fcde84d302f208575f07f280728473122",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26881,7 +28790,8 @@ const INITIAL_DPT = [
   {
     "npa": "11393",
     "name": "Dwi Rachmawati",
-    "email": "rachmawatidwi201289@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "d83d73640c2295b406fa5916f9aede2d7cfc19cca92860f6cc3dcdd6c346974b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26895,7 +28805,8 @@ const INITIAL_DPT = [
   {
     "npa": "11394",
     "name": "Hafid Hadiarahman",
-    "email": "hafidhadiarahman@yahoo.co.id",
+    "email": "ha***@yahoo.co.id",
+    "email_hash": "0fc51c27e4a271481973efc0ceeeb3ebe42c4d8fce2a4107c907df9f00eb4f1a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26909,7 +28820,8 @@ const INITIAL_DPT = [
   {
     "npa": "11395",
     "name": "Imanuel Kaunang",
-    "email": "academics.imanuel@gmail.com",
+    "email": "ac***@gmail.com",
+    "email_hash": "92bf27848546ffb9fb7035599cb23be03f2511c157792ffd04dfc0c569edeb8e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26923,7 +28835,8 @@ const INITIAL_DPT = [
   {
     "npa": "11397",
     "name": "Jamjam Mursyidin Garliska",
-    "email": "zamzammursyidin9@gmail.com",
+    "email": "za***@gmail.com",
+    "email_hash": "3b4a748a50b461e8817c14782f17e9fbe5c061b19decb2a68d7d7c58cfa1fdea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26937,7 +28850,8 @@ const INITIAL_DPT = [
   {
     "npa": "11402",
     "name": "Anggun Arifadi",
-    "email": "anggun_2001@yahoo.com",
+    "email": "an***@yahoo.com",
+    "email_hash": "6f47e4030007be7d7047f9fd177aa44b4d22054fa846cc9cce998ae4cae52774",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26951,7 +28865,8 @@ const INITIAL_DPT = [
   {
     "npa": "11414",
     "name": "Bagus Totok Purnomo",
-    "email": "bagustotok@yahoo.com",
+    "email": "ba***@yahoo.com",
+    "email_hash": "1b258ee5999ce57568e49cb7d9560e584ead24708781fcb36f578e8c0ea0b129",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26965,7 +28880,8 @@ const INITIAL_DPT = [
   {
     "npa": "11420",
     "name": "Gerry Praditya Atmaji",
-    "email": "gerrypradityaaa@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "640f953707e68a35c160cab36f0e60f9950ff5be2b745a2e440a9359acd81ba8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26979,7 +28895,8 @@ const INITIAL_DPT = [
   {
     "npa": "11424",
     "name": "YOSSELI RIFURAREANI",
-    "email": "yosseli.rifurareani@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "ada02203b3e13e1b1896176a3afe6c4c5b639cf1b49c88f6497d932c422933a7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -26993,7 +28910,8 @@ const INITIAL_DPT = [
   {
     "npa": "11425",
     "name": "Eric Arung Patandianan",
-    "email": "ericpatandianan@gmail.com",
+    "email": "er***@gmail.com",
+    "email_hash": "2de045f4707489c1d1301b38e63475a02aff934f3c608d574ddf335151065084",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27007,7 +28925,8 @@ const INITIAL_DPT = [
   {
     "npa": "11429",
     "name": "Restu Tandirerung",
-    "email": "r.tandirerung@unipa.ac.id",
+    "email": "r.***@unipa.ac.id",
+    "email_hash": "044b3e415cf7d25c197fe5a743726eb9b6f0206adc00630643cb972598486355",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27021,7 +28940,8 @@ const INITIAL_DPT = [
   {
     "npa": "11430",
     "name": "Muhammad Fauzi Setyadi",
-    "email": "m.fauzi.setyadi@gmail.com",
+    "email": "m.***@gmail.com",
+    "email_hash": "a1291cb1c7a997d9eb4032cf4d8205b4b3f40a03cde4b65db3febede7a66a2cb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27035,7 +28955,8 @@ const INITIAL_DPT = [
   {
     "npa": "11431",
     "name": "Rahmayani",
-    "email": "rahmayani17112001@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "f7c061ff8963b4d582ba4c93fa2ae654c9e17df705aa96c7d377cf77fcc436d2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27049,7 +28970,8 @@ const INITIAL_DPT = [
   {
     "npa": "11448",
     "name": "Rusdi Purnomo",
-    "email": "rusdipurnomo05@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "308aaf33dc04189e4bddb8c67e7e806a369eae854fe28128f01013ed80bb2d54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27063,7 +28985,8 @@ const INITIAL_DPT = [
   {
     "npa": "11453",
     "name": "Baso Tandi Arung",
-    "email": "bta.geologist@gmail.com",
+    "email": "bt***@gmail.com",
+    "email_hash": "6a5c10fc225f7bc6ea1f87aba55aa58d938b5de2ec4fe37b9268122bd335034f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27077,7 +29000,8 @@ const INITIAL_DPT = [
   {
     "npa": "11455",
     "name": "Rizky Fauzan",
-    "email": "rizkyyfauzaan@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "b99aff0ce74e168808fa0050c5fe80f1fbce5dca811ba1eff3aa24a843ed383f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27091,7 +29015,8 @@ const INITIAL_DPT = [
   {
     "npa": "11456",
     "name": "Muhammad Ashraf Alghozi",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27105,7 +29030,8 @@ const INITIAL_DPT = [
   {
     "npa": "11460",
     "name": "Ferdino R Fadhillah",
-    "email": "tfferdino@gmail.com",
+    "email": "tf***@gmail.com",
+    "email_hash": "0d57d5b899c3d9c0162fd9148cb39069e77b7a7e38a2d01bb7c7526eec4b1684",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27119,7 +29045,8 @@ const INITIAL_DPT = [
   {
     "npa": "11468",
     "name": "Ibrahim Parang Gupito",
-    "email": "ibrahim.gupito@pertamina.com",
+    "email": "ib***@pertamina.com",
+    "email_hash": "57b557546bd7c6f31f6e94d9d2c9e5a7291c0190195e6e7db09900f37d72868e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27133,7 +29060,8 @@ const INITIAL_DPT = [
   {
     "npa": "11475",
     "name": "Mohamad Lugas Sujatmoko",
-    "email": "lugasmuhammad61@gmail.com",
+    "email": "lu***@gmail.com",
+    "email_hash": "841e1cae9258c85da5fdf815fd03d49c81580959e8f21e77e323f1fb4d49eb54",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27147,7 +29075,8 @@ const INITIAL_DPT = [
   {
     "npa": "11477",
     "name": "Yusup Munawar",
-    "email": "yusupmunawar@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "bf76e0a0071ff9e1c1e704a9648ab0b5e08678bbffcaaf509c85ea645c972688",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27161,7 +29090,8 @@ const INITIAL_DPT = [
   {
     "npa": "11478",
     "name": "Gemilang Putradewan",
-    "email": "gilang.gemilang@yahoo.com",
+    "email": "gi***@yahoo.com",
+    "email_hash": "67e94d93c3a7c517359ae015f0be44a9a4a52960e0cbab7a1a559eabd3ac5389",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27175,7 +29105,8 @@ const INITIAL_DPT = [
   {
     "npa": "11483",
     "name": "Muh. Azriel Putra Rizal",
-    "email": "geoscience.unm@gmail.com",
+    "email": "ge***@gmail.com",
+    "email_hash": "2dad0bdd72b2ad126ce97fc14bae1b4b3aef0314c50a6985cf04e8ad4026c8a0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27189,7 +29120,8 @@ const INITIAL_DPT = [
   {
     "npa": "11486",
     "name": "Muchamad Oktasena",
-    "email": "muhamad.oktasena@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "68185cd7222cf68fb5dc8be54d6b5c44bd623c83b0be73713d339f7098445bf8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27203,7 +29135,8 @@ const INITIAL_DPT = [
   {
     "npa": "11489",
     "name": "Elfrida Andriyani Sitorus",
-    "email": "elfridaandriyanisitorus@gmail.com",
+    "email": "el***@gmail.com",
+    "email_hash": "684c69a9159d333a65ee3b11b65ca4675db93033d5756c5feed423e83366321c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27217,7 +29150,8 @@ const INITIAL_DPT = [
   {
     "npa": "11490",
     "name": "Ferdy Septiansyah",
-    "email": "ferdyseptiansyah83@gmail.com",
+    "email": "fe***@gmail.com",
+    "email_hash": "f339aac55e99ed9b34160dc2c8de56c56edac2d772f3a6ed75a7fa11b35e0d75",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27231,7 +29165,8 @@ const INITIAL_DPT = [
   {
     "npa": "11494",
     "name": "Faza Ferio Muhammad Ilham",
-    "email": "fazaferiomi@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "1fc8398e0c29c6969adcf5949e95046d3b96548e934c12081507d86273f0954c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27245,7 +29180,8 @@ const INITIAL_DPT = [
   {
     "npa": "11495",
     "name": "Zalfa Hanifah",
-    "email": "zalfahnfh@gmail.com",
+    "email": "za***@gmail.com",
+    "email_hash": "8da834102b93d2c18446f0929ca0277854160eea526c25027b07ad53353c7fb6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27259,7 +29195,8 @@ const INITIAL_DPT = [
   {
     "npa": "11496",
     "name": "Jasmin Jyalita",
-    "email": "jasmin.jyalita@gmail.com",
+    "email": "ja***@gmail.com",
+    "email_hash": "34f3d22b3b61ce472e362393ef8babf2fcd5066fd116d1549ac9f16286b9edab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27273,7 +29210,8 @@ const INITIAL_DPT = [
   {
     "npa": "11499",
     "name": "Aditya Nurdiyanto",
-    "email": "Aditya.bagus@emp.id",
+    "email": "Ad***@emp.id",
+    "email_hash": "8ddedc03381b9a6ad859d8b3ea8125c67558522bebc13b5981228cbe8610b298",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27287,7 +29225,8 @@ const INITIAL_DPT = [
   {
     "npa": "11501",
     "name": "Vhalentio Pakombong",
-    "email": "vhalentio@gmail.com",
+    "email": "vh***@gmail.com",
+    "email_hash": "1cc79fd99d829b15286812e83232d6fc8970f817d9902428a587bacc7d858a92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27301,7 +29240,8 @@ const INITIAL_DPT = [
   {
     "npa": "11502",
     "name": "Salma Sakinah",
-    "email": "salma.sakinah12@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "b0b63f9d19c71a8e0e0ba7bc444813fd8027b60f643005a5ea2d0103958464da",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27315,7 +29255,8 @@ const INITIAL_DPT = [
   {
     "npa": "11506",
     "name": "Ana Nurul Hidayati",
-    "email": "ananurulhdyt@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "8e0fb5ed14838d16b2cf6c3bf21fb1bcefe716a5d72d024e2d2b60a8b4e7d47c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27329,7 +29270,8 @@ const INITIAL_DPT = [
   {
     "npa": "11509",
     "name": "Nazwa Khoiratun Hisan",
-    "email": "nazwakhoiratunhisan@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "d5642588912f195e134fa124c5e2f61e04f9e73f75d7c1ba7a592beecbe45728",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27343,7 +29285,8 @@ const INITIAL_DPT = [
   {
     "npa": "11514",
     "name": "Andi Pahlevi",
-    "email": "andi3pahlevi@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "92619e6129cafc542390cfbf417103b0e53344909d588bf87dc305f4df6393c1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27357,7 +29300,8 @@ const INITIAL_DPT = [
   {
     "npa": "11517",
     "name": "Rifa Saifanah Nasution",
-    "email": "saifanahrifa@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "f16b39f9433703a197d018ad80c1c2becfa85c745b232d51a0d0e7df9e692fab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27371,7 +29315,8 @@ const INITIAL_DPT = [
   {
     "npa": "11519",
     "name": "Aloysius Surya Putra Dara Lay",
-    "email": "suryadaralay2002@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "1f3478dfebb7ec3848c999d5c4c0b65e73ae6075911385c483455e641b2115d6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27385,7 +29330,8 @@ const INITIAL_DPT = [
   {
     "npa": "11524",
     "name": "Ahmad Amiruddin",
-    "email": "ahmadamiruddin052@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "fc52c8718b677e435fa27abafa1724d0518462e9d7a1ea5e3930cbb4e3cf735a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27399,7 +29345,8 @@ const INITIAL_DPT = [
   {
     "npa": "11527",
     "name": "Adityo Nugroho",
-    "email": "adityonugro20@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "a5ba1971f42a32f7e6033cd91f2ec934825f57e9895e97285558e6cf78c622bb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27413,7 +29360,8 @@ const INITIAL_DPT = [
   {
     "npa": "11540",
     "name": "Yusuf Fadhilah Firman",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27427,7 +29375,8 @@ const INITIAL_DPT = [
   {
     "npa": "11544",
     "name": "Muhammad Azza Sujaka",
-    "email": "m.azzasujaka@gmail.com",
+    "email": "m.***@gmail.com",
+    "email_hash": "2d28ae6b20634706831975228c89503ceb7b67272d0fae6b9b03841ec5181efd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27441,7 +29390,8 @@ const INITIAL_DPT = [
   {
     "npa": "11545",
     "name": "A. Muh. Tegar Juliarga Amrul",
-    "email": "tegaramrul.geo@gmail.com",
+    "email": "te***@gmail.com",
+    "email_hash": "8dd3cf69cacb41fc8f0f2a0523849030ba25ba53923f56606ce514d83f258bba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27455,7 +29405,8 @@ const INITIAL_DPT = [
   {
     "npa": "11547",
     "name": "Adhen Salahudin Al ayubi Prasojo",
-    "email": "adhenayub99@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "5ffedcbe310e683b5571b45b101f726b8fc641a52e9fe0f56afa115bc35a31a6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27469,7 +29420,8 @@ const INITIAL_DPT = [
   {
     "npa": "11550",
     "name": "Bondan Novanis Punto Aji",
-    "email": "bondannovanis11@gmail.com",
+    "email": "bo***@gmail.com",
+    "email_hash": "6442f1436434f6f5b82ee118e146c48cc3f80e2eb36f6ca5df71d09bf771c5c3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27483,7 +29435,8 @@ const INITIAL_DPT = [
   {
     "npa": "11570",
     "name": "Yosafat Mendel",
-    "email": "yosafatjustin@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "8aa8eb59c9d1e8b484408c11f4ef0b9a7dd6f262cf363cd2a307a9048ad02538",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27497,7 +29450,8 @@ const INITIAL_DPT = [
   {
     "npa": "11574",
     "name": "Antonio Jobeam Gereeth Mangimbulude",
-    "email": "jobeam.mangimbulude@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "2e4e52c739226dbb4ee531564db7b7f0ca4834b202d753bf5e6fee2c14a2715b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27511,7 +29465,8 @@ const INITIAL_DPT = [
   {
     "npa": "11577",
     "name": "Naufal Arya Wijaya",
-    "email": "vivifistina28@gmail.com",
+    "email": "vi***@gmail.com",
+    "email_hash": "b7fe05fbb6adc76b49480dbea1dfcbc308e1a90451c480fd1db8fddb9f6edc19",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27525,7 +29480,8 @@ const INITIAL_DPT = [
   {
     "npa": "11579",
     "name": "Yanuar Atha Azhari",
-    "email": "palsyanuar@gmail.com",
+    "email": "pa***@gmail.com",
+    "email_hash": "aea2d4a567e789f93f4493d8dbfcac3193557766e3710cad1a71931a7b13b965",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27539,7 +29495,8 @@ const INITIAL_DPT = [
   {
     "npa": "11581",
     "name": "Nameera Putri Ramaditha",
-    "email": "pnameera@gmail.com",
+    "email": "pn***@gmail.com",
+    "email_hash": "3f5ef4ce41a684b00fc0784e3f18dca501d98da8df17b392103c6daa325cd38c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27553,7 +29510,8 @@ const INITIAL_DPT = [
   {
     "npa": "11583",
     "name": "Anindya Pramesti",
-    "email": "pramestianindya2@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "a7c5d016a2a5335bf9ea3d918bc68482f69c4ebb26bbe7dc9af8596a76a65333",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27567,7 +29525,8 @@ const INITIAL_DPT = [
   {
     "npa": "11584",
     "name": "Roni Marudut Situmorang",
-    "email": "roni.situmorang@esdm.go.id",
+    "email": "ro***@esdm.go.id",
+    "email_hash": "dd4d38f41146db79b54bf7ded5922fb587991f6c48414a0c4effb648058fde45",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27581,7 +29540,8 @@ const INITIAL_DPT = [
   {
     "npa": "11585",
     "name": "Rinaldi Siburian",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27595,7 +29555,8 @@ const INITIAL_DPT = [
   {
     "npa": "11587",
     "name": "AWWAB HAFIZH",
-    "email": "awwabnajih@gmail.com",
+    "email": "aw***@gmail.com",
+    "email_hash": "92361b87175ee6c4e7420a7d5872f43498c9ce587a6b5d98052e52bb7c28aa53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27609,7 +29570,8 @@ const INITIAL_DPT = [
   {
     "npa": "11593",
     "name": "Bagas Saputra",
-    "email": "bagasisaputra99@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "622059191809a5f6916f696ed7cb02bb806dbfdbdc78d6fb6da4f174989abdd9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27623,7 +29585,8 @@ const INITIAL_DPT = [
   {
     "npa": "11595",
     "name": "Keisha Prillia Qayyima",
-    "email": "keishapq@hotmail.com",
+    "email": "ke***@hotmail.com",
+    "email_hash": "ea9c5cac3866ec1b5fe4aa0c8007f490f00bd3209a144718c6931f1196b7b5d3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27637,7 +29600,8 @@ const INITIAL_DPT = [
   {
     "npa": "11596",
     "name": "Dinda Ayu Pradina",
-    "email": "dindaayupradina50@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "5a471b788a3c146acb813f52be024237206d918cbaa226006390922644d05ffc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27651,7 +29615,8 @@ const INITIAL_DPT = [
   {
     "npa": "11599",
     "name": "Nur Isa Hadiyanto",
-    "email": "noerisa_hy@yahoo.com",
+    "email": "no***@yahoo.com",
+    "email_hash": "4214a0d2cad5cd3bf4a7a1d7acf0764cbaf7ab2c2996b10fca43ca54149bab69",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27665,7 +29630,8 @@ const INITIAL_DPT = [
   {
     "npa": "11600",
     "name": "Josephine Puspitasari",
-    "email": "josephinepuspitasari03@gmail.com",
+    "email": "jo***@gmail.com",
+    "email_hash": "11112170ea19c448c52fdd04e9e4b4d5a87c6a3bc9884e47f353325cbf2e459a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27679,7 +29645,8 @@ const INITIAL_DPT = [
   {
     "npa": "11602",
     "name": "Irfan Hidayat",
-    "email": "irfanhdgeo@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "8ea2c830364bd9c50c90483965031ad4a8fe43bc16d3141cc93d315c57882ccb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27693,7 +29660,8 @@ const INITIAL_DPT = [
   {
     "npa": "11603",
     "name": "Rizky Afandi",
-    "email": "afandi.rizkyy@gmail.com",
+    "email": "af***@gmail.com",
+    "email_hash": "a92596314b1bf451b13dc791504b103913e99676badf71d23cd08d820be524e6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27707,7 +29675,8 @@ const INITIAL_DPT = [
   {
     "npa": "11604",
     "name": "Gita Suci Wulandari",
-    "email": "gitasuciwulandari@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "4c17d015d6a08b9a7b5fabb964f4c55f006b2ebb62d89381efdadba7d0a74104",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27721,7 +29690,8 @@ const INITIAL_DPT = [
   {
     "npa": "11605",
     "name": "Nurlela M.Busula",
-    "email": "busulalela117@gmail.com",
+    "email": "bu***@gmail.com",
+    "email_hash": "11b67da85c0010dde36b974d6013d7cf7a0e8c2bbf8793fa9b50865c6a2c610b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27735,7 +29705,8 @@ const INITIAL_DPT = [
   {
     "npa": "11606",
     "name": "Aldi Pratama",
-    "email": "aldip8534@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "7b74dfeaa7a8b2be0c3eac727adfac7496ad5a256e38f772f4f516d2ec3fd6c3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27749,7 +29720,8 @@ const INITIAL_DPT = [
   {
     "npa": "11608",
     "name": "Apriadi Saputra",
-    "email": "apriadisaputra24@gmail.com",
+    "email": "ap***@gmail.com",
+    "email_hash": "5bbf65808a87e2e898d7c85227e83fecfeb49c321e4e2585eae926f93d0165bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27763,7 +29735,8 @@ const INITIAL_DPT = [
   {
     "npa": "11609",
     "name": "Alya dwi fadhiyah",
-    "email": "alyadwifadhiyahh@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "1d20fabaebbb9ac429cbd3cbc24141773b7c7fefc43f91bf216b4cd67698cdac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27777,7 +29750,8 @@ const INITIAL_DPT = [
   {
     "npa": "11610",
     "name": "La Gusland Budyanto Salenda",
-    "email": "guslandbudyanto@gmail.com",
+    "email": "gu***@gmail.com",
+    "email_hash": "9523c6601416094cdd3e83702b2c37e24c48bbce472be6a541e6eda569861acd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27791,7 +29765,8 @@ const INITIAL_DPT = [
   {
     "npa": "11611",
     "name": "Fadilah Angraini Dg. M.",
-    "email": "fadilahadm99@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "e83d2fb6b6ac1bb12a2717e700617f57a64dd47d5da9c909cb088e2a0825abf3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27805,7 +29780,8 @@ const INITIAL_DPT = [
   {
     "npa": "11614",
     "name": "Djamal Adi Nugroho Uno, S.T,M.T",
-    "email": "djamalunoadi@gmail.com",
+    "email": "dj***@gmail.com",
+    "email_hash": "3d2c4749aa5e30475b1baa8a6432a37ad4f3aea8e9fed5d62f4cc16316da88bf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27819,7 +29795,8 @@ const INITIAL_DPT = [
   {
     "npa": "11619",
     "name": "Dewa Gede Kaniskha Astaya Kumara",
-    "email": "idgekaniskha04@gmail.com",
+    "email": "id***@gmail.com",
+    "email_hash": "b78cb796df99a530ee54dd3285db3f6d72ff45f3a053f9130c8c4c3fefbe0cfe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27833,7 +29810,8 @@ const INITIAL_DPT = [
   {
     "npa": "11621",
     "name": "Ratih Hidayati",
-    "email": "mlati_01@yahoo.com",
+    "email": "ml***@yahoo.com",
+    "email_hash": "a00f595042fa6624396530d09727c80dbd8427bfa640770769c19ea9bb207903",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27847,7 +29825,8 @@ const INITIAL_DPT = [
   {
     "npa": "11622",
     "name": "Rama Maharief",
-    "email": "maharief.rama@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "73fd1d8c7903882e7716a3860973c29d6001c67b1151ce0cf574bf3109b6eb91",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27861,7 +29840,8 @@ const INITIAL_DPT = [
   {
     "npa": "11623",
     "name": "Eko Arie Wibowo",
-    "email": "eko.arie@pertamina.com",
+    "email": "ek***@pertamina.com",
+    "email_hash": "a3f6da0728d27231e9e58d691a416e8636606678ebb61ac32b722ed20d5ea1c5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27875,7 +29855,8 @@ const INITIAL_DPT = [
   {
     "npa": "11624",
     "name": "Rangga Perdana Putra",
-    "email": "rangga.putra@pertamina.com",
+    "email": "ra***@pertamina.com",
+    "email_hash": "9193792f1070f7155b91d40022b094f606817b7638685bbb0e565fb45be22bac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27889,7 +29870,8 @@ const INITIAL_DPT = [
   {
     "npa": "11625",
     "name": "Anggoro Prima Kurniawan",
-    "email": "anggoro.kurniawan@pertamina.com",
+    "email": "an***@pertamina.com",
+    "email_hash": "40616365447edef6c0adab15c288628bf0ea0eb6d15d766fbd4d6802aee2fcf6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27903,7 +29885,8 @@ const INITIAL_DPT = [
   {
     "npa": "11629",
     "name": "Zainal Lagga",
-    "email": "enal.geo98@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "02128687c760874b389f433c26c5f1fbff7c0847a1a77b81d7bf32dc9f9423c4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27917,7 +29900,8 @@ const INITIAL_DPT = [
   {
     "npa": "11633",
     "name": "Alan Cristobal Troncoso Morales",
-    "email": "atronmo@hotmail.com",
+    "email": "at***@hotmail.com",
+    "email_hash": "fa3d552d64602185924733c0012bc191c3139a8c77b47f8e888bad21dd036f47",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27931,7 +29915,8 @@ const INITIAL_DPT = [
   {
     "npa": "11638",
     "name": "Nur Ayu Anas",
-    "email": "Ayuanas741@gmail.com",
+    "email": "Ay***@gmail.com",
+    "email_hash": "4192efe269df21c9ba8304df115bfea1cd88cdc524fbacb59a28d6e2766a89d7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27945,7 +29930,8 @@ const INITIAL_DPT = [
   {
     "npa": "11641",
     "name": "Marselino Matindas",
-    "email": "marselino.matindas1987@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "4ca39c819db0093c97d20498762eb52c50ae9e655dfc747d5dc92f8d515966c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27959,7 +29945,8 @@ const INITIAL_DPT = [
   {
     "npa": "11642",
     "name": "Hardianti Kamaluddin",
-    "email": "hardiantikamaluddin78@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "7822dffd7f7511d6c6e40426f2874543f98f0180c029767aa29de3b576c6ac84",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27973,7 +29960,8 @@ const INITIAL_DPT = [
   {
     "npa": "11649",
     "name": "Prananda Putra Adam",
-    "email": "pranandaputra277@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "65dcc03c9266fc7f498967c9dd2582d6be177fc2a4f9b3362ce42834501d6c83",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27987,7 +29975,8 @@ const INITIAL_DPT = [
   {
     "npa": "11652",
     "name": "VARRADITA M AMIN",
-    "email": "varradita@gmail.com",
+    "email": "va***@gmail.com",
+    "email_hash": "c64077b815d0b1097145c48723ff2a3cdc16a87a507a9d2c9c6138f06f450965",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28001,7 +29990,8 @@ const INITIAL_DPT = [
   {
     "npa": "11654",
     "name": "Yudit Prasetya",
-    "email": "yuditprasetya123@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "e7b3c15c68ee6a0f495b6de828dd2b00065410149d87ec291eca8ad7a558bae4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28015,7 +30005,8 @@ const INITIAL_DPT = [
   {
     "npa": "11655",
     "name": "Heber Bakka Suba",
-    "email": "heberbakasuba@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "baed9154db9264f257d9d015d07af1baeba0e4ebcaff2629b02701ceab8b57dc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28029,7 +30020,8 @@ const INITIAL_DPT = [
   {
     "npa": "11656",
     "name": "Muhammad Sarjan Djalil",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28043,7 +30035,8 @@ const INITIAL_DPT = [
   {
     "npa": "11657",
     "name": "Bayu gilang ramadhan",
-    "email": "bayugilang79@gmail.com",
+    "email": "ba***@gmail.com",
+    "email_hash": "498484f236346b92c504c4e92387014f8c92b43cf4ca492e6e50be533c523c6b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28057,7 +30050,8 @@ const INITIAL_DPT = [
   {
     "npa": "11659",
     "name": "Andi Muhammad Iqbal",
-    "email": "andiigo18@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "3130f5d657dd32437e5a6bcceb4b668845db11f430a20d79b98f8321b57cb958",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28071,7 +30065,8 @@ const INITIAL_DPT = [
   {
     "npa": "11660",
     "name": "Moh. Multazam",
-    "email": "mohammadmultazam11@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "f60bc23575cc3c0134c9fa31fdd255a70982a394b58c0f52d0da34b2f98cd689",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28085,7 +30080,8 @@ const INITIAL_DPT = [
   {
     "npa": "11661",
     "name": "Moh Sayydil Maulana",
-    "email": "sayydilmaulana11@gmail.com",
+    "email": "sa***@gmail.com",
+    "email_hash": "33b7cd94ce88da841e8e6ce94da8b0f66acd665a6c92816d3281cafc3884a2e9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28099,7 +30095,8 @@ const INITIAL_DPT = [
   {
     "npa": "11662",
     "name": "Mohammad Fauzi",
-    "email": "mohammadfauzi.r.salman@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "ca254fded8192ee0b3eb7f307ebe63a57e7bd422c35b368dee0c5314615aae3d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28113,7 +30110,8 @@ const INITIAL_DPT = [
   {
     "npa": "11663",
     "name": "Nyoman Fery Mahardika",
-    "email": "inyomanfery2001@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "18636e89717812fe42805006667ab5d2f8c131156db8a0d9c22e65f9be55c480",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28127,7 +30125,8 @@ const INITIAL_DPT = [
   {
     "npa": "11665",
     "name": "Nanda Prasetyo",
-    "email": "nandaprasetyo669@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "aa2b1aff1a185f73fc0e54da3b26f4aed7571d20a7f798a98a1fe295df405834",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28141,7 +30140,8 @@ const INITIAL_DPT = [
   {
     "npa": "11675",
     "name": "Hendra Himawan",
-    "email": "himawan_prg@yahoo.co.id",
+    "email": "hi***@yahoo.co.id",
+    "email_hash": "6a944226c5be71180bc868b5a3606ba25a3d07cc0e2f53224f05376cce9a39de",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28155,7 +30155,8 @@ const INITIAL_DPT = [
   {
     "npa": "11676",
     "name": "Marchelo Jeremy Rompas",
-    "email": "marchelojeremy@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "bc1e5b4c0e7efeaf2f0039f76c10bd418e4d2c4c809ddefc94eb7f7b0d784095",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28169,7 +30170,8 @@ const INITIAL_DPT = [
   {
     "npa": "11677",
     "name": "Dzikru Aminulloh",
-    "email": "dzikruaminulloh@upnyk.ac.id",
+    "email": "dz***@upnyk.ac.id",
+    "email_hash": "52bc64ade2b9cc62678d895f114b619e194d9585002c63c27f976a3f02092d85",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28183,7 +30185,8 @@ const INITIAL_DPT = [
   {
     "npa": "11687",
     "name": "Bagus Totok Purnomo",
-    "email": "btpurnomo@bukitasam.co.id",
+    "email": "bt***@bukitasam.co.id",
+    "email_hash": "952fe8e3d88a421e892d1617f2c3fb1d468eb83e78df7d72fc296cc06c81ddc6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28197,7 +30200,8 @@ const INITIAL_DPT = [
   {
     "npa": "11689",
     "name": "Sompoan Satria",
-    "email": "sompoan.teguh@gmail.com",
+    "email": "so***@gmail.com",
+    "email_hash": "ff2a5589cba1686855b9219a9c5a89dcafdcec38397e2854ae28e854722f36df",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28211,7 +30215,8 @@ const INITIAL_DPT = [
   {
     "npa": "11691",
     "name": "Dimas Mulya Prabowo",
-    "email": "dimasmulyaprabowo@yahoo.co.id",
+    "email": "di***@yahoo.co.id",
+    "email_hash": "8cab1067e0ab244cabfccd28a93ebe9f666b9c14318315637c069704fc2c7250",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28225,7 +30230,8 @@ const INITIAL_DPT = [
   {
     "npa": "11692",
     "name": "Afra Ghaida Fathassabilla",
-    "email": "afraghaida14@gmail.com",
+    "email": "af***@gmail.com",
+    "email_hash": "d8acfe0b2be5a2dcaf6bfb69fc91e5d8f07cc99c42d736b665b4a39fe40c59c5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28239,7 +30245,8 @@ const INITIAL_DPT = [
   {
     "npa": "11693",
     "name": "Depi Restiadi",
-    "email": "depi.restiadi@pertamina.com",
+    "email": "de***@pertamina.com",
+    "email_hash": "e9d2488621d1d6b6ab81db3b65f2d5eefd9967f7e81cb93ba2bb3a952f0f6efd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28253,7 +30260,8 @@ const INITIAL_DPT = [
   {
     "npa": "11695",
     "name": "Simon Haig Ballantyne",
-    "email": "sarifah@groundrisk.com",
+    "email": "sa***@groundrisk.com",
+    "email_hash": "a575a99659c3a4a49eb367760078425fa48828522df4465e875d214318057801",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28267,7 +30275,8 @@ const INITIAL_DPT = [
   {
     "npa": "11700",
     "name": "Anie Rahmi",
-    "email": "rahmi.anie@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "c0278411e2f84525270b7ab408c4851f1c40c14b20e26be1caea4ab48f21a8b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28281,7 +30290,8 @@ const INITIAL_DPT = [
   {
     "npa": "11702",
     "name": "Rizky Daffa Fadilla",
-    "email": "keffanasha.df@gmail.com",
+    "email": "ke***@gmail.com",
+    "email_hash": "8009e38e9d10eaaeffa06ce16a8b57e08554003d228df13aa2d7c13f68970b7f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28295,7 +30305,8 @@ const INITIAL_DPT = [
   {
     "npa": "11703",
     "name": "Khaerul Muhammad Abdillah",
-    "email": "khaerulmuhab@gmail.com",
+    "email": "kh***@gmail.com",
+    "email_hash": "39d72be48c52afd8c53bcf1df6d62102154cc7e2833f65b03893a86cfaaa0b28",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28309,7 +30320,8 @@ const INITIAL_DPT = [
   {
     "npa": "11705",
     "name": "Ghoffar Madani",
-    "email": "ghoffarmdn@gmail.com",
+    "email": "gh***@gmail.com",
+    "email_hash": "3612e9cb63c5311b3bb3c8871d557552244fe44f392b480dd946d9343e66a609",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28323,7 +30335,8 @@ const INITIAL_DPT = [
   {
     "npa": "11709",
     "name": "Winda Lestari Turnip",
-    "email": "winda.lestari@minevesting.co",
+    "email": "wi***@minevesting.co",
+    "email_hash": "315d0b2384b0ceed253e48c68e0f3b485deb9060f799b325d4208c8beb5e05f5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28337,7 +30350,8 @@ const INITIAL_DPT = [
   {
     "npa": "11710",
     "name": "Sutan Vasya",
-    "email": "sutanvasya@gmail.com",
+    "email": "su***@gmail.com",
+    "email_hash": "9fb60bf03d644f76b2e70e3339080905fb55038785d1031aea66bf66ab3e213c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28351,7 +30365,8 @@ const INITIAL_DPT = [
   {
     "npa": "11713",
     "name": "Salman Alfarisi",
-    "email": "duniasalman@gmail.com",
+    "email": "du***@gmail.com",
+    "email_hash": "c4144938c20df63e6416ec31a8ca57b0541b4a7ec1b02cd386f380b750b15522",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28365,7 +30380,8 @@ const INITIAL_DPT = [
   {
     "npa": "11714",
     "name": "Rizal Faisal Akbar",
-    "email": "rizalfaisalakbar88@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "a16547c92725eabb8776bdb8b627efedafd284afef25df3953d3b603e573b7ae",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28379,7 +30395,8 @@ const INITIAL_DPT = [
   {
     "npa": "11715",
     "name": "Yosep Aliandu",
-    "email": "yosep.aliandu@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "ce6b53092485a8d09e589a1a2bdc72860fc8095ca989c70592b4ab8ece85ea92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28393,7 +30410,8 @@ const INITIAL_DPT = [
   {
     "npa": "11716",
     "name": "Christophorus Enggar Suryo Pradipto",
-    "email": "enggarchristophorus@gmail.com",
+    "email": "en***@gmail.com",
+    "email_hash": "4e8e7983414798e514c06036940fb507013b1288e477a5019e5c57cd218ffe0b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28407,7 +30425,8 @@ const INITIAL_DPT = [
   {
     "npa": "11717",
     "name": "Hari Inwanto",
-    "email": "hariinv@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "f12efd85757d9534a409edf13cefdfe86f8f0f0b92e09df4750ffd105f545414",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28421,7 +30440,8 @@ const INITIAL_DPT = [
   {
     "npa": "11718",
     "name": "Rafi Fakhri",
-    "email": "rafi12fakhri@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "c66692a62653e5ea3571c3589d11b0f45b1771cd087d18142b8982b8918f952b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28435,7 +30455,8 @@ const INITIAL_DPT = [
   {
     "npa": "11719",
     "name": "Zhao Zhongqiu",
-    "email": "skymvpte@gmail.com",
+    "email": "sk***@gmail.com",
+    "email_hash": "288e3514e3b48d28f4c23b6e5aaec1b92676940f6c700da232ce2e775df6f904",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28449,7 +30470,8 @@ const INITIAL_DPT = [
   {
     "npa": "11720",
     "name": "Andi Laksamana Adlyansyah Baso",
-    "email": "aladlyansah@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "929b16536a88ac2f95ff095982b13b7cea9424ffc13ecd72c97f051137d0fb00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28463,7 +30485,8 @@ const INITIAL_DPT = [
   {
     "npa": "11721",
     "name": "Rake Silverrian",
-    "email": "rakesilverrian@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "dbd91b4f0c95ae9c89dddeef3962e7c81a24f418e0d9b2707847538102db727f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28477,7 +30500,8 @@ const INITIAL_DPT = [
   {
     "npa": "11722",
     "name": "Gilang Abimanyu",
-    "email": "gilangabimanyu56@gmail.com",
+    "email": "gi***@gmail.com",
+    "email_hash": "007d369de38454ed868491f63d9fdf37335dbd531c2a63c43022851ae9c1cc7f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28491,7 +30515,8 @@ const INITIAL_DPT = [
   {
     "npa": "11723",
     "name": "Adinda Aprilia Azzahra",
-    "email": "apriliaadinda40@gmail.com",
+    "email": "ap***@gmail.com",
+    "email_hash": "a83e7664c38038795e68c4a2f05adc4f5211b0520989a9be5a024601bb70892a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28505,7 +30530,8 @@ const INITIAL_DPT = [
   {
     "npa": "11724",
     "name": "Christopher Harman",
-    "email": "charman19790115@gmail.com",
+    "email": "ch***@gmail.com",
+    "email_hash": "a6411038e0db2b53ef5bc341a9eb68ddbedf1793b785006e20784ae743ffd48f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28519,7 +30545,8 @@ const INITIAL_DPT = [
   {
     "npa": "11725",
     "name": "Akbar Jasa Putra",
-    "email": "akbarp412@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "68660f05daa0ad9df50b3e440c86cb1ecf12a6f13c0eef070d038e8962492d8f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28533,7 +30560,8 @@ const INITIAL_DPT = [
   {
     "npa": "11726",
     "name": "Dimas Panggih Amukti",
-    "email": "dimaspanggih01@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "6b2f613815975d971517eafbe56dd7431c11c8d5498295317151905ad9287a3d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28547,7 +30575,8 @@ const INITIAL_DPT = [
   {
     "npa": "11727",
     "name": "Rudi Budi Setiawan",
-    "email": "rudibudisetiawan@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "2a0ac91f41240e9afad743ce8f07394de698f3e5ae651c648ead989d5387f99b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28561,7 +30590,8 @@ const INITIAL_DPT = [
   {
     "npa": "11728",
     "name": "Apriansyah Nur Saputra",
-    "email": "apriansyahnursaputra@gmail.com",
+    "email": "ap***@gmail.com",
+    "email_hash": "938637fe6a53248da024439c85f8a4524e7d3f33a41aa445416481a6be5f8f38",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28575,7 +30605,8 @@ const INITIAL_DPT = [
   {
     "npa": "11729",
     "name": "Naufal Rifgi Wardana",
-    "email": "naufalnwardana@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "7a42f2a15f851c4435968c1048f9c0129562c82aa69287897f4f374334f59de7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28589,7 +30620,8 @@ const INITIAL_DPT = [
   {
     "npa": "11730",
     "name": "Andreas Julio Nembo",
-    "email": "nembo.andreasjulio@gmail.com",
+    "email": "ne***@gmail.com",
+    "email_hash": "a1007fc6396e9bcd71248b8da71ff749da7b3db23b42a330979a814b7fa780ab",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28603,7 +30635,8 @@ const INITIAL_DPT = [
   {
     "npa": "11731",
     "name": "Irsyad Gerta Mahendra",
-    "email": "igertamahendra@gmail.com",
+    "email": "ig***@gmail.com",
+    "email_hash": "04c45988ccf646f30ae637c648c6b42b9339b1ec35da4aeb87ac39f7649886dd",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28617,7 +30650,8 @@ const INITIAL_DPT = [
   {
     "npa": "11732",
     "name": "Amri Ahmad Aminuddin",
-    "email": "amri.ahmad24@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "2d1936d04bcc60d27ee1a82435f079903db1460bc95827aa557781876a5c0313",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28631,7 +30665,8 @@ const INITIAL_DPT = [
   {
     "npa": "11733",
     "name": "Himmes Fitra Yuda",
-    "email": "himes.fy@trisakti.ac.id",
+    "email": "hi***@trisakti.ac.id",
+    "email_hash": "679e4b87507715d39e75b8004c4c12341bedb840e9d9ae94e51ef4aff5c5f8fc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28645,7 +30680,8 @@ const INITIAL_DPT = [
   {
     "npa": "11734",
     "name": "Maggy Lengke",
-    "email": "maggylengke@yahoo.com",
+    "email": "ma***@yahoo.com",
+    "email_hash": "77362879cab9f93d7066044de3dc53842ca859a6aeac4ce1d61133963d1f6f85",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28659,7 +30695,8 @@ const INITIAL_DPT = [
   {
     "npa": "11735",
     "name": "Piere Sebastian Pole Ginting",
-    "email": "pierresibastian789@gmail.com",
+    "email": "pi***@gmail.com",
+    "email_hash": "1abb585d2f07185802b9d04d50959836f5e9518eb1d5b3ab3b078c34999625e4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28673,7 +30710,8 @@ const INITIAL_DPT = [
   {
     "npa": "11736",
     "name": "Richard Markus Isliko",
-    "email": "richardisliko07@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "b975318e392732f44c8cca65454c6d4914f79d4823d353f258a1ebb59afa10fb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28687,7 +30725,8 @@ const INITIAL_DPT = [
   {
     "npa": "11737",
     "name": "Alexis Valenza",
-    "email": "alexis@valenza-engineering.com",
+    "email": "al***@valenza-engineering.com",
+    "email_hash": "e4ddc5019067fbd13e04e5587185227f38b04e281a7ca95215516c2747251595",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28701,7 +30740,8 @@ const INITIAL_DPT = [
   {
     "npa": "11738",
     "name": "Rukayah Ahmad",
-    "email": "rukayahahmad8@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "2474462b583d289b0ff174bb9448e17a0481b4fdea8180ea6c1c06dad59b192c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28715,7 +30755,8 @@ const INITIAL_DPT = [
   {
     "npa": "11739",
     "name": "Ari Nuryaddin Putra",
-    "email": "arinuryaddin@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "6891a60485963827898dd11d8c6471b1465cc3c470e28c19dd87de6e0f48766f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28729,7 +30770,8 @@ const INITIAL_DPT = [
   {
     "npa": "11740",
     "name": "Khaerul Wahyu Ramdhan",
-    "email": "khaerulwahyuramdhan@gmail.com",
+    "email": "kh***@gmail.com",
+    "email_hash": "afcfb4baccbefe9ae0940f83cf2660bf727c846a5ade2b7f2b4974dc4c2c165e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28743,7 +30785,8 @@ const INITIAL_DPT = [
   {
     "npa": "11741",
     "name": "Raynald Ariyaputera",
-    "email": "renaudputera173@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "af26979c3f0980deef133a57a5f93e3d5862f7e239ef417f11c08cbb6db939ea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28757,7 +30800,8 @@ const INITIAL_DPT = [
   {
     "npa": "11742",
     "name": "Ridwan Rahmanto",
-    "email": "ridwan.rahmantoo@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "27f854d85ee5a82285c497b576cd28d82c2e84f75bbefbfee5e0e94297345ec8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28771,7 +30815,8 @@ const INITIAL_DPT = [
   {
     "npa": "11743",
     "name": "Indra Wahyu Murtyanto",
-    "email": "indramurtyanto@gmail.com",
+    "email": "in***@gmail.com",
+    "email_hash": "c59e00452051bad761ca0edcf3c1e48fc14e2bc74a87dc5f1cde38a0def5fc25",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28785,7 +30830,8 @@ const INITIAL_DPT = [
   {
     "npa": "11744",
     "name": "Rizsa Rindira Sekar Ayu Heriadi",
-    "email": "rizsa.ayuu30@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "e1aaeac10773029bd4897e88268d6f4f29ff5a46f366191d1163f90d644d42e0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28799,7 +30845,8 @@ const INITIAL_DPT = [
   {
     "npa": "11745",
     "name": "Johanes Maunda Pinem",
-    "email": "jmpinem@gmail.com",
+    "email": "jm***@gmail.com",
+    "email_hash": "e18237c764457c0724655d8afafe0626d4cbba99d1c3691588282c7c7bc98545",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28813,7 +30860,8 @@ const INITIAL_DPT = [
   {
     "npa": "11746",
     "name": "Yoga Era Pamitro",
-    "email": "yogapamitro@gmail.com",
+    "email": "yo***@gmail.com",
+    "email_hash": "ba064d283e29f105d115cda5ae183ad2a03bb4c890788f0683ac9510124c9019",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28827,7 +30875,8 @@ const INITIAL_DPT = [
   {
     "npa": "11747",
     "name": "Aryo Dwi Handoko",
-    "email": "aryodwihandoko@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "c5b207436741bc5101a040f7789b075e706aef0a7261dd276b215a35424b3e34",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28841,7 +30890,8 @@ const INITIAL_DPT = [
   {
     "npa": "11748",
     "name": "Rifqi Naufal Aditya",
-    "email": "rifqiaditya48@gmail.com",
+    "email": "ri***@gmail.com",
+    "email_hash": "12567d1bec70e8e4bfc0deb2d5243d48179d370f9e10d69b20d997ec67ca6d00",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28855,7 +30905,8 @@ const INITIAL_DPT = [
   {
     "npa": "11749",
     "name": "Citra Aryani Anwar",
-    "email": "citraryani@icloud.com",
+    "email": "ci***@icloud.com",
+    "email_hash": "e1e465987a58eb41787d64206fe8e6e0ad934b6eff05bff2331671043bc9adc3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28869,7 +30920,8 @@ const INITIAL_DPT = [
   {
     "npa": "11750",
     "name": "Mohandes Radix Ganmhagra",
-    "email": "mohandesradixg@gmail.com",
+    "email": "mo***@gmail.com",
+    "email_hash": "819125b490fe24be2f7ef23a8be15d4f4c7300b50d23a692bcffd350c5705a29",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28883,7 +30935,8 @@ const INITIAL_DPT = [
   {
     "npa": "11751",
     "name": "Muhammad Naufal Firdaus",
-    "email": "naufalfirdaus282005@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "368c9885b62c22fa63c13772789eeef5c5448c04cfa7f6cca85d91788cabde5f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28897,7 +30950,8 @@ const INITIAL_DPT = [
   {
     "npa": "11752",
     "name": "Kevin Ardian Nur",
-    "email": "ardiannur3@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "67eab79d568e827cc5d47fed7d55c6572109c3dab747a1661979d07400d0ea42",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28911,7 +30965,8 @@ const INITIAL_DPT = [
   {
     "npa": "11753",
     "name": "Amir Hamzah",
-    "email": "amirhamzah.geo@gmail.com",
+    "email": "am***@gmail.com",
+    "email_hash": "35e3ee608a04b181574bd80dda7d377c2b674d12bfa0ecf9a5bc7455cdefd21d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28925,7 +30980,8 @@ const INITIAL_DPT = [
   {
     "npa": "11754",
     "name": "Ngisomuddin -",
-    "email": "ngisomuddin@gmail.com",
+    "email": "ng***@gmail.com",
+    "email_hash": "b08523d385e12ed0ddaeef2ce36ec870809c4a940b52bf742558d76fe1089a79",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28939,7 +30995,8 @@ const INITIAL_DPT = [
   {
     "npa": "11755",
     "name": "Regie Tio Prihantoro",
-    "email": "regietioprihantoro@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "51c7538165744d227b58030eaf76bf455b81b27b896cd8d9ff17bacaa3851908",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28953,7 +31010,8 @@ const INITIAL_DPT = [
   {
     "npa": "11756",
     "name": "Wildhon Surya Putra",
-    "email": "wildhonsurya2002@gmail.com",
+    "email": "wi***@gmail.com",
+    "email_hash": "27b54e48e862678e50eb32b0f33ec33b037d1cf2f785bfc16bbf531b1c66da58",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28967,7 +31025,8 @@ const INITIAL_DPT = [
   {
     "npa": "11757",
     "name": "Muhammad Fadhly F.Y",
-    "email": "muhfadhlyfy@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "8c840b3d5f7db6314d1d72160f3c6c22e8b724e75562a42291e0745221dc3c11",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28981,7 +31040,8 @@ const INITIAL_DPT = [
   {
     "npa": "11758",
     "name": "Gabriel Rosario Fernando Keluhang",
-    "email": "gabrielrio831@gmail.com",
+    "email": "ga***@gmail.com",
+    "email_hash": "ed36a8dc6904c41f92964a87fa57726697e3ddcd702206670ed834ebb633a494",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -28995,7 +31055,8 @@ const INITIAL_DPT = [
   {
     "npa": "11759",
     "name": "Revena Denia Putri",
-    "email": "revenadeniap@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "2ba5073dea2b2f92aa4bfde755fe724c44d3868ee41273e0935d9e483a86aa68",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29009,7 +31070,8 @@ const INITIAL_DPT = [
   {
     "npa": "11760",
     "name": "Akbar Tri Widodo",
-    "email": "akbarwidodo80@gmail.com",
+    "email": "ak***@gmail.com",
+    "email_hash": "04ffaf60c583c9ac156ed2eea88095ee2d5861384b31e9788e82b147c825ee92",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29023,7 +31085,8 @@ const INITIAL_DPT = [
   {
     "npa": "11761",
     "name": "Jeremy Naibaho",
-    "email": "jeremy.naibaho1608@gmail.com",
+    "email": "je***@gmail.com",
+    "email_hash": "c865b051181c2b7613c5ea48fb257387e3e445c162bef6ec8888ea6ab8779a09",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29037,7 +31100,8 @@ const INITIAL_DPT = [
   {
     "npa": "11762",
     "name": "Muhammad Nuur Fakhrul Ahli",
-    "email": "fakhrulahli@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "26f5e03796c17489ad771a81b29a56126d51310ea55af9696ec148572f801351",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29051,7 +31115,8 @@ const INITIAL_DPT = [
   {
     "npa": "11763",
     "name": "Fandi Arapenta Ginting",
-    "email": "fandiarapentaginting@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "7234bbb930eff072837df4fdcea91a50bb3c518554f45c1a4cd0e5437ec67063",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29065,7 +31130,8 @@ const INITIAL_DPT = [
   {
     "npa": "11764",
     "name": "Steven Anser Reyga Ramadhan",
-    "email": "stevenanser8@gmail.com",
+    "email": "st***@gmail.com",
+    "email_hash": "7731733758f4fbdca17e1608e31e118c94b7b4e68a02f015168f6339247c2e71",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29079,7 +31145,8 @@ const INITIAL_DPT = [
   {
     "npa": "11765",
     "name": "Muhammad Iman Luthfi",
-    "email": "muh.imanluthfi@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "9965266cda81f49b5c19c16cca7a0e3562c52b4997bafc2f47b78f06ac210b09",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29093,7 +31160,8 @@ const INITIAL_DPT = [
   {
     "npa": "11766",
     "name": "Ihfan Derhamy Mustav",
-    "email": "ihfan.mustav@geoservices.co.id",
+    "email": "ih***@geoservices.co.id",
+    "email_hash": "ad6a2be1e3cee841e343fa1379a662324c7eb3212fd62a6e0dacb98148e05a86",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29107,7 +31175,8 @@ const INITIAL_DPT = [
   {
     "npa": "11767",
     "name": "Aenan Putri Aulia",
-    "email": "aenan.putri@geoservices.co.id",
+    "email": "ae***@geoservices.co.id",
+    "email_hash": "4a5b83360c57e3057030beda843cda5783fd9d95dcb2c165b62f0c497a66575a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29121,7 +31190,8 @@ const INITIAL_DPT = [
   {
     "npa": "11768",
     "name": "Davin Setiadi",
-    "email": "d4vinstd17@gmail.com",
+    "email": "d4***@gmail.com",
+    "email_hash": "b9dc3a650565e5420b5eb9516615e0a965eafe74689098a7401046971e31ff0d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29135,7 +31205,8 @@ const INITIAL_DPT = [
   {
     "npa": "11769",
     "name": "Dwi Nica Wicakso",
-    "email": "dwinicawicakso@gmail.com",
+    "email": "dw***@gmail.com",
+    "email_hash": "53d594d2c552a697b43c7a02aa911bdd3aa26b9f184716faa2a58181c15069c6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29149,7 +31220,8 @@ const INITIAL_DPT = [
   {
     "npa": "11770",
     "name": "Raisha Rahma Azalia",
-    "email": "raishazalia29@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "615289b90861b759f2c52f5f837400bafe5f62f4062c155a6f492aa0f486911c",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29163,7 +31235,8 @@ const INITIAL_DPT = [
   {
     "npa": "11771",
     "name": "Barlianta Usran, S.T",
-    "email": "nisingarri@gmail.com",
+    "email": "ni***@gmail.com",
+    "email_hash": "22142e4b6aa7b0b9819facb31edce00a4ad3a4e9fe18dfdb0a42dc5cf34db3fc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29177,7 +31250,8 @@ const INITIAL_DPT = [
   {
     "npa": "11772",
     "name": "Ardi Ramadan",
-    "email": "ramadanardi37@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "a90914b47232f926fa5752e94b9df14066a65a8519306d5131fe0a33202e39c2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29191,7 +31265,8 @@ const INITIAL_DPT = [
   {
     "npa": "11773",
     "name": "ANGGI SIREGAR",
-    "email": "d_m_anggi_siregar@yahoo.com",
+    "email": "d_***@yahoo.com",
+    "email_hash": "5ff6d6fb6394cc912e193b8d3111047da1773aef569bae9d03a6b1158a8627b3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29205,7 +31280,8 @@ const INITIAL_DPT = [
   {
     "npa": "11774",
     "name": "Muh. Fatur Tardiansyah",
-    "email": "fathurtardiansyah@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "2777cfbae1c21b259faf4fd9f7958af0ea037fa46bb7cc5a414514d62d7251f3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29219,7 +31295,8 @@ const INITIAL_DPT = [
   {
     "npa": "11775",
     "name": "Ir. Muhamad Iqbal Wahyudin, S.T",
-    "email": "muhamad.iqbal.wahyudin@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "367802818591e8a3e80c56eb230dc730e454920cdcab1b0c57191222d67a7b71",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29233,7 +31310,8 @@ const INITIAL_DPT = [
   {
     "npa": "11776",
     "name": "Efrina Chandra Agusti Putri",
-    "email": "efrinacap@gmail.com",
+    "email": "ef***@gmail.com",
+    "email_hash": "b5e8e822c1d1d30099b9024a87b5eb70a5174abb6e16eb4c79ac5d357b96c1fc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29247,7 +31325,8 @@ const INITIAL_DPT = [
   {
     "npa": "11777",
     "name": "Halim Murasyid",
-    "email": "utuhcr7@gmail.com",
+    "email": "ut***@gmail.com",
+    "email_hash": "dfa3999441cd60f5716e8a5a58130a629f714fd20a37989e345f39a90b8474cf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29261,7 +31340,8 @@ const INITIAL_DPT = [
   {
     "npa": "11778",
     "name": "Jamaluddin",
-    "email": "jamaluddin@sttmigas.ac.id",
+    "email": "ja***@sttmigas.ac.id",
+    "email_hash": "f2a8cdcf42244508fe5c51e3c7496664713df29cee09468020012c64e55cf58b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29275,7 +31355,8 @@ const INITIAL_DPT = [
   {
     "npa": "11779",
     "name": "Ari Yuliyan Syah Dani",
-    "email": "ariyuliyansyahdani@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "7bb565a1de86abe212240b619bdf623e8c27cd0db033496d598a6abf9dea5486",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29289,7 +31370,8 @@ const INITIAL_DPT = [
   {
     "npa": "11780",
     "name": "Rachmat Adi Susilo",
-    "email": "rachmatadi17@gmail.com",
+    "email": "ra***@gmail.com",
+    "email_hash": "cda3b0f0d59995b66a6bc47bc55444d326b8476e21e6b9de9eaaa282ef831841",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29303,7 +31385,8 @@ const INITIAL_DPT = [
   {
     "npa": "11781",
     "name": "Arrini Syahidah",
-    "email": "arrinisyahidah23@gmail.com",
+    "email": "ar***@gmail.com",
+    "email_hash": "95c22798c4605a82320b615b8c9584ad5dfda9ace68c6daeaf9ff00480cb5fe1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29317,7 +31400,8 @@ const INITIAL_DPT = [
   {
     "npa": "11782",
     "name": "Mahmud Goviatama",
-    "email": "mgoviatama@gmail.com",
+    "email": "mg***@gmail.com",
+    "email_hash": "6469d298717c3bd1c4649aeb5f6ec0052b803ddb2107ba41c01f98f3b75a0ff2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29331,7 +31415,8 @@ const INITIAL_DPT = [
   {
     "npa": "11783",
     "name": "Hanif Indra Wicaksana",
-    "email": "hanifwicaksana22.1@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "e557314c88ca907b6e49eafc91cafe0483ab5f5623bb0aabaf327b184419a817",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29345,7 +31430,8 @@ const INITIAL_DPT = [
   {
     "npa": "11784",
     "name": "Davin Rizga Haris Suryana",
-    "email": "davinrizqa74@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "1b7620349511ab97e3ecf4705696dab97c2a6e93ab93303c7e54dc63cda49877",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29359,7 +31445,8 @@ const INITIAL_DPT = [
   {
     "npa": "11785",
     "name": "Izzatullah Muhammad A-kindi",
-    "email": "kindismile@gmail.com",
+    "email": "ki***@gmail.com",
+    "email_hash": "83b93539a81bc201798d0e2e8299dc075a1658e202c91911f28dc65dd3c1eb53",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29373,7 +31460,8 @@ const INITIAL_DPT = [
   {
     "npa": "11786",
     "name": "Adila Akmal Akbar",
-    "email": "adilaakmal0@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "d96cb1854c757453031bf12fa62272962cfe50e677db2af5e095bd2a39171086",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29387,7 +31475,8 @@ const INITIAL_DPT = [
   {
     "npa": "11787",
     "name": "Bimo Panggabean",
-    "email": "bpanggabean07@gmail.com",
+    "email": "bp***@gmail.com",
+    "email_hash": "3d7df49c792eebd298143fde01ef01854f168833edfc1edc8f1325e3572b6adc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29401,7 +31490,8 @@ const INITIAL_DPT = [
   {
     "npa": "11788",
     "name": "Munji Syarif",
-    "email": "syarif.ms@gmail.com",
+    "email": "sy***@gmail.com",
+    "email_hash": "06fe7fd6f9c9e93fafde14c5fb88e1dc22d18b0e9f4202361612f084ea9d66bc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29415,7 +31505,8 @@ const INITIAL_DPT = [
   {
     "npa": "11789",
     "name": "Alizar Ampel Soelaeman",
-    "email": "alizarsulaeman@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "40855bc9d5838d495a231d3ff82d8af911875cabe8c2c8389e534e723e950753",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29429,7 +31520,8 @@ const INITIAL_DPT = [
   {
     "npa": "11790",
     "name": "Shafa Hadaina Prawira Sari",
-    "email": "shafassari@gmail.com",
+    "email": "sh***@gmail.com",
+    "email_hash": "3fd45faec13c311b36231884dc1654516797b8c14948da5dc68743ca76293403",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29443,7 +31535,8 @@ const INITIAL_DPT = [
   {
     "npa": "11792",
     "name": "Rendy Diego Soedarjo",
-    "email": "rendy.soedarjo@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "d76d492bd90ab61f06abbf6e1f61d1c6e8a08525373d551617ca25dc3ff2c1cf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29457,7 +31550,8 @@ const INITIAL_DPT = [
   {
     "npa": "11799",
     "name": "Helmi Falah Widiyana",
-    "email": "helmifalahw12@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "40e188692406789832ad0bee7f88c4cd90ebc52116f81616236d29990c891d4d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29471,7 +31565,8 @@ const INITIAL_DPT = [
   {
     "npa": "11805",
     "name": "Zakaria Situmeang",
-    "email": "Zakariasitumeang@gmail.com",
+    "email": "Za***@gmail.com",
+    "email_hash": "89a1aaa37db25e78c93d64d4252be3d16e636547a02ce330fa5039441218df43",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29485,7 +31580,8 @@ const INITIAL_DPT = [
   {
     "npa": "11820",
     "name": "Ahmad Hafizh DhiyaVul Haq",
-    "email": "ahmadhafid110@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "7621c45b41c2fda61d42aec1e27a510d4f99052d074497bb06b5d31277b3a577",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29499,7 +31595,8 @@ const INITIAL_DPT = [
   {
     "npa": "11832",
     "name": "Hanafi Permana",
-    "email": "hanafip16@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "3444296a788c6dec348b9dbc958b5e054c8bab8b3d75c7dbcbc4a6b51cda4da8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29513,7 +31610,8 @@ const INITIAL_DPT = [
   {
     "npa": "11858",
     "name": "Ahmad Yoeriza Fitrah",
-    "email": "ahmadyoeriza@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "e391aa367da522b960646bcc4f2203052428ca1f9d1eccadf122c02d0504db5b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29527,7 +31625,8 @@ const INITIAL_DPT = [
   {
     "npa": "11860",
     "name": "Aditya Fadhiurrohman Putrananda",
-    "email": "",
+    "email": "***",
+    "email_hash": "",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29541,7 +31640,8 @@ const INITIAL_DPT = [
   {
     "npa": "11870",
     "name": "Dufinta Mutiara Elsa Nur Basit",
-    "email": "elsanurbasit08@gmail.com",
+    "email": "el***@gmail.com",
+    "email_hash": "0266a0e1da88da2321731bcd53c4b088be508fdf9ed43556baf9acf874cb83c8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29555,7 +31655,8 @@ const INITIAL_DPT = [
   {
     "npa": "11884",
     "name": "Muhamad Almizan Pamungkas",
-    "email": "malmizanp@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "1cd03f66456e8696bb8c7f79095866446e4759a4ba35074fe875a1b8d2a262a2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29569,7 +31670,8 @@ const INITIAL_DPT = [
   {
     "npa": "11890",
     "name": "Maulana Uvie Anggara",
-    "email": "maulanauvieanggara@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "fc756b4dd105e808a4f992ec2dff41baca71acd2f1a34c170d5cc209faa7f5cb",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29583,7 +31685,8 @@ const INITIAL_DPT = [
   {
     "npa": "11895",
     "name": "Muhammad Helmi Fauzi",
-    "email": "helmifauzicv12@gmail.com",
+    "email": "he***@gmail.com",
+    "email_hash": "db67d5ed2a957912a764af0a797e0f360563a968c633bd7cfe8162e2f6927add",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29597,7 +31700,8 @@ const INITIAL_DPT = [
   {
     "npa": "11924",
     "name": "Jimmi Nugraha",
-    "email": "jimmi.nugraha@yahoo.com",
+    "email": "ji***@yahoo.com",
+    "email_hash": "8be89e8ebe3671d2fa6def233267f1d371c54ec67bb959f921d2b51c4cabb169",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29611,7 +31715,8 @@ const INITIAL_DPT = [
   {
     "npa": "11928",
     "name": "Miftahul Jannah",
-    "email": "mjmiftaaa@gmail.com",
+    "email": "mj***@gmail.com",
+    "email_hash": "4881466bfa92b0069b3d5225c6bd58bb891adb8c9d7c94270b80b4256f3251dc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29625,7 +31730,8 @@ const INITIAL_DPT = [
   {
     "npa": "11929",
     "name": "Wahyu Hermansyah",
-    "email": "fatwa.wahyu@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "9e147743c0b158e3c41221513d3ab0ae3b859123afe54e2642df785cad8f08a8",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29639,7 +31745,8 @@ const INITIAL_DPT = [
   {
     "npa": "11933",
     "name": "Alfin Azkiya Sani",
-    "email": "alfinazkiyasani@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "ec729fbafb2c5e6f23712aef82213f2c31acde5eca708e06086d0d2b9b0404a3",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29653,7 +31760,8 @@ const INITIAL_DPT = [
   {
     "npa": "11938",
     "name": "Fahrul Rahman",
-    "email": "fahrulrahmann@gmail.com",
+    "email": "fa***@gmail.com",
+    "email_hash": "516d16a1d02bd5dd3e20108b9d8aaeaa301903b37d30883625fcfdf03c0a0caf",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29667,7 +31775,8 @@ const INITIAL_DPT = [
   {
     "npa": "11952",
     "name": "Yuvito Zulfa",
-    "email": "yuvitozulfa@gmail.com",
+    "email": "yu***@gmail.com",
+    "email_hash": "a23583ee5c9ac05366a2f69227ec7f5cff642142d4a4fa54fccfde0d093adfea",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29681,7 +31790,8 @@ const INITIAL_DPT = [
   {
     "npa": "11968",
     "name": "Boby Benni Wahana",
-    "email": "bobybwahana@gmail.com",
+    "email": "bo***@gmail.com",
+    "email_hash": "ab224132e3be7a335bab2c8552852631bab901f8683be80c6444b298f82b797b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29695,7 +31805,8 @@ const INITIAL_DPT = [
   {
     "npa": "11989",
     "name": "Romy Ari Setiaji",
-    "email": "romyarisetiaji@gmail.com",
+    "email": "ro***@gmail.com",
+    "email_hash": "2806d91d4aaa2afbffbb75a0c6c1a0c94b22e6115054be5c2ef4d04db579807e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29709,7 +31820,8 @@ const INITIAL_DPT = [
   {
     "npa": "12012",
     "name": "Patrick Bennett Dominic Sitorus",
-    "email": "feriojian@yahoo.com",
+    "email": "fe***@yahoo.com",
+    "email_hash": "ac01f719b209d7efe10e02f5dc98a6ac48997241c414e697b338131c6e36f42f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29723,7 +31835,8 @@ const INITIAL_DPT = [
   {
     "npa": "12014",
     "name": "Luhung Kushonggo",
-    "email": "luhung@sustracoenergy.com",
+    "email": "lu***@sustracoenergy.com",
+    "email_hash": "9c42d3708495ef05d039129ef4e862dce3a78912597e9a9ffd9b2d3ef623b538",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29737,7 +31850,8 @@ const INITIAL_DPT = [
   {
     "npa": "12024",
     "name": "Merry Aga Hermawan",
-    "email": "merryagah@gmail.com",
+    "email": "me***@gmail.com",
+    "email_hash": "951e78131f699fc32be2af3d7c0c7843f4f823ab6ffab10569ee8ad116e55f73",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29751,7 +31865,8 @@ const INITIAL_DPT = [
   {
     "npa": "12033",
     "name": "Ilham Dharmawan Putra",
-    "email": "ilhamdharmawanputra@gmail.com",
+    "email": "il***@gmail.com",
+    "email_hash": "d99d8a16ec89a9e45cfb2a03c4d19b8a8e8f61b2fc906ddbd7e69b6f033ee245",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29765,7 +31880,8 @@ const INITIAL_DPT = [
   {
     "npa": "12037",
     "name": "Dita Aprilia Putra",
-    "email": "dita-aputra@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "0940d770911a0113e4806dabc03b8505e485150187397ce9dc073c217b305221",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29779,7 +31895,8 @@ const INITIAL_DPT = [
   {
     "npa": "12040",
     "name": "Kenny Lekatompessy",
-    "email": "kennyleka72@gmail.com",
+    "email": "ke***@gmail.com",
+    "email_hash": "82653f4eaebdc4f7ff59accc27e799a5ea64fd17ce237686cfdd31c0984548fe",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29793,7 +31910,8 @@ const INITIAL_DPT = [
   {
     "npa": "12042",
     "name": "Naomi Agnes Clarissa Theng",
-    "email": "naomiagnesct@gmail.com",
+    "email": "na***@gmail.com",
+    "email_hash": "81673d46040c86cfcdf8ce7e039ffaec48e10bf21e730c31ee72b6ad79bc14c4",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29807,7 +31925,8 @@ const INITIAL_DPT = [
   {
     "npa": "12054",
     "name": "Hamjaya Ilham",
-    "email": "hamjaya658@gmail.com",
+    "email": "ha***@gmail.com",
+    "email_hash": "03109ce1d65dad9f68357c1da41ca129ad6da993f5f3fc5fbf5afac8f9fcbdb5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29821,7 +31940,8 @@ const INITIAL_DPT = [
   {
     "npa": "12056",
     "name": "Semuel Ijarolanto Mamman",
-    "email": "semueltg01@gmail.com",
+    "email": "se***@gmail.com",
+    "email_hash": "f90958fa25f5afbdc6b9821e0635e6f3c2f400f5926da451cd17062cac313aa5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29835,7 +31955,8 @@ const INITIAL_DPT = [
   {
     "npa": "12061",
     "name": "Muliandhy Baranta Ginting",
-    "email": "muliandhybg@gmail.com",
+    "email": "mu***@gmail.com",
+    "email_hash": "1086e9329cc6c6b9ef86a4a54834cdef83757b541fa1bc3eb05d3dd9198352ce",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29849,7 +31970,8 @@ const INITIAL_DPT = [
   {
     "npa": "12065",
     "name": "Muhammad Chaerul",
-    "email": "muhammad.chaerul@unifa.ac.id",
+    "email": "mu***@unifa.ac.id",
+    "email_hash": "e6094399e210e4dec81184bdf21b40bb565358591a733e6447a33880b101ad7e",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29863,7 +31985,8 @@ const INITIAL_DPT = [
   {
     "npa": "12069",
     "name": "Rio Sitorus",
-    "email": "sitorus.rio@gmail.com",
+    "email": "si***@gmail.com",
+    "email_hash": "2274147ea25163a0f0c1ae92e130ae58239114649497029a0dc3b084496d1fa0",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29877,7 +32000,8 @@ const INITIAL_DPT = [
   {
     "npa": "12072",
     "name": "Irvan Rudystian",
-    "email": "rudystian@gmail.com",
+    "email": "ru***@gmail.com",
+    "email_hash": "223fc12d1f16a88816f99acb1044f0387902bf898ee8006ec23ad47ce81239ac",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29891,7 +32015,8 @@ const INITIAL_DPT = [
   {
     "npa": "12075",
     "name": "Muhammad Aditya Wijaya",
-    "email": "adityawijaya.alc@gmail.com",
+    "email": "ad***@gmail.com",
+    "email_hash": "f8edbfe748d9f32f803c2ed1a6ff9de85ad93701bf8612f7d518e816169c386b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29905,7 +32030,8 @@ const INITIAL_DPT = [
   {
     "npa": "12077",
     "name": "Ali Okto",
-    "email": "aliokto@gmail.com",
+    "email": "al***@gmail.com",
+    "email_hash": "6c3a8f02df232307cee48391ec3ccd7d1d25d071ea939a6bdbf004c2335f401b",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29919,7 +32045,8 @@ const INITIAL_DPT = [
   {
     "npa": "12078",
     "name": "Irev Jundulloh",
-    "email": "irevjundulloh@gmail.com",
+    "email": "ir***@gmail.com",
+    "email_hash": "c2d44f63415ee2261a8ddcc26a06f4f5a409f9814a909ec09bd65a77023b9284",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29933,7 +32060,8 @@ const INITIAL_DPT = [
   {
     "npa": "12080",
     "name": "Umar Iribaram",
-    "email": "umariribaram170411@gmail.com",
+    "email": "um***@gmail.com",
+    "email_hash": "88c518744ad97a024ac3ed785c9fc7d94d1efac7df108ffdfba2b7e99c7e5f08",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29947,7 +32075,8 @@ const INITIAL_DPT = [
   {
     "npa": "12084",
     "name": "hotparulian",
-    "email": "hotparulian@gmail.com",
+    "email": "ho***@gmail.com",
+    "email_hash": "ca804dca937f311637026731b51f88f7e0a9e26daa26a431dbd0188df756dc91",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29961,7 +32090,8 @@ const INITIAL_DPT = [
   {
     "npa": "12085",
     "name": "ahmadzulharman",
-    "email": "ahmadzulharman@gmail.com",
+    "email": "ah***@gmail.com",
+    "email_hash": "635109af71b0ec49d7972f10f781a72429e15182ca2999900211b0ae6a7a5595",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29975,7 +32105,8 @@ const INITIAL_DPT = [
   {
     "npa": "12089",
     "name": "Arif Rifiyanto",
-    "email": "arif.rifiyanto@emp.id",
+    "email": "ar***@emp.id",
+    "email_hash": "b9f97a52b6af031f18bbd62b6020b6edcde719243ae0b9e53850e631c5123d6f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -29989,7 +32120,8 @@ const INITIAL_DPT = [
   {
     "npa": "12090",
     "name": "Wahyu Novian Saputra",
-    "email": "wahyunovians@gmail.com",
+    "email": "wa***@gmail.com",
+    "email_hash": "907ea91f3423560f9604ffe7713e442a43022f3e25b5a6c79d8deb33f93a9788",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30003,7 +32135,8 @@ const INITIAL_DPT = [
   {
     "npa": "12092",
     "name": "Ayi Marsendi",
-    "email": "ayimarsendi7@gmail.com",
+    "email": "ay***@gmail.com",
+    "email_hash": "ea75480a27e8de4c218f1e64eead107a5cece87be78112710057fb97b77f3b72",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30017,7 +32150,8 @@ const INITIAL_DPT = [
   {
     "npa": "12095",
     "name": "Ananda Berkah Pangestu",
-    "email": "anandaberkahpangestu@gmail.com",
+    "email": "an***@gmail.com",
+    "email_hash": "3d5d7f4bf3c5f7e210555abd31b1123f3c593b661c20d04981ce48167950b308",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30031,7 +32165,8 @@ const INITIAL_DPT = [
   {
     "npa": "12096",
     "name": "Dimas Bagus Sukron, S.T",
-    "email": "dimasbagussukron354@gmail.com",
+    "email": "di***@gmail.com",
+    "email_hash": "cbfe6732b6d398396e526e86a49208d61ad25ac92f4a5389837e05714af40b20",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30045,7 +32180,8 @@ const INITIAL_DPT = [
   {
     "npa": "12097",
     "name": "Mauliza Putri",
-    "email": "maulizaaaaa@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "dd148159eaad2193512d31c219fed882403b6942e86edef00768bd450d6c6de1",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30059,7 +32195,8 @@ const INITIAL_DPT = [
   {
     "npa": "12098",
     "name": "Yosha Nurwijaya",
-    "email": "yosha.reza@hotmail.co.id",
+    "email": "yo***@hotmail.co.id",
+    "email_hash": "6a8e86d7f6a7c4ce5cf36a4dd4a7c253679b28fdc35cddbf2de01784d790c27f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30073,7 +32210,8 @@ const INITIAL_DPT = [
   {
     "npa": "12099",
     "name": "Ahmad Agustin",
-    "email": "agustin040884@gmail.com",
+    "email": "ag***@gmail.com",
+    "email_hash": "ad2237f58523154e806a5b44c7c1860bfa388a6bc5d1db460085c5066d1b7da9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30087,7 +32225,8 @@ const INITIAL_DPT = [
   {
     "npa": "12101",
     "name": "Mochamad Maulana Ismail",
-    "email": "maulanaismail110200@gmail.com",
+    "email": "ma***@gmail.com",
+    "email_hash": "560f84a32642643fa44a63a40e78c195a67fad1dfdd06023c99fdba710436588",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30101,7 +32240,8 @@ const INITIAL_DPT = [
   {
     "npa": "12104",
     "name": "Damas Muharif",
-    "email": "damasmuharif@gmail.com",
+    "email": "da***@gmail.com",
+    "email_hash": "14e121bb865e0225b80a907521e5908d6d19cdeebded39cd334c975e1c9a4d36",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30115,7 +32255,8 @@ const INITIAL_DPT = [
   {
     "npa": "12106",
     "name": "Rengga Bima",
-    "email": "renggabima32@gmail.com",
+    "email": "re***@gmail.com",
+    "email_hash": "224f12883513bc08f8af87a51c64b5dd974babdcdefc77a864651bebe9968cb7",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30129,7 +32270,8 @@ const INITIAL_DPT = [
   {
     "npa": "12107",
     "name": "Ichsanu Balya Nur Qosim",
-    "email": "ichsanu.balya.nur@gmail.com",
+    "email": "ic***@gmail.com",
+    "email_hash": "eb19b3ba0ed9f8286dd1d39888ce14a9b6cc72b312f3f4bf80ac90b056ebfd6a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30143,7 +32285,8 @@ const INITIAL_DPT = [
   {
     "npa": "12108",
     "name": "Pramudya R.D. Perdana",
-    "email": "pramudyarinengga@gmail.com",
+    "email": "pr***@gmail.com",
+    "email_hash": "af6fea5f4498b5ca32641690e18f93db9eefa8a1067926d4f8159540165c276d",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -30155,8 +32298,6 @@ const INITIAL_DPT = [
     "voted_at": null
   }
 ];
-
-// Akun Resmi Panitia & Pengawas KPKU Pemilu IAGI 2026
 const ADMIN_ACCOUNTS = [
   {
     id: "adm-01",
