@@ -5635,15 +5635,16 @@
             <div id="desktop-view-2fa-wa" style="margin-bottom: 14px;">
               <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
                 <label class="form-label" style="font-size: 0.76rem; color: #6EE7B7; margin-bottom: 6px; display: flex; justify-content: space-between;">
-                  <span>Nomor WhatsApp Tujuan OTP</span>
-                  <span style="font-size: 0.68rem; color: #A7F3D0;">Gateway: Fonnte Live</span>
+                  <span>Nomor WhatsApp Tujuan OTP (Terkunci Resmi)</span>
+                  <span style="font-size: 0.68rem; color: #A7F3D0;">Gateway: Fonnte Live (Server)</span>
                 </label>
                 <div style="display: flex; gap: 8px;">
-                  <input type="tel" id="desktop-wa-phone-input" class="form-input font-mono" placeholder="08xxxxxxxxxx" style="font-size: 0.85rem; padding: 8px 12px;">
+                  <input type="text" id="desktop-wa-phone-input" class="form-input font-mono" placeholder="08**-****-****" readonly disabled style="font-size: 0.85rem; padding: 8px 12px; background: rgba(0,0,0,0.35); color: #F5BA42; cursor: not-allowed; border: 1px solid rgba(245,186,66,0.3);">
                   <button type="button" id="btn-send-wa-otp" class="btn btn-primary" style="white-space: nowrap; font-size: 0.74rem; background: #059669; border-color: #10B981; padding: 8px 14px;">
                     <span>Kirim OTP WA</span>
                   </button>
                 </div>
+                <div style="font-size: 0.71rem; color: #94A3B8; margin-top: 5px;">🔒 Terkunci: Kode OTP dikirimkan secara otomatis dari server hanya ke nomor resmi akun panitia terdaftar.</div>
                 <div id="desktop-wa-status-box" style="display: none; margin-top: 8px; font-size: 0.74rem; line-height: 1.4; border-radius: 4px; padding: 6px 10px;"></div>
               </div>
             </div>
@@ -8829,6 +8830,7 @@
       let isUnlocked = false;
       let pendingAdmin = null;
       let activeOtp = '2026';
+      let currentChallengeToken = null;
 
       // Clock
       function updateClock() {
@@ -9058,41 +9060,65 @@
           const email = document.getElementById('desktop-email-input').value.trim();
           const password = document.getElementById('desktop-password-input').value.trim();
 
-          const validation = window.pemiluStorage.validateAdminCredentials(email, password);
-          if (!validation.success) {
-            const failRes = recordBruteForceFail(1, email);
-            if (failRes.locked) return;
-            showAlert(`❌ Password salah! Sisa percobaan: ${failRes.remaining}x sebelum sistem dikunci 15 menit.`, 'error');
+          if (!email || !password) {
+            showAlert('Silakan masukkan email dan password admin.', 'error');
             return;
           }
 
-          // Reset kegagalan Step 1 jika sukses
-          const curState = getBruteForceState();
-          curState.step1Fails = 0;
-          saveBruteForceState(curState);
-
-          pendingAdmin = validation.admin;
-          activeOtp = window.pemiluStorage.generateAdminOtp(email, 4) || '2026';
-
-          // Move to Step 2
-          hideAlert();
-          if (step1Div) step1Div.style.display = 'none';
-          if (step2Div) step2Div.style.display = 'block';
-
-          const emailLbl = document.getElementById('desktop-step2-email-label');
-          if (emailLbl) emailLbl.innerText = `${pendingAdmin.name} (${pendingAdmin.email})`;
-
-          if (inputWaPhone) {
-            inputWaPhone.value = pendingAdmin.phone || '085771593522';
-          }
-          if (inputEmailTarget) {
-            inputEmailTarget.value = pendingAdmin.email;
+          const btnSubmit = formStep1.querySelector('button[type="submit"]');
+          if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span>⏳ Memverifikasi ke Server KPKU...</span>';
           }
 
-          const hint = document.getElementById('desktop-demo-otp-hint');
-          if (hint) hint.innerText = '2FA OTP Aktif (Kedaluwarsa 10 Menit)';
+          try {
+            const validation = await window.pemiluStorage.validateAdminCredentials(email, password);
+            if (btnSubmit) {
+              btnSubmit.disabled = false;
+              btnSubmit.innerHTML = '<span>Lanjut ke Verifikasi 2FA ➡️</span>';
+            }
 
-          showAlert(`Kredensial valid. Silakan kirim OTP via WhatsApp atau Email Resmi Panitia.`, 'info');
+            if (!validation.success) {
+              const failRes = recordBruteForceFail(1, email);
+              if (failRes.locked) return;
+              showAlert(`❌ ${validation.error || 'Password salah!'} Sisa percobaan: ${failRes.remaining}x.`, 'error');
+              return;
+            }
+
+            // Reset kegagalan Step 1 jika sukses
+            const curState = getBruteForceState();
+            curState.step1Fails = 0;
+            saveBruteForceState(curState);
+
+            pendingAdmin = validation.admin;
+            currentChallengeToken = validation.challenge_token;
+
+            // Move to Step 2
+            hideAlert();
+            if (step1Div) step1Div.style.display = 'none';
+            if (step2Div) step2Div.style.display = 'block';
+
+            const emailLbl = document.getElementById('desktop-step2-email-label');
+            if (emailLbl) emailLbl.innerText = `${pendingAdmin.name} (${pendingAdmin.email})`;
+
+            if (inputWaPhone) {
+              inputWaPhone.value = pendingAdmin.phone_masked || '08**-****-****';
+            }
+            if (inputEmailTarget) {
+              inputEmailTarget.value = pendingAdmin.email;
+            }
+
+            const hint = document.getElementById('desktop-demo-otp-hint');
+            if (hint) hint.innerText = '🔒 2FA OTP Server Aktif (Berlaku 10 Menit)';
+
+            showAlert(`Kredensial valid. Silakan klik tombol "Kirim OTP WA" untuk verifikasi 2FA resmi.`, 'info');
+          } catch (err) {
+            if (btnSubmit) {
+              btnSubmit.disabled = false;
+              btnSubmit.innerHTML = '<span>Lanjut ke Verifikasi 2FA ➡️</span>';
+            }
+            showAlert('Gagal menghubungi server otentikasi admin: ' + err.message, 'error');
+          }
         });
       }
 
@@ -9113,29 +9139,25 @@
         });
       }
 
-      // Send OTP via WhatsApp Fonnte
+      // Send OTP via WhatsApp Fonnte (Server-Side)
       if (btnSendWaOtp) {
         btnSendWaOtp.addEventListener('click', async () => {
-          const phone = (inputWaPhone ? inputWaPhone.value : '').trim();
-          if (!phone) {
-            showAlert('Silakan masukkan nomor WhatsApp tujuan.', 'error');
+          if (!currentChallengeToken) {
+            showAlert('Sesi verifikasi telah kedaluwarsa. Silakan login kembali.', 'error');
             return;
           }
 
           btnSendWaOtp.disabled = true;
-          btnSendWaOtp.innerHTML = '<span>Mengirim via Fonnte...</span>';
+          btnSendWaOtp.innerHTML = '<span>Mengirim via Gateway...</span>';
           if (boxWaStatus) {
             boxWaStatus.style.display = 'block';
             boxWaStatus.style.background = 'rgba(245, 186, 66, 0.15)';
             boxWaStatus.style.border = '1px solid rgba(245, 186, 66, 0.35)';
             boxWaStatus.style.color = '#FDE68A';
-            boxWaStatus.innerHTML = '⏳ Menghubungi Gateway Fonnte WhatsApp...';
+            boxWaStatus.innerHTML = '⏳ Menghubungi Server KPKU & Gateway Fonnte WhatsApp...';
           }
 
-          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com', 4);
-          const msg = `*KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026*\n\nKode Verifikasi 2FA Anda: *${activeOtp}*\n\nKode ini berlaku 10 menit untuk masuk Command Center Pleno. JANGAN berikan kode ini kepada siapapun demi keamanan dan integritas pleno.`;
-
-          const res = await window.pemiluStorage.sendWhatsAppFonnte(phone, msg);
+          const res = await window.pemiluStorage.requestAdminOtp(currentChallengeToken);
           btnSendWaOtp.disabled = false;
           btnSendWaOtp.innerHTML = '<span>Kirim Ulang OTP WA</span>';
 
@@ -9144,17 +9166,17 @@
               boxWaStatus.style.background = 'rgba(16, 185, 129, 0.15)';
               boxWaStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
               boxWaStatus.style.color = '#6EE7B7';
-              boxWaStatus.innerHTML = `✅ <b>OTP terkirim via Fonnte ke WhatsApp: ${res.target}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa pesan WhatsApp Anda untuk mengambil 4-digit kode verifikasi resmi.</span>`;
+              boxWaStatus.innerHTML = `✅ <b>OTP terkirim dari Server ke WhatsApp: ${res.phone_masked || (pendingAdmin ? pendingAdmin.phone_masked : '')}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa pesan WhatsApp Anda untuk mengambil 4-digit kode verifikasi resmi.</span>`;
             }
-            showAlert(`Kode OTP 4-Digit berhasil dikirim ke WhatsApp ${res.target} via Fonnte!`, 'success');
+            showAlert(`Kode OTP 4-Digit berhasil dikirim dari server ke WhatsApp panitia terdaftar!`, 'success');
           } else {
             if (boxWaStatus) {
               boxWaStatus.style.background = 'rgba(239, 68, 68, 0.15)';
               boxWaStatus.style.border = '1px solid rgba(239, 68, 68, 0.4)';
               boxWaStatus.style.color = '#FCA5A5';
-              boxWaStatus.innerHTML = `⚠️ Gagal kirim WA Fonnte: ${res.error}<br><span style="font-size: 0.72rem;">Silakan periksa nomor WhatsApp atau gunakan opsi pengiriman Email resmi.</span>`;
+              boxWaStatus.innerHTML = `⚠️ Gagal kirim WA Fonnte: ${res.error}<br><span style="font-size: 0.72rem;">Anda tetap dapat memasukkan PIN Keamanan 4-digit resmi Anda di bawah ini.</span>`;
             }
-            showAlert(`Koneksi WhatsApp Gateway terkendala: ${res.error}. Silakan gunakan opsi verifikasi Email Resmi.`, 'warning');
+            showAlert(`Gateway WhatsApp: ${res.error}. Anda dapat langsung memasukkan PIN Keamanan 4-digit resmi Anda.`, 'warning');
           }
         });
       }
@@ -9162,15 +9184,14 @@
       // Send OTP via Email
       if (btnSendEmailOtp) {
         btnSendEmailOtp.addEventListener('click', () => {
-          activeOtp = window.pemiluStorage.generateAdminOtp(pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com', 4);
           if (boxEmailStatus) {
             boxEmailStatus.style.display = 'block';
             boxEmailStatus.style.background = 'rgba(16, 185, 129, 0.15)';
             boxEmailStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
             boxEmailStatus.style.color = '#6EE7B7';
-            boxEmailStatus.innerHTML = `✅ <b>Kode verifikasi 4-digit dikirim ke: ${pendingAdmin ? pendingAdmin.email : 'cingire687@gmail.com'}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa kotak masuk atau spam email resmi Anda untuk mengambil kode.</span>`;
+            boxEmailStatus.innerHTML = `✅ <b>Silakan gunakan PIN Keamanan 4-digit resmi atau OTP WhatsApp panitia.</b>`;
           }
-          showAlert(`Kode OTP 4-Digit telah dikirim ke email resmi ${pendingAdmin ? pendingAdmin.email : ''}!`, 'success');
+          showAlert(`Silakan masukkan 4-digit kode OTP atau PIN Keamanan resmi Anda.`, 'info');
         });
       }
 
@@ -9183,9 +9204,9 @@
         });
       }
 
-      // Step 2: Verify Code (OTP or PIN)
+      // Step 2: Verify Code (Server-Side OTP or PIN)
       if (formVerifyCode) {
-        formVerifyCode.addEventListener('submit', (e) => {
+        formVerifyCode.addEventListener('submit', async (e) => {
           e.preventDefault();
           if (checkAndApplyLockout()) return;
 
@@ -9209,20 +9230,36 @@
             return;
           }
 
-          const otpCheck = window.pemiluStorage.verifyAdminOtp(email, code);
-          const pinCheck = window.pemiluStorage.verifyAdminSecurityPin(code, email);
+          const btnVerify = formVerifyCode.querySelector('button[type="submit"]');
+          if (btnVerify) {
+            btnVerify.disabled = true;
+            btnVerify.innerHTML = '<span>⏳ Memverifikasi ke Server...</span>';
+          }
 
-          if (otpCheck.success || pinCheck.success) {
-            resetBruteForceState();
-            clearLockoutUI();
-            completeLogin(pendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085771593522' });
-          } else {
-            const failRes = recordBruteForceFail(2, email);
-            if (failRes.locked) {
-              sessionStorage.removeItem('kpku_admin_otp');
-              return;
+          try {
+            const verifyRes = await window.pemiluStorage.verifyAdminOtpServer(currentChallengeToken, code);
+            if (btnVerify) {
+              btnVerify.disabled = false;
+              btnVerify.innerHTML = '<span>Verifikasi & Masuk Command Center</span>';
             }
-            showAlert(`❌ Kode verifikasi atau PIN salah! Sisa percobaan: ${failRes.remaining}x sebelum akun diblokir 15 menit.`, 'error');
+
+            if (verifyRes.success) {
+              resetBruteForceState();
+              clearLockoutUI();
+              completeLogin(verifyRes.admin || pendingAdmin);
+            } else {
+              const failRes = recordBruteForceFail(2, email);
+              if (failRes.locked) {
+                return;
+              }
+              showAlert(`❌ ${verifyRes.error || 'Kode verifikasi salah!'} Sisa percobaan: ${failRes.remaining}x.`, 'error');
+            }
+          } catch (err) {
+            if (btnVerify) {
+              btnVerify.disabled = false;
+              btnVerify.innerHTML = '<span>Verifikasi & Masuk Command Center</span>';
+            }
+            showAlert('Gagal memverifikasi ke server: ' + err.message, 'error');
           }
         });
       }

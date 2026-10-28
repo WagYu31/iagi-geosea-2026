@@ -1207,8 +1207,6 @@ class PemiluStorage {
               email: "cingire687@gmail.com",
               phone: "085771593522",
               npa: "31052",
-              password: "W31052002.",
-              securityPin: "3105",
               role: "Tim IT & Teknis",
               status: "AKTIF",
               twoFactor: true,
@@ -1216,26 +1214,21 @@ class PemiluStorage {
               lastLogin: "2026-10-28T17:02:00Z"
             });
           } else {
-            // Sinkronisasi otomatis kredensial WAGYUA% jika masih menggunakan admin / 2026 lama
-            wagyuaExisting.password = "W31052002.";
-            wagyuaExisting.securityPin = "3105";
             wagyuaExisting.role = "Tim IT & Teknis";
             wagyuaExisting.title = "SUPER ADMIN";
             wagyuaExisting.status = "AKTIF";
           }
 
           // Ensure ADMIN (addiansyah@unsri.ac.id) exists
-          const adminAddiansyah = filtered.find(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'ADMIN' || a.phone === '082255555930');
+          const adminAddiansyah = filtered.find(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'ADMIN' || a.name === 'M. Addiansyah' || a.phone === '082255555930');
           if (!adminAddiansyah) {
             filtered.push({
               id: "adm-02",
-              name: "ADMIN",
+              name: "M. Addiansyah",
               title: "SUPER ADMIN",
               email: "addiansyah@unsri.ac.id",
               phone: "082255555930",
               npa: "00000",
-              password: "admin",
-              securityPin: "2026",
               role: "Operator DPT",
               status: "AKTIF",
               twoFactor: true,
@@ -1243,7 +1236,7 @@ class PemiluStorage {
               lastLogin: null
             });
           } else {
-            adminAddiansyah.name = "ADMIN";
+            adminAddiansyah.name = "M. Addiansyah";
             adminAddiansyah.title = "SUPER ADMIN";
             adminAddiansyah.email = "addiansyah@unsri.ac.id";
             adminAddiansyah.phone = "082255555930";
@@ -1252,6 +1245,12 @@ class PemiluStorage {
             adminAddiansyah.status = "AKTIF";
             adminAddiansyah.twoFactor = true;
           }
+
+          // Clean all passwords and securityPin from client storage
+          filtered.forEach(acc => {
+            delete acc.password;
+            delete acc.securityPin;
+          });
 
           this.saveAdminAccounts(filtered);
           return filtered;
@@ -1272,8 +1271,6 @@ class PemiluStorage {
             email: "cingire687@gmail.com",
             phone: "085771593522",
             npa: "31052",
-            password: "W31052002.",
-            securityPin: "3105",
             role: "Tim IT & Teknis",
             status: "AKTIF",
             twoFactor: true,
@@ -1282,13 +1279,11 @@ class PemiluStorage {
           },
           {
             id: "adm-02",
-            name: "ADMIN",
+            name: "M. Addiansyah",
             title: "SUPER ADMIN",
             email: "addiansyah@unsri.ac.id",
             phone: "082255555930",
             npa: "00000",
-            password: "admin",
-            securityPin: "2026",
             role: "Operator DPT",
             status: "AKTIF",
             twoFactor: true,
@@ -1296,6 +1291,11 @@ class PemiluStorage {
             lastLogin: null
           }
         ];
+
+    seeds.forEach(acc => {
+      delete acc.password;
+      delete acc.securityPin;
+    });
 
     this.saveAdminAccounts(seeds);
     return seeds;
@@ -1499,142 +1499,87 @@ class PemiluStorage {
     }
   }
 
-  // --- Admin Authentication & 2FA ---
-  validateAdminCredentials(email, password) {
+  // --- Admin Authentication & 2FA (Server-Backed Bcrypt & Anti Brute-Force) ---
+  async validateAdminCredentials(email, password) {
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanPass = (password || '').trim();
-    const accounts = this.getAdminAccounts();
 
-    const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
-    if (!found) {
-      return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
+    try {
+      const res = await fetch('api/vote_sync.php?action=admin_login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail, password: cleanPass })
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.warn('Gagal koneksi ke server admin login, fallback lokal:', err);
+      const accounts = this.getAdminAccounts();
+      const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
+      if (!found) return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
+      return {
+        success: true,
+        challenge_token: 'local_challenge_' + Date.now(),
+        admin: {
+          id: found.id,
+          name: found.name,
+          email: found.email,
+          role: found.role,
+          title: found.title,
+          phone_masked: '08**-****-****',
+          two_factor: true
+        }
+      };
+    }
+  }
+
+  async requestAdminOtp(challengeToken) {
+    try {
+      const res = await fetch('api/vote_sync.php?action=admin_send_otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge_token: challengeToken })
+      });
+      return await res.json();
+    } catch (err) {
+      console.error('Request admin OTP error:', err);
+      return { success: false, error: 'Gagal menghubungi server pengiriman OTP: ' + err.message };
+    }
+  }
+
+  async verifyAdminOtpServer(challengeToken, code) {
+    const cleanCode = (code || '').trim();
+    if (!cleanCode) {
+      return { success: false, error: 'Silakan masukkan 4-digit kode verifikasi atau PIN Keamanan.' };
     }
 
-    if (found.status === 'NON-AKTIF') {
-      return { success: false, error: 'Akun admin ini berstatus NON-AKTIF / ditangguhkan. Hubungi Ketua KPKU.' };
+    try {
+      const res = await fetch('api/vote_sync.php?action=admin_verify_otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge_token: challengeToken, code: cleanCode })
+      });
+      const data = await res.json();
+      if (data && data.session_token) {
+        sessionStorage.setItem('kpku_admin_token', data.session_token);
+      }
+      return data;
+    } catch (err) {
+      console.error('Verify admin OTP error:', err);
+      return { success: false, error: 'Koneksi server gagal saat verifikasi kode.' };
     }
-
-    // Toleransi kata sandi Super Admin WAGYUA%: W31052002. / W31052002 / 31052002 / wagyua5 / admin / admin2026
-    const isWagyua = (cleanEmail === 'cingire687@gmail.com' || found.id === 'adm-01' || found.name === 'WAGYUA%');
-    const isWagyuaPassValid = isWagyua && (
-      cleanPass === 'W31052002.' ||
-      cleanPass === 'W31052002' ||
-      cleanPass.toLowerCase() === 'w31052002.' ||
-      cleanPass.toLowerCase() === 'w31052002' ||
-      cleanPass === '31052002' ||
-      cleanPass.toLowerCase() === 'wagyua5' ||
-      cleanPass === 'admin' ||
-      cleanPass === 'admin2026'
-    );
-
-    const isGeneralPassValid = (
-      found.password === cleanPass ||
-      (found.password && cleanPass === found.password.replace(/\.+$/, '')) ||
-      (found.password && cleanPass + '.' === found.password) ||
-      (found.password === 'admin' && cleanPass === 'admin2026')
-    );
-
-    if (!isWagyuaPassValid && !isGeneralPassValid) {
-      return { success: false, error: 'Password salah. Silakan periksa kembali kata sandi Anda.' };
-    }
-
-    if (isWagyua) {
-      found.password = "W31052002.";
-      found.securityPin = "3105";
-    }
-
-    // Record last login time
-    found.lastLogin = new Date().toISOString();
-    this.saveAdminAccounts(accounts);
-
-    return { success: true, admin: found };
   }
 
   generateAdminOtp(email, digits = 4) {
-    // Generate 4-digit code for secure 2FA
-    const min = Math.pow(10, digits - 1);
-    const max = Math.pow(10, digits) - 1;
-    const otp = Math.floor(min + Math.random() * (max - min + 1)).toString();
-    const expiry = Date.now() + (10 * 60 * 1000); // 10 minutes
-    const otpData = { email: (email || '').toLowerCase(), otp, expiry };
-    try {
-      sessionStorage.setItem('kpku_admin_otp', JSON.stringify(otpData));
-    } catch(e) {}
-    this.addAuditLog('ADMIN_OTP_SENT', `Kode OTP 2FA (${digits}-digit) disiapkan untuk: ${email}`);
-    return otp;
+    return '****';
   }
 
   verifyAdminOtp(email, otp) {
-    const cleanOtp = (otp || '').trim();
-    if (!cleanOtp) {
-      return { success: false, error: 'Silakan masukkan kode verifikasi 4-digit.' };
-    }
-
-    const cleanEmail = (email || '').trim().toLowerCase();
-    // Super Admin WAGYUA% PIN bypass: 3105 / 2026 / 123456
-    if (cleanEmail === 'cingire687@gmail.com' && (cleanOtp === '3105' || cleanOtp === '2026' || cleanOtp === '123456')) {
-      return { success: true };
-    }
-
-    // Check stored OTP
-    try {
-      const stored = JSON.parse(sessionStorage.getItem('kpku_admin_otp') || '{}');
-      if (stored.otp && String(stored.otp).trim() === cleanOtp) {
-        if (stored.expiry > Date.now()) {
-          return { success: true };
-        } else {
-          return { success: false, error: 'Kode verifikasi telah kedaluwarsa. Silakan minta kode baru.' };
-        }
-      }
-    } catch(e) {}
-
-    // Check if entered code matches admin's registered 4-digit security PIN
-    const pinCheck = this.verifyAdminSecurityPin(cleanOtp, email);
-    if (pinCheck.success) {
-      return { success: true };
-    }
-
-    return { success: false, error: 'Kode verifikasi tidak sesuai atau sudah kedaluwarsa.' };
+    return { success: false, error: 'Verifikasi wajib melalui server KPKU.' };
   }
 
   verifyAdminSecurityPin(pin, email) {
-    const cleanPin = (pin || '').trim();
-    if (!cleanPin) {
-      return { success: false, error: 'Silakan masukkan PIN Keamanan 4-digit.' };
-    }
-
-    const cleanEmail = (email || '').trim().toLowerCase();
-    const isWagyua = cleanEmail === 'cingire687@gmail.com';
-
-    // Toleransi PIN WAGYUA%: 3105 / 2026 / 31052002
-    if (isWagyua && (cleanPin === '3105' || cleanPin === '2026' || cleanPin === '31052002')) {
-      return { success: true };
-    }
-
-    // Check against target admin's registered PIN
-    if (email) {
-      const accounts = this.getAdminAccounts();
-      const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
-      if (found && found.securityPin) {
-        if (String(found.securityPin).trim() === cleanPin || cleanPin === '2026' || cleanPin === '3105') {
-          return { success: true };
-        }
-        return { success: false, error: 'PIN Keamanan tidak cocok dengan akun Anda.' };
-      }
-    }
-
-    // Check global fallback admin PIN (2026 or 3105)
-    if (cleanPin === '2026' || cleanPin === '3105') {
-      return { success: true };
-    }
-
-    // Check global settings admin PIN
-    const settings = this.getSettings();
-    if (settings && String(settings.adminPin).trim() === cleanPin) {
-      return { success: true };
-    }
-
-    return { success: false, error: 'PIN Keamanan 4-digit salah.' };
+    return { success: false, error: 'Verifikasi PIN wajib melalui server KPKU.' };
   }
 
   setAdminSession(admin) {
