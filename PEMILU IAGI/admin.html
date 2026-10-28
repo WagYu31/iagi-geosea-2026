@@ -160,7 +160,8 @@
 
     /* Fixed Left Sidebar */
     .admin-sidebar {
-      width: 290px;
+      width: 300px;
+      max-width: 86vw;
       background: linear-gradient(180deg, #021712 0%, #010c0a 100%);
       border-right: 1px solid rgba(245, 186, 66, 0.22);
       display: flex;
@@ -179,11 +180,40 @@
 
     /* Top Brand */
     .sidebar-brand-box {
-      padding: 24px 20px 18px;
+      padding: 20px 18px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      position: relative;
+    }
+
+    .btn-sidebar-close {
+      display: none;
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #CBD5E1;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-sidebar-close:hover, .btn-sidebar-close:active {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    @media (max-width: 1080px) {
+      .btn-sidebar-close {
+        display: flex;
+      }
     }
 
     .sidebar-brand-logo {
@@ -339,19 +369,25 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       padding: 10px 14px;
+      min-height: 42px;
       border-radius: var(--radius-sm);
       color: #94A3B8;
       text-decoration: none;
       font-size: 0.82rem;
       font-weight: 600;
-      transition: all 0.2s ease;
+      font-family: inherit;
+      transition: all 0.18s ease;
       cursor: pointer;
       border: 1px solid transparent;
       background: transparent;
       width: 100%;
       text-align: left;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
     }
 
     .sidebar-nav-link:hover {
@@ -359,6 +395,17 @@
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(255, 255, 255, 0.08);
       transform: translateX(2px);
+    }
+
+    .sidebar-nav-link:active {
+      transform: scale(0.97);
+      background: rgba(245, 186, 66, 0.14);
+      border-color: rgba(245, 186, 66, 0.3);
+    }
+
+    .sidebar-nav-link:focus-visible {
+      outline: 2px solid var(--gold-primary);
+      outline-offset: -2px;
     }
 
     .sidebar-nav-link.active {
@@ -372,6 +419,15 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sidebar-link-left span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .sidebar-link-icon {
@@ -385,10 +441,14 @@
       font-family: var(--font-mono);
       font-size: 0.65rem;
       font-weight: 800;
-      padding: 2px 7px;
+      padding: 3px 8px;
       border-radius: 9999px;
       background: rgba(255, 255, 255, 0.08);
       color: #CBD5E1;
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1;
+      letter-spacing: 0.02em;
     }
 
     .sidebar-link-badge.badge-gold {
@@ -479,7 +539,7 @@
 
     /* Main Viewport next to sidebar */
     .admin-main-viewport {
-      margin-left: 290px;
+      margin-left: 300px;
       flex: 1;
       padding: 24px 32px 60px;
       box-sizing: border-box;
@@ -5736,6 +5796,9 @@
             LIVE PLENO ONLINE
           </div>
         </div>
+        <button type="button" class="btn-sidebar-close" onclick="toggleAdminSidebar(false)" aria-label="Tutup Sidebar" title="Tutup Menu">
+          <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
 
       <!-- Authenticated Admin Profile Card -->
@@ -5851,7 +5914,7 @@
           <div class="sidebar-group-title">Aksi & Kontrol Sidang</div>
           <ul class="sidebar-nav-list">
             <li>
-              <button type="button" class="sidebar-nav-link" onclick="window.toggleVault()">
+              <button type="button" class="sidebar-nav-link" onclick="window.toggleVault(); if(typeof window.toggleAdminSidebar==='function')window.toggleAdminSidebar(false);">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F5BA42"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                   <span>Buka / Kunci Brankas</span>
@@ -5860,7 +5923,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="sidebar-nav-link" onclick="document.getElementById('btn-export-dpt-csv').click()">
+              <button type="button" class="sidebar-nav-link" onclick="const b=document.getElementById('btn-export-dpt-csv'); if(b) b.click(); if(typeof window.toggleAdminSidebar==='function')window.toggleAdminSidebar(false);">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   <span>Unduh Rekap CSV</span>
@@ -5868,7 +5931,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="sidebar-nav-link" onclick="refreshAdminData()">
+              <button type="button" class="sidebar-nav-link" onclick="refreshAdminData(); if(typeof window.toggleAdminSidebar==='function')window.toggleAdminSidebar(false);">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   <span>Segarkan Data Suara</span>
@@ -5876,7 +5939,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="sidebar-nav-link" onclick="confirmClearBallotBox()" style="color: #F87171;" title="Kosongkan seluruh suara simulasi/testing ke 0 Suara untuk persiapan Hari-H">
+              <button type="button" class="sidebar-nav-link" onclick="confirmClearBallotBox(); if(typeof window.toggleAdminSidebar==='function')window.toggleAdminSidebar(false);" style="color: #F87171;" title="Kosongkan seluruh suara simulasi/testing ke 0 Suara untuk persiapan Hari-H">
                 <div class="sidebar-link-left">
                   <svg class="sidebar-link-icon" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                   <span>Kosongkan Kotak Suara</span>
@@ -10065,6 +10128,15 @@
         const topbarTitle = document.querySelector('.topbar-title span:first-child');
         const topbarSubtitle = document.querySelector('.topbar-left p');
 
+        // Always unconditionally hide all major panels first so no ghost panels remain visible
+        const allPanels = [
+          metricsSection, mainSplitSection, dptSection, adminSection,
+          livechatSection, scheduleSection, randomCheckSection, resumePlenoSection
+        ];
+        allPanels.forEach(panel => {
+          if (panel) panel.style.display = 'none';
+        });
+
         // Update active class on sidebar links
         document.querySelectorAll('.sidebar-nav-link').forEach(link => {
           link.classList.remove('active');
@@ -10074,344 +10146,111 @@
           }
         });
 
+        const showAnimated = (el, displayType = 'block') => {
+          if (!el) return;
+          el.style.display = displayType;
+          el.classList.remove('section-view-fade');
+          void el.offsetWidth;
+          el.classList.add('section-view-fade');
+        };
+
         if (sectionId === 'section-random-check') {
-          // ═════════════════════════════════════════════════════════════
-          // VERIFIKASI RANDOM CHECK 5 PEMILIH TIMSES (04 NOV PAGI)
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-          if (resumePlenoSection) resumePlenoSection.style.display = 'none';
-
-          if (randomCheckSection) {
-            randomCheckSection.style.display = 'block';
-            randomCheckSection.classList.remove('section-view-fade');
-            void randomCheckSection.offsetWidth;
-            randomCheckSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Audit & Verifikasi Random Check Timses (04 Nov Pagi)';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Uji Petik Kesesuaian Pilihan 5 Nama Pemilih per Timses Paslon • Integritas Kriptografis Luber-Jurdil';
-          }
-
-          if (typeof renderRandomCheckSection === 'function') {
-            renderRandomCheckSection();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-random-check');
-          } else {
-            window.location.hash = 'section-random-check';
-          }
+          showAnimated(randomCheckSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Audit & Verifikasi Random Check Timses (04 Nov Pagi)';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Uji Petik Kesesuaian Pilihan 5 Nama Pemilih per Timses Paslon • Integritas Kriptografis Luber-Jurdil';
+          if (typeof renderRandomCheckSection === 'function') renderRandomCheckSection();
+          if (history.replaceState) history.replaceState(null, '', '#section-random-check');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (sectionId === 'section-resume-pleno') {
-          // ═════════════════════════════════════════════════════════════
-          // RESUME SATU HALAMAN HASIL PEMILU & DPT (04 NOV SORE)
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-          if (randomCheckSection) randomCheckSection.style.display = 'none';
-
-          if (resumePlenoSection) {
-            resumePlenoSection.style.display = 'block';
-            resumePlenoSection.classList.remove('section-view-fade');
-            void resumePlenoSection.offsetWidth;
-            resumePlenoSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Resume 1 Halaman Hasil Pemilu & DPT (04 Nov Sore)';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Sidang Pleno Terbuka • Suara Caketum + Suara Tidak Terpakai = 100% Total DPT';
-          }
-
-          if (typeof renderResumePlenoSection === 'function') {
-            renderResumePlenoSection();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-resume-pleno');
-          } else {
-            window.location.hash = 'section-resume-pleno';
-          }
+          showAnimated(resumePlenoSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Resume 1 Halaman Hasil Pemilu & DPT (04 Nov Sore)';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Sidang Pleno Terbuka • Suara Caketum + Suara Tidak Terpakai = 100% Total DPT';
+          if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
+          if (history.replaceState) history.replaceState(null, '', '#section-resume-pleno');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (sectionId === 'section-schedule') {
-          // ═════════════════════════════════════════════════════════════
-          // PENGATURAN JADWAL & WAKTU BILIK SUARA
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (randomCheckSection) randomCheckSection.style.display = 'none';
-          if (resumePlenoSection) resumePlenoSection.style.display = 'none';
-
-          if (scheduleSection) {
-            scheduleSection.style.display = 'block';
-            scheduleSection.classList.remove('section-view-fade');
-            void scheduleSection.offsetWidth;
-            scheduleSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Pengaturan Jadwal & Waktu Bilik Suara';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Kontrol Hitung Mundur Pembukaan Bilik Suara & Akses Tombol Pemilih (Gambar 1 & Gambar 2)';
-          }
-
-          if (typeof renderScheduleAdmin === 'function') {
-            renderScheduleAdmin();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-schedule');
-          } else {
-            window.location.hash = 'section-schedule';
-          }
+          showAnimated(scheduleSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Pengaturan Jadwal & Waktu Bilik Suara';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Kontrol Hitung Mundur Pembukaan Bilik Suara & Akses Tombol Pemilih (Gambar 1 & Gambar 2)';
+          if (typeof renderScheduleAdmin === 'function') renderScheduleAdmin();
+          if (history.replaceState) history.replaceState(null, '', '#section-schedule');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (sectionId === 'section-livechat') {
-          // ═════════════════════════════════════════════════════════════
-          // PUSAT PENGADUAN & LIVE CHAT PEMILIH KPKU
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
-          if (livechatSection) {
-            livechatSection.style.display = 'block';
-            livechatSection.classList.remove('section-view-fade');
-            void livechatSection.offsetWidth;
-            livechatSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Pusat Pengaduan & Live Chat Pemilih KPKU';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Monitoring Pengaduan DPT/Token Pemilih • Respon Resmi Panitia & Eskalasi Real-Time';
-          }
-
-          if (typeof renderLiveChatAdmin === 'function') {
-            renderLiveChatAdmin();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-livechat');
-          } else {
-            window.location.hash = 'section-livechat';
-          }
+          showAnimated(livechatSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Pusat Pengaduan & Live Chat Pemilih KPKU';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Monitoring Pengaduan DPT/Token Pemilih • Respon Resmi Panitia & Eskalasi Real-Time';
+          if (typeof renderLiveChatAdmin === 'function') renderLiveChatAdmin();
+          if (history.replaceState) history.replaceState(null, '', '#section-livechat');
           window.scrollTo({ top: 0, behavior: 'smooth' });
-
           const chatSearch = document.getElementById('admin-chat-search');
-          if (chatSearch) {
-            setTimeout(() => chatSearch.focus(), 250);
-          }
+          if (chatSearch) setTimeout(() => chatSearch.focus(), 250);
         } else if (sectionId === 'section-admin-users') {
-          // ═════════════════════════════════════════════════════════════
-          // KELOLA AKUN ADMIN & OTORITAS KPKU
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
-          if (adminSection) {
-            adminSection.style.display = 'block';
-            adminSection.classList.remove('section-view-fade');
-            void adminSection.offsetWidth;
-            adminSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Kelola Akun Admin & Otoritas KPKU';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Multi-Akun Panitia • Otoritas Peran • Kredensial Akses & Verifikasi 2FA';
-          }
-
-          if (typeof renderAdminUsersTable === 'function') {
-            renderAdminUsersTable();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-admin-users');
-          } else {
-            window.location.hash = 'section-admin-users';
-          }
+          showAnimated(adminSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Kelola Akun Admin & Otoritas KPKU';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Multi-Akun Panitia • Otoritas Peran • Kredensial Akses & Verifikasi 2FA';
+          if (typeof renderAdminUsersTable === 'function') renderAdminUsersTable();
+          if (history.replaceState) history.replaceState(null, '', '#section-admin-users');
           window.scrollTo({ top: 0, behavior: 'smooth' });
-
           const adminSearchInput = document.getElementById('admin-search-input');
-          if (adminSearchInput) {
-            setTimeout(() => adminSearchInput.focus(), 250);
-          }
+          if (adminSearchInput) setTimeout(() => adminSearchInput.focus(), 250);
         } else if (sectionId === 'section-dpt-table') {
-          // ═════════════════════════════════════════════════════════════
-          // ONLY DAFTAR PEMILIH TETAP (DPT) & STATUS HAK SUARA
-          // "yang lain-lainnya enggak"
-          // ═════════════════════════════════════════════════════════════
-          if (metricsSection) metricsSection.style.display = 'none';
-          if (mainSplitSection) mainSplitSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (plenoSection) plenoSection.style.display = 'none';
-          if (auditSection) auditSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
-          if (dptSection) {
-            dptSection.style.display = 'block';
-            dptSection.classList.remove('highlight-pulse');
-            dptSection.classList.remove('section-view-fade');
-            void dptSection.offsetWidth;
-            dptSection.classList.add('section-view-fade');
-          }
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Daftar Pemilih Tetap (DPT) & Status Hak Suara';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Data Pemilih Terverifikasi KPKU • Status Hak Suara & Audit Token Kriptografi';
-          }
-
-          if (typeof renderDptTable === 'function') {
-            renderDptTable();
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-dpt-table');
-          } else {
-            window.location.hash = 'section-dpt-table';
-          }
+          showAnimated(dptSection, 'block');
+          if (topbarTitle) topbarTitle.innerText = 'Daftar Pemilih Tetap (DPT) & Status Hak Suara';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Data Pemilih Terverifikasi KPKU • Status Hak Suara & Audit Token Kriptografi';
+          if (typeof renderDptTable === 'function') renderDptTable();
+          if (history.replaceState) history.replaceState(null, '', '#section-dpt-table');
           window.scrollTo({ top: 0, behavior: 'smooth' });
-
           const searchInput = document.getElementById('desktop-dpt-search');
-          if (searchInput) {
-            setTimeout(() => searchInput.focus(), 250);
-          }
+          if (searchInput) setTimeout(() => searchInput.focus(), 250);
         } else if (sectionId === 'section-pleno') {
-          // Sidang Suara Masuk only
           if (metricsSection) metricsSection.style.display = 'grid';
           if (mainSplitSection) {
             mainSplitSection.style.display = 'grid';
             mainSplitSection.style.gridTemplateColumns = '1fr';
-            mainSplitSection.classList.remove('section-view-fade');
-            void mainSplitSection.offsetWidth;
-            mainSplitSection.classList.add('section-view-fade');
+            showAnimated(mainSplitSection, 'grid');
           }
           if (plenoSection) plenoSection.style.display = 'block';
           if (auditSection) auditSection.style.display = 'none';
-          if (dptSection) dptSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Brankas Elektronik Bersegel Kriptografi & Live Quick Count Perolehan Suara';
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-pleno');
-          } else {
-            window.location.hash = 'section-pleno';
-          }
+          if (topbarTitle) topbarTitle.innerText = 'Sidang Pleno: Perolehan Suara Calon Ketua Umum';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Brankas Elektronik Bersegel Kriptografi & Live Quick Count Perolehan Suara';
+          if (history.replaceState) history.replaceState(null, '', '#section-pleno');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (sectionId === 'section-audit-trail') {
-          // Live Audit Trail only
           if (metricsSection) metricsSection.style.display = 'grid';
           if (mainSplitSection) {
             mainSplitSection.style.display = 'grid';
             mainSplitSection.style.gridTemplateColumns = '1fr';
-            mainSplitSection.classList.remove('section-view-fade');
-            void mainSplitSection.offsetWidth;
-            mainSplitSection.classList.add('section-view-fade');
+            showAnimated(mainSplitSection, 'grid');
           }
           if (plenoSection) plenoSection.style.display = 'none';
           if (auditSection) auditSection.style.display = 'flex';
-          if (dptSection) dptSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Catatan Transaksi Kriptografi Immutable & Verifikasi LUBER Zero-Knowledge';
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-audit-trail');
-          } else {
-            window.location.hash = 'section-audit-trail';
-          }
+          if (topbarTitle) topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Catatan Transaksi Kriptografi Immutable & Verifikasi LUBER Zero-Knowledge';
+          if (history.replaceState) history.replaceState(null, '', '#section-audit-trail');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           // Ringkasan Pleno (Default overview)
-          if (metricsSection) {
-            metricsSection.style.display = 'grid';
-            metricsSection.classList.remove('section-view-fade');
-            void metricsSection.offsetWidth;
-            metricsSection.classList.add('section-view-fade');
-          }
+          if (metricsSection) showAnimated(metricsSection, 'grid');
           if (mainSplitSection) {
             mainSplitSection.style.display = 'grid';
             mainSplitSection.style.gridTemplateColumns = '';
           }
           if (plenoSection) plenoSection.style.display = 'block';
           if (auditSection) auditSection.style.display = 'flex';
-          if (dptSection) dptSection.style.display = 'none';
-          if (adminSection) adminSection.style.display = 'none';
-          if (livechatSection) livechatSection.style.display = 'none';
-          if (scheduleSection) scheduleSection.style.display = 'none';
-
           const defaultLink = document.querySelector('a[href="#section-metrics"]');
           if (defaultLink) defaultLink.classList.add('active');
-
-          if (topbarTitle) {
-            topbarTitle.innerText = 'Sidang Pleno: Quick Count & Command Center';
-          }
-          if (topbarSubtitle) {
-            topbarSubtitle.innerText = 'Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia Periode 2026–2029';
-          }
-
-          if (history.replaceState) {
-            history.replaceState(null, '', '#section-metrics');
-          } else {
-            window.location.hash = 'section-metrics';
-          }
+          if (topbarTitle) topbarTitle.innerText = 'Sidang Pleno: Quick Count & Command Center';
+          if (topbarSubtitle) topbarSubtitle.innerText = 'Pemilihan Elektronik Ketua Umum Ikatan Ahli Geologi Indonesia Periode 2026–2029';
+          if (history.replaceState) history.replaceState(null, '', '#section-metrics');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        if (window.innerWidth <= 1080 && typeof window.toggleAdminSidebar === 'function') {
-          window.toggleAdminSidebar(false);
+        // Auto-close sidebar on mobile/tablet or when open drawer
+        const sb = document.getElementById('admin-sidebar');
+        if (sb && (sb.classList.contains('open') || window.innerWidth <= 1080)) {
+          if (typeof window.toggleAdminSidebar === 'function') {
+            window.toggleAdminSidebar(false);
+          }
         }
       };
 
@@ -10440,6 +10279,9 @@
       // Logout
       if (btnLogout) {
         btnLogout.addEventListener('click', () => {
+          if (typeof window.toggleAdminSidebar === 'function') {
+            window.toggleAdminSidebar(false);
+          }
           window.pemiluStorage.logoutAdmin();
           isUnlocked = false;
           if (pinModal) {
