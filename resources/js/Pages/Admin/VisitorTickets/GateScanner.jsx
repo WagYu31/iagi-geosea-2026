@@ -47,6 +47,9 @@ import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import CloseIcon from '@mui/icons-material/Close';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CropPortraitIcon from '@mui/icons-material/CropPortrait';
+import StayCurrentPortraitIcon from '@mui/icons-material/StayCurrentPortrait';
+import ScreenRotationIcon from '@mui/icons-material/ScreenRotation';
 
 const CATEGORY_MAP = {
     // 1. Participant
@@ -232,6 +235,48 @@ export default function GateScanner({
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [fullscreenToastVisible, setFullscreenToastVisible] = useState(false);
     const toastTimeoutRef = useRef(null);
+
+    // Portrait / Landscape Viewfinder Orientation Mode
+    const [isPortrait, setIsPortrait] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('gate_scanner_orientation');
+            if (saved) return saved === 'portrait';
+            return window.innerHeight > window.innerWidth;
+        }
+        return false;
+    });
+    const isPortraitRef = useRef(isPortrait);
+    useEffect(() => {
+        isPortraitRef.current = isPortrait;
+    }, [isPortrait]);
+
+    const toggleOrientation = async () => {
+        const next = !isPortrait;
+        setIsPortrait(next);
+        isPortraitRef.current = next;
+        localStorage.setItem('gate_scanner_orientation', next ? 'portrait' : 'landscape');
+        if (scanning) {
+            await startCamera(selectedCameraId || null, next);
+        }
+    };
+
+    // Auto-detect orientation change on mobile/tablet if no explicit preference is set
+    useEffect(() => {
+        const handleResize = () => {
+            const saved = localStorage.getItem('gate_scanner_orientation');
+            if (!saved && typeof window !== 'undefined') {
+                const autoPortrait = window.innerHeight > window.innerWidth;
+                setIsPortrait(autoPortrait);
+                isPortraitRef.current = autoPortrait;
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+        };
+    }, []);
 
     // AI Auto-Focus State
     const [aiAutoFocus, setAiAutoFocus] = useState(() => {
@@ -737,7 +782,7 @@ export default function GateScanner({
         };
     }, [scanning]);
 
-    const startCamera = async (specificModeOrId = null) => {
+    const startCamera = async (specificModeOrId = null, forcedPortrait = null) => {
         setCameraError(null);
         try {
             if (html5QrCodeRef.current) {
@@ -754,6 +799,7 @@ export default function GateScanner({
             }
 
             const isHandheldPhone = /iPhone|Android.*Mobile|Mobile.*Android/i.test(navigator.userAgent) && !/iPad|Tablet/i.test(navigator.userAgent);
+            const usePortrait = forcedPortrait !== null ? forcedPortrait : isPortraitRef.current;
 
             // Full frame scan configuration (no restrictive qrbox cropping)
             const qrConfig = {
@@ -761,8 +807,9 @@ export default function GateScanner({
                 disableFlip: false,
                 videoConstraints: {
                     facingMode: isHandheldPhone ? 'environment' : 'user',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
+                    width: usePortrait ? { ideal: 720 } : { ideal: 1280 },
+                    height: usePortrait ? { ideal: 1280 } : { ideal: 720 },
+                    aspectRatio: usePortrait ? 0.75 : 1.7777,
                 },
             };
 
@@ -1066,6 +1113,34 @@ export default function GateScanner({
                             </Button>
                         </Tooltip>
 
+                        {/* Portrait / Landscape Viewfinder Toggle Button */}
+                        <Tooltip title={isPortrait ? "Beralih ke Tampilan Landscape (Melebar)" : "Beralih ke Tampilan Portrait (Tegak / Stand Kiosk)"}>
+                            <Button
+                                size="small"
+                                onClick={toggleOrientation}
+                                startIcon={isPortrait ? <CropPortraitIcon sx={{ color: '#094d42' }} /> : <ScreenRotationIcon sx={{ color: '#64748b' }} />}
+                                sx={{
+                                    bgcolor: isPortrait ? '#ecfdf5' : '#f8fafc',
+                                    color: isPortrait ? '#094d42' : '#475569',
+                                    border: `1.5px solid ${isPortrait ? '#a7f3d0' : '#cbd5e1'}`,
+                                    boxShadow: isPortrait ? '0 2px 0 #a7f3d0, 0 4px 12px rgba(16,185,129,0.1)' : '0 2px 0 #cbd5e1',
+                                    textTransform: 'none',
+                                    fontWeight: 800,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '10px',
+                                    px: 1.5,
+                                    py: 0.6,
+                                    '&:hover': {
+                                        bgcolor: isPortrait ? '#d1fae5' : '#f1f5f9',
+                                        transform: 'translateY(-1px)',
+                                    },
+                                    '&:active': { transform: 'translateY(1px)' },
+                                }}
+                            >
+                                {isPortrait ? '📱 Portrait' : '🖥️ Landscape'}
+                            </Button>
+                        </Tooltip>
+
                         {/* Sound Toggle */}
                         <Tooltip title={soundEnabled ? 'Mute Audio Beep' : 'Enable Audio Beep'}>
                             <IconButton
@@ -1248,6 +1323,33 @@ export default function GateScanner({
                                         </Tooltip>
                                     )}
 
+                                    <Tooltip title={isPortrait ? "Beralih ke Tampilan Landscape (Melebar)" : "Beralih ke Tampilan Portrait (Tegak / Vertikal)"}>
+                                        <Button
+                                            size="small"
+                                            onClick={toggleOrientation}
+                                            startIcon={isPortrait ? <CropPortraitIcon /> : <ScreenRotationIcon />}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 800,
+                                                color: isPortrait ? '#065f46' : '#475569',
+                                                bgcolor: isPortrait ? '#ecfdf5' : '#f8fafc',
+                                                border: `1px solid ${isPortrait ? '#a7f3d0' : '#cbd5e1'}`,
+                                                borderRadius: '8px',
+                                                py: 0.4,
+                                                px: 1.2,
+                                                boxShadow: `0 1px 0 ${isPortrait ? '#a7f3d0' : '#cbd5e1'}`,
+                                                '&:hover': {
+                                                    bgcolor: isPortrait ? '#d1fae5' : '#f1f5f9',
+                                                    transform: 'translateY(-1px)',
+                                                },
+                                                '&:active': { transform: 'translateY(1px)' },
+                                            }}
+                                        >
+                                            {isPortrait ? '📱 Portrait' : '🖥️ Landscape'}
+                                        </Button>
+                                    </Tooltip>
+
                                     <Tooltip title="Buka Kamera Layar Penuh (Hanya Tampil Kamera Full)">
                                         <Button
                                             size="small"
@@ -1274,7 +1376,7 @@ export default function GateScanner({
                                 </Stack>
                             </Box>
 
-                            {/* Camera Viewfinder Box (Switches seamlessly to 100vw x 100vh Fullscreen) */}
+                            {/* Camera Viewfinder Box (Switches seamlessly between Portrait / Landscape / Fullscreen) */}
                             <Box
                                 onClick={handleViewfinderClick}
                                 sx={{
@@ -1284,9 +1386,16 @@ export default function GateScanner({
                                     right: isFullscreen ? 0 : 'auto',
                                     bottom: isFullscreen ? 0 : 'auto',
                                     width: isFullscreen ? '100vw !important' : '100%',
-                                    height: isFullscreen ? '100vh !important' : 280,
-                                    maxWidth: isFullscreen ? '100vw !important' : '100%',
-                                    maxHeight: isFullscreen ? '100vh !important' : 280,
+                                    height: isFullscreen
+                                        ? '100vh !important'
+                                        : (isPortrait ? { xs: 450, sm: 500, md: 520 } : 280),
+                                    maxHeight: isFullscreen
+                                        ? '100vh !important'
+                                        : (isPortrait ? { xs: 450, sm: 500, md: 520 } : 280),
+                                    maxWidth: isFullscreen
+                                        ? '100vw !important'
+                                        : (isPortrait ? { xs: '100%', sm: 400, md: 440 } : '100%'),
+                                    mx: isPortrait && !isFullscreen ? 'auto' : 0,
                                     zIndex: isFullscreen ? 999999 : 1,
                                     borderRadius: isFullscreen ? 0 : '16px',
                                     overflow: 'hidden',
@@ -1297,7 +1406,7 @@ export default function GateScanner({
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'all 0.3s ease',
                                     cursor: scanning ? 'crosshair' : 'default',
                                 }}
                             >
@@ -1305,10 +1414,12 @@ export default function GateScanner({
                                     id="qr-reader"
                                     sx={{
                                         width: isFullscreen ? '100vw !important' : '100% !important',
-                                        height: isFullscreen ? '100vh !important' : '280px !important',
+                                        height: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
+                                        minHeight: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
                                         '& video': {
                                             width: isFullscreen ? '100vw !important' : '100% !important',
-                                            height: isFullscreen ? '100vh !important' : '280px !important',
+                                            height: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
+                                            minHeight: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
                                             objectFit: 'cover !important',
                                             display: 'block !important',
                                         },
@@ -1317,8 +1428,8 @@ export default function GateScanner({
                                         },
                                         '& #qr-reader__scan_region': {
                                             width: isFullscreen ? '100vw !important' : '100% !important',
-                                            height: isFullscreen ? '100vh !important' : '280px !important',
-                                            minHeight: isFullscreen ? '100vh !important' : '280px !important',
+                                            height: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
+                                            minHeight: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
                                             border: 'none !important',
                                             boxShadow: 'none !important',
                                         },
@@ -1331,7 +1442,8 @@ export default function GateScanner({
                                         },
                                         '& #qr-reader__scan_region video': {
                                             width: isFullscreen ? '100vw !important' : '100% !important',
-                                            height: isFullscreen ? '100vh !important' : '280px !important',
+                                            height: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
+                                            minHeight: isFullscreen ? '100vh !important' : (isPortrait ? '100% !important' : '280px !important'),
                                             objectFit: 'cover !important',
                                         },
                                         '& #qr-reader__dashboard_section_csr': {
@@ -1626,6 +1738,26 @@ export default function GateScanner({
                                                     </IconButton>
                                                 </Tooltip>
 
+                                                <Tooltip title={isPortrait ? "Ganti ke Reticle Landscape (Melebar)" : "Ganti ke Reticle Portrait (Tegak / Vertikal)"}>
+                                                    <IconButton
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleOrientation();
+                                                        }}
+                                                        sx={{
+                                                            bgcolor: isPortrait ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255,255,255,0.15)',
+                                                            backdropFilter: 'blur(12px)',
+                                                            color: isPortrait ? '#34d399' : '#ffffff',
+                                                            border: `1px solid ${isPortrait ? 'rgba(52, 211, 153, 0.5)' : 'rgba(255,255,255,0.25)'}`,
+                                                            borderRadius: '12px',
+                                                            p: 1,
+                                                            '&:hover': { bgcolor: isPortrait ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255,255,255,0.25)' },
+                                                        }}
+                                                    >
+                                                        {isPortrait ? <StayCurrentPortraitIcon sx={{ fontSize: 20 }} /> : <CropPortraitIcon sx={{ fontSize: 20 }} />}
+                                                    </IconButton>
+                                                </Tooltip>
+
                                                 <Tooltip title={soundEnabled ? 'Mute Suara Beep' : 'Nyalakan Suara Beep'}>
                                                     <IconButton
                                                         onClick={(e) => {
@@ -1680,10 +1812,11 @@ export default function GateScanner({
                                                 top: '50%',
                                                 left: '50%',
                                                 transform: 'translate(-50%, -50%)',
-                                                width: { xs: 260, sm: 320, md: 360 },
-                                                height: { xs: 260, sm: 320, md: 360 },
+                                                width: isPortrait ? { xs: 240, sm: 280, md: 320 } : { xs: 260, sm: 320, md: 360 },
+                                                height: isPortrait ? { xs: 340, sm: 400, md: 460 } : { xs: 260, sm: 320, md: 360 },
                                                 pointerEvents: 'none',
                                                 zIndex: 40,
+                                                transition: 'all 0.3s ease',
                                             }}
                                         >
                                             {/* AI Auto-Focus Status Badge above Frame */}
