@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import jsQR from 'jsqr';
 import axios from 'axios';
 import {
     Box,
@@ -555,15 +556,22 @@ export default function GateScanner({
 
     const processTicketCheckIn = async (code, isManual = false) => {
         if (!code) return;
-        const cleanCode = code.trim();
+        let cleanCode = code.trim();
+
+        // Auto extract ticket code if raw URL was scanned (e.g. https://pitiagi.cloud/ticket/show/TKT-...)
+        const urlMatch = cleanCode.match(/TKT-[A-Z0-9\-]+/i);
+        if (urlMatch) {
+            cleanCode = urlMatch[0].toUpperCase();
+        }
+
         const now = Date.now();
 
-        // Prevent camera loop from repeatedly scanning the exact same QR code (4-second cooldown per same code)
+        // Prevent camera loop from repeatedly scanning the exact same QR code (2.5-second cooldown per same code)
         if (!isManual) {
             if (isProcessingRef.current) return;
             if (
                 lastScannedCodeRef.current === cleanCode &&
-                now - lastScannedAtRef.current < 4000
+                now - lastScannedAtRef.current < 2500
             ) {
                 return; // Silently skip duplicate camera triggers for same code
             }
@@ -631,12 +639,103 @@ export default function GateScanner({
             if (inputRef.current) {
                 inputRef.current.focus();
             }
-            // Rapid release: 1 second delay before next scan can process
+            // Rapid release: 800ms delay before next scan can process
             setTimeout(() => {
                 isProcessingRef.current = false;
-            }, 1000);
+            }, 800);
         }
     };
+
+    // Multi-Engine High Speed Realtime QR Decoder Loop (Direct Video Stream + jsQR inverted attemptBoth + Native BarcodeDetector)
+    useEffect(() => {
+        if (!scanning) return;
+
+        let active = true;
+        let animationFrameId = null;
+        let canvas = null;
+        let ctx = null;
+
+        let nativeDetector = null;
+        if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
+            try {
+                nativeDetector = new window.BarcodeDetector({ formats: ['qr_code'] });
+            } catch (_) {}
+        }
+
+        const scanDirectVideo = async () => {
+            if (!active) return;
+
+            const videoEl = document.querySelector('#qr-reader video');
+            if (videoEl && videoEl.readyState >= 2 && !videoEl.paused && !isProcessingRef.current) {
+                let detectedCode = null;
+
+                // Priority 1: Native Hardware BarcodeDetector (instant GPU decode on Apple/Android)
+                if (nativeDetector) {
+                    try {
+                        const barcodes = await nativeDetector.detect(videoEl);
+                        if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+                            detectedCode = barcodes[0].rawValue;
+                        }
+                    } catch (_) {}
+                }
+
+                // Priority 2: jsQR with { inversionAttempts: 'attemptBoth' } (Crucial for dark mode phone screens & inverted QR codes)
+                if (!detectedCode && videoEl.videoWidth > 0 && videoEl.videoHeight > 0) {
+                    try {
+                        if (!canvas) {
+                            canvas = document.createElement('canvas');
+                            ctx = canvas.getContext('2d', { willReadFrequently: true });
+                        }
+
+                        // Sample at max 720 width for fast 30fps decoding
+                        const scale = Math.min(1, 720 / videoEl.videoWidth);
+                        const w = Math.floor(videoEl.videoWidth * scale);
+                        const h = Math.floor(videoEl.videoHeight * scale);
+
+                        if (canvas.width !== w || canvas.height !== h) {
+                            canvas.width = w;
+                            canvas.height = h;
+                        }
+
+                        ctx.drawImage(videoEl, 0, 0, w, h);
+                        const imageData = ctx.getImageData(0, 0, w, h);
+
+                        const qr = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: 'attemptBoth',
+                        });
+
+                        if (qr && qr.data) {
+                            detectedCode = qr.data;
+                        }
+                    } catch (_) {}
+                }
+
+                if (detectedCode && !isProcessingRef.current) {
+                    processTicketCheckIn(detectedCode, false);
+                }
+            }
+
+            if (active) {
+                setTimeout(() => {
+                    if (active) {
+                        animationFrameId = requestAnimationFrame(scanDirectVideo);
+                    }
+                }, 80);
+            }
+        };
+
+        const timer = setTimeout(() => {
+            animationFrameId = requestAnimationFrame(scanDirectVideo);
+        }, 400);
+
+        return () => {
+            active = false;
+            clearTimeout(timer);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            canvas = null;
+            ctx = null;
+        };
+    }, [scanning]);
 
     const startCamera = async (specificModeOrId = null) => {
         setCameraError(null);
@@ -654,12 +753,16 @@ export default function GateScanner({
                 }
             }
 
+            const isHandheldPhone = /iPhone|Android.*Mobile|Mobile.*Android/i.test(navigator.userAgent) && !/iPad|Tablet/i.test(navigator.userAgent);
+
+            // Full frame scan configuration (no restrictive qrbox cropping)
             const qrConfig = {
-                fps: 15,
-                qrbox: (viewfinderWidth, viewfinderHeight) => {
-                    const minEdge = Math.min(viewfinderWidth || 300, viewfinderHeight || 300);
-                    const size = Math.max(160, Math.min(Math.floor(minEdge * 0.75), 250));
-                    return { width: size, height: size };
+                fps: 25,
+                disableFlip: false,
+                videoConstraints: {
+                    facingMode: isHandheldPhone ? 'environment' : 'user',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
                 },
             };
 
@@ -667,12 +770,15 @@ export default function GateScanner({
                 processTicketCheckIn(decodedText, false);
             };
 
-            // iPad, Mac, PC, Laptop, and Tablets: ALWAYS USE FRONT CAMERA ('user')
-            // Only handheld smartphones (HP panitia) default to scanner mode ('environment')
-            const isHandheldPhone = /iPhone|Android.*Mobile|Mobile.*Android/i.test(navigator.userAgent) && !/iPad|Tablet/i.test(navigator.userAgent);
             const el = document.getElementById('qr-reader');
             if (el) el.innerHTML = '';
-            const instance = new Html5Qrcode('qr-reader');
+            const instance = new Html5Qrcode('qr-reader', {
+                formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+                verbose: false,
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true,
+                },
+            });
             html5QrCodeRef.current = instance;
 
             // 1. If user explicitly selected a camera from dropdown
