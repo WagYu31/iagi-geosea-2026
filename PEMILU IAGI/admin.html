@@ -9078,7 +9078,7 @@
               boxWaStatus.style.background = 'rgba(16, 185, 129, 0.15)';
               boxWaStatus.style.border = '1px solid rgba(16, 185, 129, 0.4)';
               boxWaStatus.style.color = '#6EE7B7';
-              boxWaStatus.innerHTML = `✅ <b>OTP terkirim via Fonnte ke WhatsApp: ${res.target}</b>.<br><span style="font-size: 0.72rem; opacity: 0.9;">Kode Anda: <b>${activeOtp}</b> (atau PIN Akun: <b>${pendingAdmin ? pendingAdmin.securityPin : '2026'}</b>)</span>`;
+              boxWaStatus.innerHTML = `✅ <b>OTP terkirim via Fonnte ke WhatsApp: ${res.target}</b>.<br><span style="font-size: 0.72rem; color: #94A3B8;">Silakan periksa pesan WhatsApp Anda untuk mengambil 4-digit kode verifikasi resmi.</span>`;
             }
             showAlert(`Kode OTP 4-Digit berhasil dikirim ke WhatsApp ${res.target} via Fonnte!`, 'success');
           } else {

@@ -1774,9 +1774,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (emailLabel) emailLabel.innerText = `${currentPendingAdmin.name} (${currentPendingAdmin.email})`;
 
       const otpHint = document.getElementById('demo-otp-hint');
-      if (otpHint) otpHint.innerText = `Kode OTP terkirim: ${currentActiveOtp}`;
+      if (otpHint) otpHint.innerText = '2FA OTP Aktif (Kedaluwarsa 10 Menit)';
 
-      showAlert(adminLoginAlert, `Kode OTP telah dikirim ke ${email}. (Kode Demo: ${currentActiveOtp})`, 'info');
+      showAlert(adminLoginAlert, `Kode OTP 4-Digit telah dikirim ke ${email}. Silakan periksa kotak masuk pesan Anda.`, 'info');
       triggerHaptic('success');
     });
   }
