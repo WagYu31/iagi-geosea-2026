@@ -50,6 +50,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CropPortraitIcon from '@mui/icons-material/CropPortrait';
 import StayCurrentPortraitIcon from '@mui/icons-material/StayCurrentPortrait';
 import ScreenRotationIcon from '@mui/icons-material/ScreenRotation';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const CATEGORY_MAP = {
     // 1. Participant
@@ -494,6 +495,26 @@ export default function GateScanner({
             }
         } catch (e) {
             console.warn('Auto print error:', e);
+        }
+    };
+
+    const [resettingCheckIn, setResettingCheckIn] = useState(false);
+
+    const handleResetTicketCheckIn = async () => {
+        if (!scanResult?.ticket?.id) return;
+        setResettingCheckIn(true);
+        try {
+            await axios.patch(route('admin.visitorTickets.toggleCheckIn', scanResult.ticket.id));
+            const ticketCode = scanResult.ticket.ticket_code;
+            setScanResult(null);
+            setRecentScans(prev => prev.filter(s => s.ticket.id !== scanResult.ticket.id));
+            if (lastScannedCodeRef.current === ticketCode) {
+                lastScannedCodeRef.current = null;
+            }
+        } catch (e) {
+            console.error('Failed to reset check-in status:', e);
+        } finally {
+            setResettingCheckIn(false);
         }
     };
 
@@ -2348,6 +2369,31 @@ export default function GateScanner({
                                         }}
                                     >
                                         🖨️ Print Lanyard Badge ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
+                                    </Button>
+                                )}
+
+                                {/* Testing Helper: Reset Check-In Status */}
+                                {scanResult.ticket && scanResult.status === 'already_checked_in' && (
+                                    <Button
+                                        variant="outlined"
+                                        fullWidth
+                                        disabled={resettingCheckIn}
+                                        onClick={handleResetTicketCheckIn}
+                                        startIcon={resettingCheckIn ? <CircularProgress size={16} color="inherit" /> : <RestartAltIcon />}
+                                        sx={{
+                                            mt: 1.5,
+                                            textTransform: 'none',
+                                            fontWeight: 800,
+                                            fontSize: '0.8rem',
+                                            borderRadius: '12px',
+                                            py: 1,
+                                            color: '#b45309',
+                                            borderColor: '#fde68a',
+                                            bgcolor: '#fffbeb',
+                                            '&:hover': { bgcolor: '#fef3c7', borderColor: '#f59e0b' },
+                                        }}
+                                    >
+                                        {resettingCheckIn ? 'Mereset Status Tiket...' : '🔄 Reset Status Check-In (Untuk Test Scan Ulang)'}
                                     </Button>
                                 )}
                             </Paper>
