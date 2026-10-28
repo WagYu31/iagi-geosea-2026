@@ -8381,8 +8381,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.6.3"></script>
-  <script src="js/storage.js?v=4.6.3"></script>
+  <script src="js/data.js?v=4.7.0"></script>
+  <script src="js/storage.js?v=4.7.0"></script>
 
   <script>
     // =========================================================================
@@ -12608,6 +12608,47 @@
       }
 
       function renderAdminUsersTable() {
+        // Direct safety purge of legacy dummy accounts from localStorage
+        try {
+          const raw = localStorage.getItem('pemilu_iagi_admin_accounts_v1');
+          if (raw) {
+            const list = JSON.parse(raw);
+            if (Array.isArray(list)) {
+              const dummyEmails = ['admin.kpku@iagi.or.id', 'panitia@pemiluiagi.id', 'operator.dpt@iagi.or.id', 'it.pemilu@iagi.or.id'];
+              const cleaned = list.filter(a => 
+                !dummyEmails.includes(a.email) && 
+                a.name !== 'Dr. Ir. Hendra Saputra, M.T.' &&
+                a.name !== 'Sekretariat Panitia & Saksi Pleno' &&
+                a.name !== 'Ir. Bambang Triyono, M.Sc.' &&
+                a.name !== 'Tim IT & Cyber Security KPKU'
+              );
+              const hasAdmin = cleaned.some(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'ADMIN');
+              if (!hasAdmin) {
+                cleaned.push({
+                  id: "adm-02",
+                  name: "ADMIN",
+                  title: "SUPER ADMIN",
+                  email: "addiansyah@unsri.ac.id",
+                  phone: "082255555930",
+                  npa: "00000",
+                  password: "admin",
+                  securityPin: "2026",
+                  role: "Operator DPT",
+                  status: "AKTIF",
+                  twoFactor: true,
+                  createdAt: "2026-01-20T08:00:00Z",
+                  lastLogin: null
+                });
+              }
+              if (cleaned.length !== list.length || !hasAdmin) {
+                localStorage.setItem('pemilu_iagi_admin_accounts_v1', JSON.stringify(cleaned));
+              }
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
         if (!window.pemiluStorage || !window.pemiluStorage.getAdminAccounts) return;
         const accounts = window.pemiluStorage.getAdminAccounts();
         const searchInput = document.getElementById('admin-search-input');
