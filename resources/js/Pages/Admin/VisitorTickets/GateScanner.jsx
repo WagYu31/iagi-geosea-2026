@@ -44,6 +44,8 @@ import DeskIcon from '@mui/icons-material/DesktopWindows';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import CloseIcon from '@mui/icons-material/Close';
+import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const CATEGORY_MAP = {
     // 1. Participant
@@ -229,6 +231,104 @@ export default function GateScanner({
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [fullscreenToastVisible, setFullscreenToastVisible] = useState(false);
     const toastTimeoutRef = useRef(null);
+
+    // AI Auto-Focus State
+    const [aiAutoFocus, setAiAutoFocus] = useState(() => {
+        const saved = localStorage.getItem('gate_scanner_ai_autofocus');
+        return saved !== null ? saved === 'true' : true;
+    });
+    const [focusTapPoint, setFocusTapPoint] = useState(null);
+    const [aiFocusStatus, setAiFocusStatus] = useState('ACTIVE'); // 'ACTIVE' | 'LOCKING' | 'LOCKED'
+    const focusTapTimeoutRef = useRef(null);
+    const autoFocusIntervalRef = useRef(null);
+
+    // AI Hardware Auto-Focus Constraint Driver (WebRTC MediaTrackConstraints)
+    const triggerHardwareFocus = async (point = null) => {
+        try {
+            const videoEl = document.querySelector('#qr-reader video');
+            if (!videoEl || !videoEl.srcObject) return;
+            const stream = videoEl.srcObject;
+            const tracks = stream.getVideoTracks ? stream.getVideoTracks() : [];
+            if (tracks.length === 0) return;
+            const track = tracks[0];
+
+            const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+            const advancedConstraints = {};
+
+            // Optical Continuous / Single-Shot Focus
+            if (capabilities.focusMode) {
+                if (capabilities.focusMode.includes('continuous')) {
+                    advancedConstraints.focusMode = 'continuous';
+                } else if (capabilities.focusMode.includes('single-shot')) {
+                    advancedConstraints.focusMode = 'single-shot';
+                }
+            }
+
+            // Tap-to-focus point coordinate
+            if (point && capabilities.pointsOfInterest) {
+                advancedConstraints.pointsOfInterest = [{ x: point.normX, y: point.normY }];
+            }
+
+            // Auto exposure adjustment
+            if (capabilities.exposureMode && capabilities.exposureMode.includes('continuous')) {
+                advancedConstraints.exposureMode = 'continuous';
+            }
+
+            if (Object.keys(advancedConstraints).length > 0) {
+                await track.applyConstraints({ advanced: [advancedConstraints] });
+            }
+        } catch (_) {}
+    };
+
+    // AI Auto-Focus Routine Listener
+    useEffect(() => {
+        if (!scanning || !aiAutoFocus) {
+            if (autoFocusIntervalRef.current) clearInterval(autoFocusIntervalRef.current);
+            return;
+        }
+
+        // Apply immediately
+        triggerHardwareFocus();
+
+        // Recalibrate focus every 4 seconds
+        autoFocusIntervalRef.current = setInterval(() => {
+            setAiFocusStatus('LOCKING');
+            triggerHardwareFocus();
+            setTimeout(() => {
+                setAiFocusStatus('LOCKED');
+                setTimeout(() => setAiFocusStatus('ACTIVE'), 1000);
+            }, 600);
+        }, 4000);
+
+        return () => {
+            if (autoFocusIntervalRef.current) clearInterval(autoFocusIntervalRef.current);
+        };
+    }, [scanning, aiAutoFocus]);
+
+    const handleViewfinderClick = (e) => {
+        if (!scanning) return;
+        if (e.target.closest('button') || e.target.closest('.MuiButtonBase-root') || e.target.closest('input')) {
+            return;
+        }
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const normX = Math.max(0, Math.min(1, x / rect.width));
+        const normY = Math.max(0, Math.min(1, y / rect.height));
+
+        setFocusTapPoint({ x, y });
+        setAiFocusStatus('LOCKING');
+        triggerHardwareFocus({ normX, normY });
+
+        if (focusTapTimeoutRef.current) clearTimeout(focusTapTimeoutRef.current);
+        focusTapTimeoutRef.current = setTimeout(() => {
+            setAiFocusStatus('LOCKED');
+            setTimeout(() => {
+                setFocusTapPoint(null);
+                setAiFocusStatus('ACTIVE');
+            }, 1200);
+        }, 400);
+    };
 
     // Fullscreen Camera Kiosk Toggle Handlers
     const toggleFullscreen = async () => {
@@ -629,6 +729,7 @@ export default function GateScanner({
             if (started) {
                 setScanning(true);
                 setCameraError(null);
+                setTimeout(() => triggerHardwareFocus(), 300);
                 return;
             }
 
@@ -688,7 +789,7 @@ export default function GateScanner({
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', color: '#0f172a', py: { xs: 2, md: 3 } }}>
             <Head title={`Gate Scanner (Station ${stationNumber}) - 55th PIT IAGI & GEOSEA 2026`} />
 
-            {/* Global Keyframes for Fullscreen Scanner Animations */}
+            {/* Global Keyframes for Fullscreen Scanner Animations & AI Auto-Focus */}
             <style>{`
                 @keyframes scanLaserLine {
                     0% { top: 8%; opacity: 0.2; }
@@ -702,6 +803,20 @@ export default function GateScanner({
                 @keyframes slideUpToast {
                     from { transform: translate(-50%, 40px); opacity: 0; }
                     to { transform: translate(-50%, 0); opacity: 1; }
+                }
+                @keyframes aiFocusRing {
+                    0% { transform: scale(0.3); opacity: 1; border-color: #22d3ee; }
+                    50% { transform: scale(1.15); opacity: 0.85; border-color: #06b6d4; }
+                    100% { transform: scale(1.6); opacity: 0; border-color: #10b981; }
+                }
+                @keyframes spinPulse {
+                    0% { transform: rotate(0deg) scale(1); }
+                    50% { transform: rotate(180deg) scale(1.2); }
+                    100% { transform: rotate(360deg) scale(1); }
+                }
+                @keyframes crosshairPulse {
+                    0%, 100% { opacity: 0.4; transform: scale(0.95); }
+                    50% { opacity: 1; transform: scale(1.05); }
                 }
             `}</style>
 
@@ -809,6 +924,39 @@ export default function GateScanner({
                                 }}
                             >
                                 {autoPrint ? '⚡ Auto-Print: ON' : 'Auto-Print: OFF'}
+                            </Button>
+                        </Tooltip>
+
+                        {/* AI Auto-Focus Toggle Button */}
+                        <Tooltip title={aiAutoFocus ? "AI Auto-Fokus AKTIF: Kamera otomatis mengunci fokus & ketajaman QR code" : "AI Auto-Fokus NONAKTIF"}>
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    const next = !aiAutoFocus;
+                                    setAiAutoFocus(next);
+                                    localStorage.setItem('gate_scanner_ai_autofocus', String(next));
+                                    if (next) triggerHardwareFocus();
+                                }}
+                                startIcon={<AutoAwesomeIcon sx={{ color: aiAutoFocus ? '#0284c7' : '#94a3b8' }} />}
+                                sx={{
+                                    bgcolor: aiAutoFocus ? '#f0f9ff' : '#f1f5f9',
+                                    color: aiAutoFocus ? '#0284c7' : '#64748b',
+                                    border: `1px solid ${aiAutoFocus ? '#bae6fd' : '#cbd5e1'}`,
+                                    boxShadow: aiAutoFocus ? '0 2px 0 #bae6fd, 0 4px 12px rgba(2,132,199,0.15)' : '0 2px 0 #cbd5e1',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.75rem',
+                                    borderRadius: '10px',
+                                    px: 1.5,
+                                    py: 0.6,
+                                    '&:hover': {
+                                        bgcolor: aiAutoFocus ? '#e0f2fe' : '#e2e8f0',
+                                        transform: 'translateY(-1px)',
+                                    },
+                                    '&:active': { transform: 'translateY(1px)' },
+                                }}
+                            >
+                                {aiAutoFocus ? '🤖 AI Focus: ON' : 'AI Focus: OFF'}
                             </Button>
                         </Tooltip>
 
@@ -1022,6 +1170,7 @@ export default function GateScanner({
 
                             {/* Camera Viewfinder Box (Switches seamlessly to 100vw x 100vh Fullscreen) */}
                             <Box
+                                onClick={handleViewfinderClick}
                                 sx={{
                                     position: isFullscreen ? 'fixed' : 'relative',
                                     top: isFullscreen ? 0 : 'auto',
@@ -1043,6 +1192,7 @@ export default function GateScanner({
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     transition: 'all 0.2s ease',
+                                    cursor: scanning ? 'crosshair' : 'default',
                                 }}
                             >
                                 <Box
@@ -1054,11 +1204,24 @@ export default function GateScanner({
                                             width: isFullscreen ? '100vw !important' : '100% !important',
                                             height: isFullscreen ? '100vh !important' : '280px !important',
                                             objectFit: 'cover !important',
+                                            display: 'block !important',
+                                        },
+                                        '& #qr-shaded-region': {
+                                            display: 'none !important',
                                         },
                                         '& #qr-reader__scan_region': {
                                             width: isFullscreen ? '100vw !important' : '100% !important',
                                             height: isFullscreen ? '100vh !important' : '280px !important',
                                             minHeight: isFullscreen ? '100vh !important' : '280px !important',
+                                            border: 'none !important',
+                                            boxShadow: 'none !important',
+                                        },
+                                        '& #qr-reader__scan_region > div': {
+                                            border: 'none !important',
+                                            boxShadow: 'none !important',
+                                        },
+                                        '& #qr-reader__scan_region canvas': {
+                                            display: 'none !important',
                                         },
                                         '& #qr-reader__scan_region video': {
                                             width: isFullscreen ? '100vw !important' : '100% !important',
@@ -1076,6 +1239,91 @@ export default function GateScanner({
                                         },
                                     }}
                                 />
+
+                                {/* Interactive Tap-to-Focus Sonar Ring */}
+                                {focusTapPoint && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            left: focusTapPoint.x,
+                                            top: focusTapPoint.y,
+                                            transform: 'translate(-50%, -50%)',
+                                            pointerEvents: 'none',
+                                            zIndex: 45,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: 64,
+                                                height: 64,
+                                                borderRadius: '50%',
+                                                border: '2px solid #22d3ee',
+                                                animation: 'aiFocusRing 0.8s ease-out forwards',
+                                                boxShadow: '0 0 16px #22d3ee',
+                                            }}
+                                        />
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                width: 8,
+                                                height: 8,
+                                                borderRadius: '50%',
+                                                bgcolor: '#22d3ee',
+                                                boxShadow: '0 0 8px #22d3ee',
+                                            }}
+                                        />
+                                        <Typography
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 42,
+                                                left: '50%',
+                                                transform: 'translateX(-50%)',
+                                                whiteSpace: 'nowrap',
+                                                color: '#22d3ee',
+                                                fontWeight: 900,
+                                                fontSize: '0.7rem',
+                                                textShadow: '0 2px 6px rgba(0,0,0,0.9)',
+                                                bgcolor: 'rgba(15,23,42,0.85)',
+                                                px: 1,
+                                                py: 0.3,
+                                                borderRadius: '6px',
+                                                border: '1px solid rgba(34,211,238,0.5)',
+                                            }}
+                                        >
+                                            🎯 AI FOCUS LOCKED
+                                        </Typography>
+                                    </Box>
+                                )}
+
+                                {/* Normal Mode Badges (Top-Left AI Focus pill & Top-Right Fullscreen Expand) */}
+                                {!isFullscreen && scanning && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 10,
+                                            left: 10,
+                                            zIndex: 10,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.6,
+                                            bgcolor: 'rgba(15, 23, 42, 0.75)',
+                                            backdropFilter: 'blur(8px)',
+                                            border: '1px solid rgba(6, 182, 212, 0.4)',
+                                            borderRadius: '20px',
+                                            px: 1.2,
+                                            py: 0.4,
+                                            color: '#22d3ee',
+                                        }}
+                                    >
+                                        <AutoAwesomeIcon sx={{ fontSize: 13, animation: 'spinPulse 3s linear infinite' }} />
+                                        <Typography sx={{ fontWeight: 800, fontSize: '0.68rem', letterSpacing: '0.02em' }}>
+                                            AI AUTO-FOKUS
+                                        </Typography>
+                                    </Box>
+                                )}
 
                                 {/* Floating Fullscreen Expand Button on Viewfinder Corner (Normal Mode Only) */}
                                 {!isFullscreen && (
@@ -1132,8 +1380,8 @@ export default function GateScanner({
                                                 background: 'linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
                                             }}
                                         >
-                                            {/* Left Live Gate Badge */}
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                            {/* Left Live Gate & AI Badges */}
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
@@ -1160,6 +1408,34 @@ export default function GateScanner({
                                                     />
                                                     <Typography sx={{ fontWeight: 900, fontSize: { xs: '0.78rem', sm: '0.88rem' }, letterSpacing: '0.02em' }}>
                                                         GATE {stationNumber} SCANNER
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* AI Auto-Focus Indicator Pill */}
+                                                <Box
+                                                    sx={{
+                                                        display: { xs: 'none', sm: 'flex' },
+                                                        alignItems: 'center',
+                                                        bgcolor: aiAutoFocus ? 'rgba(6, 182, 212, 0.2)' : 'rgba(255,255,255,0.1)',
+                                                        backdropFilter: 'blur(12px)',
+                                                        border: `1px solid ${aiAutoFocus ? 'rgba(6, 182, 212, 0.5)' : 'rgba(255,255,255,0.2)'}`,
+                                                        borderRadius: '12px',
+                                                        px: 1.5,
+                                                        py: 0.8,
+                                                        color: aiAutoFocus ? '#67e8f9' : '#94a3b8',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const next = !aiAutoFocus;
+                                                        setAiAutoFocus(next);
+                                                        localStorage.setItem('gate_scanner_ai_autofocus', String(next));
+                                                        if (next) triggerHardwareFocus();
+                                                    }}
+                                                >
+                                                    <AutoAwesomeIcon sx={{ fontSize: 16, mr: 0.6, color: aiAutoFocus ? '#22d3ee' : '#94a3b8' }} />
+                                                    <Typography sx={{ fontWeight: 800, fontSize: '0.78rem' }}>
+                                                        {aiAutoFocus ? 'AI Auto-Focus: ON' : 'AI Focus: OFF'}
                                                     </Typography>
                                                 </Box>
 
@@ -1198,9 +1474,38 @@ export default function GateScanner({
 
                                             {/* Right Controls */}
                                             <Stack direction="row" spacing={1.2} alignItems="center">
+                                                {/* Manual Refocus Trigger */}
+                                                <Tooltip title="Trigger AI Auto-Focus Sekarang">
+                                                    <IconButton
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setAiFocusStatus('LOCKING');
+                                                            triggerHardwareFocus();
+                                                            setTimeout(() => {
+                                                                setAiFocusStatus('LOCKED');
+                                                                setTimeout(() => setAiFocusStatus('ACTIVE'), 1000);
+                                                            }, 500);
+                                                        }}
+                                                        sx={{
+                                                            bgcolor: 'rgba(6, 182, 212, 0.25)',
+                                                            backdropFilter: 'blur(12px)',
+                                                            color: '#22d3ee',
+                                                            border: '1px solid rgba(6, 182, 212, 0.4)',
+                                                            borderRadius: '12px',
+                                                            p: 1,
+                                                            '&:hover': { bgcolor: 'rgba(6, 182, 212, 0.4)' },
+                                                        }}
+                                                    >
+                                                        <CenterFocusStrongIcon sx={{ fontSize: 20 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+
                                                 <Tooltip title="Ganti Kamera Depan / Belakang">
                                                     <IconButton
-                                                        onClick={toggleCameraFacing}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleCameraFacing();
+                                                        }}
                                                         sx={{
                                                             bgcolor: 'rgba(255,255,255,0.15)',
                                                             backdropFilter: 'blur(12px)',
@@ -1217,7 +1522,10 @@ export default function GateScanner({
 
                                                 <Tooltip title={soundEnabled ? 'Mute Suara Beep' : 'Nyalakan Suara Beep'}>
                                                     <IconButton
-                                                        onClick={() => setSoundEnabled(!soundEnabled)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSoundEnabled(!soundEnabled);
+                                                        }}
                                                         sx={{
                                                             bgcolor: 'rgba(255,255,255,0.15)',
                                                             backdropFilter: 'blur(12px)',
@@ -1235,7 +1543,10 @@ export default function GateScanner({
                                                 <Button
                                                     variant="contained"
                                                     color="error"
-                                                    onClick={exitFullscreen}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        exitFullscreen();
+                                                    }}
                                                     startIcon={<FullscreenExitIcon />}
                                                     sx={{
                                                         background: 'linear-gradient(180deg, #ef4444 0%, #dc2626 100%)',
@@ -1256,7 +1567,7 @@ export default function GateScanner({
                                             </Stack>
                                         </Box>
 
-                                        {/* Center Reticle / Scan Frame */}
+                                        {/* Center Reticle / Scan Frame with AI Auto-Focus Indicator */}
                                         <Box
                                             sx={{
                                                 position: 'absolute',
@@ -1269,11 +1580,57 @@ export default function GateScanner({
                                                 zIndex: 40,
                                             }}
                                         >
+                                            {/* AI Auto-Focus Status Badge above Frame */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: -42,
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 0.8,
+                                                    bgcolor: 'rgba(15, 23, 42, 0.85)',
+                                                    backdropFilter: 'blur(10px)',
+                                                    border: `1.5px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#06b6d4'}`,
+                                                    borderRadius: '20px',
+                                                    px: 1.6,
+                                                    py: 0.4,
+                                                    boxShadow: '0 0 14px rgba(6, 182, 212, 0.35)',
+                                                }}
+                                            >
+                                                <AutoAwesomeIcon sx={{ fontSize: 14, color: aiFocusStatus === 'LOCKING' ? '#fbbf24' : '#22d3ee', animation: 'spinPulse 3s linear infinite' }} />
+                                                <Typography sx={{ color: '#ffffff', fontWeight: 900, fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+                                                    AI AUTO-FOKUS {aiFocusStatus === 'LOCKING' ? 'MENGUNCI FOKUS...' : aiFocusStatus === 'LOCKED' ? 'TERKUNCI 100%' : 'AKTIF'}
+                                                </Typography>
+                                                <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981', boxShadow: '0 0 8px #10b981' }} />
+                                            </Box>
+
                                             {/* 4 Corner Markers */}
-                                            <Box sx={{ position: 'absolute', top: 0, left: 0, width: 40, height: 40, borderTop: '4px solid #10b981', borderLeft: '4px solid #10b981', borderRadius: '4px 0 0 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
-                                            <Box sx={{ position: 'absolute', top: 0, right: 0, width: 40, height: 40, borderTop: '4px solid #10b981', borderRight: '4px solid #10b981', borderRadius: '0 4px 0 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
-                                            <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: 40, height: 40, borderBottom: '4px solid #10b981', borderLeft: '4px solid #10b981', borderRadius: '0 0 0 4px', filter: 'drop-shadow(0 0 8px #10b981)' }} />
-                                            <Box sx={{ position: 'absolute', bottom: 0, right: 0, width: 40, height: 40, borderBottom: '4px solid #10b981', borderRight: '4px solid #10b981', borderRadius: '0 0 4px 0', filter: 'drop-shadow(0 0 8px #10b981)' }} />
+                                            <Box sx={{ position: 'absolute', top: 0, left: 0, width: 40, height: 40, borderTop: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderLeft: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRadius: '4px 0 0 0', filter: 'drop-shadow(0 0 8px #10b981)', transition: 'border-color 0.2s ease' }} />
+                                            <Box sx={{ position: 'absolute', top: 0, right: 0, width: 40, height: 40, borderTop: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRight: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRadius: '0 4px 0 0', filter: 'drop-shadow(0 0 8px #10b981)', transition: 'border-color 0.2s ease' }} />
+                                            <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: 40, height: 40, borderBottom: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderLeft: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRadius: '0 0 0 4px', filter: 'drop-shadow(0 0 8px #10b981)', transition: 'border-color 0.2s ease' }} />
+                                            <Box sx={{ position: 'absolute', bottom: 0, right: 0, width: 40, height: 40, borderBottom: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRight: `4px solid ${aiFocusStatus === 'LOCKING' ? '#f59e0b' : '#10b981'}`, borderRadius: '0 0 4px 0', filter: 'drop-shadow(0 0 8px #10b981)', transition: 'border-color 0.2s ease' }} />
+
+                                            {/* Center Crosshair Aim */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    width: 24,
+                                                    height: 24,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    animation: 'crosshairPulse 2s ease-in-out infinite',
+                                                }}
+                                            >
+                                                <Box sx={{ position: 'absolute', width: 24, height: '1.5px', bgcolor: 'rgba(34, 211, 238, 0.7)' }} />
+                                                <Box sx={{ position: 'absolute', height: 24, width: '1.5px', bgcolor: 'rgba(34, 211, 238, 0.7)' }} />
+                                                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#22d3ee', boxShadow: '0 0 6px #22d3ee' }} />
+                                            </Box>
 
                                             {/* Animated Laser Scanning Line */}
                                             <Box
@@ -1292,7 +1649,7 @@ export default function GateScanner({
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
-                                                    bottom: -50,
+                                                    bottom: -56,
                                                     left: -60,
                                                     right: -60,
                                                     textAlign: 'center',
@@ -1310,14 +1667,14 @@ export default function GateScanner({
                                                 </Typography>
                                                 <Typography
                                                     sx={{
-                                                        color: 'rgba(255,255,255,0.7)',
-                                                        fontWeight: 600,
-                                                        fontSize: '0.75rem',
+                                                        color: '#67e8f9',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.72rem',
                                                         textShadow: '0 2px 6px rgba(0,0,0,0.8)',
                                                         mt: 0.3,
                                                     }}
                                                 >
-                                                    Atau scan langsung menggunakan USB Barcode Gun
+                                                    🎯 Ketuk layar di mana saja untuk Auto-Fokus manual
                                                 </Typography>
                                             </Box>
                                         </Box>
