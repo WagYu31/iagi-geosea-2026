@@ -272,14 +272,20 @@ export default function GateScanner({
         }
 
         // Seamless permission-reactive check:
-        // Only auto-start if permission was already granted previously.
-        // If state is 'prompt' or unknown, wait for user click to ensure genuine user gesture.
-        if (navigator.permissions && navigator.permissions.query) {
+        // Only auto-start if permission was already explicitly granted previously.
+        let isMounted = true;
+        if (navigator?.permissions?.query) {
             navigator.permissions.query({ name: 'camera' })
                 .then((status) => {
-                    if (status.state === 'granted') {
+                    if (status.state === 'granted' && isMounted) {
                         startCamera();
                     }
+                    status.onchange = () => {
+                        if (status.state === 'granted' && isMounted) {
+                            setCameraError(null);
+                            startCamera();
+                        }
+                    };
                 })
                 .catch(() => {});
         }
@@ -606,41 +612,7 @@ export default function GateScanner({
         }
     };
 
-    // Auto-start camera when page loads if permission is already granted, and listen for user changes
-    useEffect(() => {
-        let isMounted = true;
-        const checkAndStart = async () => {
-            try {
-                if (navigator?.permissions?.query) {
-                    const status = await navigator.permissions.query({ name: 'camera' });
-                    if (status.state === 'granted') {
-                        if (isMounted) startCamera();
-                    }
-                    // Auto-start as soon as user grants permission in Chrome popup
-                    status.onchange = () => {
-                        if (status.state === 'granted' && isMounted) {
-                            setCameraError(null);
-                            startCamera();
-                        }
-                    };
-                } else {
-                    startCamera();
-                }
-            } catch (e) {
-                startCamera();
-            }
-        };
 
-        const timer = setTimeout(checkAndStart, 500);
-
-        return () => {
-            isMounted = false;
-            clearTimeout(timer);
-            if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
-                html5QrCodeRef.current.stop().catch(console.error);
-            }
-        };
-    }, []);
 
     const handleManualSubmit = (e) => {
         e.preventDefault();
