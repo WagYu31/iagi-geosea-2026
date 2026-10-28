@@ -274,12 +274,18 @@ export default function GateScanner({
         // Auto-start camera on mount (seamless kiosk check-in without manual clicking)
         const autoTimer = setTimeout(() => {
             startCamera();
-        }, 400);
+        }, 500);
 
         return () => {
             clearTimeout(autoTimer);
-            if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
-                html5QrCodeRef.current.stop().catch(() => {});
+            if (html5QrCodeRef.current) {
+                try {
+                    const qr = html5QrCodeRef.current;
+                    const isScanning = typeof qr.isScanning === 'boolean' ? qr.isScanning : (qr.getState && qr.getState() === 2);
+                    if (isScanning) {
+                        qr.stop().catch(() => {});
+                    }
+                } catch (_) {}
             }
         };
     }, []);
@@ -487,10 +493,11 @@ export default function GateScanner({
 
             // Fresh instance creator to guarantee clean Html5Qrcode state
             const getFreshInstance = () => {
-                try {
-                    const el = document.getElementById('qr-reader');
-                    if (el) el.innerHTML = '';
-                } catch (_) {}
+                const el = document.getElementById('qr-reader');
+                if (!el) {
+                    throw new Error('Elemen kamera (qr-reader) belum siap di halaman.');
+                }
+                el.innerHTML = '';
                 return new Html5Qrcode('qr-reader');
             };
 

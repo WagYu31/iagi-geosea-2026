@@ -136,9 +136,37 @@
             </div>
         </div>
 
-        <!-- Auto-refresh: detect new deployments -->
+        <!-- Auto-refresh & Recovery: detect new deployments & chunk errors -->
         <script>
         (function() {
+            // 1. Auto-reload on stale chunk 404
+            window.addEventListener('error', function(e) {
+                if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+                    var src = e.target.src || e.target.href || '';
+                    if (src.indexOf('/build/assets/') !== -1) {
+                        var retryKey = 'asset_recovery_ts';
+                        var lastRetry = parseInt(sessionStorage.getItem(retryKey) || '0', 10);
+                        if (Date.now() - lastRetry > 10000) {
+                            sessionStorage.setItem(retryKey, Date.now().toString());
+                            console.warn('[AutoRecovery] Asset update detected, reloading fresh HTML...');
+                            window.location.reload();
+                        }
+                    }
+                }
+            }, true);
+
+            // 2. Splash screen safety timeout
+            setTimeout(function() {
+                var splash = document.querySelector('.app-splash');
+                if (splash && document.getElementById('app')) {
+                    var sub = splash.querySelector('.app-splash-sub');
+                    if (sub) {
+                        sub.innerHTML = 'Memuat versi terbaru...<br><button onclick="window.location.reload()" style="margin-top:14px;padding:8px 20px;background:#1abc9c;color:#ffffff;border:none;border-radius:8px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);">Muat Ulang Halaman</button>';
+                    }
+                }
+            }, 5000);
+
+            // 3. Periodic version check
             var currentVersion = null;
             var CHECK_INTERVAL = 30000; // 30 seconds
 
@@ -157,7 +185,6 @@
                     .catch(function() {}); // silently fail
             }
 
-            // Start checking after page load
             setTimeout(function() {
                 checkVersion();
                 setInterval(checkVersion, CHECK_INTERVAL);
