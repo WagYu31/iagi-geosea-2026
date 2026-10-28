@@ -5,10 +5,22 @@
  * Dilengkapi atomic file lock (flock) untuk mencegah race condition / pencoblosan ganda lintas perangkat/browser.
  */
 
-header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
+// Enterprise CORS Protection - Restrict to official domain
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$allowedOrigins = [
+    'https://pemiluiagi.web.id',
+    'https://www.pemiluiagi.web.id',
+    'http://localhost:8088',
+    'http://127.0.0.1:8088'
+];
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: {$origin}");
+    header("Access-Control-Allow-Credentials: true");
+} else {
+    header("Access-Control-Allow-Origin: https://pemiluiagi.web.id");
+}
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Admin-Pin');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -17,11 +29,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 date_default_timezone_set('Asia/Jakarta');
 
-$dataDir = __DIR__ . '/data';
-if (!is_dir($dataDir)) {
-    @mkdir($dataDir, 0755, true);
+// Direktori Data Aman: Prioritaskan di LUAR Document Root web (~/pemiluiagi_data)
+// agar file database JSON tidak dapat diunduh langsung via URL publik browser.
+function resolveSecureDataDir() {
+    $secureDir = dirname(__DIR__, 2) . '/pemiluiagi_data';
+    $localDir = __DIR__ . '/data';
+
+    // Jika direktori luar web root ada atau berhasil dibuat
+    if (@is_dir($secureDir) || @mkdir($secureDir, 0750, true)) {
+        // Migrasi otomatis file lama jika belum dipindahkan
+        if (is_dir($localDir)) {
+            $filesToMigrate = ['ballots.json', 'voters_status.json', 'audit.json', 'settings.json', 'ip_lockout.json', 'voting.lock'];
+            foreach ($filesToMigrate as $fn) {
+                $oldFile = $localDir . '/' . $fn;
+                $newFile = $secureDir . '/' . $fn;
+                if (file_exists($oldFile)) {
+                    if (!file_exists($newFile) || filesize($oldFile) > filesize($newFile)) {
+                        @copy($oldFile, $newFile);
+                    }
+                    // Hapus file lama di folder web agar tidak bisa diunduh langsung
+                    @unlink($oldFile);
+                }
+            }
+        }
+        return $secureDir;
+    }
+
+    if (!is_dir($localDir)) {
+        @mkdir($localDir, 0755, true);
+    }
+    return $localDir;
 }
-$dataHtaccess = $dataDir . '/.htaccess';
+
+$dataDir = resolveSecureDataDir();
+$dataHtaccess = __DIR__ . '/data/.htaccess';
 if (!file_exists($dataHtaccess)) {
     @file_put_contents($dataHtaccess, "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n    Order deny,allow\n    Deny from all\n</IfModule>\n");
 }
@@ -153,6 +194,44 @@ if ($action === 'get_voted_list') {
     exit;
 }
 
+// ================= ACTION 2B: REGISTER CLAIMED TOKEN (HASH ONLY) =================
+if ($action === 'register_claim') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
+    $token = isset($payload['token']) ? strtoupper(trim($payload['token'])) : '';
+    $name = isset($payload['name']) ? trim($payload['name']) : '';
+
+    if (strlen($npa) !== 5 || empty($token) || strlen($token) < 8) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Data klaim tidak lengkap atau format token tidak valid.']);
+        exit;
+    }
+
+    $fpLock = @fopen($lockFile, 'c+');
+    if ($fpLock && @flock($fpLock, LOCK_EX)) {
+        $voters = readJsonFile($votersFile, []);
+        if (!isset($voters[$npa]) || empty($voters[$npa]['voted'])) {
+            $voters[$npa] = [
+                'npa' => $npa,
+                'name' => $name ?: (isset($voters[$npa]['name']) ? $voters[$npa]['name'] : ''),
+                'claimed' => true,
+                'claimed_at' => date('d F Y, H:i:s') . ' WIB',
+                'token_hash' => hash('sha256', $token),
+                'voted' => false
+            ];
+            writeJsonFile($votersFile, $voters);
+        }
+        flock($fpLock, LOCK_UN);
+        fclose($fpLock);
+    }
+
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 // ================= ACTION 3: CAST VOTE (ATOMIC & STRICT ANTI-DOUBLE VOTE) =================
 if ($action === 'cast_vote') {
     $rawInput = @file_get_contents('php://input');
@@ -169,6 +248,12 @@ if ($action === 'cast_vote') {
     if (strlen($npa) !== 5) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'NPA harus tepat 5 digit angka (contoh: 00000).']);
+        exit;
+    }
+
+    if (empty($token) || strlen($token) < 8) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Token surat suara wajib diisi dengan kode unik resmi KPKU IAGI.']);
         exit;
     }
 
@@ -189,7 +274,7 @@ if ($action === 'cast_vote') {
     try {
         $voters = readJsonFile($votersFile, []);
 
-        // CRITICAL CHECK: Has this NPA ALREADY voted?
+        // CRITICAL CHECK 1: Has this NPA ALREADY voted?
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
             $votedAt = $voters[$npa]['voted_at'];
             flock($fpLock, LOCK_UN);
@@ -202,6 +287,22 @@ if ($action === 'cast_vote') {
                 'error' => "Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem KPKU menolak pemungutan suara ganda!"
             ]);
             exit;
+        }
+
+        // CRITICAL CHECK 2: Token verification against issued token hash
+        $tokenHash = hash('sha256', $token);
+        if (isset($voters[$npa]) && !empty($voters[$npa]['token_hash'])) {
+            if ($tokenHash !== $voters[$npa]['token_hash']) {
+                flock($fpLock, LOCK_UN);
+                fclose($fpLock);
+
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'error' => "❌ Token Surat Suara tidak cocok dengan token resmi yang diterbitkan untuk NPA {$npa}. Pastikan menggunakan kode dari email resmi KPKU."
+                ]);
+                exit;
+            }
         }
 
         $nowTimestamp = time();

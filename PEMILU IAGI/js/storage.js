@@ -870,6 +870,22 @@ class PemiluStorage {
     dpt[voterIndex] = voter;
     this.saveDPT(dpt);
 
+    // Daftarkan hash token ke server KPKU untuk validasi autentisitas coblos
+    try {
+      if (typeof fetch !== 'undefined') {
+        fetch('api/vote_sync.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'register_claim',
+            npa: voter.npa,
+            token: token,
+            name: voter.name
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
     this.addAuditLog('CLAIM_TOKEN', `Klaim surat suara berhasil untuk NPA ${voter.npa} (${voter.name})`);
 
     return {

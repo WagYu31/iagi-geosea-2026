@@ -6,8 +6,14 @@
 # Disable directory listing
 Options -Indexes
 
+# Block direct HTTP access to api/data directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^api/data(/.*)?$ - [F,L]
+</IfModule>
+
 # Protect hidden files and sensitive extensions
-<FilesMatch "(^\.|\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|env|lock)$)">
+<FilesMatch "(^\.|\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|env|lock|json)$)">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

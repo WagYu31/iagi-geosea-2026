@@ -5,8 +5,20 @@
  * Menegakkan Integritas Asas LUBER (Langsung, Umum, Bebas, Rahasia).
  */
 
-header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
+// Enterprise CORS Protection - Restrict to official domain
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$allowedOrigins = [
+    'https://pemiluiagi.web.id',
+    'https://www.pemiluiagi.web.id',
+    'http://localhost:8088',
+    'http://127.0.0.1:8088'
+];
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: {$origin}");
+    header("Access-Control-Allow-Credentials: true");
+} else {
+    header("Access-Control-Allow-Origin: https://pemiluiagi.web.id");
+}
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
@@ -23,6 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 date_default_timezone_set('Asia/Jakarta');
 
+// Direktori Data Aman (Luar Web Root)
+function resolveSecureDataDir() {
+    $secureDir = dirname(__DIR__, 2) . '/pemiluiagi_data';
+    $localDir = __DIR__ . '/data';
+    if (@is_dir($secureDir) || @mkdir($secureDir, 0750, true)) {
+        return $secureDir;
+    }
+    if (!is_dir($localDir)) {
+        @mkdir($localDir, 0755, true);
+    }
+    return $localDir;
+}
+
+$dataDir = resolveSecureDataDir();
+
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
 
@@ -30,10 +57,63 @@ if (!$data) {
     $data = $_POST;
 }
 
-$npa = isset($data['npa']) ? trim($data['npa']) : '';
+// 1. Proteksi Honeypot Trap
+if (!empty($data['website_url']) || !empty($data['trap_field']) || !empty($data['official_org_website_url'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Permintaan ditolak oleh sistem keamanan (Anti-Bot Trap).']);
+    exit;
+}
+
+// 2. Resolusi IP Klien & Proteksi Rate Limiting (Anti-Spam Mailer)
+$clientIp = '0.0.0.0';
+if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+    $clientIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
+} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+    $clientIp = trim($parts[0]);
+} elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+    $clientIp = trim($_SERVER['REMOTE_ADDR']);
+}
+$clientIp = preg_replace('/[^0-9a-fA-F:\.]/', '', $clientIp);
+
+$rateFile = $dataDir . '/mail_rate_limit.json';
+$rateData = @json_decode(@file_get_contents($rateFile), true) ?: [];
+$now = time();
+
+// Bersihkan data expired (> 15 menit)
+foreach ($rateData as $k => $info) {
+    if (isset($info['reset_at']) && $info['reset_at'] < $now) {
+        unset($rateData[$k]);
+    }
+}
+
+// Cek limit IP (Maksimal 5 kirim email per 10 menit per IP)
+if (!isset($rateData[$clientIp])) {
+    $rateData[$clientIp] = ['count' => 1, 'reset_at' => $now + (10 * 60)];
+} else {
+    if ($rateData[$clientIp]['count'] >= 5) {
+        $sisaMenit = ceil(($rateData[$clientIp]['reset_at'] - $now) / 60);
+        http_response_code(429);
+        echo json_encode([
+            'success' => false,
+            'error' => "⛔ Terlalu banyak permintaan pengiriman token dari perangkat Anda. Demi keamanan server, silakan tunggu {$sisaMenit} menit lagi sebelum mencoba kembali."
+        ]);
+        exit;
+    }
+    $rateData[$clientIp]['count']++;
+}
+@file_put_contents($rateFile, json_encode($rateData), LOCK_EX);
+
+$npa = isset($data['npa']) ? substr(preg_replace('/\D/', '', $data['npa']), 0, 5) : '';
 $name = isset($data['name']) ? trim($data['name']) : '';
 $email = isset($data['email']) ? trim($data['email']) : '';
 $token = isset($data['token']) ? trim($data['token']) : '';
+
+if (strlen($npa) !== 5) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'NPA harus tepat 5 digit angka.']);
+    exit;
+}
 
 if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
@@ -41,9 +121,9 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-if (empty($token)) {
+if (empty($token) || strlen($token) < 8) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Token surat suara kosong.']);
+    echo json_encode(['success' => false, 'error' => 'Token surat suara kosong atau tidak valid.']);
     exit;
 }
 
@@ -58,6 +138,22 @@ $monthsIndo = [
     'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
 ];
 $waktuKlaim = strtr(date('d F Y, H:i'), $monthsIndo) . ' WIB';
+
+// 3. Daftarkan hash token resmi ke registry pemilih server KPKU
+$votersFile = $dataDir . '/voters_status.json';
+$voters = @json_decode(@file_get_contents($votersFile), true) ?: [];
+if (!isset($voters[$npa]) || empty($voters[$npa]['voted'])) {
+    $voters[$npa] = [
+        'npa' => $npa,
+        'name' => $displayName,
+        'email' => $email,
+        'claimed' => true,
+        'claimed_at' => $waktuKlaim,
+        'token_hash' => hash('sha256', $cleanToken),
+        'voted' => false
+    ];
+    @file_put_contents($votersFile, json_encode($voters, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+}
 
 $voteUrl = 'https://pemiluiagi.web.id/app.html?npa=' . urlencode($npa) . '&code=' . urlencode($token) . '#vote';
 $subject = 'Surat Suara Elektronik & Kode Unik Pemilu IAGI 2026 - NPA ' . $npa;
