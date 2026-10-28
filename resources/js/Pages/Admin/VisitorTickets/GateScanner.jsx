@@ -502,7 +502,27 @@ export default function GateScanner({
                 return;
             }
 
-            // 2. Direct start with optimal facingMode
+            // 2. Hardware-ID First: enumerate physical cameras to avoid facingMode constraint mismatch
+            try {
+                const cameras = await Html5Qrcode.getCameras();
+                if (cameras && cameras.length > 0) {
+                    setAvailableCameras(cameras);
+                    // On mobile, prefer rear/back camera if available, otherwise first camera
+                    const preferred = isMobile
+                        ? (cameras.find((c) => /back|rear|environment|belakang/i.test(c.label)) || cameras[cameras.length - 1])
+                        : (cameras.find((c) => /front|user|facetime|built-in|integrated|macbook/i.test(c.label)) || cameras[0]);
+
+                    await instance.start(preferred.id, qrConfig, qrSuccessCallback, () => {});
+                    setSelectedCameraId(preferred.id);
+                    setScanning(true);
+                    setCameraError(null);
+                    return;
+                }
+            } catch (camErr) {
+                console.warn('Physical camera enumeration fallback:', camErr);
+            }
+
+            // 3. Fallback: try by facingMode
             const primaryMode = isMobile ? 'environment' : 'user';
             const secondaryMode = isMobile ? 'user' : 'environment';
 
@@ -519,28 +539,13 @@ export default function GateScanner({
                     started = true;
                 } catch (err2) {
                     console.warn(`Secondary mode (${secondaryMode}) failed:`, err2);
-                    // 3. Fallback: try by enumerated device IDs
-                    const cameras = await Html5Qrcode.getCameras();
-                    if (cameras && cameras.length > 0) {
-                        setAvailableCameras(cameras);
-                        await instance.start(cameras[0].id, qrConfig, qrSuccessCallback, () => {});
-                        setSelectedCameraId(cameras[0].id);
-                        started = true;
-                    } else {
-                        throw err1 || err2;
-                    }
+                    throw err1 || err2;
                 }
             }
 
             if (started) {
                 setScanning(true);
                 setCameraError(null);
-                // Background enumerate cameras to populate switcher dropdown
-                Html5Qrcode.getCameras().then((devices) => {
-                    if (devices && devices.length > 0) {
-                        setAvailableCameras(devices);
-                    }
-                }).catch(() => {});
                 return;
             }
 
