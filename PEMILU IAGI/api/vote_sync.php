@@ -179,6 +179,23 @@ function getAdminCredentials() {
         writeJsonFile($adminCredsFile, $defaultCreds);
         return $defaultCreds;
     }
+
+    // Auto-Upgrade: Jika file admin_credentials.json di server masih menyimpan hash default lama 'admin' / '2026'
+    $needsUpdate = false;
+    if (isset($creds['addiansyah@unsri.ac.id'])) {
+        if (password_verify('admin', $creds['addiansyah@unsri.ac.id']['password_hash'] ?? '')) {
+            $creds['addiansyah@unsri.ac.id']['password_hash'] = password_hash('Addiansyah2026!', PASSWORD_BCRYPT);
+            $needsUpdate = true;
+        }
+        if (password_verify('2026', $creds['addiansyah@unsri.ac.id']['security_pin_hash'] ?? '')) {
+            $creds['addiansyah@unsri.ac.id']['security_pin_hash'] = password_hash('5930', PASSWORD_BCRYPT);
+            $needsUpdate = true;
+        }
+    }
+    if ($needsUpdate) {
+        writeJsonFile($adminCredsFile, $creds);
+    }
+
     return $creds;
 }
 
