@@ -533,7 +533,48 @@ export default function GateScanner({
                 }
             };
 
-            // 1. If user explicitly picked a specific camera device ID from dropdown
+            // 1. Direct Preflight Check: Request clean userMedia directly on click
+            // This reliably triggers the native browser/OS consent prompt if not yet granted.
+            let stream = null;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: isMobile ? { facingMode: { ideal: 'environment' } } : true,
+                    audio: false,
+                });
+                // Once permission is granted, immediately stop the test stream tracks
+                stream.getTracks().forEach((track) => track.stop());
+            } catch (permErr) {
+                const errString = String(permErr?.message || permErr);
+                const isDenied =
+                    permErr?.name === 'NotAllowedError' ||
+                    permErr?.name === 'PermissionDeniedError' ||
+                    errString.includes('Permission denied') ||
+                    errString.includes('NotAllowedError');
+
+                if (isDenied) {
+                    throw new Error(
+                        'PERMISSION_DENIED: Akses kamera ditolak oleh macOS atau browser. Harap aktifkan Google Chrome di System Settings > Privacy & Security > Camera.'
+                    );
+                }
+                throw permErr;
+            }
+
+            // 2. Enumerate available video hardware once permission is established
+            let videoDevices = [];
+            try {
+                const allDevices = await navigator.mediaDevices.enumerateDevices();
+                videoDevices = allDevices.filter((d) => d.kind === 'videoinput');
+                if (videoDevices.length > 0) {
+                    setAvailableCameras(
+                        videoDevices.map((d, i) => ({
+                            id: d.deviceId,
+                            label: d.label || `Kamera ${i + 1}`,
+                        }))
+                    );
+                }
+            } catch (_) {}
+
+            // 3. If user explicitly picked a specific camera device ID from dropdown
             if (specificModeOrId && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
                 const ok = await tryStart(specificModeOrId);
                 if (ok) {
@@ -543,69 +584,47 @@ export default function GateScanner({
                 }
             }
 
-            // 2. LAPTOP / DESKTOP FIRST: Use physical hardware deviceId directly from enumerateDevices
-            // Desktop webcams (MacBook Pro Camera, USB webcams) do not support mobile facingMode constraints.
-            if (!isMobile) {
-                try {
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
-                    if (videoDevices.length > 0) {
-                        setAvailableCameras(videoDevices.map(d => ({ id: d.deviceId, label: d.label || 'Webcam' })));
-                        const preferred = videoDevices.find(d => 
-                            d.label?.toLowerCase().includes('macbook') ||
-                            d.label?.toLowerCase().includes('facetime') ||
-                            d.label?.toLowerCase().includes('built-in') ||
-                            d.label?.toLowerCase().includes('integrated') ||
-                            d.label?.toLowerCase().includes('camera')
-                        ) || videoDevices[0];
-
-                        const ok = await tryStart(preferred.deviceId);
-                        if (ok) {
-                            setSelectedCameraId(preferred.deviceId);
-                            setScanning(true);
-                            return;
-                        }
-                    }
-                } catch (enumErr) {
-                    console.warn('Direct device enumeration fallback:', enumErr);
+            // 4. MOBILE: Try environment (rear) camera first
+            if (isMobile) {
+                if (await tryStart({ facingMode: 'environment' })) {
+                    setFacingMode('environment');
+                    setScanning(true);
+                    return;
                 }
             }
 
-            // 3. MOBILE FIRST: Try mobile rear camera (environment)
-            const primaryMode = isMobile ? 'environment' : 'user';
-            const modeAttempt = specificModeOrId || primaryMode;
-            if (await tryStart({ facingMode: modeAttempt })) {
-                setFacingMode(modeAttempt);
+            // 5. DESKTOP / LAPTOP: Bind to first detected video device ID
+            if (videoDevices.length > 0 && videoDevices[0].deviceId) {
+                const preferred = videoDevices.find((d) =>
+                    d.label?.toLowerCase().includes('macbook') ||
+                    d.label?.toLowerCase().includes('facetime') ||
+                    d.label?.toLowerCase().includes('built-in') ||
+                    d.label?.toLowerCase().includes('integrated') ||
+                    d.label?.toLowerCase().includes('camera')
+                ) || videoDevices[0];
+
+                const ok = await tryStart(preferred.deviceId);
+                if (ok) {
+                    setSelectedCameraId(preferred.deviceId);
+                    setScanning(true);
+                    return;
+                }
+            }
+
+            // 6. Fallback facingMode modes
+            const fallbackMode = isMobile ? 'environment' : 'user';
+            if (await tryStart({ facingMode: fallbackMode })) {
+                setFacingMode(fallbackMode);
                 setScanning(true);
-                Html5Qrcode.getCameras().then(devices => {
-                    if (devices && devices.length > 0) setAvailableCameras(devices);
-                }).catch(() => {});
                 return;
             }
 
-            // 4. Fallback to opposite facingMode
-            const altMode = modeAttempt === 'environment' ? 'user' : 'environment';
+            const altMode = fallbackMode === 'environment' ? 'user' : 'environment';
             if (await tryStart({ facingMode: altMode })) {
                 setFacingMode(altMode);
                 setScanning(true);
-                Html5Qrcode.getCameras().then(devices => {
-                    if (devices && devices.length > 0) setAvailableCameras(devices);
-                }).catch(() => {});
                 return;
             }
-
-            // 5. Ultimate fallback to Html5Qrcode.getCameras()
-            try {
-                const allDevices = await Html5Qrcode.getCameras();
-                if (allDevices && allDevices.length > 0) {
-                    setAvailableCameras(allDevices);
-                    if (await tryStart(allDevices[0].id)) {
-                        setSelectedCameraId(allDevices[0].id);
-                        setScanning(true);
-                        return;
-                    }
-                }
-            } catch (_) {}
 
             throw lastErr || new Error('Tidak ada perangkat kamera yang dapat diakses.');
 
@@ -614,7 +633,7 @@ export default function GateScanner({
             const errName = err?.name || '';
             const errStr = String(err?.message || err);
 
-            setCameraError(`Kendala kamera [${errName || 'Error'}]: ${errStr}`);
+            setCameraError(errStr.replace(/^Error:\s*/, ''));
             setScanning(false);
         }
     };
@@ -990,8 +1009,14 @@ export default function GateScanner({
 
                             {cameraError && (
                                 <Alert 
-                                    severity="error" 
-                                    sx={{ mb: 2, borderRadius: '12px', fontSize: '0.8rem', fontWeight: 600 }}
+                                    severity={cameraError.includes('PERMISSION_DENIED') ? 'warning' : 'error'} 
+                                    sx={{ 
+                                        mb: 2, 
+                                        borderRadius: '12px', 
+                                        fontSize: '0.8rem', 
+                                        fontWeight: 600,
+                                        '& .MuiAlert-message': { width: '100%' }
+                                    }}
                                     action={
                                         <Button 
                                             color="inherit" 
@@ -1000,13 +1025,30 @@ export default function GateScanner({
                                                 setCameraError(null);
                                                 startCamera();
                                             }}
-                                            sx={{ fontWeight: 800, textTransform: 'none', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '8px', px: 1.5 }}
+                                            sx={{ fontWeight: 800, textTransform: 'none', border: '1px solid rgba(0,0,0,0.2)', borderRadius: '8px', px: 1.5, ml: 1 }}
                                         >
                                             Coba Lagi
                                         </Button>
                                     }
                                 >
-                                    {cameraError}
+                                    {cameraError.includes('PERMISSION_DENIED') ? (
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 0.5, color: '#92400e' }}>
+                                                🔒 Izin Kamera Ditolak oleh Sistem / Browser
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ display: 'block', color: '#78350f', mb: 0.5, lineHeight: 1.4 }}>
+                                                <strong>1. Pengguna Mac:</strong> Buka <em>System Settings &gt; Privacy &amp; Security &gt; Camera</em>, pastikan <strong>Google Chrome</strong> posisi ON.
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ display: 'block', color: '#78350f', mb: 0.5, lineHeight: 1.4 }}>
+                                                <strong>2. Browser:</strong> Klik ikon pengaturan di samping <code>https://pitiagi.cloud</code> &gt; Izinkan Kamera.
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ display: 'block', color: '#047857', fontWeight: 700, mt: 0.5, lineHeight: 1.4 }}>
+                                                ⚡ <strong>Untuk Hari-H Acara:</strong> Cukup colok <strong>USB Barcode Scanner Gun</strong> (alat tembak) — bisa scan &amp; cetak langsung tanpa perlu kamera sama sekali! Atau buka di browser HP (Android / iOS).
+                                            </Typography>
+                                        </Box>
+                                    ) : (
+                                        cameraError
+                                    )}
                                 </Alert>
                             )}
 
