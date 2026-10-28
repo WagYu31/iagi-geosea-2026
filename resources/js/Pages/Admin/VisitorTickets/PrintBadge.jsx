@@ -178,9 +178,14 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                 '@media print': {
                     boxShadow: 'none !important',
                     borderRadius: '0 !important',
-                    width: '100mm !important',
-                    height: '158.6mm !important',
+                    width: '54mm !important',
+                    height: '85.6mm !important',
+                    minWidth: '54mm !important',
+                    maxWidth: '54mm !important',
+                    minHeight: '85.6mm !important',
+                    maxHeight: '85.6mm !important',
                     margin: '0 auto !important',
+                    padding: '0 !important',
                     pageBreakInside: 'avoid !important',
                     breakInside: 'avoid !important',
                     pageBreakAfter: 'always !important',
@@ -237,7 +242,8 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                         textShadow: isVisitor ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
                         '@media print': {
                             color: isVisitor ? '#000000 !important' : '#ffffff !important',
-                            fontSize: nameLength > 28 ? '10pt' : nameLength > 20 ? '12pt' : '14pt',
+                            fontSize: nameLength > 28 ? '6.5pt !important' : nameLength > 20 ? '7.5pt !important' : nameLength > 14 ? '8.5pt !important' : '9.5pt !important',
+                            lineHeight: '1.15 !important',
                         },
                     }}
                 >
@@ -276,7 +282,8 @@ function SingleLanyardCard({ ticket, templatePath, isBulk }) {
                         width: '100%',
                         '@media print': {
                             color: '#000000 !important',
-                            fontSize: institutionLength > 28 ? '8.5pt' : institutionLength > 20 ? '9.5pt' : '11pt',
+                            fontSize: institutionLength > 28 ? '5.5pt !important' : institutionLength > 20 ? '6.5pt !important' : '7.5pt !important',
+                            lineHeight: '1.15 !important',
                         },
                     }}
                 >
@@ -413,7 +420,7 @@ export default function PrintBadge({
                 {`
                     @media print {
                         @page {
-                            size: portrait;
+                            size: 54mm 85.6mm;
                             margin: 0mm;
                         }
                         *, *::before, *::after {
@@ -427,6 +434,8 @@ export default function PrintBadge({
                             print-color-adjust: exact !important;
                             margin: 0 !important;
                             padding: 0 !important;
+                            width: 54mm !important;
+                            height: 85.6mm !important;
                         }
                         .badge-page {
                             -webkit-print-color-adjust: exact !important;
@@ -437,7 +446,16 @@ export default function PrintBadge({
                             break-inside: avoid !important;
                             display: block !important;
                             position: relative !important;
+                            width: 54mm !important;
+                            height: 85.6mm !important;
+                            min-width: 54mm !important;
+                            max-width: 54mm !important;
+                            min-height: 85.6mm !important;
+                            max-height: 85.6mm !important;
                             margin: 0 auto !important;
+                            padding: 0 !important;
+                            box-sizing: border-box !important;
+                            overflow: hidden !important;
                         }
                         .badge-bg-img {
                             -webkit-print-color-adjust: exact !important;
@@ -522,6 +540,17 @@ export default function PrintBadge({
                             bgcolor: imagesReady ? '#10b981' : '#f59e0b',
                             color: '#ffffff',
                             fontWeight: 900,
+                            fontSize: '0.72rem',
+                        }}
+                    />
+                    <Chip
+                        label="Format: 54 × 85.6 mm (CR-80)"
+                        size="small"
+                        sx={{
+                            bgcolor: 'rgba(56, 189, 248, 0.12)',
+                            color: '#38bdf8',
+                            border: '1px solid rgba(56, 189, 248, 0.35)',
+                            fontWeight: 800,
                             fontSize: '0.72rem',
                         }}
                     />
