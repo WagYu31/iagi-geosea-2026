@@ -505,82 +505,116 @@ export default function GateScanner({
             };
 
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            let lastErr = null;
 
-            const el = document.getElementById('qr-reader');
-            if (!el) {
-                throw new Error('Container qr-reader tidak ditemukan di halaman.');
-            }
-            el.innerHTML = '';
+            // Helper to start with guaranteed fresh instance (prevents transition lock)
+            const tryStart = async (cameraSource) => {
+                try {
+                    if (html5QrCodeRef.current) {
+                        try {
+                            const qr = html5QrCodeRef.current;
+                            const isScanning = typeof qr.isScanning === 'boolean' ? qr.isScanning : (qr.getState && qr.getState() === 2);
+                            if (isScanning) {
+                                await qr.stop();
+                            }
+                            await qr.clear();
+                        } catch (_) {}
+                    }
+                    const el = document.getElementById('qr-reader');
+                    if (el) el.innerHTML = '';
+                    const instance = new Html5Qrcode('qr-reader');
+                    html5QrCodeRef.current = instance;
+                    await instance.start(cameraSource, qrConfig, qrSuccessCallback, () => {});
+                    return true;
+                } catch (e) {
+                    lastErr = e;
+                    console.warn('Attempt with source failed:', cameraSource, e);
+                    return false;
+                }
+            };
 
-            const scanner = new Html5Qrcode('qr-reader');
-            html5QrCodeRef.current = scanner;
-
-            // 1. Specific camera device ID manually chosen by user
+            // 1. If user explicitly picked a specific camera device ID from dropdown
             if (specificModeOrId && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
-                await scanner.start(specificModeOrId, qrConfig, qrSuccessCallback, () => {});
-                setSelectedCameraId(specificModeOrId);
-                setScanning(true);
-                return;
+                const ok = await tryStart(specificModeOrId);
+                if (ok) {
+                    setSelectedCameraId(specificModeOrId);
+                    setScanning(true);
+                    return;
+                }
             }
 
-            // 2. Direct start with device-appropriate facingMode:
-            // Mobile defaults to 'environment' (back camera); Laptop/Desktop defaults to 'user' (front webcam)
-            const targetMode = specificModeOrId || (isMobile ? 'environment' : 'user');
-            try {
-                await scanner.start({ facingMode: targetMode }, qrConfig, qrSuccessCallback, () => {});
-                setFacingMode(targetMode);
-                setScanning(true);
+            // 2. LAPTOP / DESKTOP FIRST: Use physical hardware deviceId directly from enumerateDevices
+            // Desktop webcams (MacBook Pro Camera, USB webcams) do not support mobile facingMode constraints.
+            if (!isMobile) {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                    if (videoDevices.length > 0) {
+                        setAvailableCameras(videoDevices.map(d => ({ id: d.deviceId, label: d.label || 'Webcam' })));
+                        const preferred = videoDevices.find(d => 
+                            d.label?.toLowerCase().includes('macbook') ||
+                            d.label?.toLowerCase().includes('facetime') ||
+                            d.label?.toLowerCase().includes('built-in') ||
+                            d.label?.toLowerCase().includes('integrated') ||
+                            d.label?.toLowerCase().includes('camera')
+                        ) || videoDevices[0];
 
-                // Fetch camera list in background to populate selector without locking stream
-                Html5Qrcode.getCameras().then((devices) => {
+                        const ok = await tryStart(preferred.deviceId);
+                        if (ok) {
+                            setSelectedCameraId(preferred.deviceId);
+                            setScanning(true);
+                            return;
+                        }
+                    }
+                } catch (enumErr) {
+                    console.warn('Direct device enumeration fallback:', enumErr);
+                }
+            }
+
+            // 3. MOBILE FIRST: Try mobile rear camera (environment)
+            const primaryMode = isMobile ? 'environment' : 'user';
+            const modeAttempt = specificModeOrId || primaryMode;
+            if (await tryStart({ facingMode: modeAttempt })) {
+                setFacingMode(modeAttempt);
+                setScanning(true);
+                Html5Qrcode.getCameras().then(devices => {
                     if (devices && devices.length > 0) setAvailableCameras(devices);
                 }).catch(() => {});
                 return;
-            } catch (primaryErr) {
-                console.warn(`Direct start with ${targetMode} failed, attempting alternate:`, primaryErr);
             }
 
-            // 3. Fallback to alternate facingMode (e.g. if laptop failed with environment, try user)
-            const altMode = targetMode === 'environment' ? 'user' : 'environment';
-            try {
-                await scanner.start({ facingMode: altMode }, qrConfig, qrSuccessCallback, () => {});
+            // 4. Fallback to opposite facingMode
+            const altMode = modeAttempt === 'environment' ? 'user' : 'environment';
+            if (await tryStart({ facingMode: altMode })) {
                 setFacingMode(altMode);
                 setScanning(true);
-
-                Html5Qrcode.getCameras().then((devices) => {
+                Html5Qrcode.getCameras().then(devices => {
                     if (devices && devices.length > 0) setAvailableCameras(devices);
                 }).catch(() => {});
                 return;
-            } catch (altErr) {
-                console.warn(`Alt start with ${altMode} failed:`, altErr);
             }
 
-            // 4. Ultimate fallback to enumerated camera ID
-            const allDevices = await Html5Qrcode.getCameras();
-            if (allDevices && allDevices.length > 0) {
-                setAvailableCameras(allDevices);
-                await scanner.start(allDevices[0].id, qrConfig, qrSuccessCallback, () => {});
-                setSelectedCameraId(allDevices[0].id);
-                setScanning(true);
-                return;
-            }
+            // 5. Ultimate fallback to Html5Qrcode.getCameras()
+            try {
+                const allDevices = await Html5Qrcode.getCameras();
+                if (allDevices && allDevices.length > 0) {
+                    setAvailableCameras(allDevices);
+                    if (await tryStart(allDevices[0].id)) {
+                        setSelectedCameraId(allDevices[0].id);
+                        setScanning(true);
+                        return;
+                    }
+                }
+            } catch (_) {}
 
-            throw new Error('Tidak ada perangkat kamera yang terdeteksi.');
+            throw lastErr || new Error('Tidak ada perangkat kamera yang dapat diakses.');
 
         } catch (err) {
             console.error('Camera start error:', err);
             const errName = err?.name || '';
             const errStr = String(err?.message || err);
 
-            if (errName === 'NotAllowedError' || errStr.includes('NotAllowedError') || errStr.includes('Permission')) {
-                setCameraError('Izin kamera belum aktif. Silakan klik tombol "Start Scanner Camera" lagi dan pilih "Allow" / "Izinkan" saat browser memunculkan konfirmasi izin kamera.');
-            } else if (errName === 'NotFoundError' || errStr.includes('NotFoundError') || errStr.includes('DevicesNotFoundError')) {
-                setCameraError('Kamera tidak ditemukan pada perangkat ini.');
-            } else if (errName === 'NotReadableError' || errStr.includes('NotReadableError') || errStr.includes('TrackStartError')) {
-                setCameraError('Kamera sedang digunakan aplikasi lain (misal Zoom atau tab webcam lain). Silakan tutup aplikasi tersebut lalu coba lagi.');
-            } else {
-                setCameraError(`Gagal membuka kamera: ${errStr}`);
-            }
+            setCameraError(`Kendala kamera [${errName || 'Error'}]: ${errStr}`);
             setScanning(false);
         }
     };

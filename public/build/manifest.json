@@ -58,8 +58,8 @@
       "assets/RichTextEditor-CQ7DNbul.css"
     ]
   },
-  "_SidebarLayout-CrdDK--V.js": {
-    "file": "assets/SidebarLayout-CrdDK--V.js",
+  "_SidebarLayout-MTC8h4_e.js": {
+    "file": "assets/SidebarLayout-MTC8h4_e.js",
     "name": "SidebarLayout",
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
@@ -132,14 +132,14 @@
     "name": "vendor-react"
   },
   "resources/js/Pages/Admin/Certificates.jsx": {
-    "file": "assets/Certificates-NzlydbOl.js",
+    "file": "assets/Certificates-BSMH0IwG.js",
     "name": "Certificates",
     "src": "resources/js/Pages/Admin/Certificates.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -147,14 +147,14 @@
     ]
   },
   "resources/js/Pages/Admin/Dashboard.jsx": {
-    "file": "assets/Dashboard-Dzb3f0ln.js",
+    "file": "assets/Dashboard-B211dijX.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Admin/Dashboard.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_react-D-iytu9v.js",
       "_PieChart-DJOJA6DT.js",
@@ -163,14 +163,14 @@
     ]
   },
   "resources/js/Pages/Admin/EmailSettings.jsx": {
-    "file": "assets/EmailSettings-E_TrSUDj.js",
+    "file": "assets/EmailSettings-Ct1vr_nd.js",
     "name": "EmailSettings",
     "src": "resources/js/Pages/Admin/EmailSettings.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -178,14 +178,14 @@
     ]
   },
   "resources/js/Pages/Admin/Logs/Index.jsx": {
-    "file": "assets/Index-LjoTTCOD.js",
+    "file": "assets/Index-Dr72qz1U.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Logs/Index.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -193,14 +193,14 @@
     ]
   },
   "resources/js/Pages/Admin/Payments.jsx": {
-    "file": "assets/Payments-D3eRIC6f.js",
+    "file": "assets/Payments-BzAvAHEr.js",
     "name": "Payments",
     "src": "resources/js/Pages/Admin/Payments.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -208,14 +208,14 @@
     ]
   },
   "resources/js/Pages/Admin/PresentationScores.jsx": {
-    "file": "assets/PresentationScores-UI492G6J.js",
+    "file": "assets/PresentationScores-BXauuCx9.js",
     "name": "PresentationScores",
     "src": "resources/js/Pages/Admin/PresentationScores.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -223,14 +223,14 @@
     ]
   },
   "resources/js/Pages/Admin/Scores.jsx": {
-    "file": "assets/Scores-CvyFLTeq.js",
+    "file": "assets/Scores-B9Ehr78V.js",
     "name": "Scores",
     "src": "resources/js/Pages/Admin/Scores.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -238,14 +238,14 @@
     ]
   },
   "resources/js/Pages/Admin/Settings.jsx": {
-    "file": "assets/Settings-mEVYTafJ.js",
+    "file": "assets/Settings-DmMN5kKh.js",
     "name": "Settings",
     "src": "resources/js/Pages/Admin/Settings.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_sponsors-D86InnkE.js",
       "_vendor-react-DNWpyu2A.js",
@@ -254,7 +254,7 @@
     ]
   },
   "resources/js/Pages/Admin/Submissions.jsx": {
-    "file": "assets/Submissions-DYgBCr55.js",
+    "file": "assets/Submissions-bPpyJtis.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Admin/Submissions.jsx",
     "isDynamicEntry": true,
@@ -262,7 +262,7 @@
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
       "_cjs-D6_Y3KMB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -270,14 +270,14 @@
     ]
   },
   "resources/js/Pages/Admin/Users.jsx": {
-    "file": "assets/Users-DtxBeJWY.js",
+    "file": "assets/Users-BkKitWdc.js",
     "name": "Users",
     "src": "resources/js/Pages/Admin/Users.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -285,7 +285,7 @@
     ]
   },
   "resources/js/Pages/Admin/VisitorTickets/GateScanner.jsx": {
-    "file": "assets/GateScanner-CsB_FAjK.js",
+    "file": "assets/GateScanner-C29qA9H-.js",
     "name": "GateScanner",
     "src": "resources/js/Pages/Admin/VisitorTickets/GateScanner.jsx",
     "isDynamicEntry": true,
@@ -297,14 +297,14 @@
     ]
   },
   "resources/js/Pages/Admin/VisitorTickets/Index.jsx": {
-    "file": "assets/Index-DFhKBTz1.js",
+    "file": "assets/Index-CyEGOSz3.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/VisitorTickets/Index.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_index-C_X_sc3T.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
@@ -421,14 +421,14 @@
     ]
   },
   "resources/js/Pages/Certificates/Index.jsx": {
-    "file": "assets/Index-CFr-eih2.js",
+    "file": "assets/Index-Bf060vot.js",
     "name": "Index",
     "src": "resources/js/Pages/Certificates/Index.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -436,14 +436,14 @@
     ]
   },
   "resources/js/Pages/Dashboard.jsx": {
-    "file": "assets/Dashboard-BVl8A3BE.js",
+    "file": "assets/Dashboard-Gx-W5Tsl.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Dashboard.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_CoachMark-DfS_1fGP.js",
       "_cjs-D6_Y3KMB.js",
@@ -454,14 +454,14 @@
     ]
   },
   "resources/js/Pages/Juri/Dashboard.jsx": {
-    "file": "assets/Dashboard-D5XDa2Uh.js",
+    "file": "assets/Dashboard-CkNQzko8.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Juri/Dashboard.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -469,14 +469,14 @@
     ]
   },
   "resources/js/Pages/Juri/ScoreForm.jsx": {
-    "file": "assets/ScoreForm-rEGfQ6se.js",
+    "file": "assets/ScoreForm-DmmQdTcY.js",
     "name": "ScoreForm",
     "src": "resources/js/Pages/Juri/ScoreForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_JudgesPanelMonitor-Db5oPn0i.js",
       "_vendor-react-DNWpyu2A.js",
@@ -485,14 +485,14 @@
     ]
   },
   "resources/js/Pages/Juri/Submissions.jsx": {
-    "file": "assets/Submissions-BP9CMAyb.js",
+    "file": "assets/Submissions-DfA7DiGn.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Juri/Submissions.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_JudgesPanelMonitor-Db5oPn0i.js",
       "_vendor-react-DNWpyu2A.js",
@@ -515,14 +515,14 @@
     ]
   },
   "resources/js/Pages/Payments/Index.jsx": {
-    "file": "assets/Index-DyY-FwjX.js",
+    "file": "assets/Index-DnsRWJ9A.js",
     "name": "Index",
     "src": "resources/js/Pages/Payments/Index.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_CoachMark-DfS_1fGP.js",
       "_vendor-react-DNWpyu2A.js",
@@ -543,14 +543,14 @@
     ]
   },
   "resources/js/Pages/Profile/Edit.jsx": {
-    "file": "assets/Edit-CHu8gEXj.js",
+    "file": "assets/Edit-BAVuVodh.js",
     "name": "Edit",
     "src": "resources/js/Pages/Profile/Edit.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "resources/js/Pages/Profile/Partials/UpdatePasswordForm.jsx",
       "resources/js/Pages/Profile/Partials/UpdateProfileInformationForm.jsx",
@@ -608,14 +608,14 @@
     ]
   },
   "resources/js/Pages/Reviewer/Dashboard.jsx": {
-    "file": "assets/Dashboard-DJdmmgTb.js",
+    "file": "assets/Dashboard-ytEAeQ-_.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Reviewer/Dashboard.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_PieChart-DJOJA6DT.js",
       "_vendor-react-DNWpyu2A.js",
@@ -624,14 +624,14 @@
     ]
   },
   "resources/js/Pages/Reviewer/Submissions.jsx": {
-    "file": "assets/Submissions-C_I-pvnn.js",
+    "file": "assets/Submissions-DNvqAn-p.js",
     "name": "Submissions",
     "src": "resources/js/Pages/Reviewer/Submissions.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
@@ -639,14 +639,14 @@
     ]
   },
   "resources/js/Pages/Submissions/Index.jsx": {
-    "file": "assets/Index-BZnQ6Cpy.js",
+    "file": "assets/Index-B9epYjGa.js",
     "name": "Index",
     "src": "resources/js/Pages/Submissions/Index.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_RichTextEditor-cDEVViQa.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_CoachMark-DfS_1fGP.js",
@@ -656,14 +656,14 @@
     ]
   },
   "resources/js/Pages/Submissions/View.jsx": {
-    "file": "assets/View-r2l3P7fU.js",
+    "file": "assets/View-BxyzynMh.js",
     "name": "View",
     "src": "resources/js/Pages/Submissions/View.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_RichTextEditor-cDEVViQa.js",
       "_vendor-mui-icons-C_AJA4kb.js",
       "_vendor-react-DNWpyu2A.js",
@@ -684,14 +684,14 @@
     ]
   },
   "resources/js/Pages/TestAdmin.jsx": {
-    "file": "assets/TestAdmin-K9Ouf99W.js",
+    "file": "assets/TestAdmin-BBTB9jlR.js",
     "name": "TestAdmin",
     "src": "resources/js/Pages/TestAdmin.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-mui-core-DvJW4Eou.js",
       "_vendor-inertia-DpAgMXgB.js",
-      "_SidebarLayout-CrdDK--V.js",
+      "_SidebarLayout-MTC8h4_e.js",
       "_vendor-react-DNWpyu2A.js",
       "_react-D-iytu9v.js",
       "_vendor-mui-icons-C_AJA4kb.js",
@@ -774,7 +774,7 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Dlxb3llk.js",
+    "file": "assets/app-CS5c7YTC.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
