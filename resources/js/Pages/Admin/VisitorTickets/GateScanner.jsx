@@ -463,6 +463,40 @@ export default function GateScanner({
         localStorage.setItem('gate_scanner_auto_print', String(val));
     };
 
+    const triggerAutoPrint = (ticketId) => {
+        try {
+            const printUrl = route('admin.visitorTickets.printBadge', ticketId);
+
+            // Attempt 1: window.open (Standard separate popup window)
+            let win = null;
+            try {
+                win = window.open(printUrl, '_blank', 'width=750,height=900,menubar=no,toolbar=no,location=no');
+            } catch (_) {}
+
+            // Attempt 2: If Safari / Chrome blocked the popup, fallback immediately to silent iframe print!
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                let iframe = document.getElementById('silent-badge-printer-frame');
+                if (!iframe) {
+                    iframe = document.createElement('iframe');
+                    iframe.id = 'silent-badge-printer-frame';
+                    iframe.style.position = 'fixed';
+                    iframe.style.right = '0';
+                    iframe.style.bottom = '0';
+                    iframe.style.width = '10px';
+                    iframe.style.height = '10px';
+                    iframe.style.opacity = '0.01';
+                    iframe.style.border = 'none';
+                    iframe.style.pointerEvents = 'none';
+                    iframe.style.zIndex = '-9999';
+                    document.body.appendChild(iframe);
+                }
+                iframe.src = printUrl;
+            }
+        } catch (e) {
+            console.warn('Auto print error:', e);
+        }
+    };
+
     // Preload Badge Background SVGs for 0ms print latency
     useEffect(() => {
         const badgeSvgs = [
@@ -650,8 +684,7 @@ export default function GateScanner({
 
                 // ⚡ AUTO-OPEN PRINT BADGE IF ENABLED (For 10 Printer Stations High Speed Printing)
                 if (autoPrint) {
-                    const printUrl = route('admin.visitorTickets.printBadge', data.ticket.id);
-                    window.open(printUrl, '_blank', 'width=750,height=900,menubar=no,toolbar=no,location=no');
+                    triggerAutoPrint(data.ticket.id);
                 }
             }
         } catch (err) {
@@ -2281,6 +2314,15 @@ export default function GateScanner({
                                             </Typography>
                                         )}
                                     </Paper>
+                                )}
+
+                                {/* Auto-Print Status Banner */}
+                                {autoPrint && scanResult.success && (
+                                    <Box sx={{ mb: 1.5, p: 1.2, bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', textAlign: 'center' }}>
+                                        <Typography sx={{ color: '#047857', fontWeight: 800, fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.8 }}>
+                                            <BoltIcon sx={{ fontSize: 16 }} /> Auto-Print aktif: Perintah cetak badge telah dikirim ke printer.
+                                        </Typography>
+                                    </Box>
                                 )}
 
                                 {/* Action: Trigger Print Lanyard Card */}
