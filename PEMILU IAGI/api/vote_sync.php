@@ -30,6 +30,7 @@ $votersFile = $dataDir . '/voters_status.json';
 $ballotsFile = $dataDir . '/ballots.json';
 $auditFile = $dataDir . '/audit.json';
 $lockFile = $dataDir . '/voting.lock';
+$settingsFile = $dataDir . '/settings.json';
 
 // Helper function to read json safely
 function readJsonFile($path, $default = []) {
@@ -43,6 +44,55 @@ function readJsonFile($path, $default = []) {
 // Helper function to write json safely
 function writeJsonFile($path, $data) {
     return @file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+}
+
+// Resolusi IP Klien
+function getClientIp() {
+    $clientIp = '0.0.0.0';
+    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $clientIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $clientIp = trim($parts[0]);
+    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+        $clientIp = trim($_SERVER['REMOTE_ADDR']);
+    }
+    return preg_replace('/[^0-9a-fA-F:\.]/', '', $clientIp);
+}
+
+// Ekstraksi PIN Admin dari Header, Query, atau Payload POST
+function getAdminPin($payload = []) {
+    if (!empty($_SERVER['HTTP_X_ADMIN_PIN'])) {
+        return trim($_SERVER['HTTP_X_ADMIN_PIN']);
+    }
+    if (isset($_GET['admin_pin'])) {
+        return trim($_GET['admin_pin']);
+    }
+    if (is_array($payload) && isset($payload['admin_pin'])) {
+        return trim($payload['admin_pin']);
+    }
+    return '';
+}
+
+// Validasi Dual-Key Otoritas Pleno (31052002, 312226, atau master PIN 2026)
+function isValidAdminPin($pin) {
+    return ($pin === '31052002' || $pin === '312226' || $pin === '2026');
+}
+
+// Ambil Status Segel Kotak Suara Digital Server (Default: TERSEGEL KETAT / is_sealed: true)
+function getVaultSettings() {
+    global $settingsFile;
+    $defaults = [
+        'is_sealed' => true,
+        'sealed_at' => '2026-10-26T00:00:00+07:00',
+        'unsealed_at' => null,
+        'unsealed_by' => null
+    ];
+    $settings = readJsonFile($settingsFile, $defaults);
+    if (!isset($settings['is_sealed'])) {
+        $settings['is_sealed'] = true;
+    }
+    return $settings;
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
@@ -225,10 +275,44 @@ if ($action === 'cast_vote') {
 }
 
 // ================= ACTION 4: GET BALLOT STATS (FOR ADMIN / RESULTS) =================
+// DILINDUNGI STRICT LUBER-JURDIL SEAL:
+// Jika kotak suara masih TERSEGEL (Sealed Vault) dan pengakses BUKAN Admin resmi dengan PIN:
+// Perolehan suara masing-masing calon (counts) dan surat suara mentah (ballots) WAJIB DIKUNCI / DIRAHASIAKAN!
 if ($action === 'get_results') {
+    $settings = getVaultSettings();
+    $isSealed = ($settings['is_sealed'] !== false);
+
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $adminPin = getAdminPin($payload);
+    $isAdmin = isValidAdminPin($adminPin);
+
     $ballots = readJsonFile($ballotsFile, []);
     $voters = readJsonFile($votersFile, []);
 
+    // 1. KEAMANAN STRICT: KOTAK SUARA TERSEGEL & NON-ADMIN
+    if ($isSealed && !$isAdmin) {
+        echo json_encode([
+            'success' => true,
+            'is_sealed' => true,
+            'status' => 'SEALED_VAULT',
+            'message' => 'Kotak Suara Digital KPKU Berstatus Tersegel (Sealed Vault). Rincian perolehan suara calon dan surat suara tersimpan aman dan terkunci rapat sampai Sidang Pleno Terbuka Buka Segel Resmi.',
+            'total_votes' => count($ballots), // Hanya total suara sah masuk (tingkat partisipasi), tanpa membocorkan pilihan calon!
+            'total_voters_registered' => count($voters),
+            'counts' => [
+                '1' => 0,
+                '2' => 0,
+                '3' => 0
+            ],
+            'counts_hidden' => true,
+            'ballots' => [] // Daftar surat suara dirahasiakan
+        ]);
+        exit;
+    }
+
+    // 2. KOTAK SUARA TELAH DIBUKA (PLENO RESMI) ATAU DIAKSES OLEH ADMIN DENGAN PIN PLENO
     $counts = [1 => 0, 2 => 0, 3 => 0];
     foreach ($ballots as $b) {
         $cId = isset($b['candidate_id']) ? intval($b['candidate_id']) : 0;
@@ -237,12 +321,158 @@ if ($action === 'get_results') {
         }
     }
 
+    // Jika admin terverifikasi: kirim ballots lengkap
+    // Jika publik saat unsealed: kirim feed audit kriptografi (tanpa menghubungkan identitas)
+    $outputBallots = $ballots;
+    if (!$isAdmin) {
+        $outputBallots = array_map(function($b, $idx) {
+            return [
+                'id' => isset($b['id']) ? $b['id'] : ('ballot-' . ($idx + 1)),
+                'ballot_hash' => isset($b['ballot_hash']) ? $b['ballot_hash'] : '',
+                'timestamp' => isset($b['timestamp']) ? $b['timestamp'] : null,
+                'timestamp_str' => isset($b['timestamp_str']) ? $b['timestamp_str'] : ''
+            ];
+        }, $ballots, array_keys($ballots));
+    }
+
     echo json_encode([
         'success' => true,
+        'is_sealed' => $isSealed,
+        'status' => $isSealed ? 'SEALED_ADMIN_PREVIEW' : 'UNSEALED_OFFICIAL',
         'total_votes' => count($ballots),
         'counts' => $counts,
         'total_voters_registered' => count($voters),
-        'ballots' => $ballots
+        'ballots' => $outputBallots
+    ]);
+    exit;
+}
+
+// ================= ACTION 4B: SET VAULT SEAL STATUS (ADMIN AUTHORIZED WITH PIN) =================
+if ($action === 'set_vault_seal') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $adminPin = getAdminPin($payload);
+    $clientIp = getClientIp();
+    $now = time();
+
+    // Proteksi Anti Brute-Force Server
+    $lockoutFile = $dataDir . '/ip_lockout.json';
+    $lockouts = readJsonFile($lockoutFile, []);
+
+    if (isset($lockouts[$clientIp])) {
+        $ipData = $lockouts[$clientIp];
+        if (!empty($ipData['lock_until']) && $ipData['lock_until'] > $now) {
+            $sisaDetik = $ipData['lock_until'] - $now;
+            $sisaMenit = ceil($sisaDetik / 60);
+
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ AKSES DIBLOKIR SEMENTARA: Alamat IP ({$clientIp}) terdeteksi 5x percobaan tidak sah. Sistem dikunci selama {$sisaMenit} menit.",
+                'locked' => true,
+                'remaining_seconds' => $sisaDetik
+            ]);
+            exit;
+        }
+    }
+
+    if (!isValidAdminPin($adminPin)) {
+        if (!isset($lockouts[$clientIp])) {
+            $lockouts[$clientIp] = ['fails' => 0, 'lock_until' => 0, 'first_fail' => $now];
+        }
+        $lockouts[$clientIp]['fails'] = ($lockouts[$clientIp]['fails'] ?? 0) + 1;
+        $lockouts[$clientIp]['last_attempt'] = $now;
+
+        $auditLogs = readJsonFile($auditFile, []);
+
+        if ($lockouts[$clientIp]['fails'] >= 5) {
+            $lockouts[$clientIp]['lock_until'] = $now + (15 * 60);
+            writeJsonFile($lockoutFile, $lockouts);
+
+            $auditLogs[] = [
+                'id' => 'sec-' . bin2hex(random_bytes(4)),
+                'action' => 'BRUTE_FORCE_LOCKOUT_TRIGGERED',
+                'details' => "IP {$clientIp} diblokir 15 menit setelah 5x gagal memasukkan PIN segel vault.",
+                'ip' => $clientIp,
+                'timestamp' => date('c')
+            ];
+            writeJsonFile($auditFile, $auditLogs);
+
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ AKSES DIBLOKIR: Terdeteksi 5 kali kegagalan input PIN otorisasi. Alamat IP ({$clientIp}) dibekukan selama 15 menit.",
+                'locked' => true,
+                'remaining_seconds' => 900
+            ]);
+            exit;
+        }
+
+        writeJsonFile($lockoutFile, $lockouts);
+        $sisaPercobaan = 5 - $lockouts[$clientIp]['fails'];
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => "❌ PIN Otoritas KPKU tidak valid! Sisa kesempatan: {$sisaPercobaan}x sebelum IP Anda diblokir 15 menit.",
+            'remaining_attempts' => $sisaPercobaan
+        ]);
+        exit;
+    }
+
+    // PIN Valid: Reset kegagalan IP
+    if (isset($lockouts[$clientIp])) {
+        unset($lockouts[$clientIp]);
+        writeJsonFile($lockoutFile, $lockouts);
+    }
+
+    $nextState = true;
+    if (isset($payload['is_sealed'])) {
+        $nextState = filter_var($payload['is_sealed'], FILTER_VALIDATE_BOOLEAN);
+    }
+
+    $settings = getVaultSettings();
+    $settings['is_sealed'] = $nextState;
+    $settings['updated_at'] = date('c');
+    $settings['updated_by_ip'] = $clientIp;
+    if ($nextState) {
+        $settings['sealed_at'] = date('c');
+    } else {
+        $settings['unsealed_at'] = date('c');
+    }
+    writeJsonFile($settingsFile, $settings);
+
+    $auditLogs = readJsonFile($auditFile, []);
+    $auditLogs[] = [
+        'id' => 'audit-' . bin2hex(random_bytes(4)),
+        'action' => $nextState ? 'VAULT_SEALED' : 'VAULT_UNSEALED',
+        'details' => ($nextState ? 'Kotak Suara Digital KPKU DIKUNCI BERSEGEL' : 'Kotak Suara Digital KPKU DIBUKA (PLENO RESMI)') . " oleh Otoritas IP {$clientIp}.",
+        'ip' => $clientIp,
+        'timestamp' => date('c')
+    ];
+    writeJsonFile($auditFile, $auditLogs);
+
+    echo json_encode([
+        'success' => true,
+        'is_sealed' => $nextState,
+        'message' => $nextState ? 'Kotak suara digital berhasil dikunci berstatus TERSEGEL.' : 'Segel kotak suara berhasil DIBUKA untuk Sidang Pleno Resmi.'
+    ]);
+    exit;
+}
+
+// ================= ACTION 4C: GET VAULT SEAL STATUS (PUBLIC SAFE) =================
+if ($action === 'get_vault_status') {
+    $settings = getVaultSettings();
+    $isSealed = ($settings['is_sealed'] !== false);
+    $ballots = readJsonFile($ballotsFile, []);
+    $voters = readJsonFile($votersFile, []);
+
+    echo json_encode([
+        'success' => true,
+        'is_sealed' => $isSealed,
+        'total_votes' => count($ballots),
+        'total_voters_registered' => count($voters)
     ]);
     exit;
 }
@@ -252,19 +482,8 @@ if ($action === 'clear_ballots') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
-    $adminPin = isset($payload['admin_pin']) ? trim($payload['admin_pin']) : '';
-
-    // Resolusi IP Klien
-    $clientIp = '0.0.0.0';
-    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-        $clientIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $clientIp = trim($parts[0]);
-    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
-        $clientIp = trim($_SERVER['REMOTE_ADDR']);
-    }
-    $clientIp = preg_replace('/[^0-9a-fA-F:\.]/', '', $clientIp);
+    $adminPin = getAdminPin($payload);
+    $clientIp = getClientIp();
 
     // Proteksi Anti Brute-Force Server (5x Gagal = Lockout 15 Menit)
     $lockoutFile = $dataDir . '/ip_lockout.json';

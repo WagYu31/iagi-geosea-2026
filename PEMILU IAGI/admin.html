@@ -8712,7 +8712,7 @@
     window.executeVaultStateChange = function(nextState) {
       try {
         const store = window.pemiluStorage;
-        // 1. Update Storage
+        // 1. Update Storage & Server Seal State
         if (store && typeof store.updateSettings === 'function') {
           store.updateSettings({ isSealed: nextState });
         } else {
@@ -8721,6 +8721,9 @@
             cur.isSealed = nextState;
             localStorage.setItem('pemilu_iagi_settings_v2', JSON.stringify(cur));
           } catch (e) {}
+        }
+        if (store && typeof store.updateServerVaultSeal === 'function') {
+          store.updateServerVaultSeal(nextState, '31052002');
         }
 
         // 2. Direct DOM update (Guaranteed instant UI reaction)
@@ -14496,6 +14499,9 @@
 
         if (confirm('KONFIRMASI SIDANG PLENO SORE:\nBuka tabulasi hasil pemilu sekarang ke publik (hasil.html)?\n\nHalaman hasil publik akan langsung menampilkan tabulasi perolehan suara secara real-time.')) {
           window.pemiluStorage.updateSettings({ isSealed: false });
+          if (typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
+            window.pemiluStorage.updateServerVaultSeal(false, '31052002');
+          }
           renderResumePlenoSection();
           refreshAll();
           alert('✓ Tabulasi hasil resmi telah DIBUKA ke publik!\nAnggota dan publik kini dapat melihat resume hasil di hasil.html');

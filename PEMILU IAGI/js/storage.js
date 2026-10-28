@@ -223,64 +223,82 @@ class PemiluStorage {
       } catch (e) {}
     }
 
-    // Auto-sync status pemilih dan perolehan suara dari server KPKU
-    this.syncWithServer();
+    // Auto-sync status pemilih dari server KPKU untuk cegah pemungutan suara ganda
+    this.syncVotedListWithServer();
   }
 
-  async syncWithServer() {
+  // Sinkronisasi status pemilih yang sudah memberikan suara (Aman & Ringan untuk Semua Halaman Publik)
+  async syncVotedListWithServer() {
+    try {
+      if (typeof fetch === 'undefined') return;
+      const respVoted = await fetch('api/vote_sync.php?action=get_voted_list');
+      const dataVoted = await respVoted.json();
+      if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
+        const dpt = this.getDPT();
+        let changed = false;
+        dpt.forEach(v => {
+          const clean = String(v.npa || '').trim().toUpperCase();
+          if (dataVoted.voted_npas[clean]) {
+            if (!v.voted || !v.claimed) {
+              v.voted = true;
+              v.claimed = true;
+              v.token = null; // Token dibakar permanen
+              v.voted_at = dataVoted.voted_npas[clean].voted_at || new Date().toISOString();
+              v.receipt_hash = dataVoted.voted_npas[clean].receipt_hash || 'VERIFIED';
+              changed = true;
+            }
+          }
+        });
+        if (changed) {
+          this.saveDPT(dpt);
+        }
+      }
+    } catch (errVoted) {
+      console.warn('Voted list sync notice:', errVoted);
+    }
+  }
+
+  // Sinkronisasi hasil tabulasi & kotak suara (HANYA untuk Admin Dashboard atau Halaman Hasil Pleno Resmi)
+  async syncWithServer(options = {}) {
     try {
       if (typeof fetch === 'undefined') return;
 
-      // 1. Sync list of voters who have cast their votes
-      try {
-        const respVoted = await fetch('api/vote_sync.php?action=get_voted_list');
-        const dataVoted = await respVoted.json();
-        if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
-          const dpt = this.getDPT();
-          let changed = false;
-          dpt.forEach(v => {
-            const clean = String(v.npa || '').trim().toUpperCase();
-            if (dataVoted.voted_npas[clean]) {
-              if (!v.voted || !v.claimed) {
-                v.voted = true;
-                v.claimed = true;
-                v.token = null; // Token burned permanently
-                v.voted_at = dataVoted.voted_npas[clean].voted_at || new Date().toISOString();
-                v.receipt_hash = dataVoted.voted_npas[clean].receipt_hash || 'VERIFIED';
-                changed = true;
-              }
-            }
-          });
-          if (changed) {
-            this.saveDPT(dpt);
-          }
-        }
-      } catch (errVoted) {
-        console.warn('Voted list sync notice:', errVoted);
+      // 1. Selalu sinkronkan daftar NPA yang sudah mencoblos
+      await this.syncVotedListWithServer();
+
+      // 2. Cek apakah ada otorisasi admin
+      const adminSession = (typeof this.getAdminSession === 'function') ? this.getAdminSession() : null;
+      const adminPin = options.adminPin || (adminSession ? (adminSession.pin || '31052002') : '');
+
+      let resultsUrl = 'api/vote_sync.php?action=get_results';
+      if (adminPin) {
+        resultsUrl += `&admin_pin=${encodeURIComponent(adminPin)}`;
       }
 
-      // 2. Sync digital ballot box & quick count results from central server
-      try {
-        const respResults = await fetch('api/vote_sync.php?action=get_results');
-        const dataResults = await respResults.json();
-        if (dataResults && dataResults.success) {
-          // Cache server counts & total votes
+      const respResults = await fetch(resultsUrl);
+      const dataResults = await respResults.json();
+
+      if (dataResults && dataResults.success) {
+        // Jika status kotak suara TERSEGEL (Sealed Vault) & perolehan dirahasiakan:
+        if (dataResults.counts_hidden || (dataResults.is_sealed && !adminSession)) {
+          // Bersihkan cache hasil bocoran lama dari localStorage browser
+          localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
+          // Pastikan surat suara mentah tidak tersimpan di browser non-admin
+          if (!adminSession) {
+            localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
+          }
+        } else if (dataResults.counts) {
+          // Pasca Pleno / Admin Terotorisasi: Simpan hasil sah
           localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify({
             total_votes: Number(dataResults.total_votes || 0),
-            counts: dataResults.counts || { 1: 0, 2: 0, 3: 0 },
+            counts: dataResults.counts,
             updated_at: Date.now()
           }));
 
-          // If server returns ballots array, sync them to local storage
           if (Array.isArray(dataResults.ballots) && dataResults.ballots.length > 0) {
-            const currentBallots = this.getBallots();
-            if (dataResults.ballots.length >= currentBallots.length) {
-              localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(dataResults.ballots));
-            }
+            localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(dataResults.ballots));
           }
         }
-      } catch (errResults) {
-        console.warn('Results sync notice:', errResults);
       }
     } catch (e) {
       console.warn('Server sync error:', e);
@@ -288,7 +306,27 @@ class PemiluStorage {
   }
 
   async syncVotedWithServer() {
-    return this.syncWithServer();
+    return this.syncVotedListWithServer();
+  }
+
+  // Update Status Segel Kotak Suara ke Server (Admin Pleno)
+  async updateServerVaultSeal(isSealed, pin = '31052002') {
+    try {
+      if (typeof fetch === 'undefined') return { success: false };
+      const resp = await fetch('api/vote_sync.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'set_vault_seal',
+          is_sealed: Boolean(isSealed),
+          admin_pin: pin
+        })
+      });
+      return await resp.json();
+    } catch (e) {
+      console.warn('Failed to update server vault seal:', e);
+      return { success: false, error: e.message };
+    }
   }
 
   // --- DPT Management ---
@@ -1002,13 +1040,10 @@ class PemiluStorage {
     const dpt = this.getDPT();
 
     let counts = { 1: 0, 2: 0, 3: 0 };
-    ballots.forEach(b => {
-      if (counts[b.candidate_id] !== undefined) {
-        counts[b.candidate_id]++;
-      }
-    });
-
     let totalVotes = ballots.length;
+
+    const isSealed = settings.isSealed !== false;
+    const adminSession = (typeof this.getAdminSession === 'function') ? this.getAdminSession() : null;
 
     // Fallback / sync from cached server results if local ballots are fewer
     try {
@@ -1017,6 +1052,8 @@ class PemiluStorage {
         const srv = JSON.parse(rawServer);
         if (srv && typeof srv.total_votes === 'number' && srv.total_votes > totalVotes) {
           totalVotes = srv.total_votes;
+        }
+        if (srv && srv.counts && (!isSealed || adminSession)) {
           counts = {
             1: Number(srv.counts?.[1] || 0),
             2: Number(srv.counts?.[2] || 0),
@@ -1026,13 +1063,25 @@ class PemiluStorage {
       }
     } catch (e) {}
 
+    // Hitung counts hanya jika segel dibuka (Pleno) atau sedang dibuka oleh Admin resmi
+    if (!isSealed || adminSession) {
+      ballots.forEach(b => {
+        if (counts[b.candidate_id] !== undefined) {
+          counts[b.candidate_id]++;
+        }
+      });
+    } else {
+      // Tersegel ketat untuk publik
+      counts = { 1: 0, 2: 0, 3: 0 };
+    }
+
     const totalDPT = dpt.length;
     const totalClaimed = dpt.filter(v => v.claimed || v.voted).length;
     const turnoutPercentage = totalDPT > 0 ? (Math.min(100, (totalVotes / totalDPT) * 100)).toFixed(1) : '0.0';
     const claimPercentage = totalDPT > 0 ? ((totalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
 
     return {
-      isSealed: settings.isSealed,
+      isSealed: isSealed,
       counts,
       totalVotes,
       totalDPT,
