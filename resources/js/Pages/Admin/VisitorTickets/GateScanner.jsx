@@ -270,6 +270,18 @@ export default function GateScanner({
         if (inputRef.current) {
             inputRef.current.focus();
         }
+
+        // Auto-start camera on mount (seamless kiosk check-in without manual clicking)
+        const autoTimer = setTimeout(() => {
+            startCamera();
+        }, 400);
+
+        return () => {
+            clearTimeout(autoTimer);
+            if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+                html5QrCodeRef.current.stop().catch(() => {});
+            }
+        };
     }, []);
 
     // Global barcode scanner hardware gun listener (Keyboard wedge support for USB/Bluetooth 2D Guns)
@@ -458,8 +470,6 @@ export default function GateScanner({
                 }
             }
 
-            html5QrCodeRef.current = new Html5Qrcode('qr-reader');
-
             const qrConfig = {
                 fps: 15,
                 qrbox: (viewfinderWidth, viewfinderHeight) => {
@@ -474,64 +484,91 @@ export default function GateScanner({
             };
 
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const defaultFacing = isMobile ? 'environment' : 'user';
-            const targetMode = specificModeOrId || defaultFacing;
 
-            // If a specific camera device ID was provided
-            if (typeof targetMode === 'string' && targetMode !== 'environment' && targetMode !== 'user') {
+            // Fresh instance creator to guarantee clean Html5Qrcode state
+            const getFreshInstance = () => {
+                try {
+                    const el = document.getElementById('qr-reader');
+                    if (el) el.innerHTML = '';
+                } catch (_) {}
+                return new Html5Qrcode('qr-reader');
+            };
+
+            // 1. If a specific device ID was explicitly chosen by user
+            if (specificModeOrId && typeof specificModeOrId === 'string' && specificModeOrId !== 'environment' && specificModeOrId !== 'user') {
+                html5QrCodeRef.current = getFreshInstance();
                 await html5QrCodeRef.current.start(
-                    targetMode,
+                    specificModeOrId,
                     qrConfig,
                     qrSuccessCallback,
                     () => {}
                 );
-                setSelectedCameraId(targetMode);
+                setSelectedCameraId(specificModeOrId);
                 setScanning(true);
                 return;
             }
 
-            // Direct start with target facingMode (single getUserMedia call, zero hardware lock contention)
+            // 2. LAPTOP / DESKTOP FIRST STRATEGY:
+            // Enumerate hardware cameras first to directly bind to MacBook Pro Camera or USB webcam.
+            // This prevents OverconstrainedError / NotAllowedError caused by mobile facingMode constraints on laptops.
+            if (!isMobile) {
+                try {
+                    const devices = await Html5Qrcode.getCameras();
+                    if (devices && devices.length > 0) {
+                        setAvailableCameras(devices);
+                        const preferred = devices.find(d => 
+                            d.label?.toLowerCase().includes('macbook') ||
+                            d.label?.toLowerCase().includes('facetime') ||
+                            d.label?.toLowerCase().includes('built-in') ||
+                            d.label?.toLowerCase().includes('integrated') ||
+                            d.label?.toLowerCase().includes('webcam')
+                        ) || devices[0];
+
+                        html5QrCodeRef.current = getFreshInstance();
+                        await html5QrCodeRef.current.start(
+                            preferred.id,
+                            qrConfig,
+                            qrSuccessCallback,
+                            () => {}
+                        );
+                        setSelectedCameraId(preferred.id);
+                        setScanning(true);
+                        return;
+                    }
+                } catch (enumErr) {
+                    console.warn('Laptop camera enumeration fallback:', enumErr);
+                }
+            }
+
+            // 3. MOBILE STRATEGY (Phones / Tablets) or fallback:
+            const primaryMode = isMobile ? 'environment' : 'user';
             try {
+                html5QrCodeRef.current = getFreshInstance();
                 await html5QrCodeRef.current.start(
-                    { facingMode: targetMode },
+                    { facingMode: specificModeOrId || primaryMode },
                     qrConfig,
                     qrSuccessCallback,
                     () => {}
                 );
-                setFacingMode(targetMode);
+                setFacingMode(specificModeOrId || primaryMode);
                 setScanning(true);
                 return;
-            } catch (firstErr) {
-                console.warn(`Direct start with ${targetMode} failed, trying alternate facingMode...`, firstErr);
+            } catch (facingErr) {
+                console.warn('FacingMode start failed, trying alternate devices...', facingErr);
             }
 
-            // Fallback 1: opposite facingMode (e.g. user on laptop or environment on phone)
-            const altFacing = targetMode === 'environment' ? 'user' : 'environment';
-            try {
+            // 4. ULTIMATE HARDWARE FALLBACK: Enumerate all available camera devices
+            const allDevices = await Html5Qrcode.getCameras();
+            if (allDevices && allDevices.length > 0) {
+                setAvailableCameras(allDevices);
+                html5QrCodeRef.current = getFreshInstance();
                 await html5QrCodeRef.current.start(
-                    { facingMode: altFacing },
+                    allDevices[0].id,
                     qrConfig,
                     qrSuccessCallback,
                     () => {}
                 );
-                setFacingMode(altFacing);
-                setScanning(true);
-                return;
-            } catch (altErr) {
-                console.warn(`Alt facingMode ${altFacing} failed, trying camera enumeration...`, altErr);
-            }
-
-            // Fallback 2: enumerate devices and pick the first available camera ID
-            const devices = await Html5Qrcode.getCameras();
-            if (devices && devices.length > 0) {
-                setAvailableCameras(devices);
-                await html5QrCodeRef.current.start(
-                    devices[0].id,
-                    qrConfig,
-                    qrSuccessCallback,
-                    () => {}
-                );
-                setSelectedCameraId(devices[0].id);
+                setSelectedCameraId(allDevices[0].id);
                 setScanning(true);
                 return;
             }
@@ -541,8 +578,8 @@ export default function GateScanner({
         } catch (err) {
             console.error('Camera start error:', err);
             const errStr = String(err?.message || err);
-            if (errStr.includes('NotAllowedError')) {
-                setCameraError(`Izin kamera belum aktif di Chrome (${errStr}). Pastikan izin Camera diatur ke Allow lalu klik tombol Coba Lagi.`);
+            if (errStr.includes('NotAllowedError') || errStr.includes('Permission')) {
+                setCameraError(`Izin kamera belum aktif di Chrome. Silakan klik ikon Setelan / Slider ( 🎛️ ) di address bar atau Site Settings lalu atur Camera ke Allow.`);
             } else if (errStr.includes('NotFoundError') || errStr.includes('DevicesNotFoundError')) {
                 setCameraError(`Kamera tidak ditemukan pada perangkat ini (${errStr}).`);
             } else if (errStr.includes('NotReadableError') || errStr.includes('TrackStartError')) {
