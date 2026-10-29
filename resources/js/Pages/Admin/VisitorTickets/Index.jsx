@@ -438,8 +438,29 @@ export default function VisitorTicketsIndex({
     const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
     const [sentTicketIds, setSentTicketIds] = useState([]);
 
-    // Multi-select state
-    const [selectedIds, setSelectedIds] = useState([]);
+    // Multi-select state (persisted in localStorage so red mark doesn't disappear on refresh)
+    const [selectedIds, setSelectedIds] = useState(() => {
+        try {
+            const saved = localStorage.getItem('visitor_tickets_selected_ids');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) {
+                    return parsed;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load selectedIds from localStorage', e);
+        }
+        return [];
+    });
+
+    useEffect(() => {
+        try {
+            localStorage.setItem('visitor_tickets_selected_ids', JSON.stringify(selectedIds));
+        } catch (e) {
+            console.error('Failed to save selectedIds to localStorage', e);
+        }
+    }, [selectedIds]);
 
     // Dialog states
     const [onsiteModalOpen, setOnsiteModalOpen] = useState(false);
