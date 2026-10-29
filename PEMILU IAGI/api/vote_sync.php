@@ -62,9 +62,19 @@ function resolveSecureDataDir() {
 }
 
 $dataDir = resolveSecureDataDir();
-$dataHtaccess = __DIR__ . '/data/.htaccess';
-if (!file_exists($dataHtaccess)) {
-    @file_put_contents($dataHtaccess, "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n    Order deny,allow\n    Deny from all\n</IfModule>\n");
+
+// Pastikan proteksi .htaccess dan index.php selalu aktif di direktori data
+foreach ([$dataDir, __DIR__ . '/data'] as $dir) {
+    if (is_dir($dir)) {
+        $ht = $dir . '/.htaccess';
+        if (!file_exists($ht)) {
+            @file_put_contents($ht, "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n    Order deny,allow\n    Deny from all\n</IfModule>\n");
+        }
+        $idx = $dir . '/index.php';
+        if (!file_exists($idx)) {
+            @file_put_contents($idx, "<?php http_response_code(403); exit('403 Forbidden');");
+        }
+    }
 }
 
 $votersFile = $dataDir . '/voters_status.json';
@@ -75,6 +85,7 @@ $settingsFile = $dataDir . '/settings.json';
 $adminCredsFile = $dataDir . '/admin_credentials.json';
 $adminChallengesFile = $dataDir . '/admin_challenges.json';
 $adminSessionsFile = $dataDir . '/admin_sessions.json';
+$accessRequestsFile = $dataDir . '/feature_access_requests.json';
 
 // Helper function to read json safely
 function readJsonFile($path, $default = []) {
@@ -146,7 +157,7 @@ function getAdminCredentials() {
         'cingire687@gmail.com' => [
             'id' => 'adm-01',
             'name' => 'WAGYUA%',
-            'title' => 'SUPER ADMIN',
+            'title' => 'Admin Teknis',
             'email' => 'cingire687@gmail.com',
             'phone' => '085771593522',
             'npa' => '31052',
@@ -164,8 +175,8 @@ function getAdminCredentials() {
             'title' => 'SUPER ADMIN',
             'email' => 'addiansyah@unsri.ac.id',
             'phone' => '082255555930',
-            'npa' => '00000',
-            'role' => 'Operator DPT',
+            'npa' => '00880',
+            'role' => 'Ketua Panitia',
             'status' => 'AKTIF',
             'password_hash' => password_hash('Addiansyah2026!', PASSWORD_BCRYPT),
             'security_pin_hash' => password_hash('5930', PASSWORD_BCRYPT),
@@ -180,9 +191,21 @@ function getAdminCredentials() {
         return $defaultCreds;
     }
 
-    // Auto-Upgrade: Jika file admin_credentials.json di server masih menyimpan hash default lama 'admin' / '2026'
+    // Auto-Upgrade: Sinkronisasi title, role & hash
     $needsUpdate = false;
+    if (isset($creds['cingire687@gmail.com'])) {
+        if (($creds['cingire687@gmail.com']['title'] ?? '') !== 'Admin Teknis') {
+            $creds['cingire687@gmail.com']['title'] = 'Admin Teknis';
+            $needsUpdate = true;
+        }
+    }
     if (isset($creds['addiansyah@unsri.ac.id'])) {
+        if (($creds['addiansyah@unsri.ac.id']['role'] ?? '') !== 'Ketua Panitia') {
+            $creds['addiansyah@unsri.ac.id']['role'] = 'Ketua Panitia';
+            $creds['addiansyah@unsri.ac.id']['title'] = 'SUPER ADMIN';
+            $creds['addiansyah@unsri.ac.id']['npa'] = '00880';
+            $needsUpdate = true;
+        }
         if (password_verify('admin', $creds['addiansyah@unsri.ac.id']['password_hash'] ?? '')) {
             $creds['addiansyah@unsri.ac.id']['password_hash'] = password_hash('Addiansyah2026!', PASSWORD_BCRYPT);
             $needsUpdate = true;
@@ -284,6 +307,80 @@ function sendServerWhatsAppFonnte($phone, $message) {
         return ['success' => true, 'target' => $cleanPhone, 'data' => $resData];
     }
     return ['success' => false, 'error' => $resData['reason'] ?? ($resData['detail'] ?? 'Gagal mengirim pesan WhatsApp.'), 'raw' => $response];
+}
+
+// Helper: Kirim Email Resmi Sistem KPKU (Mendukung PHP mail() & Fallback Direct SSL SMTP)
+function sendServerEmail($toEmail, $toName, $subject, $messageHtml) {
+    $headers = [
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        'From: KPKU IAGI 2026 <noreply@pitiagi.cloud>',
+        'Reply-To: KPKU IAGI <iagisekretariat@gmail.com>',
+        'X-Mailer: PHP/' . phpversion()
+    ];
+
+    $mailSent = false;
+    $errorDetail = '';
+
+    // Attempt 1: Standard PHP mail function
+    try {
+        $mailSent = @mail($toEmail, $subject, $messageHtml, implode("\r\n", $headers));
+    } catch (Exception $e) {
+        $errorDetail = $e->getMessage();
+    }
+
+    // Attempt 2: If mail() failed, try direct SMTP socket connection
+    if (!$mailSent) {
+        $smtpHost = 'pitiagi.cloud';
+        $smtpPort = 465;
+        $smtpUser = 'noreply@pitiagi.cloud';
+        $smtpPass = 'Wagyu312226';
+
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            ]
+        ]);
+
+        $socket = @stream_socket_client("ssl://{$smtpHost}:{$smtpPort}", $errno, $errstr, 4, STREAM_CLIENT_CONNECT, $context);
+        if ($socket) {
+            $read = function($sock) {
+                $resp = '';
+                while ($line = fgets($sock, 515)) {
+                    $resp .= $line;
+                    if (substr($line, 3, 1) === ' ') break;
+                }
+                return $resp;
+            };
+
+            $read($socket);
+            fwrite($socket, "EHLO pemiluiagi.web.id\r\n"); $read($socket);
+            fwrite($socket, "AUTH LOGIN\r\n"); $read($socket);
+            fwrite($socket, base64_encode($smtpUser) . "\r\n"); $read($socket);
+            fwrite($socket, base64_encode($smtpPass) . "\r\n"); $read($socket);
+            fwrite($socket, "MAIL FROM:<{$smtpUser}>\r\n"); $read($socket);
+            fwrite($socket, "RCPT TO:<{$toEmail}>\r\n"); $read($socket);
+            fwrite($socket, "DATA\r\n"); $read($socket);
+            
+            $dataPayload = "Subject: {$subject}\r\n";
+            $dataPayload .= "To: {$toName} <{$toEmail}>\r\n";
+            $dataPayload .= implode("\r\n", $headers) . "\r\n\r\n";
+            $dataPayload .= $messageHtml . "\r\n.\r\n";
+            
+            fwrite($socket, $dataPayload);
+            $resultResp = $read($socket);
+            fwrite($socket, "QUIT\r\n");
+            fclose($socket);
+
+            if (strpos($resultResp, '250') !== false) {
+                $mailSent = true;
+            }
+        }
+    }
+
+    return ['success' => $mailSent, 'error' => $errorDetail];
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
@@ -579,6 +676,550 @@ if ($action === 'admin_verify_otp') {
     exit;
 }
 
+// =========================================================================
+// ACTION: REQUEST FEATURE ACCESS (OTORISASI AKSES FITUR OLEH SUPER ADMIN)
+// WAGYUA% meminta izin membuka fitur terproteksi -> Notifikasi dikirim ke M. Addiansyah
+// =========================================================================
+if ($action === 'request_feature_access') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $requesterName = trim($payload['requester_name'] ?? 'WAGYUA%');
+    $requesterEmail = strtolower(trim($payload['requester_email'] ?? 'cingire687@gmail.com'));
+    $featureKey = trim($payload['feature_key'] ?? 'unknown_feature');
+    $featureName = trim($payload['feature_name'] ?? 'Fitur Otoritas Tinggi');
+    $extraInfo = trim($payload['extra_info'] ?? '');
+    $clientIp = getClientIp();
+    $now = time();
+
+    // Target Super Admin resmi: M. Addiansyah
+    $targetName = 'M. Addiansyah';
+    $targetEmail = 'addiansyah@unsri.ac.id';
+    $targetPhone = '082255555930';
+
+    // Buat ID Request Unik & Token Rahasia Approve/Reject
+    $requestId = 'REQ-' . strtoupper(substr(bin2hex(random_bytes(5)), 0, 8));
+    $tokenApprove = bin2hex(random_bytes(16));
+    $tokenReject = bin2hex(random_bytes(16));
+    $expiresAt = $now + (30 * 60); // 30 Menit
+
+    $requests = readJsonFile($accessRequestsFile, []);
+
+    // Simpan data permohonan ke database server
+    $requests[$requestId] = [
+        'id' => $requestId,
+        'requester_name' => $requesterName,
+        'requester_email' => $requesterEmail,
+        'target_name' => $targetName,
+        'target_email' => $targetEmail,
+        'target_phone' => $targetPhone,
+        'feature_key' => $featureKey,
+        'feature_name' => $featureName,
+        'extra_info' => $extraInfo,
+        'status' => 'PENDING',
+        'created_at' => date('c'),
+        'expires_at' => $expiresAt,
+        'token_approve' => $tokenApprove,
+        'token_reject' => $tokenReject,
+        'ip' => $clientIp,
+        'decided_at' => null,
+        'decided_by' => null
+    ];
+    writeJsonFile($accessRequestsFile, $requests);
+
+    // Format tanggal & waktu lokal Indonesia
+    $monthsIndo = [
+        'January' => 'Januari', 'February' => 'Februari', 'March' => 'Maret',
+        'April' => 'April', 'May' => 'Mei', 'June' => 'Juni',
+        'July' => 'Juli', 'August' => 'Agustus', 'September' => 'September',
+        'October' => 'Oktober', 'November' => 'November', 'December' => 'Desember'
+    ];
+    $waktuReqIndo = strtr(date('d F Y, H:i', $now), $monthsIndo) . ' WIB';
+    $waktuExpIndo = strtr(date('H:i', $expiresAt), $monthsIndo) . ' WIB';
+
+    // Resolusi URL Backend Dinamis untuk Tombol Email
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'pemiluiagi.web.id';
+    $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+    $baseUrl = $protocol . '://' . $host . $scriptDir;
+
+    $approveUrl = $baseUrl . '/vote_sync.php?action=respond_access_request&req_id=' . urlencode($requestId) . '&decision=approve&token=' . urlencode($tokenApprove);
+    $rejectUrl = $baseUrl . '/vote_sync.php?action=respond_access_request&req_id=' . urlencode($requestId) . '&decision=reject&token=' . urlencode($tokenReject);
+
+    $safeFeature = htmlspecialchars($featureName, ENT_QUOTES, 'UTF-8');
+    $safeRequester = htmlspecialchars($requesterName, ENT_QUOTES, 'UTF-8');
+    $safeExtra = !empty($extraInfo) ? htmlspecialchars($extraInfo, ENT_QUOTES, 'UTF-8') : '-';
+
+    $subject = "[OTORISASI SUPER ADMIN] Permintaan Akses Fitur: {$featureName} oleh {$requesterName}";
+    $logoUrl = 'https://pemiluiagi.web.id/assets/iagi-logo.png';
+
+    // Template HTML Email Resmi KPKU IAGI 2026
+    $emailHtml = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Permohonan Otorisasi Fitur Super Admin KPKU</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table { border-collapse: collapse; }
+    td { padding: 0; }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #010C0A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #010C0A; padding: 30px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 620px; background-color: #021612; border: 1px solid rgba(245, 186, 66, 0.4); border-radius: 18px; overflow: hidden; box-shadow: 0 16px 45px rgba(0, 0, 0, 0.7);">
+          
+          <!-- Top Gold Ribbon -->
+          <tr>
+            <td style="height: 6px; background: linear-gradient(90deg, #D97706 0%, #F5BA42 50%, #D97706 100%);"></td>
+          </tr>
+
+          <!-- Header Section -->
+          <tr>
+            <td style="background-color: #03211B; padding: 32px 24px; text-align: center; border-bottom: 1px solid rgba(245, 186, 66, 0.25);">
+              <img src="{$logoUrl}" alt="Logo IAGI" width="76" height="76" style="display: block; width: 76px; height: 76px; margin: 0 auto 14px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+              <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.18em; color: #F5BA42; text-transform: uppercase; margin-bottom: 6px;">
+                IKATAN AHLI GEOLOGI INDONESIA (IAGI)
+              </div>
+              <div style="font-size: 12px; font-weight: 700; color: #94A3B8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+                KOMISI PEMILIHAN KETUA UMUM (KPKU) 2026–2029
+              </div>
+              <div style="display: inline-block; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.5); color: #FDE68A; font-size: 11px; font-weight: 800; padding: 6px 16px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;">
+                🛡️ PERMOHONAN OTORISASI SUPER ADMIN 🛡️
+              </div>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 32px 26px;">
+              <p style="font-size: 15px; color: #E2E8F0; line-height: 1.6; margin: 0 0 16px;">
+                Yth. Bapak <strong>M. Addiansyah</strong>,<br>
+                <span style="font-size: 13px; color: #94A3B8;">Ketua Panitia & Super Admin KPKU Pemilu IAGI 2026</span>
+              </p>
+
+              <div style="background: rgba(245, 186, 66, 0.08); border-left: 4px solid #F5BA42; padding: 14px 18px; border-radius: 6px; margin-bottom: 22px;">
+                <p style="font-size: 13px; color: #FDE68A; line-height: 1.5; margin: 0;">
+                  ⚠️ Sistem keamanan mendeteksi upaya pembukaan fitur dengan tingkat wewenang khusus oleh <strong>{$safeRequester}</strong>. Sesuai protokol integritas, fitur ini terkunci dan <strong>hanya dapat dijalankan jika Anda memberikan persetujuan</strong>.
+                </p>
+              </div>
+
+              <!-- Information Table -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-size: 12px; width: 38%;">Fitur yang Diminta:</td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #F5BA42; font-size: 13px; font-weight: 800;">{$safeFeature}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-size: 12px;">Pemohon:</td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #FFFFFF; font-size: 13px; font-weight: 700;">{$safeRequester} ({$requesterEmail})</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-size: 12px;">Peran Pemohon:</td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #2DD4BF; font-size: 12px; font-weight: 700;">Admin Teknis / Tim IT</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-size: 12px;">Waktu Pengajuan:</td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #CBD5E1; font-size: 12px;">{$waktuReqIndo}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-size: 12px;">ID Permohonan:</td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); color: #94A3B8; font-family: monospace; font-size: 12px;">{$requestId}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 16px; color: #94A3B8; font-size: 12px;">Batas Kedaluwarsa:</td>
+                  <td style="padding: 12px 16px; color: #FCA5A5; font-size: 12px; font-weight: 700;">30 Menit (Hingga {$waktuExpIndo})</td>
+                </tr>
+              </table>
+
+              <!-- Action Decision Buttons (2 Pilihan Resmi) -->
+              <p style="font-size: 13px; font-weight: 700; color: #FFFFFF; text-align: center; margin: 0 0 16px;">
+                Silakan tentukan keputusan otorisasi Anda:
+              </p>
+
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom: 12px;">
+                    <a href="{$approveUrl}" target="_blank" style="display: block; width: 88%; max-width: 380px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #FFFFFF; font-weight: 800; font-size: 15px; padding: 15px 20px; text-decoration: none; border-radius: 12px; text-align: center; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); letter-spacing: 0.03em;">
+                      ✅ IZINKAN AKSES
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <a href="{$rejectUrl}" target="_blank" style="display: block; width: 88%; max-width: 380px; background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%); color: #FFFFFF; font-weight: 800; font-size: 14px; padding: 13px 20px; text-decoration: none; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); letter-spacing: 0.03em;">
+                      ❌ TOLAK AKSES
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size: 11px; color: #64748B; text-align: center; margin: 24px 0 0; line-height: 1.5;">
+                Jika Anda tidak mengenal pengajuan ini atau ingin menolak demi keamanan data, cukup klik tombol <strong>TOLAK AKSES</strong>. Fitur akan tetap terkunci rapat.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #03211B; border-top: 1px solid rgba(245, 186, 66, 0.25); padding: 22px 20px; text-align: center;">
+              <div style="font-size: 11px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px;">
+                KOMISI PEMILIHAN KETUA UMUM (KPKU) IAGI 2026
+              </div>
+              <div style="font-size: 10px; color: #64748B; line-height: 1.5;">
+                Notifikasi keamanan otomatis terenkripsi &bull; Hak Cipta &copy; 2026 Ikatan Ahli Geologi Indonesia
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+HTML;
+
+    // Kirim Email ke M. Addiansyah
+    $mailRes = sendServerEmail($targetEmail, $targetName, $subject, $emailHtml);
+
+    // Kirim Alert Notifikasi Cepat ke WhatsApp M. Addiansyah (Opsional / Complementary)
+    $waMsg = "*[NOTIFIKASI OTORISASI KPKU IAGI 2026]*\n\n" .
+             "Yth. Bapak *M. Addiansyah* (Super Admin),\n" .
+             "Ada permohonan pembukaan fitur oleh *{$requesterName}*:\n" .
+             "🔹 *Fitur*: {$featureName}\n" .
+             "🔹 *ID Permohonan*: {$requestId}\n\n" .
+             "Notifikasi lengkap beserta tombol *IZINKAN* dan *TOLAK* telah dikirim ke email Anda: *{$targetEmail}*.\n\n" .
+             "Atau klik langsung:\n" .
+             "✅ Izinkan: {$approveUrl}\n\n" .
+             "❌ Tolak: {$rejectUrl}\n\n" .
+             "_Batas waktu respon: 30 menit._";
+
+    sendServerWhatsAppFonnte($targetPhone, $waMsg);
+
+    // Catat ke Audit Log
+    $auditLogs = readJsonFile($auditFile, []);
+    $auditLogs[] = [
+        'id' => 'req-' . bin2hex(random_bytes(4)),
+        'action' => 'FEATURE_ACCESS_REQUESTED',
+        'details' => "WAGYUA% mengajukan permohonan akses fitur '{$featureName}' (ID: {$requestId}). Notifikasi dikirim ke M. Addiansyah ({$targetEmail}).",
+        'ip' => $clientIp,
+        'timestamp' => date('c')
+    ];
+    writeJsonFile($auditFile, $auditLogs);
+
+    echo json_encode([
+        'success' => true,
+        'request_id' => $requestId,
+        'feature_key' => $featureKey,
+        'feature_name' => $featureName,
+        'target_email' => $targetEmail,
+        'target_name' => $targetName,
+        'expires_at' => $expiresAt,
+        'mail_sent' => $mailRes['success'],
+        'message' => "Permohonan akses fitur berhasil dikirim ke email resmi {$targetEmail}."
+    ]);
+    exit;
+}
+
+// =========================================================================
+// ACTION: RESPOND ACCESS REQUEST (DIKLIK DARI EMAIL OLEH M. ADDIANSYAH)
+// Menerima keputusan IZINKAN atau TOLAK langsung dari tautan email
+// =========================================================================
+if ($action === 'respond_access_request') {
+    $reqId = trim($_GET['req_id'] ?? ($_POST['req_id'] ?? ''));
+    $decision = strtolower(trim($_GET['decision'] ?? ($_POST['decision'] ?? '')));
+    $token = trim($_GET['token'] ?? ($_POST['token'] ?? ''));
+    $clientIp = getClientIp();
+    $now = time();
+
+    $requests = readJsonFile($accessRequestsFile, []);
+
+    if (empty($reqId) || !isset($requests[$reqId])) {
+        http_response_code(404);
+        echo "<!DOCTYPE html><html><body style='font-family:sans-serif; background:#010c0a; color:#fff; text-align:center; padding:50px;'><h2>❌ Permohonan Tidak Ditemukan</h2><p>ID permohonan tidak valid atau telah dihapus.</p></body></html>";
+        exit;
+    }
+
+    $req = &$requests[$reqId];
+
+    // Cek kedaluwarsa
+    if ($req['expires_at'] < $now && $req['status'] === 'PENDING') {
+        $req['status'] = 'EXPIRED';
+        writeJsonFile($accessRequestsFile, $requests);
+        http_response_code(410);
+        echo "<!DOCTYPE html><html><body style='font-family:sans-serif; background:#010c0a; color:#fff; text-align:center; padding:50px;'><h2 style='color:#EF4444;'>⏳ Permohonan Telah Kedaluwarsa</h2><p>Batas waktu persetujuan 30 menit telah berakhir. Pemohon harus mengajukan ulang jika masih diperlukan.</p></body></html>";
+        exit;
+    }
+
+    // Validasi Token Kriptografis
+    $validToken = ($decision === 'approve') ? $req['token_approve'] : $req['token_reject'];
+    if (empty($token) || $token !== $validToken) {
+        http_response_code(403);
+        echo "<!DOCTYPE html><html><body style='font-family:sans-serif; background:#010c0a; color:#fff; text-align:center; padding:50px;'><h2 style='color:#EF4444;'>⛔ Token Tidak Valid</h2><p>Tautan otorisasi tidak sah atau telah diubah.</p></body></html>";
+        exit;
+    }
+
+    $isApprove = ($decision === 'approve');
+    $req['status'] = $isApprove ? 'APPROVED' : 'REJECTED';
+    $req['decided_at'] = date('c');
+    $req['decided_by'] = 'M. Addiansyah (addiansyah@unsri.ac.id)';
+    $req['decision_ip'] = $clientIp;
+    writeJsonFile($accessRequestsFile, $requests);
+
+    // Catat ke Audit Log Server
+    $auditLogs = readJsonFile($auditFile, []);
+    $auditLogs[] = [
+        'id' => 'dec-' . bin2hex(random_bytes(4)),
+        'action' => $isApprove ? 'FEATURE_ACCESS_APPROVED' : 'FEATURE_ACCESS_REJECTED',
+        'details' => "M. Addiansyah telah " . ($isApprove ? "MENYETUJUI (IZINKAN)" : "MENOLAK") . " pembukaan fitur '{$req['feature_name']}' untuk {$req['requester_name']} (ID: {$reqId}).",
+        'ip' => $clientIp,
+        'timestamp' => date('c')
+    ];
+    writeJsonFile($auditFile, $auditLogs);
+
+    // Tampilkan Halaman Respon HTML yang Elegan kepada M. Addiansyah
+    $statusColor = $isApprove ? '#10B981' : '#EF4444';
+    $statusBg = $isApprove ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+    $statusBorder = $isApprove ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+    $statusIcon = $isApprove ? '✅' : '❌';
+    $statusTitle = $isApprove ? 'AKSES BERHASIL DIIZINKAN' : 'AKSES BERHASIL DITOLAK';
+    $statusDesc = $isApprove
+        ? "Anda (M. Addiansyah, Ketua Panitia) telah <strong>MENYETUJUI</strong> permintaan pembukaan fitur <strong>{$req['feature_name']}</strong> untuk <strong>{$req['requester_name']}</strong>.<br><br>Sistem telah membuka izin fitur ini secara otomatis pada sesi kerja pemohon."
+        : "Anda (M. Addiansyah, Ketua Panitia) telah <strong>MENOLAK</strong> permintaan akses fitur <strong>{$req['feature_name']}</strong> untuk <strong>{$req['requester_name']}</strong>.<br><br>Fitur tetap terkunci rapat dan aman dari akses tanpa wewenang.";
+
+    echo <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>{$statusTitle} | KPKU IAGI 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #010C0A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .card {
+      max-width: 540px;
+      width: 100%;
+      background: #021612;
+      border: 1px solid {$statusBorder};
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      position: relative;
+      overflow: hidden;
+    }
+    .icon-badge {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: {$statusBg};
+      border: 2px solid {$statusBorder};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      margin: 0 auto 20px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 800;
+      color: {$statusColor};
+      margin: 0 0 12px;
+      letter-spacing: 0.02em;
+    }
+    .desc {
+      font-size: 14px;
+      color: #CBD5E1;
+      line-height: 1.6;
+      margin: 0 0 24px;
+    }
+    .meta-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 12px;
+      color: #94A3B8;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .meta-box div {
+      margin-bottom: 6px;
+    }
+    .meta-box div:last-child {
+      margin-bottom: 0;
+    }
+    .btn-portal {
+      display: inline-block;
+      background: linear-gradient(135deg, #FDE68A 0%, #F5BA42 50%, #D97706 100%);
+      color: #000000;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-badge">{$statusIcon}</div>
+    <h1 class="title">{$statusTitle}</h1>
+    <p class="desc">{$statusDesc}</p>
+
+    <div class="meta-box">
+      <div><strong>Fitur:</strong> {$req['feature_name']}</div>
+      <div><strong>Pemohon:</strong> {$req['requester_name']} ({$req['requester_email']})</div>
+      <div><strong>ID Permohonan:</strong> <span style="font-family: 'JetBrains Mono', monospace; color: #F5BA42;">{$reqId}</span></div>
+      <div><strong>Waktu Keputusan:</strong> {$req['decided_at']}</div>
+      <div><strong>Otorisator:</strong> {$req['decided_by']}</div>
+    </div>
+
+    <a href="../admin.html" class="btn-portal">Buka Dashboard Pleno KPKU &rarr;</a>
+  </div>
+</body>
+</html>
+HTML;
+    exit;
+}
+
+// =========================================================================
+// ACTION: CHECK FEATURE ACCESS (DIPERIKSA SECARA POLLING OLEH WAGYUA%)
+// Frontend WAGYUA% memeriksa status approval dari M. Addiansyah
+// =========================================================================
+if ($action === 'check_feature_access') {
+    $reqId = trim($_GET['req_id'] ?? ($_POST['req_id'] ?? ''));
+    $now = time();
+
+    $requests = readJsonFile($accessRequestsFile, []);
+
+    if (empty($reqId) || !isset($requests[$reqId])) {
+        echo json_encode(['success' => false, 'error' => 'Permohonan tidak ditemukan.']);
+        exit;
+    }
+
+    $req = &$requests[$reqId];
+
+    // Cek timeout otomatis
+    if ($req['status'] === 'PENDING' && $req['expires_at'] < $now) {
+        $req['status'] = 'EXPIRED';
+        writeJsonFile($accessRequestsFile, $requests);
+    }
+
+    echo json_encode([
+        'success' => true,
+        'request_id' => $reqId,
+        'status' => $req['status'],
+        'feature_key' => $req['feature_key'],
+        'feature_name' => $req['feature_name'],
+        'requester_name' => $req['requester_name'],
+        'decided_at' => $req['decided_at'],
+        'decided_by' => $req['decided_by']
+    ]);
+    exit;
+}
+
+// =========================================================================
+// ACTION: GET PENDING ACCESS REQUESTS (UNTUK DASHBOARD LIVE M. ADDIANSYAH)
+// M. Addiansyah dapat melihat daftar permohonan yang sedang pending
+// =========================================================================
+if ($action === 'get_pending_access_requests') {
+    $now = time();
+    $requests = readJsonFile($accessRequestsFile, []);
+    $pending = [];
+
+    foreach ($requests as $id => $req) {
+        if ($req['status'] === 'PENDING') {
+            if ($req['expires_at'] < $now) {
+                $requests[$id]['status'] = 'EXPIRED';
+            } else {
+                $pending[] = [
+                    'id' => $req['id'],
+                    'requester_name' => $req['requester_name'],
+                    'requester_email' => $req['requester_email'],
+                    'feature_key' => $req['feature_key'],
+                    'feature_name' => $req['feature_name'],
+                    'created_at' => $req['created_at'],
+                    'expires_at' => $req['expires_at']
+                ];
+            }
+        }
+    }
+    writeJsonFile($accessRequestsFile, $requests);
+
+    echo json_encode([
+        'success' => true,
+        'pending_requests' => $pending
+    ]);
+    exit;
+}
+
+// =========================================================================
+// ACTION: ADMIN APPROVE ACCESS DIRECT (DARI DALAM DASHBOARD M. ADDIANSYAH)
+// =========================================================================
+if ($action === 'admin_approve_access_direct') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $reqId = trim($payload['req_id'] ?? '');
+    $decision = strtolower(trim($payload['decision'] ?? 'approve'));
+    $clientIp = getClientIp();
+
+    $requests = readJsonFile($accessRequestsFile, []);
+    if (empty($reqId) || !isset($requests[$reqId])) {
+        echo json_encode(['success' => false, 'error' => 'Permohonan tidak ditemukan.']);
+        exit;
+    }
+
+    $req = &$requests[$reqId];
+    $isApprove = ($decision === 'approve');
+    $req['status'] = $isApprove ? 'APPROVED' : 'REJECTED';
+    $req['decided_at'] = date('c');
+    $req['decided_by'] = 'M. Addiansyah (addiansyah@unsri.ac.id) via Dashboard';
+    $req['decision_ip'] = $clientIp;
+    writeJsonFile($accessRequestsFile, $requests);
+
+    // Audit log
+    $auditLogs = readJsonFile($auditFile, []);
+    $auditLogs[] = [
+        'id' => 'dec-dir-' . bin2hex(random_bytes(4)),
+        'action' => $isApprove ? 'FEATURE_ACCESS_APPROVED' : 'FEATURE_ACCESS_REJECTED',
+        'details' => "M. Addiansyah telah " . ($isApprove ? "MENYETUJUI" : "MENOLAK") . " akses fitur '{$req['feature_name']}' untuk {$req['requester_name']} langsung dari dashboard.",
+        'ip' => $clientIp,
+        'timestamp' => date('c')
+    ];
+    writeJsonFile($auditFile, $auditLogs);
+
+    echo json_encode([
+        'success' => true,
+        'request_id' => $reqId,
+        'status' => $req['status'],
+        'message' => "Permohonan berhasil " . ($isApprove ? "diizinkan" : "ditolak") . "."
+    ]);
+    exit;
+}
+
 // ================= ACTION: VERIFIKASI INTEGRITAS KRIPTOGRAFI KOTAK SUARA =================
 if ($action === 'verify_integrity') {
     $ballots = readJsonFile($ballotsFile, []);
@@ -684,6 +1325,14 @@ if ($action === 'get_audit_logs') {
     } else {
         $combinedLogs = array_reverse($combinedLogs);
     }
+
+    // Filter out any VAULT_UNSEALED / DIBUKA entries
+    $combinedLogs = array_values(array_filter($combinedLogs, function($l) {
+        if (!is_array($l)) return false;
+        $act = $l['action'] ?? '';
+        $det = $l['details'] ?? '';
+        return ($act !== 'VAULT_UNSEALED' && stripos($det, 'DIBUKA') === false);
+    }));
 
     echo json_encode([
         'success' => true,
@@ -953,8 +1602,10 @@ if ($action === 'get_results') {
     $ballots = readJsonFile($ballotsFile, []);
     $voters = readJsonFile($votersFile, []);
 
-    // 1. KEAMANAN STRICT: KOTAK SUARA TERSEGEL & NON-ADMIN
-    if ($isSealed && !$isAdmin) {
+    // 1. KEAMANAN STRICT LUBER-JURDIL: KOTAK SUARA TERSEGEL (is_sealed: true)
+    // Selama status is_sealed = true, TIDAK ADA SIAPA PUN (termasuk Admin Teknis) yang boleh melihat perolehan suara calon!
+    // Perolehan suara hanya dibuka saat Sidang Pleno resmi setelah segel dibuka dengan izin Ketua Panitia.
+    if ($isSealed) {
         echo json_encode([
             'success' => true,
             'is_sealed' => true,
@@ -1091,6 +1742,33 @@ if ($action === 'set_vault_seal') {
     $nextState = true;
     if (isset($payload['is_sealed'])) {
         $nextState = filter_var($payload['is_sealed'], FILTER_VALIDATE_BOOLEAN);
+    }
+
+    // Jika ingin MEMBUKA segel brankas ($nextState === false)
+    if ($nextState === false) {
+        $reqId = trim($payload['req_id'] ?? '');
+        $adminEmail = trim($payload['admin_email'] ?? '');
+        $isSuperAdmin = ($adminEmail === 'addiansyah@unsri.ac.id');
+
+        $hasApproval = false;
+        if (!empty($reqId)) {
+            $requests = readJsonFile($accessRequestsFile, []);
+            if (isset($requests[$reqId]) && $requests[$reqId]['feature_key'] === 'unseal_vault' && in_array($requests[$reqId]['status'], ['APPROVED', 'CONSUMED'])) {
+                $hasApproval = true;
+                $requests[$reqId]['status'] = 'CONSUMED';
+                $requests[$reqId]['consumed_at'] = date('c');
+                writeJsonFile($accessRequestsFile, $requests);
+            }
+        }
+
+        if (!$isSuperAdmin && !$hasApproval) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => '⛔ OTORISASI DITOLAK: Membuka segel brankas pleno memerlukan persetujuan Dual-Key dari Ketua Panitia (M. Addiansyah) via email addiansyah@unsri.ac.id!'
+            ]);
+            exit;
+        }
     }
 
     $settings = getVaultSettings();
