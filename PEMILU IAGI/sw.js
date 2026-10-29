@@ -1,15 +1,11 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v4.7.1';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.0.0-purge';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './landing.html',
   './app.html',
   './manifest.json',
-  './css/landing.css?v=4.7.1',
-  './js/data.js?v=4.7.1',
-  './js/storage.js?v=4.7.1',
-  './js/app.js?v=4.7.1',
-  './js/livechat.js?v=4.6.9',
+  './css/landing.css?v=5.0.0',
   './assets/iagi-logo.png',
   './assets/candidate-1.jpg',
   './assets/candidate-2.jpg',
@@ -29,29 +25,37 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event: purge ALL old caches
+// Activate event: PURGE ALL OLD CACHES UNCONDITIONALLY
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Purging old PWA cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('Purging PWA cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch event: Network-First for HTML/Navigation, Stale-while-revalidate for assets
+// Fetch event: Network-Only for dynamic data/scripts, Network-First for HTML
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
-  // Network-first for navigation/HTML documents to ensure immediate freshness
+  // ALWAYS Network-Only for data.js & storage.js to guarantee fresh data without credentials
+  if (url.pathname.includes('data.js') || url.pathname.includes('storage.js')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).catch(() => {
+        return fetch(event.request);
+      })
+    );
+    return;
+  }
+
+  // Network-first for navigation/HTML documents
   if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
     event.respondWith(
       fetch(event.request)
