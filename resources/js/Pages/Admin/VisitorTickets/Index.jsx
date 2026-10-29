@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import { useTheme } from '@mui/material/styles';
@@ -370,6 +370,7 @@ export default function VisitorTicketsIndex({
     stats = {},
     settings = {},
     filters = {},
+    occupiedUniqueCodes = [],
 }) {
     const theme = useTheme();
     const c = theme.palette.custom;
@@ -523,6 +524,37 @@ export default function VisitorTicketsIndex({
     const liveOnsiteBasePrice = CATEGORY_PRICES[onsiteData.visitor_type] || 0;
     const liveOnsiteUniqueCode = parseInt(onsiteData.unique_code, 10) || 0;
     const liveOnsiteTotal = liveOnsiteBasePrice > 0 ? (liveOnsiteBasePrice + liveOnsiteUniqueCode) : 0;
+
+    const getNextAvailableUniqueCode = useCallback((occupied = []) => {
+        const occupiedSet = new Set((occupied || []).map(Number));
+        const available = [];
+        for (let i = 101; i <= 999; i++) {
+            if (!occupiedSet.has(i)) {
+                available.push(i);
+            }
+        }
+        if (available.length > 0) {
+            return available[Math.floor(Math.random() * available.length)];
+        }
+        return Math.floor(1001 + Math.random() * 8998);
+    }, []);
+
+    // Automatically generate and assign collision-free unique code when modal opens or category changes
+    useEffect(() => {
+        if (onsiteModalOpen) {
+            const basePrice = CATEGORY_PRICES[onsiteData.visitor_type] || 0;
+            if (basePrice > 0) {
+                if (!onsiteData.unique_code || onsiteData.unique_code === 0) {
+                    const code = getNextAvailableUniqueCode(occupiedUniqueCodes);
+                    setOnsiteData('unique_code', code);
+                }
+            } else {
+                if (onsiteData.unique_code !== 0) {
+                    setOnsiteData('unique_code', 0);
+                }
+            }
+        }
+    }, [onsiteModalOpen, onsiteData.visitor_type, occupiedUniqueCodes, getNextAvailableUniqueCode]);
 
     const searchTimer = useRef(null);
 
@@ -3811,52 +3843,46 @@ export default function VisitorTicketsIndex({
 
                                     {onsiteData.payment_status !== 'free_bypass' && liveOnsiteBasePrice > 0 && (
                                         <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                                    🔢 Kode Unik Pembayaran:
-                                                </Typography>
-                                                <Box sx={{ display: 'flex', gap: 0.8 }}>
-                                                    <Button
-                                                        size="small"
-                                                        variant="text"
-                                                        onClick={() => setOnsiteData('unique_code', Math.floor(100 + Math.random() * 900))}
-                                                        sx={{ fontSize: '0.70rem', py: 0.2, px: 1, minWidth: 0, textTransform: 'none', fontWeight: 700, color: '#0284c7' }}
-                                                    >
-                                                        🎲 Acak 3 Digit
-                                                    </Button>
-                                                    <Button
-                                                        size="small"
-                                                        variant="text"
-                                                        onClick={() => setOnsiteData('unique_code', 0)}
-                                                        sx={{ fontSize: '0.70rem', py: 0.2, px: 1, minWidth: 0, textTransform: 'none', fontWeight: 700, color: '#64748b' }}
-                                                    >
-                                                        0 (Pas)
-                                                    </Button>
-                                                </Box>
-                                            </Box>
-
-                                            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-                                                <TextField
-                                                    size="small"
-                                                    type="number"
-                                                    value={onsiteData.unique_code}
-                                                    onChange={(e) => setOnsiteData('unique_code', Math.max(0, parseInt(e.target.value, 10) || 0))}
-                                                    placeholder="0"
-                                                    sx={{ width: 130, bgcolor: '#ffffff' }}
-                                                    inputProps={{ min: 0, max: 9999, style: { fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' } }}
-                                                />
-                                                <Box sx={{ flex: 1, bgcolor: '#f0fdf4', p: 1, px: 1.5, borderRadius: '8px', border: '1px solid #bbf7d0' }}>
-                                                    <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 600 }}>
-                                                        Total Tagihan:
+                                            <Box sx={{ 
+                                                p: 1.8, 
+                                                borderRadius: '12px', 
+                                                bgcolor: '#f0fdf4', 
+                                                border: '1.5px solid #86efac', 
+                                                display: 'flex', 
+                                                justifyContent: 'space-between', 
+                                                alignItems: 'center', 
+                                                flexWrap: 'wrap', 
+                                                gap: 1.5 
+                                            }}>
+                                                <Box>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.4 }}>
+                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                            🔢 Kode Unik Pembayaran:
+                                                        </Typography>
+                                                        <Chip 
+                                                            icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
+                                                            label={`+ Rp ${liveOnsiteUniqueCode}`} 
+                                                            size="small" 
+                                                            sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.78rem', height: 24, border: '1px solid #86efac' }} 
+                                                        />
+                                                    </Box>
+                                                    <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.70rem', display: 'block', fontWeight: 600 }}>
+                                                        🛡️ Terverifikasi unik otomatis oleh sistem (bebas duplikat)
                                                     </Typography>
-                                                    <Typography variant="subtitle2" sx={{ color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.92rem' }}>
+                                                </Box>
+
+                                                <Box sx={{ textAlign: 'right' }}>
+                                                    <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 700 }}>
+                                                        TOTAL TAGIHAN:
+                                                    </Typography>
+                                                    <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.08rem', lineHeight: 1.2 }}>
                                                         Rp {liveOnsiteTotal.toLocaleString('id-ID')}
                                                     </Typography>
+                                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.64rem', display: 'block' }}>
+                                                        (Rp {liveOnsiteBasePrice.toLocaleString('id-ID')} + Rp {liveOnsiteUniqueCode})
+                                                    </Typography>
                                                 </Box>
                                             </Box>
-                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', display: 'block', mt: 0.5 }}>
-                                                {liveOnsiteUniqueCode > 0 ? `Tarif Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} + Kode Unik Rp ${liveOnsiteUniqueCode}` : 'Isi 0 untuk nominal pas (tunai/EDC/QRIS), atau klik "Acak 3 Digit" jika transfer bank.'}
-                                            </Typography>
                                         </Box>
                                     )}
 

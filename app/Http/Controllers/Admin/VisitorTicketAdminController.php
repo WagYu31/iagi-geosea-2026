@@ -191,6 +191,7 @@ class VisitorTicketAdminController extends Controller
                 'status' => $request->input('status', 'all'),
                 'debt' => $request->input('debt', 'all'),
             ],
+            'occupiedUniqueCodes' => VisitorPayment::getOccupiedUniqueCodes(),
         ]);
     }
 
@@ -229,7 +230,17 @@ class VisitorTicketAdminController extends Controller
                 $settingKey = "visitor_ticket_price_{$type}";
                 $priceSetting = LandingPageSetting::where('key', $settingKey)->value('value');
                 $price = floatval($priceSetting ?: $paidCategories[$type]);
+
+                // Ensure system-enforced unique code without duplicates
                 $uniqueCode = intval($request->input('unique_code', 0));
+                $isOccupied = ($uniqueCode > 0) && VisitorPayment::where('unique_code', $uniqueCode)
+                    ->where('status', '!=', 'rejected')
+                    ->exists();
+
+                if ($uniqueCode <= 0 || $isOccupied) {
+                    $uniqueCode = self::generateUniquePaymentCode();
+                }
+
                 $totalAmount = $price + $uniqueCode;
 
                 $proofPath = null;
@@ -296,6 +307,14 @@ class VisitorTicketAdminController extends Controller
 
             return back()->with('success', "Onsite registration successful! Ticket Code: {$ticket->ticket_code}");
         });
+    }
+
+    /**
+     * Generate collision-free unique payment code between 101 and 999
+     */
+    public static function generateUniquePaymentCode(): int
+    {
+        return VisitorPayment::generateUniqueCode();
     }
 
     /**

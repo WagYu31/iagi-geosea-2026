@@ -405,9 +405,13 @@ class VisitorTicketController extends Controller
                 $subtotal += ($paidPricingMap[$m['visitor_type']] ?? 0);
             }
 
-            $uniqueCode = ($request->filled('unique_code') && intval($request->unique_code) >= 100 && intval($request->unique_code) <= 999)
-                ? intval($request->unique_code)
-                : rand(100, 999);
+            $candidateCode = intval($request->input('unique_code', 0));
+            $isOccupied = ($candidateCode > 0) && VisitorPayment::where('unique_code', $candidateCode)
+                ->where('status', '!=', 'rejected')
+                ->exists();
+            $uniqueCode = ($candidateCode >= 100 && $candidateCode <= 999 && !$isOccupied)
+                ? $candidateCode
+                : VisitorPayment::generateUniqueCode();
             $totalAmount = $subtotal + $uniqueCode;
 
             return DB::transaction(function () use ($request, $members, $totalMembers, $paidPricingMap, $uniqueCode, $totalAmount) {
@@ -525,9 +529,13 @@ class VisitorTicketController extends Controller
             $groupCode = $totalMembers > 1 ? 'GRP-' . strtoupper(Str::random(8)) : null;
 
             if ($isPaid) {
-                $uniqueCode = ($request->filled('unique_code') && intval($request->unique_code) >= 100 && intval($request->unique_code) <= 999)
-                    ? intval($request->unique_code)
-                    : rand(100, 999);
+                $candidateCode = intval($request->input('unique_code', 0));
+                $isOccupied = ($candidateCode > 0) && VisitorPayment::where('unique_code', $candidateCode)
+                    ->where('status', '!=', 'rejected')
+                    ->exists();
+                $uniqueCode = ($candidateCode >= 100 && $candidateCode <= 999 && !$isOccupied)
+                    ? $candidateCode
+                    : VisitorPayment::generateUniqueCode();
                 $totalAmount = ($pricePerTicket * $totalMembers) + $uniqueCode;
 
                 $proofPath = null;

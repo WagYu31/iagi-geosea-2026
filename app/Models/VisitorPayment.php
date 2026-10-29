@@ -102,4 +102,39 @@ class VisitorPayment extends Model
         $ticket = $this->tickets()->first();
         return ($ticket && !empty($ticket->visitor_name)) ? $ticket->visitor_name : 'Registrant';
     }
+
+    /**
+     * Get all active occupied unique payment codes
+     */
+    public static function getOccupiedUniqueCodes(): array
+    {
+        return self::where('status', '!=', 'rejected')
+            ->whereNotNull('unique_code')
+            ->where('unique_code', '>', 0)
+            ->pluck('unique_code')
+            ->map(fn($v) => (int) $v)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Generate collision-free unique payment code between 101 and 999
+     */
+    public static function generateUniqueCode(): int
+    {
+        $occupied = array_flip(self::getOccupiedUniqueCodes());
+
+        $available = [];
+        for ($i = 101; $i <= 999; $i++) {
+            if (!isset($occupied[$i])) {
+                $available[] = $i;
+            }
+        }
+
+        if (!empty($available)) {
+            return $available[array_rand($available)];
+        }
+
+        return rand(1001, 9999);
+    }
 }
