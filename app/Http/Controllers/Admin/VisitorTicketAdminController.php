@@ -143,6 +143,16 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Unpaid Excel filter
+        if ($unpaidExcel = $request->input('unpaid_excel')) {
+            $unpaidEmails = self::getUnpaidPresenterEmails();
+            if ($unpaidExcel === 'unpaid') {
+                $query->whereIn(DB::raw('LOWER(visitor_email)'), $unpaidEmails);
+            } elseif ($unpaidExcel === 'paid') {
+                $query->whereNotIn(DB::raw('LOWER(visitor_email)'), $unpaidEmails);
+            }
+        }
+
         return $query;
     }
 
@@ -162,6 +172,15 @@ class VisitorTicketAdminController extends Controller
             Log::warning('Orphan visitor payments cleanup: ' . $e->getMessage());
         }
 
+        // Unpaid presenters list from Excel
+        $unpaidEmails = self::getUnpaidPresenterEmails();
+        $unpaidTicketIds = [];
+        try {
+            $unpaidTicketIds = VisitorTicket::whereIn(DB::raw('LOWER(visitor_email)'), $unpaidEmails)->pluck('id')->toArray();
+        } catch (\Exception $e) {
+            Log::warning('Error fetching unpaidTicketIds: ' . $e->getMessage());
+        }
+
         // Calculate global summary stats linked to actual visitor tickets
         $stats = [
             'totalVisitors' => VisitorTicket::count(),
@@ -177,6 +196,7 @@ class VisitorTicketAdminController extends Controller
             'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
             'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
             'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
+            'unpaidExcelCount' => count($unpaidTicketIds),
         ];
 
         // Lanyard Templates from settings
@@ -202,8 +222,11 @@ class VisitorTicketAdminController extends Controller
                 'status' => $request->input('status', 'all'),
                 'debt' => $request->input('debt', 'all'),
                 'email_sent' => $request->input('email_sent', 'all'),
+                'unpaid_excel' => $request->input('unpaid_excel', 'all'),
             ],
             'occupiedUniqueCodes' => VisitorPayment::getOccupiedUniqueCodes(),
+            'unpaidExcelEmails' => $unpaidEmails,
+            'unpaidTicketIds' => $unpaidTicketIds,
         ]);
     }
 
@@ -2064,6 +2087,181 @@ class VisitorTicketAdminController extends Controller
         }
 
         return back();
+    }
+
+    /**
+     * Upload an updated Excel/CSV file containing unpaid presenters
+     */
+    public function uploadUnpaidExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:10240', // 10MB max
+        ]);
+
+        $file = $request->file('file');
+        $ext = strtolower($file->getClientOriginalExtension());
+        if (!in_array($ext, ['xlsx', 'xls', 'csv'])) {
+            return back()->with('error', 'Format file harus berupa Excel (.xlsx, .xls) atau CSV (.csv).');
+        }
+
+        $destDir = storage_path('app');
+        if (!file_exists($destDir)) {
+            @mkdir($destDir, 0755, true);
+        }
+
+        $destPath = storage_path('app/List_Belum_Bayar.xlsx');
+        $file->move($destDir, 'List_Belum_Bayar.xlsx');
+
+        $emails = self::extractEmailsFromExcel($destPath);
+        $count = count($emails);
+
+        $matchedTicketsCount = VisitorTicket::whereIn(DB::raw('LOWER(visitor_email)'), $emails)->count();
+
+        return back()->with('success', "File Excel berhasil diunggah! Terdeteksi {$count} email unik dari file, dengan {$matchedTicketsCount} tiket pengunjung yang cocok di sistem.");
+    }
+
+    /**
+     * Download current unpaid presenters Excel file
+     */
+    public function downloadUnpaidExcel()
+    {
+        $possiblePaths = [
+            storage_path('app/List_Belum_Bayar.xlsx'),
+            base_path('List_Belum_Bayar.xlsx'),
+        ];
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                return response()->download($path, 'List_Belum_Bayar.xlsx');
+            }
+        }
+        return back()->with('error', 'File List Belum Bayar belum tersedia di server.');
+    }
+
+    /**
+     * Get list of lowercase emails of unpaid presenters from Excel or fallback preset
+     */
+    public static function getUnpaidPresenterEmails(): array
+    {
+        $possiblePaths = [
+            base_path('List_Belum_Bayar.xlsx'),
+            storage_path('app/List_Belum_Bayar.xlsx'),
+            storage_path('app/unpaid_presenters.xlsx'),
+        ];
+
+        foreach ($possiblePaths as $filePath) {
+            if (file_exists($filePath)) {
+                $extracted = self::extractEmailsFromExcel($filePath);
+                if (!empty($extracted)) {
+                    return $extracted;
+                }
+            }
+        }
+
+        // Default verified list from List_Belum_Bayar.xlsx
+        return [
+            'ak.al.jailani@gmail.com',
+            'aazizurrofi@skkmigas.go.id',
+            'ainunrahmaniah1717@gmail.com',
+            'ajirahmat.g@gmail.com',
+            'alfian.gumelar@pertamina.com',
+            'anggit.kurnia@pertamina.com',
+            'annisar.ea@techconnect.co.id',
+            'falkhanb@gmail.com',
+            'rahmadiantyanastya@gmail.com',
+            'aveliansyah@gmail.com',
+            'gheaayuanggraeni@gmail.com',
+            'bermanmora01@gmail.com',
+            'yurisaputra@gmail.com',
+            'budi.r.permana@medcoenergi.com',
+            'devon.agasya@borneo-indobara.com',
+            'earifullah27@gmail.com',
+            'farihaelsya@gmail.com',
+            'husein.almunawwar@pertamina.com',
+            'ihsanakmala@gmail.com',
+            'imasviestawati22@gmail.com',
+            'mk.iram.dairaby@pertamina.com',
+            'lano.adhitya@esdm.go.id',
+            'mk.m.suryantara@pertamina.com',
+            'malamshah@bukitasam.co.id',
+            'hapiid1st@gmail.com',
+            'mk.muh.ghifari@pertamina.com',
+            'luthfimuhammmad@gmail.com',
+            'isetiawan2@slb.com',
+            'ncitajaya@gmail.com',
+            'nurqosimg@gmail.com',
+            'abelardyan@gmail.com',
+            'rendyjohneffendi@gmail.com',
+            'riezarachmatgsi@gmail.com',
+            'riksathabrani@gmail.com',
+            'rinaldi.ikhram@unpad.ac.id',
+            'ryan.rahdiana@gmail.com',
+            'hoseawidodo@ui.ac.id',
+            'dumex.pasaribu@gmail.com',
+            'winofadriand@gmail.com',
+            'zikri.sulistyo@gmail.com',
+            'gendang88@gmail.com',
+        ];
+    }
+
+    /**
+     * Extract unique email addresses from an Excel (.xlsx) or CSV file
+     */
+    public static function extractEmailsFromExcel(string $filePath): array
+    {
+        $emails = [];
+        try {
+            $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            if ($ext === 'csv') {
+                $content = @file_get_contents($filePath);
+                if ($content && preg_match_all('/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/', $content, $matches)) {
+                    foreach ($matches[0] as $em) {
+                        $em = trim(strtolower($em));
+                        if (filter_var($em, FILTER_VALIDATE_EMAIL)) {
+                            $emails[] = $em;
+                        }
+                    }
+                }
+            } else {
+                $zip = new \ZipArchive();
+                if ($zip->open($filePath) === true) {
+                    $strings = [];
+                    $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+                    if ($sharedXml) {
+                        $sXml = @simplexml_load_string($sharedXml);
+                        if ($sXml && isset($sXml->si)) {
+                            foreach ($sXml->si as $si) {
+                                $strings[] = (string)($si->t ?? '');
+                            }
+                        }
+                    }
+
+                    for ($i = 1; $i <= 10; $i++) {
+                        $sheetXml = $zip->getFromName("xl/worksheets/sheet{$i}.xml");
+                        if (!$sheetXml) continue;
+                        $shXml = @simplexml_load_string($sheetXml);
+                        if ($shXml && isset($shXml->sheetData->row)) {
+                            foreach ($shXml->sheetData->row as $row) {
+                                foreach ($row->c as $cell) {
+                                    $val = (string)$cell->v;
+                                    if ((string)$cell['t'] === 's' && isset($strings[(int)$val])) {
+                                        $val = $strings[(int)$val];
+                                    }
+                                    $val = trim(strtolower($val));
+                                    if (filter_var($val, FILTER_VALIDATE_EMAIL)) {
+                                        $emails[] = $val;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $zip->close();
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("extractEmailsFromExcel error: " . $e->getMessage());
+        }
+
+        return array_values(array_unique($emails));
     }
 }
 

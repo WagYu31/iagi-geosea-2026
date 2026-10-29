@@ -374,6 +374,8 @@ export default function VisitorTicketsIndex({
     settings = {},
     filters = {},
     occupiedUniqueCodes = [],
+    unpaidExcelEmails = [],
+    unpaidTicketIds = [],
 }) {
     const theme = useTheme();
     const c = theme.palette.custom;
@@ -433,6 +435,7 @@ export default function VisitorTicketsIndex({
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
     const [emailSentFilter, setEmailSentFilter] = useState(filters.email_sent || 'all');
+    const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
     const [sentTicketIds, setSentTicketIds] = useState([]);
 
     // Multi-select state
@@ -440,6 +443,9 @@ export default function VisitorTicketsIndex({
 
     // Dialog states
     const [onsiteModalOpen, setOnsiteModalOpen] = useState(false);
+    const [unpaidModalOpen, setUnpaidModalOpen] = useState(false);
+    const [unpaidFile, setUnpaidFile] = useState(null);
+    const [unpaidUploading, setUnpaidUploading] = useState(false);
     const [detailModal, setDetailModal] = useState({ open: false, ticket: null });
     const [editModal, setEditModal] = useState({ open: false, ticket: null });
     const [proofModal, setProofModal] = useState({ open: false, payment: null });
