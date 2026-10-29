@@ -483,6 +483,7 @@ export default function VisitorTicketsIndex({
     const [editStatus, setEditStatus] = useState('approved');
     const [editAdminNotes, setEditAdminNotes] = useState('');
     const [updatingProof, setUpdatingProof] = useState(false);
+    const [onsiteProofPreview, setOnsiteProofPreview] = useState(null);
 
     // Onsite Registration Form
     const { data: onsiteData, setData: setOnsiteData, post: postOnsite, processing: onsiteProcessing, reset: resetOnsite, errors: onsiteErrors } = useForm({
@@ -492,6 +493,7 @@ export default function VisitorTicketsIndex({
         visitor_institution: '',
         visitor_type: 'non_exclusive',
         payment_status: 'paid_cash',
+        proof_of_payment: null,
     });
 
     // Edit Visitor & Group Registration Form
@@ -1065,6 +1067,7 @@ export default function VisitorTicketsIndex({
             preserveScroll: true,
             onSuccess: () => {
                 setOnsiteModalOpen(false);
+                setOnsiteProofPreview(null);
                 resetOnsite();
             },
         });
@@ -3800,12 +3803,65 @@ export default function VisitorTicketsIndex({
                                         <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Complimentary (VIP Invitation / Sponsor Bypass)" />
                                         <FormControlLabel value="pending" control={<Radio size="small" />} label="Unpaid (Pending)" />
                                     </RadioGroup>
+
+                                    {onsiteData.payment_status !== 'free_bypass' && (
+                                        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 0.8 }}>
+                                                📎 Upload Bukti Pembayaran / Struk (Opsional):
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                component="label"
+                                                size="small"
+                                                startIcon={<CloudUploadIcon />}
+                                                sx={{ textTransform: 'none', borderRadius: '8px', fontSize: '0.78rem', borderColor: '#cbd5e1', color: '#334155' }}
+                                            >
+                                                {onsiteData.proof_of_payment ? 'Ganti File Bukti' : 'Pilih File (Foto / Struk / PDF)'}
+                                                <input
+                                                    type="file"
+                                                    hidden
+                                                    accept="image/*,application/pdf"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            setOnsiteData('proof_of_payment', file);
+                                                            if (file.type.startsWith('image/')) {
+                                                                const reader = new FileReader();
+                                                                reader.onload = (ev) => setOnsiteProofPreview(ev.target.result);
+                                                                reader.readAsDataURL(file);
+                                                            } else {
+                                                                setOnsiteProofPreview(null);
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                            </Button>
+                                            {onsiteData.proof_of_payment && (
+                                                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Chip
+                                                        label={onsiteData.proof_of_payment.name}
+                                                        size="small"
+                                                        onDelete={() => {
+                                                            setOnsiteData('proof_of_payment', null);
+                                                            setOnsiteProofPreview(null);
+                                                        }}
+                                                        sx={{ fontSize: '0.72rem', maxWidth: 280 }}
+                                                    />
+                                                </Box>
+                                            )}
+                                            {onsiteProofPreview && (
+                                                <Box sx={{ mt: 1, maxWidth: 160, maxHeight: 120, overflow: 'hidden', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                                    <img src={onsiteProofPreview} alt="Preview Bukti" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    )}
                                 </Box>
                             )}
                         </Stack>
                     </DialogContent>
                     <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
-                        <Button onClick={() => setOnsiteModalOpen(false)} sx={{ textTransform: 'none' }}>
+                        <Button onClick={() => { setOnsiteModalOpen(false); setOnsiteProofPreview(null); resetOnsite(); }} sx={{ textTransform: 'none' }}>
                             Cancel
                         </Button>
                         <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>

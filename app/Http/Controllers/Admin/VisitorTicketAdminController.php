@@ -206,6 +206,7 @@ class VisitorTicketAdminController extends Controller
             'visitor_institution' => 'nullable|string|max:150',
             'visitor_type' => 'required|string|max:100',
             'payment_status' => 'nullable|in:paid_cash,free_bypass,pending',
+            'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -228,6 +229,14 @@ class VisitorTicketAdminController extends Controller
                 $priceSetting = LandingPageSetting::where('key', $settingKey)->value('value');
                 $price = floatval($priceSetting ?: $paidCategories[$type]);
 
+                $proofPath = null;
+                $originalSize = null;
+                if ($request->hasFile('proof_of_payment')) {
+                    $file = $request->file('proof_of_payment');
+                    $originalSize = (int) round($file->getSize() / 1024);
+                    $proofPath = $file->store('visitor_proofs', 'public');
+                }
+
                 $payment = VisitorPayment::create([
                     'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(Str::random(6)),
                     'payment_method' => 'cash_onsite',
@@ -238,6 +247,9 @@ class VisitorTicketAdminController extends Controller
                     'status' => $request->payment_status === 'pending' ? 'pending' : 'approved',
                     'verified_at' => $request->payment_status === 'pending' ? null : now(),
                     'verified_by_admin_id' => Auth::id(),
+                    'proof_of_payment' => $proofPath,
+                    'original_file_size_kb' => $originalSize,
+                    'compressed_file_size_kb' => $originalSize,
                     'notes' => 'Onsite registration by Admin: ' . (Auth::user()->name ?? 'Admin'),
                 ]);
 
