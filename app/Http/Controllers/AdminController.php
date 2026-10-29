@@ -1553,14 +1553,20 @@ class AdminController extends Controller
     {
         $submissions = Submission::with([
             'user:id,name,email,affiliation',
-            'presentationScores.juri:id,name,email',
+            'presentationScores.juri:id,name,email,role,affiliation',
         ])
             ->whereHas('presentationScores')
             ->latest()
-            ->paginate(50);
+            ->paginate(100);
+
+        $availableJuris = User::whereIn('role', ['Juri', 'Reviewer', 'Admin'])
+            ->select('id', 'name', 'email', 'role', 'affiliation')
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Admin/PresentationScores', [
             'submissions' => $submissions,
+            'availableJuris' => $availableJuris,
         ]);
     }
 }
