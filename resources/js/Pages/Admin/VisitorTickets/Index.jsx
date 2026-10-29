@@ -3764,424 +3764,735 @@ export default function VisitorTicketsIndex({
             </Dialog>
 
             {/* MODAL 3: QUICK ONSITE REGISTRATION */}
-            <Dialog open={onsiteModalOpen} onClose={() => setOnsiteModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
+            <Dialog 
+                open={onsiteModalOpen} 
+                onClose={() => setOnsiteModalOpen(false)} 
+                maxWidth="md" 
+                fullWidth 
+                PaperProps={{ 
+                    sx: { 
+                        borderRadius: '24px', 
+                        maxWidth: { xs: '95%', sm: '680px', md: '740px' },
+                        overflow: 'hidden',
+                        boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.3)'
+                    } 
+                }}
+            >
                 <form onSubmit={handleOnsiteSubmit}>
-                    <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
-                        👤 Onsite Visitor Registration
-                    </DialogTitle>
-                    <DialogContent sx={{ pt: 2.5 }}>
-                        <Typography variant="body2" sx={{ color: '#64748b', mb: 2, mt: 1 }}>
-                            Direct walk-in / on-desk registration form at the event venue.
-                        </Typography>
-
-                        <Stack spacing={2}>
-                            <FormControl fullWidth size="small">
-                                <InputLabel>Visitor Category</InputLabel>
-                                <Select
-                                    value={onsiteData.visitor_type}
-                                    label="Visitor Category"
-                                    onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
-                                >
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        1. PARTICIPANT
-                                    </ListSubheader>
-                                    <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member) - Rp 3.000.000</MenuItem>
-                                    <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member) - Rp 4.000.000</MenuItem>
-                                    <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
-                                    <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
-                                    <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
-                                    <MenuItem value="dosen" sx={{ pl: 3 }}>• Dosen - Rp 1.500.000</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        2. TECHNICAL
-                                    </ListSubheader>
-                                    <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
-                                    <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
-                                    <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter (Invited / Free)</MenuItem>
-                                    <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter (Invited / Free)</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        3. VISITOR
-                                    </ListSubheader>
-                                    <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free / Rp 0)</MenuItem>
-
-                                    <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
-                                        4. ROLES & INVITATIONS
-                                    </ListSubheader>
-                                    <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
-                                    <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
-                                    <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
-                                    <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
-                                    <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
-                                    <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
-                                    <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
-                                    <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
-                                    <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
-                                    <MenuItem value="student_crowd">12. 🎓 Student Crowd (Invited / Free)</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            <TextField
-                                label="Full Name *"
-                                value={onsiteData.visitor_name}
-                                onChange={(e) => setOnsiteData('visitor_name', e.target.value)}
-                                fullWidth
-                                size="small"
-                                required
-                            />
-
-                            <TextField
-                                label="Email Address *"
-                                type="email"
-                                value={onsiteData.visitor_email}
-                                onChange={(e) => setOnsiteData('visitor_email', e.target.value)}
-                                fullWidth
-                                size="small"
-                                required
-                            />
-
-                            <TextField
-                                label="WhatsApp / Phone Number"
-                                value={onsiteData.visitor_phone}
-                                onChange={(e) => setOnsiteData('visitor_phone', e.target.value)}
-                                fullWidth
-                                size="small"
-                            />
-
-                            <TextField
-                                label="Institution / Organization"
-                                value={onsiteData.visitor_institution}
-                                onChange={(e) => setOnsiteData('visitor_institution', e.target.value)}
-                                fullWidth
-                                size="small"
-                            />
-
-                            {[
-                                'iagi_member_professional',
-                                'non_iagi_member_professional',
-                                'iagi_member_expatriate',
-                                'non_iagi_member_expatriate',
-                                'student_undergraduate',
-                                'dosen',
-                            ].includes(onsiteData.visitor_type) && (
-                                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
-                                        Onsite Payment Status:
+                    {/* MODAL HEADER */}
+                    <DialogTitle sx={{ p: 0, borderBottom: '1px solid #e2e8f0', bgcolor: '#ffffff' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: { xs: 2.2, sm: 3 }, py: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8 }}>
+                                <Box sx={{ 
+                                    width: 44, 
+                                    height: 44, 
+                                    borderRadius: '14px', 
+                                    background: 'linear-gradient(135deg, #094d42 0%, #0d9488 100%)', 
+                                    color: '#ffffff', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 12px rgba(13, 148, 136, 0.25)'
+                                }}>
+                                    <PersonAddIcon sx={{ fontSize: 24 }} />
+                                </Box>
+                                <Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.1rem', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+                                            Registrasi Pengunjung Onsite
+                                        </Typography>
+                                        <Chip 
+                                            label="Walk-in Desk" 
+                                            size="small" 
+                                            sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 800, fontSize: '0.68rem', height: 20, border: '1px solid #a7f3d0' }} 
+                                        />
+                                    </Box>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem', display: 'block', mt: 0.3 }}>
+                                        Pendaftaran langsung di venue — Tiket, Barcode & Kwitansi langsung terbit
                                     </Typography>
-                                    <RadioGroup
-                                        value={onsiteData.payment_status}
-                                        onChange={(e) => setOnsiteData('payment_status', e.target.value)}
+                                </Box>
+                            </Box>
+                            <IconButton 
+                                size="small" 
+                                onClick={() => { setOnsiteModalOpen(false); setOnsiteProofPreview(null); resetOnsite(); }}
+                                sx={{ color: '#94a3b8', '&:hover': { color: '#0f172a', bgcolor: '#f1f5f9' } }}
+                            >
+                                <CloseIcon sx={{ fontSize: 20 }} />
+                            </IconButton>
+                        </Box>
+                    </DialogTitle>
+
+                    {/* MODAL BODY */}
+                    <DialogContent sx={{ p: { xs: 2, sm: 3 }, bgcolor: '#f8fafc', maxHeight: 'calc(85vh - 140px)', overflowY: 'auto' }}>
+                        {/* CARD 1: DATA PENGUNJUNG */}
+                        <Paper elevation={0} sx={{ p: 2.2, borderRadius: '16px', bgcolor: '#ffffff', border: '1px solid #e2e8f0', mb: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.8 }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                    <Box component="span" sx={{ width: 22, height: 22, borderRadius: '6px', bgcolor: '#e6f4f1', color: '#094d42', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 900 }}>1</Box>
+                                    Data & Kategori Pengunjung
+                                </Typography>
+                                {liveOnsiteBasePrice > 0 ? (
+                                    <Chip 
+                                        label={`Tarif: Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')}`} 
+                                        size="small" 
+                                        sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', fontWeight: 800, fontSize: '0.72rem', height: 22, border: '1px solid #bfdbfe' }} 
+                                    />
+                                ) : (
+                                    <Chip 
+                                        label="Akses Gratis (Rp 0)" 
+                                        size="small" 
+                                        sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 800, fontSize: '0.72rem', height: 22, border: '1px solid #a7f3d0' }} 
+                                    />
+                                )}
+                            </Box>
+
+                            <Stack spacing={1.8}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel id="visitor-cat-label" sx={{ fontSize: '0.85rem', fontWeight: 600 }}>Pilih Kategori Tiket / Visitor</InputLabel>
+                                    <Select
+                                        labelId="visitor-cat-label"
+                                        value={onsiteData.visitor_type}
+                                        label="Pilih Kategori Tiket / Visitor"
+                                        onChange={(e) => setOnsiteData('visitor_type', e.target.value)}
+                                        sx={{ borderRadius: '10px', fontSize: '0.88rem' }}
                                     >
-                                        <FormControlLabel value="paid_cash" control={<Radio size="small" />} label="Paid Onsite (Cash / EDC / QRIS)" />
-                                        <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Complimentary (VIP Invitation / Sponsor Bypass)" />
-                                        <FormControlLabel value="pending" control={<Radio size="small" />} label="Unpaid (Pending)" />
-                                    </RadioGroup>
+                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                            1. PARTICIPANT
+                                        </ListSubheader>
+                                        <MenuItem value="iagi_member_professional" sx={{ pl: 3 }}>• Professional (Member) - Rp 3.000.000</MenuItem>
+                                        <MenuItem value="non_iagi_member_professional" sx={{ pl: 3 }}>• Professional (Non-Member) - Rp 4.000.000</MenuItem>
+                                        <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
+                                        <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
+                                        <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
+                                        <MenuItem value="dosen" sx={{ pl: 3 }}>• Dosen - Rp 1.500.000</MenuItem>
 
-                                    {onsiteData.payment_status !== 'free_bypass' && liveOnsiteBasePrice > 0 && (
-                                        <>
-                                            {/* FITUR DISKON (Rp atau %) */}
-                                            <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, flexWrap: 'wrap', gap: 1 }}>
-                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 0.6, fontSize: '0.78rem' }}>
-                                                        <DiscountIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
-                                                        Diskon Pembayaran:
-                                                    </Typography>
-                                                    
-                                                    {/* Mode Selector: Tanpa Diskon / Rp / % */}
-                                                    <Box sx={{ display: 'inline-flex', bgcolor: '#f1f5f9', p: '3px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                                                        <Button
-                                                            size="small"
-                                                            onClick={() => {
-                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'none', discount_value: '' }));
-                                                            }}
-                                                            sx={{
-                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
-                                                                bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : 'transparent',
-                                                                color: onsiteData.discount_type === 'none' ? '#334155' : '#64748b',
-                                                                boxShadow: onsiteData.discount_type === 'none' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                                                                borderRadius: '6px',
-                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : '#e2e8f0' }
-                                                            }}
-                                                        >
-                                                            Tanpa Diskon
-                                                        </Button>
-                                                        <Button
-                                                            size="small"
-                                                            onClick={() => {
-                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'nominal', discount_value: prev.discount_type === 'nominal' ? prev.discount_value : '' }));
-                                                            }}
-                                                            sx={{
-                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
-                                                                bgcolor: onsiteData.discount_type === 'nominal' ? '#0284c7' : 'transparent',
-                                                                color: onsiteData.discount_type === 'nominal' ? '#ffffff' : '#64748b',
-                                                                boxShadow: onsiteData.discount_type === 'nominal' ? '0 1px 3px rgba(2,132,199,0.3)' : 'none',
-                                                                borderRadius: '6px',
-                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'nominal' ? '#0369a1' : '#e2e8f0' }
-                                                            }}
-                                                        >
-                                                            Rp (Nominal)
-                                                        </Button>
-                                                        <Button
-                                                            size="small"
-                                                            onClick={() => {
-                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'percent', discount_value: prev.discount_type === 'percent' ? prev.discount_value : '' }));
-                                                            }}
-                                                            sx={{
-                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
-                                                                bgcolor: onsiteData.discount_type === 'percent' ? '#7c3aed' : 'transparent',
-                                                                color: onsiteData.discount_type === 'percent' ? '#ffffff' : '#64748b',
-                                                                boxShadow: onsiteData.discount_type === 'percent' ? '0 1px 3px rgba(124,58,237,0.3)' : 'none',
-                                                                borderRadius: '6px',
-                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'percent' ? '#6d28d9' : '#e2e8f0' }
-                                                            }}
-                                                        >
-                                                            % (Persentase)
-                                                        </Button>
-                                                    </Box>
-                                                </Box>
+                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                            2. TECHNICAL
+                                        </ListSubheader>
+                                        <MenuItem value="presenter" sx={{ pl: 3 }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
+                                        <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter (Invited / Free)</MenuItem>
+                                        <MenuItem value="invited_speaker" sx={{ pl: 3 }}>2. 🗣️ Invited Speaker (Invited / Free)</MenuItem>
+                                        <MenuItem value="session_chair_judge" sx={{ pl: 3 }}>3. ⚖️ Session Chair / Judge (Invited / Free)</MenuItem>
+                                        <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter (Invited / Free)</MenuItem>
+                                        <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter (Invited / Free)</MenuItem>
 
-                                                {/* Input & Quick Chips if discount enabled */}
-                                                {onsiteData.discount_type !== 'none' && (
-                                                    <Box sx={{ 
-                                                        p: 1.5, 
-                                                        borderRadius: '10px', 
-                                                        bgcolor: onsiteData.discount_type === 'percent' ? '#f5f3ff' : '#f0f9ff', 
-                                                        border: `1.5px solid ${onsiteData.discount_type === 'percent' ? '#ddd6fe' : '#bae6fd'}`,
-                                                        mb: 1.5
-                                                    }}>
-                                                        <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center', flexWrap: 'wrap' }}>
-                                                            <TextField
-                                                                size="small"
-                                                                type="number"
-                                                                placeholder={onsiteData.discount_type === 'percent' ? 'Contoh: 10' : 'Contoh: 250000'}
-                                                                value={onsiteData.discount_value}
-                                                                onChange={(e) => {
-                                                                    const val = e.target.value === '' ? '' : Math.max(0, parseFloat(e.target.value) || 0);
-                                                                    if (val === '') {
-                                                                        setOnsiteData('discount_value', '');
-                                                                    } else {
-                                                                        setOnsiteData('discount_value', onsiteData.discount_type === 'percent' ? Math.min(100, val) : Math.min(liveOnsiteBasePrice, val));
-                                                                    }
-                                                                }}
-                                                                InputProps={{
-                                                                    startAdornment: (
-                                                                        <InputAdornment position="start">
-                                                                            <Typography sx={{ 
-                                                                                fontSize: '0.80rem', 
-                                                                                fontWeight: 800, 
-                                                                                color: onsiteData.discount_type === 'percent' ? '#7c3aed' : '#0284c7' 
-                                                                            }}>
-                                                                                {onsiteData.discount_type === 'percent' ? '%' : 'Rp'}
-                                                                            </Typography>
-                                                                        </InputAdornment>
-                                                                    ),
-                                                                }}
-                                                                sx={{ width: { xs: '100%', sm: 160 }, bgcolor: '#ffffff' }}
-                                                                inputProps={{ 
-                                                                    min: 0, 
-                                                                    max: onsiteData.discount_type === 'percent' ? 100 : liveOnsiteBasePrice,
-                                                                    style: { fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' } 
-                                                                }}
-                                                            />
+                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                            3. VISITOR
+                                        </ListSubheader>
+                                        <MenuItem value="non_exclusive" sx={{ pl: 3 }}>🎟️ Visitor Pass (Free / Rp 0)</MenuItem>
 
-                                                            {/* Quick Presets */}
-                                                            <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', alignItems: 'center' }}>
-                                                                <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', fontWeight: 600 }}>
-                                                                    Quick:
-                                                                </Typography>
-                                                                {onsiteData.discount_type === 'percent' ? (
-                                                                    [10, 20, 25, 50, 100].map(pct => (
-                                                                        <Chip
-                                                                            key={pct}
-                                                                            label={`${pct}%`}
-                                                                            size="small"
-                                                                            onClick={() => setOnsiteData('discount_value', pct)}
-                                                                            sx={{
-                                                                                cursor: 'pointer',
-                                                                                fontWeight: 700,
-                                                                                fontSize: '0.70rem',
-                                                                                height: 24,
-                                                                                bgcolor: Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ffffff',
-                                                                                color: Number(onsiteData.discount_value) === pct ? '#ffffff' : '#6d28d9',
-                                                                                border: `1px solid ${Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ddd6fe'}`,
-                                                                                '&:hover': { bgcolor: '#ede9fe' }
-                                                                            }}
-                                                                        />
-                                                                    ))
-                                                                ) : (
-                                                                    [100000, 250000, 500000, 750000].filter(amt => amt <= liveOnsiteBasePrice).map(amt => (
-                                                                        <Chip
-                                                                            key={amt}
-                                                                            label={`Rp ${(amt / 1000).toLocaleString('id-ID')}k`}
-                                                                            size="small"
-                                                                            onClick={() => setOnsiteData('discount_value', amt)}
-                                                                            sx={{
-                                                                                cursor: 'pointer',
-                                                                                fontWeight: 700,
-                                                                                fontSize: '0.70rem',
-                                                                                height: 24,
-                                                                                bgcolor: Number(onsiteData.discount_value) === amt ? '#0284c7' : '#ffffff',
-                                                                                color: Number(onsiteData.discount_value) === amt ? '#ffffff' : '#0369a1',
-                                                                                border: `1px solid ${Number(onsiteData.discount_value) === amt ? '#0284c7' : '#bae6fd'}`,
-                                                                                '&:hover': { bgcolor: '#e0f2fe' }
-                                                                            }}
-                                                                        />
-                                                                    ))
-                                                                )}
-                                                            </Box>
-                                                        </Box>
+                                        <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                            4. ROLES & INVITATIONS
+                                        </ListSubheader>
+                                        <MenuItem value="vip">3. ⭐ VIP (Invited / Free)</MenuItem>
+                                        <MenuItem value="speaker">4. 🎤 Keynote Speaker (Invited / Free)</MenuItem>
+                                        <MenuItem value="panelist">5. 👥 Panelist (Invited / Free)</MenuItem>
+                                        <MenuItem value="moderator">6. 🎯 Moderator (Invited / Free)</MenuItem>
+                                        <MenuItem value="exhibition">7. 🏛️ Exhibition (Invited / Free)</MenuItem>
+                                        <MenuItem value="committee">8. 👔 Committee (Invited / Free)</MenuItem>
+                                        <MenuItem value="student_volunteer">9. 🤝 Student Volunteer (Invited / Free)</MenuItem>
+                                        <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
+                                        <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
+                                        <MenuItem value="student_crowd">12. 🎓 Student Crowd (Invited / Free)</MenuItem>
+                                    </Select>
+                                </FormControl>
 
-                                                        {/* Keterangan / Alasan Diskon */}
+                                {/* 2-Column Responsive Grid for inputs */}
+                                <Grid container spacing={1.5}>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            label="Nama Lengkap"
+                                            placeholder="cth: Dr. Ir. Budi Santoso, M.T."
+                                            value={onsiteData.visitor_name}
+                                            onChange={(e) => setOnsiteData('visitor_name', e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            required
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <PersonOutlineIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{ bgcolor: '#ffffff' }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            label="Alamat Email"
+                                            type="email"
+                                            placeholder="budi@instansi.ac.id"
+                                            value={onsiteData.visitor_email}
+                                            onChange={(e) => setOnsiteData('visitor_email', e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            required
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <EmailOutlinedIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{ bgcolor: '#ffffff' }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            label="Nomor WhatsApp / HP"
+                                            placeholder="081234567890"
+                                            value={onsiteData.visitor_phone}
+                                            onChange={(e) => setOnsiteData('visitor_phone', e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <PhoneIphoneIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{ bgcolor: '#ffffff' }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            label="Instansi / Organisasi"
+                                            placeholder="Universitas / Perusahaan / Lembaga"
+                                            value={onsiteData.visitor_institution}
+                                            onChange={(e) => setOnsiteData('visitor_institution', e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <BusinessIcon sx={{ fontSize: 18, color: '#94a3b8' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{ bgcolor: '#ffffff' }}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Stack>
+                        </Paper>
+
+                        {/* CARD 2: STATUS & RINCIAN PEMBAYARAN */}
+                        <Paper elevation={0} sx={{ p: 2.2, borderRadius: '16px', bgcolor: '#ffffff', border: '1px solid #e2e8f0' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                    <Box component="span" sx={{ width: 22, height: 22, borderRadius: '6px', bgcolor: '#e6f4f1', color: '#094d42', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 900 }}>2</Box>
+                                    Status & Metode Pembayaran
+                                </Typography>
+                            </Box>
+
+                            {/* 3 Selectable Interactive Cards */}
+                            <Grid container spacing={1.2}>
+                                <Grid item xs={12} sm={4}>
+                                    <Box 
+                                        onClick={() => setOnsiteData('payment_status', 'paid_cash')}
+                                        sx={{
+                                            p: 1.4,
+                                            borderRadius: '12px',
+                                            border: '1.5px solid',
+                                            borderColor: onsiteData.payment_status === 'paid_cash' ? '#10b981' : '#e2e8f0',
+                                            bgcolor: onsiteData.payment_status === 'paid_cash' ? '#f0fdf4' : '#fafafa',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            boxShadow: onsiteData.payment_status === 'paid_cash' ? '0 4px 12px rgba(16, 185, 129, 0.15)' : 'none',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 0.4,
+                                            height: '100%',
+                                            '&:hover': { borderColor: '#10b981', bgcolor: '#f0fdf4' }
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <PaidIcon sx={{ fontSize: 18, color: onsiteData.payment_status === 'paid_cash' ? '#059669' : '#64748b' }} />
+                                                <Typography sx={{ fontWeight: 800, fontSize: '0.80rem', color: onsiteData.payment_status === 'paid_cash' ? '#065f46' : '#334155' }}>
+                                                    Lunas Onsite
+                                                </Typography>
+                                            </Box>
+                                            {onsiteData.payment_status === 'paid_cash' && (
+                                                <CheckCircleIcon sx={{ fontSize: 16, color: '#10b981' }} />
+                                            )}
+                                        </Box>
+                                        <Typography sx={{ fontSize: '0.68rem', color: '#64748b', lineHeight: 1.3 }}>
+                                            Cash / Mesin EDC / QRIS (Lunas)
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+
+                                <Grid item xs={12} sm={4}>
+                                    <Box 
+                                        onClick={() => setOnsiteData('payment_status', 'free_bypass')}
+                                        sx={{
+                                            p: 1.4,
+                                            borderRadius: '12px',
+                                            border: '1.5px solid',
+                                            borderColor: onsiteData.payment_status === 'free_bypass' ? '#8b5cf6' : '#e2e8f0',
+                                            bgcolor: onsiteData.payment_status === 'free_bypass' ? '#f5f3ff' : '#fafafa',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            boxShadow: onsiteData.payment_status === 'free_bypass' ? '0 4px 12px rgba(139, 92, 246, 0.15)' : 'none',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 0.4,
+                                            height: '100%',
+                                            '&:hover': { borderColor: '#8b5cf6', bgcolor: '#f5f3ff' }
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <StarIcon sx={{ fontSize: 18, color: onsiteData.payment_status === 'free_bypass' ? '#7c3aed' : '#64748b' }} />
+                                                <Typography sx={{ fontWeight: 800, fontSize: '0.80rem', color: onsiteData.payment_status === 'free_bypass' ? '#5b21b6' : '#334155' }}>
+                                                    Gratis / VIP
+                                                </Typography>
+                                            </Box>
+                                            {onsiteData.payment_status === 'free_bypass' && (
+                                                <CheckCircleIcon sx={{ fontSize: 16, color: '#8b5cf6' }} />
+                                            )}
+                                        </Box>
+                                        <Typography sx={{ fontSize: '0.68rem', color: '#64748b', lineHeight: 1.3 }}>
+                                            Undangan VIP, Sponsor, Panitia
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+
+                                <Grid item xs={12} sm={4}>
+                                    <Box 
+                                        onClick={() => setOnsiteData('payment_status', 'pending')}
+                                        sx={{
+                                            p: 1.4,
+                                            borderRadius: '12px',
+                                            border: '1.5px solid',
+                                            borderColor: onsiteData.payment_status === 'pending' ? '#f59e0b' : '#e2e8f0',
+                                            bgcolor: onsiteData.payment_status === 'pending' ? '#fffbeb' : '#fafafa',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            boxShadow: onsiteData.payment_status === 'pending' ? '0 4px 12px rgba(245, 158, 11, 0.15)' : 'none',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 0.4,
+                                            height: '100%',
+                                            '&:hover': { borderColor: '#f59e0b', bgcolor: '#fffbeb' }
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <AccessTimeIcon sx={{ fontSize: 18, color: onsiteData.payment_status === 'pending' ? '#d97706' : '#64748b' }} />
+                                                <Typography sx={{ fontWeight: 800, fontSize: '0.80rem', color: onsiteData.payment_status === 'pending' ? '#92400e' : '#334155' }}>
+                                                    Belum Bayar
+                                                </Typography>
+                                            </Box>
+                                            {onsiteData.payment_status === 'pending' && (
+                                                <CheckCircleIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                            )}
+                                        </Box>
+                                        <Typography sx={{ fontSize: '0.68rem', color: '#64748b', lineHeight: 1.3 }}>
+                                            Pending (Menunggu Pembayaran)
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            {/* IF CATEGORY IS PAID & NOT FREE BYPASS */}
+                            {onsiteData.payment_status !== 'free_bypass' && liveOnsiteBasePrice > 0 && (
+                                <Box sx={{ mt: 2.2 }}>
+                                    {/* FITUR DISKON (SEGMENTED TABS) */}
+                                    <Box sx={{ p: 1.8, bgcolor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', mb: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 1.2 }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 0.6, fontSize: '0.78rem' }}>
+                                                <DiscountIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                                Diskon Pembayaran Khusus (Opsional):
+                                            </Typography>
+
+                                            {/* Segmented Switch */}
+                                            <Box sx={{ display: 'inline-flex', bgcolor: '#e2e8f0', p: '3px', borderRadius: '8px' }}>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setOnsiteData(prev => ({ ...prev, discount_type: 'none', discount_value: '' }))}
+                                                    sx={{
+                                                        py: 0.3, px: 1.2, minWidth: 0, fontSize: '0.72rem', textTransform: 'none', fontWeight: 800,
+                                                        bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : 'transparent',
+                                                        color: onsiteData.discount_type === 'none' ? '#0f172a' : '#64748b',
+                                                        boxShadow: onsiteData.discount_type === 'none' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                                        borderRadius: '6px',
+                                                        '&:hover': { bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : '#cbd5e1' }
+                                                    }}
+                                                >
+                                                    Tanpa Diskon
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setOnsiteData(prev => ({ ...prev, discount_type: 'nominal', discount_value: prev.discount_type === 'nominal' ? prev.discount_value : '' }))}
+                                                    sx={{
+                                                        py: 0.3, px: 1.2, minWidth: 0, fontSize: '0.72rem', textTransform: 'none', fontWeight: 800,
+                                                        bgcolor: onsiteData.discount_type === 'nominal' ? '#0284c7' : 'transparent',
+                                                        color: onsiteData.discount_type === 'nominal' ? '#ffffff' : '#64748b',
+                                                        boxShadow: onsiteData.discount_type === 'nominal' ? '0 2px 4px rgba(2,132,199,0.25)' : 'none',
+                                                        borderRadius: '6px',
+                                                        '&:hover': { bgcolor: onsiteData.discount_type === 'nominal' ? '#0369a1' : '#cbd5e1' }
+                                                    }}
+                                                >
+                                                    Potongan Rp
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setOnsiteData(prev => ({ ...prev, discount_type: 'percent', discount_value: prev.discount_type === 'percent' ? prev.discount_value : '' }))}
+                                                    sx={{
+                                                        py: 0.3, px: 1.2, minWidth: 0, fontSize: '0.72rem', textTransform: 'none', fontWeight: 800,
+                                                        bgcolor: onsiteData.discount_type === 'percent' ? '#7c3aed' : 'transparent',
+                                                        color: onsiteData.discount_type === 'percent' ? '#ffffff' : '#64748b',
+                                                        boxShadow: onsiteData.discount_type === 'percent' ? '0 2px 4px rgba(124,58,237,0.25)' : 'none',
+                                                        borderRadius: '6px',
+                                                        '&:hover': { bgcolor: onsiteData.discount_type === 'percent' ? '#6d28d9' : '#cbd5e1' }
+                                                    }}
+                                                >
+                                                    Potongan %
+                                                </Button>
+                                            </Box>
+                                        </Box>
+
+                                        {onsiteData.discount_type !== 'none' && (
+                                            <Box sx={{ mt: 1.2, pt: 1.2, borderTop: '1px dashed #cbd5e1' }}>
+                                                <Grid container spacing={1.5} alignItems="center">
+                                                    <Grid item xs={12} sm={4}>
                                                         <TextField
                                                             size="small"
                                                             fullWidth
-                                                            placeholder="Keterangan / Alasan Diskon (Opsional, cth: Mahasiswa Undangan, Kerjasama Kampus, dll)"
+                                                            type="number"
+                                                            placeholder={onsiteData.discount_type === 'percent' ? 'cth: 20' : 'cth: 500000'}
+                                                            value={onsiteData.discount_value}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value === '' ? '' : Math.max(0, parseFloat(e.target.value) || 0);
+                                                                if (val === '') {
+                                                                    setOnsiteData('discount_value', '');
+                                                                } else {
+                                                                    setOnsiteData('discount_value', onsiteData.discount_type === 'percent' ? Math.min(100, val) : Math.min(liveOnsiteBasePrice, val));
+                                                                }
+                                                            }}
+                                                            InputProps={{
+                                                                startAdornment: (
+                                                                    <InputAdornment position="start">
+                                                                        <Typography sx={{ 
+                                                                            fontSize: '0.80rem', 
+                                                                            fontWeight: 900, 
+                                                                            color: onsiteData.discount_type === 'percent' ? '#7c3aed' : '#0284c7' 
+                                                                        }}>
+                                                                            {onsiteData.discount_type === 'percent' ? '%' : 'Rp'}
+                                                                        </Typography>
+                                                                    </InputAdornment>
+                                                                ),
+                                                            }}
+                                                            sx={{ bgcolor: '#ffffff' }}
+                                                            inputProps={{ 
+                                                                min: 0, 
+                                                                max: onsiteData.discount_type === 'percent' ? 100 : liveOnsiteBasePrice,
+                                                                style: { fontFamily: 'monospace', fontWeight: 800, fontSize: '0.90rem' } 
+                                                            }}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={8}>
+                                                        <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', alignItems: 'center' }}>
+                                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.70rem', fontWeight: 700 }}>
+                                                                Pilihan Cepat:
+                                                            </Typography>
+                                                            {onsiteData.discount_type === 'percent' ? (
+                                                                [10, 20, 25, 50, 100].map(pct => (
+                                                                    <Chip
+                                                                        key={pct}
+                                                                        label={pct === 100 ? '100% (Gratis)' : `${pct}%`}
+                                                                        size="small"
+                                                                        onClick={() => setOnsiteData('discount_value', pct)}
+                                                                        sx={{
+                                                                            cursor: 'pointer',
+                                                                            fontWeight: 800,
+                                                                            fontSize: '0.72rem',
+                                                                            height: 26,
+                                                                            bgcolor: Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ffffff',
+                                                                            color: Number(onsiteData.discount_value) === pct ? '#ffffff' : '#6d28d9',
+                                                                            border: `1px solid ${Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ddd6fe'}`,
+                                                                            '&:hover': { bgcolor: '#ede9fe' }
+                                                                        }}
+                                                                    />
+                                                                ))
+                                                            ) : (
+                                                                [100000, 250000, 500000, 750000, 1000000].filter(amt => amt <= liveOnsiteBasePrice).map(amt => (
+                                                                    <Chip
+                                                                        key={amt}
+                                                                        label={`Rp ${(amt / 1000).toLocaleString('id-ID')}k`}
+                                                                        size="small"
+                                                                        onClick={() => setOnsiteData('discount_value', amt)}
+                                                                        sx={{
+                                                                            cursor: 'pointer',
+                                                                            fontWeight: 800,
+                                                                            fontSize: '0.72rem',
+                                                                            height: 26,
+                                                                            bgcolor: Number(onsiteData.discount_value) === amt ? '#0284c7' : '#ffffff',
+                                                                            color: Number(onsiteData.discount_value) === amt ? '#ffffff' : '#0369a1',
+                                                                            border: `1px solid ${Number(onsiteData.discount_value) === amt ? '#0284c7' : '#bae6fd'}`,
+                                                                            '&:hover': { bgcolor: '#e0f2fe' }
+                                                                        }}
+                                                                    />
+                                                                ))
+                                                            )}
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <TextField
+                                                            size="small"
+                                                            fullWidth
+                                                            placeholder="Keterangan / Alasan Diskon (cth: Dosen Tamu / Mahasiswa Undangan / Kerjasama BEM)"
                                                             value={onsiteData.discount_notes}
                                                             onChange={(e) => setOnsiteData('discount_notes', e.target.value)}
-                                                            sx={{ mt: 1, bgcolor: '#ffffff' }}
-                                                            inputProps={{ style: { fontSize: '0.75rem', py: 0.8 } }}
+                                                            sx={{ bgcolor: '#ffffff' }}
+                                                            inputProps={{ style: { fontSize: '0.80rem' } }}
                                                         />
+                                                    </Grid>
+                                                </Grid>
 
-                                                        {liveDiscountAmount > 0 && (
-                                                            <Box sx={{ mt: 1, pt: 0.8, borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
-                                                                <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 800, fontSize: '0.74rem' }}>
-                                                                    ✂️ Potongan Diskon: - Rp {liveDiscountAmount.toLocaleString('id-ID')}
-                                                                </Typography>
-                                                                <Typography variant="caption" sx={{ color: '#047857', fontWeight: 800, fontSize: '0.74rem' }}>
-                                                                    Tarif Bersih: Rp {livePriceAfterDiscount.toLocaleString('id-ID')}
-                                                                </Typography>
-                                                            </Box>
-                                                        )}
+                                                {liveDiscountAmount > 0 && (
+                                                    <Box sx={{ mt: 1.2, p: 1, bgcolor: '#fef3c7', borderRadius: '8px', border: '1px solid #fde68a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+                                                        <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 800, fontSize: '0.74rem' }}>
+                                                            ✂️ Potongan Diskon Diterapkan: - Rp {liveDiscountAmount.toLocaleString('id-ID')}
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#047857', fontWeight: 900, fontSize: '0.74rem' }}>
+                                                            Tarif Bersih: Rp {livePriceAfterDiscount.toLocaleString('id-ID')}
+                                                        </Typography>
                                                     </Box>
                                                 )}
                                             </Box>
+                                        )}
+                                    </Box>
 
-                                            {/* KODE UNIK PEMBAYARAN & TOTAL TAGIHAN */}
-                                            <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
-                                                <Box sx={{ 
-                                                    p: 1.8, 
-                                                    borderRadius: '12px', 
-                                                    bgcolor: '#f0fdf4', 
-                                                    border: '1.5px solid #86efac', 
-                                                    display: 'flex', 
-                                                    justifyContent: 'space-between', 
-                                                    alignItems: 'center', 
-                                                    flexWrap: 'wrap', 
-                                                    gap: 1.5 
-                                                }}>
-                                                    <Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.4 }}>
-                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                                🔢 Kode Unik Pembayaran:
-                                                            </Typography>
-                                                            {livePriceAfterDiscount > 0 ? (
-                                                                <Chip 
-                                                                    icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
-                                                                    label={`+ Rp ${liveOnsiteUniqueCode}`} 
-                                                                    size="small" 
-                                                                    sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.78rem', height: 24, border: '1px solid #86efac' }} 
-                                                                />
-                                                            ) : (
-                                                                <Chip 
-                                                                    label="Rp 0 (Gratis)" 
-                                                                    size="small" 
-                                                                    sx={{ bgcolor: '#f1f5f9', color: '#64748b', fontWeight: 800, fontSize: '0.72rem', height: 24 }} 
-                                                                />
-                                                            )}
-                                                        </Box>
-                                                        <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.70rem', display: 'block', fontWeight: 600 }}>
-                                                            {livePriceAfterDiscount > 0 
-                                                                ? '🛡️ Terverifikasi unik otomatis oleh sistem (bebas duplikat)'
-                                                                : '🎉 Tiket 100% Gratis karena diskon penuh'}
-                                                        </Typography>
-                                                    </Box>
+                                    {/* BILLING / POS SUMMARY RECEIPT CARD */}
+                                    <Box sx={{ 
+                                        p: 2.2, 
+                                        borderRadius: '16px', 
+                                        background: 'linear-gradient(135deg, #094d42 0%, #064e3b 100%)', 
+                                        color: '#ffffff',
+                                        boxShadow: '0 10px 25px -5px rgba(9, 77, 66, 0.4)',
+                                        mb: 2
+                                    }}>
+                                        {/* Breakdown List */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.74rem', fontWeight: 600 }}>
+                                                Tarif Dasar Kategori Tiket
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#ffffff' }}>
+                                                Rp {liveOnsiteBasePrice.toLocaleString('id-ID')}
+                                            </Typography>
+                                        </Box>
 
-                                                    <Box sx={{ textAlign: 'right' }}>
-                                                        <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 700 }}>
-                                                            TOTAL TAGIHAN:
-                                                        </Typography>
-                                                        <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.08rem', lineHeight: 1.2 }}>
-                                                            Rp {liveOnsiteTotal.toLocaleString('id-ID')}
-                                                        </Typography>
-                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.64rem', display: 'block' }}>
-                                                            {liveDiscountAmount > 0 
-                                                                ? `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} - Diskon Rp ${liveDiscountAmount.toLocaleString('id-ID')} + Rp ${liveOnsiteUniqueCode})`
-                                                                : `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} + Rp ${liveOnsiteUniqueCode})`}
-                                                        </Typography>
+                                        {liveDiscountAmount > 0 && (
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
+                                                <Typography variant="caption" sx={{ color: '#fde047', fontSize: '0.74rem', fontWeight: 700 }}>
+                                                    Potongan Diskon ({liveDiscountType === 'percent' ? `${liveDiscountRawVal}%` : 'Nominal'})
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#fde047' }}>
+                                                    - Rp {liveDiscountAmount.toLocaleString('id-ID')}
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.74rem', fontWeight: 600 }}>
+                                                    Kode Unik Transfer
+                                                </Typography>
+                                                {livePriceAfterDiscount > 0 ? (
+                                                    <Chip 
+                                                        label={`+ Rp ${liveOnsiteUniqueCode}`} 
+                                                        size="small" 
+                                                        sx={{ bgcolor: '#34d399', color: '#064e3b', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.72rem', height: 20 }} 
+                                                    />
+                                                ) : (
+                                                    <Chip 
+                                                        label="Rp 0 (Gratis)" 
+                                                        size="small" 
+                                                        sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#ffffff', fontWeight: 800, fontSize: '0.70rem', height: 20 }} 
+                                                    />
+                                                )}
+                                            </Box>
+                                            <Typography variant="caption" sx={{ color: '#a7f3d0', fontSize: '0.70rem', fontWeight: 700 }}>
+                                                {livePriceAfterDiscount > 0 ? '🛡️ Terverifikasi Unik Otomatis' : '🎉 Diskon Penuh 100%'}
+                                            </Typography>
+                                        </Box>
+
+                                        <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)', my: 1.2 }} />
+
+                                        {/* Final Total Row */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                            <Box>
+                                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.85)', display: 'block', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.06em' }}>
+                                                    TOTAL TAGIHAN ONSITE
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.66rem' }}>
+                                                    {liveDiscountAmount > 0 
+                                                        ? `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} - Diskon + Rp ${liveOnsiteUniqueCode})`
+                                                        : `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} + Rp ${liveOnsiteUniqueCode})`}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="h5" sx={{ color: '#34d399', fontWeight: 900, fontFamily: 'monospace', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                                                Rp {liveOnsiteTotal.toLocaleString('id-ID')}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {/* UPLOAD BUKTI PEMBAYARAN */}
+                            {onsiteData.payment_status !== 'free_bypass' && (
+                                <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 0.8, fontSize: '0.78rem' }}>
+                                        📎 Bukti Pembayaran / Struk (Opsional):
+                                    </Typography>
+
+                                    {!onsiteData.proof_of_payment ? (
+                                        <Button
+                                            variant="outlined"
+                                            component="label"
+                                            fullWidth
+                                            startIcon={<CloudUploadIcon sx={{ color: '#094d42' }} />}
+                                            sx={{
+                                                p: 1.2,
+                                                textTransform: 'none',
+                                                borderRadius: '10px',
+                                                fontSize: '0.80rem',
+                                                fontWeight: 700,
+                                                borderStyle: 'dashed',
+                                                borderWidth: '1.5px',
+                                                borderColor: '#cbd5e1',
+                                                color: '#334155',
+                                                bgcolor: '#f8fafc',
+                                                '&:hover': { bgcolor: '#f1f5f9', borderColor: '#094d42' }
+                                            }}
+                                        >
+                                            Pilih File Foto Struk EDC / Bukti Transfer / PDF
+                                            <input
+                                                type="file"
+                                                hidden
+                                                accept="image/*,application/pdf"
+                                                onChange={(e) => {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        setOnsiteData('proof_of_payment', file);
+                                                        if (file.type.startsWith('image/')) {
+                                                            const reader = new FileReader();
+                                                            reader.onload = (ev) => setOnsiteProofPreview(ev.target.result);
+                                                            reader.readAsDataURL(file);
+                                                        } else {
+                                                            setOnsiteProofPreview(null);
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </Button>
+                                    ) : (
+                                        <Box sx={{ 
+                                            p: 1.2, 
+                                            borderRadius: '10px', 
+                                            bgcolor: '#f0fdf4', 
+                                            border: '1px solid #86efac', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'space-between',
+                                            flexWrap: 'wrap',
+                                            gap: 1
+                                        }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                                {onsiteProofPreview ? (
+                                                    <Box sx={{ width: 44, height: 44, borderRadius: '6px', overflow: 'hidden', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                                                        <img src={onsiteProofPreview} alt="Preview Bukti" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </Box>
+                                                ) : (
+                                                    <ReceiptLongIcon sx={{ color: '#059669', fontSize: 28 }} />
+                                                )}
+                                                <Box>
+                                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#065f46', fontSize: '0.80rem' }}>
+                                                        {onsiteData.proof_of_payment.name}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.68rem' }}>
+                                                        {(onsiteData.proof_of_payment.size / 1024).toFixed(1)} KB • Siap Diupload
+                                                    </Typography>
                                                 </Box>
                                             </Box>
-                                        </>
-                                    )}
 
-                                    {onsiteData.payment_status !== 'free_bypass' && (
-                                        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 0.8 }}>
-                                                📎 Upload Bukti Pembayaran / Struk (Opsional):
-                                            </Typography>
                                             <Button
-                                                variant="outlined"
-                                                component="label"
                                                 size="small"
-                                                startIcon={<CloudUploadIcon />}
-                                                sx={{ textTransform: 'none', borderRadius: '8px', fontSize: '0.78rem', borderColor: '#cbd5e1', color: '#334155' }}
+                                                color="error"
+                                                onClick={() => {
+                                                    setOnsiteData('proof_of_payment', null);
+                                                    setOnsiteProofPreview(null);
+                                                }}
+                                                startIcon={<DeleteOutlineIcon sx={{ fontSize: 16 }} />}
+                                                sx={{ textTransform: 'none', fontSize: '0.72rem', fontWeight: 700 }}
                                             >
-                                                {onsiteData.proof_of_payment ? 'Ganti File Bukti' : 'Pilih File (Foto / Struk / PDF)'}
-                                                <input
-                                                    type="file"
-                                                    hidden
-                                                    accept="image/*,application/pdf"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files[0];
-                                                        if (file) {
-                                                            setOnsiteData('proof_of_payment', file);
-                                                            if (file.type.startsWith('image/')) {
-                                                                const reader = new FileReader();
-                                                                reader.onload = (ev) => setOnsiteProofPreview(ev.target.result);
-                                                                reader.readAsDataURL(file);
-                                                            } else {
-                                                                setOnsiteProofPreview(null);
-                                                            }
-                                                        }
-                                                    }}
-                                                />
+                                                Hapus
                                             </Button>
-                                            {onsiteData.proof_of_payment && (
-                                                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <Chip
-                                                        label={onsiteData.proof_of_payment.name}
-                                                        size="small"
-                                                        onDelete={() => {
-                                                            setOnsiteData('proof_of_payment', null);
-                                                            setOnsiteProofPreview(null);
-                                                        }}
-                                                        sx={{ fontSize: '0.72rem', maxWidth: 280 }}
-                                                    />
-                                                </Box>
-                                            )}
-                                            {onsiteProofPreview && (
-                                                <Box sx={{ mt: 1, maxWidth: 160, maxHeight: 120, overflow: 'hidden', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                                                    <img src={onsiteProofPreview} alt="Preview Bukti" style={{ width: '100%', height: 'auto', display: 'block' }} />
-                                                </Box>
-                                            )}
                                         </Box>
                                     )}
                                 </Box>
                             )}
-                        </Stack>
+                        </Paper>
                     </DialogContent>
-                    <DialogActions sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
-                        <Button onClick={() => { setOnsiteModalOpen(false); setOnsiteProofPreview(null); resetOnsite(); }} sx={{ textTransform: 'none' }}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="contained" disabled={onsiteProcessing} sx={{ bgcolor: '#10b981', textTransform: 'none', fontWeight: 900, borderRadius: '8px' }}>
-                            {onsiteProcessing ? 'Issuing...' : 'Issue Onsite Ticket'}
-                        </Button>
+
+                    {/* MODAL FOOTER */}
+                    <DialogActions sx={{ 
+                        px: { xs: 2.2, sm: 3 }, 
+                        py: 2, 
+                        borderTop: '1px solid #e2e8f0', 
+                        bgcolor: '#ffffff',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 1.5
+                    }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                            <CheckCircleIcon sx={{ fontSize: 17, color: '#10b981' }} />
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.74rem' }}>
+                                ID Badge & QR Code langsung terbit otomatis
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center' }}>
+                            <Button 
+                                onClick={() => { setOnsiteModalOpen(false); setOnsiteProofPreview(null); resetOnsite(); }} 
+                                sx={{ textTransform: 'none', color: '#64748b', fontWeight: 700, px: 2, borderRadius: '10px' }}
+                            >
+                                Batal
+                            </Button>
+                            <Button 
+                                type="submit" 
+                                variant="contained" 
+                                disabled={onsiteProcessing} 
+                                sx={{ 
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                                    textTransform: 'none', 
+                                    fontWeight: 900, 
+                                    borderRadius: '10px',
+                                    px: 2.8,
+                                    py: 1,
+                                    fontSize: '0.88rem',
+                                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+                                    '&:hover': { background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }
+                                }}
+                            >
+                                {onsiteProcessing 
+                                    ? 'Menerbitkan Tiket...' 
+                                    : (liveOnsiteTotal > 0 
+                                        ? `Terbitkan Tiket • Rp ${liveOnsiteTotal.toLocaleString('id-ID')}`
+                                        : 'Terbitkan Tiket (Gratis)')}
+                            </Button>
+                        </Box>
                     </DialogActions>
                 </form>
             </Dialog>
+
 
             {/* MODAL 3B: IMPORT EXCEL / CSV TICKETS (ESPECIALLY TECHNICAL) */}
             <Dialog 
