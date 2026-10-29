@@ -1582,13 +1582,13 @@ export default function VisitorTicketsIndex({
 
                         <Button
                             variant="contained"
-                            startIcon={<EmailIcon />}
+                            startIcon={selectedIds.length > 0 ? <BlockIcon /> : <EmailIcon />}
                             onClick={() => {
                                 setEmailTargetMode(selectedIds.length > 0 ? 'exclude_selected' : 'filtered');
                                 setEmailModalOpen(true);
                             }}
                             sx={{
-                                bgcolor: '#0284c7',
+                                bgcolor: selectedIds.length > 0 ? '#d97706' : '#0284c7',
                                 color: '#ffffff',
                                 fontWeight: 800,
                                 fontSize: '0.82rem',
@@ -1596,10 +1596,14 @@ export default function VisitorTicketsIndex({
                                 py: 1,
                                 borderRadius: '12px',
                                 textTransform: 'none',
-                                boxShadow: '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
+                                boxShadow: selectedIds.length > 0
+                                    ? '0 4px 0 #b45309, 0 8px 16px rgba(217,119,6,0.2)'
+                                    : '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
                                 '&:hover': {
-                                    bgcolor: '#0369a1',
-                                    boxShadow: '0 2px 0 #075985, 0 4px 8px rgba(2,132,199,0.2)',
+                                    bgcolor: selectedIds.length > 0 ? '#b45309' : '#0369a1',
+                                    boxShadow: selectedIds.length > 0
+                                        ? '0 2px 0 #78350f, 0 4px 8px rgba(217,119,6,0.2)'
+                                        : '0 2px 0 #075985, 0 4px 8px rgba(2,132,199,0.2)',
                                     transform: 'translateY(2px)',
                                 },
                                 '&:active': {
@@ -1609,7 +1613,9 @@ export default function VisitorTicketsIndex({
                                 transition: 'all 0.12s ease',
                             }}
                         >
-                            Resend E-Tickets
+                            {selectedIds.length > 0
+                                ? `Resend E-Tickets (Lewati ${selectedIds.length} Merah)`
+                                : 'Resend E-Tickets'}
                         </Button>
 
                         <Button
@@ -1980,7 +1986,7 @@ export default function VisitorTicketsIndex({
                         sx={{
                             p: 1.6,
                             px: 2.5,
-                            borderRadius: '14px',
+                            borderRadius: '16px',
                             bgcolor: '#0f172a',
                             color: '#ffffff',
                             mb: 2.5,
@@ -1989,19 +1995,36 @@ export default function VisitorTicketsIndex({
                             alignItems: 'center',
                             flexWrap: 'wrap',
                             gap: 1.5,
-                            border: '1.5px solid #334155',
-                            boxShadow: '0 4px 0 #020617, 0 12px 24px rgba(0,0,0,0.2)',
+                            border: '2px solid #ef4444',
+                            boxShadow: '0 4px 0 #991b1b, 0 12px 28px rgba(239,68,68,0.25)',
                         }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                             <Chip
-                                label={`${selectedIds.length} Tickets Selected`}
+                                icon={<BlockIcon sx={{ fontSize: '14px !important', color: '#ffffff !important' }} />}
+                                label={`${selectedIds.length} Baris Merah (Dilewati / Tidak Dikirim Email)`}
                                 size="small"
-                                sx={{ bgcolor: '#38bdf8', color: '#0f172a', fontWeight: 900, fontSize: '0.75rem' }}
+                                sx={{ bgcolor: '#dc2626', color: '#ffffff', fontWeight: 900, fontSize: '0.75rem', px: 0.5 }}
                             />
-                            <Typography variant="body2" sx={{ fontWeight: 600, color: '#cbd5e1', display: { xs: 'none', sm: 'block' } }}>
-                                Bulk actions for selected tickets:
-                            </Typography>
+                            <Button
+                                size="small"
+                                onClick={() => setSelectedIds([])}
+                                startIcon={<CloseIcon sx={{ fontSize: 14 }} />}
+                                sx={{
+                                    color: '#fca5a5',
+                                    textTransform: 'none',
+                                    fontWeight: 800,
+                                    fontSize: '0.74rem',
+                                    bgcolor: 'rgba(239, 68, 68, 0.15)',
+                                    border: '1px solid #b91c1c',
+                                    borderRadius: '8px',
+                                    px: 1.2,
+                                    py: 0.3,
+                                    '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.35)', color: '#ffffff' },
+                                }}
+                            >
+                                Lepas Semua Tanda Merah
+                            </Button>
                         </Box>
 
                         <Stack direction="row" spacing={1} flexWrap="wrap">
@@ -2015,16 +2038,16 @@ export default function VisitorTicketsIndex({
                                 }}
                                 disabled={bulkActionProcessing}
                                 sx={{
-                                    bgcolor: '#d97706',
+                                    bgcolor: '#dc2626',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
-                                    boxShadow: '0 3px 0 #b45309',
-                                    '&:hover': { bgcolor: '#b45309' },
+                                    boxShadow: '0 3px 0 #991b1b',
+                                    '&:hover': { bgcolor: '#b91c1c' },
                                 }}
                             >
-                                Kirim Kecualikan ({selectedIds.length})
+                                Kirim E-Tiket (Lewati {selectedIds.length} Baris Merah)
                             </Button>
                             <Button
                                 size="small"
@@ -2136,6 +2159,48 @@ export default function VisitorTicketsIndex({
                         overflow: 'hidden',
                     }}
                 >
+                    {selectedIds.length > 0 && (
+                        <Box
+                            sx={{
+                                px: 2.5,
+                                py: 1.2,
+                                bgcolor: '#fef2f2',
+                                borderBottom: '1.5px solid #fecaca',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: 1,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#ef4444', boxShadow: '0 0 0 3px rgba(239,68,68,0.25)' }} />
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#991b1b', fontSize: '0.8rem' }}>
+                                    Ada <strong>{selectedIds.length} baris berwarna merah</strong> (ditandai untuk dilewati / tidak menerima E-Tiket saat kirim email).
+                                </Typography>
+                            </Box>
+                            <Button
+                                size="small"
+                                onClick={() => setSelectedIds([])}
+                                startIcon={<CloseIcon sx={{ fontSize: 13 }} />}
+                                sx={{
+                                    textTransform: 'none',
+                                    color: '#b91c1c',
+                                    bgcolor: '#fee2e2',
+                                    border: '1px solid #fca5a5',
+                                    fontWeight: 800,
+                                    fontSize: '0.72rem',
+                                    py: 0.2,
+                                    px: 1.2,
+                                    borderRadius: '6px',
+                                    '&:hover': { bgcolor: '#fecaca', color: '#7f1d1d' },
+                                }}
+                            >
+                                Lepas Semua Tanda Merah
+                            </Button>
+                        </Box>
+                    )}
+
                     <TableContainer
                         sx={{
                             width: '100%',
@@ -2154,13 +2219,19 @@ export default function VisitorTicketsIndex({
                             <TableHead>
                                 <TableRow sx={{ bgcolor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                                     <TableCell padding="checkbox" sx={{ py: 1.5, px: 1.5, whiteSpace: 'nowrap' }}>
-                                        <Checkbox
-                                            size="small"
-                                            indeterminate={selectedIds.length > 0 && selectedIds.length < ticketsData.length}
-                                            checked={ticketsData.length > 0 && selectedIds.length === ticketsData.length}
-                                            onChange={handleSelectAll}
-                                            sx={{ p: 0.5, color: '#94a3b8', '&.Mui-checked': { color: '#094d42' } }}
-                                        />
+                                        <Tooltip title={selectedIds.length > 0 ? "Lepas semua tanda merah" : "Tandai semua baris (merah / lewati email)"} arrow>
+                                            <Checkbox
+                                                size="small"
+                                                indeterminate={selectedIds.length > 0 && selectedIds.length < ticketsData.length}
+                                                checked={ticketsData.length > 0 && selectedIds.length === ticketsData.length}
+                                                onChange={handleSelectAll}
+                                                sx={{
+                                                    p: 0.5,
+                                                    color: selectedIds.length > 0 ? '#ef4444' : '#94a3b8',
+                                                    '&.Mui-checked, &.MuiCheckbox-indeterminate': { color: '#dc2626' }
+                                                }}
+                                            />
+                                        </Tooltip>
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET CODE</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INVOICE / RECEIPT</TableCell>
@@ -2197,17 +2268,31 @@ export default function VisitorTicketsIndex({
                                                 selected={isSelected}
                                                 sx={{
                                                     borderBottom: '1px solid #f1f5f9',
-                                                    '&:hover': { bgcolor: '#f8fafc' },
-                                                    '&.Mui-selected': { bgcolor: '#f0fdf4 !important' },
+                                                    borderLeft: isSelected ? '5px solid #ef4444 !important' : '5px solid transparent',
+                                                    bgcolor: isSelected ? '#fef2f2 !important' : 'inherit',
+                                                    transition: 'all 0.15s ease',
+                                                    '&:hover': {
+                                                        bgcolor: isSelected ? '#fee2e2 !important' : '#f8fafc',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        bgcolor: '#fef2f2 !important',
+                                                        '&:hover': { bgcolor: '#fee2e2 !important' },
+                                                    },
                                                 }}
                                             >
                                                 <TableCell padding="checkbox" sx={{ py: 1.2, px: 1.5, whiteSpace: 'nowrap' }}>
-                                                    <Checkbox
-                                                        size="small"
-                                                        checked={isSelected}
-                                                        onChange={() => handleSelectRow(t.id)}
-                                                        sx={{ p: 0.5, color: '#cbd5e1', '&.Mui-checked': { color: '#094d42' } }}
-                                                    />
+                                                    <Tooltip title={isSelected ? "Klik untuk LEPAS tanda merah (izinkan kirim email)" : "Tandai MERAH (jangan kirim email ke tiket ini)"} arrow>
+                                                        <Checkbox
+                                                            size="small"
+                                                            checked={isSelected}
+                                                            onChange={() => handleSelectRow(t.id)}
+                                                            sx={{
+                                                                p: 0.5,
+                                                                color: isSelected ? '#ef4444' : '#cbd5e1',
+                                                                '&.Mui-checked': { color: '#dc2626' }
+                                                            }}
+                                                        />
+                                                    </Tooltip>
                                                 </TableCell>
 
                                                 {/* TICKET CODE */}
@@ -2294,17 +2379,43 @@ export default function VisitorTicketsIndex({
                                                         onClick={() => setDetailModal({ open: true, ticket: t })}
                                                         sx={{
                                                             fontWeight: 900,
-                                                            color: '#0f172a',
+                                                            color: isSelected ? '#991b1b' : '#0f172a',
                                                             cursor: 'pointer',
                                                             fontSize: '0.88rem',
-                                                            '&:hover': { color: '#094d42', textDecoration: 'underline' }
+                                                            '&:hover': { color: isSelected ? '#7f1d1d' : '#094d42', textDecoration: 'underline' }
                                                         }}
                                                     >
                                                         {t.visitor_name}
                                                     </Typography>
-                                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
+                                                    <Typography variant="caption" sx={{ color: isSelected ? '#b91c1c' : '#64748b', display: 'block', fontSize: '0.72rem' }}>
                                                         {t.visitor_email}
                                                     </Typography>
+                                                    {isSelected && (
+                                                        <Box sx={{ mt: 0.4 }}>
+                                                            <Chip
+                                                                icon={<BlockIcon sx={{ fontSize: '13px !important', color: '#b91c1c !important' }} />}
+                                                                label="⛔ Tidak Dikirim Email"
+                                                                size="small"
+                                                                onDelete={() => handleSelectRow(t.id)}
+                                                                deleteIcon={
+                                                                    <Tooltip title="Klik untuk lepas tanda merah (tiket ini akan dikirimi email)" arrow>
+                                                                        <CloseIcon sx={{ fontSize: '13px !important', color: '#b91c1c !important', '&:hover': { color: '#7f1d1d !important' } }} />
+                                                                    </Tooltip>
+                                                                }
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.65rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: '#fee2e2',
+                                                                    color: '#b91c1c',
+                                                                    border: '1px solid #fca5a5',
+                                                                    cursor: 'pointer',
+                                                                    boxShadow: '0 1px 2px rgba(239,68,68,0.15)',
+                                                                    '&:hover': { bgcolor: '#fecaca' },
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    )}
                                                     <Box sx={{ display: 'flex', gap: 1, mt: 0.3, flexWrap: 'wrap', alignItems: 'center' }}>
                                                         {t.visitor_phone && (
                                                             <Typography variant="caption" sx={{ color: '#0369a1', fontSize: '0.68rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
@@ -2723,11 +2834,17 @@ export default function VisitorTicketsIndex({
 
                                                         {/* Email Resend Direct */}
                                                         {t.visitor_email && (
-                                                            <Tooltip title="Send / Resend E-Ticket Email">
+                                                            <Tooltip title={isSelected ? "Ditandai Merah: Dikecualikan dari kirim email massal (Klik jika tetap ingin kirim manual perorangan)" : "Send / Resend E-Ticket Email"}>
                                                                 <IconButton
                                                                     size="small"
                                                                     onClick={() => handleResendEmail(t.id, t.visitor_email)}
-                                                                    sx={{ color: '#0284c7', bgcolor: '#f0f9ff', border: '1px solid #bae6fd', p: 0.5, borderRadius: '8px' }}
+                                                                    sx={{
+                                                                        color: isSelected ? '#ef4444' : '#0284c7',
+                                                                        bgcolor: isSelected ? '#fef2f2' : '#f0f9ff',
+                                                                        border: isSelected ? '1px dashed #f87171' : '1px solid #bae6fd',
+                                                                        p: 0.5,
+                                                                        borderRadius: '8px'
+                                                                    }}
                                                                 >
                                                                     <EmailIcon sx={{ fontSize: 15 }} />
                                                                 </IconButton>
