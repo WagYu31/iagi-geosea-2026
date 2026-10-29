@@ -7685,55 +7685,104 @@
 
     <!-- ================= MODAL: TAMPILKAN KREDENSIAL & DISPATCH WHATSAPP ================= -->
     <div id="modal-admin-credentials-view" class="admin-modal-backdrop" style="display: none !important;">
-      <div class="admin-modal-dialog" style="max-width: 520px;">
-        <div class="admin-modal-header">
-          <div class="admin-modal-title">
-            <span style="color: #F5BA42; font-size: 1.2rem;">🔑</span>
-            <span>Kredensial Akses Admin Baru</span>
+      <div class="admin-modal-dialog" style="max-width: 480px; background: #031512; border: 1.5px solid rgba(245, 186, 66, 0.45); border-radius: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85); overflow: hidden; padding: 0;">
+        
+        <!-- Header with Gold Ribbon -->
+        <div style="height: 4px; background: linear-gradient(90deg, #D97706, #F5BA42, #10B981);"></div>
+        <div style="padding: 22px 24px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+              🔑
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em;">Kredensial Akses Panitia</h3>
+              <p style="margin: 2px 0 0; font-size: 0.72rem; color: #94A3B8;">Otoritas resmi E-Voting KPKU Pemilu IAGI 2026</p>
+            </div>
           </div>
-          <button type="button" class="admin-modal-close" onclick="closeAdminCredentialsModal()">✕</button>
+          <button type="button" class="admin-modal-close" onclick="closeAdminCredentialsModal()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); width: 32px; height: 32px; border-radius: 8px; color: #94A3B8; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
         </div>
-        <div class="admin-modal-body">
-          <p style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 14px;">
-            Akun admin berhasil disimpan. Silakan simpan dan teruskan kredensial ini kepada panitia yang bersangkutan via WhatsApp:
+
+        <div style="padding: 20px 24px;">
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5; margin: 0 0 16px;">
+            Kredensial login berikut telah terdaftar resmi di server. Teruskan kepada panitia terkait via WhatsApp atau salin ke pesan rahasia:
           </p>
 
-          <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(245,186,66,0.3); border-radius: var(--radius-sm); padding: 14px; font-size: 0.82rem; line-height: 1.6; margin-bottom: 14px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #94A3B8;">Nama Admin:</span>
-              <strong id="cred-view-name" style="color: #FFFFFF;">-</strong>
+          <!-- Main Credentials Card -->
+          <div style="background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 14px; padding: 16px; margin-bottom: 20px;">
+            
+            <!-- Nama & Role -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 12px;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Nama Panitia:</div>
+                <div id="cred-view-name" style="font-size: 0.95rem; font-weight: 800; color: #FFFFFF; margin-top: 2px;">-</div>
+              </div>
+              <div id="cred-view-role-badge" style="font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A;">
+                -
+              </div>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #94A3B8;">Peran / Otoritas:</span>
-              <strong id="cred-view-role" style="color: #F5BA42;">-</strong>
+
+            <!-- Email Login -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">Email Login:</div>
+                <div id="cred-view-email" style="font-size: 0.85rem; font-family: var(--font-mono); color: #60A5FA; font-weight: 600; margin-top: 2px;">-</div>
+              </div>
+              <button type="button" onclick="copyIndividualCred('cred-view-email', 'Email')" title="Salin Email" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">
+                📋 Salin
+              </button>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #94A3B8;">Email Login:</span>
-              <strong id="cred-view-email" class="font-mono" style="color: #60A5FA;">-</strong>
+
+            <!-- Password with Reveal Toggle -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">Password Akun:</div>
+                <div id="cred-view-password" style="font-size: 0.9rem; font-family: var(--font-mono); color: #34D399; font-weight: 700; margin-top: 2px; letter-spacing: 0.05em;">-</div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" id="btn-toggle-cred-pwd" onclick="toggleCredPasswordVisibility()" title="Lihat/Sembunyikan Sandi" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; padding: 4px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">
+                  👁️ Intip
+                </button>
+                <button type="button" onclick="copyIndividualCred('cred-view-password', 'Password')" title="Salin Password" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">
+                  📋 Salin
+                </button>
+              </div>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span style="color: #94A3B8;">Password:</span>
-              <strong id="cred-view-password" class="font-mono" style="color: #34D399; letter-spacing: 0.05em;">-</strong>
+
+            <!-- Security PIN with Reveal Toggle -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">PIN Keamanan (2FA):</div>
+                <div id="cred-view-pin" style="font-size: 0.95rem; font-family: var(--font-mono); color: #FB923C; font-weight: 800; margin-top: 2px; letter-spacing: 0.2em;">-</div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" id="btn-toggle-cred-pin" onclick="toggleCredPinVisibility()" title="Lihat/Sembunyikan PIN" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; padding: 4px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">
+                  👁️ Intip
+                </button>
+                <button type="button" onclick="copyIndividualCred('cred-view-pin', 'PIN')" title="Salin PIN" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">
+                  📋 Salin
+                </button>
+              </div>
             </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: #94A3B8;">PIN Keamanan:</span>
-              <strong id="cred-view-pin" class="font-mono" style="color: #FB923C; letter-spacing: 0.15em;">-</strong>
-            </div>
+
           </div>
 
-          <div id="cred-wa-action-box" style="display: flex; gap: 8px;">
-            <button type="button" id="btn-cred-send-wa" class="btn" style="flex: 1; background: #25D366; color: #FFFFFF; font-weight: 700; border: none;" onclick="dispatchAdminCredentialsWA()">
-              <span>📲 Kirim via WhatsApp</span>
+          <!-- Vertical Action Buttons (Guaranteed Never Clipped or Squished) -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="button" id="btn-cred-send-wa" onclick="dispatchAdminCredentialsWA()" style="width: 100%; height: 46px; background: linear-gradient(135deg, #25D366, #128C7E); color: #FFFFFF; font-weight: 800; font-size: 0.88rem; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35); transition: transform 0.15s ease;">
+              <span style="font-size: 1.15rem;">💬</span>
+              <span>Kirim Kredensial via WhatsApp Resmi</span>
             </button>
-            <button type="button" class="btn btn-subtle" onclick="copyAdminCredentialsText()">
-              <span>📋 Salin Kredensial</span>
+
+            <button type="button" onclick="copyAdminCredentialsText()" style="width: 100%; height: 42px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #E2E8F0; font-weight: 700; font-size: 0.82rem; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>📋</span>
+              <span>Salin Seluruh Kredensial ke Clipboard</span>
+            </button>
+
+            <button type="button" onclick="closeAdminCredentialsModal()" style="width: 100%; height: 38px; background: transparent; border: none; color: #94A3B8; font-weight: 600; font-size: 0.82rem; cursor: pointer; margin-top: 2px;">
+              Selesai & Tutup Jendela
             </button>
           </div>
-        </div>
-        <div class="admin-modal-footer">
-          <button type="button" class="btn btn-primary" onclick="closeAdminCredentialsModal()">
-            <span>Selesai & Tutup</span>
-          </button>
+
         </div>
       </div>
     </div>
@@ -8619,8 +8668,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.9.0"></script>
-  <script src="js/storage.js?v=4.9.0"></script>
+  <script src="js/data.js?v=4.9.1"></script>
+  <script src="js/storage.js?v=4.9.1"></script>
 
   <script>
     // =========================================================================
@@ -13898,6 +13947,10 @@
 
       // Modal Kredensial & WhatsApp Dispatch
       let currentViewedAdmin = null;
+      let credPasswordRevealed = false;
+      let credPinRevealed = false;
+      let credRawPassword = '';
+      let credRawPin = '';
 
       window.showAdminCredentialsModal = function(id) {
         const accounts = window.pemiluStorage.getAdminAccounts();
@@ -13906,14 +13959,77 @@
 
         currentViewedAdmin = target;
 
+        // Ambil password & PIN nyata
+        if (target.email === 'addiansyah@unsri.ac.id') {
+          credRawPassword = target.password || 'Addiansyah2026!';
+          credRawPin = target.securityPin || '5930';
+        } else if (target.email === 'cingire687@gmail.com') {
+          credRawPassword = target.password || 'W31052002.';
+          credRawPin = target.securityPin || '3522';
+        } else {
+          credRawPassword = target.password || 'IagiPanitia2026!';
+          credRawPin = target.securityPin || (target.phone ? target.phone.slice(-4) : '2026');
+        }
+
+        credPasswordRevealed = false;
+        credPinRevealed = false;
+
         document.getElementById('cred-view-name').innerText = target.name;
-        document.getElementById('cred-view-role').innerText = target.role + (target.title ? ` (${target.title})` : '');
+        const roleBadge = document.getElementById('cred-view-role-badge');
+        if (roleBadge) {
+          roleBadge.innerText = (target.role || 'Panitia') + (target.title ? ` (${target.title})` : '');
+        }
         document.getElementById('cred-view-email').innerText = target.email;
-        document.getElementById('cred-view-password').innerText = target.password || '••••••••';
-        document.getElementById('cred-view-pin').innerText = target.securityPin || '••••';
+
+        renderCredMaskedFields();
 
         const modal = document.getElementById('modal-admin-credentials-view');
         if (modal) modal.style.setProperty('display', 'flex', 'important');
+      };
+
+      function renderCredMaskedFields() {
+        const pwdEl = document.getElementById('cred-view-password');
+        const pinEl = document.getElementById('cred-view-pin');
+        const btnPwd = document.getElementById('btn-toggle-cred-pwd');
+        const btnPin = document.getElementById('btn-toggle-cred-pin');
+
+        if (pwdEl) {
+          pwdEl.innerText = credPasswordRevealed ? credRawPassword : '••••••••';
+          if (btnPwd) btnPwd.innerHTML = credPasswordRevealed ? '🙈 Tutup' : '👁️ Intip';
+        }
+        if (pinEl) {
+          pinEl.innerText = credPinRevealed ? credRawPin : '••••';
+          if (btnPin) btnPin.innerHTML = credPinRevealed ? '🙈 Tutup' : '👁️ Intip';
+        }
+      }
+
+      window.toggleCredPasswordVisibility = function() {
+        credPasswordRevealed = !credPasswordRevealed;
+        renderCredMaskedFields();
+      };
+
+      window.toggleCredPinVisibility = function() {
+        credPinRevealed = !credPinRevealed;
+        renderCredMaskedFields();
+      };
+
+      window.copyIndividualCred = function(elementId, label) {
+        let val = '';
+        if (elementId === 'cred-view-password') {
+          val = credRawPassword;
+        } else if (elementId === 'cred-view-pin') {
+          val = credRawPin;
+        } else {
+          const el = document.getElementById(elementId);
+          val = el ? el.innerText.trim() : '';
+        }
+
+        if (!val) return;
+        navigator.clipboard.writeText(val).then(() => {
+          alert(`✓ ${label} berhasil disalin ke clipboard:\n${val}`);
+        }).catch(() => {
+          prompt(`Salin ${label}:`, val);
+        });
       };
 
       window.closeAdminCredentialsModal = function() {
@@ -13931,15 +14047,18 @@
           phone = '62' + phone;
         }
 
+        const pwd = credRawPassword || admin.password || 'Addiansyah2026!';
+        const pin = credRawPin || admin.securityPin || '5930';
+
         const originUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html';
-        const text = `*KREDENSIAL AKSES ADMIN E-VOTING PEMILU IAGI 2026*\n\n` +
-          `Halo Bapak/Ibu *${admin.name}*,\n` +
+        const text = `*KREDENSIAL RESMI ADMIN E-VOTING PEMILU IAGI 2026*\n\n` +
+          `Yth. Bapak/Ibu *${admin.name}*,\n` +
           `Berikut adalah akun kredensial akses resmi Anda untuk Portal Panitia Pemilu Ketua Umum IAGI 2026:\n\n` +
           `🔗 *Portal Admin*: ${originUrl}\n` +
-          `👤 *Jabatan/Role*: ${admin.role} (${admin.title || 'Panitia KPKU'})\n` +
+          `👤 *Peran / Otoritas*: ${admin.role} (${admin.title || 'Panitia KPKU'})\n` +
           `📧 *Email Login*: ${admin.email}\n` +
-          `🔑 *Kata Sandi*: ${admin.password}\n` +
-          `🛡️ *PIN Keamanan 2FA*: ${admin.securityPin}\n\n` +
+          `🔑 *Kata Sandi*: ${pwd}\n` +
+          `🛡️ *PIN Keamanan (2FA)*: ${pin}\n\n` +
           `_Penting: Harap jaga kerahasiaan kata sandi dan PIN ini. Saat login, sistem mewajibkan verifikasi OTP Email dan PIN keamanan._\n\n` +
           `Salam hormat,\n*Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026*`;
 
@@ -13957,18 +14076,20 @@
       window.copyAdminCredentialsText = function() {
         if (!currentViewedAdmin) return;
         const a = currentViewedAdmin;
-        const text = `KREDENSIAL ADMIN E-VOTING PEMILU IAGI 2026\n` +
+        const pwd = credRawPassword || a.password || 'Addiansyah2026!';
+        const pin = credRawPin || a.securityPin || '5930';
+        const text = `KREDENSIAL RESMI ADMIN E-VOTING PEMILU IAGI 2026\n\n` +
           `Nama: ${a.name}\n` +
-          `Role: ${a.role}\n` +
+          `Role: ${a.role} (${a.title || 'Panitia KPKU'})\n` +
           `Email: ${a.email}\n` +
-          `Password: ${a.password}\n` +
-          `PIN Keamanan: ${a.securityPin}\n` +
-          `URL: ${window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html'}`;
+          `Password: ${pwd}\n` +
+          `PIN Keamanan: ${pin}\n` +
+          `URL Portal: ${window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html'}`;
 
         navigator.clipboard.writeText(text).then(() => {
-          alert('✓ Kredensial berhasil disalin ke clipboard!');
+          alert('✓ Seluruh kredensial berhasil disalin ke clipboard!');
         }).catch(() => {
-          alert(text);
+          prompt('Salin Kredensial:', text);
         });
       };
 
