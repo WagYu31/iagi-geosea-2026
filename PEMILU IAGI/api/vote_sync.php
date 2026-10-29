@@ -2134,4 +2134,82 @@ if ($action === 'clear_ballots') {
     exit;
 }
 
+// ================= ACTION: PENGINGAT HARIAN DPT & GOOGLE CALENDAR =================
+if ($action === 'get_reminder_status') {
+    if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
+    require_once __DIR__ . '/cron_daily_reminder.php';
+
+    $dataDir = resolveSecureDataDir();
+    $logsFile = $dataDir . '/reminder_logs.json';
+    $historyFile = $dataDir . '/reminder_history.json';
+    $logs = readJsonFile($logsFile, []);
+    $history = readJsonFile($historyFile, []);
+
+    $registry = getUnvotedVoterRegistry();
+    $now = time();
+    $diffSec = strtotime('2026-11-03 23:59:00') - $now;
+    $daysLeft = max(1, (int)ceil($diffSec / 86400));
+
+    echo json_encode([
+        'success' => true,
+        'days_left' => $daysLeft,
+        'deadline_wib' => '2026-11-03 23:59:00',
+        'total_dpt' => $registry['total_dpt'] ?? 2143,
+        'total_voted' => $registry['total_voted_dpt'] ?? 0,
+        'total_ballots' => $registry['total_ballots_vault'] ?? 0,
+        'total_unvoted' => $registry['total_unvoted'] ?? 0,
+        'total_valid_emails_unvoted' => $registry['total_valid_emails_unvoted'] ?? 0,
+        'total_unique_reminders_sent' => count($history),
+        'last_run' => $logs[0] ?? null,
+        'recent_logs' => array_slice($logs, 0, 5)
+    ]);
+    exit;
+}
+
+if ($action === 'send_reminder_test') {
+    if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
+    require_once __DIR__ . '/cron_daily_reminder.php';
+
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+    $targetEmail = trim($body['email'] ?? ($_GET['email'] ?? ''));
+
+    if (empty($targetEmail) || !filter_var($targetEmail, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Alamat email uji coba tidak valid. Masukkan email resmi yang benar.']);
+        exit;
+    }
+
+    $now = time();
+    $diffSec = strtotime('2026-11-03 23:59:00') - $now;
+    $daysLeft = max(1, (int)ceil($diffSec / 86400));
+
+    $html = buildReminderEmailHtml('00880', 'M. Addiansyah (Uji Coba)', $daysLeft);
+    $ics = buildIcsAttachment('00880', 'M. Addiansyah');
+    $subject = "🧪 [UJI COBA RESMI] Pengingat Bilik Suara & Google Calendar Pemilu IAGI 2026";
+
+    $res = sendCalendarReminderEmail($targetEmail, 'Admin KPKU', $subject, $html, $ics);
+    if ($res['success']) {
+        echo json_encode(['success' => true, 'message' => "Email pengingat & Google Calendar uji coba berhasil dikirim ke {$targetEmail}!"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Gagal mengirim email: ' . ($res['error'] ?? 'Unknown error')]);
+    }
+    exit;
+}
+
+if ($action === 'trigger_reminder_batch') {
+    if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
+    require_once __DIR__ . '/cron_daily_reminder.php';
+
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+    $batchSize = isset($body['batch_size']) ? (int)$body['batch_size'] : 50;
+    $force = !empty($body['force']);
+
+    $res = executeReminderBatch($batchSize, false, $force);
+    echo json_encode($res);
+    exit;
+}
+
 echo json_encode(['success' => true, 'service' => 'KPKU IAGI 2026 Vote Sync API', 'status' => 'ONLINE']);
