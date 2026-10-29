@@ -965,12 +965,24 @@ class AdminController extends Controller
 
         $users = $query->paginate(25)->withQueryString();
 
+        $stats = [
+            'total' => User::count(),
+            'verified' => User::whereNotNull('email_verified_at')->count(),
+            'unverified' => User::whereNull('email_verified_at')->count(),
+            'admins' => User::where('role', 'Admin')->count(),
+            'authors' => User::where('role', 'Author')->count(),
+            'reviewers' => User::where('role', 'Reviewer')->count(),
+            'juris' => User::where('role', 'Juri')->count(),
+            'scanners' => User::whereIn('role', ['Scanner', 'Scaner'])->count(),
+        ];
+
         return Inertia::render('Admin/Users', [
             'users' => $users,
             'filters' => [
                 'search' => $request->input('search', ''),
                 'role' => $request->input('role', 'all'),
             ],
+            'stats' => $stats,
         ]);
     }
 
