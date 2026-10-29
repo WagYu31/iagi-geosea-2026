@@ -354,8 +354,13 @@ class PemiluStorage {
 
         // Jika status kotak suara TERSEGEL (Sealed Vault) & perolehan dirahasiakan:
         if (dataResults.counts_hidden || dataResults.is_sealed) {
-          // Bersihkan cache hasil bocoran lama dari localStorage browser
-          localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
+          // Tetap catat total suara masuk (turnout) resmi dari server, namun kosongkan counts calon
+          localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify({
+            total_votes: Number(dataResults.total_votes || 0),
+            counts: { 1: 0, 2: 0, 3: 0 },
+            is_sealed: true,
+            updated_at: Date.now()
+          }));
           // Pastikan surat suara mentah tidak tersimpan di browser
           localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
         } else if (dataResults.counts) {
