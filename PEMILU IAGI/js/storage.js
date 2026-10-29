@@ -1179,16 +1179,21 @@ class PemiluStorage {
     }
 
     const totalDPT = dpt.length;
-    const totalClaimed = dpt.filter(v => v.claimed || v.voted).length;
+    // Pemilih yang sudah klaim token tapi belum submit coblosan
+    const claimedPendingVote = dpt.filter(v => (v.claimed || v.token) && !v.voted).length;
+    const baseClaimedInDPT = dpt.filter(v => v.claimed || v.voted).length;
+    // Secara logika pemilu: Surat Suara Terklaim WAJIB minimal >= Total Suara Masuk
+    const effectiveTotalClaimed = Math.max(baseClaimedInDPT, totalVotes + claimedPendingVote);
+
     const turnoutPercentage = totalDPT > 0 ? (Math.min(100, (totalVotes / totalDPT) * 100)).toFixed(1) : '0.0';
-    const claimPercentage = totalDPT > 0 ? ((totalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
+    const claimPercentage = totalDPT > 0 ? ((effectiveTotalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
 
     return {
       isSealed: isSealed,
       counts,
       totalVotes,
       totalDPT,
-      totalClaimed,
+      totalClaimed: effectiveTotalClaimed,
       turnoutPercentage,
       claimPercentage
     };

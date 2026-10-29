@@ -8668,8 +8668,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.9.1"></script>
-  <script src="js/storage.js?v=4.9.1"></script>
+  <script src="js/data.js?v=4.9.2"></script>
+  <script src="js/storage.js?v=4.9.2"></script>
 
   <script>
     // =========================================================================
@@ -11010,14 +11010,15 @@
 
         // 4. Update DPT mini stats bar
         const dptList = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
-        const votedCount = dptList.filter(v => v && v.voted).length;
+        const baseVotedCount = dptList.filter(v => v && v.voted).length;
+        const effectiveVotedCount = Math.max(baseVotedCount, Number(results.totalVotes || 0));
         const claimedNotVoted = dptList.filter(v => v && (v.claimed || v.token) && !v.voted).length;
-        const unclaimedCount = dptList.filter(v => v && !v.claimed && !v.voted && !v.token).length;
+        const unclaimedCount = Math.max(0, results.totalDPT - (effectiveVotedCount + claimedNotVoted));
 
         const elMiniTotal = document.getElementById('dpt-mini-total');
         if (elMiniTotal) elMiniTotal.innerText = Number(results.totalDPT).toLocaleString('id-ID');
         const elMiniVoted = document.getElementById('dpt-mini-voted');
-        if (elMiniVoted) elMiniVoted.innerText = votedCount.toLocaleString('id-ID');
+        if (elMiniVoted) elMiniVoted.innerText = effectiveVotedCount.toLocaleString('id-ID');
         const elMiniClaimed = document.getElementById('dpt-mini-claimed');
         if (elMiniClaimed) elMiniClaimed.innerText = claimedNotVoted.toLocaleString('id-ID');
         const elMiniUnclaimed = document.getElementById('dpt-mini-unclaimed');
