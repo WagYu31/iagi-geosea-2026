@@ -2003,7 +2003,7 @@ export default function AdminSubmissions({ submissions = {}, reviewers = [], jur
                             {(() => {
                                 const assignedIds = (assignJuriDialog.submission.presentation_scores || []).map(ps => ps.juri_id);
                                 const available = juris.filter(j => !assignedIds.includes(j.id) && !selectedJuris.includes(j.id));
-                                const filteredJuris = available.filter(j => {
+                                const filteredJuris = available.filter(juri => {
                                     if (!juriSearch.trim()) return true;
                                     const q = juriSearch.toLowerCase().trim();
                                     const name = (juri.name || '').toLowerCase();
