@@ -68,6 +68,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import BlockIcon from '@mui/icons-material/Block';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
@@ -1215,7 +1216,15 @@ export default function VisitorTicketsIndex({
 
     const handleSendBulkEmail = () => {
         const payload = { mode: emailTargetMode };
-        if (emailTargetMode === 'selected') {
+        if (emailTargetMode === 'exclude_selected') {
+            payload.excluded_ids = selectedIds;
+            if (searchTerm) payload.search = searchTerm;
+            if (typeFilter !== 'all') payload.type = typeFilter;
+            if (registrationTypeFilter !== 'all') payload.registration_type = registrationTypeFilter;
+            if (checkedInFilter !== 'all') payload.checked_in = checkedInFilter;
+            if (statusFilter !== 'all') payload.status = statusFilter;
+            if (debtFilter !== 'all') payload.debt = debtFilter;
+        } else if (emailTargetMode === 'selected') {
             if (selectedIds.length === 0) {
                 alert('Pilih setidaknya 1 tiket untuk dikirimi email.');
                 return;
@@ -1224,8 +1233,10 @@ export default function VisitorTicketsIndex({
         } else {
             if (searchTerm) payload.search = searchTerm;
             if (typeFilter !== 'all') payload.type = typeFilter;
+            if (registrationTypeFilter !== 'all') payload.registration_type = registrationTypeFilter;
             if (checkedInFilter !== 'all') payload.checked_in = checkedInFilter;
             if (statusFilter !== 'all') payload.status = statusFilter;
+            if (debtFilter !== 'all') payload.debt = debtFilter;
         }
 
         setEmailSending(true);
@@ -1573,7 +1584,7 @@ export default function VisitorTicketsIndex({
                             variant="contained"
                             startIcon={<EmailIcon />}
                             onClick={() => {
-                                setEmailTargetMode(selectedIds.length > 0 ? 'selected' : 'filtered');
+                                setEmailTargetMode(selectedIds.length > 0 ? 'exclude_selected' : 'filtered');
                                 setEmailModalOpen(true);
                             }}
                             sx={{
@@ -1997,8 +2008,32 @@ export default function VisitorTicketsIndex({
                             <Button
                                 size="small"
                                 variant="contained"
+                                startIcon={<BlockIcon />}
+                                onClick={() => {
+                                    setEmailTargetMode('exclude_selected');
+                                    setEmailModalOpen(true);
+                                }}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#d97706',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    boxShadow: '0 3px 0 #b45309',
+                                    '&:hover': { bgcolor: '#b45309' },
+                                }}
+                            >
+                                Kirim Kecualikan ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
                                 startIcon={<EmailIcon />}
-                                onClick={() => handleBulkAction('resend_email')}
+                                onClick={() => {
+                                    setEmailTargetMode('selected');
+                                    setEmailModalOpen(true);
+                                }}
                                 disabled={bulkActionProcessing}
                                 sx={{
                                     bgcolor: '#0284c7',
@@ -2010,7 +2045,7 @@ export default function VisitorTicketsIndex({
                                     '&:hover': { bgcolor: '#0369a1' },
                                 }}
                             >
-                                Resend Email ({selectedIds.length})
+                                Hanya Kirim ({selectedIds.length})
                             </Button>
                             <Button
                                 size="small"
@@ -5341,45 +5376,122 @@ export default function VisitorTicketsIndex({
                         onChange={(e) => setEmailTargetMode(e.target.value)}
                         sx={{ mb: 2.5 }}
                     >
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 1.5,
-                                px: 2,
-                                mb: 1.5,
-                                borderRadius: '12px',
-                                border: emailTargetMode === 'selected' ? '2px solid #0284c7' : '1px solid #e2e8f0',
-                                bgcolor: emailTargetMode === 'selected' ? '#f0f9ff' : '#ffffff',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => setEmailTargetMode('selected')}
-                        >
-                            <FormControlLabel
-                                value="selected"
-                                control={<Radio size="small" />}
-                                label={
-                                    <Box>
-                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                            Kirim ke Tiket yang Dipilih ({selectedIds.length} tiket)
+                        {selectedIds.length > 0 && (
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    px: 2,
+                                    mb: 1.5,
+                                    borderRadius: '14px',
+                                    border: emailTargetMode === 'exclude_selected' ? '2px solid #d97706' : '1px solid #e2e8f0',
+                                    bgcolor: emailTargetMode === 'exclude_selected' ? '#fffbeb' : '#ffffff',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                }}
+                                onClick={() => setEmailTargetMode('exclude_selected')}
+                            >
+                                <FormControlLabel
+                                    value="exclude_selected"
+                                    control={<Radio size="small" sx={{ color: '#d97706', '&.Mui-checked': { color: '#d97706' } }} />}
+                                    label={
+                                        <Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#92400e' }}>
+                                                    Kirim ke Semua, KECUALI yang Dicentang
+                                                </Typography>
+                                                <Chip
+                                                    icon={<BlockIcon sx={{ fontSize: '13px !important', color: '#b45309 !important' }} />}
+                                                    label={`${selectedIds.length} Dilewati`}
+                                                    size="small"
+                                                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 800, bgcolor: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}
+                                                />
+                                            </Box>
+                                            <Typography variant="caption" sx={{ color: '#78350f', display: 'block', mt: 0.3 }}>
+                                                E-Tiket akan dikirimkan ke semua pengunjung aktif, <strong>TETAPI {selectedIds.length} tiket yang Anda tandai/centang saat ini TIDAK AKAN menerima email</strong>.
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{ width: '100%', m: 0 }}
+                                />
+
+                                {emailTargetMode === 'exclude_selected' && (
+                                    <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #fde68a' }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#b45309', display: 'block', mb: 0.8 }}>
+                                            ⛔ {selectedIds.length} Tiket yang Dikecualikan (Tidak Dikirim):
                                         </Typography>
-                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
-                                            Hanya mengirimkan E-Tiket ke item yang dicentang di tabel saat ini.
-                                        </Typography>
+                                        <Stack direction="row" spacing={0.6} flexWrap="wrap" useFlexGap sx={{ maxHeight: 90, overflowY: 'auto' }}>
+                                            {ticketsData.filter(t => selectedIds.includes(t.id)).slice(0, 10).map(t => (
+                                                <Chip
+                                                    key={t.id}
+                                                    label={`${t.visitor_name} (${t.ticket_code})`}
+                                                    size="small"
+                                                    sx={{
+                                                        height: 22,
+                                                        fontSize: '0.68rem',
+                                                        fontWeight: 700,
+                                                        bgcolor: '#fee2e2',
+                                                        color: '#b91c1c',
+                                                        border: '1px solid #fca5a5',
+                                                    }}
+                                                />
+                                            ))}
+                                            {selectedIds.length > 10 && (
+                                                <Chip
+                                                    label={`+${selectedIds.length - 10} lainnya`}
+                                                    size="small"
+                                                    sx={{ height: 22, fontSize: '0.68rem', fontWeight: 800, bgcolor: '#fecaca', color: '#991b1b' }}
+                                                />
+                                            )}
+                                        </Stack>
                                     </Box>
-                                }
-                                sx={{ width: '100%', m: 0 }}
-                            />
-                        </Paper>
+                                )}
+                            </Paper>
+                        )}
+
+                        {selectedIds.length > 0 && (
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    px: 2,
+                                    mb: 1.5,
+                                    borderRadius: '14px',
+                                    border: emailTargetMode === 'selected' ? '2px solid #0284c7' : '1px solid #e2e8f0',
+                                    bgcolor: emailTargetMode === 'selected' ? '#f0f9ff' : '#ffffff',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                }}
+                                onClick={() => setEmailTargetMode('selected')}
+                            >
+                                <FormControlLabel
+                                    value="selected"
+                                    control={<Radio size="small" />}
+                                    label={
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                Hanya Kirim ke Tiket yang Dicentang ({selectedIds.length} tiket)
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                                Hanya mengirimkan E-Tiket ke {selectedIds.length} tiket yang dicentang di tabel saat ini.
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{ width: '100%', m: 0 }}
+                                />
+                            </Paper>
+                        )}
 
                         <Paper
                             elevation={0}
                             sx={{
                                 p: 1.5,
                                 px: 2,
-                                borderRadius: '12px',
+                                borderRadius: '14px',
                                 border: emailTargetMode === 'filtered' ? '2px solid #0284c7' : '1px solid #e2e8f0',
                                 bgcolor: emailTargetMode === 'filtered' ? '#f0f9ff' : '#ffffff',
                                 cursor: 'pointer',
+                                transition: 'all 0.15s ease',
                             }}
                             onClick={() => setEmailTargetMode('filtered')}
                         >
@@ -5392,7 +5504,7 @@ export default function VisitorTicketsIndex({
                                             Kirim ke Semua Sesuai Filter ({totalItems} tiket terdaftar)
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: '#64748b' }}>
-                                            Mengirimkan ke semua tiket aktif yang sesuai filter pencarian/kategori.
+                                            Mengirimkan ke semua tiket aktif tanpa ada yang dikecualikan.
                                         </Typography>
                                     </Box>
                                 }
@@ -5401,7 +5513,13 @@ export default function VisitorTicketsIndex({
                         </Paper>
                     </RadioGroup>
 
-                    <Alert severity="info" sx={{ borderRadius: '12px', fontSize: '0.8rem', bgcolor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                    {selectedIds.length === 0 && (
+                        <Alert severity="info" sx={{ mb: 2, borderRadius: '12px', fontSize: '0.8rem', bgcolor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                            💡 <strong>Ingin menandai/mengecualikan tiket tertentu agar TIDAK dikirim?</strong> Centang kotak tiket di tabel pengunjung terlebih dahulu, lalu klik tombol <strong>Resend E-Tickets</strong>.
+                        </Alert>
+                    )}
+
+                    <Alert severity="warning" sx={{ borderRadius: '12px', fontSize: '0.8rem', bgcolor: '#fffbeb', color: '#92400e', border: '1px solid #fde68a' }}>
                         Pastikan konfigurasi SMTP di menu <strong>Email Settings</strong> sudah berstatus aktif dan teruji agar email terkirim dengan lancar tanpa terblokir.
                     </Alert>
                 </DialogContent>
@@ -5413,19 +5531,25 @@ export default function VisitorTicketsIndex({
                         onClick={handleSendBulkEmail}
                         disabled={emailSending || (emailTargetMode === 'selected' && selectedIds.length === 0)}
                         variant="contained"
-                        startIcon={emailSending ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <SendIcon />}
+                        startIcon={emailSending ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : (emailTargetMode === 'exclude_selected' ? <BlockIcon /> : <SendIcon />)}
                         sx={{
-                            bgcolor: '#0284c7',
+                            bgcolor: emailTargetMode === 'exclude_selected' ? '#d97706' : '#0284c7',
                             color: '#ffffff',
                             fontWeight: 900,
                             borderRadius: '10px',
                             textTransform: 'none',
                             px: 3,
-                            boxShadow: '0 3px 0 #0369a1',
-                            '&:hover': { bgcolor: '#0369a1' },
+                            boxShadow: emailTargetMode === 'exclude_selected' ? '0 3px 0 #b45309' : '0 3px 0 #0369a1',
+                            '&:hover': { bgcolor: emailTargetMode === 'exclude_selected' ? '#b45309' : '#0369a1' },
                         }}
                     >
-                        {emailSending ? 'Sedang Mengirim...' : `Kirim E-Tiket (${emailTargetMode === 'selected' ? selectedIds.length : totalItems})`}
+                        {emailSending
+                            ? 'Sedang Mengirim...'
+                            : emailTargetMode === 'exclude_selected'
+                                ? `Kirim E-Tiket (Kecualikan ${selectedIds.length} Ditandai)`
+                                : emailTargetMode === 'selected'
+                                    ? `Kirim E-Tiket (${selectedIds.length} Tiket)`
+                                    : `Kirim E-Tiket (${totalItems} Tiket)`}
                     </Button>
                 </DialogActions>
             </Dialog>

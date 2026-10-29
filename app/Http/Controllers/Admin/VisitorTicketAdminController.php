@@ -982,10 +982,21 @@ class VisitorTicketAdminController extends Controller
      */
     public function resendEmailsBulk(Request $request)
     {
-        $mode = $request->input('mode', 'selected'); // 'selected' or 'filtered'
+        $mode = $request->input('mode', 'selected'); // 'selected', 'filtered', or 'exclude_selected'
         $ticketIds = $request->input('ticket_ids', []);
+        $excludedIds = $request->input('excluded_ids', []);
 
-        if ($mode === 'selected' || !empty($ticketIds)) {
+        if ($mode === 'exclude_selected') {
+            $query = $this->filterTicketsQuery($request);
+            if (!empty($excludedIds)) {
+                $exIdArray = is_array($excludedIds) ? $excludedIds : array_filter(explode(',', (string)$excludedIds));
+                $query->whereNotIn('id', $exIdArray);
+            }
+            $tickets = $query->where('status', 'active')
+                ->whereNotNull('visitor_email')
+                ->where('visitor_email', '!=', '')
+                ->get();
+        } elseif ($mode === 'selected' || (!empty($ticketIds) && $mode !== 'filtered')) {
             $idArray = is_array($ticketIds) ? $ticketIds : array_filter(explode(',', (string)$ticketIds));
             $tickets = VisitorTicket::whereIn('id', $idArray)
                 ->where('status', 'active')
@@ -1019,10 +1030,13 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        $excludedCount = is_array($excludedIds) ? count($excludedIds) : count(array_filter(explode(',', (string)$excludedIds)));
+        $msgSuffix = ($mode === 'exclude_selected' && $excludedCount > 0) ? " ({$excludedCount} tiket ditandai berhasil dilewati/tidak dikirimi email)" : "";
+
         if ($failCount === 0) {
-            return back()->with('success', "E-Tiket berhasil dikirimkan ke {$successCount} email pengunjung.");
+            return back()->with('success', "E-Tiket berhasil dikirimkan ke {$successCount} email pengunjung{$msgSuffix}.");
         } else {
-            return back()->with('warning', "E-Tiket terkirim ke {$successCount} email ({$failCount} email gagal dikirim). Pastikan pengaturan SMTP sudah aktif.");
+            return back()->with('warning', "E-Tiket terkirim ke {$successCount} email ({$failCount} email gagal dikirim){$msgSuffix}. Pastikan pengaturan SMTP sudah aktif.");
         }
     }
 
