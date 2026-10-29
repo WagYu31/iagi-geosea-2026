@@ -61,6 +61,7 @@ const CATEGORY_MAP = {
     iagi_member_expatriate: { label: 'Expatriate (Member)', shortLabel: 'EXPAT (MEMBER)', badge: 'EXPATRIATE (MEMBER)', bg: '#ede9fe', color: '#6d28d9', border: '#c4b5fd' },
     non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', shortLabel: 'EXPAT (NON-MEMBER)', badge: 'EXPATRIATE (NON-MEMBER)', bg: '#ede9fe', color: '#5b21b6', border: '#c4b5fd' },
     student_undergraduate: { label: 'Student Undergraduate', shortLabel: 'STUDENT', badge: 'STUDENT UNDERGRADUATE', bg: '#e0e7ff', color: '#3730a3', border: '#a5b4fc' },
+    dosen: { label: 'Dosen', shortLabel: 'DOSEN', badge: 'DOSEN', bg: '#fef3c7', color: '#b45309', border: '#fde68a' },
 
     // 2. Technical
     presenter: { label: 'Presenter', shortLabel: 'PRESENTER', badge: 'PRESENTER', bg: '#ecfdf5', color: '#004C23', border: '#a7f3d0' },

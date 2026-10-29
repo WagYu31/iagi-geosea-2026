@@ -48,6 +48,7 @@ const CATEGORY_MAP = {
     iagi_member_expatriate: { label: 'Expatriate (Member)', badge: 'EXPATRIATE (MEMBER)' },
     non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', badge: 'EXPATRIATE (NON-MEMBER)' },
     student_undergraduate: { label: 'Student Undergraduate', badge: 'STUDENT UNDERGRADUATE' },
+    dosen: { label: 'Participant - Dosen', badge: 'PARTICIPANT: DOSEN' },
 
     // 2. Technical
     presenter: { label: 'Presenter', badge: 'PRESENTER' },

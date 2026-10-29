@@ -711,6 +711,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
     const [priceIagiExpat, setPriceIagiExpat] = useState(getSettingValue('visitor_ticket_price_iagi_member_expatriate', 6000000));
     const [priceNonIagiExpat, setPriceNonIagiExpat] = useState(getSettingValue('visitor_ticket_price_non_iagi_member_expatriate', 7000000));
     const [priceStudent, setPriceStudent] = useState(getSettingValue('visitor_ticket_price_student_undergraduate', 1000000));
+    const [priceDosen, setPriceDosen] = useState(getSettingValue('visitor_ticket_price_dosen', 1500000));
     const [priceExclusive, setPriceExclusive] = useState(getSettingValue('visitor_ticket_price_exclusive', 500000));
     const [priceNonExclusive, setPriceNonExclusive] = useState(getSettingValue('visitor_ticket_price_non_exclusive', 0));
     const [eventDate, setEventDate] = useState(getSettingValue('visitor_event_date', '3-5 November 2026'));
@@ -751,6 +752,7 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                 visitor_ticket_price_iagi_member_expatriate: priceIagiExpat,
                 visitor_ticket_price_non_iagi_member_expatriate: priceNonIagiExpat,
                 visitor_ticket_price_student_undergraduate: priceStudent,
+                visitor_ticket_price_dosen: priceDosen,
                 visitor_ticket_price_exclusive: priceExclusive,
                 visitor_ticket_price_non_exclusive: priceNonExclusive,
                 visitor_event_date: eventDate,
@@ -946,6 +948,17 @@ function VisitorTicketsTab({ inputSx, tealBtnSx, sectionCardSx, sectionTitleSx, 
                                         onChange={(e) => setPriceStudent(e.target.value)}
                                         sx={inputSx}
                                         helperText={`Rp ${Number(priceStudent || 0).toLocaleString('id-ID')} / orang`}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        label="Participant - Dosen (IDR)"
+                                        value={priceDosen}
+                                        onChange={(e) => setPriceDosen(e.target.value)}
+                                        sx={inputSx}
+                                        helperText={`Rp ${Number(priceDosen || 0).toLocaleString('id-ID')} / orang`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>

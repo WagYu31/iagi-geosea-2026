@@ -119,6 +119,14 @@ const CATEGORY_META = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
+    dosen: {
+        label: 'Participant - Dosen',
+        shortLabel: 'DOSEN',
+        bg: '#fef3c7',
+        color: '#b45309',
+        border: '#fde68a',
+    },
+
 
     // 2. Technical (Free / Invited)
     presenter: {
@@ -328,6 +336,7 @@ const CATEGORY_PRICES = {
     'iagi_member_expatriate': 6000000,
     'non_iagi_member_expatriate': 7000000,
     'student_undergraduate': 1000000,
+    'dosen': 1500000,
     'exclusive': 500000,
     'non_exclusive': 0,
     'vip': 0,
@@ -1781,6 +1790,7 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
                                 <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
                                 <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
+                                <MenuItem value="dosen" sx={{ pl: 3, fontSize: '0.82rem' }}>• Dosen</MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     2. TECHNICAL
@@ -3539,6 +3549,14 @@ export default function VisitorTicketsIndex({
                                                                 <Chip label="Rp 1.000.000" size="small" sx={{ bgcolor: '#e0e7ff', color: '#3730a3', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
+                                                        <MenuItem value="dosen" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#b45309', fontSize: '0.82rem' }}>
+                                                                    • Dosen
+                                                                </Typography>
+                                                                <Chip label="Rp 1.500.000" size="small" sx={{ bgcolor: '#fef3c7', color: '#b45309', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             2. TECHNICAL (FREE / INVITED)
@@ -3694,6 +3712,7 @@ export default function VisitorTicketsIndex({
                                     <MenuItem value="iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Member) - Rp 6.000.000</MenuItem>
                                     <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
                                     <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
+                                    <MenuItem value="dosen" sx={{ pl: 3 }}>• Dosen - Rp 1.500.000</MenuItem>
 
                                     <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                         2. TECHNICAL
@@ -3767,6 +3786,7 @@ export default function VisitorTicketsIndex({
                                 'iagi_member_expatriate',
                                 'non_iagi_member_expatriate',
                                 'student_undergraduate',
+                                'dosen',
                             ].includes(onsiteData.visitor_type) && (
                                 <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                                     <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'block', mb: 1 }}>
@@ -5250,6 +5270,26 @@ export default function VisitorTicketsIndex({
                         </Box>
                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
                             Kode: TKT-STUD
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('dosen')}
+                    selected={selectedTicketForCategory?.visitor_type === 'dosen'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#b45309', fontSize: '0.8rem' }}>
+                                Dosen
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 1.500.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-DOSN
                         </Typography>
                     </Box>
                 </MenuItem>

@@ -89,6 +89,13 @@ const CATEGORY_MAP = {
         color: '#3730a3',
         border: '#a5b4fc',
     },
+    dosen: {
+        label: 'PARTICIPANT: DOSEN',
+        shortLabel: 'DOSEN',
+        bg: '#fef3c7',
+        color: '#b45309',
+        border: '#fde68a',
+    },
 
     // 2. Visitor
     non_exclusive: {

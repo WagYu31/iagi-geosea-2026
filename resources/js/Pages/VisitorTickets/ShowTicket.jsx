@@ -219,6 +219,16 @@ const CATEGORY_MAP = {
         tagBg: '#e0e7ff',
         tagColor: '#3730a3',
     },
+    dosen: {
+        label: 'Participant - Dosen',
+        badge: 'PARTICIPANT: DOSEN',
+        gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+        border: '#f59e0b',
+        shadow: 'rgba(245, 158, 11, 0.25)',
+        textColor: '#b45309',
+        tagBg: '#fef3c7',
+        tagColor: '#b45309',
+    },
     non_exclusive: {
         label: 'Visitor Pass (Free)',
         badge: 'VISITOR PASS (FREE)',

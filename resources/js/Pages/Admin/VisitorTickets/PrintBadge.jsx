@@ -23,6 +23,7 @@ export const BADGE_TEMPLATES = {
     iagi_member_expatriate: '/images/badges/Participant.png',
     non_iagi_member_expatriate: '/images/badges/Participant.png',
     student_undergraduate: '/images/badges/Student.png',
+    dosen: '/images/badges/Participant.png',
     student: '/images/badges/Student.png',
 
     // 2. Visitor
@@ -83,6 +84,7 @@ const CATEGORY_MAP = {
     iagi_member_expatriate: { label: 'PARTICIPANT: EXPATRIATE (MEMBER)', short: 'EXPAT MEMBER' },
     non_iagi_member_expatriate: { label: 'PARTICIPANT: EXPATRIATE (NON-MEMBER)', short: 'EXPAT NON-MEMBER' },
     student_undergraduate: { label: 'PARTICIPANT: STUDENT UNDERGRADUATE', short: 'STUDENT' },
+    dosen: { label: 'PARTICIPANT: DOSEN', short: 'DOSEN' },
 
     // 2. Technical
     student: { label: 'PRESENTER', short: 'PRESENTER' },
